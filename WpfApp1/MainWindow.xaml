@@ -1,0 +1,234 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="コピペツール" Height="450" Width="1000"
+        Name="window1"
+        xmlns:b="clr-namespace:WpfApp1.Behaviors"
+        >
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+    <Window.InputBindings>
+        <!-- 検索ダイアログを表示-->
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding searchCommand}" />
+        <!-- アイテムをLiteDBから再読み込みする-->
+        <KeyBinding Key="R" Modifiers="Control" Command="{Binding ReloadCommand}" />
+
+        <!-- 選択したアイテムを開く-->
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenSelectedItemCommand}" />
+        <!-- 選択したアイテムを新規として開く-->
+        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenSelectedItemAsNewCommand}" />
+        <!-- 選択中のフォルダにアイテムを貼り付け-->
+        <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteFromClipboardCommand}" />
+        <!--選択中のアイテムをクリップボードにコピー-->
+        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyToClipboardCommand}" />
+        <!-- 選択中のアイテムをクリップボードにコピー + CutフラグをTrue-->
+        <KeyBinding Key="X" Modifiers="Control" Command="{Binding CutItemCommand}" />
+        <!-- アイテムを新規作成-->
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding CreateItemCommand}" />
+        <!-- 選択したアイテムを削除-->
+        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand}" />
+        <!-- 表示中のアイテムを削除-->
+        <KeyBinding Key="Delete" Modifiers="Control" Command="{Binding DeleteDisplayedItemCommand}" />
+
+
+    </Window.InputBindings>
+    <Grid Name="grid1" >
+        <!-- 1. メニューバー、2. (TreeView,ListBox)、3. StatusTextのGrid.Row 1と3は固定サイズにする。 -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel  Orientation="Vertical" Grid.Row="0" Margin="0,0,0,0">
+            <!-- メニューバー -->
+            <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True">
+                <MenuItem Header="ファイル">
+                    <MenuItem Header="作成">
+                        <MenuItem Header="アイテム作成" Command="{Binding CreateItemCommand}" />
+                        <MenuItem Header="Pythonスクリプト作成" Command="{Binding CreatePythonScriptCommand}" />
+                    </MenuItem>
+                        <MenuItem Header="終了" Click="Close_Click" />
+                </MenuItem>
+                <MenuItem Header="編集">
+                    <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" />
+                </MenuItem>
+
+                <MenuItem Header="検索" Click="Search_Click" />
+                <MenuItem Header="設定" Command="{Binding SettingCommand}" />
+            </Menu>
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <!-- TreeView, ListBox -->
+            <Grid.ColumnDefinitions>
+                <!-- 1. TreeView、2. GridSplitter、3. ListBox-->
+                <!-- TreeViewとListBoxの間にGridSplitterを入れる -->
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Grid.Column="0" Grid.Row="0" ItemsSource="{Binding ClipboardItemFolders}">
+                <TreeView.ItemTemplate >
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolder">
+                        <!-- ツリーアイテム-->
+                        <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
+                        <DockPanel HorizontalAlignment="Stretch" >
+                            <TextBlock Text="{Binding DisplayName}" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                            <DockPanel.InputBindings>
+                                <!-- フォルダを右クリックでそのフォルダを表示-->
+                                <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/>
+                            </DockPanel.InputBindings>
+                            <DockPanel.ContextMenu>
+                                <!-- フォルダのコンテキストメニュー -->
+                                <ContextMenu>
+                                    <MenuItem Header="新規作成" Command="{Binding CreateFolderCommand}" CommandParameter="{Binding}"/>
+                                    <MenuItem Header="編集" Command="{Binding EditFolderCommand}" CommandParameter="{Binding}"/>
+                                    <MenuItem Header="削除" Command="{Binding DeleteFolderCommand}" CommandParameter="{Binding}"/>
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+                        </DockPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ItemContainerStyle>
+                    <!-- TreeViewのアイテムがクリックされた場合に色を変更-->
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" />
+            <!-- クリップボードのListBox -->
+            <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
+            <ListBox
+                ItemsSource="{Binding SelectedFolder.Items}"
+                SelectedItem="{Binding SelectedItem}"
+                Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch"
+                b:ListBoxBehavior.ScrollSelectedIntoView="True"
+                >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                    <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
+                        <DockPanel 
+                            HorizontalAlignment="Stretch"
+                            ToolTip="{Binding Path=ToolTipString}"
+                            >
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <!-- 1. 説明、 2.詳細情報、 3. クリップボードアイテム-->
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Text="{Binding Path=DescriptionText}"
+                                    Name="DescriptionText" 
+                                    TextTrimming="None"
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="10pt"
+                                    Grid.Row="0"
+                                    Visibility="{Binding DescriptionVisibility}"
+                                    />
+                                <TextBlock
+                                    Text="{Binding Path=HeaderText}"
+                                    Name="headerText" 
+                                    TextTrimming="None"
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="6pt"
+                                    Grid.Row="1"/>
+                                <Border 
+                                    BorderBrush="Black" 
+                                    BorderThickness="1"  
+                                    HorizontalAlignment="Stretch" 
+                                    Grid.Row="2">
+                                    <TextBlock 
+                                        Text="{Binding Path=Content}" Name="clipboardText" 
+                                        TextTrimming="None"
+                                        FontSize="8pt"
+                                        MinHeight="50" MaxHeight="100"
+                                        HorizontalAlignment="Stretch"
+                                        />
+                                </Border>
+                            </Grid>
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Header="開く"  
+                                        Command="{Binding OpenItemCommand }"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem
+                                        Header="新規として開く"  
+                                        Command="{Binding OpenItemAsNewCommand }"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem
+                                        Header="編集"  
+                                        Command="{Binding EditItemCommand }"
+                                        CommandParameter="{Binding}"/>
+
+                                    <MenuItem
+                                        Header="コピー"  
+                                        Command="{Binding CopyToClipboardCommand }"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem 
+                                        Header="タグ"  
+                                        Command="{Binding EditTagItemCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem
+                                        Header="Pythonスクリプト"  
+                                        >
+                                        <MenuItem
+                                            Header="テキストを抽出"  
+                                            Command="{Binding ExtractTextCommand }"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding FileVisibility}"
+                                            />
+                                        <MenuItem
+                                            Header="データをマスキング"  
+                                            Command="{Binding MaskDataCommand }"
+                                            CommandParameter="{Binding}"
+                                            Visibility="{Binding TextVisibility }"
+                                        />
+                                    </MenuItem>
+                                    <MenuItem ItemsSource="{Binding ScriptItems}"
+                                        Header="Pythonスクリプト(ユーザー定義)" >
+                                        <MenuItem.ItemTemplate>
+                                            <DataTemplate>
+                                                <MenuItem Header="{Binding Description}" Command="{Binding RunPythonScriptCommand}" CommandParameter="{Binding}"/>
+                                            </DataTemplate>
+                                        </MenuItem.ItemTemplate>
+                                    </MenuItem>
+                                    <MenuItem
+                                        Header="OpenAIチャット"
+                                        Command="{Binding OpenAIChatCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem
+                                        Header="削除"
+                                        Command="{Binding DeleteItemCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                            </DockPanel.ContextMenu>
+                            <DockPanel.InputBindings>
+                                <!-- 選択したアイテムを開く-->
+                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding OpenItemCommand}" CommandParameter="{Binding}"/>
+                    </DockPanel.InputBindings>
+                        </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+        <StatusBar Name="statusBar1" VerticalAlignment="Bottom" Grid.Row="2">
+            <StatusBarItem>
+                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text }" />
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

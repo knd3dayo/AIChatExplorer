@@ -1,0 +1,145 @@
+﻿<Window x:Class="WpfApp1.OpenAIChatWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="OpenAIチャット" Height="450" Width="800">
+    <Window.DataContext>
+        <local:OpenAIChatWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListBox
+            Name="listView1" 
+            ItemsSource="{Binding ChatItems}"
+            SelectedItem="{Binding SelectedItem}"
+            Grid.Row="0"
+            Margin="10,10,10,10"
+            >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel
+                        Name="stackPanel1" Orientation="Horizontal" 
+                        HorizontalAlignment="Stretch"
+                        >
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                            Text="{Binding Role}"
+                                            Width="500"
+                                            FontSize="8pt"
+                                            Grid.Row="0"/>
+                            <Border
+                                BorderBrush="Black" 
+                                BorderThickness="1"  
+                                HorizontalAlignment="Stretch" 
+                                Grid.Row="1"
+                                >
+                                <TextBlock 
+                                    Text="{Binding Content}"
+                                    TextTrimming="None"
+                                    FontSize="8pt"
+                                    MinHeight="50" 
+                                    Width="500"
+                                    TextWrapping="Wrap"
+                                    />
+                            </Border>
+                        </Grid>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem
+                                    Header="開く"  
+                                    Command="{Binding OpenItemCommand }"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem
+                                    Header="新規として開く"  
+                                    Command="{Binding OpenItemAsNewCommand }"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem
+                                    Header="編集"
+                                    Command="{Binding EditItemCommand }"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem
+                                    Header="コピー・移動"  
+                                    >
+                                    <MenuItem 
+                                        Header="ブックマークにコピー"  
+                                        Command="{Binding BookmarkItemCommand }"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem 
+                                        Header="その他のタブにコピー"  
+                                        Command="{Binding CopyToOtherTabCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    <MenuItem 
+                                        Header="その他のタブに移動"  
+                                        Command="{Binding MoveToOtherTabCommand}"
+                                        CommandParameter="{Binding}"/>
+                                </MenuItem>
+
+                                <MenuItem 
+                                    Header="タグ"  
+                                    Command="{Binding EditTagItemCommand}"
+                                    CommandParameter="{Binding}"/>
+                                <MenuItem
+                                    Header="Pythonスクリプト"  
+                                    >
+                                    <MenuItem
+                                        Header="テキストを抽出"  
+                                        Command="{Binding ExtractTextCommand }"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding FileVisibility}"
+                                        />
+                                    <MenuItem
+                                        Header="データをマスキング"  
+                                        Command="{Binding MaskDataCommand }"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding TextVisibility }"
+                                    />
+                                </MenuItem>
+                                <MenuItem ItemsSource="{Binding ScriptItems}"
+                                    Header="Pythonスクリプト(ユーザー定義)" >
+                                    <MenuItem.ItemTemplate>
+                                        <DataTemplate>
+                                            <MenuItem Header="{Binding Description}" Command="{Binding RunPythonScriptCommand}" CommandParameter="{Binding}"/>
+                                        </DataTemplate>
+                                    </MenuItem.ItemTemplate>
+                                </MenuItem>
+                                <MenuItem
+                                    Header="削除"
+                                    Command="{Binding DeleteItemCommand}"
+                                    CommandParameter="{Binding}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+                        <StackPanel.InputBindings>
+                            <MouseBinding  MouseAction="LeftDoubleClick" 
+                                    Command="{Binding CopyToClipboardCommand}"
+                                    CommandParameter="{Binding}"/>
+                        </StackPanel.InputBindings>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <TextBox Grid.Row="1" Text="{Binding InpupText}" Margin="10,10,10,10" MinHeight="50"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Content="Send" Command="{Binding SendChatCommand}" Margin="10,10,10,10"/>
+            <Button Content="Clear" Command="{Binding ClearChatCommand}" Margin="10,10,10,10"/>
+            <Button Content="Close" Command="{Binding CloseCommand}"  Margin="10,10,10,10"/>
+            
+        </StackPanel>
+    </Grid>
+</Window>

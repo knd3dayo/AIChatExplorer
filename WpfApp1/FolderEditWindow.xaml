@@ -1,0 +1,76 @@
+﻿<Window x:Class="WpfApp1.FolderEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="フォルダ編集" Width="350" Height="350">
+    <Window.DataContext>
+        <local:FolderEditWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Content="名前" Grid.Row="0" Grid.Column="0"  Margin="10,10,10,10" Width="120"/>
+            <TextBox Text="{Binding CollectionName}" Grid.Row="0" Grid.Column="1" Margin="10,10,10,10" 
+                     IsEnabled="False"
+                     />
+            <Label Content="表示名" Grid.Row="1" Grid.Column="0" Margin="10,10,10,10" Width="120"/>
+            <TextBox Text="{Binding DisplayName}" Grid.Row="1" Grid.Column="1" Width="160" Margin="10,10,10,10"/>
+            <Label Content="検索条件を常時適用" Grid.Row="2" Grid.Column="0" Margin="10,10,10,10" Width="120"/>
+            <CheckBox Content="有効" IsChecked="{Binding AlwaysApplySearchCondition}" Grid.Row="2" Grid.Column="1" Margin="10,10,10,10"/>
+            <Label Content="自動処理1" Grid.Row="3" Grid.Column="0" Margin="10,10,10,10" Width="120"/>
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="10,10,10,10" Width="160" 
+                      ItemsSource="{Binding AutoProcessItems}"
+                      SelectedItem="{Binding SelectedAutoProcessItem1}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      />
+            <Label Content="自動処理2" Grid.Row="4" Grid.Column="0" Margin="10,10,10,10" Width="120"/>
+            <ComboBox Grid.Row="4" Grid.Column="1" Margin="10,10,10,10" Width="160" 
+                      ItemsSource="{Binding AutoProcessItems}"
+                      SelectedItem="{Binding SelectedAutoProcessItem2}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      />
+            <Label Content="自動処理3" Grid.Row="5" Grid.Column="0" Margin="10,10,10,10" Width="120"/>
+            <ComboBox Grid.Row="5" Grid.Column="1" Margin="10,10,10,10" Width="160" 
+                      ItemsSource="{Binding AutoProcessItems}"
+                      SelectedItem="{Binding SelectedAutoProcessItem3}"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      />
+        </Grid>
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
+            <Button Content="OK" 
+                Margin="10,0,0,0"
+                Command="{Binding CreateCommand}" 
+                    Width="50"
+                    />
+            <Button Content="Cancel"
+                Margin="10,0,30,0"
+                Command="{Binding CancelCommand}" 
+                    DockPanel.Dock="Right"
+                    Width="50"
+                    />
+        </DockPanel>
+
+    </Grid>
+</Window>
