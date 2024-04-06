@@ -51,7 +51,7 @@ namespace WpfApp1
                 ClipboardItem.Description = Description;
                 ClipboardItem.Content = Content;
                 // ClipboardItemを更新
-                ClipboardController.UpsertItem(ClipboardItem);
+                ClipboardDatabaseController.UpsertItem(ClipboardItem);
 
             }
             // ウィンドウを閉じる

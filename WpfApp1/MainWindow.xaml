@@ -56,6 +56,7 @@
                         <MenuItem Header="終了" Click="Close_Click" />
                 </MenuItem>
                 <MenuItem Header="編集">
+                    <MenuItem Header="自動処理ルール編集" Command="{Binding OpenListAutoProcessRuleWindowCommand}" />
                     <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" />
                 </MenuItem>
 

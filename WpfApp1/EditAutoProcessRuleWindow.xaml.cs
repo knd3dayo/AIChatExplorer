@@ -15,13 +15,12 @@ using System.Windows.Shapes;
 namespace WpfApp1
 {
     /// <summary>
-    /// FolderCreateWindow.xaml の相互作用ロジック
+    /// EditAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class FolderCreateWindow : Window
+    public partial class EditAutoProcessRuleWindow : Window
     {
-        public static FolderCreateWindow? Current;
-
-        public FolderCreateWindow()
+        public static EditAutoProcessRuleWindow? Current;
+        public EditAutoProcessRuleWindow()
         {
             InitializeComponent();
             Current = this;

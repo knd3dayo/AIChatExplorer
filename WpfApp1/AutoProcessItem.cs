@@ -1,26 +1,40 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Controls;
 
 namespace WpfApp1
 {
     public class AutoProcessItem
     {
+        public enum ActionType
+        {
+            CopyToFolder,
+            MoveToFolder,
+            ExtractText,
+            MaskData,
+            RunPythonScript,
+        }
+
         public int Id { get; set; }
         public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public string CommandPath { get; set; }
+        public ActionType Type { get; set; }
 
+        public string Description { get; set; } = "";
         public ScriptItem? ScriptItem { get; set; }
 
-        public AutoProcessItem(string name, string description, string commandPath)
+        public AutoProcessItem()
+        {
+        }
+        public AutoProcessItem(string name, string description, ActionType actionType): this()
         {
             Name = name;
             Description = description;
-            CommandPath = commandPath;
+            Type = actionType;
         }
 
-        public AutoProcessItem(string name, string description, string commandPath, ScriptItem scriptItem) : this(name, description, commandPath)
+        public AutoProcessItem(string name, string description, ActionType actionType, ScriptItem scriptItem) : this(name, description, actionType)
         {
             ScriptItem = scriptItem;
+
         }
 
         public static ObservableCollection<AutoProcessItem> AutoProcessItems
@@ -28,14 +42,24 @@ namespace WpfApp1
             get
             {
                 ObservableCollection<AutoProcessItem> items = new ObservableCollection<AutoProcessItem>();
+
+                // itemにフォルダにコピーするコマンドを追加
+                items.Add(new AutoProcessItem("フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします",
+                    ActionType.CopyToFolder));
+                // itemにフォルダに移動するコマンドを追加
+                items.Add(new AutoProcessItem("フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します",
+                    ActionType.MoveToFolder));
+
                 // itemにテキスト抽出コマンドを追加
-                string extractTextCommand = "AutoExtractTextCommandExecute";
-                items.Add(new AutoProcessItem("テキスト抽出", "クリップボードのテキストを抽出します", extractTextCommand));
+                items.Add(new AutoProcessItem("テキスト抽出", "クリップボードのテキストを抽出します", 
+                    ActionType.ExtractText));
                 // itemにデータマスキングコマンドを追加
-                string maskDataCommand = "AutoMaskDataCommandExecute";
-                items.Add(new AutoProcessItem("データマスキング", "クリップボードのテキストをマスキングします", maskDataCommand));
+                items.Add(new AutoProcessItem("データマスキング", "クリップボードのテキストをマスキングします",
+                    ActionType.MaskData));
+
+                // GetFolderCollectionでフォルダを取得
+
                 // itemにPythonスクリプト実行コマンドを追加
-                string runPythonScriptCommand = "AutoRunPythonScriptCommandExecute";
                 // GetScriptItemCollectionでスクリプトを取得
                 var scriptItems = ClipboardController.GetScriptItems();
                 // スクリプトを追加
@@ -53,34 +77,73 @@ namespace WpfApp1
                     {
                         continue;
                     }
-                    items.Add(new AutoProcessItem(scriptItem.Description, $"Pythonスクリプト{scriptItem.Description}を実行します", runPythonScriptCommand, scriptItem));
+                    items.Add(new AutoProcessItem(scriptItem.Description, $"Pythonスクリプト{scriptItem.Description}を実行します",
+                        ActionType.RunPythonScript, scriptItem));
                 }
 
 
                 return items;
             }
         }
-        public ClipboardItem Execute(ClipboardItem clipboardItem)
+        public ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardItemFolder? destinationFolder)
         {
-            // CommandPathから関数を取得
-            System.Reflection.MethodInfo? method = typeof(PythonCommands).GetMethod(CommandPath);
-            if (method == null)
+            // Type が RunPythonScriptの場合
+            if (Type == ActionType.RunPythonScript)
             {
-                return clipboardItem;
+                if (ScriptItem == null)
+                {
+                    return clipboardItem;
+                }
+                // ScriptItemのRunScriptを実行
+                return PythonCommands.AutoRunPythonScriptCommandExecute(ScriptItem, clipboardItem);
             }
-            // 関数を実行
-             object? obj =  method.Invoke(null, [ScriptItem, clipboardItem]);
-            if (obj == null)
+            // Type が CopyToFolderの場合 
+            if (Type == ActionType.CopyToFolder)
             {
+                // DestinationFolderがNullの場合はそのまま返す
+                if (destinationFolder == null)
+                {
+                    Tools.Warn("フォルダが選択されていません");
+                    return clipboardItem;
+                }
+                Tools.Info($"フォルダにコピーします{destinationFolder.AbsoluteCollectionName}");
+                // DestinationFolderにコピー
+                ClipboardItem newItem = clipboardItem.Copy();
+                destinationFolder.AddItem(newItem);
+                // コピーの場合は元のアイテムを返す
                 return clipboardItem;
-            }
-            if (obj is not ClipboardItem)
-            {
-                return clipboardItem;
-            }
-            return (ClipboardItem)obj;
-        }
 
+            }
+            // Type が MoveToFolderの場合
+            if (Type == ActionType.MoveToFolder)
+            {
+                // DestinationFolderがNullの場合はそのまま返す
+                if (destinationFolder == null)
+                {
+                    Tools.Warn("フォルダが選択されていません");
+                    return clipboardItem;
+                }
+                // DestinationFolderに追加
+                ClipboardItem newItem = clipboardItem.Copy();
+                ClipboardItem result = destinationFolder.AddItem(newItem);
+                // 元のフォルダから削除
+                Tools.Info($"{clipboardItem.CollectionName}から削除します");
+                ClipboardDatabaseController.DeleteItem(clipboardItem);
+                // Moveの場合は元のアイテムを返さない
+                return null;
+            }
+            // Type が ExtractTextの場合
+            if (Type == ActionType.ExtractText)
+            {
+                return PythonCommands.AutoExtractTextCommandExecute(clipboardItem);
+            }
+            // Type が MaskDataの場合
+            if (Type == ActionType.MaskData)
+            {
+                return PythonCommands.AutoMaskDataCommandExecute(clipboardItem);
+            }
+            return clipboardItem;
+        }
     }
 
 }

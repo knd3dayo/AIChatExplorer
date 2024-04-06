@@ -14,7 +14,7 @@ namespace WpfApp1
             set
             {
                 scriptItem = value;
-                OnPropertyChanged("ScriptItem");
+                OnPropertyChanged("CommandArgument");
             }
         }
 

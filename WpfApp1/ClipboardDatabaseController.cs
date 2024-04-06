@@ -10,6 +10,7 @@ namespace WpfApp1
         public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public static string SCRIPT_COLLECTION_NAME = "scripts";
+        public static string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
 
         private static LiteDatabase? db;
         // static
@@ -52,7 +53,16 @@ namespace WpfApp1
         public static LiteDatabase GetClipboardDatabase(){
             if (db == null)
             {
-                db = new LiteDatabase("clipboard.db");
+                try
+                {
+                    db = new LiteDatabase("clipboard.db");
+                }
+                catch (System.Exception e)
+                {
+                    System.Windows.MessageBox.Show("データベースのオープンに失敗しました。" + e.Message);
+                    // データベースのオープンに失敗した場合は終了
+                    System.Environment.Exit(1);
+                }
             }
             return db;
         }
@@ -62,6 +72,55 @@ namespace WpfApp1
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolder>(ClipboardDatabaseController.CLIPBOARD_FOLDERS_COLLECTION_NAME);
             var item = collection.FindOne(x => x.AbsoluteCollectionName == collectionName);
             return item;
+        }
+
+        // 指定したTargetFolderを持つAutoProcessRuleを取得する
+        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ClipboardItemFolder? targetFolder)
+        {
+            if (targetFolder == null)
+            {
+                return GetAllAutoProcessRules();
+            }
+            var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
+            var items = collection.FindAll().Where(x => x.TargetFolder != null && x.TargetFolder.AbsoluteCollectionName == targetFolder.AbsoluteCollectionName);
+            ObservableCollection<AutoProcessRule> result = [.. items];
+            return result;
+        }
+        // すべてのAutoProcessRuleを取得する
+        public static ObservableCollection<AutoProcessRule> GetAllAutoProcessRules()
+        {
+            var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
+            var items = collection.FindAll();
+            ObservableCollection<AutoProcessRule> result = [.. items];
+            return result;
+        }
+
+        // AutoProcessRuleを追加または更新する
+        public static void UpsertAutoProcessRule(AutoProcessRule rule)
+        {
+            var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
+            collection.Upsert(rule);
+        }
+        // AutoProcessRuleを削除する
+        public static void DeleteAutoProcessRule(AutoProcessRule rule)
+        {
+            var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
+            collection.Delete(rule.Id);
+        }
+
+        // TypeがCopyTo または MoveToのルールをLiteDBから取得する。
+        public static IEnumerable<AutoProcessRule> GetCopyToMoveToRules()
+        {
+            var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
+            var items = collection.FindAll().Where(
+                x => x.RuleAction != null
+                && (x.RuleAction.Type == AutoProcessItem.ActionType.CopyToFolder
+                    || x.RuleAction.Type == AutoProcessItem.ActionType.MoveToFolder
+                    )
+                    );
+
+            return items;
+
         }
 
         // --------------------------------------------------------------
@@ -79,6 +138,21 @@ namespace WpfApp1
             }
             return result;
         }
+        // ClipboardItemをLiteDBに追加または更新する
+        public static void UpsertItem(ClipboardItem item)
+        {
+            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(item.CollectionName);
+            collection.Upsert(item);
+        }
+        // アイテムをDBから削除する
+        public static void DeleteItem(ClipboardItem item)
+        {
+            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(item.CollectionName);
+            // System.Windows.MessageBox.Show(item.CollectionName);
+            collection.Delete(item.Id);
+        }
+
+
 
         // ClipboardItemFolderをLiteDBに追加または更新する
         public static void UpsertFolder(ClipboardItemFolder folder)
@@ -89,6 +163,7 @@ namespace WpfApp1
             // ★ folderのItemsはCLIPBOARD_FOLDERS_COLLECTION_NAMEに保存しない。AbsoluteCollectionNameコレクションに保存する。
             var tmpItems = folder.Items;
             folder.Items = new ObservableCollection<ClipboardItem>();
+
 
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolder>(ClipboardDatabaseController.CLIPBOARD_FOLDERS_COLLECTION_NAME);
             collection.Upsert(folder);
@@ -117,6 +192,13 @@ namespace WpfApp1
             collection.Upsert(relation);
 
         }
+        // ClipboardItemのリストをLiteDBから取得するObservableCollectionOn
+        public static IEnumerable<ClipboardItem> GetClipboardItemCollection(string collectionName)
+        {
+            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(collectionName);
+            // UpdatedAtの降順で取得
+            return collection.FindAll().OrderByDescending(x => x.UpdatedAt);
+        }
 
         public static bool Load(ClipboardItemFolder targetFolder)
         {
@@ -135,7 +217,8 @@ namespace WpfApp1
             targetFolder.SearchCondition.CopyFrom(folder.SearchCondition);
 
             // ItemsをLiteDBのAbsoluteCollectionNameから取得
-            var clipboardItems = ClipboardController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
+            var clipboardItems = ClipboardDatabaseController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
+            // 
             targetFolder.Items.Clear();
             foreach (var item in clipboardItems)
             {
@@ -178,11 +261,24 @@ namespace WpfApp1
             }
         }
 
+        // フォルダツリーを取得する
+        public static ClipboardItemFolder? GetFolderTree()
+        {
+            var rootFolder = ClipboardDatabaseController.GetClipboardItemFolder(ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME);
+            if (rootFolder == null)
+            {
+                return null;
+            }
+
+            LoadFolderTree(rootFolder);
+            return rootFolder;
+        }
+
         public static void DeleteItems(ClipboardItemFolder targetFolder)
         {
             foreach (var item in targetFolder.Items)
             {
-                ClipboardController.DeleteItem(item);
+                ClipboardDatabaseController.DeleteItem(item);
             }
             targetFolder.Items.Clear();
             ClipboardDatabaseController.UpsertFolder(targetFolder);
@@ -195,7 +291,7 @@ namespace WpfApp1
 
             targetFolder.Items.Clear();
 
-            var results = ClipboardController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
+            var results = ClipboardDatabaseController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
             // SearchConditionの内容に従ってフィルタリング
             if (string.IsNullOrEmpty(targetFolder.SearchCondition.Description) == false)
             {

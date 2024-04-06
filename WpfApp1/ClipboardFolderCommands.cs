@@ -27,13 +27,13 @@ namespace WpfApp1
             if (StatusText != null)
             {
                 string message = $"フォルダ[{Instance.SelectedFolder?.DisplayName}]";
-                // AutoProcessItemsが設定されている場合
-                if (Instance.SelectedFolder?.AutoProcessItems.Count() > 0)
+                // AutoProcessRuleが設定されている場合
+                if (ClipboardDatabaseController.GetAutoProcessRules(Instance.SelectedFolder).Count() > 0)
                 {
                     message += " 自動処理が設定されています[";
-                    foreach (AutoProcessItem item in Instance.SelectedFolder.AutoProcessItems)
+                    foreach (AutoProcessRule item in ClipboardDatabaseController.GetAutoProcessRules(Instance.SelectedFolder))
                     {
-                        message += item.Name + " ";
+                        message += item.RuleName + " ";
                     }
                     message += "]";
                 }
@@ -95,11 +95,11 @@ namespace WpfApp1
             {
                 return;
             }
-            FolderCreateWindow FolderCreateWindow = new FolderCreateWindow();
-            FolderCreateWindowViewModel FolderCreateWindowViewModel = ((FolderCreateWindowViewModel)FolderCreateWindow.DataContext);
-            FolderCreateWindowViewModel.ParentFolder = (ClipboardItemFolder)parameter;
+            FolderEditWindow FolderEditWindow = new FolderEditWindow();
+            FolderEditWindowViewModel FolderEditWindowViewModel = ((FolderEditWindowViewModel)FolderEditWindow.DataContext);
+            FolderEditWindowViewModel.Init((ClipboardItemFolder)parameter, FolderEditWindowViewModel.Mode.CreateChild);
 
-            FolderCreateWindow.ShowDialog();
+            FolderEditWindow.ShowDialog();
 
         }
         // フォルダ編集コマンド
@@ -111,7 +111,7 @@ namespace WpfApp1
             }
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = ((FolderEditWindowViewModel)FolderEditWindow.DataContext);
-            FolderEditWindowViewModel.Init((ClipboardItemFolder)parameter);
+            FolderEditWindowViewModel.Init((ClipboardItemFolder)parameter, FolderEditWindowViewModel.Mode.Edit);
 
             FolderEditWindow.ShowDialog();
 
@@ -156,7 +156,6 @@ namespace WpfApp1
 
             MainWindowViewModel.Instance?.UpdateStatusText("フォルダを削除しました");
         }
-
     }
 
 }

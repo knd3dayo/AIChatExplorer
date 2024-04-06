@@ -29,9 +29,6 @@ namespace WpfApp1
 
         public ObservableCollection<ClipboardItem> Items { get; set; } = new ObservableCollection<ClipboardItem>();
 
-        //AutoProcessItem
-        public ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = new ObservableCollection<AutoProcessItem>();
-
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardItemFolder()
@@ -83,14 +80,14 @@ namespace WpfApp1
             }
 
             // LiteDBに保存
-            ClipboardController.UpsertItem(item);
+            ClipboardDatabaseController.UpsertItem(item);
         }
         // ClipboardItemを削除
         public void DeleteItem(ClipboardItem item)
         {
             Items.Remove(item);
             // LiteDBに保存
-            ClipboardController.DeleteItem(item);
+            ClipboardDatabaseController.DeleteItem(item);
         }
 
         public List<ClipboardItem> GetDuplicateList(ClipboardItem item)
@@ -144,18 +141,68 @@ namespace WpfApp1
                 OnPropertyChanged("IsSelected");
             }
         }
-        // 自動処理を適用する処理
-        public ClipboardItem ApplyAutoProcess(ClipboardItem clipboardItem)
+
+        // FolderSelectWindowで選択されたフォルダを適用する処理
+        private bool _IsSelectedOnFolderSelectWindow;
+        public bool IsSelectedOnFolderSelectWindow
         {
-            ClipboardItem result = clipboardItem;
-            foreach (var autoProcessItem in AutoProcessItems)
+            get { return _IsSelectedOnFolderSelectWindow; }
+            set
             {
-                MainWindowViewModel.Instance?.UpdateStatusText ($"自動処理:{autoProcessItem.Name}を実行します");
-                result = autoProcessItem.Execute(result);
+                _IsSelectedOnFolderSelectWindow = value;
+                OnPropertyChanged("_IsSelectedOnFolderSelectWindow");
+            }
+        }
+
+        // 自動処理を適用する処理
+        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem)
+        {
+            ClipboardItem? result = clipboardItem;
+            // AutoProcessRulesを取得
+            var AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(this);
+            foreach (var rule in AutoProcessRules)
+            {
+                Tools.Info("自動処理を適用します "  + rule.GetDescriptionString() );
+                result = rule.RunAction(result);
+                // resultがNullの場合は処理を中断
+                if (result == null)
+                {
+                    Tools.Info("自動処理でアイテムが削除されました");
+                    return null;
+                }
             }
             return result;
         }
 
+        // アイテムを追加する処理
+        public ClipboardItem AddItem(ClipboardItem item)
+        {
+            // AbsoluteCollectionNameを設定
+            item.CollectionName = AbsoluteCollectionName;
+
+            // 自動処理を適用
+            ClipboardItem? result = ApplyAutoProcess(item);
+
+            if (result == null)
+            {
+                // 自動処理で削除または移動された場合は何もしない
+                Tools.Info("自動処理でアイテムが削除または移動されました");
+                return item;
+            }
+
+            // 重複アイテムを削除
+            RemoveDuplicateItems(result);
+            // LiteDBに保存
+            ClipboardDatabaseController.UpsertItem(result);
+            // Itemsに追加
+            Items.Add(result);
+            // OnPropertyChanged
+            OnPropertyChanged("Items");
+
+
+            return item;
+
+        }
         //--------------------------------------------------------------------------------
         //--コマンド
         //--------------------------------------------------------------------------------
@@ -170,6 +217,8 @@ namespace WpfApp1
         // フォルダ削除コマンド
         public static SimpleDelegateCommand DeleteFolderCommand => new SimpleDelegateCommand(ClipboardFolderCommands.DeleteFolderCommandExecute);
 
+        // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
+        public static SimpleDelegateCommand FolderSelectWindowSelectFolderCommand => new SimpleDelegateCommand(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
 
     }
 }

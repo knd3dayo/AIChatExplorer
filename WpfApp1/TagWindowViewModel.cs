@@ -124,12 +124,9 @@ namespace WpfApp1
                 }
             }
             // DBに反映
-            ClipboardController.UpsertItem(ClipboardItem);
+            ClipboardDatabaseController.UpsertItem(ClipboardItem);
             // ウィンドウを閉じる
             TagWindow.Current?.Close();
-
         }
-        
-
     }
 }

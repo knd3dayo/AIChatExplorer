@@ -6,6 +6,21 @@ namespace WpfApp1
 {
     public class FolderEditWindowViewModel : ObservableObject
     {
+        // 編集モードか新規子フォルダ作成モードか
+        public enum Mode
+        {
+            Edit,
+            CreateChild
+        }
+        // Windowの名前
+        public string WindowName
+        {
+            get
+            {
+                return CurrentMode == Mode.Edit ? "フォルダ編集" : "新規フォルダ作成";
+            }
+        }
+        public Mode CurrentMode { get; set; }
         private string _collectionName = "";
         public string CollectionName
         {
@@ -52,39 +67,43 @@ namespace WpfApp1
             }
         }
 
-        // 自動処理1のItemSource
-        public ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = AutoProcessItem.AutoProcessItems;
-        // 自動処理1の選択中のItem
-        public AutoProcessItem? SelectedAutoProcessItem1 { get; set; }
-        // 自動処理2の選択中のItem
-        public AutoProcessItem? SelectedAutoProcessItem2 { get; set; }
-        // 自動処理3の選択中のItem
-        public AutoProcessItem? SelectedAutoProcessItem3 { get; set; }
+        // CollectionNameが編集可能かどうか
+        public bool IsCollectionNameEditable
+        {
+            get
+            {
+                return CurrentMode == Mode.CreateChild;
+            }
+        }
 
         public SimpleDelegateCommand CreateCommand => new SimpleDelegateCommand(CreateCommandExecute);
 
         // 起動時の処理
-        public void Init(ClipboardItemFolder clipboardItemFolder)
+        public void Init(ClipboardItemFolder clipboardItemFolder, Mode mode)
         {
+            CurrentMode = mode;
+            OnPropertyChanged("IsCollectionNameEditable");
+
             Folder = clipboardItemFolder;
-            // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
-            CollectionName =　clipboardItemFolder.AbsoluteCollectionName.Split('_').Last();
+            // 編集モードの場合
+            if (CurrentMode == Mode.Edit)
+            {
+                // CollectionNameを設定
+                // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
+                CollectionName = clipboardItemFolder.AbsoluteCollectionName.Split('_').Last();
 
-            // 常時検索条件を適用するかどうか
-            AlwaysApplySearchCondition = clipboardItemFolder.AlwaysApplySearchCondition;
+                // 常時検索条件を適用するかどうか
+                AlwaysApplySearchCondition = clipboardItemFolder.AlwaysApplySearchCondition;
 
-            DisplayName = clipboardItemFolder.DisplayName;
-            if (clipboardItemFolder.AutoProcessItems.Count > 0)
-            {
-                SelectedAutoProcessItem1 = clipboardItemFolder.AutoProcessItems[0];
+
+                DisplayName = clipboardItemFolder.DisplayName;
             }
-            if (clipboardItemFolder.AutoProcessItems.Count > 1)
+            // 新規子フォルダ作成モードの場合
+            else if (CurrentMode == Mode.CreateChild)
             {
-                SelectedAutoProcessItem2 = clipboardItemFolder.AutoProcessItems[1];
-            }
-            if (clipboardItemFolder.AutoProcessItems.Count > 2)
-            {
-                SelectedAutoProcessItem3 = clipboardItemFolder.AutoProcessItems[2];
+                // CollectionNameを設定
+                CollectionName = "";
+                DisplayName = "";
             }
 
         }
@@ -114,25 +133,30 @@ namespace WpfApp1
                 Tools.ShowMessage("フォルダ名は英文字で入力してください");
                 return;
             }
-            // DisplayNameを設定
-            Folder.DisplayName = DisplayName;
-            // 検索条件を常時適用するかどうか
-            Folder.AlwaysApplySearchCondition = AlwaysApplySearchCondition;
 
-            // 自動処理を追加
-            if (SelectedAutoProcessItem1 != null)
+            // 編集モードの場合
+            if (CurrentMode == Mode.Edit)
             {
-                Folder.AutoProcessItems.Add(SelectedAutoProcessItem1);
+                // DisplayNameを設定
+                Folder.DisplayName = DisplayName;
+                // 検索条件を常時適用するかどうか
+                Folder.AlwaysApplySearchCondition = AlwaysApplySearchCondition;
+
+                ClipboardDatabaseController.UpsertFolder(Folder);
             }
-            if (SelectedAutoProcessItem2 != null)
+            // 新規子フォルダ作成モードの場合
+            else if (CurrentMode == Mode.CreateChild)
             {
-                Folder.AutoProcessItems.Add(SelectedAutoProcessItem2);
+                // フォルダを作成
+                ClipboardItemFolder child = new ClipboardItemFolder(Folder, CollectionName, DisplayName);
+                // 検索条件を常時適用するかどうか
+                child.AlwaysApplySearchCondition = AlwaysApplySearchCondition;
+
+                ClipboardDatabaseController.UpsertFolder(child);
+                // 親フォルダと子フォルダの関係を登録
+                ClipboardDatabaseController.UpsertFolderRelation(Folder, child);
+
             }
-            if (SelectedAutoProcessItem3 != null)
-            {
-                Folder.AutoProcessItems.Add(SelectedAutoProcessItem3);
-            }
-            ClipboardDatabaseController.UpsertFolder(Folder);
 
             // RootFolderを再読み込み
             ClipboardController.RootFolder.Load();
@@ -146,6 +170,23 @@ namespace WpfApp1
             FolderEditWindow.Current?.Close();
 
         }
+
+        // OpenListAutoProcessRuleWindowCommand
+        public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new SimpleDelegateCommand(OpenListAutoProcessRuleWindowCommandExecute);
+        private void OpenListAutoProcessRuleWindowCommandExecute(object parameter)
+        {
+            if (Folder == null)
+            {
+                Tools.Error("フォルダが指定されていません");
+                return;
+            }
+            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
+            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = ((ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext);
+            ListAutoProcessRuleWindowViewModel.Initialize(Folder);
+
+            ListAutoProcessRuleWindow.ShowDialog();
+        }
+
     }
 
 }

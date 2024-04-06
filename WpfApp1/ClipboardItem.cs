@@ -37,6 +37,9 @@ namespace WpfApp1
         //　貼り付け元のアプリケーションのパス
         public string? SourceApplicationPath { get; set; }
 
+        // 自動処理時のコピー回数カウンター
+        public int CopyCount { get; set; } = 0;
+
         public ClipboardItem()
         {
             CreatedAt = DateTime.Now;
@@ -57,13 +60,6 @@ namespace WpfApp1
             newItem.Tags = new List<string>(this.Tags);
             newItem.Description = this.Description;
             return newItem;
-
-        }
-        public void CopyTo(ClipboardItemFolder newFolder)
-        {
-            ClipboardItem newItem = this.Copy();
-            newItem.CollectionName = newFolder.AbsoluteCollectionName;
-            newFolder.UpsertItem(newItem);
 
         }
         // 重複をチェックするメソッド

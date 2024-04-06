@@ -40,7 +40,7 @@ namespace WpfApp1
         // Pythonスクリプトを実行するコマンド
         //--------------------------------------------------------------------------------
         // 自動処理でテキストを抽出」を実行するコマンド
-        public static ClipboardItem AutoExtractTextCommandExecute(ScriptItem? scriptItem, ClipboardItem clipboardItem)
+        public static ClipboardItem AutoExtractTextCommandExecute(ClipboardItem clipboardItem)
         {
             if (PythonExecutor.IsPythonEnabled == false)
             {
@@ -102,7 +102,7 @@ namespace WpfApp1
         }
 
         // 自動処理でデータをマスキング」を実行するコマンド
-        public static ClipboardItem AutoMaskDataCommandExecute(ScriptItem? scriptItem, ClipboardItem clipboardItem)
+        public static ClipboardItem AutoMaskDataCommandExecute(ClipboardItem clipboardItem)
         {
             if (PythonExecutor.IsPythonEnabled == false)
             {

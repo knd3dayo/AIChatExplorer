@@ -11,9 +11,13 @@ namespace WpfApp1
 
         public MainWindowViewModel()
         {
+            // ロギング設定
+            Tools.StatusText = StatusText;
+
             // クリップボードコントローラーの初期化
             ClipboardController.Init(this);
             Instance = this;
+
 
             ClipboardItemFolders.Add(ClipboardController.RootFolder);
 
@@ -124,6 +128,17 @@ namespace WpfApp1
         public static SimpleDelegateCommand CreatePythonScriptCommand => new SimpleDelegateCommand(PythonCommands.CreatePythonScriptCommandExecute);
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
         public static SimpleDelegateCommand EditPythonScriptCommand => new SimpleDelegateCommand(PythonCommands.EditPythonScriptCommandExecute);
+        // メニューの「自動処理ルールを編集」をクリックしたときの処理
+        public static SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new SimpleDelegateCommand(OpenListAutoProcessRuleWindowCommandExecute);
+        private static void OpenListAutoProcessRuleWindowCommandExecute(object obj)
+        {
+            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
+            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = ((ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext);
+            ListAutoProcessRuleWindowViewModel.Initialize();
+
+            ListAutoProcessRuleWindow.ShowDialog();
+        }
+        
         // スクリプトを削除するコマンド
 
 

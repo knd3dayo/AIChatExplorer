@@ -46,7 +46,7 @@ namespace WpfApp1
             try
             {
                 // 選択中のアイテムを開く
-                ClipboardController.OpenItem(MainWindowViewModel.Instance.SelectedItem);
+                ClipboardProcessController.OpenItem(MainWindowViewModel.Instance.SelectedItem);
             }
             catch (ThisApplicationException e)
             {
@@ -68,7 +68,7 @@ namespace WpfApp1
             try
             {
                 // 選択中のアイテムを新規として開く
-                ClipboardController.OpenItem(MainWindowViewModel.Instance.SelectedItem, true);
+                ClipboardProcessController.OpenItem(MainWindowViewModel.Instance.SelectedItem, true);
             }
             catch (ThisApplicationException e)
             {
@@ -186,55 +186,62 @@ namespace WpfApp1
         public static void PasteFromClipboardCommandExecute(object obj)
         {
             MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-            StatusText? StatusText = MainWindowViewModel.StatusText;
-
             if (Instance == null)
             {
                 return;
             }
-            if (Instance.CopiedItem == null)
+            PasteClipboardItemCommandExecute(
+                Instance,
+                Instance.CopiedItem, Instance.CopiedItemFolder, Instance.SelectedFolder);
+        }
+
+        // Ctrl + V が押された時の処理
+        public static ClipboardItem? PasteClipboardItemCommandExecute(
+            MainWindowViewModel Instance,
+            ClipboardItem? item, ClipboardItemFolder? fromFolder, ClipboardItemFolder? toFolder)
+        {
+            if (Instance == null)
             {
-                Tools.ShowMessage("コピーされたアイテムがありません");
-                return;
+                return item;
             }
-            if (Instance.SelectedFolder == null)
+            if (item == null)
             {
-                Tools.ShowMessage("フォルダが選択されていません");
-                return;
+                Tools.Error("アイテムがありません");
+                return item;
             }
-            if (Instance.CopiedItemFolder == null)
+            if (toFolder == null)
             {
-                Tools.ShowMessage("コピーされたフォルダがありません");
-                return;
+                Tools.Error("コピー/移動先のフォルダが選択されていません");
+                return item;
+            }
+            if (fromFolder  == null)
+            {
+                Tools.Error("コピー/移動元のフォルダがありません");
+                return item;
             }
             try
             {
-                // 自動処理が設定されている場合は処理を行う
-                ClipboardItem clipboardItem;
-                if (Instance.SelectedFolder.AutoProcessItems.Count() > 0)
-                {
-                    clipboardItem = Instance.SelectedFolder.ApplyAutoProcess(Instance.CopiedItem);
-
-                }else
-                {
-                    clipboardItem = (ClipboardItem)Instance.CopiedItem;
-                }
-                clipboardItem.CopyTo(Instance.SelectedFolder);
+                ClipboardItem newItem = item.Copy();
+                toFolder.AddItem(newItem);
+                // Cutフラグが立っている場合はコピー元のアイテムを削除する
                 if (Instance.CutFlag)
                 {
 
-                    Instance.CopiedItemFolder.DeleteItem(Instance.CopiedItem);
+                    fromFolder.DeleteItem(item);
                     Instance.CutFlag = false;
                 }
-                Instance.UpdateStatusText("貼り付けました");   
+                Instance.UpdateStatusText("貼り付けました");
+                return newItem;
 
             }
             catch (Exception e)
             {
                 string message = string.Format("エラーが発生しました。\nメッセージ:\n{0]\nスタックトレース:\n[1]", e.Message, e.StackTrace);
                 Tools.ShowMessage(message);
+                return item;
             }
         }
+
     }
 
 }
