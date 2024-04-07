@@ -1,0 +1,44 @@
+﻿<Window x:Class="WpfApp1.View.ClipboardItemFolderView.FolderSelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1.View.ClipboardItemFolderView"
+        mc:Ignorable="d"
+        Title="FolderSelectWindow" Height="450" Width="600">
+    <Window.DataContext>
+        <local:FolderSelectWindowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TreeView Grid.Row="0" ItemsSource="{Binding RootFolders}" >
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolder">
+                    <TextBlock Text="{Binding DisplayName}">
+                        <TextBlock.InputBindings>
+                            <MouseBinding  MouseAction="LeftClick" Command="{Binding FolderSelectWindowSelectFolderCommand}" CommandParameter="{Binding}"/>
+                        </TextBlock.InputBindings>
+                    </TextBlock>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+            <TreeView.ItemContainerStyle>
+                <!-- TreeViewのアイテムがクリックされた場合に色を変更-->
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelectedOnFolderSelectWindow}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+        <TextBlock Grid.Row="1" Text="{Binding SelectedFolderAbsoluteCollectionName}" MinHeight="20" HorizontalAlignment="Stretch"/>
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right" >
+                <Button  Content="Select" Command="{Binding SelectFolderCommand}" 
+                        Width="50" Margin="10,10,10,10"/>
+                <Button Grid.Column="1" Content="Cancel" Command="{Binding CancelCommand}"
+                        Width="50" Margin="10,10,10,10"/>
+        </DockPanel>
+    </Grid>
+</Window>
+    

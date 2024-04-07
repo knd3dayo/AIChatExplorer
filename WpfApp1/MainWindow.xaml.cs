@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using WpfApp1.Model;
+using WpfApp1.View.SearchView;
 
 
 
@@ -9,24 +11,30 @@ namespace WpfApp1
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public class MainWindow : Window
     {
         public MainWindow()
         {
+            // データベースのチェックポイント処理
+            ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
             InitializeComponent();
 
         }
+
         private void Close_Click(object sneder, RoutedEventArgs e)
         {
             Console.WriteLine("メニュー操作：閉じる");
-            System.Windows.Application.Current.Shutdown();
+            Application.Current.Shutdown();
         }
         private void Search_Click(object sneder, RoutedEventArgs e)
         {
             Console.WriteLine("メニュー操作：検索");
-            SearchWindow  searchWindow = new SearchWindow();
-            ((SearchWindowViewModel)searchWindow.DataContext).ClipboardItemFolder
-                = MainWindowViewModel.Instance?.SelectedFolder;
+            SearchWindow searchWindow = new SearchWindow();
+            SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
+            searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () =>
+            {
+                MainWindowViewModel.Instance?.SelectedFolder?.Load();
+            });
 
             searchWindow.ShowDialog();
         }

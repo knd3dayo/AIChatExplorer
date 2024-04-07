@@ -6,7 +6,8 @@ using System.Diagnostics;
 using System.Collections;
 using System.Windows;
 using System.IO;
-using Python.Runtime;
+using WpfApp1.Model;
+using WpfApp1.Utils;
 
 namespace WpfApp1
 {
@@ -132,8 +133,6 @@ namespace WpfApp1
     }
     public class ClipboardController
     {
-        public static ClipboardItemFolder RootFolder = new(ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME, "クリップボード");
-
         //--------------------------------------------------------------------------------
 
 
@@ -167,19 +166,11 @@ namespace WpfApp1
         {
 
             MainWindowViewModel = mainWindowViewModel;
+
+
             // Clipboardの監視開始
             clipboard = new SharpClipboard();
             clipboard.ClipboardChanged += ClipboardChanged;
-            // データベースのチェックポイント処理
-            ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
-
-            // LIteDBからRootFolderを取得。存在しない場合は新規作成
-            if (RootFolder.Load() == false)
-            {
-                ClipboardDatabaseController.UpsertFolder(RootFolder);
-            }
-
-
             // クリップボードの監視を有効にする
             IsClipboardMonitorEnabled = true;
 
@@ -189,10 +180,6 @@ namespace WpfApp1
                 PythonExecutor.Init();
             }
 
-            // LiteDBのバックアップを行う。
-            // 過去のバックアップはPropertiesのBACKUP_GENERATONS分保持する。
-            BackupController.Init("backup", Properties.Settings.Default.BACKUP_GENERATIONS);
-            BackupController.BackupNow();
         }
         // ClipboardItemの内容をクリップボードにコピーする 
         // Ctrl+Cで実行するコマンド
@@ -280,14 +267,15 @@ namespace WpfApp1
             item.ContentType = contentTypes;
             item.SetApplicationInfo(e);
             item.Content = content;
-            item.CollectionName = RootFolder.AbsoluteCollectionName;
+            item.CollectionName = ClipboardItemFolder.RootFolder.AbsoluteCollectionName;
 
             // RootFolderのAddItemを呼び出す
-            RootFolder.AddItem(item);
+            ClipboardItemFolder.RootFolder.AddItem(item);
 
         }
 
         // CollectionNameを指定してClipboardItemFolderを取得する
+        /**
         public static ObservableCollection<ClipboardItem> GetClipboardItems(ClipboardItemFolder folder)
         {
             ObservableCollection<ClipboardItem> items = new ObservableCollection<ClipboardItem>();
@@ -302,7 +290,8 @@ namespace WpfApp1
                 items.Add(i);
             }
             return items;
-        }   
+        }  
+        **/
 
     }
 }

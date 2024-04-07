@@ -24,6 +24,10 @@
         <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenSelectedItemAsNewCommand}" />
         <!-- 選択中のフォルダにアイテムを貼り付け-->
         <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteFromClipboardCommand}" />
+        <!-- 選択中のアイテムにアイテムをマージ-->
+        <KeyBinding Key="M" Modifiers="Control" Command="{Binding MergeItemCommand}" />
+        <!-- 選択中のアイテムにアイテムをヘッダー付きでマージ-->
+        <KeyBinding Key="M" Modifiers="Control+Shift" Command="{Binding MergeItemWithHeaderCommand}" />
         <!--選択中のアイテムをクリップボードにコピー-->
         <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyToClipboardCommand}" />
         <!-- 選択中のアイテムをクリップボードにコピー + CutフラグをTrue-->
@@ -75,7 +79,7 @@
             </Grid.ColumnDefinitions>
             <TreeView Grid.Column="0" Grid.Row="0" ItemsSource="{Binding ClipboardItemFolders}">
                 <TreeView.ItemTemplate >
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolder">
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolderViewModel">
                         <!-- ツリーアイテム-->
                         <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
                         <DockPanel HorizontalAlignment="Stretch" >
@@ -87,9 +91,15 @@
                             <DockPanel.ContextMenu>
                                 <!-- フォルダのコンテキストメニュー -->
                                 <ContextMenu>
-                                    <MenuItem Header="新規作成" Command="{Binding CreateFolderCommand}" CommandParameter="{Binding}"/>
-                                    <MenuItem Header="編集" Command="{Binding EditFolderCommand}" CommandParameter="{Binding}"/>
-                                    <MenuItem Header="削除" Command="{Binding DeleteFolderCommand}" CommandParameter="{Binding}"/>
+                                    <MenuItem Header="新規作成" Command="{Binding CreateFolderCommand}" CommandParameter="{Binding}"
+                                              IsEnabled="{Binding IsCreateVisible}"
+                                              />
+                                    <MenuItem Header="編集" Command="{Binding EditFolderCommand}" CommandParameter="{Binding}"
+                                              IsEnabled="{Binding IsEditVisible}"
+                                              />
+                                    <MenuItem Header="削除" Command="{Binding DeleteFolderCommand}" CommandParameter="{Binding}"
+                                              IsEnabled="{Binding IsDeleteVisible}"
+                                              />
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
                         </DockPanel>

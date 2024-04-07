@@ -1,11 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfApp1.Model;
+using WpfApp1.Utils;
+using WpfApp1.View.AutoProcessRuleView;
+using WpfApp1.View.ClipboardItemView;
+using WpfApp1.View.ClipboardItemFolderView;
 
 
 namespace WpfApp1
 {
 
-    public class MainWindowViewModel: ObservableObject
+    public class MainWindowViewModel : ObservableObject
     {
         public static MainWindowViewModel? Instance = null;
 
@@ -14,27 +19,47 @@ namespace WpfApp1
             // ロギング設定
             Tools.StatusText = StatusText;
 
+
             // クリップボードコントローラーの初期化
+            // SearchConditionをLiteDBから取得
+            ClipboardItemFolder.GlobalSearchCondition.Name = ClipboardDatabaseController.SEARCH_CONDITION_APPLIED_CONDITION_NAME;
+            SearchCondition? searchCondition = ClipboardDatabaseController.GetSearchCondition(ClipboardItemFolder.GlobalSearchCondition.Name);
+            if (searchCondition != null)
+            {
+                ClipboardItemFolder.GlobalSearchCondition = searchCondition;
+            }
+
+            // フォルダ階層を再描写する
+            ReloadFolder();
+
             ClipboardController.Init(this);
             Instance = this;
 
 
-            ClipboardItemFolders.Add(ClipboardController.RootFolder);
+            // バックアップ処理を実施
+            BackupController.Init();
 
+        }
+        // フォルダ階層を再描写する
+        public void ReloadFolder()
+        {
+            ClipboardItemFolders.Clear();
+            ClipboardItemFolders.Add(new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder));
+            ClipboardItemFolders.Add(new ClipboardItemFolderViewModel(ClipboardItemFolder.SearchRootFolder));
             OnPropertyChanged("ClipboardItemFolders");
-
         }
 
         // ClipboardItemFolder
 
-        public static ObservableCollection<ClipboardItemFolder> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardItemFolder>();
+        public static ObservableCollection<ClipboardItemFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
 
         // Cutフラグ
         public bool CutFlag { get; set; } = false;
 
         // 選択中のアイテム
-        private ClipboardItem? _selectedItem = null;
-        public ClipboardItem? SelectedItem { 
+        private ClipboardItemViewModel? _selectedItem = null;
+        public ClipboardItemViewModel? SelectedItem
+        {
             get
             {
                 return _selectedItem;
@@ -46,8 +71,9 @@ namespace WpfApp1
             }
         }
         // 選択中のフォルダ
-        private  ClipboardItemFolder? _selectedFolder = ClipboardController.RootFolder;
-        public   ClipboardItemFolder? SelectedFolder {
+        private ClipboardItemFolderViewModel? _selectedFolder = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+        public ClipboardItemFolderViewModel? SelectedFolder
+        {
             get
             {
                 return _selectedFolder;
@@ -59,10 +85,10 @@ namespace WpfApp1
             }
         }
         // Ctrl + C が押された時のClipboardItem
-        public ClipboardItem? CopiedItem { get; set; } = null;
+        public ClipboardItemViewModel? CopiedItem { get; set; } = null;
 
         // Ctrl + C が押された時のClipboardItemFolder
-        public ClipboardItemFolder? CopiedItemFolder { get; set; } = null;
+        public ClipboardItemFolderViewModel? CopiedItemFolder { get; set; } = null;
         // static 
 
         // ステータスバーのテキスト
@@ -79,16 +105,14 @@ namespace WpfApp1
         //--------------------------------------------------------------------------------
 
         // Ctrl + Q が押された時の処理
-        public static SimpleDelegateCommand ExitCommand => new(ExitCommandExecute);
-
-        private static void ExitCommandExecute(Object obj)
-        {
-            // System.Windows.MessageBox.Show("Exit");
+        public static SimpleDelegateCommand ExitCommand => new((parameter) => {
             System.Windows.Application.Current.Shutdown();
-        }
+        });
 
         // Ctrl + F が押された時の処理
-        public static SimpleDelegateCommand searchCommand => new SimpleDelegateCommand(ClipboardFolderCommands.SearchCommandExecute);
+        public static SimpleDelegateCommand searchCommand => new SimpleDelegateCommand((parameter) => {
+            ClipboardFolderCommands.SearchCommandExecute(parameter);
+        });
 
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public static SimpleDelegateCommand DeleteDisplayedItemCommand => new SimpleDelegateCommand(ClipboardFolderCommands.DeleteDisplayedItemCommandExecute);
@@ -115,7 +139,7 @@ namespace WpfApp1
             SettingWindow settingWindow = new SettingWindow();
             settingWindow.ShowDialog();
         }
-        
+
 
         // Ctrl + X が押された時の処理
         public static SimpleDelegateCommand CutItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.CutItemCommandExecute);
@@ -123,6 +147,11 @@ namespace WpfApp1
         public static SimpleDelegateCommand CopyToClipboardCommand => new SimpleDelegateCommand(ClipboardItemCommands.CopyToClipboardCommandExecute);
         // Ctrl + V が押された時の処理
         public static SimpleDelegateCommand PasteFromClipboardCommand => new SimpleDelegateCommand(ClipboardItemCommands.PasteFromClipboardCommandExecute);
+
+        // Ctrl + M が押された時の処理
+        public static SimpleDelegateCommand MergeItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.MergeItemCommandExecute);
+        // Ctrl + Shift + M が押された時の処理
+        public static SimpleDelegateCommand MergeItemWithHeaderCommand => new SimpleDelegateCommand(ClipboardItemCommands.MergeItemWithHeaderCommandExecute);
 
         // メニューの「Pythonスクリプト作成」をクリックしたときの処理
         public static SimpleDelegateCommand CreatePythonScriptCommand => new SimpleDelegateCommand(PythonCommands.CreatePythonScriptCommandExecute);
@@ -133,12 +162,12 @@ namespace WpfApp1
         private static void OpenListAutoProcessRuleWindowCommandExecute(object obj)
         {
             ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
-            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = ((ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext);
+            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext;
             ListAutoProcessRuleWindowViewModel.Initialize();
 
             ListAutoProcessRuleWindow.ShowDialog();
         }
-        
+
         // スクリプトを削除するコマンド
 
 

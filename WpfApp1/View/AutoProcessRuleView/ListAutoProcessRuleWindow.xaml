@@ -1,0 +1,73 @@
+﻿<Window x:Class="WpfApp1.View.AutoProcessRuleView.ListAutoProcessRuleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:view="clr-namespace:WpfApp1.View.AutoProcessRuleView"
+        mc:Ignorable="d"
+        Title="ListAutoProcessRuleWindow" Height="450" Width="600">
+    <Window.DataContext>
+        <view:ListAutoProcessRuleWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Margin="0,0,0,10">
+            <!-- ルール一覧のListBox-->
+            
+            <ListView ItemsSource="{Binding AutoProcessRules}" 
+                     SelectedItem="{Binding SelectedAutoProcessRule}"
+                     Grid.Row="0"
+                     >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="適用対象フォルダ" DisplayMemberBinding="{Binding TargetFolder.DisplayName}" Width="100"/>
+                        <GridViewColumn Header="適用対象フォルダ(パス)" DisplayMemberBinding="{Binding TargetFolder.AbsoluteCollectionName}" Width="150"/>
+                        <GridViewColumn Header="ルール名" DisplayMemberBinding="{Binding RuleName}" Width="350"/>
+                    </GridView>
+                </ListView.View>
+                <!-- コンテキストメニュー-->
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="編集" 
+                                  Command="{Binding EditAutoProcessRuleCommand}" 
+                                  />
+                        <MenuItem Header="削除" 
+                                  Command="{Binding DeleteAutoProcessRuleCommand}" 
+                                  />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+            </ListView>
+        </DockPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Column="0" HorizontalAlignment="Left" Margin="10,0,0,10">
+                <Button Content="新規自動処理ルール" 
+               Margin="10,0,0,0"
+               Command="{Binding AddAutoProcessRuleCommand}" 
+                   Width="150"
+                   />
+                <Button Content="自動処理ルール編集" 
+               Margin="10,0,0,0"
+               Command="{Binding EditAutoProcessRuleCommand}" 
+                   Width="150"
+                   />
+            </DockPanel>
+            <DockPanel Grid.Column="1" HorizontalAlignment="Right"  Margin="10,0,0,10">
+                <Button Content="Close"
+                Margin="10,0,20,0"
+                Command="{Binding CloseCommand}" 
+                    DockPanel.Dock="Right"
+                    Width="50"
+                    />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>
