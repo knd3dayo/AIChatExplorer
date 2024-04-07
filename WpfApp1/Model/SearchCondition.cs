@@ -20,8 +20,13 @@ namespace WpfApp1.Model
         private bool _ExcludeSourceApplicationName = false;
         private bool _ExcludeSourceApplicationTitle = false;
 
-        // 常時適用(ClipboardItemFolderのAbsoluteCollectionName or SEARCH_CONDITION_APPLIED_CONDITION_NAME)
-        public string AppliedTargetName { get; set; } = "";
+        // 検索対象のフォルダの絶対パス
+        public HashSet<string> TargetFolderHashSet { get; set; } = new HashSet<string>();
+
+        // 検索対象のフォルダの絶対パス
+        public string SearchFolderAbsoluteCollectionName { get; set; } = "";
+        // 検索対象フォルダ配下を検索するかどうか
+        public bool SearchSubFolder { get; set; } = false;
 
         // ObjectId
         public ObjectId? Id { get; set; }

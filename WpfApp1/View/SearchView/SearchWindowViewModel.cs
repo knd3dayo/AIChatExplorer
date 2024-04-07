@@ -79,7 +79,7 @@ namespace WpfApp1.View.SearchView
             // フォルダが選択されたら、TargetFolderに設定
             void FolderSelectedAction(ClipboardItemFolder folder)
             {
-                SearchCondition.AppliedTargetName = folder.AbsoluteCollectionName;
+                SearchCondition.TargetFolderHashSet.Add(folder.AbsoluteCollectionName);
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;

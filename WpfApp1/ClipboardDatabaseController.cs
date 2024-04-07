@@ -64,6 +64,7 @@ namespace WpfApp1
                     db = new LiteDatabase("clipboard.db");
 
                     // BSonMapperの設定
+                    // ClipboardItemFolderのChildren, Items, SearchConditionを無視する
                     var mapper = BsonMapper.Global;
                     mapper.Entity<ClipboardItemFolder>()
                         .Ignore(x => x.Children);
@@ -71,7 +72,6 @@ namespace WpfApp1
                         .Ignore(x => x.Items);
                     mapper.Entity<ClipboardItemFolder>()
                         .Ignore(x => x.SearchCondition);
-                    // ClipboardItem
                 }
 
                 catch (System.Exception e)
@@ -167,10 +167,16 @@ namespace WpfApp1
             var item = collection.FindOne(x => x.Name == name);
             return item;
         }
+        // AbsoluteCollectionNameを指定してSearchConditionを取得する
+        public static SearchCondition? GetSearchConditionByCollectionName(string collectionName) {
+            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
+            var item = collection.FindOne(x => x.TargetFolderHashSet.Contains(collectionName));
+            return item;
+        }
         // --------------------------------------------------------------
 
         // 親フォルダのAbsoluteCollectionNameを指定して子フォルダのリストを取得する
-        public static List<string> GetClipboardItemFolderRelation(string parentCollectionName)
+        public static List<string> GetClipboardItemFolderChildRelations(string parentCollectionName)
         {
             List<string> result = new List<string>();
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(ClipboardDatabaseController.CLIPBOARD_FOLDER_RELATION_NAME);
@@ -182,6 +188,24 @@ namespace WpfApp1
             }
             return result;
         }
+        // 子フォルダのAbsoluteCollectionNameを指定して親フォルダを取得する。
+        public static string GetClipboardItemFolderParentRelation(string childCollectionName) {
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(ClipboardDatabaseController.CLIPBOARD_FOLDER_RELATION_NAME);
+            var item = collection.FindOne(x => x.ChildCollectionName == childCollectionName);
+            return item.ParentCollectionName;
+        }
+
+        // 第1引数にフォルダパスをして、第2引数に子フォルダのパスの第1引数のフォルダパスが第2引数の祖先フォルダかどうかを返す
+        public static bool IsAncestorFolder(string parentPath, string childPath) {
+            if (string.IsNullOrEmpty(parentPath) || string.IsNullOrEmpty(childPath)) {
+                return false;
+            }
+            if (childPath.StartsWith(parentPath) == false) {
+                return false;
+            }
+            return true;
+        }
+
         // ClipboardItemをLiteDBに追加または更新する
         public static void UpsertItem(ClipboardItem item)
         {
@@ -233,120 +257,23 @@ namespace WpfApp1
 
         }
         // ClipboardItemのリストをLiteDBから取得するObservableCollectionOn
-        public static IEnumerable<ClipboardItem> GetClipboardItemCollection(string collectionName)
+        public static IEnumerable<ClipboardItem> GetClipboardItems(string collectionName, SearchCondition searchCondition)
         {
             var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(collectionName);
-            // UpdatedAtの降順で取得
-            return collection.FindAll().OrderByDescending(x => x.UpdatedAt);
-        }
-
-        public static bool Load(ClipboardItemFolder targetFolder)
-        {
-            if (targetFolder.IsSearchFolder || targetFolder.AbsoluteCollectionName == SEARCH_ROOT_FOLDER_NAME)
-            {
-                return LoadSearchFolder(targetFolder);
+            if (searchCondition.IsEmpty()) {
+                return collection.FindAll().OrderByDescending(x => x.UpdatedAt);
             }
-            else
-            {
-                SearchCondition searchCondition = ClipboardItemFolder.GlobalSearchCondition;
-                return LoadNormalFolder(targetFolder, searchCondition);
+            else {
+                return Filter(collection, searchCondition).OrderByDescending(x => x.UpdatedAt);
             }
         }
-        public static bool LoadNormalFolder(ClipboardItemFolder targetFolder, SearchCondition searchCondition)
-        {
-            // LiteDBからClipboardItemFolderを取得
-            var folder = ClipboardDatabaseController.GetClipboardItemFolder(targetFolder.AbsoluteCollectionName);
-            if (folder == null)
-            {
-                return false;
-            }
-
-            // folderの内容をコピー
-            targetFolder.AbsoluteCollectionName = folder.AbsoluteCollectionName;
-            targetFolder.DisplayName = folder.DisplayName;
-            targetFolder.IsApplyingSearchCondition = folder.IsApplyingSearchCondition;
-            targetFolder.IsSearchFolder = folder.IsSearchFolder;
-
-            // 検索条件がNullまたは空でない場合はFilterを実行
-            if (searchCondition.IsEmpty() == false)
-            {
-                // 現在検索中フラグを立てる
-                targetFolder.IsApplyingSearchCondition = true;
-                Filter(targetFolder, searchCondition);
-            }
-            else
-            {
-                // フィルダーを実行しない場合は、Itemsを取得
-                // ItemsをLiteDBのAbsoluteCollectionNameから取得
-                var clipboardItems = ClipboardDatabaseController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
-                // 
-                targetFolder.Items.Clear();
-                foreach (var item in clipboardItems)
-                {
-                    targetFolder.Items.Add(item);
-                }
-                // 現在検索中フラグをクリア
-                targetFolder.IsApplyingSearchCondition = false;
-            }
-
-            return true;
-        }
-
-        public static bool LoadSearchFolder(ClipboardItemFolder targetFolder)
-        {
-            // LiteDBからClipboardItemFolderを取得
-            var folder = ClipboardDatabaseController.GetClipboardItemFolder(targetFolder.AbsoluteCollectionName);
-            if (folder == null)
-            {
-                Tools.Info("フォルダが見つかりませんでした。");
-                return false;
-            }
-            // folderの内容をコピー
-            targetFolder.AbsoluteCollectionName = folder.AbsoluteCollectionName;
-            targetFolder.DisplayName = folder.DisplayName;
-            targetFolder.IsApplyingSearchCondition = folder.IsApplyingSearchCondition;
-            targetFolder.SearchCondition = folder.SearchCondition;
-            targetFolder.IsSearchFolder = folder.IsSearchFolder;
-
-            // LiteDBから検索対象のフォルダを取得
-            var searchFolder = ClipboardDatabaseController.GetClipboardItemFolder(folder.SearchFolderAbsoluteCollectionName);
-            if (searchFolder == null)
-            {
-                // 現在検索中フラグをクリア
-                targetFolder.IsApplyingSearchCondition = false;
-                Tools.Info("検索対象フォルダが見つかりませんでした。");
-            }
-            // 検索条件がNullまたは空の場合は何もしない
-            else if (targetFolder.SearchCondition.IsEmpty())
-            {
-                Tools.Info("検索条件が設定されていません。");
-                // 現在検索中フラグをクリア
-                targetFolder.IsApplyingSearchCondition = false;
-            }
-            else
-            {
-                // 検索条件がNullまたは空でない場合はFilterを実行
-                // 現在検索中フラグを立てる
-                targetFolder.IsApplyingSearchCondition = true;
-                Filter(searchFolder, targetFolder.SearchCondition);
-                // 検索結果のItemをTargetFolderにコピー
-                targetFolder.Items.Clear();
-                foreach (var item in searchFolder.Items)
-                {
-                    targetFolder.Items.Add(item);
-                }
-                // 現在検索中フラグをたてる
-                targetFolder.IsApplyingSearchCondition = true;
-            }
-
-            return true;
-        }
 
 
-        public static void LoadFolderTree(ClipboardItemFolder targetFolder)
+
+        private static void LoadFolderTree(ClipboardItemFolder targetFolder)
         {
             // LiteDBから自分が親となっているフォルダを取得
-            var childrenNames = ClipboardDatabaseController.GetClipboardItemFolderRelation(targetFolder.AbsoluteCollectionName);
+            var childrenNames = ClipboardDatabaseController.GetClipboardItemFolderChildRelations(targetFolder.AbsoluteCollectionName);
             // Childrenをクリア
             targetFolder.Children.Clear();
             // childrenNamesからClipboardItemFolderを取得する
@@ -386,14 +313,14 @@ namespace WpfApp1
 
         }
 
-        public static void Filter(ClipboardItemFolder targetFolder, SearchCondition searchCondition)
+        public static IEnumerable<ClipboardItem> Filter(ILiteCollection<ClipboardItem> liteCollection, SearchCondition searchCondition)
         {
             if (searchCondition.IsEmpty())
             {
-                return;
+                return liteCollection.FindAll();
             }
 
-            var results = ClipboardDatabaseController.GetClipboardItemCollection(targetFolder.AbsoluteCollectionName);
+            var results = liteCollection.FindAll();
             // SearchConditionの内容に従ってフィルタリング
             if (string.IsNullOrEmpty(searchCondition.Description) == false)
             {
@@ -460,12 +387,7 @@ namespace WpfApp1
             }
             results = results.OrderByDescending(x => x.UpdatedAt);
 
-
-            targetFolder.Items.Clear();
-            foreach (var item in results)
-            {
-                targetFolder.Items.Add(item);
-            }
+            return results;
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Data;
+using System.Windows;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.SearchView;
@@ -11,7 +12,6 @@ namespace WpfApp1.View.ClipboardItemFolderView
         public static void OpenFolderCommandExecute(object parameter)
         {
             MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-            StatusText? StatusText = MainWindowViewModel.StatusText;
 
             if (Instance == null)
             {
@@ -30,13 +30,19 @@ namespace WpfApp1.View.ClipboardItemFolderView
             Instance.SelectedFolder = folderViewModel;
             folderViewModel.IsSelected = true;
             // フォルダ内のアイテムを読み込む
+            // ClipboardItemFolderのLoadメソッドを呼び出す
+            // Children.Item,SearchCondition,IsApplyingSearchCondition,AlwaysApplySearchConditionを更新
             folderViewModel.Load();
-
-            if (StatusText != null)
-            {
+            UpdateStatusText(folderViewModel);
+        }
+        private static void UpdateStatusText(ClipboardItemFolderViewModel folderViewModel) {
+            StatusText? StatusText = MainWindowViewModel.StatusText;
+            if (StatusText == null) {
+                return;
+            }
                 string message = $"フォルダ[{folderViewModel.DisplayName}]";
                 // AutoProcessRuleが設定されている場合
-                if (ClipboardDatabaseController.GetAutoProcessRules(Instance.SelectedFolder?.ClipboardItemFolder).Count() > 0)
+                if (ClipboardDatabaseController.GetAutoProcessRules(folderViewModel.ClipboardItemFolder).Count() > 0)
                 {
                     message += " 自動処理が設定されています[";
                     foreach (AutoProcessRule item in ClipboardDatabaseController.GetAutoProcessRules(folderViewModel.ClipboardItemFolder))
@@ -46,29 +52,23 @@ namespace WpfApp1.View.ClipboardItemFolderView
                     message += "]";
                 }
 
-                // SearchConditionがEmptyではなく、AlwaysApplySearchConditionがTrueの場合
-                /***
-                if (folderViewModel.ClipboardItemFolder.AlwaysApplySearchCondition == true)
-                {
-                    message += " 検索条件を常時適用[有効]";
-                }
-                ***/
-                // IsApplyingSearchConditionがTrueの場合
-                if (folderViewModel.ClipboardItemFolder.IsApplyingSearchCondition)
-                {
-                    message += " 検索条件を適用中";
+                // folderが検索フォルダの場合
+                SearchCondition searchCondition = ClipboardItemFolder.GlobalSearchCondition;
+                if (folderViewModel.ClipboardItemFolder.IsSearchFolder) {
+                    searchCondition = folderViewModel.ClipboardItemFolder.SearchCondition;
                 }
                 // SearchConditionがNullでなく、 Emptyでもない場合
-                if (ClipboardItemFolder.GlobalSearchCondition != null && !ClipboardItemFolder.GlobalSearchCondition.IsEmpty())
+                if (searchCondition != null && !searchCondition.IsEmpty())
                 {
                     message += " 検索条件[";
-                    message += ClipboardItemFolder.GlobalSearchCondition.ToStringSearchCondition();
+                    message += searchCondition.ToStringSearchCondition();
                     message += "]";
                 }
-                Instance.UpdateStatusText(message);
+                StatusText.Text = message;
                 StatusText.InitText = message;
-            }
+
         }
+
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(object obj)
         {

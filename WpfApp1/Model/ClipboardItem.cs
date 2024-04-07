@@ -94,63 +94,6 @@ namespace WpfApp1.Model
             return this;
         }
 
-        // 重複をチェックするメソッド
-        public bool IsDuplicate(ClipboardItem item)
-        {
-            if (item == null)
-            {
-                return false;
-            }
-            // Contentが一致してない場合は場合は重複ではない。
-            if (item.Content != Content)
-            {
-                return false;
-            }
-            // Typeが一致していない場合は重複ではない。
-            if (item.ContentType != ContentType)
-            {
-                return false;
-            }
-            // Tagsが一致していない場合は重複ではない。
-            if (item.Tags.Count != Tags.Count)
-            {
-                return false;
-            }
-            for (int i = 0; i < item.Tags.Count; i++)
-            {
-                if (item.Tags[i] != Tags[i])
-                {
-                    return false;
-                }
-            }
-            // Descriptionが一致していない場合は重複ではない。
-            if (item.Description != Description)
-            {
-                return false;
-            }
-            // SourceApplicationNameが一致していない場合は重複ではない。
-            if (item.SourceApplicationName != SourceApplicationName)
-            {
-                return false;
-            }
-            // SourceApplicationTitleが一致していない場合は重複ではない。
-            if (item.SourceApplicationTitle != SourceApplicationTitle)
-            {
-                return false;
-            }
-            // SourceApplicationIDが一致していない場合は重複ではない。
-            if (item.SourceApplicationID != SourceApplicationID)
-            {
-                return false;
-            }
-            // SourceApplicationPathが一致していない場合は重複ではない。
-            if (item.SourceApplicationPath != SourceApplicationPath)
-            {
-                return false;
-            }
-            return true;
-
-        }
         // タグ表示用の文字列
         public string TagsString()
         {

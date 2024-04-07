@@ -35,7 +35,7 @@
                         Command="{Binding OpenSelectTargetFolderWindowCommand}"
                         Margin="20,10,20,10"
                         />
-            <TextBox Text="{Binding SearchCondition.AppliedTargetName}"  Margin="20,10,20,10"
+            <TextBox Text="{Binding SearchCondition.SearchFolderAbsoluteCollectionName}"  Margin="20,10,20,10"
                          IsEnabled="False"
                          />
         </DockPanel>

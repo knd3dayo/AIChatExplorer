@@ -85,14 +85,14 @@ namespace WpfApp1.View.ClipboardItemFolderView
         // Load
         public void Load()
         {
-            ClipboardItemFolder.Load();
-            // Itemsを更新
-            Items.Clear();
+            // Children.Item,SearchCondition,AutoProcessRule を更新
+
             foreach (ClipboardItem item in ClipboardItemFolder.Items)
             {
                 Items.Add(new ClipboardItemViewModel(item));
             }
             OnPropertyChanged("Items");
+
             // Childrenを更新
             Children.Clear();
             foreach (ClipboardItemFolder folder in ClipboardItemFolder.Children)
@@ -100,6 +100,9 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 Children.Add(new ClipboardItemFolderViewModel(folder));
             }
             OnPropertyChanged("Children");
+
+
+
         }
 
         // - コンテキストメニューの削除を表示するかどうか

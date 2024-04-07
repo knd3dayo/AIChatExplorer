@@ -367,7 +367,6 @@ namespace WpfApp1.View.AutoProcessRuleView
             }
             DestinationFolder = folder;
             folder.IsSelectedOnFolderSelectWindow = true;
-            folder.Load();
         }
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand OpenSelectDestinationFolderWindowCommand => new SimpleDelegateCommand(OpenSelectDestinationFolderWindowCommandExecute);

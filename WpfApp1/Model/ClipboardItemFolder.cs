@@ -46,7 +46,7 @@ namespace WpfApp1.Model {
         // 検索対象のフォルダの絶対パス
         public string SearchFolderAbsoluteCollectionName { get; set; } = "";
 
-        // 検索条件
+        // 検索条件 BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
         public SearchCondition SearchCondition { get; set; } = new SearchCondition();
 
 
@@ -62,7 +62,7 @@ namespace WpfApp1.Model {
                     return children;
                 }
                 // LiteDBから自分が親となっているフォルダを取得
-                var childrenNames = ClipboardDatabaseController.GetClipboardItemFolderRelation(AbsoluteCollectionName);
+                var childrenNames = ClipboardDatabaseController.GetClipboardItemFolderChildRelations(AbsoluteCollectionName);
                 foreach (var childName in childrenNames) {
                     var child = ClipboardDatabaseController.GetClipboardItemFolder(childName);
                     if (child != null) {
@@ -81,8 +81,12 @@ namespace WpfApp1.Model {
                     return new ObservableCollection<ClipboardItem>();
                 }
                 // AbsoluteCollectionNameのコレクションを取得
-                var itemsCollection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(AbsoluteCollectionName);
-                return new ObservableCollection<ClipboardItem>(itemsCollection.FindAll());
+                // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+                // 検索フォルダの場合は、SearchConditionを適用して取得
+                var items = ClipboardDatabaseController.GetClipboardItems(AbsoluteCollectionName, IsSearchFolder ? SearchCondition : GlobalSearchCondition);
+                
+                ObservableCollection<ClipboardItem> result = [.. items];
+                return result;
             }
         }
         //--------------------------------------------------------------------------------
@@ -136,35 +140,9 @@ namespace WpfApp1.Model {
             ClipboardDatabaseController.DeleteItem(item);
         }
 
-        public List<ClipboardItem> GetDuplicateList(ClipboardItem item) {
-            List<ClipboardItem> dupList = new List<ClipboardItem>();
-            // prevCountで指定された数だけ過去のアイテムと比較する
-            for (int i = 0; i < Items.Count; i++) {
-                ClipboardItem prev = Items[i];
-                if (item.IsDuplicate(prev)) {
-                    dupList.Add(prev);
-                }
-            }
-            return dupList;
-        }
-
-        private void RemoveDuplicateItems(ClipboardItem item) {
-            List<ClipboardItem> dupList = GetDuplicateList(item);
-            foreach (var dupItem in dupList) {
-                DeleteItem(dupItem);
-            }
-        }
-        public bool Load() {
-            bool result = ClipboardDatabaseController.Load(this);
-            return result;
-        }
 
         public void DeleteItems() {
             ClipboardDatabaseController.DeleteItems(this);
-        }
-
-        public void Filter(SearchCondition searchCondition) {
-            ClipboardDatabaseController.Filter(this, searchCondition);
         }
 
         private bool _IsSelected;
@@ -217,15 +195,12 @@ namespace WpfApp1.Model {
                 return item;
             }
 
-            // 重複アイテムを削除
-            RemoveDuplicateItems(result);
             // LiteDBに保存
             ClipboardDatabaseController.UpsertItem(result);
             // Itemsに追加
             Items.Add(result);
             // OnPropertyChanged
             OnPropertyChanged("Items");
-
 
             return item;
 
