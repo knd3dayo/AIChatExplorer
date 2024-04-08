@@ -18,8 +18,8 @@ namespace WpfApp1.View.AutoProcessRuleView
             Edit
         }
         // ルール適用対象のClipboardItemFolder
-        private ClipboardItemFolder? _TargetFolder { get; set; }
-        public ClipboardItemFolder? TargetFolder
+        private ClipboardItemFolderViewModel? _TargetFolder { get; set; }
+        public ClipboardItemFolderViewModel? TargetFolder
         {
             get
             {
@@ -103,8 +103,8 @@ namespace WpfApp1.View.AutoProcessRuleView
         public string SourceApplicationTitle { get; set; } = "";
 
         // コピーまたは移動先のフォルダ
-        private ClipboardItemFolder? _DestinationFolder = null;
-        public ClipboardItemFolder? DestinationFolder
+        private ClipboardItemFolderViewModel? _DestinationFolder = null;
+        public ClipboardItemFolderViewModel? DestinationFolder
         {
             get
             {
@@ -137,10 +137,10 @@ namespace WpfApp1.View.AutoProcessRuleView
 
         // 
         // 初期化
-        private void Initialize(Mode mode, ClipboardItemFolder? clipboardItemFolder, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate)
+        private void Initialize(Mode mode, ClipboardItemFolderViewModel? folderViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate)
         {
             CurrentMode = mode;
-            TargetFolder = clipboardItemFolder;
+            TargetFolder = folderViewModel;
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule?.IsEnabled ?? true;
             _AfterUpdate = afterUpdate;
@@ -156,7 +156,9 @@ namespace WpfApp1.View.AutoProcessRuleView
                     }
                 }
             }
-            DestinationFolder = autoProcessRule?.DestinationFolder;
+            if (autoProcessRule?.TargetFolder != null) {
+                TargetFolder = new ClipboardItemFolderViewModel(autoProcessRule.TargetFolder);
+            }
 
 
             // autoProcessRuleがNullでない場合は初期化
@@ -208,13 +210,13 @@ namespace WpfApp1.View.AutoProcessRuleView
         }
 
         // 初期化 modeがEditの場合
-        public void InitializeEdit(ClipboardItemFolder? clipboardItemFolder, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate)
+        public void InitializeEdit(ClipboardItemFolderViewModel? clipboardItemFolder, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate)
         {
             Initialize(Mode.Edit, clipboardItemFolder, autoProcessRule, afterUpdate);
 
         }
         // 初期化 modeがCreateの場合
-        public void InitializeCreate(ClipboardItemFolder? clipboardItemFolder, Action<AutoProcessRule> afterUpdate)
+        public void InitializeCreate(ClipboardItemFolderViewModel? clipboardItemFolder, Action<AutoProcessRule> afterUpdate)
         {
             Initialize(Mode.Create, clipboardItemFolder, null, afterUpdate);
         }
@@ -244,7 +246,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             // 新規作成
             if (CurrentMode == Mode.Create)
             {
-                TargetAutoProcessRule = new AutoProcessRule(RuleName, TargetFolder);
+                TargetAutoProcessRule = new AutoProcessRule(RuleName, TargetFolder.ClipboardItemFolder);
             }
             // 編集
             else
@@ -268,7 +270,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolder = TargetFolder;
+            TargetAutoProcessRule.TargetFolder = TargetFolder.ClipboardItemFolder;
 
             // IsDescriptionRuleCheckedがTrueの場合は条件を追加
             if (IsDescriptionRuleChecked)
@@ -311,12 +313,12 @@ namespace WpfApp1.View.AutoProcessRuleView
                     return;
                 }
                 // TargetFolderとDestinationFolderが同じ場合はエラー
-                if (TargetFolder.AbsoluteCollectionName == DestinationFolder.AbsoluteCollectionName)
+                if (TargetFolder.ClipboardItemFolder.AbsoluteCollectionName == DestinationFolder.ClipboardItemFolder.AbsoluteCollectionName)
                 {
                     Tools.Error("同じフォルダにはコピーまたは移動できません。");
                     return;
                 }
-                TargetAutoProcessRule.DestinationFolder = DestinationFolder;
+                TargetAutoProcessRule.DestinationFolder = DestinationFolder.ClipboardItemFolder;
             }
             // 無限ループのチェック処理
             if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule))
@@ -348,19 +350,19 @@ namespace WpfApp1.View.AutoProcessRuleView
             EditAutoProcessRuleWindow.Current?.Close();
         }
         // OnSelectedFolderChanged
-        public void OnSelectedFolderChanged(ClipboardItemFolder? folder)
+        public void OnSelectedFolderChanged(ClipboardItemFolderViewModel? folder)
         {
             if (folder == null)
             {
                 return;
             }
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.AbsoluteCollectionName == TargetFolder?.AbsoluteCollectionName)
+            if (folder.ClipboardItemFolder.AbsoluteCollectionName == TargetFolder?.ClipboardItemFolder.AbsoluteCollectionName)
             {
                 Tools.Error("同じフォルダにはコピーまたは移動できません。");
                 return;
             }// コピーor移動先が検索フォルダの場合はエラー
-            if (folder.IsSearchFolder)
+            if (folder.ClipboardItemFolder.IsSearchFolder)
             {
                 Tools.Error("検索フォルダにはコピーまたは移動できません。");
                 return;
@@ -373,9 +375,9 @@ namespace WpfApp1.View.AutoProcessRuleView
         public void OpenSelectDestinationFolderWindowCommandExecute(object parameter)
         {
             // フォルダが選択されたら、DestinationFolderに設定
-            void FolderSelectedAction(ClipboardItemFolder folder)
+            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel)
             {
-                DestinationFolder = folder;
+                DestinationFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
@@ -388,9 +390,9 @@ namespace WpfApp1.View.AutoProcessRuleView
         public void OpenSelectTargetFolderWindowCommandExecute(object parameter)
         {
             // フォルダが選択されたら、TargetFolderに設定
-            void FolderSelectedAction(ClipboardItemFolder folder)
+            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel)
             {
-                TargetFolder = folder;
+                TargetFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;

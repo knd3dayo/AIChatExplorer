@@ -145,24 +145,10 @@ namespace WpfApp1.Model {
             ClipboardDatabaseController.DeleteItems(this);
         }
 
-        private bool _IsSelected;
-        public bool IsSelected {
-            get { return _IsSelected; }
-            set {
-                _IsSelected = value;
-                OnPropertyChanged("IsSelected");
-            }
-        }
+        public bool IsSelected { get; set; } = false;
 
         // FolderSelectWindowで選択されたフォルダを適用する処理
-        private bool _IsSelectedOnFolderSelectWindow;
-        public bool IsSelectedOnFolderSelectWindow {
-            get { return _IsSelectedOnFolderSelectWindow; }
-            set {
-                _IsSelectedOnFolderSelectWindow = value;
-                OnPropertyChanged("_IsSelectedOnFolderSelectWindow");
-            }
-        }
+        public bool IsSelectedOnFolderSelectWindow { get; set; } = false;
 
         // 自動処理を適用する処理
         public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {

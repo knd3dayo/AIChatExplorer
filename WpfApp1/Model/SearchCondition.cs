@@ -26,8 +26,8 @@ namespace WpfApp1.Model
         // 検索対象のフォルダの絶対パス
         public string SearchFolderAbsoluteCollectionName { get; set; } = "";
         // 検索対象フォルダ配下を検索するかどうか
-        public bool SearchSubFolder { get; set; } = false;
-
+        public bool IncludeSubFolder { get; set; } = false;
+        
         // ObjectId
         public ObjectId? Id { get; set; }
         // 検索条件の名前

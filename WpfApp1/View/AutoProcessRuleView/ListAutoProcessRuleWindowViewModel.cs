@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
+using WpfApp1.View.ClipboardItemFolderView;
 
 namespace WpfApp1.View.AutoProcessRuleView
 {
@@ -11,7 +12,7 @@ namespace WpfApp1.View.AutoProcessRuleView
         public static ListAutoProcessRuleWindowViewModel? Instance = null;
 
         // 処理対象のClipboardItemFolder
-        public static ClipboardItemFolder? TargetFolder { get; set; } = null;
+        public static ClipboardItemFolderViewModel? TargetFolder { get; set; } = null;
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = new ObservableCollection<AutoProcessRule>();
@@ -36,11 +37,11 @@ namespace WpfApp1.View.AutoProcessRuleView
 
         }
 
-        public void Initialize(ClipboardItemFolder? targetFolder)
+        public void Initialize(ClipboardItemFolderViewModel? targetFolder)
         {
             TargetFolder = targetFolder;
             // AutoProcessRulesを更新
-            AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder);
+            AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
             OnPropertyChanged("AutoProcessRules");
 
         }
@@ -59,7 +60,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                     return;
                 }
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder);
+                Instance.AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
                 Instance.OnPropertyChanged("AutoProcessRules");
             }
             // debug
@@ -88,7 +89,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                     return;
                 }
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder);
+                Instance.AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
                 Instance.OnPropertyChanged("AutoProcessRules");
             }
             EditAutoProcessRuleWindow window = new EditAutoProcessRuleWindow();

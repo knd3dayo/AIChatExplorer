@@ -107,12 +107,12 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 {
                     folderViewModel.Load();
                 });
+            } else {
+                searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () =>
+                {
+                    folderViewModel.Load();
+                });
             }
-
-            searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () =>
-            {
-                folderViewModel.Load();
-            });
 
             searchWindow.ShowDialog();
 
@@ -145,7 +145,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
             ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Init(folderViewModel.ClipboardItemFolder, FolderEditWindowViewModel.Mode.CreateChild, AfterUpdate);
+            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, AfterUpdate);
 
             FolderEditWindow.ShowDialog();
 
@@ -176,7 +176,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
             ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Init(folderViewModel.ClipboardItemFolder, FolderEditWindowViewModel.Mode.Edit, AfterUpdate);
+            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.Edit, AfterUpdate);
 
             FolderEditWindow.ShowDialog();
 

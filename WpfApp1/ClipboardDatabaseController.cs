@@ -100,7 +100,10 @@ namespace WpfApp1
                 return GetAllAutoProcessRules();
             }
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
-            var items = collection.FindAll().Where(x => x.TargetFolder != null && x.TargetFolder.AbsoluteCollectionName == targetFolder.AbsoluteCollectionName);
+            var items = collection.FindAll()
+                .Where(x => x.TargetFolder != null && x.TargetFolder.AbsoluteCollectionName == targetFolder.AbsoluteCollectionName)
+                .OrderBy(x => x.RuleName);
+
             ObservableCollection<AutoProcessRule> result = [.. items];
             return result;
         }
@@ -217,6 +220,9 @@ namespace WpfApp1
         // アイテムをDBから削除する
         public static void DeleteItem(ClipboardItem item)
         {
+            if (item.Id == null) {
+                return;
+            }
             var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(item.CollectionName);
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(item.Id);

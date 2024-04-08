@@ -52,7 +52,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 OnPropertyChanged("DisplayName");
             }
         }
-        public ClipboardItemFolder? Folder { get; set; }
+        public ClipboardItemFolderViewModel? FolderViewModel { get; set; }
 
 
         // 検索条件を常時適用するかどうか
@@ -82,21 +82,21 @@ namespace WpfApp1.View.ClipboardItemFolderView
         private Action? _afterUpdate;
 
         // 起動時の処理
-        public void Init(ClipboardItemFolder clipboardItemFolder, Mode mode, Action afterUpdate)
+        public void Initialize(ClipboardItemFolderViewModel folderViewModel, Mode mode, Action afterUpdate)
         {
             CurrentMode = mode;
             OnPropertyChanged("IsCollectionNameEditable");
             _afterUpdate = afterUpdate;
 
-            Folder = clipboardItemFolder;
+            FolderViewModel = folderViewModel;
             // 編集モードの場合
             if (CurrentMode == Mode.Edit)
             {
                 // CollectionNameを設定
                 // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
-                CollectionName = clipboardItemFolder.AbsoluteCollectionName.Split('_').Last();
+                CollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName.Split('_').Last();
 
-                DisplayName = clipboardItemFolder.DisplayName;
+                DisplayName = folderViewModel.ClipboardItemFolder.DisplayName;
             }
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild)
@@ -117,7 +117,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
         private void CreateCommandExecute(object parameter)
         {
 
-            if (Folder == null)
+            if (FolderViewModel == null)
             {
                 Tools.Error("フォルダが指定されていません");
                 return;
@@ -145,18 +145,18 @@ namespace WpfApp1.View.ClipboardItemFolderView
             if (CurrentMode == Mode.Edit)
             {
                 // DisplayNameを設定
-                Folder.DisplayName = DisplayName;
+                FolderViewModel.DisplayName = DisplayName;
 
-                ClipboardDatabaseController.UpsertFolder(Folder);
+                ClipboardDatabaseController.UpsertFolder(FolderViewModel.ClipboardItemFolder);
             }
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild)
             {
                 // フォルダを作成
-                ClipboardItemFolder child = new ClipboardItemFolder(Folder, CollectionName, DisplayName);
+                ClipboardItemFolder child = new ClipboardItemFolder(FolderViewModel.ClipboardItemFolder, CollectionName, DisplayName);
                 // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
-                if (Folder.AbsoluteCollectionName == ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME 
-                    || Folder.IsSearchFolder)
+                if (FolderViewModel.ClipboardItemFolder.AbsoluteCollectionName == ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME 
+                    || FolderViewModel.ClipboardItemFolder.IsSearchFolder)
                 {
                     // 子フォルダも検索フォルダにする
                     child.IsSearchFolder = true;
@@ -164,7 +164,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
 
                 ClipboardDatabaseController.UpsertFolder(child);
                 // 親フォルダと子フォルダの関係を登録
-                ClipboardDatabaseController.UpsertFolderRelation(Folder, child);
+                ClipboardDatabaseController.UpsertFolderRelation(FolderViewModel.ClipboardItemFolder, child);
 
             }
             // フォルダ作成後に実行するコマンドが設定されている場合
@@ -187,14 +187,14 @@ namespace WpfApp1.View.ClipboardItemFolderView
         public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new SimpleDelegateCommand(OpenListAutoProcessRuleWindowCommandExecute);
         private void OpenListAutoProcessRuleWindowCommandExecute(object parameter)
         {
-            if (Folder == null)
+            if (FolderViewModel == null)
             {
                 Tools.Error("フォルダが指定されていません");
                 return;
             }
             ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
             ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext;
-            ListAutoProcessRuleWindowViewModel.Initialize(Folder);
+            ListAutoProcessRuleWindowViewModel.Initialize(FolderViewModel);
 
             ListAutoProcessRuleWindow.ShowDialog();
         }
@@ -211,7 +211,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
                     return Visibility.Collapsed;
                 }
                 // folderがSelectFolderの場合は表示する
-                if (Folder != null && Folder.IsSearchFolder)
+                if (FolderViewModel != null && FolderViewModel.ClipboardItemFolder.IsSearchFolder)
                 {
                     return Visibility.Visible; 
                 }
@@ -229,7 +229,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
                     return Visibility.Collapsed;
                 }
                 // folderがSelectFolderの場合は表示する
-                if (Folder != null && ! Folder.IsSearchFolder)
+                if (FolderViewModel != null && ! FolderViewModel.ClipboardItemFolder.IsSearchFolder)
                 {
                     return Visibility.Visible;
                 }

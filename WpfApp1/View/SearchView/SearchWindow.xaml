@@ -16,6 +16,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -27,7 +28,7 @@
                        IsEnabled="False"
                        />
         </Grid>
-        <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="False">
+        <DockPanel Grid.Row="1" HorizontalAlignment="Stretch" IsEnabled="{Binding IsTargetFolderEnabled}">
             <TextBox Text="適用対象" Margin="20,10,20,10"
                        />
             <!-- 適用対象を選択するツリービューを表示するボタン-->
@@ -39,7 +40,16 @@
                          IsEnabled="False"
                          />
         </DockPanel>
-        <Grid  Grid.Row="2">
+        <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" IsEnabled="{Binding IsTargetFolderEnabled}">
+            <TextBox Text="適用対象" Margin="20,10,20,10"
+                       />
+            <!-- 適用対象配下も対象にするかどうか-->
+            <CheckBox Content="適用対象配下のフォルダも対象にする" 
+                        Margin="20,10,20,10"
+                          IsChecked="{Binding IsIncludeSubFolder}"
+                        />
+        </DockPanel>
+        <Grid  Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -97,7 +107,7 @@
             <TextBlock Text="終了日" Grid.Row="6" Grid.Column="1" Margin="20,20,20,0"/>
             <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding SearchCondition.EndTime}" Margin="20,20,20,0"/>
         </Grid>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>

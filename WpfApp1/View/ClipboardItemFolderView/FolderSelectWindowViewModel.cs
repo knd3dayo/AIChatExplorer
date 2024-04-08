@@ -15,14 +15,14 @@ namespace WpfApp1.View.ClipboardItemFolderView
     {
         private static FolderSelectWindowViewModel? Instance;
         // フォルダツリーのルート
-        public ObservableCollection<ClipboardItemFolder> RootFolders { get; set; } = new ObservableCollection<ClipboardItemFolder>();
+        public ObservableCollection<ClipboardItemFolderViewModel> RootFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
 
         // フォルダ選択時のAction
-        public Action<ClipboardItemFolder>? FolderSelectedAction { get; set; }
+        public Action<ClipboardItemFolderViewModel>? FolderSelectedAction { get; set; }
 
         // 選択されたフォルダ
-        private ClipboardItemFolder? _selectedFolder { get; set; }
-        public ClipboardItemFolder? SelectedFolder
+        private ClipboardItemFolderViewModel? _selectedFolder { get; set; }
+        public ClipboardItemFolderViewModel? SelectedFolder
         {
             get
             {
@@ -49,15 +49,16 @@ namespace WpfApp1.View.ClipboardItemFolderView
             }
         }
 
-        public void Initialize(Action<ClipboardItemFolder> _FolderSelectedAction)
+        public void Initialize(Action<ClipboardItemFolderViewModel> _FolderSelectedAction)
         {
+
             FolderSelectedAction = _FolderSelectedAction;
-            ClipboardItemFolder? rootFolder = ClipboardDatabaseController.GetFolderTree();
+            ClipboardItemFolder? rootFolder = ClipboardItemFolder.RootFolder;
             if (rootFolder == null)
             {
                 return;
             }
-            RootFolders.Add(rootFolder);
+            RootFolders.Add(new ClipboardItemFolderViewModel(rootFolder));
             Instance = this;
         }
         public static SimpleDelegateCommand SelectFolderCommand => new SimpleDelegateCommand(SelectFolderCommandExecute);
@@ -91,13 +92,13 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
-            if (parameter is not ClipboardItemFolder folder)
+            if (parameter is not ClipboardItemFolderViewModel folder)
             {
                 Tools.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
             Instance.SelectedFolder = folder;
-            Instance.SelectedFolderAbsoluteCollectionName = folder.AbsoluteCollectionName;
+            Instance.SelectedFolderAbsoluteCollectionName = folder.ClipboardItemFolder.AbsoluteCollectionName;
 
         }
     }

@@ -47,6 +47,16 @@ namespace WpfApp1.View.ClipboardItemFolderView
             }
         }
 
+        public string AbsoluteCollectionName {
+            get {
+                return ClipboardItemFolder.AbsoluteCollectionName;
+            }
+            set {
+                ClipboardItemFolder.AbsoluteCollectionName = value;
+                OnPropertyChanged("AbsoluteCollectionName");
+            }
+
+        }
         public bool IsSelected
         {
             get
@@ -59,6 +69,16 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 OnPropertyChanged("IsSelected");
             }
         }
+        // FolderSelectWindowで選択されたフォルダを適用する処理
+        private bool _IsSelectedOnFolderSelectWindow;
+        public bool IsSelectedOnFolderSelectWindow {
+            get { return _IsSelectedOnFolderSelectWindow; }
+            set {
+                _IsSelectedOnFolderSelectWindow = value;
+                OnPropertyChanged("_IsSelectedOnFolderSelectWindow");
+            }
+        }
+
 
         // Items
         public ObservableCollection<ClipboardItemViewModel> Items
@@ -128,11 +148,6 @@ namespace WpfApp1.View.ClipboardItemFolderView
         {
             get
             {
-                // RootFolderは編集不可
-                if (ClipboardItemFolder.AbsoluteCollectionName == ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME)
-                {
-                    return false;
-                }
                 // SearchRootFolderは編集不可
                 if (ClipboardItemFolder.AbsoluteCollectionName == ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME)
                 {
