@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiteDB;
+﻿using LiteDB;
 using WpfApp1.Utils;
 using WpfApp1.View.AutoProcessRuleView;
 
@@ -92,6 +87,7 @@ namespace WpfApp1.Model
         }
 
         // ConditionTypeに対応する関数を実行してBoolを返す
+        // ★TODO SearchConditionと共通化する
         public bool ExecuteCondition(ClipboardItem clipboardItem)
         {
             switch (Type)

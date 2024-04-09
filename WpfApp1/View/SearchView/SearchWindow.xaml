@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:view="clr-namespace:WpfApp1.View.SearchView"
         mc:Ignorable="d"
-        Title="検索" Height="450" Width="400">
+        Title="検索" Height="480" Width="400">
     <Window.DataContext>
         <view:SearchWindowViewModel />
     </Window.DataContext>
@@ -23,7 +23,7 @@
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="検索条件" Grid.Column="0" Margin="20,20,20,0" />
+            <TextBlock Text="検索条件名" Grid.Column="0" Margin="20,20,20,0" />
             <TextBox   Text="{Binding SearchCondition.Name}" Grid.Column="1" Margin="20,20,20,0"
                        IsEnabled="False"
                        />

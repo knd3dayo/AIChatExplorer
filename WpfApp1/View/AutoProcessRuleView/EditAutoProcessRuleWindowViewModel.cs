@@ -11,7 +11,7 @@ namespace WpfApp1.View.AutoProcessRuleView
     public class EditAutoProcessRuleWindowViewModel : ObservableObject
     {
         // 自動処理の一覧
-        public static ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = AutoProcessItem.AutoProcessItems;
+        public static ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = AutoProcessItem.AutoProcessItemTemplates;
         public enum Mode
         {
             Create,
@@ -158,6 +158,9 @@ namespace WpfApp1.View.AutoProcessRuleView
             }
             if (autoProcessRule?.TargetFolder != null) {
                 TargetFolder = new ClipboardItemFolderViewModel(autoProcessRule.TargetFolder);
+            }
+            if (autoProcessRule?.DestinationFolder != null) {
+                DestinationFolder = new ClipboardItemFolderViewModel(autoProcessRule.DestinationFolder);
             }
 
 

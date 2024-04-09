@@ -309,7 +309,7 @@ namespace WpfApp1.View.ClipboardItemView
             {
                 Instance.CopiedItem = Instance.SelectedItem;
                 Instance.CopiedItemFolder = Instance.SelectedFolder;
-                // ClipboardController.CopyToClipboard(Instance.SelectedItem);
+                ClipboardController.CopyToClipboard(Instance.SelectedItem.ClipboardItem);
                 MainWindowViewModel.Instance?.UpdateStatusText("クリップボードにコピーしました");
 
             }

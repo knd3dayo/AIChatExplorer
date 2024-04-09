@@ -55,6 +55,9 @@ namespace WpfApp1.View.SearchView {
             IsTargetFolderEnabled = ApplyTargetFolderViewModel != null;
 
         }
+        public SearchWindowViewModel() {
+        }
+
         public void Initialize(SearchCondition searchCondition, Action afterUpdate) {
             Initialize(searchCondition, null, afterUpdate);
         }

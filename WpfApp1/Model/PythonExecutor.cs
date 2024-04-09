@@ -327,6 +327,7 @@ namespace WpfApp1.Model
 
         }
 
+        // ★スクリプトを実行する
         public static ClipboardItem? RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem)
         {
             if (scriptItem == null)
@@ -367,8 +368,9 @@ namespace WpfApp1.Model
                     ClipboardItem? resultItem = FromJson(result);
                     if (resultItem == null)
                     {
-                        Tools.ShowMessage("Pythonの処理結果のJSON文字列をClipboardItemに変換できませんでした");
-                        return null;
+                        Tools.Error("Pythonの処理結果のJSON文字列をClipboardItemに変換できませんでした");
+                        // 元のクリップボードアイテムを返す
+                        return clipboardItem;
                     }
                     return resultItem;
 
