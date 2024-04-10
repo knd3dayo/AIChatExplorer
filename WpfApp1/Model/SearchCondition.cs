@@ -20,14 +20,6 @@ namespace WpfApp1.Model
         private bool _ExcludeSourceApplicationName = false;
         private bool _ExcludeSourceApplicationTitle = false;
 
-        // 検索対象のフォルダの絶対パス
-        public HashSet<string> TargetFolderHashSet { get; set; } = new HashSet<string>();
-
-        // 検索対象のフォルダの絶対パス
-        public string SearchFolderAbsoluteCollectionName { get; set; } = "";
-        // 検索対象フォルダ配下を検索するかどうか
-        public bool IncludeSubFolder { get; set; } = false;
-        
         // ObjectId
         public ObjectId? Id { get; set; }
         // 検索条件の名前
@@ -36,11 +28,6 @@ namespace WpfApp1.Model
         // デフォルトコンストラクタ
         public SearchCondition()
         {
-        }
-        // LiteDBに保存
-        public void Upsert()
-        {
-            ClipboardDatabaseController.UpsertSearchCondition(this);
         }
 
         public string Description

@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:view="clr-namespace:WpfApp1.View.SearchView"
         mc:Ignorable="d"
+        SizeToContent="Height"
         Title="検索" Height="Auto" Width="400">
     <Window.DataContext>
         <view:SearchWindowViewModel />
@@ -26,7 +27,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="検索タイプ" Grid.Column="0" Margin="10,10,10,0" />
-            <TextBlock Text="{Binding SearchType}" Grid.Column="1" Margin="10,10,10,0"
+            <TextBlock Text="{Binding SearchTypeText}" Grid.Column="1" Margin="10,10,10,0"
                        />
         </Grid>
         <Grid Grid.Row="1">
@@ -35,11 +36,11 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="検索条件名" Grid.Column="0" Margin="10,10,10,0" />
-            <TextBox   Text="{Binding SearchCondition}" Grid.Column="1" Margin="10,10,10,0"
+            <TextBox   Text="{Binding SearchConditionRule.Name}" Grid.Column="1" Margin="10,10,10,0"
                        IsEnabled="False"
                        />
         </Grid>
-        <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" Visibility="{Binding IsSearchFolderVisibility}">
+        <DockPanel Grid.Row="2" HorizontalAlignment="Stretch" Visibility="{Binding SearchFolderVisibility}">
             <TextBlock Text="検索フォルダ" Margin="10,10,10,0"
                        />
             <!-- 適用対象を選択するツリービューを表示するボタン-->
@@ -47,7 +48,7 @@
                         Command="{Binding OpenSelectSearchFolderWindowCommand}"
                         Margin="10,10,10,0"
                         />
-            <TextBox Text="{Binding SearchCondition.SearchFolderAbsoluteCollectionName}"  Margin="10,10,10,0"
+            <TextBox Text="{Binding SearchFolderPath}"  Margin="10,10,10,0"
                          IsEnabled="False"
                          />
         </DockPanel>
@@ -68,56 +69,56 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <CheckBox Content="除外" Grid.Row="0" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.ExcludeDescription}"
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeDescription}"
                       />
             <TextBlock Text="説明" Grid.Row="0" Grid.Column="1" Margin="10,10,10,0"/>
-            <TextBox Text="{Binding SearchCondition.Description}" Grid.Row="0" Grid.Column="2" Margin="10,10,10,0"/>
+            <TextBox Text="{Binding SearchConditionRule.SearchCondition.Description}" Grid.Row="0" Grid.Column="2" Margin="10,10,10,0"/>
 
             <CheckBox Content="除外" Grid.Row="1" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.ExcludeContent}"
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeContent}"
                       />
             <TextBlock Text="内容" Grid.Row="1" Grid.Column="1" Margin="10,10,10,0"/>
-            <TextBox Text="{Binding SearchCondition.Content}" Grid.Row="1" Grid.Column="2" Margin="10,10,10,0"/>
+            <TextBox Text="{Binding SearchConditionRule.SearchCondition.Content}" Grid.Row="1" Grid.Column="2" Margin="10,10,10,0"/>
 
             <CheckBox Content="除外" Grid.Row="2" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.ExcludeTags}"
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeTags}"
                       />
             <TextBlock Text="タグ" Grid.Row="2" Grid.Column="1" Margin="10,10,10,0"/>
-            <TextBox Text="{Binding SearchCondition.Tags}" Grid.Row="2" Grid.Column="2" Margin="10,10,10,0"/>
+            <TextBox Text="{Binding SearchConditionRule.SearchCondition.Tags}" Grid.Row="2" Grid.Column="2" Margin="10,10,10,0"/>
 
             <CheckBox Content="除外" Grid.Row="3" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.ExcludeSourceApplicationName}"
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationName}"
                       />
             <TextBlock Text="コピー元アプリ名" Grid.Row="3" Grid.Column="1" Margin="10,10,10,0"/>
-            <TextBox Text="{Binding SearchCondition.SourceApplicationName}" Grid.Row="3" Grid.Column="2" Margin="10,10,10,0"/>
+            <TextBox Text="{Binding SearchConditionRule.SearchCondition.SourceApplicationName}" Grid.Row="3" Grid.Column="2" Margin="10,10,10,0"/>
 
             <CheckBox Content="除外" Grid.Row="4" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.ExcludeSourceApplicationTitle}"
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationTitle}"
                       />
             <TextBlock Text="コピー元タイトル" Grid.Row="4" Grid.Column="1" Margin="10,10,10,0"/>
-            <TextBox Text="{Binding SearchCondition.SourceApplicationTitle}" Grid.Row="4" Grid.Column="2" Margin="10,10,10,0"/>
+            <TextBox Text="{Binding SearchConditionRule.SearchCondition.SourceApplicationTitle}" Grid.Row="4" Grid.Column="2" Margin="10,10,10,0"/>
 
             <CheckBox Content="有効" Grid.Row="5" Grid.Column="0" Margin="10,10,10,0"
-                     IsChecked="{Binding SearchCondition.EnableStartTime}"                       
+                     IsChecked="{Binding SearchConditionRule.SearchCondition.EnableStartTime}"                       
                      />
             <TextBlock Text="開始日" Grid.Row="5" Grid.Column="1" Margin="10,10,10,0"/>
-            <DatePicker Grid.Row="5" Grid.Column="2" SelectedDate="{Binding SearchCondition.StartTime}" Margin="10,10,10,0"/>
+            <DatePicker Grid.Row="5" Grid.Column="2" SelectedDate="{Binding SearchConditionRule.SearchCondition.StartTime}" Margin="10,10,10,0"/>
 
             <CheckBox Content="有効" Grid.Row="6" Grid.Column="0" Margin="10,10,10,0"
-                      IsChecked="{Binding SearchCondition.EnableEndTime}"                       
+                      IsChecked="{Binding SearchConditionRule.SearchCondition.EnableEndTime}"                       
                       />
             <TextBlock Text="終了日" Grid.Row="6" Grid.Column="1" Margin="10,10,10,0"/>
-            <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding SearchCondition.EndTime}" Margin="10,10,10,0"/>
+            <DatePicker Grid.Row="6" Grid.Column="2" SelectedDate="{Binding SearchConditionRule.SearchCondition.EndTime}" Margin="10,10,10,0"/>
         </Grid>
         <DockPanel Grid.Row="4" HorizontalAlignment="Stretch" Visibility="{Binding SearchFolderVisibility}">
             <TextBlock Text="対象フォルダ" Margin="10,10,10,00"
                        />
             <!-- 適用対象を選択するツリービューを表示するボタン-->
             <Button Content="選択" 
-                        Command="{Binding OpenSelectSearchFolderWindowCommand}"
+                        Command="{Binding OpenSelectTargetFolderWindowCommand}"
                         Margin="10,10,10,0"
                         />
-            <TextBox Text="{Binding SearchCondition.SearchFolderAbsoluteCollectionName}"  Margin="10,10,10,0"
+            <TextBox Text="{Binding TargetFolderPath}"  Margin="10,10,10,0"
                          IsEnabled="False"
                          />
         </DockPanel>
@@ -125,7 +126,7 @@
             <!-- 適用対象配下も対象にするかどうか-->
             <CheckBox Content="適用対象配下のフォルダも対象にする" 
                         Margin="10,10,10,0"
-                          IsChecked="{Binding IsIncludeSubFolder}"
+                          IsChecked="{Binding SearchConditionRule.IsIncludeSubFolder}"
                         />
         </DockPanel>
         <Grid Grid.Row="6">

@@ -12,11 +12,12 @@ namespace WpfApp1
         public static string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public static string SCRIPT_COLLECTION_NAME = "scripts";
         public static string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
-        public static string SEARCH_CONDITIONS_COLLECTION_NAME = "search_conditions";
+        
+        public static string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
+        public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
 
         public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static string SEARCH_ROOT_FOLDER_NAME = "search_folder";
-        public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
 
         private static LiteDatabase? db;
         // static
@@ -70,8 +71,6 @@ namespace WpfApp1
                         .Ignore(x => x.Children);
                     mapper.Entity<ClipboardItemFolder>()
                         .Ignore(x => x.Items);
-                    mapper.Entity<ClipboardItemFolder>()
-                        .Ignore(x => x.SearchCondition);
                 }
 
                 catch (System.Exception e)
@@ -144,36 +143,36 @@ namespace WpfApp1
 
         }
         // SearchConditionを追加または更新する
-        public static void UpsertSearchCondition(SearchCondition condition)
+        public static void UpsertSearchConditionRule(SearchConditionRule conditionRule)
         {
-            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
-            collection.Upsert(condition);
+            var collection = GetClipboardDatabase().GetCollection<SearchConditionRule>(ClipboardDatabaseController.SEARCH_CONDITION_RULES_COLLECTION_NAME);
+            collection.Upsert(conditionRule);
         }
         // SearchConditionを削除する
-        public static void DeleteSearchCondition(SearchCondition condition)
+        public static void DeleteSearchConditionRule(SearchConditionRule conditionRule)
         {
-            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
-            collection.Delete(condition.Id);
+            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITION_RULES_COLLECTION_NAME);
+            collection.Delete(conditionRule.Id);
         }
         // SearchConditionを取得する
-        public static ObservableCollection<SearchCondition> GetSearchConditions()
+        public static ObservableCollection<SearchConditionRule> GetSearchConditionRules()
         {
-            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
+            var collection = GetClipboardDatabase().GetCollection<SearchConditionRule>(ClipboardDatabaseController.SEARCH_CONDITION_RULES_COLLECTION_NAME);
             var items = collection.FindAll();
-            ObservableCollection<SearchCondition> result = [.. items];
+            ObservableCollection<SearchConditionRule> result = [.. items];
             return result;
         }
         // 名前を指定して検索条件を取得する
-        public static SearchCondition? GetSearchCondition(string name)
+        public static SearchConditionRule? GetSearchConditionRule(string name)
         {
-            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
+            var collection = GetClipboardDatabase().GetCollection<SearchConditionRule>(ClipboardDatabaseController.SEARCH_CONDITION_RULES_COLLECTION_NAME);
             var item = collection.FindOne(x => x.Name == name);
             return item;
         }
-        // AbsoluteCollectionNameを指定してSearchConditionを取得する
-        public static SearchCondition? GetSearchConditionByCollectionName(string collectionName) {
-            var collection = GetClipboardDatabase().GetCollection<SearchCondition>(ClipboardDatabaseController.SEARCH_CONDITIONS_COLLECTION_NAME);
-            var item = collection.FindOne(x => x.TargetFolderHashSet.Contains(collectionName));
+        // 指定したAbsoluteCollectionNameに対応する検索条件を取得する
+        public static SearchConditionRule? GetSearchConditionRuleByCollectionName(string collectionName) {
+            var collection = GetClipboardDatabase().GetCollection<SearchConditionRule>(ClipboardDatabaseController.SEARCH_CONDITION_RULES_COLLECTION_NAME);
+            var item = collection.FindOne(x => x.SearchFolder != null && x.SearchFolder.AbsoluteCollectionName == collectionName);
             return item;
         }
         // --------------------------------------------------------------
@@ -233,23 +232,9 @@ namespace WpfApp1
         // ClipboardItemFolderをLiteDBに追加または更新する
         public static void UpsertFolder(ClipboardItemFolder folder)
         {
-            // ★ IsSearchFolderがTrueの場合はSearchConditionを保存する、そうでない場合はLiteDBに保存しない
-            var tmpSearchCondition = folder.SearchCondition;
-            if (folder.IsSearchFolder == false)
-            {
-                folder.SearchCondition = new SearchCondition();
-            }
 
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolder>(ClipboardDatabaseController.CLIPBOARD_FOLDERS_COLLECTION_NAME);
             collection.Upsert(folder);
-
-            // SearchConditionを再設定
-            folder.SearchCondition = tmpSearchCondition;
-            // folderがSearchFolderの場合はここで終了
-            if (folder.IsSearchFolder)
-            {
-                return;
-            }
 
         }
 
@@ -263,10 +248,10 @@ namespace WpfApp1
 
         }
         // ClipboardItemのリストをLiteDBから取得するObservableCollectionOn
-        public static IEnumerable<ClipboardItem> GetClipboardItems(string collectionName, SearchCondition searchCondition)
+        public static IEnumerable<ClipboardItem> GetClipboardItems(string collectionName, SearchCondition? searchCondition)
         {
             var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(collectionName);
-            if (searchCondition.IsEmpty()) {
+            if (searchCondition == null || searchCondition.IsEmpty()) {
                 return collection.FindAll().OrderByDescending(x => x.UpdatedAt);
             }
             else {
@@ -274,6 +259,46 @@ namespace WpfApp1
             }
         }
 
+        // ClipboardItemを検索する。
+        public static IEnumerable<ClipboardItem> SearchClipboardItems(SearchConditionRule searchConditionRule) {
+            // 結果を格納するIEnumerable<ClipboardItem>を作成
+            IEnumerable<ClipboardItem> result = new List<ClipboardItem>();
+            // TargetFolderがない場合は何もしない
+            if (searchConditionRule.TargetFolder == null) {
+                return result;
+            }
+            // サブフォルダを含むかどうか
+            bool includeSubFolder = searchConditionRule.IsIncludeSubFolder;
+            // サブフォルダを含まない場合は、対象フォルダのみ検索
+            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(searchConditionRule.TargetFolder.AbsoluteCollectionName);
+            // Filterの結果を結果に追加
+            result = Filter(collection, searchConditionRule.SearchCondition);
+            // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
+            if (includeSubFolder) {
+                // 対象フォルダの子フォルダを取得
+                var folders = GetChildFolders(searchConditionRule.TargetFolder.AbsoluteCollectionName);
+                foreach (var folder in folders) {
+                    // サブフォルダのアイテムを取得
+                    var subCollection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ClipboardItem>(folder);
+                    // Filterの結果を結果に追加
+                    result = result.Concat(Filter(subCollection, searchConditionRule.SearchCondition));
+                }
+            }
+            return result;
+
+        }
+
+        // 指定したフォルダの子フォルダのAbsoluteCollectionNameを再帰的に取得する
+        public static List<string> GetChildFolders(string parentCollectionName) {
+            List<string> result = new List<string>();
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(ClipboardDatabaseController.CLIPBOARD_FOLDER_RELATION_NAME);
+            var items = collection.FindAll().Where(x => x.ParentCollectionName == parentCollectionName);
+            foreach (var i in items) {
+                result.Add(i.ChildCollectionName);
+                result.AddRange(GetChildFolders(i.ChildCollectionName));
+            }
+            return result;
+        }
 
 
         private static void LoadFolderTree(ClipboardItemFolder targetFolder)

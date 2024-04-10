@@ -22,11 +22,9 @@ namespace WpfApp1
 
             // クリップボードコントローラーの初期化
             // SearchConditionをLiteDBから取得
-            ClipboardItemFolder.GlobalSearchCondition.Name = ClipboardDatabaseController.SEARCH_CONDITION_APPLIED_CONDITION_NAME;
-            SearchCondition? searchCondition = ClipboardDatabaseController.GetSearchCondition(ClipboardItemFolder.GlobalSearchCondition.Name);
-            if (searchCondition != null)
-            {
-                ClipboardItemFolder.GlobalSearchCondition = searchCondition;
+            SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRule(ClipboardDatabaseController.SEARCH_CONDITION_APPLIED_CONDITION_NAME);
+            if (searchConditionRule != null) {
+                ClipboardItemFolder.GlobalSearchCondition = searchConditionRule;
             }
 
             // フォルダ階層を再描写する
@@ -110,7 +108,7 @@ namespace WpfApp1
         });
 
         // Ctrl + F が押された時の処理
-        public static SimpleDelegateCommand searchCommand => new SimpleDelegateCommand((parameter) => {
+        public static SimpleDelegateCommand SearchCommand => new SimpleDelegateCommand((parameter) => {
             ClipboardFolderCommands.SearchCommandExecute(parameter);
         });
 

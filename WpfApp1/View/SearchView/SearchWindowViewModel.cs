@@ -7,14 +7,14 @@ using WpfApp1.View.ClipboardItemFolderView;
 namespace WpfApp1.View.SearchView {
     public class SearchWindowViewModel : ObservableObject {
 
-        private SearchCondition? searchCondition;
-        public SearchCondition? SearchCondition {
+        private SearchConditionRule? _searchConditionRule;
+        public SearchConditionRule? SearchConditionRule {
             get {
-                return searchCondition;
+                return _searchConditionRule;
             }
             set {
-                searchCondition = value;
-                OnPropertyChanged("SearchCondition");
+                _searchConditionRule = value;
+                OnPropertyChanged("SearchConditionRule");
             }
         }
 
@@ -28,53 +28,67 @@ namespace WpfApp1.View.SearchView {
                 OnPropertyChanged("SearchFolderViewModel");
             }
         }
-        // 検索フォルダ用の検索かどうか
-        public bool IsSearchFolder {
-            get {
-                if ( SearchFolderViewModel == null) { 
-                    return false;
-                }
-                return SearchFolderViewModel.ClipboardItemFolder.IsSearchFolder;
-            }
-        }
-
-        public bool IsIncludeSubFolder {
-            get {
-                if (SearchCondition == null) {
-                    return false;
-                }
-                return SearchCondition.IncludeSubFolder;
-            }
-            set {
-                if (SearchCondition == null) {
-                    return;
-                }
-                SearchCondition.IncludeSubFolder = value;
-                OnPropertyChanged("IsIncludeSubFolder");
-            }
-        }
         // 検索フォルダの場合は表示する、それ以外は非表示
         public Visibility SearchFolderVisibility {
 
             get {
-                if (IsSearchFolder) {
+                if (SearchConditionRule?.Type == SearchConditionRule.SearchType.SearchFolder) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
             }
         }
 
+        // 検索タイプ 標準 or 検索フォルダ
+        public string SearchTypeText {
+            get {
+                if (SearchConditionRule?.Type == SearchConditionRule.SearchType.SearchFolder) {
+                    return "検索フォルダ";
+                }   
+                return "標準";
+            }
+        }
+
+        // 検索フォルダのパス
+        private string? _searchFolderPath;
+        public string? SearchFolderPath {
+            get {
+                return _searchFolderPath;
+            }
+            set {
+                _searchFolderPath = value;
+                OnPropertyChanged("SearchFolderPath");
+            }
+        }
+        // 対象フォルダのパス
+        private string? _targetFolderPath;
+        public string? TargetFolderPath {
+            get {
+                return _targetFolderPath;
+            }
+            set {
+                _targetFolderPath = value;
+                OnPropertyChanged("TargetFolderPath");
+            }
+        }
+        
         private Action? _afterUpdate;
 
-        public void Initialize(SearchCondition searchCondition, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
-            this.SearchCondition = searchCondition;
+        public void Initialize(SearchConditionRule searchConditionRule, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
+            this.SearchConditionRule = searchConditionRule;
+
             _afterUpdate = afterUpdate;
             SearchFolderViewModel = searchFolderViewModel;
+            SearchFolderPath = searchFolderViewModel?.ClipboardItemFolder.AbsoluteCollectionName;
+            TargetFolderPath = searchConditionRule.TargetFolder?.AbsoluteCollectionName;
+
+            OnPropertyChanged("SearchTypeText");
+            OnPropertyChanged("SearchFolderVisibility");
 
         }
 
-        public void Initialize(SearchCondition searchCondition, Action afterUpdate) {
-            Initialize(searchCondition, null, afterUpdate);
+        public void Initialize(SearchConditionRule searchConditionRule, Action afterUpdate) {
+            Initialize(searchConditionRule, null, afterUpdate);
         }
 
         //--------------------------------------------------------------------------------
@@ -83,18 +97,18 @@ namespace WpfApp1.View.SearchView {
 
         public SimpleDelegateCommand ClearCommand => new SimpleDelegateCommand(ClearCommandExecute);
         private void ClearCommandExecute(object parameter) {
-            SearchCondition?.Clear();
+            SearchConditionRule?.SearchCondition?.Clear();
         }
 
         public SimpleDelegateCommand ApplyCommand => new SimpleDelegateCommand(ApplyCommandExecute);
 
         private void ApplyCommandExecute(object parameter) {
-            if (SearchCondition == null) {
+            if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
             }
             // 検索条件をLiteDBに保存
-            SearchCondition.Upsert();
+            ClipboardDatabaseController.UpsertSearchConditionRule(SearchConditionRule);
 
             // 検索条件を適用後に実行する処理
             _afterUpdate?.Invoke();
@@ -107,9 +121,17 @@ namespace WpfApp1.View.SearchView {
         // 検索フォルダを選択する
         public SimpleDelegateCommand OpenSelectSearchFolderWindowCommand => new SimpleDelegateCommand(OpenSelectSearchFolderWindowCommandExecute);
         public void OpenSelectSearchFolderWindowCommandExecute(object parameter) {
+            if (SearchConditionRule == null) {
+                Tools.Error("検索条件がNullです");
+                return;
+            }
             // フォルダが選択されたら、SearchFolderに設定
             void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
                 SearchFolderViewModel = folderViewModel;
+                SearchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
+                SearchFolderPath = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
+                OnPropertyChanged("SearchFolderPath");
+
             }
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
@@ -123,13 +145,19 @@ namespace WpfApp1.View.SearchView {
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new SimpleDelegateCommand(OpenSelectTargetFolderWindowCommandExecute);
         public void OpenSelectTargetFolderWindowCommandExecute(object parameter) {
-            if (!IsSearchFolder) {
+            if (SearchConditionRule == null) {
+                Tools.Error("検索条件がNullです");
+                return;
+            }
+            if (SearchConditionRule.Type != SearchConditionRule.SearchType.SearchFolder) {
                 Tools.Error("検索フォルダ以外では選択できません");
                 return;
             }
             // フォルダが選択されたら、TargetFolderに設定
             void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
-                SearchCondition?.TargetFolderHashSet.Add(folderViewModel.ClipboardItemFolder.AbsoluteCollectionName);
+                SearchConditionRule.TargetFolder = folderViewModel.ClipboardItemFolder;
+                TargetFolderPath = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
+                OnPropertyChanged("TargetFolderPath");
             }
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();

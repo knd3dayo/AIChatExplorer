@@ -8,7 +8,7 @@ namespace WpfApp1.Model {
     public class ClipboardItemFolder : ObservableObject {
 
         // アプリ共通の検索条件
-        public static SearchCondition GlobalSearchCondition = new SearchCondition();
+        public static SearchConditionRule GlobalSearchCondition = new SearchConditionRule();
 
         //--------------------------------------------------------------------------------
         public static ClipboardItemFolder RootFolder {
@@ -43,13 +43,6 @@ namespace WpfApp1.Model {
         // 検索フォルダかどうか
         public bool IsSearchFolder { get; set; } = false;
 
-        // 検索対象のフォルダの絶対パス
-        public string SearchFolderAbsoluteCollectionName { get; set; } = "";
-
-        // 検索条件 BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
-        public SearchCondition SearchCondition { get; set; } = new SearchCondition();
-
-
         // 現在、検索条件を適用中かどうか
         public bool IsApplyingSearchCondition { get; set; } = false;
 
@@ -80,10 +73,19 @@ namespace WpfApp1.Model {
                 if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
                     return new ObservableCollection<ClipboardItem>();
                 }
-                // AbsoluteCollectionNameのコレクションを取得
+                IEnumerable<ClipboardItem> items = new List<ClipboardItem>();
                 // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
                 // 検索フォルダの場合は、SearchConditionを適用して取得
-                var items = ClipboardDatabaseController.GetClipboardItems(AbsoluteCollectionName, IsSearchFolder ? SearchCondition : GlobalSearchCondition);
+                if (IsSearchFolder) {
+                    // 検索フォルダの場合
+                    SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(AbsoluteCollectionName);
+                    if (searchConditionRule != null) {
+                        items = ClipboardDatabaseController.SearchClipboardItems(searchConditionRule);
+                    }
+                } else {
+                    // 通常のフォルダの場合
+                    items = ClipboardDatabaseController.GetClipboardItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition);
+                }
                 
                 ObservableCollection<ClipboardItem> result = [.. items];
                 return result;
@@ -101,8 +103,6 @@ namespace WpfApp1.Model {
                 AbsoluteCollectionName = ClipboardDatabaseController.ConcatenatePath(parent.AbsoluteCollectionName, collectionName);
             }
             DisplayName = displayName;
-            // SearchConditionの名前を設定
-            SearchCondition.Name = $"{AbsoluteCollectionName}の検索条件";
 
         }
         public ClipboardItemFolder(string collectionName, string displayName) : this(null, collectionName, displayName) {

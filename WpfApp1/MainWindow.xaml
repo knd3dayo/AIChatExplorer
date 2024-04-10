@@ -14,7 +14,7 @@
     </Window.DataContext>
     <Window.InputBindings>
         <!-- 検索ダイアログを表示-->
-        <KeyBinding Key="F" Modifiers="Control" Command="{Binding searchCommand}" />
+        <KeyBinding Key="F" Modifiers="Control" Command="{Binding SearchCommand}" />
         <!-- アイテムをLiteDBから再読み込みする-->
         <KeyBinding Key="R" Modifiers="Control" Command="{Binding ReloadCommand}" />
 

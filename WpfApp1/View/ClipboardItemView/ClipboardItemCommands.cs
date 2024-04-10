@@ -60,7 +60,7 @@ namespace WpfApp1.View.ClipboardItemView
             ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)obj;
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
-            editItemWindowViewModel.Initialize(clipboardItemViewModel.ClipboardItem, () =>
+            editItemWindowViewModel.Initialize(clipboardItemViewModel, () =>
             {
                 // フォルダ内のアイテムを再読み込み
                 MainWindowViewModel.Instance?.SelectedFolder?.Load();
@@ -107,10 +107,15 @@ namespace WpfApp1.View.ClipboardItemView
             {
                 return;
             }
-            NewItemWindow newItemWindow = new NewItemWindow();
-            NewItemWindowViewModel newItemWindowViewModel = (NewItemWindowViewModel)newItemWindow.DataContext;
-            newItemWindowViewModel.clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-            newItemWindow.ShowDialog();
+            EditItemWindow editItemWindow = new EditItemWindow();
+            EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
+            editItemWindowViewModel.Initialize(null, () => {
+                // フォルダ内のアイテムを再読み込み
+                MainWindowViewModel.Instance?.SelectedFolder?.Load();
+                Tools.Info("追加しました");
+            });
+
+            editItemWindow.ShowDialog();
         }
 
         // Ctrl + V が押された時の処理

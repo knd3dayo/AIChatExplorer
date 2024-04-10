@@ -53,12 +53,13 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 }
 
                 // folderが検索フォルダの場合
-                SearchCondition searchCondition = ClipboardItemFolder.GlobalSearchCondition;
+                SearchConditionRule? searchConditionRule = ClipboardItemFolder.GlobalSearchCondition;
                 if (folderViewModel.ClipboardItemFolder.IsSearchFolder) {
-                    searchCondition = folderViewModel.ClipboardItemFolder.SearchCondition;
+                    searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(folderViewModel.ClipboardItemFolder.AbsoluteCollectionName);
                 }
+                SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
                 // SearchConditionがNullでなく、 Emptyでもない場合
-                if (searchCondition != null && !searchCondition.IsEmpty())
+                if (searchCondition != null)
                 {
                     message += " 検索条件[";
                     message += searchCondition.ToStringSearchCondition();
@@ -101,9 +102,15 @@ namespace WpfApp1.View.ClipboardItemFolderView
             SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
             // 選択されたフォルダが検索フォルダの場合
             if (folderViewModel.ClipboardItemFolder.IsSearchFolder) { 
-                SearchCondition searchCondition = folderViewModel.ClipboardItemFolder.SearchCondition;
-                
-                searchWindowViewModel.Initialize(searchCondition, MainWindowViewModel.Instance.SelectedFolder, () =>
+                string absoluteCollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
+                SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(absoluteCollectionName);
+                if (searchConditionRule == null) {
+                    searchConditionRule = new SearchConditionRule();
+                    searchConditionRule.Type = SearchConditionRule.SearchType.SearchFolder;
+                    searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
+
+                }
+                searchWindowViewModel.Initialize(searchConditionRule, MainWindowViewModel.Instance.SelectedFolder, () =>
                 {
                     folderViewModel.Load();
                 });
