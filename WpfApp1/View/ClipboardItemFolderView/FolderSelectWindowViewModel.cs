@@ -49,16 +49,15 @@ namespace WpfApp1.View.ClipboardItemFolderView
             }
         }
 
-        public void Initialize(Action<ClipboardItemFolderViewModel> _FolderSelectedAction)
+        public void Initialize(ClipboardItemFolderViewModel rootFolderViewModel, Action<ClipboardItemFolderViewModel> _FolderSelectedAction)
         {
 
             FolderSelectedAction = _FolderSelectedAction;
-            ClipboardItemFolder? rootFolder = ClipboardItemFolder.RootFolder;
-            if (rootFolder == null)
+            if (rootFolderViewModel == null)
             {
                 return;
             }
-            RootFolders.Add(new ClipboardItemFolderViewModel(rootFolder));
+            RootFolders.Add(rootFolderViewModel);
             Instance = this;
         }
         public static SimpleDelegateCommand SelectFolderCommand => new SimpleDelegateCommand(SelectFolderCommandExecute);

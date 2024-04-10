@@ -295,19 +295,6 @@ namespace WpfApp1
             }
         }
 
-        // フォルダツリーを取得する
-        public static ClipboardItemFolder? GetFolderTree()
-        {
-            var rootFolder = ClipboardDatabaseController.GetClipboardItemFolder(ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME);
-            if (rootFolder == null)
-            {
-                return null;
-            }
-
-            LoadFolderTree(rootFolder);
-            return rootFolder;
-        }
-
         public static void DeleteItems(ClipboardItemFolder targetFolder)
         {
             foreach (var item in targetFolder.Items)

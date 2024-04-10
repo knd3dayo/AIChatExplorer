@@ -384,7 +384,8 @@ namespace WpfApp1.View.AutoProcessRuleView
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            FolderSelectWindowViewModel.Initialize(FolderSelectedAction);
+            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }
 
@@ -399,7 +400,8 @@ namespace WpfApp1.View.AutoProcessRuleView
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            FolderSelectWindowViewModel.Initialize(FolderSelectedAction);
+            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }
     }

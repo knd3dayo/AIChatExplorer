@@ -1,17 +1,14 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.ClipboardItemFolderView;
 
 namespace WpfApp1.View.SearchView {
     public class SearchWindowViewModel : ObservableObject {
-        private SearchCondition searchCondition = new SearchCondition();
 
-        public SearchWindowViewModel(SearchCondition searchCondition) {
-            this.SearchCondition = searchCondition;
-        }
-
-        public SearchCondition SearchCondition {
+        private SearchCondition? searchCondition;
+        public SearchCondition? SearchCondition {
             get {
                 return searchCondition;
             }
@@ -20,54 +17,76 @@ namespace WpfApp1.View.SearchView {
                 OnPropertyChanged("SearchCondition");
             }
         }
-        // フォルダ選択用DockPanelを有効にするかどうか
-        private bool isTargetFolderEnabled = false;
-        public bool IsTargetFolderEnabled {
+
+        private ClipboardItemFolderViewModel? searchFolderViewModel;
+        public ClipboardItemFolderViewModel? SearchFolderViewModel {
             get {
-                return isTargetFolderEnabled;
+                return searchFolderViewModel;
             }
             set {
-                isTargetFolderEnabled = value;
-                OnPropertyChanged("IsTargetFolderEnabled");
+                searchFolderViewModel = value;
+                OnPropertyChanged("SearchFolderViewModel");
+            }
+        }
+        // 検索フォルダ用の検索かどうか
+        public bool IsSearchFolder {
+            get {
+                if ( SearchFolderViewModel == null) { 
+                    return false;
+                }
+                return SearchFolderViewModel.ClipboardItemFolder.IsSearchFolder;
             }
         }
 
         public bool IsIncludeSubFolder {
             get {
+                if (SearchCondition == null) {
+                    return false;
+                }
                 return SearchCondition.IncludeSubFolder;
             }
             set {
+                if (SearchCondition == null) {
+                    return;
+                }
                 SearchCondition.IncludeSubFolder = value;
                 OnPropertyChanged("IsIncludeSubFolder");
             }
         }
+        // 検索フォルダの場合は表示する、それ以外は非表示
+        public Visibility SearchFolderVisibility {
 
-        public SimpleDelegateCommand ClearCommand => new SimpleDelegateCommand(ClearCommandExecute);
+            get {
+                if (IsSearchFolder) {
+                    return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
+        }
 
         private Action? _afterUpdate;
 
-        // 設定対象の検索フォルダ
-        public ClipboardItemFolderViewModel? ApplyTargetFolderViewModel { get; set; }
-        public void Initialize(SearchCondition searchCondition, ClipboardItemFolderViewModel? applyTargetFolderViewModel, Action afterUpdate) {
+        public void Initialize(SearchCondition searchCondition, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
             this.SearchCondition = searchCondition;
             _afterUpdate = afterUpdate;
-            ApplyTargetFolderViewModel = applyTargetFolderViewModel;
-            IsTargetFolderEnabled = ApplyTargetFolderViewModel != null;
+            SearchFolderViewModel = searchFolderViewModel;
 
-        }
-        public SearchWindowViewModel() {
         }
 
         public void Initialize(SearchCondition searchCondition, Action afterUpdate) {
             Initialize(searchCondition, null, afterUpdate);
         }
 
+        //--------------------------------------------------------------------------------
+        // コマンド
+        //--------------------------------------------------------------------------------
+
+        public SimpleDelegateCommand ClearCommand => new SimpleDelegateCommand(ClearCommandExecute);
         private void ClearCommandExecute(object parameter) {
-            SearchCondition.Clear();
+            SearchCondition?.Clear();
         }
 
-
-        public SimpleDelegateCommand applyCommand => new SimpleDelegateCommand(ApplyCommandExecute);
+        public SimpleDelegateCommand ApplyCommand => new SimpleDelegateCommand(ApplyCommandExecute);
 
         private void ApplyCommandExecute(object parameter) {
             if (SearchCondition == null) {
@@ -83,16 +102,40 @@ namespace WpfApp1.View.SearchView {
             // Close the window
             SearchWindow.Current?.Close();
         }
+
+        // OpenSelectSearchFolderWindowCommand
+        // 検索フォルダを選択する
+        public SimpleDelegateCommand OpenSelectSearchFolderWindowCommand => new SimpleDelegateCommand(OpenSelectSearchFolderWindowCommandExecute);
+        public void OpenSelectSearchFolderWindowCommandExecute(object parameter) {
+            // フォルダが選択されたら、SearchFolderに設定
+            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
+                SearchFolderViewModel = folderViewModel;
+            }
+
+            FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
+            FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
+            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.SearchRootFolder);
+            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
+            FolderSelectWindow.ShowDialog();
+        }
+
+
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new SimpleDelegateCommand(OpenSelectTargetFolderWindowCommandExecute);
         public void OpenSelectTargetFolderWindowCommandExecute(object parameter) {
+            if (!IsSearchFolder) {
+                Tools.Error("検索フォルダ以外では選択できません");
+                return;
+            }
             // フォルダが選択されたら、TargetFolderに設定
             void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
-                SearchCondition.TargetFolderHashSet.Add(folderViewModel.ClipboardItemFolder.AbsoluteCollectionName);
+                SearchCondition?.TargetFolderHashSet.Add(folderViewModel.ClipboardItemFolder.AbsoluteCollectionName);
             }
+
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            FolderSelectWindowViewModel.Initialize(FolderSelectedAction);
+            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }
 
