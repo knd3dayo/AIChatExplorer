@@ -73,7 +73,7 @@
             <Grid.ColumnDefinitions>
                 <!-- 1. TreeView、2. GridSplitter、3. ListBox-->
                 <!-- TreeViewとListBoxの間にGridSplitterを入れる -->
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="150"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
