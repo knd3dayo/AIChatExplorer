@@ -15,24 +15,42 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <Label Content="説明" Grid.Row="0" Grid.Column="0"/>
-        <TextBox Text="{Binding Description}" Grid.Row="0" Grid.Column="1"
-                 Width="700" Margin="0,10,0,10"
-                 IsEnabled="True"
-                 />
-        <Label Content="内容" Grid.Row="1" Grid.Column="0"/>
-        <TextBox Text="{Binding Content}" Grid.Row="1" Grid.Column="1" 
-                 Width="700" Height="300" Margin="0,10,0,10"
-                 IsEnabled="True"
-                 AcceptsReturn="True"
-                  />
-        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-            <Button Content="OK" Command="{Binding OKButtonCommand}" Margin="10,10,10,10"/>
-            <Button Content="キャンセル" Command="{Binding CancelButtonCommand}" Margin="10,10,10,10"/>
-        </StackPanel>
+        <Grid Grid.Row="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="説明" Grid.Row="0" Grid.Column="0" Width="100"
+                     Margin="10,10,10,10"
+                       />
+            <TextBox Text="{Binding Description}" Grid.Row="0" Grid.Column="1"
+                     Margin="10,10,10,10"
+                     IsEnabled="True"
+                     />
+            <Button Content="タグ" Grid.Row="1" Grid.Column="0" 
+                     Margin="10,10,10,10"
+            />
+            <TextBox Text="{Binding Tag}" Grid.Row="1" Grid.Column="1"
+                     Margin="10,10,10,10"
+                     IsEnabled="False"
+                     />
+            <TextBlock Text="内容" Grid.Row="2" Grid.Column="0"  Width="100"/>
+            <TextBox Text="{Binding Content}" Grid.Row="2" Grid.Column="1" 
+                     Height="300" Margin="10,10,10,10"
+                     IsEnabled="True"
+                     AcceptsReturn="True"
+                      />
+        </Grid>
+        <Grid Grid.Row="1">
+            <DockPanel HorizontalAlignment="Right" Width="150" Margin="10,0,0,10">
+                <Button DockPanel.Dock="Left"  Content="OK" Command="{Binding OKButtonCommand}" Width="50" Margin="10,10,10,0"  HorizontalAlignment="Left"/>
+                <Button Content="キャンセル" Command="{Binding CancelButtonCommand}" Width="50" Margin="10,10,10,0" HorizontalAlignment="Left"/>
+            </DockPanel>
+        </Grid>
     </Grid>
 </Window>
