@@ -53,6 +53,8 @@ namespace WpfApp1
 
         // Cutフラグ
         public bool CutFlag { get; set; } = false;
+        // 選択中のアイテム(複数選択)
+        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = new ObservableCollection<ClipboardItemViewModel>();
 
         // 選択中のアイテム
         private ClipboardItemViewModel? _selectedItem = null;

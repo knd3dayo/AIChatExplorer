@@ -54,5 +54,25 @@ namespace WpfApp1.Behaviors
                     }));
             }
         }
+        public static readonly DependencyProperty SelectedItemsProperty =
+            DependencyProperty.RegisterAttached("SelectedItems", typeof(IList<object>), typeof(ListBoxBehavior), new PropertyMetadata(new PropertyChangedCallback(SelectedItemsChanged)));
+        public static void SelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+            ListBox element = (ListBox)d;
+            element.SelectionChanged += Element_SelectionChanged;
+        }
+
+        public static void Element_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            ListBox element = (ListBox)sender;
+            element.SetValue(SelectedItemsProperty, element.SelectedItems);
+        }
+
+        public static void SetSelectedItems(UIElement element, IList<object> value) {
+            element.SetValue(SelectedItemsProperty, value);
+        }
+
+        public static IList<object> GetSelectedItems(UIElement element) {
+            return (IList<object>)element.GetValue(SelectedItemsProperty);
+        }
+
     }
 }
