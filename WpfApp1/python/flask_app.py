@@ -1,41 +1,62 @@
-﻿from flask import Flask
+﻿from flask import Flask, request, jsonify
+import os
+import importlib
+import json
+import spacy
+
+import clipboard_app_utils
 
 app = Flask(__name__)
 
-import importlib
-import json
-class OpenAIUtil:
-    def __init__(self, azure_openai, openai_api_key, azure_openai_endpoint=None):
-        self.azure_openai = azure_openai
-        self.openai_api_key = openai_api_key
-        self.azure_openai_endpoint = azure_openai_endpoint
-        self.client = self._create_openai_object()
 
-    def _create_openai_object(self):
-        # OpenAIオブジェクトを作成
-        openai = importlib.import_module("openai")
-        if self.azure_openai:
-            client = openai.AzureOpenAI(
-                api_key=self.openai_api_key,
-                api_version="2023-12-01-preview",
-                azure_endpoint = self.azure_openai_endpoint
-            )
-        else:
-            client = openai.OpenAI(
-                api_key=self.openai_api_key,
-            )
-        return client
-
-openai_util = OpenAIUtil(
-    openai_api_key="{{OPENAI_API_KEY}}", 
-    azure_openai={{AZURE_OPENAI}}, 
-    azure_openai_endpoint={{AZURE_OPENAI_ENDPOINT}}
+openai_util = clipboard_app_utils.OpenAIUtil(
+    openai_api_key=os.getenv("OPENAI_API_KEY"),
+    azure_openai=os.getenv("AZURE_OPENAI"), 
+    azure_openai_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
-chat_model_name = "{{CHAT_MODEL_NAME}}"
+chat_model_name = os.getenv("CHAT_MODEL_NAME")
+spacy_model_name = os.getenv("SPACY_MODEL_NAME")
+    
+# textの中から個人情報をマスクする
+nlp = spacy.load(spacy_model_name)
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def hello_world():
     return 'Hello, World!'
+
+@app.route('/api/clipboard_item', methods = ['POST'])
+def clipboard():
+    # クリップボードの内容を取得する
+    post_data = request.get_json()
+    print(post_data)
+    
+
+    # actionを取得
+    action = post_data.get("action","")
+    # actionによって処理を分岐
+    if action == "openai_chat":
+        # OpenAIのchatを実行
+        return openai_chat(post_data["item"], chat_model_name)
+    if action == "mask_data":
+        # テキストから個人情報をマスク
+        item = post_data.get("item", None)
+        if item is None:
+            response = jsonify({"error": "item is required"})
+            return response
+        # マスクしたテキストを返す
+        content = item.get("content", None)
+        if content is None:
+            response = jsonify({"error": "content is required"})
+            return response
+        masked_content = clipboard_app_utils.mask_data(nlp, content)
+        item["content"] = masked_content
+        # マスクしたテキストを返す
+        return jsonify({"item": item});
+
+    # その他の場合はerrorを設定して返す。
+    response = jsonify({"error": "action not found"})
+    return response
+    
 
 def openai_chat(input_json, chat_model_name):
     # OpenAIのchatを実行する
@@ -50,4 +71,4 @@ def openai_chat(input_json, chat_model_name):
 
 
 if __name__ == '__main__':
-    app.run(debug=True , port={{PORT}})
+    app.run(debug=True , port=os.getenv("PORT"))

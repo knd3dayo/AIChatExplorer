@@ -239,6 +239,9 @@
             <StatusBarItem>
                 <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text }" />
             </StatusBarItem>
+            <StatusBar.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding OpenStatusMessageWindowCommand}" />
+            </StatusBar.InputBindings>
         </StatusBar>
     </Grid>
 </Window>

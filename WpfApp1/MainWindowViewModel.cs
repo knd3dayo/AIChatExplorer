@@ -6,6 +6,7 @@ using WpfApp1.Utils;
 using WpfApp1.View.AutoProcessRuleView;
 using WpfApp1.View.ClipboardItemFolderView;
 using WpfApp1.View.ClipboardItemView;
+using WpfApp1.View.StatusMessageView;
 
 
 namespace WpfApp1 {
@@ -157,7 +158,14 @@ namespace WpfApp1 {
 
             ListAutoProcessRuleWindow.ShowDialog();
         }
-
+        // ステータスバーをクリックしたときの処理
+        public static SimpleDelegateCommand OpenStatusMessageWindowCommand => new SimpleDelegateCommand(OpenStatusMessageWindowCommandExecute);
+        private static void OpenStatusMessageWindowCommandExecute(object obj) {
+            StatusMessageWindow statusMessageWindow = new StatusMessageWindow();
+            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)statusMessageWindow.DataContext;
+            statusMessageWindowViewModel.Initialize();
+            statusMessageWindow.ShowDialog();
+        }
         // スクリプトを削除するコマンド
 
 

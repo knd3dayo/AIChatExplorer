@@ -10,6 +10,8 @@ using Python.Runtime;
 using System.ComponentModel;
 using WpfApp1.Utils;
 using WpfApp1.View.OpenAIView;
+using System.Diagnostics;
+using System.Data;
 
 namespace WpfApp1.Model
 {
@@ -58,12 +60,17 @@ namespace WpfApp1.Model
             // PropertyでUSE_PYTHON_FLASK=Trueとなっている場合はFlaskを起動
             if (Properties.Settings.Default.USE_PYTHON_FLASK)
             {
-                _tokenSource = new CancellationTokenSource();
-                RunFlask(_tokenSource.Token);
+                RunFlask();
             }
 
         }
-
+        public static string GetApiUrl(string path) {
+            if (FlaskPort == -1) {
+                Tools.Error("Flaskアプリのポート番号を取得できませんでした");
+                return "";
+            }
+            return "http://localhost:" + FlaskPort + path;
+        }
         public static int FlaskPort { get; private set; } = -1;
         private static void BindFreePort()
         {
@@ -81,8 +88,7 @@ namespace WpfApp1.Model
                 _tokenSource.Cancel();
             }
         }
-        public static void FlaskThread()
-        {
+        public static Process? CreateProcess() {
             // FlaskのPythonスクリプトを読み込み別スレッドで実行する
             // スレッドを起動した後、python flask_app.pyを実行する
             // OSはWindowsを想定しているため、python3ではなくpythonを実行する
@@ -90,76 +96,76 @@ namespace WpfApp1.Model
             // Flaskアプリはエフェメラルポートで起動するため、ポート番号は固定されていない
             // ポート番号はFlaskアプリが起動した後に取得する
 
-            // テンポラリディレクトリを取得
-            string tempDir = Path.GetTempPath();
-            // 標準出力、標準エラー保存用のテンポラリファイルを作成
-            string tempOutputFilePath = Path.GetTempFileName();
-
-            // FlaskのPythonスクリプトを読み込む
-            string script = LoadPythonScript(FlaskScript);
             // Flaskアプリのポート番号を取得
             BindFreePort();
             // FlaskPortを取得できなかった場合はエラーを表示
-            if (FlaskPort == -1)
-            {
-                Tools.ShowMessage("Flaskアプリのポート番号を取得できませんでした");
-                return;
+            if (FlaskPort == -1) {
+                Tools.Error("Flaskアプリのポート番号を取得できませんでした");
+                return null;
             }
-            // script内の{{OPENAI_API_KEY}}をProperties.Settings.Default.OPENAI_API_KEYに置換する
-            script = script.Replace("{{OPENAI_API_KEY}}", Properties.Settings.Default.OPENAI_API_KEY);
-            // script内の{{AZURE_OPENAI}}をProperties.Settings.Default.AZURE_OPENAIに置換する
-            script = script.Replace("{{AZURE_OPENAI}}", Properties.Settings.Default.AZURE_OPENAI.ToString());
-            // script内の{{CHAT_MODEL_NAME}}をProperties.Settings.Default.CHAT_MODEL_NAMEに置換する
-            script = script.Replace("{{CHAT_MODEL_NAME}}", Properties.Settings.Default.CHAT_MODEL_NAME);
-            // script内の{{AZURE_OPENAI_ENDPOINT}}をProperties.Settings.Default.AZURE_OPENAI_ENDPOINTに置換する
-            if (string.IsNullOrEmpty(Properties.Settings.Default.AZURE_OPENAI_ENDPOINT))
-            {
-                script = script.Replace("{{AZURE_OPENAI_ENDPOINT}}", "None");
-            }
-            else
-            {
-                script = script.Replace("{{AZURE_OPENAI_ENDPOINT}}", Properties.Settings.Default.AZURE_OPENAI_ENDPOINT);
-            }
-
-
-            // scriptの中のポート番号をFlaskPortに置換する
-            script = script.Replace("{{PORT}}", FlaskPort.ToString());
-
-            // テンポラリファイルにPythonスクリプトを書き込む
-            string tempFilePath = Path.Combine(tempDir, "flask_app.py");
-            File.WriteAllText(tempFilePath, script);
-
-            // Pythonスクリプトを実行する
-
             System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
             psi.FileName = "python";
-            psi.Arguments = tempFilePath;
+            psi.Arguments = FlaskScript;
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
             psi.RedirectStandardError = true;
             psi.CreateNoWindow = true;
-            System.Diagnostics.Process? p = System.Diagnostics.Process.Start(psi);
-            if (p == null)
-            {
-                Tools.ShowMessage("Flaskアプリの起動に失敗しました");
-                return;
-            }
-            p.WaitForExit();
-            string output = p.StandardOutput.ReadToEnd();
-            string error = p.StandardError.ReadToEnd();
-            // tempOutputFilePathに標準出力、標準エラーを書き込む
-            File.WriteAllText(tempOutputFilePath, output + error);
+            // psiに環境変数を設定
+            psi.EnvironmentVariables["OPENAI_API_KEY"] = Properties.Settings.Default.OPENAI_API_KEY;
+            psi.EnvironmentVariables["AZURE_OPENAI"] = Properties.Settings.Default.AZURE_OPENAI.ToString();
+            psi.EnvironmentVariables["CHAT_MODEL_NAME"] = Properties.Settings.Default.CHAT_MODEL_NAME;
+            psi.EnvironmentVariables["AZURE_OPENAI_ENDPOINT"] = Properties.Settings.Default.AZURE_OPENAI_ENDPOINT;
+            psi.EnvironmentVariables["SPACY_MODEL_NAME"] = Properties.Settings.Default.SPACY_MODEL_NAME;
+            psi.EnvironmentVariables["PORT"] = FlaskPort.ToString();
+
+            System.Diagnostics.Process? p = new System.Diagnostics.Process();
+            p.StartInfo = psi;
+            p.EnableRaisingEvents = true;
+
+            p.ErrorDataReceived += (sender, e) => {
+                if (e.Data != null) {
+                    Tools.Info(e.Data);
+                }
+            };
+            p.OutputDataReceived += (sender, e) => {
+                if (e.Data != null) {
+                    Tools.Info(e.Data);
+                }
+            };
+            return p;
 
         }
-        public static void RunFlask(CancellationToken token)
+        public static void FlaskThread(Process process) {
+            // Pythonスクリプトを実行する
+            process.Start();
+            if (process == null) {
+                Tools.Error("Flaskアプリの起動に失敗しました");
+                return;
+            }
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            process.WaitForExit();
+
+        }
+        public static void RunFlask()
         {
+            // FlaskのPythonスクリプトを読み込み別スレッドで実行する
+            Process? process = CreateProcess();
+            if (process == null) {
+                Tools.Error("Flaskアプリの起動に失敗しました");
+                return;
+            }
+
+            _tokenSource = new CancellationTokenSource();
+
             BackgroundWorker wc = new BackgroundWorker();
             wc.WorkerSupportsCancellation = true;
             wc.DoWork += (sender, e) =>
             {
-                FlaskThread();
+                FlaskThread(process);
             };
-            token.Register(() =>
+            _tokenSource.Token.Register(() =>
             {
                 wc.CancelAsync();
             });

@@ -31,9 +31,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="python\clipboard_app_utils.py" />
-    <Resource Include="python\flask_app.py" />
-    <Resource Include="python\template.py" />
+    <EmbeddedResource Include="python\clipboard_app_utils.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\flask_app.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\template.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

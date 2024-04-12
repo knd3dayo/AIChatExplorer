@@ -1,6 +1,8 @@
 ﻿using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using WK.Libraries.SharpClipboardNS;
 using LiteDB;
+using System.Text.Json.Nodes;
+using WpfApp1.Utils;
 
 namespace WpfApp1.Model
 {
@@ -59,6 +61,95 @@ namespace WpfApp1.Model
             return newItem;
 
         }
+        // このオブジェクトをJSONに変換
+        public JsonNode ToJsonNode() {
+            JsonNode jsonNode = new JsonObject();
+            jsonNode["content"] = Content;
+            jsonNode["type"] = ContentType.ToString();
+            JsonArray tagsJsonArray = new JsonArray();
+            foreach (var tag in Tags) {
+                tagsJsonArray.Add(tag);
+            }
+            jsonNode["tags"] = tagsJsonArray;
+            jsonNode["description"] = Description;
+            jsonNode["sourceApplicationName"] = SourceApplicationName;
+            jsonNode["sourceApplicationTitle"] = SourceApplicationTitle;
+            jsonNode["sourceApplicationID"] = SourceApplicationID;
+            jsonNode["sourceApplicationPath"] = SourceApplicationPath;
+            return jsonNode;
+        }
+        // JSONからオブジェクトを生成
+        public void FromJsonNode(JsonNode jsonNode) {
+            if (jsonNode == null) { 
+                Tools.Warn("ClipboardItem.FromJsonNode: jsonNode is null");
+                return;
+            }
+            JsonNode? item = jsonNode["item"];
+            if (item == null) {
+                Tools.Warn("ClipboardItem.FromJsonNode: item is null");
+                return;
+            }
+
+            JsonNode? contentNode = item["content"];
+            if (contentNode != null) {
+                var value = contentNode.GetValue<string>();
+                if (value != null) {
+                    Content = value;
+                }
+            }
+            JsonNode? typeNode = item["type"];
+            if (typeNode != null) {
+                var value = typeNode.GetValue<string>();
+                if (value != null) {
+                    ContentType = (ContentTypes)System.Enum.Parse(typeof(ContentTypes), value);
+                }
+            }
+            JsonArray? tagsNode = item["tags"]?.AsArray();
+            if (tagsNode != null) {
+                Tags.Clear();
+                foreach (var tagNode in tagsNode) {
+                    var value = tagNode?.GetValue<string>();
+                    if (value != null) {
+                        Tags.Add(value);
+                    }
+                }
+            }
+            JsonNode? descriptionNode = item["description"];
+            if (descriptionNode != null) {
+                var value = descriptionNode.GetValue<string>();
+                if (value != null) {
+                    Description = value;
+                }
+            }
+            JsonNode? sourceApplicationNameNode = item["sourceApplicationName"];
+            if (sourceApplicationNameNode != null) {
+                var value = sourceApplicationNameNode.GetValue<string>();
+                if (value != null) {
+                    SourceApplicationName = value;
+                }
+            }
+            JsonNode? sourceApplicationTitleNode = item["sourceApplicationTitle"];
+            if (sourceApplicationTitleNode != null) {
+                var value = sourceApplicationTitleNode.GetValue<string>();
+                if (value != null) {
+                    SourceApplicationTitle = value;
+                }
+            }
+            JsonNode? sourceApplicationIDNode = item["sourceApplicationID"];
+            if (sourceApplicationIDNode != null) {
+                var value = sourceApplicationIDNode.GetValue<int>();
+                SourceApplicationID = value;
+            }
+            JsonNode? sourceApplicationPathNode = item["sourceApplicationPath"];
+            if (sourceApplicationPathNode != null) {
+                var value = sourceApplicationPathNode.GetValue<string>();
+                if (value != null) {
+                    SourceApplicationPath = value;
+                }
+            }
+
+        }
+
         public ClipboardItem MergeItems(List<ClipboardItem> items, bool mergeWithHeader) 
         {
             if (this.ContentType != SharpClipboard.ContentTypes.Text) {

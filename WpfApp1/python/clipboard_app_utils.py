@@ -1,4 +1,6 @@
 ﻿
+
+
 def extract_text(filename):
     from unstructured.partition.auto import partition
 
@@ -7,11 +9,7 @@ def extract_text(filename):
     return "\n".join([element.text for element in elements])
 
 
-def mask_data(spacy_model_name, text ):
-    import spacy
-    
-    # textの中から個人情報をマスクする
-    nlp = spacy.load(spacy_model_name)
+def mask_data(nlp, text ):
     doc = nlp(text)
     # ent.label_がPERSONのent.textと 連番を保持する
     person_dict = {}
@@ -50,9 +48,9 @@ def mask_data(spacy_model_name, text ):
 def openai_chat2():
     pass
 
-def openai_chat(input_json, json_mode, azure_openai, openai_api_key, chat_model_name, azure_openai_endpoint):
+def openai_chat(input_json, azure_openai, openai_api_key, chat_model_name, azure_openai_endpoint):
     # OpenAIのchatを実行する
-    openai_util = OpenAIUtil(json_mode, azure_openai, openai_api_key, azure_openai_endpoint)
+    openai_util = OpenAIUtil(azure_openai, openai_api_key, azure_openai_endpoint)
     json_obj = json.loads(input_json)
     client = openai_util.client
     response = client.chat.completions.create(
@@ -64,12 +62,10 @@ def openai_chat(input_json, json_mode, azure_openai, openai_api_key, chat_model_
 import importlib
 import json
 class OpenAIUtil:
-    def __init__(self, json_mode, azure_openai, openai_api_key, azure_openai_endpoint=None):
+    def __init__(self, azure_openai, openai_api_key, azure_openai_endpoint=None):
         self.azure_openai = azure_openai
         self.openai_api_key = openai_api_key
         self.azure_openai_endpoint = azure_openai_endpoint
-        # json_formatの使用可否
-        self.json_mode = json_mode
 
         self.client = self._create_openai_object()
 

@@ -215,7 +215,7 @@ namespace WpfApp1 {
         }
         private static void ProcessClipboardItem(SharpClipboard.ContentTypes contentTypes, string content, ClipboardChangedEventArgs e) {
             if (clipboard == null) {
-                Tools.ShowMessage("Clipboard is null");
+                Tools.Error("Clipboard is null");
                 return;
             }
 
@@ -247,7 +247,10 @@ namespace WpfApp1 {
                 }
 
             }
-
+            // test
+            ClipboardItemAppClient client = new ClipboardItemAppClient();
+            client.Post(item);
+            
             // RootFolderのAddItemを呼び出す
             ClipboardItemFolder.RootFolder.AddItem(item);
 
