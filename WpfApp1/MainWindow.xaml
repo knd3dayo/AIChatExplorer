@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="コピペツール" Height="450" Width="1000"
+        Title="コピペツール" Height="450" Width="800"
         Name="window1"
         xmlns:b="clr-namespace:WpfApp1.Behaviors"
         >
@@ -162,7 +162,7 @@
                                     Grid.Row="2">
                                     <TextBlock 
                                         Text="{Binding Path=Content}" Name="clipboardText" 
-                                        TextTrimming="None"
+                                        TextTrimming="CharacterEllipsis"
                                         FontSize="8pt"
                                         MinHeight="50" MaxHeight="100"
                                         HorizontalAlignment="Stretch"

@@ -58,13 +58,16 @@ namespace WpfApp1.View.ClipboardItemView
         /// <param name="obj"></param>
         public static void OpenItemCommandExecute(object obj)
         {
-            // objがClipboardItemViewModelでない場合は処理をしない
-            if (obj is not ClipboardItemViewModel)
-            {
-                Tools.Error("obj is not ClipboardItemViewModel");
+            if (MainWindowViewModel.Instance == null) {
+                Tools.Error("Instanceがありません");
                 return;
             }
-            ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)obj;
+            if (MainWindowViewModel.Instance.SelectedItem == null)
+            {
+                Tools.Error("選択中のアイテムがありません");
+                return;
+            }
+            ClipboardItemViewModel clipboardItemViewModel = MainWindowViewModel.Instance.SelectedItem;
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(clipboardItemViewModel, () =>

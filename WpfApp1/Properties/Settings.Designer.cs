@@ -133,7 +133,7 @@ namespace WpfApp1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool USE_PYTHON {
             get {
                 return ((bool)(this["USE_PYTHON"]));
@@ -181,13 +181,25 @@ namespace WpfApp1.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool USE_PYTHON_FLASK {
             get {
                 return ((bool)(this["USE_PYTHON_FLASK"]));
             }
             set {
                 this["USE_PYTHON_FLASK"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AUTO_DESCRIPTION {
+            get {
+                return ((bool)(this["AUTO_DESCRIPTION"]));
+            }
+            set {
+                this["AUTO_DESCRIPTION"] = value;
             }
         }
     }

@@ -30,7 +30,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="USE_PYTHON" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="PYTHON_DLL_PATH" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Python312\python312.dll</Value>
@@ -42,6 +42,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="USE_PYTHON_FLASK" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AUTO_DESCRIPTION" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

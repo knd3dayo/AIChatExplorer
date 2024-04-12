@@ -32,17 +32,17 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="説明" Grid.Column="0" Grid.Row="0" Width="100" HorizontalAlignment="Left"
-                     Margin="10,10,0,10"
+                     Margin="10,0,10,10"
                        />
                 <TextBox Text="{Binding Description}" Grid.Column="1" Grid.Row="0"  
-                     Margin="10,0,0,10"
+                     Margin="10,0,10,10"
                      IsEnabled="True"
                      />
                 <Button Content="タグ" Grid.Column="0" Grid.Row="1" Width="100" HorizontalAlignment="Left"
-                     Margin="10,0,0,10" Command="{Binding AddTagButtonCommand}" 
+                     Margin="10,0,10,10" Command="{Binding AddTagButtonCommand}" 
             />
                 <TextBox Text="{Binding TagsString}" Grid.Column="1" Grid.Row="1"
-                     Margin="10,0,0,10"
+                     Margin="10,0,10,10"
                      IsEnabled="False"
                      />
             </Grid>
