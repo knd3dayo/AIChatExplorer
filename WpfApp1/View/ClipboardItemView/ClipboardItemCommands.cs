@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Windows;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.ClipboardItemFolderView;
@@ -22,7 +23,7 @@ namespace WpfApp1.View.ClipboardItemView
                 return;
             }
             // 選択中のアイテムがない場合は処理をしない
-            if (MainWindowViewModel.Instance.SelectedItem == null)
+            if (MainWindowViewModel.Instance.SelectedItems.Count  == 0)
             {
                 Tools.Error("エラーが発生しました。選択中のアイテムがない");
                 return;
@@ -38,7 +39,13 @@ namespace WpfApp1.View.ClipboardItemView
             {
                 ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
                 // 選択中のアイテムを削除
-                clipboardItemFolder.ClipboardItemFolder.DeleteItem(MainWindowViewModel.Instance.SelectedItem.ClipboardItem);
+                foreach (var item in MainWindowViewModel.Instance.SelectedItems) {
+                    if (item is not ClipboardItemViewModel) {
+                        continue;
+                    }
+                    ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)item;
+                    clipboardItemFolder.ClipboardItemFolder.DeleteItem(clipboardItemViewModel.ClipboardItem);
+                }
                 // フォルダ内のアイテムを再読み込む
                 clipboardItemFolder.Load();
                 Tools.Info("削除しました");
@@ -49,7 +56,7 @@ namespace WpfApp1.View.ClipboardItemView
         /// 編集後にフォルダ内のアイテムを再読み込みする
         /// </summary>
         /// <param name="obj"></param>
-        public static void EditItemCommandExecute(object obj)
+        public static void OpenItemCommandExecute(object obj)
         {
             // objがClipboardItemViewModelでない場合は処理をしない
             if (obj is not ClipboardItemViewModel)
@@ -223,26 +230,42 @@ namespace WpfApp1.View.ClipboardItemView
                 Tools.Error("Instanceがありません");
                 return;
             }
-            if (Instance.SelectedItem == null)
+            if (Instance.SelectedItems is null)
             {
                 Tools.Error("選択中のアイテムがありません");
                 return;
             }
-            if (Instance.CopiedItem == null)
-            {
-                Tools.Error("コピーされたアイテムがありません");
+            if (Instance.SelectedItems.Count == 0) {
+                Tools.Error("選択中のアイテムがありません");
                 return;
             }
-            ClipboardItem fromItem = Instance.CopiedItem.ClipboardItem;
-            ClipboardItem toItem = Instance.SelectedItem.ClipboardItem;
-
+            IList selectedItems = Instance.SelectedItems;
+            if (selectedItems.Count < 2) {
+                Tools.Error("マージするアイテムを2つ選択してください");
+                return;
+            }
+            // マージ先のアイテム。SelectedItems[0]がマージ先
+            if (selectedItems[0] is not ClipboardItemViewModel toItemModelView) {
+                Tools.Error("マージ先のアイテムが選択されていません");
+                return;
+            }
+            ClipboardItem toItem = toItemModelView.ClipboardItem;
+            List<ClipboardItem> fromItems = new List<ClipboardItem>();
             try
             {
-                ClipboardItem newItem = toItem.Merge(fromItem, mergeWithHeader);
+                // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
+                for (int i = 1; i < selectedItems.Count; i++) {
+                    if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
+                        Tools.Error("マージ元のアイテムが選択されていません");
+                        return;
+                    }
+                    fromItems.Add(fromItemModelView.ClipboardItem);
+                }
+                toItem = toItem.MergeItems(fromItems, mergeWithHeader);
                 // ClipboardItemをLiteDBに保存
-                ClipboardDatabaseController.UpsertItem(newItem);
+                ClipboardDatabaseController.UpsertItem(toItem);
                 // コピー元のアイテムを削除
-                ClipboardDatabaseController.DeleteItem(fromItem);
+                ClipboardDatabaseController.DeleteItems(fromItems);
 
                 // フォルダ内のアイテムを再読み込み
                 Instance.SelectedFolder?.Load();
@@ -327,7 +350,7 @@ namespace WpfApp1.View.ClipboardItemView
 
 
         // 選択中のアイテムを開く処理
-        public static void OpenSelectedItemCommandExecute(object obj)
+        public static void OpenSelectedItemAsFileCommandExecute(object obj)
         {
             if (MainWindowViewModel.Instance == null)
             {
@@ -349,7 +372,7 @@ namespace WpfApp1.View.ClipboardItemView
 
         }
         // 選択中のアイテムを新規として開く処理
-        public static void OpenSelectedItemAsNewCommandExecute(object obj)
+        public static void OpenSelectedItemAsNewFileCommandExecute(object obj)
         {
             if (MainWindowViewModel.Instance == null)
             {

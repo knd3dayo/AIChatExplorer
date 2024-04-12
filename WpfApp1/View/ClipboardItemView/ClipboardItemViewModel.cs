@@ -123,11 +123,11 @@ namespace WpfApp1.View.ClipboardItemView
         public static SimpleDelegateCommand CopyToClipboardCommand => new(ClipboardItemCommands.CopyToClipboardCommandExecute);
 
         // コンテキストメニューの「開く」の実行用コマンド
-        public SimpleDelegateCommand OpenItemCommand => new(ClipboardItemCommands.OpenSelectedItemCommandExecute);
+        public SimpleDelegateCommand OpenItemAsFileCommand => new(ClipboardItemCommands.OpenSelectedItemAsFileCommandExecute);
         // コンテキストメニューの「新規で開く」の実行用コマンド
-        public SimpleDelegateCommand OpenItemAsNewCommand => new(ClipboardItemCommands.OpenSelectedItemAsNewCommandExecute);
+        public SimpleDelegateCommand OpenItemAsNewFileCommand => new(ClipboardItemCommands.OpenSelectedItemAsNewFileCommandExecute);
         // コンテキストメニューの「編集」の実行用コマンド
-        public SimpleDelegateCommand EditItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.EditItemCommandExecute);
+        public SimpleDelegateCommand OpenItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
         // コンテキストメニューの「タグ」の実行用コマンド
         public static SimpleDelegateCommand EditTagItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.EditTagCommandExecute);
         // コンテキストメニューの「削除」の実行用コマンド

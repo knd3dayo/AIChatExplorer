@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
@@ -55,7 +56,8 @@ namespace WpfApp1.Behaviors
             }
         }
         public static readonly DependencyProperty SelectedItemsProperty =
-            DependencyProperty.RegisterAttached("SelectedItems", typeof(IList<object>), typeof(ListBoxBehavior), new PropertyMetadata(new PropertyChangedCallback(SelectedItemsChanged)));
+            DependencyProperty.RegisterAttached("SelectedItems", typeof(IList), typeof(ListBoxBehavior), 
+                new PropertyMetadata(new PropertyChangedCallback(SelectedItemsChanged)));
         public static void SelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
             ListBox element = (ListBox)d;
             element.SelectionChanged += Element_SelectionChanged;
@@ -66,12 +68,12 @@ namespace WpfApp1.Behaviors
             element.SetValue(SelectedItemsProperty, element.SelectedItems);
         }
 
-        public static void SetSelectedItems(UIElement element, IList<object> value) {
+        public static void SetSelectedItems(UIElement element, IList value) {
             element.SetValue(SelectedItemsProperty, value);
         }
 
-        public static IList<object> GetSelectedItems(UIElement element) {
-            return (IList<object>)element.GetValue(SelectedItemsProperty);
+        public static IList GetSelectedItems(UIElement element) {
+            return (IList)element.GetValue(SelectedItemsProperty);
         }
 
     }

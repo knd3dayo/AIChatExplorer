@@ -20,8 +20,10 @@
 
         <!-- 選択したアイテムを開く-->
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenSelectedItemCommand}" />
-        <!-- 選択したアイテムを新規として開く-->
-        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenSelectedItemAsNewCommand}" />
+        <!-- 選択したアイテムをファイルとして開く-->
+        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenSelectedItemAsFileCommand}" />
+        <!-- 選択したアイテムを新規ファイルとして開く-->
+        <KeyBinding Key="O" Modifiers="Control+Shift+Alt" Command="{Binding OpenSelectedItemAsNewFileCommand}" />
         <!-- 選択中のフォルダにアイテムを貼り付け-->
         <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteFromClipboardCommand}" />
         <!-- 選択中のアイテムにアイテムをマージ-->
@@ -174,21 +176,16 @@
                                         Command="{Binding OpenItemCommand }"
                                         CommandParameter="{Binding}"/>
                                     <MenuItem
-                                        Header="新規として開く"  
-                                        Command="{Binding OpenItemAsNewCommand }"
+                                        Header="ファイルとして開く"  
+                                        Command="{Binding OpenItemAsFileCommand }"
                                         CommandParameter="{Binding}"/>
                                     <MenuItem
-                                        Header="編集"  
-                                        Command="{Binding EditItemCommand }"
+                                        Header="新規ファイルとして開く"  
+                                        Command="{Binding OpenItemAsNewFileCommand }"
                                         CommandParameter="{Binding}"/>
-
                                     <MenuItem
                                         Header="コピー"  
                                         Command="{Binding CopyToClipboardCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem 
-                                        Header="タグ"  
-                                        Command="{Binding EditTagItemCommand}"
                                         CommandParameter="{Binding}"/>
                                     <MenuItem
                                         Header="Pythonスクリプト"  
@@ -227,7 +224,7 @@
                             <DockPanel.InputBindings>
                                 <!-- 選択したアイテムを開く-->
                                 <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding OpenItemCommand}" CommandParameter="{Binding}"/>
-                    </DockPanel.InputBindings>
+                            </DockPanel.InputBindings>
                         </DockPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

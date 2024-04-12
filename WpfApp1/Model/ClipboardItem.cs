@@ -59,35 +59,38 @@ namespace WpfApp1.Model
             return newItem;
 
         }
-        public ClipboardItem Merge(ClipboardItem item, bool mergeWithHeader) 
+        public ClipboardItem MergeItems(List<ClipboardItem> items, bool mergeWithHeader) 
         {
-            // 自分の種別がFileの場合はマージしない
-            if (ContentType == ContentTypes.Files)
-            {
-                throw new Utils.ThisApplicationException("Fileのマージはできません");
-            }
-            // 相手の種別がFileの場合はマージしない
-            if (item.ContentType == ContentTypes.Files)
-            {
-                throw new Utils.ThisApplicationException("Fileのマージはできません");
-            }
+            if (this.ContentType != SharpClipboard.ContentTypes.Text) {
 
+                throw new Utils.ThisApplicationException("Text以外のアイテムへのマージはできません");
+            }
             string mergeText = "\n";
             // 現在の時刻をYYYY/MM/DD HH:MM:SS形式で取得
             mergeText += "--- マージ時刻 " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
-            if (mergeWithHeader)
-            {
-                // 説明がある場合は追加
-                if (Description != "")
-                {
-                    mergeText += item.Description + "\n";
-                }
-                // mergeTextにHeaderを追加
-                mergeText += item.HeaderText + "\n";
-            }
-            // Contentを追加
-            mergeText += item.Content + "\n";
 
+            foreach ( var item in items) {
+
+                // Itemの種別がFileが含まれている場合はマージしない
+                if (item.ContentType != ContentTypes.Files && item.ContentType != ContentTypes.Text) {
+                    throw new Utils.ThisApplicationException("TextまたはFile以外のアイテムのマージはできません");
+                }
+            }
+            foreach (var item in items) {
+                if (mergeWithHeader)
+                {
+                    // 説明がある場合は追加
+                    if (Description != "")
+                    {
+                        mergeText += item.Description + "\n";
+                    }
+                    // mergeTextにHeaderを追加
+                    mergeText += item.HeaderText + "\n";
+                }
+                // Contentを追加
+                mergeText += item.Content + "\n";
+
+            }
             // mergeTextをContentに追加
             Content += mergeText;
 

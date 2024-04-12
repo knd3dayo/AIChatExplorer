@@ -226,6 +226,12 @@ namespace WpfApp1
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(item.Id);
         }
+        // アイテムをDBから削除する
+        public static void DeleteItems(List<ClipboardItem> items) {
+            foreach (var item in items) {
+                DeleteItem(item);
+            }
+        }
 
 
 
