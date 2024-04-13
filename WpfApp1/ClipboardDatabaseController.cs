@@ -323,87 +323,63 @@ namespace WpfApp1
             }
         }
 
-        public static void DeleteItems(ClipboardItemFolder targetFolder)
-        {
-            foreach (var item in targetFolder.Items)
-            {
-                ClipboardDatabaseController.DeleteItem(item);
-            }
-            targetFolder.Items.Clear();
-            ClipboardDatabaseController.UpsertFolder(targetFolder);
+        public static void DeleteItems(ClipboardItemFolder targetFolder) {
+            foreach (var item in targetFolder.Items) {
+                if (item.IsPinned == false) {
+                    ClipboardDatabaseController.DeleteItem(item);
+                }
+                targetFolder.Items.Clear();
+                ClipboardDatabaseController.UpsertFolder(targetFolder);
 
+            }
         }
 
-        public static IEnumerable<ClipboardItem> Filter(ILiteCollection<ClipboardItem> liteCollection, SearchCondition searchCondition)
-        {
-            if (searchCondition.IsEmpty())
-            {
+        public static IEnumerable<ClipboardItem> Filter(ILiteCollection<ClipboardItem> liteCollection, SearchCondition searchCondition) {
+            if (searchCondition.IsEmpty()) {
                 return liteCollection.FindAll();
             }
 
             var results = liteCollection.FindAll();
             // SearchConditionの内容に従ってフィルタリング
-            if (string.IsNullOrEmpty(searchCondition.Description) == false)
-            {
-                if (searchCondition.ExcludeDescription)
-                {
+            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
+                if (searchCondition.ExcludeDescription) {
                     results = results.Where(x => x.Description.Contains(searchCondition.Description) == false);
-                }
-                else
-                {
+                } else {
                     results = results.Where(x => x.Description.Contains(searchCondition.Description));
                 }
             }
-            if (string.IsNullOrEmpty(searchCondition.Content) == false)
-            {
-                if (searchCondition.ExcludeContent)
-                {
+            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
+                if (searchCondition.ExcludeContent) {
                     results = results.Where(x => x.Content.Contains(searchCondition.Content) == false);
-                }
-                else
-                {
+                } else {
                     results = results.Where(x => x.Content.Contains(searchCondition.Content));
                 }
             }
-            if (string.IsNullOrEmpty(searchCondition.Tags) == false)
-            {
-                if (searchCondition.ExcludeTags)
-                {
+            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
+                if (searchCondition.ExcludeTags) {
                     results = results.Where(x => x.Tags.Contains(searchCondition.Tags) == false);
-                }
-                else
-                {
+                } else {
                     results = results.Where(x => x.Tags.Contains(searchCondition.Tags));
                 }
             }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false)
-            {
-                if (searchCondition.ExcludeSourceApplicationName)
-                {
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
+                if (searchCondition.ExcludeSourceApplicationName) {
                     results = results.Where(x => x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
-                }
-                else
-                {
+                } else {
                     results = results.Where(x => x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
                 }
             }
-            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false)
-            {
-                if (searchCondition.ExcludeSourceApplicationTitle)
-                {
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
+                if (searchCondition.ExcludeSourceApplicationTitle) {
                     results = results.Where(x => x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
-                }
-                else
-                {
+                } else {
                     results = results.Where(x => x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
                 }
             }
-            if (searchCondition.EnableStartTime)
-            {
+            if (searchCondition.EnableStartTime) {
                 results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
             }
-            if (searchCondition.EnableEndTime)
-            {
+            if (searchCondition.EnableEndTime) {
                 results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
             }
             results = results.OrderByDescending(x => x.UpdatedAt);
@@ -411,12 +387,12 @@ namespace WpfApp1
             return results;
 
         }
+
         public static List<ScriptItem> GetScriptItems() {
             var collection = GetClipboardDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
             var items = collection.FindAll();
             return items.ToList();
         }
-
 
     }
 }

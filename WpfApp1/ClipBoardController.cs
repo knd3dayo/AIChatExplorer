@@ -230,6 +230,10 @@ namespace WpfApp1 {
             if (Properties.Settings.Default.AutoDescription) {
                 AutoProcessCommand.CreateAutoDescription(item);
             }
+            // AUTO_TAGが設定されている場合は自動でタグを設定する
+            if (Properties.Settings.Default.AutoTag) {
+                AutoProcessCommand.CreateAutoTags(item);
+            }
             // ★test
             // ClipboardItemAppClient client = new ClipboardItemAppClient();
             // client.Post(item);

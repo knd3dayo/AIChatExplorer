@@ -32,6 +32,7 @@ namespace WpfApp1.Model {
             public static ActionName ExtractText = new ActionName(true, "ExtractText");
             public static ActionName MaskData = new ActionName(true, "MaskData");
             public static ActionName SplitPathToFolderAndFileName = new ActionName(true, "SplitPathToFolderAndFileName");
+
             public static ActionName RunPythonScript = new ActionName(false, "RunPythonScript");
 
         }

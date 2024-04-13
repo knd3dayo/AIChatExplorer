@@ -12,6 +12,13 @@ namespace WpfApp1.Model
 {
     public class ClipboardItem
     {
+        // コンストラクタ
+        public ClipboardItem() {
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
+        }
+        // プロパティ
+
         public ObjectId? Id { get; set; }
 
         public string? CollectionName { get; set; }
@@ -41,13 +48,13 @@ namespace WpfApp1.Model
         public int? SourceApplicationID { get; set; }
         //　貼り付け元のアプリケーションのパス
         public string? SourceApplicationPath { get; set; }
+        // ピン止め
+        public bool IsPinned { get; set; }
 
 
-        public ClipboardItem()
-        {
-            CreatedAt = DateTime.Now;
-            UpdatedAt = DateTime.Now;
-        }
+        // -------------------------------------------------------------------
+        // インスタンスメソッド
+        // -------------------------------------------------------------------
 
         public ClipboardItem Copy()
         {
@@ -135,7 +142,10 @@ namespace WpfApp1.Model
                 header1 += "[ソースタイトル]" + SourceApplicationTitle + "\n";
                 // Tags
                 header1 += "[タグ]" + TagsString() + "\n";
-
+                // ピン止め中かどうか
+                if (IsPinned) {
+                    header1 += "[ピン止めしてます]\n";
+                }
 
                 if (ContentType == SharpClipboard.ContentTypes.Text)
                 {
@@ -151,6 +161,10 @@ namespace WpfApp1.Model
                 }
             }
         }
+        //--------------------------------------------------------------------------------
+        // staticメソッド
+        //--------------------------------------------------------------------------------
+
         // ClipboardItemをJSON文字列に変換する
         public static string ToJson(ClipboardItem item) {
             var options = new JsonSerializerOptions {

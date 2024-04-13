@@ -37,6 +37,8 @@ namespace WpfApp1 {
             BackupController.Init();
 
             // コンテキストメニューの初期化
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ピン止め", ChangePinCommand));
+
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("開く", OpenSelectedItemCommand));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ファイルとして開く", OpenSelectedItemAsFileCommand));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("新規ファイルとして開く", OpenSelectedItemAsNewFileCommand));
@@ -169,6 +171,8 @@ namespace WpfApp1 {
             settingWindow.ShowDialog();
         }
 
+        // ピン止めの切り替え処理
+        public static SimpleDelegateCommand ChangePinCommand => new SimpleDelegateCommand(ClipboardItemCommands.ChangePinCommandExecute);
         // 選択中のアイテムを開く処理
         public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
         // 選択したアイテムをテキストファイルとして開く処理

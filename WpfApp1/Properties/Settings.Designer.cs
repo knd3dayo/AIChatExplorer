@@ -142,5 +142,17 @@ namespace WpfApp1.Properties {
                 this["AutoDescription"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoTag {
+            get {
+                return ((bool)(this["AutoTag"]));
+            }
+            set {
+                this["AutoTag"] = value;
+            }
+        }
     }
 }

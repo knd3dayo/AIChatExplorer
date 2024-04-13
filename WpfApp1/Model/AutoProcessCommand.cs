@@ -87,7 +87,11 @@ namespace WpfApp1.Model {
                 }
             }
         }
-        
+        // 自動でタグを付与するコマンド
+        public static void CreateAutoTags(ClipboardItem item) {
+            // タグを初期化
+            List<string> originalTags = item.Tags;
+        }
 
     }
 }

@@ -46,11 +46,20 @@ namespace WpfApp1.View.ClipboardItemView {
                 Tools.Info("削除しました");
             }
         }
-        /// <summary>
-        /// コンテキストメニューの「編集」をクリックしたときの処理
-        /// 編集後にフォルダ内のアイテムを再読み込みする
-        /// </summary>
-        /// <param name="obj"></param>
+        public static void ChangePinCommandExecute(object obj) {
+            if (MainWindowViewModel.Instance == null) {
+                Tools.Error("Instanceがありません");
+                return;
+            }
+            if (MainWindowViewModel.Instance.SelectedItem == null) {
+                Tools.Error("選択中のアイテムがありません");
+                return;
+            }
+            ClipboardItemViewModel clipboardItemViewModel = MainWindowViewModel.Instance.SelectedItem;
+            clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
+            ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+
+        }
         public static void OpenItemCommandExecute(object obj) {
             if (MainWindowViewModel.Instance == null) {
                 Tools.Error("Instanceがありません");
