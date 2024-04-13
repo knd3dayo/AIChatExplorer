@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WK.Libraries.SharpClipboardNS;
@@ -15,6 +9,7 @@ namespace WpfApp1.View.ClipboardItemView
 {
     public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject
     {
+
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; set; } = clipboardItem;
 
@@ -116,32 +111,20 @@ namespace WpfApp1.View.ClipboardItemView
                 return ClipboardItem.HeaderText;
             }
         }
-        // --------------------------------------------------------------
-        // コマンド
-        // --------------------------------------------------------------
-        // Ctrl+Cで実行するコマンド
-        public static SimpleDelegateCommand CopyToClipboardCommand => new(ClipboardItemCommands.CopyToClipboardCommandExecute);
-
-        // コンテキストメニューの「開く」の実行用コマンド
-        public SimpleDelegateCommand OpenItemAsFileCommand => new(ClipboardItemCommands.OpenSelectedItemAsFileCommandExecute);
-        // コンテキストメニューの「新規で開く」の実行用コマンド
-        public SimpleDelegateCommand OpenItemAsNewFileCommand => new(ClipboardItemCommands.OpenSelectedItemAsNewFileCommandExecute);
-        // コンテキストメニューの「編集」の実行用コマンド
-        public SimpleDelegateCommand OpenItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
-        // コンテキストメニューの「タグ」の実行用コマンド
-        public static SimpleDelegateCommand EditTagItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.EditTagCommandExecute);
-        // コンテキストメニューの「削除」の実行用コマンド
-        public SimpleDelegateCommand DeleteItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.DeleteSelectedItemCommandExecute);
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(PythonCommands.ExtractTextCommandExecute);
+        public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
         // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(PythonCommands.MaskDataCommandExecute);
-
+        public static SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemMaskDataCommandExecute);
         // コンテキストメニューの「OpenAIチャット」を実行するコマンド
-        public SimpleDelegateCommand OpenAIChatCommand => new SimpleDelegateCommand(PythonCommands.OpenAIChatCommandExecute);
+        public static SimpleDelegateCommand OpenAIChatCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenAIChatCommandExecute);
 
         // コンテキストメニューの「スクリプト」のItemSource
         public static ObservableCollection<ScriptItem> ScriptItems => PythonExecutor.ScriptItems;
+        // RunPythonScriptCommand
+        public static SimpleDelegateCommand RunPythonScriptCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute);
+
+        // 選択中のアイテムを開く処理
+        public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
 
     }
 }

@@ -217,7 +217,7 @@ namespace WpfApp1.Model
                     result += "アクション:なし\n";
                 }
                 // Type が CopyToFolderまたはMoveToFolderの場合
-                if (RuleAction?.Type == AutoProcessItem.ActionType.CopyToFolder || RuleAction?.Type == AutoProcessItem.ActionType.MoveToFolder)
+                if (RuleAction != null && RuleAction.IsCopyOrMoveAction())
                 {
                     // DestinationFolderが設定されている場合
                     if (DestinationFolder != null)
@@ -236,8 +236,16 @@ namespace WpfApp1.Model
         // 無限ループなコピーまたは移動の可能性をチェックする
         public static bool CheckInfiniteLoop(AutoProcessRule rule)
         {
+            // ruleがNullの場合はFalseを返す
+            if (rule == null) {
+                return false;
+            }
+            // rule.RuleActionがNullの場合はFalseを返す
+            if (rule.RuleAction == null) {
+                return false;
+            }
             // ruleがCopyToFolderまたはMoveToFolder以外の場合はFalseを返す
-            if (rule.RuleAction?.Type != AutoProcessItem.ActionType.CopyToFolder && rule.RuleAction?.Type != AutoProcessItem.ActionType.MoveToFolder)
+            if (rule.RuleAction.IsCopyOrMoveAction() == false)
             {
                 return false;
             }

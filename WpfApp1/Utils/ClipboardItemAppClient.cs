@@ -9,31 +9,22 @@ using WpfApp1.Model;
 namespace WpfApp1.Utils {
     public class ClipboardItemAppClient : ApiClient {
 
-        public void Post(ClipboardItem clipboardItem) {
+        public ClipboardItem Post(ClipboardItem clipboardItem) {
             string path = "/api/clipboard_item";
             string url = PythonExecutor.GetApiUrl(path);
             if (string.IsNullOrEmpty(url)) {
-                Tools.Error("APIサーバーのURLが設定されていません");
-                return;
+                throw new ThisApplicationException("APIサーバーのURLが設定されていません。設定画面でAPIサーバーのURLを設定してください。");
             }
-            var requestJsonNode = new JsonObject();
-            requestJsonNode["item"] = clipboardItem.ToJsonNode();
-            requestJsonNode["action"] = "mask_data";
 
-            var responseJsonNode = base.Post(url, requestJsonNode);
+            var responseJsonNode = base.Post(url, ClipboardItem.ToJson(clipboardItem));
             if (responseJsonNode == null) {
-                Tools.Error("APIサーバーとの通信に失敗しました");
-                return;
+                throw new Exception("APIサーバーとの通信に失敗しました");
             }
-            if (responseJsonNode["error"] != null) {
-                string? message = responseJsonNode["error"]?.GetValue<string>();
-                if (message != null) {
-                    Tools.Error(message);
-                    return;
-                }
+            ClipboardItem? resultItem = ClipboardItem.FromJson(responseJsonNode);
+            if (resultItem == null) {
+                throw new Exception("APIサーバーからのレスポンスが不正です");
             }
-            clipboardItem.FromJsonNode(responseJsonNode);
-            return;
+            return resultItem;
         }
 
     }

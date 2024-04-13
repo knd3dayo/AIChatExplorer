@@ -16,7 +16,7 @@ namespace WpfApp1.View.ScriptView
             set
             {
                 scriptItem = value;
-                OnPropertyChanged("CommandArgument");
+                OnPropertyChanged("ScriptItem");
             }
         }
 

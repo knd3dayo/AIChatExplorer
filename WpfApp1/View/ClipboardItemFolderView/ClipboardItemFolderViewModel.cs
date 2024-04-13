@@ -66,6 +66,10 @@ namespace WpfApp1.View.ClipboardItemFolderView
             set
             {
                 ClipboardItemFolder.IsSelected = value;
+                // MainWindowViewModelのSelectedFolderにも反映
+                if (MainWindowViewModel.Instance != null) {
+                    MainWindowViewModel.Instance.SelectedFolder = this;
+                }
                 OnPropertyChanged("IsSelected");
             }
         }

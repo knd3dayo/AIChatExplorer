@@ -185,8 +185,6 @@ namespace WpfApp1.Model {
             ClipboardDatabaseController.UpsertItem(result);
             // Itemsに追加
             Items.Add(result);
-            // OnPropertyChanged
-            OnPropertyChanged("Items");
 
             return item;
 

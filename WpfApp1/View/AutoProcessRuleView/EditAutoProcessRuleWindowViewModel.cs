@@ -10,8 +10,6 @@ namespace WpfApp1.View.AutoProcessRuleView
 {
     public class EditAutoProcessRuleWindowViewModel : ObservableObject
     {
-        // 自動処理の一覧
-        public static ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = AutoProcessItem.AutoProcessItemTemplates;
         public enum Mode
         {
             Create,
@@ -64,12 +62,14 @@ namespace WpfApp1.View.AutoProcessRuleView
             }
             set
             {
+                if (value == null) {
+                    return;
+                }
                 _SelectedAutoProcessItem = value;
                 OnPropertyChanged("SelectedAutoProcessItem");
 
                 // アクションがコピーまたは移動の場合はFolderSelectionPanelEnabledをtrueにする
-                if (value?.Type == AutoProcessItem.ActionType.CopyToFolder ||
-                                       value?.Type == AutoProcessItem.ActionType.MoveToFolder)
+                if (value.IsCopyOrMoveAction())
                 {
                     FolderSelectionPanelEnabled = true;
                 }
@@ -147,7 +147,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             //  autoProcessRule?.RuleActionが存在し、AutoProcessItemsの名前が一致するものを選択
             if (autoProcessRule?.RuleAction != null)
             {
-                foreach (var item in AutoProcessItems)
+                foreach (var item in AutoProcessItem.GetScriptAutoProcessItems())
                 {
                     if (item.Name == autoProcessRule.RuleAction.Name)
                     {
@@ -307,8 +307,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             // アクションを追加
             TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem;
             // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
-            if (SelectedAutoProcessItem.Type == AutoProcessItem.ActionType.CopyToFolder ||
-                               SelectedAutoProcessItem.Type == AutoProcessItem.ActionType.MoveToFolder)
+            if (SelectedAutoProcessItem.IsCopyOrMoveAction())
             {
                 if (DestinationFolder == null)
                 {

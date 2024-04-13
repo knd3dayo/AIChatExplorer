@@ -22,7 +22,10 @@ namespace WpfApp1.Model
             set
             {
                 _text = value;
-                Messages.Add($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {value}");
+                // DefaultText以外の場合はメッセージを追加
+                if (value != DefaultText) {
+                    Messages.Add($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {value}");
+                }
                 OnPropertyChanged("Text");
                 // _tokenSourceがnullの場合は初期化
                 if (_tokenSource != null)

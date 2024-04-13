@@ -134,11 +134,8 @@ namespace WpfApp1
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(ClipboardDatabaseController.AUTO_PROCESS_RULES_COLLECTION_NAME);
             var items = collection.FindAll().Where(
                 x => x.RuleAction != null
-                && (x.RuleAction.Type == AutoProcessItem.ActionType.CopyToFolder
-                    || x.RuleAction.Type == AutoProcessItem.ActionType.MoveToFolder
-                    )
-                    );
-
+                && (x.RuleAction.Name== AutoProcessItem.ActionName.CopyToFolder.Name
+                    || x.RuleAction.Name == AutoProcessItem.ActionName.MoveToFolder.Name));
             return items;
 
         }
@@ -414,7 +411,11 @@ namespace WpfApp1
             return results;
 
         }
-
+        public static List<ScriptItem> GetScriptItems() {
+            var collection = GetClipboardDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
+            var items = collection.FindAll();
+            return items.ToList();
+        }
 
 
     }

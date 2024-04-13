@@ -149,10 +149,8 @@ namespace WpfApp1 {
             // クリップボードの監視を有効にする
             IsClipboardMonitorEnabled = true;
 
-            // PropertiesにUSE_PYTHONが設定されている場合はPythonスクリプトを実行する準備を行う。
-            if (Properties.Settings.Default.USE_PYTHON) {
-                PythonExecutor.Init();
-            }
+            // Pythonの初期化
+            PythonExecutor.Init();
 
         }
         // ClipboardItemの内容をクリップボードにコピーする 
@@ -229,30 +227,19 @@ namespace WpfApp1 {
             item.CollectionName = ClipboardItemFolder.RootFolder.AbsoluteCollectionName;
 
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
-            if (Properties.Settings.Default.AUTO_DESCRIPTION) {
-                string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
-                // Textの場合
-                if (item.ContentType == SharpClipboard.ContentTypes.Text) {
-                    item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
-                }
-                // Fileの場合
-                else if (item.ContentType == SharpClipboard.ContentTypes.Files) {
-                    item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
-                    // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
-                    if (item.Content.Length > 20) {
-                        item.Description += " ファイル：" + item.Content.Substring(0, 20) + "..." + item.Content.Substring(item.Content.Length - 30);
-                    } else {
-                        item.Description += " ファイル：" + item.Content;
-                    }
-                }
-
+            if (Properties.Settings.Default.AutoDescription) {
+                AutoProcessCommand.CreateAutoDescription(item);
             }
-            // test
-            ClipboardItemAppClient client = new ClipboardItemAppClient();
-            client.Post(item);
+            // ★test
+            // ClipboardItemAppClient client = new ClipboardItemAppClient();
+            // client.Post(item);
             
             // RootFolderのAddItemを呼び出す
+            
             ClipboardItemFolder.RootFolder.AddItem(item);
+            // 現在選択中のClipboardItemFolderに通知
+            MainWindowViewModel.ReloadClipboardItems();
+
 
         }
 

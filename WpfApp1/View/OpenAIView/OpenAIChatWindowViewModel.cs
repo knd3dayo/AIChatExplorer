@@ -82,7 +82,7 @@ namespace WpfApp1.View.OpenAIView
         public string ChatSessionCollectionName { get; set; } = "chat-session";
 
         private string inputText = "";
-        public string InpupText
+        public string InputText
         {
             get
             {
@@ -91,7 +91,7 @@ namespace WpfApp1.View.OpenAIView
             set
             {
                 inputText = value;
-                OnPropertyChanged("InpupText");
+                OnPropertyChanged("InputText");
             }
 
         }
@@ -101,16 +101,16 @@ namespace WpfApp1.View.OpenAIView
         public void SendChatCommandExecute(object parameter)
         {
             // inputTextをChatItemsに追加
-            ChatItems.Add(new ChatItem(ChatSessionCollectionName, ChatItem.UserRole, InpupText));
+            ChatItems.Add(new ChatItem(ChatSessionCollectionName, ChatItem.UserRole, InputText));
             // OpenAIにチャットを送信してレスポンスを受け取る
             try
             {
                 // OpenAIにチャットを送信してレスポンスを受け取る
-                string result = PythonExecutor.OpenAIChat(JSONChatItems);
+                string result = PythonExecutor.PythonFunctions.OpenAIChat(JSONChatItems);
                 // レスポンスをChatItemsに追加
                 ChatItems.Add(new ChatItem(ChatSessionCollectionName, ChatItem.AssistantRole, result));
                 // inputTextをクリア
-                InpupText = "";
+                InputText = "";
             }
             catch (Exception e)
             {
@@ -125,7 +125,7 @@ namespace WpfApp1.View.OpenAIView
         public void ClearChatCommandExecute(object parameter)
         {
             ChatItems.Clear();
-            InpupText = "";
+            InputText = "";
         }
 
         // Closeコマンド

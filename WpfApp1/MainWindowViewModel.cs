@@ -36,6 +36,34 @@ namespace WpfApp1 {
             // バックアップ処理を実施
             BackupController.Init();
 
+            // コンテキストメニューの初期化
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("開く", OpenSelectedItemCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ファイルとして開く", OpenSelectedItemAsFileCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("新規ファイルとして開く", OpenSelectedItemAsNewFileCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("コピー", CopyToClipboardCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("削除", DeleteSelectedItemCommand));
+
+            // サブメニュー設定
+            ClipboardAppMenuItem pythonMenuItems = new ClipboardAppMenuItem("Python実行", SimpleDelegateCommand.EmptyCommand);
+            pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("テキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
+            pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
+            pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("OpenAIチャット", ClipboardItemViewModel.OpenAIChatCommand));
+            // Pythonスクリプト(ユーザー定義)
+            foreach (ScriptItem scriptItem in ClipboardItemViewModel.ScriptItems) {
+
+                pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem(scriptItem.Description , new SimpleDelegateCommand((parameter) => {
+                    ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute(scriptItem);
+                })
+                ));
+            }
+            ClipboardItemContextMenuItems.Add(pythonMenuItems);
+
+            // フォルダーのコンテキストメニュー
+            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("開く", ClipboardItemFolderViewModel.OpenFolderCommand));
+            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("編集", ClipboardItemFolderViewModel.EditFolderCommand));
+            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("新規作成", ClipboardItemFolderViewModel.CreateFolderCommand));
+            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("削除", ClipboardItemFolderViewModel.DeleteFolderCommand));
+
         }
         // フォルダ階層を再描写する
         public void ReloadFolder() {
@@ -44,7 +72,16 @@ namespace WpfApp1 {
             ClipboardItemFolders.Add(new ClipboardItemFolderViewModel(ClipboardItemFolder.SearchRootFolder));
             OnPropertyChanged("ClipboardItemFolders");
         }
-
+        // ClipboardItemを再描写する
+        public static void ReloadClipboardItems() {
+            if (Instance == null) {
+                return;
+            }
+            if (Instance.SelectedFolder == null) {
+                return;
+            }
+            Instance.SelectedFolder.Load();
+        }
         // ClipboardItemFolder
 
         public static ObservableCollection<ClipboardItemFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
@@ -91,6 +128,13 @@ namespace WpfApp1 {
             StatusText.Text = text;
             OnPropertyChanged("StatusText");
         }
+        //-----
+        // ClipboardItemContextMenuItems
+        //-----
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
         //--------------------------------------------------------------------------------
         // コマンド
         //--------------------------------------------------------------------------------
@@ -115,13 +159,6 @@ namespace WpfApp1 {
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public static SimpleDelegateCommand DeleteSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.DeleteSelectedItemCommandExecute);
 
-        // 選択中のアイテムを開く処理
-        public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
-        // 選択したアイテムをテキストファイルとして開く処理
-        public static SimpleDelegateCommand OpenSelectedItemAsFileCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenSelectedItemAsFileCommandExecute);
-        // 選択したアイテムを新規として開く処理
-        public static SimpleDelegateCommand OpenSelectedItemAsNewFileCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenSelectedItemAsNewFileCommandExecute);
-
         // Ctrl + N が押された時の処理
         public static SimpleDelegateCommand CreateItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.CreateItemCommandExecute);
 
@@ -132,6 +169,12 @@ namespace WpfApp1 {
             settingWindow.ShowDialog();
         }
 
+        // 選択中のアイテムを開く処理
+        public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
+        // 選択したアイテムをテキストファイルとして開く処理
+        public static SimpleDelegateCommand OpenSelectedItemAsFileCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenSelectedItemAsFileCommandExecute);
+        // 選択したアイテムを新規として開く処理
+        public static SimpleDelegateCommand OpenSelectedItemAsNewFileCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenSelectedItemAsNewFileCommandExecute);
 
         // Ctrl + X が押された時の処理
         public static SimpleDelegateCommand CutItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.CutItemCommandExecute);
@@ -166,10 +209,6 @@ namespace WpfApp1 {
             statusMessageWindowViewModel.Initialize();
             statusMessageWindow.ShowDialog();
         }
-        // スクリプトを削除するコマンド
-
-
-        // OpenAIChatを実行したときの処理
 
     }
 

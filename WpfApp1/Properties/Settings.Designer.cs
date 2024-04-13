@@ -26,180 +26,120 @@ namespace WpfApp1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool USE_OPENAI {
+        public bool AzureOpenAI {
             get {
-                return ((bool)(this["USE_OPENAI"]));
+                return ((bool)(this["AzureOpenAI"]));
             }
             set {
-                this["USE_OPENAI"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AZURE_OPENAI {
-            get {
-                return ((bool)(this["AZURE_OPENAI"]));
-            }
-            set {
-                this["AZURE_OPENAI"] = value;
+                this["AzureOpenAI"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OPENAI_API_KEY {
+        public string OpenAIKey {
             get {
-                return ((string)(this["OPENAI_API_KEY"]));
+                return ((string)(this["OpenAIKey"]));
             }
             set {
-                this["OPENAI_API_KEY"] = value;
+                this["OpenAIKey"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("text-embedding-3-small")]
-        public string EMBEDDING_MODEL_NAME {
+        public string OpenAIEmbeddingModel {
             get {
-                return ((string)(this["EMBEDDING_MODEL_NAME"]));
+                return ((string)(this["OpenAIEmbeddingModel"]));
             }
             set {
-                this["EMBEDDING_MODEL_NAME"] = value;
+                this["OpenAIEmbeddingModel"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("gpt-4-1106-preview")]
-        public string CHAT_MODEL_NAME {
+        public string OpenAICompletionModel {
             get {
-                return ((string)(this["CHAT_MODEL_NAME"]));
+                return ((string)(this["OpenAICompletionModel"]));
             }
             set {
-                this["CHAT_MODEL_NAME"] = value;
+                this["OpenAICompletionModel"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ja_core_news_lg")]
-        public string SPACY_MODEL_NAME {
+        public string SpacyModel {
             get {
-                return ((string)(this["SPACY_MODEL_NAME"]));
+                return ((string)(this["SpacyModel"]));
             }
             set {
-                this["SPACY_MODEL_NAME"] = value;
+                this["SpacyModel"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool USE_VECTOR_DB {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int PythonExecution {
             get {
-                return ((bool)(this["USE_VECTOR_DB"]));
+                return ((int)(this["PythonExecution"]));
             }
             set {
-                this["USE_VECTOR_DB"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string VECTOR_DB_URL {
-            get {
-                return ((string)(this["VECTOR_DB_URL"]));
-            }
-            set {
-                this["VECTOR_DB_URL"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string TAGS {
-            get {
-                return ((string)(this["TAGS"]));
-            }
-            set {
-                this["TAGS"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool USE_PYTHON {
-            get {
-                return ((bool)(this["USE_PYTHON"]));
-            }
-            set {
-                this["USE_PYTHON"] = value;
+                this["PythonExecution"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Python312\\python312.dll")]
-        public string PYTHON_DLL_PATH {
+        public string PythonDllPath {
             get {
-                return ((string)(this["PYTHON_DLL_PATH"]));
+                return ((string)(this["PythonDllPath"]));
             }
             set {
-                this["PYTHON_DLL_PATH"] = value;
+                this["PythonDllPath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("7")]
-        public int BACKUP_GENERATIONS {
+        public int BackupGeneration {
             get {
-                return ((int)(this["BACKUP_GENERATIONS"]));
+                return ((int)(this["BackupGeneration"]));
             }
             set {
-                this["BACKUP_GENERATIONS"] = value;
+                this["BackupGeneration"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AZURE_OPENAI_ENDPOINT {
+        public string AzureOpenAIEndpoint {
             get {
-                return ((string)(this["AZURE_OPENAI_ENDPOINT"]));
+                return ((string)(this["AzureOpenAIEndpoint"]));
             }
             set {
-                this["AZURE_OPENAI_ENDPOINT"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool USE_PYTHON_FLASK {
-            get {
-                return ((bool)(this["USE_PYTHON_FLASK"]));
-            }
-            set {
-                this["USE_PYTHON_FLASK"] = value;
+                this["AzureOpenAIEndpoint"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool AUTO_DESCRIPTION {
+        public bool AutoDescription {
             get {
-                return ((bool)(this["AUTO_DESCRIPTION"]));
+                return ((bool)(this["AutoDescription"]));
             }
             set {
-                this["AUTO_DESCRIPTION"] = value;
+                this["AutoDescription"] = value;
             }
         }
     }

@@ -1,6 +1,5 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
+using System.Windows.Threading;
 using Python.Runtime;
 
 namespace WpfApp1
@@ -10,19 +9,16 @@ namespace WpfApp1
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            try
-            {
-                base.OnStartup(e);
-                // here you take control
+        protected override void OnStartup(StartupEventArgs e) {
+            base.OnStartup(e);
 
-            }catch(System.Exception ex)
-            {
-                // error.logにエラーログを出力
-                System.IO.File.AppendAllText("error.log", ex.Message + "\n" + ex.StackTrace + "\n");
-            }
+            DispatcherUnhandledException += OnUnhandledException;
+        }
 
+        private void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
+            Exception ex = e.Exception;
+            string message = $"エラーが発生しました\nメッセージ：{ex.Message}\nスタックトレース:\n{ex.StackTrace}";
+            System.Windows.MessageBox.Show(message);
         }
     }
 

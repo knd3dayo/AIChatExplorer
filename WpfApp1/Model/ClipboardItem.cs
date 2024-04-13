@@ -3,6 +3,10 @@ using WK.Libraries.SharpClipboardNS;
 using LiteDB;
 using System.Text.Json.Nodes;
 using WpfApp1.Utils;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
+using WpfApp1.View.OpenAIView;
 
 namespace WpfApp1.Model
 {
@@ -48,7 +52,11 @@ namespace WpfApp1.Model
         public ClipboardItem Copy()
         {
             ClipboardItem newItem = new ClipboardItem();
-            newItem.CreatedAt = CreatedAt;
+            CopyTo(newItem);
+            return newItem;
+
+        }
+        public void CopyTo(ClipboardItem newItem) {
             newItem.UpdatedAt = UpdatedAt;
             newItem.Content = Content;
             newItem.ContentType = ContentType;
@@ -58,98 +66,8 @@ namespace WpfApp1.Model
             newItem.SourceApplicationPath = SourceApplicationPath;
             newItem.Tags = new List<string>(Tags);
             newItem.Description = Description;
-            return newItem;
-
         }
-        // このオブジェクトをJSONに変換
-        public JsonNode ToJsonNode() {
-            JsonNode jsonNode = new JsonObject();
-            jsonNode["content"] = Content;
-            jsonNode["type"] = ContentType.ToString();
-            JsonArray tagsJsonArray = new JsonArray();
-            foreach (var tag in Tags) {
-                tagsJsonArray.Add(tag);
-            }
-            jsonNode["tags"] = tagsJsonArray;
-            jsonNode["description"] = Description;
-            jsonNode["sourceApplicationName"] = SourceApplicationName;
-            jsonNode["sourceApplicationTitle"] = SourceApplicationTitle;
-            jsonNode["sourceApplicationID"] = SourceApplicationID;
-            jsonNode["sourceApplicationPath"] = SourceApplicationPath;
-            return jsonNode;
-        }
-        // JSONからオブジェクトを生成
-        public void FromJsonNode(JsonNode jsonNode) {
-            if (jsonNode == null) { 
-                Tools.Warn("ClipboardItem.FromJsonNode: jsonNode is null");
-                return;
-            }
-            JsonNode? item = jsonNode["item"];
-            if (item == null) {
-                Tools.Warn("ClipboardItem.FromJsonNode: item is null");
-                return;
-            }
-
-            JsonNode? contentNode = item["content"];
-            if (contentNode != null) {
-                var value = contentNode.GetValue<string>();
-                if (value != null) {
-                    Content = value;
-                }
-            }
-            JsonNode? typeNode = item["type"];
-            if (typeNode != null) {
-                var value = typeNode.GetValue<string>();
-                if (value != null) {
-                    ContentType = (ContentTypes)System.Enum.Parse(typeof(ContentTypes), value);
-                }
-            }
-            JsonArray? tagsNode = item["tags"]?.AsArray();
-            if (tagsNode != null) {
-                Tags.Clear();
-                foreach (var tagNode in tagsNode) {
-                    var value = tagNode?.GetValue<string>();
-                    if (value != null) {
-                        Tags.Add(value);
-                    }
-                }
-            }
-            JsonNode? descriptionNode = item["description"];
-            if (descriptionNode != null) {
-                var value = descriptionNode.GetValue<string>();
-                if (value != null) {
-                    Description = value;
-                }
-            }
-            JsonNode? sourceApplicationNameNode = item["sourceApplicationName"];
-            if (sourceApplicationNameNode != null) {
-                var value = sourceApplicationNameNode.GetValue<string>();
-                if (value != null) {
-                    SourceApplicationName = value;
-                }
-            }
-            JsonNode? sourceApplicationTitleNode = item["sourceApplicationTitle"];
-            if (sourceApplicationTitleNode != null) {
-                var value = sourceApplicationTitleNode.GetValue<string>();
-                if (value != null) {
-                    SourceApplicationTitle = value;
-                }
-            }
-            JsonNode? sourceApplicationIDNode = item["sourceApplicationID"];
-            if (sourceApplicationIDNode != null) {
-                var value = sourceApplicationIDNode.GetValue<int>();
-                SourceApplicationID = value;
-            }
-            JsonNode? sourceApplicationPathNode = item["sourceApplicationPath"];
-            if (sourceApplicationPathNode != null) {
-                var value = sourceApplicationPathNode.GetValue<string>();
-                if (value != null) {
-                    SourceApplicationPath = value;
-                }
-            }
-
-        }
-
+        
         public ClipboardItem MergeItems(List<ClipboardItem> items, bool mergeWithHeader) 
         {
             if (this.ContentType != SharpClipboard.ContentTypes.Text) {
@@ -233,7 +151,37 @@ namespace WpfApp1.Model
                 }
             }
         }
+        // ClipboardItemをJSON文字列に変換する
+        public static string ToJson(ClipboardItem item) {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return System.Text.Json.JsonSerializer.Serialize(item, options);
+        }
+        // JSON文字列をClipboardItemに変換する
+        public static ClipboardItem? FromJson(string json) {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            ClipboardItem? item = System.Text.Json.JsonSerializer.Deserialize<ClipboardItem>(json, options);
+            if (item == null) {
+                throw new ThisApplicationException("JSON文字列をClipboardItemに変換できませんでした");
+            }
 
+            return item;
+
+        }
+
+        // ChatItemsをJSON文字列に変換する
+        public static string ToJson(List<JSONChatItem> items) {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return System.Text.Json.JsonSerializer.Serialize(items, options);
+        }
     }
 
 }

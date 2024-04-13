@@ -12,6 +12,12 @@
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <!-- クリップボードアイテムのコンテキストメニューアイテム-->
+        <CollectionViewSource Source="{Binding ClipboardItemContextMenuItems}" x:Key="ClipboardItemContextMenuItems"/>
+        <!-- フォルダのコンテキストメニューアイテム-->
+        <CollectionViewSource Source="{Binding ClipboardItemFolderContextMenuItems}" x:Key="ClipboardItemFolderContextMenuItems"/>
+    </Window.Resources>
     <Window.InputBindings>
         <!-- 検索ダイアログを表示-->
         <KeyBinding Key="F" Modifiers="Control" Command="{Binding SearchCommand}" />
@@ -171,59 +177,25 @@
                             </Grid>
                             <DockPanel.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem
-                                        Header="開く"  
-                                        Command="{Binding OpenItemCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem
-                                        Header="ファイルとして開く"  
-                                        Command="{Binding OpenItemAsFileCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem
-                                        Header="新規ファイルとして開く"  
-                                        Command="{Binding OpenItemAsNewFileCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem
-                                        Header="コピー"  
-                                        Command="{Binding CopyToClipboardCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem
-                                        Header="Pythonスクリプト"  
-                                        >
-                                        <MenuItem
-                                            Header="テキストを抽出"  
-                                            Command="{Binding ExtractTextCommand }"
-                                            CommandParameter="{Binding}"
-                                            Visibility="{Binding FileVisibility}"
-                                            />
-                                        <MenuItem
-                                            Header="データをマスキング"  
-                                            Command="{Binding MaskDataCommand }"
-                                            CommandParameter="{Binding}"
-                                            Visibility="{Binding TextVisibility }"
-                                        />
-                                    </MenuItem>
-                                    <MenuItem ItemsSource="{Binding ScriptItems}"
-                                        Header="Pythonスクリプト(ユーザー定義)" >
-                                        <MenuItem.ItemTemplate>
-                                            <DataTemplate>
-                                                <MenuItem Header="{Binding Description}" Command="{Binding RunPythonScriptCommand}" CommandParameter="{Binding}"/>
-                                            </DataTemplate>
-                                        </MenuItem.ItemTemplate>
-                                    </MenuItem>
-                                    <MenuItem
-                                        Header="OpenAIチャット"
-                                        Command="{Binding OpenAIChatCommand}"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem
-                                        Header="削除"
-                                        Command="{Binding DeleteItemCommand}"
-                                        CommandParameter="{Binding}"/>
-                                    </ContextMenu>
+                                    <ContextMenu.ItemsSource>
+                                        <CompositeCollection>
+                                            <CollectionContainer Collection="{Binding Source={StaticResource ClipboardItemContextMenuItems}}"/>
+                                        </CompositeCollection>
+                                    </ContextMenu.ItemsSource>
+                                    <ContextMenu.ItemContainerStyle>
+                                        <Style TargetType="MenuItem">
+                                            <Setter Property="MenuItem.Header" Value="{Binding Title}"/>
+                                            <Setter Property="MenuItem.Command" Value="{Binding Command}"/>
+                                            <Setter Property="MenuItem.CommandParameter" Value="{Binding}"/>
+                                            <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}"/>
+                                        </Style>
+                                    </ContextMenu.ItemContainerStyle>
+
+                                </ContextMenu>
                             </DockPanel.ContextMenu>
                             <DockPanel.InputBindings>
                                 <!-- 選択したアイテムを開く-->
-                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding OpenItemCommand}" CommandParameter="{Binding}"/>
+                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding OpenSelectedItemCommand}" CommandParameter="{Binding}"/>
                             </DockPanel.InputBindings>
                         </DockPanel>
                         </DataTemplate>

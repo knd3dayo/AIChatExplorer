@@ -17,7 +17,7 @@ namespace WpfApp1
         public static void Init()
         {
             string backupDir = "backup";
-            int backupGenerations = Properties.Settings.Default.BACKUP_GENERATIONS;
+            int backupGenerations = Properties.Settings.Default.BackupGeneration;
 
             // バックアップ処理の初期化
             // バックアップ先のリポジトリのパスがない場合はディレクトリ作成を行い、リポジトリを初期化する

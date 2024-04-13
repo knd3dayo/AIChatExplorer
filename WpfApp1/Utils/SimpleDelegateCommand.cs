@@ -25,5 +25,8 @@ namespace WpfApp1.Utils
 
         public bool CanExecute(object? parameter) { return true; }
         public event EventHandler? CanExecuteChanged;
+
+
+        public static SimpleDelegateCommand EmptyCommand => new((parameter) => { });
     }
 }

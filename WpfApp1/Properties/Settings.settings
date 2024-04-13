@@ -2,49 +2,34 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WpfApp1.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="USE_OPENAI" Type="System.Boolean" Scope="User">
+    <Setting Name="AzureOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AZURE_OPENAI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OPENAI_API_KEY" Type="System.String" Scope="User">
+    <Setting Name="OpenAIKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="EMBEDDING_MODEL_NAME" Type="System.String" Scope="User">
+    <Setting Name="OpenAIEmbeddingModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">text-embedding-3-small</Value>
     </Setting>
-    <Setting Name="CHAT_MODEL_NAME" Type="System.String" Scope="User">
+    <Setting Name="OpenAICompletionModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">gpt-4-1106-preview</Value>
     </Setting>
-    <Setting Name="SPACY_MODEL_NAME" Type="System.String" Scope="User">
+    <Setting Name="SpacyModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">ja_core_news_lg</Value>
     </Setting>
-    <Setting Name="USE_VECTOR_DB" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="PythonExecution" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="VECTOR_DB_URL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="TAGS" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="USE_PYTHON" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="PYTHON_DLL_PATH" Type="System.String" Scope="User">
+    <Setting Name="PythonDllPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Python312\python312.dll</Value>
     </Setting>
-    <Setting Name="BACKUP_GENERATIONS" Type="System.Int32" Scope="User">
+    <Setting Name="BackupGeneration" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
     </Setting>
-    <Setting Name="AZURE_OPENAI_ENDPOINT" Type="System.String" Scope="User">
+    <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="USE_PYTHON_FLASK" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="AUTO_DESCRIPTION" Type="System.Boolean" Scope="User">
+    <Setting Name="AutoDescription" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

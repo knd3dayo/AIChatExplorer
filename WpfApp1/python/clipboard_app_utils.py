@@ -1,5 +1,6 @@
 ﻿
 
+nlp = None
 
 def extract_text(filename):
     from unstructured.partition.auto import partition
@@ -8,15 +9,29 @@ def extract_text(filename):
     elements = partition(filename=filename)
     return "\n".join([element.text for element in elements])
 
-
-def mask_data(nlp, text ):
+def mask_data(text, props = {}):
+    global nlp
+    if (nlp is None):
+        import spacy
+        model_name = props.get("SpacyModel", None)
+        if model_name is None:
+            return text
+        else:
+            nlp = spacy.load(model_name)
+    
+    # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
     doc = nlp(text)
+    # text、PERSON、ORG、GPEを格納するdictを作成
+    resut_dict = {}
+    # PERSONの変換前後のdict
+    result_persion_dict = {}
+    # ORGの変換前後のdict
+    result_org_dict = {}
+    
     # ent.label_がPERSONのent.textと 連番を保持する
     person_dict = {}
     # ent.label_がORGのent.textと 連番を保持する
     org_dict = {}
-    # ent.label_がGPEのent.textと 連番を保持する
-    gpe_dict = {}
 
     for ent in doc.ents:
         if ent.label_ == "PERSON":
@@ -26,7 +41,9 @@ def mask_data(nlp, text ):
                 person_dict[ent.text] = num
 
             text = text.replace(ent.text, f"[MASKED {ent.label_} {num}]")
-       
+            # 結果を格納
+            result_persion_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
+
         elif ent.label_ == "ORG":
             num = org_dict.get(ent.text, None)
             if num is None:
@@ -34,16 +51,35 @@ def mask_data(nlp, text ):
                 org_dict[ent.text] = num
 
             text = text.replace(ent.text, f"[MASKED {ent.label_} {num}]")
+            # 結果を格納
+            result_org_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
 
-        elif ent.label_ == "GPE":
-            num = gpe_dict.get(ent.text, None)
-            if num is None:
-                num = len(gpe_dict) + 1
-                gpe_dict[ent.text] = num
-        
-            text = text.replace(ent.text, f"[MASKED {ent.label_} {num}]")
+        # それぞれのdictをresut_dictに格納する
+        resut_dict["PERSON"] = result_persion_dict
+        resut_dict["ORG"] = result_org_dict
+        resut_dict["TEXT"] = {"BEFORE": text, "AFTER": text}
 
-    return text
+    return resut_dict
+
+def extract_entity(text, props = {}):
+    global nlp
+    if (nlp is None):
+        import spacy
+        model_name = props.get("SpacyModel", None)
+        if model_name is None:
+            return text
+        else:
+            nlp = spacy.load(model_name)
+    
+    # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
+    doc = nlp(text)
+    # text、PERSON、ORG、GPEを格納するdictを作成
+    resut_set = set()
+
+    for ent in doc.ents:
+        resut_set.add(ent.text)
+    return list(resut_set)
+
 
 def openai_chat2():
     pass
