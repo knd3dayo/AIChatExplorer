@@ -29,6 +29,7 @@ namespace WpfApp1.View.ClipboardItemView {
                 Tools.Error("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
+
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
@@ -58,6 +59,9 @@ namespace WpfApp1.View.ClipboardItemView {
             ClipboardItemViewModel clipboardItemViewModel = MainWindowViewModel.Instance.SelectedItem;
             clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
             ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+
+            // フォルダ内のアイテムを再読み込み
+            MainWindowViewModel.Instance?.SelectedFolder?.Load();
 
         }
         public static void OpenItemCommandExecute(object obj) {
@@ -134,6 +138,10 @@ namespace WpfApp1.View.ClipboardItemView {
             PasteClipboardItemCommandExecute(
                 Instance,
                 Instance.CopiedItem, Instance.CopiedItemFolder, Instance.SelectedFolder);
+
+            // フォルダ内のアイテムを再読み込み
+            MainWindowViewModel.Instance?.SelectedFolder?.Load();
+
         }
 
         /// <summary>
@@ -368,6 +376,10 @@ namespace WpfApp1.View.ClipboardItemView {
             AutoProcessCommand.ExtractTextCommandExecute(clipboardItem);
             // 保存
             ClipboardDatabaseController.UpsertItem(clipboardItem);
+
+            // フォルダ内のアイテムを再読み込み
+            MainWindowViewModel.Instance?.SelectedFolder?.Load();
+
         }
 
 
@@ -394,6 +406,8 @@ namespace WpfApp1.View.ClipboardItemView {
             // 保存
             ClipboardDatabaseController.UpsertItem(clipboardItem);
 
+            // フォルダ内のアイテムを再読み込み
+            MainWindowViewModel.Instance?.SelectedFolder?.Load();
 
         }
 
@@ -418,6 +432,9 @@ namespace WpfApp1.View.ClipboardItemView {
                 MainWindowViewModel.StatusText.Text = "Pythonスクリプトを実行しました";
                 // 保存
                 ClipboardDatabaseController.UpsertItem(clipboardItem);
+
+                // フォルダ内のアイテムを再読み込み
+                MainWindowViewModel.Instance?.SelectedFolder?.Load();
 
             } catch (ThisApplicationException e) {
                 Tools.Error(e.Message);

@@ -141,10 +141,6 @@ namespace WpfApp1.Model {
         }
 
 
-        public void DeleteItems() {
-            ClipboardDatabaseController.DeleteItems(this);
-        }
-
         public bool IsSelected { get; set; } = false;
 
         // FolderSelectWindowで選択されたフォルダを適用する処理

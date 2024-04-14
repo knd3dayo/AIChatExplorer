@@ -89,9 +89,15 @@ namespace WpfApp1.Model {
         }
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
-            // タグを初期化
-            List<string> originalTags = item.Tags;
-        }
+            // PythonでItem.ContentからEntityを抽出
+            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(item.Content);
+            foreach (var entity in entities) {
+                // LiteDBにタグを追加
+                ClipboardDatabaseController.InsertTag(entity);
+                // タグを追加
+                item.Tags.Add(entity);
+            }
 
+        }
     }
 }

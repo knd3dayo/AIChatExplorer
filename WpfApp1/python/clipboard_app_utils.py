@@ -15,7 +15,7 @@ def mask_data(text, props = {}):
         import spacy
         model_name = props.get("SpacyModel", None)
         if model_name is None:
-            return text
+            return {}
         else:
             nlp = spacy.load(model_name)
     
@@ -62,23 +62,24 @@ def mask_data(text, props = {}):
     return resut_dict
 
 def extract_entity(text, props = {}):
+    # entityを格納するset
+    result_set = set()
+
     global nlp
     if (nlp is None):
         import spacy
         model_name = props.get("SpacyModel", None)
         if model_name is None:
-            return text
+            return result_set
         else:
             nlp = spacy.load(model_name)
     
-    # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
     doc = nlp(text)
-    # text、PERSON、ORG、GPEを格納するdictを作成
-    resut_set = set()
 
     for ent in doc.ents:
-        resut_set.add(ent.text)
-    return list(resut_set)
+        result_set.add(ent.text)
+
+    return result_set
 
 
 def openai_chat2():

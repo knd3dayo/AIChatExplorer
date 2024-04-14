@@ -20,7 +20,7 @@ namespace WpfApp1.Model {
         public void RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem) {
             throw new Utils.ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
-        public List<string> ExtractEntity(string text) {
+        public HashSet<string> ExtractEntity(string text) {
             throw new Utils.ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
     }

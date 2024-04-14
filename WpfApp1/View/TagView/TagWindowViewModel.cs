@@ -9,7 +9,6 @@ namespace WpfApp1.View.TagView
     public class TagWindowViewModel : ObservableObject
     {
         public ObservableCollection<TagItem> TagList { get; set; } = new ObservableCollection<TagItem>();
-        private ILiteCollection<TagItem>? tagCollection;
 
         private ClipboardItem? _clipboardItem;
         public ClipboardItem? ClipboardItem
@@ -41,10 +40,7 @@ namespace WpfApp1.View.TagView
 
         public TagWindowViewModel()
         {
-            // タグリストの初期化
-            tagCollection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<TagItem>("tag");
-            foreach (var item in tagCollection.FindAll())
-            {
+            foreach (var item in ClipboardDatabaseController.GetTagList()) {
                 TagList.Add(item);
             }
         }
@@ -66,53 +62,56 @@ namespace WpfApp1.View.TagView
 
 
         // タグを追加したときの処理
-        public SimpleDelegateCommand addTagCommand => new SimpleDelegateCommand(AddTagCommandExecute);
+        public SimpleDelegateCommand AddTagCommand => new SimpleDelegateCommand(AddTagCommandExecute);
 
-        private void AddTagCommandExecute(object obj)
+        private void AddTagCommandExecute(object parameter)
         {
-
-            if (obj is string)
-            {
-                string tag = (string)obj;
-                //tagが既に存在するかチェック
-                foreach (var item in TagList)
-                {
-                    if (item.Tag == tag)
-                    {
-                        return;
-                    }
-                }
-                TagItem tagItem = new TagItem { Tag = tag };
-                TagList.Add(tagItem);
-                tagCollection?.Insert(tagItem);
-                NewTag = "";
-
+            if (parameter is not string) {
+                Tools.Error("パラメーターがありません");
+                return;
             }
+            string tag = (string)parameter;
+            if (string.IsNullOrEmpty(tag)) {
+                Tools.Error("タグが空です");
+            }
+            //tagが既に存在するかチェック
+            foreach (var item in TagList) {
+                if (item.Tag == tag) {
+                    Tools.Error("タグが既に存在します");
+                    return;
+                }
+            }
+
+            TagItem tagItem = new TagItem { Tag = tag };
+                TagList.Add(tagItem);
+                ClipboardDatabaseController.InsertTag(tag);
+                NewTag = "";
         }
 
         // タグを削除したときの処理
-        public SimpleDelegateCommand deleteTagCommand => new SimpleDelegateCommand(DeleteTagCommandExecute);
+        public SimpleDelegateCommand DeleteTagCommand => new SimpleDelegateCommand(DeleteTagCommandExecute);
 
         private void DeleteTagCommandExecute(object obj)
         {
-            if (obj is string)
-            {
-                string tag = (string)obj;
-                //tagが既に存在するかチェック
-                foreach (var item in TagList)
-                {
-                    if (item.Tag == tag)
-                    {
-                        TagList.Remove(item);
-                        tagCollection?.Delete(item.Id);
-                        return;
-                    }
+
+            // IsCheckedがTrueのものを削除
+            foreach (var item in TagList) {
+                if (item.IsChecked) {
+                    // LiteDBから削除
+                    ClipboardDatabaseController.DeleteTag(item.Tag);
+                    // TagListから削除
                 }
             }
+            // LiteDBから再読み込み
+            TagList.Clear();
+            foreach (var item in ClipboardDatabaseController.GetTagList()) {
+                TagList.Add(item);
+            }
+
         }
 
         // OKボタンを押したときの処理
-        public SimpleDelegateCommand okCommand => new SimpleDelegateCommand(OkCommandExecute);
+        public SimpleDelegateCommand OkCommand => new SimpleDelegateCommand(OkCommandExecute);
         private void OkCommandExecute(object obj)
         {
             if (ClipboardItem == null)

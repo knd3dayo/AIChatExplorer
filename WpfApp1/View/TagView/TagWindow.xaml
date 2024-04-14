@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1.View.TagView"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
-        Title="タグ編集" Height="300" Width="300">
+        Title="タグ編集" Height="300" Width="400">
     <Window.DataContext>
         <local:TagWindowViewModel/>
     </Window.DataContext>
@@ -32,7 +31,7 @@
                         <StackPanel.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="削除" 
-                                    Command="{Binding PlacementTarget.Tag.deleteTagCommand , RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"
+                                    Command="{Binding PlacementTarget.Tag.DeleteTagCommand , RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"
                                     CommandParameter="{Binding Tag}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
@@ -52,11 +51,11 @@
                          />
             </DockPanel>
             <Button Content="追加" Width="50" HorizontalAlignment="Right" Grid.Column="1"
-                        Command="{Binding addTagCommand}"  
+                        Command="{Binding AddTagCommand}"  
                         CommandParameter="{Binding NewTag}" Margin="10,0,10,0" />
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Command="{Binding okCommand}" Margin="10"  Width="50"/>
+            <Button Content="OK" Command="{Binding OkCommand}" Margin="10"  Width="50"/>
             <Button Content="キャンセル" Click="Cancel_Click" Margin="10"  Width="50"/>
         </StackPanel>
 

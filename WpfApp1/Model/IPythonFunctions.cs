@@ -15,7 +15,7 @@ namespace WpfApp1.Model {
         public void RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem);
 
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する
-        public List<string> ExtractEntity(string text);
+        public HashSet<string> ExtractEntity(string text);
 
 
 

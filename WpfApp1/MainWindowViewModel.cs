@@ -37,11 +37,11 @@ namespace WpfApp1 {
             BackupController.Init();
 
             // コンテキストメニューの初期化
-            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ピン止め", ChangePinCommand));
-
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("開く", OpenSelectedItemCommand));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ファイルとして開く", OpenSelectedItemAsFileCommand));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("新規ファイルとして開く", OpenSelectedItemAsNewFileCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ピン止め", ChangePinCommand));
+
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("コピー", CopyToClipboardCommand));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("削除", DeleteSelectedItemCommand));
 

@@ -12,6 +12,7 @@ namespace WpfApp1
         public static string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public static string SCRIPT_COLLECTION_NAME = "scripts";
         public static string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
+        public static string TAG_COLLECTION_NAME = "tags";
         
         public static string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
         public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
@@ -392,6 +393,42 @@ namespace WpfApp1
             var collection = GetClipboardDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
             var items = collection.FindAll();
             return items.ToList();
+        }
+
+        // タグを取得する
+        public static IEnumerable<TagItem> GetTagList() {
+            var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            var items = collection.FindAll();
+            return items;
+        }
+
+        // 名前を指定してタグを検索する
+        public static IEnumerable<TagItem> SearchTag(string tag) {
+            var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            var tags = collection.FindAll().Where(x => x.Tag.Contains(tag));
+            return tags;
+
+        }
+        // タグを削除する
+        public static void DeleteTag(string tag) {
+            var tags = SearchTag(tag);
+            var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            foreach (var i in tags) {
+                collection.Delete(i.Id);
+            }
+        }
+        // タグを追加する
+        public static void InsertTag(string tag) {
+            // すでに存在するかチェック
+            var tags = SearchTag(tag);
+            foreach (var i in tags) {
+                if (i.Tag == tag) {
+                    return;
+                }
+            }
+            var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            TagItem tagItem = new TagItem { Tag = tag };
+            collection.Insert(tagItem);
         }
 
     }

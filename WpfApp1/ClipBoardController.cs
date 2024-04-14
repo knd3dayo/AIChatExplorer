@@ -228,18 +228,26 @@ namespace WpfApp1 {
 
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
             if (Properties.Settings.Default.AutoDescription) {
-                AutoProcessCommand.CreateAutoDescription(item);
+                try {
+                    AutoProcessCommand.CreateAutoDescription(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"自動タイトル設定処理が失敗しました。\n{ex.Message}");
+                }
             }
             // AUTO_TAGが設定されている場合は自動でタグを設定する
             if (Properties.Settings.Default.AutoTag) {
-                AutoProcessCommand.CreateAutoTags(item);
+                try {
+                    AutoProcessCommand.CreateAutoTags(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
+                }
             }
             // ★test
             // ClipboardItemAppClient client = new ClipboardItemAppClient();
             // client.Post(item);
-            
+
             // RootFolderのAddItemを呼び出す
-            
+
             ClipboardItemFolder.RootFolder.AddItem(item);
             // 現在選択中のClipboardItemFolderに通知
             MainWindowViewModel.ReloadClipboardItems();

@@ -198,9 +198,9 @@ namespace WpfApp1.Model {
 
 
         // IPythonFunctionsのメソッドを実装
-        public List<string> ExtractEntity(string text) {
+        public HashSet<string> ExtractEntity(string text) {
             // Pythonスクリプトを実行する
-            List<string> result = new List<string>();
+            HashSet<string> result = new HashSet<string>();
             Task command = new Task(() => {
                 using (Py.GIL()) {
                     // Pythonスクリプトの関数を呼び出す
@@ -209,10 +209,24 @@ namespace WpfApp1.Model {
                     if (extract_entity == null) {
                         throw new ThisApplicationException("Pythonスクリプトファイルにextract_entity関数が見つかりません");
                     }
+                    // Pythonの関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
+                    // PropertiesからSPACY_MODEL_NAMEを取得
+                    string SPACY_MODEL_NAME = Properties.Settings.Default.SpacyModel;
+                    Dictionary<string, string> dict = new Dictionary<string, string> {
+                            { "SpacyModel", SPACY_MODEL_NAME }
+                        };
                     // extract_entity関数を呼び出す
                     try {
 
-                        result = extract_entity(text);
+                        PyIterable pyIterable = extract_entity(text, dict);
+                        // PythonのリストをC#のHashSetに変換
+                        foreach (PyObject item in pyIterable) {
+                            string? entity = item.ToString();
+                            if (entity == null) {
+                                continue;
+                            }
+                            result.Add(entity);
+                        }
 
                     } catch (PythonException e) {
                         throw new ThisApplicationException(CreatePythonExceptionMessage(e));

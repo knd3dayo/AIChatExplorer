@@ -2,6 +2,7 @@
 using System.Windows;
 using WpfApp1.Model;
 using WpfApp1.Utils;
+using WpfApp1.View.ClipboardItemView;
 using WpfApp1.View.SearchView;
 
 namespace WpfApp1.View.ClipboardItemFolderView
@@ -236,14 +237,20 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 return;
             }
             //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show("表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show("ピン止めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
                 ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-                clipboardItemFolder.ClipboardItemFolder.DeleteItems();
+                foreach (ClipboardItemViewModel item in clipboardItemFolder.Items) {
+                    if (item.ClipboardItem.IsPinned) {
+                        continue;
+                    }
+                    ClipboardDatabaseController.DeleteItem(item.ClipboardItem);
+                }
+
                 // フォルダ内のアイテムを読み込む
                 clipboardItemFolder.Load();
-                Tools.Info("表示中のアイテムを削除しました");
+                Tools.Info("ピン止めされたアイテム以外の表示中のアイテムを削除しました");
             }
         }
     }

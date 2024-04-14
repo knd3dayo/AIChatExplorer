@@ -14,7 +14,7 @@ namespace WpfApp1.View.ClipboardItemView
             }
             set {
                 itemViewModel = value;
-                TagsString = string.Join(",", itemViewModel?.ClipboardItem?.Tags ?? new List<string>());
+                TagsString = string.Join(",", itemViewModel?.ClipboardItem?.Tags ?? new HashSet<string>());
                 Description = itemViewModel?.ClipboardItem?.Description ?? "";
                 Content = itemViewModel?.ClipboardItem?.Content ?? "";
 

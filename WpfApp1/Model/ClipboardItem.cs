@@ -35,7 +35,7 @@ namespace WpfApp1.Model
         public ContentTypes ContentType { get; set; }
 
         //Tags
-        public List<string> Tags { get; set; } = new List<string>();
+        public HashSet<string> Tags { get; set; } = new HashSet<string>();
 
         //説明
         public string Description { get; set; } = "";
@@ -71,7 +71,7 @@ namespace WpfApp1.Model
             newItem.SourceApplicationTitle = SourceApplicationTitle;
             newItem.SourceApplicationID = SourceApplicationID;
             newItem.SourceApplicationPath = SourceApplicationPath;
-            newItem.Tags = new List<string>(Tags);
+            newItem.Tags = new HashSet<string>(Tags);
             newItem.Description = Description;
         }
         
