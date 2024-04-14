@@ -6,10 +6,8 @@ using WpfApp1.Utils;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using WpfApp1.View.OpenAIView;
 
-namespace WpfApp1.Model
-{
+namespace WpfApp1.Model {
     public class ClipboardItem
     {
         // コンストラクタ

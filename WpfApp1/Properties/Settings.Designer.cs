@@ -154,5 +154,17 @@ namespace WpfApp1.Properties {
                 this["AutoTag"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UserMaskedDataInOpenAI {
+            get {
+                return ((bool)(this["UserMaskedDataInOpenAI"]));
+            }
+            set {
+                this["UserMaskedDataInOpenAI"] = value;
+            }
+        }
     }
 }

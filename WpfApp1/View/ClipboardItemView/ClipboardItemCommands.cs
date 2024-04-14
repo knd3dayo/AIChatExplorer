@@ -454,7 +454,6 @@ namespace WpfApp1.View.ClipboardItemView {
             if (Instance.SelectedItem != null) {
                 openAIChatWindowViewModel.InputText = Instance.SelectedItem.ClipboardItem.Content;
             }
-            openAIChatWindowViewModel.ChatSessionCollectionName = ClipboardController.CreateChatSessionCollectionName();
             openAIChatWindow.Show();
         }
 

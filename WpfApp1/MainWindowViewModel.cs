@@ -47,9 +47,11 @@ namespace WpfApp1 {
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("削除", DeleteSelectedItemCommand));
 
             // サブメニュー設定
-            ClipboardAppMenuItem pythonMenuItems = new ClipboardAppMenuItem("Python実行", SimpleDelegateCommand.EmptyCommand);
+            ClipboardAppMenuItem pythonMenuItems = new ClipboardAppMenuItem("便利機能", SimpleDelegateCommand.EmptyCommand);
+            pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", SplitFilePathCommand));
             pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("テキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
             pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
+            pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データを整形", FormatTextCommand));
             pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("OpenAIチャット", ClipboardItemViewModel.OpenAIChatCommand));
             // Pythonスクリプト(ユーザー定義)
             foreach (ScriptItem scriptItem in ClipboardItemViewModel.ScriptItems) {
@@ -222,6 +224,40 @@ namespace WpfApp1 {
             statusMessageWindow.ShowDialog();
         }
 
+        // コンテキストメニューの「テキストを整形」の実行用コマンド
+        public static SimpleDelegateCommand FormatTextCommand => new SimpleDelegateCommand(
+            (parameter) => {
+                // 選択中のアイテムを取得
+                ClipboardItemViewModel clipboardItemViewModel = Instance!.SelectedItem!;
+                if (clipboardItemViewModel == null) {
+                    return;
+                }
+                string content = clipboardItemViewModel.ClipboardItem.Content;
+                // テキストを整形
+                content = AutoProcessCommand.FormatTextCommandExecute(content);
+                // 整形したテキストをセット
+                clipboardItemViewModel.ClipboardItem.Content = content;
+                // LiteDBに保存
+                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+                // 再描写
+                ReloadClipboardItems();
+            });
+        // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
+        public static SimpleDelegateCommand SplitFilePathCommand => new SimpleDelegateCommand(
+                       (parameter) => {
+                // 選択中のアイテムを取得
+                ClipboardItemViewModel clipboardItemViewModel = Instance!.SelectedItem!;
+                if (clipboardItemViewModel == null) {
+                    return;
+                }
+                ClipboardItem clipboardItem = clipboardItemViewModel.ClipboardItem;
+                // ファイルパスを分割
+                AutoProcessCommand.SplitFilePathCommandExecute(clipboardItem);
+                // LiteDBに保存
+                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+                // 再描写
+                ReloadClipboardItems();
+            });
     }
 
 }

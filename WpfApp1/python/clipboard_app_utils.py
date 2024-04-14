@@ -9,7 +9,7 @@ def extract_text(filename):
     elements = partition(filename=filename)
     return "\n".join([element.text for element in elements])
 
-def mask_data(text, props = {}):
+def mask_data(textList: list, props = {}):
     global nlp
     if (nlp is None):
         import spacy
@@ -19,47 +19,53 @@ def mask_data(text, props = {}):
         else:
             nlp = spacy.load(model_name)
     
-    # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
-    doc = nlp(text)
     # text、PERSON、ORG、GPEを格納するdictを作成
-    resut_dict = {}
+    result_dict = {}
+    
     # PERSONの変換前後のdict
     result_persion_dict = {}
     # ORGの変換前後のdict
     result_org_dict = {}
-    
     # ent.label_がPERSONのent.textと 連番を保持する
     person_dict = {}
     # ent.label_がORGのent.textと 連番を保持する
     org_dict = {}
 
-    for ent in doc.ents:
-        if ent.label_ == "PERSON":
-            num = person_dict.get(ent.text, None)
-            if num is None:
-                num = len(person_dict) + 1
-                person_dict[ent.text] = num
+    result_text_list = []
+    # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
+    for beforeText in textList:
+        afterText = beforeText
+        doc = nlp(beforeText)
 
-            text = text.replace(ent.text, f"[MASKED {ent.label_} {num}]")
-            # 結果を格納
-            result_persion_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
+        for ent in doc.ents:
+            if ent.label_ == "PERSON":
+                num = person_dict.get(ent.text, None)
+                if num is None:
+                    num = len(person_dict) + 1
+                    person_dict[ent.text] = num
 
-        elif ent.label_ == "ORG":
-            num = org_dict.get(ent.text, None)
-            if num is None:
-                num = len(org_dict) + 1
-                org_dict[ent.text] = num
+                afterText = afterText.replace(ent.text, f"[MASKED {ent.label_} {num}]")
+                # 結果を格納
+                result_persion_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
 
-            text = text.replace(ent.text, f"[MASKED {ent.label_} {num}]")
-            # 結果を格納
-            result_org_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
+            elif ent.label_ == "ORG":
+                num = org_dict.get(ent.text, None)
+                if num is None:
+                    num = len(org_dict) + 1
+                    org_dict[ent.text] = num
 
-        # それぞれのdictをresut_dictに格納する
-        resut_dict["PERSON"] = result_persion_dict
-        resut_dict["ORG"] = result_org_dict
-        resut_dict["TEXT"] = {"BEFORE": text, "AFTER": text}
+                afterText = afterText.replace(ent.text, f"[MASKED {ent.label_} {num}]")
+                # 結果を格納
+                result_org_dict[ent.text] = f"[MASKED {ent.label_} {num}]"
 
-    return resut_dict
+        result_text_list.append({"BEFORE": beforeText, "AFTER": afterText})
+
+    # それぞれのdictをresut_dictに格納する
+    result_dict["PERSON"] = result_persion_dict
+    result_dict["ORG"] = result_org_dict
+    result_dict["TEXT"] = result_text_list
+
+    return result_dict
 
 def extract_entity(text, props = {}):
     # entityを格納するset
@@ -88,10 +94,34 @@ def extract_entity(text, props = {}):
     return result_set
 
 
-def openai_chat2():
-    pass
+def openai_json_chat(input_json, props={}):
+    # propsからopenaiの設定を取得する
+    openai_api_key = props.get("OpenAIKey", None)
+    azure_openai_endpoint = props.get("AzureOpenAIEndpoint", None)
+    chat_model_name = props.get("OpenAICompletionModel", None)
+    azure_openai_string = props.get("AzureOpenAI", False)
+    # azure_openaiがTrueの場合、AzureOpenAIを使用する.azure_openai_stringを大文字にしてTRUEの場合はTrueに変換する
+    azure_openai = azure_openai_string.upper() == "TRUE"
+    # OpenAIのchatを実行する
+    openai_util = OpenAIUtil(azure_openai, openai_api_key, azure_openai_endpoint)
+    json_obj = json.loads(input_json)
+    client = openai_util.client
+    response = client.chat.completions.create(
+        model=chat_model_name,
+        messages=json_obj,
+        response_format={"type": "json_object"}    
+        )
+    return response.choices[0].message.content
+    
 
-def openai_chat(input_json, azure_openai, openai_api_key, chat_model_name, azure_openai_endpoint):
+def openai_chat(input_json, props ={}):
+    # propsからopenaiの設定を取得する
+    openai_api_key = props.get("OpenAIKey", None)
+    azure_openai_endpoint = props.get("AzureOpenAIEndpoint", None)
+    chat_model_name = props.get("OpenAICompletionModel", None)
+    azure_openai_string = props.get("AzureOpenAI", False)
+    # azure_openaiがTrueの場合、AzureOpenAIを使用する.azure_openai_stringを大文字にしてTRUEの場合はTrueに変換する
+    azure_openai = azure_openai_string.upper() == "TRUE"
     # OpenAIのchatを実行する
     openai_util = OpenAIUtil(azure_openai, openai_api_key, azure_openai_endpoint)
     json_obj = json.loads(input_json)

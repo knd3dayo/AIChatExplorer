@@ -9,6 +9,10 @@
     <Window.DataContext>
         <local:EditItemWindowViewModel/>
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" />
+        <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -43,12 +47,18 @@
                      IsEnabled="False"
                      />
             </Grid>
-            <TextBox Text="{Binding Content}" Grid.Row="1" 
+            <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" 
                      Margin="10,10,10,10"
                      IsEnabled="True"
                      AcceptsReturn="True"
                      VerticalScrollBarVisibility="Auto"
-                      />
+                     HorizontalScrollBarVisibility="Auto"
+                      >
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" />
+                    <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="10,0,0,10" VerticalAlignment="Bottom">
             <DockPanel HorizontalAlignment="Right" Width="150" >

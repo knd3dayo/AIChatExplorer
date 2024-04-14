@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using WK.Libraries.SharpClipboardNS;
 using WpfApp1.Utils;
-using System.IO;
 
 namespace WpfApp1.Model {
     public class AutoProcessCommand {
@@ -35,7 +30,7 @@ namespace WpfApp1.Model {
                 throw new ThisApplicationException("テキスト以外のコンテンツはマスキングできません");
             }
             Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();
-            string result = PythonExecutor.PythonFunctions.MaskData(clipboardItem.Content);
+            string result = PythonExecutor.PythonFunctions.GetMaskedString(clipboardItem.Content);
             clipboardItem.Content = result;
 
             MainWindowViewModel.StatusText.Text = "データをマスキングしました";
@@ -55,7 +50,7 @@ namespace WpfApp1.Model {
                 throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
             string path = clipboardItem.Content;
-            if (string.IsNullOrEmpty(path)) {
+            if (string.IsNullOrEmpty(path) == false) {
                 // ファイルパスをフォルダ名とファイル名に分割
                 string? folderPath = Path.GetDirectoryName(path);
                 if (folderPath == null) {
@@ -99,5 +94,87 @@ namespace WpfApp1.Model {
             }
 
         }
+
+        // 自動処理でOpenAIにチャットを送信するコマンド
+        public static string ChatCommandExecute(List<JSONChatItem> jSONChatItemList, bool masked = false) {
+            string result = "";
+            // maskedがTrueの場合
+            if (masked) {
+                List<string> beforeTextList = new List<string>();
+                foreach (var jSONChatItem in jSONChatItemList) {
+                    beforeTextList.Add(jSONChatItem.Content);
+                }
+                // マスキングデータを取得
+                MaskedData maskedData = PythonExecutor.PythonFunctions.GetMaskedData(beforeTextList);
+
+                for (int i = 0; i < jSONChatItemList.Count; i++) {
+                    jSONChatItemList[i].Content = maskedData.AfterTextList[i];
+                }
+                // JsonChatItemListにマスキングデータを使用している旨のSystemMessageがない場合は追加
+                JSONChatItem systemMessage = CreateMaskedDataSystemMessage();
+                if (jSONChatItemList.Count == 0 || jSONChatItemList[0].Content != systemMessage.Content) {
+                    jSONChatItemList.Insert(0, systemMessage);
+                }
+
+                // ステータスバーにメッセージを表示
+                MainWindowViewModel.StatusText.Text = "OpenAIに送信するデータ:\n";
+                foreach (var item in jSONChatItemList) {
+                    MainWindowViewModel.StatusText.Text += item.Content + "\n";
+                }
+                // OpenAIにチャットを送信してレスポンスを受け取る
+                result = PythonExecutor.PythonFunctions.OpenAIChat(jSONChatItemList);
+                MainWindowViewModel.StatusText.Text = "OpenAIから受信したデータ:\n" + result + "\n";
+
+                result = CovertMaskedDataToOriginalData(maskedData, result);
+
+            } else {
+                // ステータスバーにメッセージを表示
+                MainWindowViewModel.StatusText.Text = "OpenAIに送信するデータ:\n";
+                foreach (var item in jSONChatItemList) {
+                    MainWindowViewModel.StatusText.Text += item.Content + "\n";
+                }
+                // OpenAIにチャットを送信してレスポンスを受け取る
+                result = PythonExecutor.PythonFunctions.OpenAIChat(jSONChatItemList);
+                MainWindowViewModel.StatusText.Text = "OpenAIから受信したデータ:\n" + result + "\n";
+            }
+
+            return result;
+        }
+        // OpenAIでテキストを成形するコマンド
+        public static string FormatTextCommandExecute(string text) {
+            string prompt = "次の文章はWindowsのクリップボードから取得した文章です。これを整形してください。重複した内容がある場合は削除してください。\n";
+
+            // ChatCommandExecuteを実行
+            prompt += "処理対象の文章\n-----------\n" + text;
+            JSONChatItem chatItem = new JSONChatItem(ChatItem.UserRole, text);
+            List<JSONChatItem> jSONChatItemList = [chatItem];
+            string result = ChatCommandExecute(jSONChatItemList, Properties.Settings.Default.UserMaskedDataInOpenAI);
+
+            return result;
+
+        }
+
+        private static string CovertMaskedDataToOriginalData(MaskedData? maskedData, string maskedText) {
+            if (maskedData == null) {
+                return maskedText;
+            }
+            // マスキングデータをもとに戻す
+            string result = maskedText;
+            foreach (var entity in maskedData.Entities) {
+                // ステータスバーにメッセージを表示
+                MainWindowViewModel.StatusText.Text += $"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n";
+                result = result.Replace(entity.After, entity.Before);
+            }
+            return result;
+        }
+
+        private static JSONChatItem CreateMaskedDataSystemMessage() {
+            JSONChatItem jSONChatItem
+                = new JSONChatItem(ChatItem.SystemRole,
+                "このチャットではマスキングデータ(MASKED_...)を使用している場合があります。" +
+                "マスキングデータの文字列はそのままにしてください");
+            return jSONChatItem;
+        }
+
     }
 }

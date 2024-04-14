@@ -9,6 +9,10 @@
     <Window.DataContext>
         <local:OpenAIChatWindowViewModel/>
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding SendChatCommand}"/>
+        <KeyBinding Key="Escape" Command="{Binding CloseCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -134,12 +138,16 @@
                 </Style>
             </ListBox.ItemContainerStyle>
         </ListBox>
-        <TextBox Grid.Row="1" Text="{Binding InputText}" Margin="10,10,10,10" MinHeight="50"/>
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Content="Send" Command="{Binding SendChatCommand}" Margin="10,10,10,10"/>
-            <Button Content="Clear" Command="{Binding ClearChatCommand}" Margin="10,10,10,10"/>
-            <Button Content="Close" Command="{Binding CloseCommand}"  Margin="10,10,10,10"/>
-            
+        <TextBox Grid.Row="1" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" MinHeight="50">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding SendChatCommand}"/>
+                <KeyBinding Key="Escape" Command="{Binding CloseCommand}"/>
+            </TextBox.InputBindings>
+        </TextBox>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="送信" Command="{Binding SendChatCommand}" Margin="10,10,10,10"/>
+            <Button Content="クリア" Command="{Binding ClearChatCommand}" Margin="10,10,10,10"/>
+            <Button Content="閉じる" Command="{Binding CloseCommand}"  Margin="10,10,10,10"/>
         </StackPanel>
     </Grid>
 </Window>

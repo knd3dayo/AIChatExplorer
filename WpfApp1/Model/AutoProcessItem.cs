@@ -30,7 +30,7 @@ namespace WpfApp1.Model {
             public static ActionName CopyToFolder = new ActionName(true, "CopyToFolder");
             public static ActionName MoveToFolder = new ActionName(true, "MoveToFolder");
             public static ActionName ExtractText = new ActionName(true, "ExtractText");
-            public static ActionName MaskData = new ActionName(true, "MaskData");
+            public static ActionName MaskData = new ActionName(true, "GetMaskedString");
             public static ActionName SplitPathToFolderAndFileName = new ActionName(true, "SplitPathToFolderAndFileName");
 
             public static ActionName RunPythonScript = new ActionName(false, "RunPythonScript");

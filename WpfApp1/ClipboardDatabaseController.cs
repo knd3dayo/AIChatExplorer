@@ -16,6 +16,7 @@ namespace WpfApp1
         
         public static string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
         public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
+        public static string CHAT_SESSION_COLLECTION_NAME = "chat_session";
 
         public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static string SEARCH_ROOT_FOLDER_NAME = "search_folder";
