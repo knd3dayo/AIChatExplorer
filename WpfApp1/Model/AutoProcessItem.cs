@@ -199,13 +199,15 @@ namespace WpfApp1.Model {
                 return (args) => {
                     ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
                     
-                    return AutoProcessCommand.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                    AutoProcessCommand.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                    return args.ClipboardItem;
                 };
             }
             if (name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
                 return (args) => {
                     ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
-                    return AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
+                    AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
+                    return args.ClipboardItem;
                 };
             }
             return (args) => {

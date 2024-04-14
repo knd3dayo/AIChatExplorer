@@ -242,6 +242,14 @@ namespace WpfApp1 {
                     Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
                 }
             }
+            // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
+            if (Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
+                try {
+                    AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
+                }
+            }
             // ★test
             // ClipboardItemAppClient client = new ClipboardItemAppClient();
             // client.Post(item);

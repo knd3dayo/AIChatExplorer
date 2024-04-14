@@ -166,5 +166,17 @@ namespace WpfApp1.Properties {
                 this["UserMaskedDataInOpenAI"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoMergeItemsBySourceApplicationTitle {
+            get {
+                return ((bool)(this["AutoMergeItemsBySourceApplicationTitle"]));
+            }
+            set {
+                this["AutoMergeItemsBySourceApplicationTitle"] = value;
+            }
+        }
     }
 }

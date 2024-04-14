@@ -108,6 +108,9 @@ namespace WpfApp1.Model {
             // mergeTextをContentに追加
             Content += mergeText;
 
+            // Tagsのマージ。重複を除外して追加
+            Tags.UnionWith(items.SelectMany(item => item.Tags));
+
             return this;
         }
 

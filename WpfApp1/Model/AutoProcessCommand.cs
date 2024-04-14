@@ -177,9 +177,9 @@ namespace WpfApp1.Model {
         }
 
         // 指定されたフォルダの全アイテムをマージするコマンド
-        public static ClipboardItem MergeItemsCommandExecute(ClipboardItemFolder folder, ClipboardItem item) {
+        public static void MergeItemsCommandExecute(ClipboardItemFolder folder, ClipboardItem item) {
             if (folder.Items.Count == 0) {
-                return item;
+                return;
             }
             // マージ先のアイテムを取得
             ClipboardItem mergeToItem = folder.Items[0];
@@ -192,18 +192,21 @@ namespace WpfApp1.Model {
             // 最後に引数のアイテムを追加
             mergedFromItems.Add(item);
             // マージ元のアイテムをマージ先のアイテムにマージ
-            mergeToItem.MergeItems(mergedFromItems, false);
+            ClipboardItem resultItem = mergeToItem.MergeItems(mergedFromItems, false);
             
             // マージしたアイテムを削除
             foreach (var mergedItem in mergedFromItems) {
                 folder.DeleteItem(mergedItem);
             }
-            return mergeToItem;
+            resultItem.CopyTo(item);
+            // mergedItemを削除
+            ClipboardDatabaseController.DeleteItem(mergeToItem);
+
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public static ClipboardItem MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
+        public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
             if (folder.Items.Count == 0) {
-                return newItem;
+                return;
             }
             List<ClipboardItem> sameTitleItems = new List<ClipboardItem>();
             // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
@@ -214,7 +217,7 @@ namespace WpfApp1.Model {
             }
             // mergeFromItemsが空の場合はnewItemをそのまま返す。
             if (sameTitleItems.Count == 0) {
-                return newItem;
+                return;
             }
             // マージ元のアイテムをUpdateAtの昇順にソート
             sameTitleItems.Sort((a, b) => a.UpdatedAt.CompareTo(b.UpdatedAt));
@@ -225,12 +228,14 @@ namespace WpfApp1.Model {
             // sameTitleItemsの1から最後までをマージ元のアイテムとする
             sameTitleItems.RemoveAt(0);
             // マージ元のアイテムをマージ先のアイテムにマージ
-            mergeToItem.MergeItems(sameTitleItems, false);
+            ClipboardItem resultItem = mergeToItem.MergeItems(sameTitleItems, false);
             // マージしたアイテムを削除
             foreach (var mergedItem in sameTitleItems) {
                 folder.DeleteItem(mergedItem);
             }
-            return mergeToItem;
+            resultItem.CopyTo(newItem);
+            // mergedItemを削除
+            ClipboardDatabaseController.DeleteItem(mergeToItem);
         }
     }
 }
