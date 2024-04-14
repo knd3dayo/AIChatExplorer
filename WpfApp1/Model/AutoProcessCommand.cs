@@ -176,5 +176,61 @@ namespace WpfApp1.Model {
             return jSONChatItem;
         }
 
+        // 指定されたフォルダの全アイテムをマージするコマンド
+        public static ClipboardItem MergeItemsCommandExecute(ClipboardItemFolder folder, ClipboardItem item) {
+            if (folder.Items.Count == 0) {
+                return item;
+            }
+            // マージ先のアイテムを取得
+            ClipboardItem mergeToItem = folder.Items[0];
+
+            // マージ元のアイテム
+            List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
+            for (int i = 1; i < folder.Items.Count; i++) {
+                mergedFromItems.Add(folder.Items[i]);
+            }
+            // 最後に引数のアイテムを追加
+            mergedFromItems.Add(item);
+            // マージ元のアイテムをマージ先のアイテムにマージ
+            mergeToItem.MergeItems(mergedFromItems, false);
+            
+            // マージしたアイテムを削除
+            foreach (var mergedItem in mergedFromItems) {
+                folder.DeleteItem(mergedItem);
+            }
+            return mergeToItem;
+        }
+        // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
+        public static ClipboardItem MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
+            if (folder.Items.Count == 0) {
+                return newItem;
+            }
+            List<ClipboardItem> sameTitleItems = new List<ClipboardItem>();
+            // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
+            foreach (var item in folder.Items) {
+                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
+                    sameTitleItems.Add(item);
+                }
+            }
+            // mergeFromItemsが空の場合はnewItemをそのまま返す。
+            if (sameTitleItems.Count == 0) {
+                return newItem;
+            }
+            // マージ元のアイテムをUpdateAtの昇順にソート
+            sameTitleItems.Sort((a, b) => a.UpdatedAt.CompareTo(b.UpdatedAt));
+            // マージ元のアイテムをマージ先のアイテムにマージ
+            ClipboardItem mergeToItem = folder.Items[0];
+            // sameTitleItemsにnewItemを追加
+            sameTitleItems.Add(newItem);
+            // sameTitleItemsの1から最後までをマージ元のアイテムとする
+            sameTitleItems.RemoveAt(0);
+            // マージ元のアイテムをマージ先のアイテムにマージ
+            mergeToItem.MergeItems(sameTitleItems, false);
+            // マージしたアイテムを削除
+            foreach (var mergedItem in sameTitleItems) {
+                folder.DeleteItem(mergedItem);
+            }
+            return mergeToItem;
+        }
     }
 }

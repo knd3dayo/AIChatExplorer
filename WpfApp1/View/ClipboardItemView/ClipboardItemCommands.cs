@@ -222,11 +222,7 @@ namespace WpfApp1.View.ClipboardItemView {
                 Tools.Error("Instanceがありません");
                 return;
             }
-            if (Instance.SelectedItems is null) {
-                Tools.Error("選択中のアイテムがありません");
-                return;
-            }
-            if (Instance.SelectedItems.Count == 0) {
+            if (Instance.SelectedItems is null || Instance.SelectedItems.Count == 0) {
                 Tools.Error("選択中のアイテムがありません");
                 return;
             }

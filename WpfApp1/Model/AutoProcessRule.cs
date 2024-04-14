@@ -217,7 +217,7 @@ namespace WpfApp1.Model
                     result += "アクション:なし\n";
                 }
                 // Type が CopyToFolderまたはMoveToFolderの場合
-                if (RuleAction != null && RuleAction.IsCopyOrMoveAction())
+                if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction())
                 {
                     // DestinationFolderが設定されている場合
                     if (DestinationFolder != null)
@@ -245,7 +245,7 @@ namespace WpfApp1.Model
                 return false;
             }
             // ruleがCopyToFolderまたはMoveToFolder以外の場合はFalseを返す
-            if (rule.RuleAction.IsCopyOrMoveAction() == false)
+            if (rule.RuleAction.IsCopyOrMoveOrMergeAction() == false)
             {
                 return false;
             }

@@ -69,7 +69,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                 OnPropertyChanged("SelectedAutoProcessItem");
 
                 // アクションがコピーまたは移動の場合はFolderSelectionPanelEnabledをtrueにする
-                if (value.IsCopyOrMoveAction())
+                if (value.IsCopyOrMoveOrMergeAction())
                 {
                     FolderSelectionPanelEnabled = true;
                 }
@@ -307,7 +307,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             // アクションを追加
             TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem;
             // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
-            if (SelectedAutoProcessItem.IsCopyOrMoveAction())
+            if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction())
             {
                 if (DestinationFolder == null)
                 {

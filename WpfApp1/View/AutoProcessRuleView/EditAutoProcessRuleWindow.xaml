@@ -106,10 +106,10 @@
             <DockPanel Grid.Row="8" HorizontalAlignment="Stretch" IsEnabled="{Binding FolderSelectionPanelEnabled}"
 
                        >
-                <Label Content="コピー/移動先" Margin="10,10,10,10"
+                <Label Content="コピー/移動/マージ先" Margin="10,10,10,10"
                         Width="250"
                        />
-                <!-- コピー/移動先を選択するツリービューを表示するボタン-->
+                <!-- コピー/移動/マージ先を選択するツリービューを表示するボタン-->
                 <Button Content="選択" 
                         Command="{Binding OpenSelectDestinationFolderWindowCommand}"
                         Margin="10,10,10,10"

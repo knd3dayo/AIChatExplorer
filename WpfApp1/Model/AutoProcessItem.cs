@@ -32,6 +32,9 @@ namespace WpfApp1.Model {
             public static ActionName ExtractText = new ActionName(true, "ExtractText");
             public static ActionName MaskData = new ActionName(true, "GetMaskedString");
             public static ActionName SplitPathToFolderAndFileName = new ActionName(true, "SplitPathToFolderAndFileName");
+            public static ActionName MergeAllItems = new ActionName(true, "MergeAllItems");
+            // 同じSourceApplicationTitleを持つアイテムをマージする
+            public static ActionName MergeItemsWithSameSourceApplicationTitle = new ActionName(true, "MergeItemsWithSameSourceApplicationTitle");
 
             public static ActionName RunPythonScript = new ActionName(false, "RunPythonScript");
 
@@ -61,8 +64,9 @@ namespace WpfApp1.Model {
             ScriptItem = scriptItem;
         }
 
-        public bool IsCopyOrMoveAction() {
-            return Name == ActionName.CopyToFolder.Name || Name == ActionName.MoveToFolder.Name;
+        public bool IsCopyOrMoveOrMergeAction() {
+            return Name == ActionName.CopyToFolder.Name || Name == ActionName.MoveToFolder.Name
+                || Name == ActionName.MergeAllItems.Name || Name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name;
         }
 
         public static AutoProcessItem GetSystemAutoProcessItem(string name) {
@@ -114,6 +118,15 @@ namespace WpfApp1.Model {
                 items.Add(
                     new AutoProcessItem(ActionName.SplitPathToFolderAndFileName.Name, "コピーしたファイルをフォルダパスとファイル名に分割", "コピーしたファイルをフォルダパスとファイル名に分割")
                     );
+                // フォルダ内のアイテムを自動的にマージするコマンドを追加
+                items.Add(
+                    new AutoProcessItem(ActionName.MergeAllItems.Name, "フォルダ内のアイテムをマージ", "フォルダ内のアイテムをマージします")
+                    );
+                // 同じSourceApplicationTitleを持つアイテムをマージするコマンドを追加
+                items.Add(
+                    new AutoProcessItem(ActionName.MergeItemsWithSameSourceApplicationTitle.Name, "同じSourceApplicationTitleを持つアイテムをマージ", "同じSourceApplicationTitleを持つアイテムをマージします")
+                    );
+
 
                 var scriptItems = ClipboardController.GetScriptItems();
                 // スクリプトを追加
@@ -180,6 +193,19 @@ namespace WpfApp1.Model {
                 return (args) => {
                     AutoProcessCommand.SplitFilePathCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;
+                };
+            }
+            if (name == ActionName.MergeAllItems.Name) {
+                return (args) => {
+                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    
+                    return AutoProcessCommand.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                };
+            }
+            if (name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
+                return (args) => {
+                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    return AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
                 };
             }
             return (args) => {
