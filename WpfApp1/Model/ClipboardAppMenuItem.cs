@@ -17,10 +17,19 @@ namespace WpfApp1.Model {
         // Command
         public SimpleDelegateCommand Command { get; set; }
 
+        // InputGestureText
+        public string? InputGestureText { get; set; }
         public ClipboardAppMenuItem(string title, SimpleDelegateCommand command) {
             Title = title;
             Command = command;
         }
+        public ClipboardAppMenuItem(string title, SimpleDelegateCommand command, string inputGestureText) {
+            Title = title;
+            Command = command;
+            InputGestureText = inputGestureText;
+        }
+
+
 
     }
 }

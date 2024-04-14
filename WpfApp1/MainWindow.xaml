@@ -191,6 +191,7 @@
                                             <Setter Property="MenuItem.Command" Value="{Binding Command}"/>
                                             <Setter Property="MenuItem.CommandParameter" Value="{Binding}"/>
                                             <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}"/>
+                                            <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}"/>
                                         </Style>
                                     </ContextMenu.ItemContainerStyle>
 
