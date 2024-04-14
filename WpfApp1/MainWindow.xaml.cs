@@ -15,35 +15,10 @@ namespace WpfApp1
     {
         public MainWindow()
         {
-            // データベースのチェックポイント処理
-            ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
             InitializeComponent();
 
         }
 
-        private void Close_Click(object sneder, RoutedEventArgs e)
-        {
-            Console.WriteLine("メニュー操作：閉じる");
-            Application.Current.Shutdown();
-        }
-        private void Search_Click(object sneder, RoutedEventArgs e)
-        {
-            Console.WriteLine("メニュー操作：検索");
-            SearchWindow searchWindow = new SearchWindow();
-            SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
-            searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () =>
-            {
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
-            });
-
-            searchWindow.ShowDialog();
-        }
-        private void Setting_Click(object sneder, RoutedEventArgs e)
-        {
-            Console.WriteLine("メニュー操作：設定");
-            SettingWindow settingWindow = new SettingWindow();
-            settingWindow.ShowDialog();
-        }
 
         protected override void OnClosing(CancelEventArgs e)
         {

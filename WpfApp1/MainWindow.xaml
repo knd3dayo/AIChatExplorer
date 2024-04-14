@@ -19,6 +19,8 @@
         <CollectionViewSource Source="{Binding ClipboardItemFolderContextMenuItems}" x:Key="ClipboardItemFolderContextMenuItems"/>
     </Window.Resources>
     <Window.InputBindings>
+        <!-- アプリケーション終了-->
+        <KeyBinding Key="Q" Modifiers="Control" Command="{Binding ExitCommand}" />
         <!-- 検索ダイアログを表示-->
         <KeyBinding Key="F" Modifiers="Control" Command="{Binding SearchCommand}" />
         <!-- アイテムをLiteDBから再読み込みする-->
@@ -65,7 +67,7 @@
                         <MenuItem Header="アイテム作成" Command="{Binding CreateItemCommand}" />
                         <MenuItem Header="Pythonスクリプト作成" Command="{Binding CreatePythonScriptCommand}" />
                     </MenuItem>
-                        <MenuItem Header="終了" Click="Close_Click" />
+                        <MenuItem Header="終了" Command="{Binding ExitCommand}" />
                 </MenuItem>
                 <MenuItem Header="編集">
                     <MenuItem Header="タグ編集" Command="{Binding OpenTagWindowCommand}" />
@@ -74,7 +76,7 @@
                     
                 </MenuItem>
 
-                <MenuItem Header="検索" Click="Search_Click" />
+                <MenuItem Header="検索" Command="{Binding SearchCommand}" />
                 <MenuItem Header="設定" Command="{Binding SettingCommand}" />
             </Menu>
         </StackPanel>

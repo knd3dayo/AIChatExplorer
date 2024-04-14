@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
@@ -16,6 +17,9 @@ namespace WpfApp1 {
         public static MainWindowViewModel? Instance = null;
 
         public MainWindowViewModel() {
+            // データベースのチェックポイント処理
+            ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
+
             // ロギング設定
             Tools.StatusText = StatusText;
 
@@ -147,8 +151,13 @@ namespace WpfApp1 {
 
         // Ctrl + Q が押された時の処理
         public static SimpleDelegateCommand ExitCommand => new((parameter) => {
-            System.Windows.Application.Current.Shutdown();
-        });
+            // 終了確認ダイアログを表示。Yesならアプリケーションを終了
+            MessageBoxResult result = MessageBox.Show("終了しますか?", "Confirmation", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+
+                System.Windows.Application.Current.Shutdown();
+            }
+            });
 
         // Ctrl + F が押された時の処理
         public static SimpleDelegateCommand SearchCommand => new SimpleDelegateCommand((parameter) => {
@@ -259,6 +268,7 @@ namespace WpfApp1 {
                 // 再描写
                 ReloadClipboardItems();
             });
+
     }
 
 }
