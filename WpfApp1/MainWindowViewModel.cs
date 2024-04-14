@@ -7,6 +7,7 @@ using WpfApp1.View.AutoProcessRuleView;
 using WpfApp1.View.ClipboardItemFolderView;
 using WpfApp1.View.ClipboardItemView;
 using WpfApp1.View.StatusMessageView;
+using WpfApp1.View.TagView;
 
 
 namespace WpfApp1 {
@@ -204,6 +205,13 @@ namespace WpfApp1 {
             ListAutoProcessRuleWindowViewModel.Initialize();
 
             ListAutoProcessRuleWindow.ShowDialog();
+        }
+        // メニューの「タグ編集」をクリックしたときの処理
+        public static SimpleDelegateCommand OpenTagWindowCommand => new SimpleDelegateCommand(OpenTagWindowCommandExecute);
+        private static void OpenTagWindowCommandExecute(object obj) {
+            TagWindow tagWindow = new TagWindow();
+
+            tagWindow.ShowDialog();
         }
         // ステータスバーをクリックしたときの処理
         public static SimpleDelegateCommand OpenStatusMessageWindowCommand => new SimpleDelegateCommand(OpenStatusMessageWindowCommandExecute);

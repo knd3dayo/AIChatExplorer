@@ -1,29 +1,21 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LiteDB;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 
-namespace WpfApp1.View.TagView
-{
-    public class TagWindowViewModel : ObservableObject
-    {
+namespace WpfApp1.View.TagView {
+    public class TagWindowViewModel : ObservableObject {
         public ObservableCollection<TagItem> TagList { get; set; } = new ObservableCollection<TagItem>();
 
         private ClipboardItem? _clipboardItem;
-        public ClipboardItem? ClipboardItem
-        {
-            get
-            {
+        public ClipboardItem? ClipboardItem {
+            get {
                 return _clipboardItem;
             }
-            set
-            {
+            set {
                 _clipboardItem = value;
-                if (value != null)
-                {
-                    foreach (var item in TagList)
-                    {
+                if (value != null) {
+                    foreach (var item in TagList) {
                         var tagString = item.Tag;
                         item.IsChecked = value.Tags.Contains(tagString);
                     }
@@ -32,14 +24,12 @@ namespace WpfApp1.View.TagView
         }
         Action? _afterUpdate;
 
-        public void Initialize(ClipboardItem clipboardItem, Action afterUpdate)
-        {
+        public void Initialize(ClipboardItem clipboardItem, Action afterUpdate) {
             ClipboardItem = clipboardItem;
             _afterUpdate = afterUpdate;
         }
 
-        public TagWindowViewModel()
-        {
+        public TagWindowViewModel() {
             foreach (var item in ClipboardDatabaseController.GetTagList()) {
                 TagList.Add(item);
             }
@@ -47,14 +37,11 @@ namespace WpfApp1.View.TagView
 
         //新規タグのテキスト
         private string _newTag = "";
-        public string NewTag
-        {
-            get
-            {
+        public string NewTag {
+            get {
                 return _newTag;
             }
-            set
-            {
+            set {
                 _newTag = value;
                 OnPropertyChanged("NewTag");
             }
@@ -64,8 +51,7 @@ namespace WpfApp1.View.TagView
         // タグを追加したときの処理
         public SimpleDelegateCommand AddTagCommand => new SimpleDelegateCommand(AddTagCommandExecute);
 
-        private void AddTagCommandExecute(object parameter)
-        {
+        private void AddTagCommandExecute(object parameter) {
             if (parameter is not string) {
                 Tools.Error("パラメーターがありません");
                 return;
@@ -83,16 +69,15 @@ namespace WpfApp1.View.TagView
             }
 
             TagItem tagItem = new TagItem { Tag = tag };
-                TagList.Add(tagItem);
-                ClipboardDatabaseController.InsertTag(tag);
-                NewTag = "";
+            TagList.Add(tagItem);
+            ClipboardDatabaseController.InsertTag(tag);
+            NewTag = "";
         }
 
         // タグを削除したときの処理
         public SimpleDelegateCommand DeleteTagCommand => new SimpleDelegateCommand(DeleteTagCommandExecute);
 
-        private void DeleteTagCommandExecute(object obj)
-        {
+        private void DeleteTagCommandExecute(object obj) {
 
             // IsCheckedがTrueのものを削除
             foreach (var item in TagList) {
@@ -112,23 +97,20 @@ namespace WpfApp1.View.TagView
 
         // OKボタンを押したときの処理
         public SimpleDelegateCommand OkCommand => new SimpleDelegateCommand(OkCommandExecute);
-        private void OkCommandExecute(object obj)
-        {
-            if (ClipboardItem == null)
-            {
+        private void OkCommandExecute(object obj) {
+            if (ClipboardItem == null) {
+                // クリップボードアイテムがnullの場合は何もしない
+                // ウィンドウを閉じる
+                TagWindow.Current?.Close();
                 return;
             }
             // ClipboardItemのタグをクリア
             ClipboardItem.Tags.Clear();
             // TagListのチェックを反映
-            foreach (var item in TagList)
-            {
-                if (item.IsChecked)
-                {
+            foreach (var item in TagList) {
+                if (item.IsChecked) {
                     ClipboardItem.Tags.Add(item.Tag);
-                }
-                else
-                {
+                } else {
                     ClipboardItem.Tags.Remove(item.Tag);
                 }
             }
