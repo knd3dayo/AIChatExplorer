@@ -49,6 +49,8 @@ namespace WpfApp1.View.AutoProcessRuleView
                 OnPropertyChanged("IsAutoProcessRuleEnabled");
             }
         }
+        // AutoProcessRuleのリスト
+        public ObservableCollection<AutoProcessItem> AutoProcessItems { get; set; } = new ObservableCollection<AutoProcessItem>(AutoProcessItem.SystemAutoProcesses);
 
         // 自動処理ルールの条件リスト
         public ObservableCollection<AutoProcessRuleCondition> Conditions { get; set; } = new ObservableCollection<AutoProcessRuleCondition>();
@@ -103,16 +105,6 @@ namespace WpfApp1.View.AutoProcessRuleView
         public bool IsSourceApplicationTitleRuleChecked { get; set; } = false;
         public string SourceApplicationTitle { get; set; } = "";
 
-        // AutoProcessRuleのリスト
-        public ObservableCollection<AutoProcessItem> AutoProcessItems {
-            get {
-                ObservableCollection<AutoProcessItem> autoProcessItems = new ObservableCollection<AutoProcessItem>();
-                foreach (var item in AutoProcessItem.SystemAutoProcesses) {
-                    autoProcessItems.Add(item);
-                }
-                return autoProcessItems;
-            }
-        }
                 
         // コピーまたは移動先のフォルダ
         private ClipboardItemFolderViewModel? _DestinationFolder = null;
@@ -397,6 +389,18 @@ namespace WpfApp1.View.AutoProcessRuleView
             ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
+        }
+        public SimpleDelegateCommand AutoProcessItemSelectionChangedCommand => new SimpleDelegateCommand(AutoProcessItemSelectionChangedCommandExecute);
+        public void AutoProcessItemSelectionChangedCommandExecute(object parameter) {
+            if (SelectedAutoProcessItem == null) {
+                return;
+            }
+            if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
+                FolderSelectionPanelEnabled = true;
+            }
+            else {
+                FolderSelectionPanelEnabled = false;
+            }
         }
     }
 }

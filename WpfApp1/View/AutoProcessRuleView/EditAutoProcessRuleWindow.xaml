@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:view="clr-namespace:WpfApp1.View.AutoProcessRuleView"
         mc:Ignorable="d"
         Title="EditAutoProcessRuleWindow" Height="450" Width="600">
@@ -103,9 +104,15 @@
                           SelectedValuePath="Name"
                           DisplayMemberPath="DisplayName"
                           Margin="10,10,10,10"
-                          />
+                          >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
             </DockPanel>
-            <DockPanel Grid.Row="8" HorizontalAlignment="Stretch" IsEnabled="{Binding FolderSelectionPanelEnabled}"
+            <DockPanel Grid.Row="8" HorizontalAlignment="Stretch" IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}"
 
                        >
                 <Label Content="コピー/移動/マージ先" Margin="10,10,10,10"
