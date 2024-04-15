@@ -66,6 +66,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                     return;
                 }
                 _SelectedAutoProcessItem = value;
+
                 OnPropertyChanged("SelectedAutoProcessItem");
 
                 // アクションがコピーまたは移動の場合はFolderSelectionPanelEnabledをtrueにする
@@ -102,6 +103,17 @@ namespace WpfApp1.View.AutoProcessRuleView
         public bool IsSourceApplicationTitleRuleChecked { get; set; } = false;
         public string SourceApplicationTitle { get; set; } = "";
 
+        // AutoProcessRuleのリスト
+        public ObservableCollection<AutoProcessItem> AutoProcessItems {
+            get {
+                ObservableCollection<AutoProcessItem> autoProcessItems = new ObservableCollection<AutoProcessItem>();
+                foreach (var item in AutoProcessItem.SystemAutoProcesses) {
+                    autoProcessItems.Add(item);
+                }
+                return autoProcessItems;
+            }
+        }
+                
         // コピーまたは移動先のフォルダ
         private ClipboardItemFolderViewModel? _DestinationFolder = null;
         public ClipboardItemFolderViewModel? DestinationFolder
@@ -144,18 +156,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule?.IsEnabled ?? true;
             _AfterUpdate = afterUpdate;
-            //  autoProcessRule?.RuleActionが存在し、AutoProcessItemsの名前が一致するものを選択
-            if (autoProcessRule?.RuleAction != null)
-            {
-                foreach (var item in AutoProcessItem.GetScriptAutoProcessItems())
-                {
-                    if (item.Name == autoProcessRule.RuleAction.Name)
-                    {
-                        SelectedAutoProcessItem = item;
-                        break;
-                    }
-                }
-            }
+
             if (autoProcessRule?.TargetFolder != null) {
                 TargetFolder = new ClipboardItemFolderViewModel(autoProcessRule.TargetFolder);
             }
@@ -165,16 +166,14 @@ namespace WpfApp1.View.AutoProcessRuleView
 
 
             // autoProcessRuleがNullでない場合は初期化
-            if (autoProcessRule != null)
+            if (TargetAutoProcessRule != null)
             {
-                RuleName = autoProcessRule.RuleName;
+                RuleName = TargetAutoProcessRule.RuleName;
                 OnPropertyChanged("RuleName");
-                Conditions = new ObservableCollection<AutoProcessRuleCondition>(autoProcessRule.Conditions);
-                OnPropertyChanged("Conditions");
-                SelectedAutoProcessItem = autoProcessRule.RuleAction;
-                OnPropertyChanged("SelectedAutoProcessItem");
+                Conditions = new ObservableCollection<AutoProcessRuleCondition>(TargetAutoProcessRule.Conditions);
+                SelectedAutoProcessItem = TargetAutoProcessRule.RuleAction;
 
-                foreach (var condition in autoProcessRule.Conditions)
+                foreach (var condition in TargetAutoProcessRule.Conditions)
                 {
                     switch (condition.Type)
                     {
@@ -209,6 +208,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                             break;
                     }
                 }
+                OnPropertyChanged("Conditions");
             }
         }
 
@@ -329,11 +329,6 @@ namespace WpfApp1.View.AutoProcessRuleView
                 return;
             }
 
-            // 新規作成の場合は追加
-            if (CurrentMode == Mode.Create)
-            {
-                ClipboardDatabaseController.UpsertAutoProcessRule(TargetAutoProcessRule);
-            }
             // LiteDBに保存
             ClipboardDatabaseController.UpsertAutoProcessRule(TargetAutoProcessRule);
 

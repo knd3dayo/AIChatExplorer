@@ -98,8 +98,10 @@
                         Width="250"
                        />
                 <ComboBox ItemsSource="{Binding AutoProcessItems}" 
-                          SelectedItem="{Binding SelectedAutoProcessItem}" 
-                          DisplayMemberPath="Name"
+                          IsSynchronizedWithCurrentItem="True"
+                          SelectedValue="{Binding SelectedAutoProcessItem.Name}"
+                          SelectedValuePath="Name"
+                          DisplayMemberPath="DisplayName"
                           Margin="10,10,10,10"
                           />
             </DockPanel>

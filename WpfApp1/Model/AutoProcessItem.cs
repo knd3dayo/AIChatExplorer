@@ -90,7 +90,7 @@ namespace WpfApp1.Model {
 
         }
 
-        private static ObservableCollection<AutoProcessItem> SystemAutoProcesses {
+        public static ObservableCollection<AutoProcessItem> SystemAutoProcesses {
             get {
                 ObservableCollection<AutoProcessItem> items = new ObservableCollection<AutoProcessItem>();
 
