@@ -41,5 +41,8 @@
     <Setting Name="AutoMergeItemsBySourceApplicationTitle" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

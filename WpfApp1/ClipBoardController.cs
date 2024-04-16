@@ -216,6 +216,11 @@ namespace WpfApp1 {
                 Tools.Error("Clipboard is null");
                 return;
             }
+            // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
+            if (Properties.Settings.Default.MonitorTargetAppNames != "" 
+                && !Properties.Settings.Default.MonitorTargetAppNames.Contains(e.SourceApplication.Name)) {
+                return;
+            }
 
             // RootFolderにClipboardItemを追加
 
@@ -226,6 +231,7 @@ namespace WpfApp1 {
             item.Content = content;
             item.CollectionName = ClipboardItemFolder.RootFolder.AbsoluteCollectionName;
 
+            // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
             if (Properties.Settings.Default.AutoDescription) {
                 try {
@@ -234,6 +240,7 @@ namespace WpfApp1 {
                     Tools.Error($"自動タイトル設定処理が失敗しました。\n{ex.Message}");
                 }
             }
+            // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_TAGが設定されている場合は自動でタグを設定する
             if (Properties.Settings.Default.AutoTag) {
                 try {
@@ -242,6 +249,7 @@ namespace WpfApp1 {
                     Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
                 }
             }
+            // ★TODO 自動処理ルールで処理するようにする。
             // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
             if (Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
@@ -250,9 +258,6 @@ namespace WpfApp1 {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
                 }
             }
-            // ★test
-            // ClipboardItemAppClient client = new ClipboardItemAppClient();
-            // client.Post(item);
 
             // RootFolderのAddItemを呼び出す
 

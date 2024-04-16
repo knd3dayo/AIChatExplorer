@@ -126,5 +126,6 @@ namespace WpfApp1.View.ClipboardItemView
         // 選択中のアイテムを開く処理
         public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
 
+
     }
 }

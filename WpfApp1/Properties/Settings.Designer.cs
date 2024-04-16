@@ -178,5 +178,17 @@ namespace WpfApp1.Properties {
                 this["AutoMergeItemsBySourceApplicationTitle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MonitorTargetAppNames {
+            get {
+                return ((string)(this["MonitorTargetAppNames"]));
+            }
+            set {
+                this["MonitorTargetAppNames"] = value;
+            }
+        }
     }
 }

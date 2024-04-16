@@ -46,7 +46,7 @@ namespace WpfApp1.Model {
         public int? SourceApplicationID { get; set; }
         //　貼り付け元のアプリケーションのパス
         public string? SourceApplicationPath { get; set; }
-        // ピン止め
+        // ピン留め
         public bool IsPinned { get; set; }
 
 
@@ -73,7 +73,7 @@ namespace WpfApp1.Model {
             newItem.Description = Description;
         }
         
-        public ClipboardItem MergeItems(List<ClipboardItem> items, bool mergeWithHeader) 
+        public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader) 
         {
             if (this.ContentType != SharpClipboard.ContentTypes.Text) {
 
@@ -110,8 +110,6 @@ namespace WpfApp1.Model {
 
             // Tagsのマージ。重複を除外して追加
             Tags.UnionWith(items.SelectMany(item => item.Tags));
-
-            return this;
         }
 
         // タグ表示用の文字列
@@ -143,9 +141,9 @@ namespace WpfApp1.Model {
                 header1 += "[ソースタイトル]" + SourceApplicationTitle + "\n";
                 // Tags
                 header1 += "[タグ]" + TagsString() + "\n";
-                // ピン止め中かどうか
+                // ピン留め中かどうか
                 if (IsPinned) {
-                    header1 += "[ピン止めしてます]\n";
+                    header1 += "[ピン留めしてます]\n";
                 }
 
                 if (ContentType == SharpClipboard.ContentTypes.Text)

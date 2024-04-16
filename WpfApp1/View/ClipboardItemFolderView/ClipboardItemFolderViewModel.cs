@@ -190,5 +190,10 @@ namespace WpfApp1.View.ClipboardItemFolderView
         // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
         public static SimpleDelegateCommand FolderSelectWindowSelectFolderCommand => new SimpleDelegateCommand(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
 
+        // フォルダ内のアイテムをJSON形式でエクスポートする処理
+        public static SimpleDelegateCommand ExportItemsFromFolderCommand => new SimpleDelegateCommand(ClipboardFolderCommands.ExportItemsFromFolderCommandExecute);
+        // フォルダ内のアイテムをJSON形式でインポートする処理
+        public static SimpleDelegateCommand ImportItemsToFolderCommand => new SimpleDelegateCommand(ClipboardFolderCommands.ImportItemsToFolderCommandExecute);
+
     }
 }

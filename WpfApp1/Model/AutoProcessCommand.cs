@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using WK.Libraries.SharpClipboardNS;
 using WpfApp1.Utils;
 
@@ -181,30 +182,39 @@ namespace WpfApp1.Model {
             if (folder.Items.Count == 0) {
                 return;
             }
-            // マージ先のアイテムを取得
-            ClipboardItem mergeToItem = folder.Items[0];
 
             // マージ元のアイテム
             List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
-            for (int i = 1; i < folder.Items.Count; i++) {
-                mergedFromItems.Add(folder.Items[i]);
+            for (int i = folder.Items.Count -1 ; i > 0; i--) {
+                // TypeがTextのアイテムのみマージ
+                if (folder.Items[i].ContentType == SharpClipboard.ContentTypes.Text) {
+                    mergedFromItems.Add(folder.Items[i]);
+                }
             }
-            // 最後に引数のアイテムを追加
-            mergedFromItems.Add(item);
+            // 先頭に引数のアイテムを追加
+            mergedFromItems.Insert(0, item);
+            // mergeToItemを取得(更新時間が一番古いアイテム)
+            ClipboardItem mergeToItem = mergedFromItems.Last();
+            // mergedFromItemsからmergeToItemを削除
+            mergedFromItems.Remove(mergeToItem);
+
             // マージ元のアイテムをマージ先のアイテムにマージ
-            ClipboardItem resultItem = mergeToItem.MergeItems(mergedFromItems, false);
+            mergeToItem.MergeItems(mergedFromItems, false);
             
             // マージしたアイテムを削除
             foreach (var mergedItem in mergedFromItems) {
                 folder.DeleteItem(mergedItem);
             }
-            resultItem.CopyTo(item);
-            // mergedItemを削除
-            ClipboardDatabaseController.DeleteItem(mergeToItem);
+            // mergedItemを更新
+            ClipboardDatabaseController.UpsertItem(mergeToItem);
 
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
         public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
+            // NewItemのSourceApplicationTitleが空の場合は何もしない
+            if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
+                return;
+            }
             if (folder.Items.Count == 0) {
                 return;
             }
@@ -212,30 +222,30 @@ namespace WpfApp1.Model {
             // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
             foreach (var item in folder.Items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
-                    sameTitleItems.Add(item);
+                    // TypeがTextのアイテムのみマージ
+                    if (item.ContentType == SharpClipboard.ContentTypes.Text) { 
+                        sameTitleItems.Add(newItem);
+                    }
                 }
             }
             // mergeFromItemsが空の場合はnewItemをそのまま返す。
             if (sameTitleItems.Count == 0) {
                 return;
             }
-            // マージ元のアイテムをUpdateAtの昇順にソート
-            sameTitleItems.Sort((a, b) => a.UpdatedAt.CompareTo(b.UpdatedAt));
-            // マージ元のアイテムをマージ先のアイテムにマージ
-            ClipboardItem mergeToItem = folder.Items[0];
+            // マージ元のアイテムをマージ先(更新時間が一番古いもの)のアイテムにマージ
+            ClipboardItem mergeToItem = folder.Items.Last();
             // sameTitleItemsにnewItemを追加
-            sameTitleItems.Add(newItem);
+            sameTitleItems.Insert(0, newItem);
             // sameTitleItemsの1から最後までをマージ元のアイテムとする
-            sameTitleItems.RemoveAt(0);
+            sameTitleItems.Remove(mergeToItem);
             // マージ元のアイテムをマージ先のアイテムにマージ
-            ClipboardItem resultItem = mergeToItem.MergeItems(sameTitleItems, false);
+            mergeToItem.MergeItems(sameTitleItems, false);
             // マージしたアイテムを削除
             foreach (var mergedItem in sameTitleItems) {
                 folder.DeleteItem(mergedItem);
             }
-            resultItem.CopyTo(newItem);
-            // mergedItemを削除
-            ClipboardDatabaseController.DeleteItem(mergeToItem);
+            // mergedItemを更新
+            ClipboardDatabaseController.UpsertItem(mergeToItem);
         }
     }
 }

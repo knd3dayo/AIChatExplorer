@@ -46,7 +46,7 @@ namespace WpfApp1 {
 
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ファイルとして開く", OpenSelectedItemAsFileCommand, "Ctrl+Shit+O"));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("新規ファイルとして開く", OpenSelectedItemAsNewFileCommand, "Ctrl+Shit+Alt+O"));
-            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ピン止め", ChangePinCommand));
+            ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("ピン留め", ChangePinCommand));
 
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("コピー", CopyToClipboardCommand, "Ctrl+C"));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("削除", DeleteSelectedItemCommand, "Delete"));
@@ -68,13 +68,7 @@ namespace WpfApp1 {
             }
             ClipboardItemContextMenuItems.Add(pythonMenuItems);
 
-            // フォルダーのコンテキストメニュー
-            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("開く", ClipboardItemFolderViewModel.OpenFolderCommand));
-            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("編集", ClipboardItemFolderViewModel.EditFolderCommand));
-            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("新規作成", ClipboardItemFolderViewModel.CreateFolderCommand));
-            ClipboardItemFolderContextMenuItems.Add(new ClipboardAppMenuItem("削除", ClipboardItemFolderViewModel.DeleteFolderCommand));
-
-        }
+            }
         // フォルダ階層を再描写する
         public void ReloadFolder() {
             ClipboardItemFolders.Clear();
@@ -184,7 +178,7 @@ namespace WpfApp1 {
             settingWindow.ShowDialog();
         }
 
-        // ピン止めの切り替え処理
+        // ピン留めの切り替え処理
         public static SimpleDelegateCommand ChangePinCommand => new SimpleDelegateCommand(ClipboardItemCommands.ChangePinCommandExecute);
         // 選択中のアイテムを開く処理
         public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);

@@ -113,6 +113,8 @@
                                     <MenuItem Header="削除" Command="{Binding DeleteFolderCommand}" CommandParameter="{Binding}"
                                               IsEnabled="{Binding IsDeleteVisible}"
                                               />
+                                    <MenuItem Header="エクスポート" Command="{Binding ExportItemsFromFolderCommand}"  CommandParameter="{Binding}" />
+                                    <MenuItem Header="インポート" Command="{Binding ImportItemsToFolderCommand}"  CommandParameter="{Binding}" />
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
                         </DockPanel>

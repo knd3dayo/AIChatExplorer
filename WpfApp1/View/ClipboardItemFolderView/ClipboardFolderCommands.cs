@@ -1,5 +1,8 @@
 ﻿using System.Data;
+using System.IO;
 using System.Windows;
+using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.ClipboardItemView;
@@ -190,6 +193,63 @@ namespace WpfApp1.View.ClipboardItemFolderView
 
         }
 
+        // フォルダーのアイテムをエクスポートする処理
+        public static void ExportItemsFromFolderCommandExecute(object obj) {
+            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
+                Tools.Error("フォルダが選択されていません");
+                return;
+            }
+            ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
+            ClipboardItemFolder folder = clipboardItemFolder.ClipboardItemFolder;
+            DirectoryInfo directoryInfo = new DirectoryInfo("export");
+            // exportフォルダが存在しない場合は作成
+            if (!System.IO.Directory.Exists("export")) {
+                directoryInfo =System.IO.Directory.CreateDirectory("export");
+            }
+            //ファイルダイアログを表示
+            using var dialog = new CommonOpenFileDialog() {
+                Title = "フォルダを選択してください",
+                InitialDirectory = directoryInfo.FullName,
+                // フォルダ選択モードにする
+                IsFolderPicker = true,
+            };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                string folderPath = dialog.FileName;
+                folder.ExportItemsToJson(folderPath);
+                // フォルダ内のアイテムを読み込む
+                Tools.Info("フォルダをエクスポートしました");
+            }
+        }
+
+        //フォルダーのアイテムをインポートする処理
+        public static void ImportItemsToFolderCommandExecute(object obj) {
+            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
+                Tools.Error("フォルダが選択されていません");
+                return;
+            }
+            ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
+            ClipboardItemFolder folder = clipboardItemFolder.ClipboardItemFolder;
+
+            //ファイルダイアログを表示
+            using var dialog = new CommonOpenFileDialog() {
+                Title = "フォルダを選択してください",
+                InitialDirectory = @".",
+                // フォルダ選択モードにする
+                IsFolderPicker = true,
+            };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+                return;
+            } else { 
+                string filapath = dialog.FileName;
+                folder.ImportItemsFromJson(filapath);
+                // フォルダ内のアイテムを読み込む
+                clipboardItemFolder.Load();
+                Tools.Info("フォルダをインポートしました");
+            }
+        }
+
         /// <summary>
         /// フォルダ削除コマンド
         /// フォルダを削除した後に、RootFolderをリロードする処理を行う。
@@ -237,7 +297,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
                 return;
             }
             //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show("ピン止めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show("ピン留めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes)
             {
                 ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
@@ -250,7 +310,7 @@ namespace WpfApp1.View.ClipboardItemFolderView
 
                 // フォルダ内のアイテムを読み込む
                 clipboardItemFolder.Load();
-                Tools.Info("ピン止めされたアイテム以外の表示中のアイテムを削除しました");
+                Tools.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
             }
         }
     }

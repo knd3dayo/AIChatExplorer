@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 using WpfApp1.Utils;
@@ -185,6 +187,48 @@ namespace WpfApp1.Model {
             return item;
 
         }
+        // フォルダ内のアイテムをJSON形式でExport
+        public void ExportItemsToJson(string directoryPath) {
+            JsonArray jsonArray = new JsonArray();
+            foreach (ClipboardItem item in Items) {
+                jsonArray.Add(ClipboardItem.ToJson(item));
+            }
+            string jsonString = jsonArray.ToString();
+            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.AbsoluteCollectionName + ".json";
 
+            File.WriteAllText(Path.Combine(directoryPath, fileName), jsonString);
+
+        }
+
+        //exportしたJSONファイルをインポート
+        public void ImportItemsFromJson(string json) {
+            JsonNode? node = JsonNode.Parse(json);
+            if (node == null) {
+                throw new ThisApplicationException("JSON文字列をパースできませんでした");
+            }
+            JsonArray? jsonArray = node as JsonArray;
+            if (jsonArray == null) {
+                throw new ThisApplicationException("JSON文字列をパースできませんでした");
+            }
+
+            // Itemsをクリア
+            Items.Clear();
+
+            foreach (JsonValue? jsonValue in jsonArray) {
+                if (jsonValue == null) {
+                    continue;
+                }
+                string jsonString = jsonValue.ToString();
+                ClipboardItem? item = ClipboardItem.FromJson(jsonString);
+                if (item == null) {
+                    continue;
+                }
+                // Itemsに追加
+                Items.Add(item);
+                // LiteDBに保存
+                ClipboardDatabaseController.UpsertItem(item);
+            }
+
+        }
     }
 }

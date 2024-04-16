@@ -247,7 +247,7 @@ namespace WpfApp1.View.ClipboardItemView {
                     }
                     fromItems.Add(fromItemModelView.ClipboardItem);
                 }
-                toItem = toItem.MergeItems(fromItems, mergeWithHeader);
+                toItem.MergeItems(fromItems, mergeWithHeader);
                 // ClipboardItemをLiteDBに保存
                 ClipboardDatabaseController.UpsertItem(toItem);
                 // コピー元のアイテムを削除
