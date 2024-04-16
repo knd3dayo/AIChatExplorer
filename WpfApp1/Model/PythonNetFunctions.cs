@@ -202,6 +202,9 @@ namespace WpfApp1.Model {
             dict.Add("OpenAICompletionModel", Properties.Settings.Default.OpenAICompletionModel);
             dict.Add("AzureOpenAI", Properties.Settings.Default.AzureOpenAI.ToString());
             dict.Add("AzureOpenAIEndpoint", Properties.Settings.Default.AzureOpenAIEndpoint);
+            if (Properties.Settings.Default.OpenAIBaseURL != "") {
+                dict.Add("AzureOpenAIKey", Properties.Settings.Default.OpenAIBaseURL);
+            }
             return dict;
         }
 

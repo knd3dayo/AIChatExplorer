@@ -190,5 +190,17 @@ namespace WpfApp1.Properties {
                 this["MonitorTargetAppNames"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OpenAIBaseURL {
+            get {
+                return ((string)(this["OpenAIBaseURL"]));
+            }
+            set {
+                this["OpenAIBaseURL"] = value;
+            }
+        }
     }
 }

@@ -122,8 +122,11 @@ def openai_chat(input_json, props ={}):
     azure_openai_string = props.get("AzureOpenAI", False)
     # azure_openaiがTrueの場合、AzureOpenAIを使用する.azure_openai_stringを大文字にしてTRUEの場合はTrueに変換する
     azure_openai = azure_openai_string.upper() == "TRUE"
+    # base_urlを取得する
+    base_url = props.get("OpenAIBaseURL", None)
+    
     # OpenAIのchatを実行する
-    openai_util = OpenAIUtil(azure_openai, openai_api_key, azure_openai_endpoint)
+    openai_util = OpenAIUtil(azure_openai, openai_api_key, azure_openai_endpoint, base_url=base_url)
     json_obj = json.loads(input_json)
     client = openai_util.client
     response = client.chat.completions.create(
@@ -135,12 +138,14 @@ def openai_chat(input_json, props ={}):
 import importlib
 import json
 class OpenAIUtil:
-    def __init__(self, azure_openai, openai_api_key, azure_openai_endpoint=None):
+    def __init__(self, azure_openai, openai_api_key, azure_openai_endpoint=None, base_url=None):
         self.azure_openai = azure_openai
         self.openai_api_key = openai_api_key
         self.azure_openai_endpoint = azure_openai_endpoint
 
         self.client = self._create_openai_object()
+        if base_url is not None:
+            self.client.base_url = base_url
 
     def _create_openai_object(self):
         # OpenAIオブジェクトを作成
