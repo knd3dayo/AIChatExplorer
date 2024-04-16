@@ -1,9 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
 using WK.Libraries.SharpClipboardNS;
+using WpfApp1.PythonIF;
 using WpfApp1.Utils;
 
-namespace WpfApp1.Model {
+namespace WpfApp1.Model
+{
     public class AutoProcessCommand {
 
         // 自動処理でテキストを抽出」を実行するコマンド
@@ -97,10 +99,10 @@ namespace WpfApp1.Model {
         }
 
         // 自動処理でOpenAIにチャットを送信するコマンド
-        public static string ChatCommandExecute(List<JSONChatItem> jSONChatItemList, bool masked = false) {
+        public static string ChatCommandExecute(List<JSONChatItem> jSONChatItemList) {
             string result = "";
             // maskedがTrueの場合
-            if (masked) {
+            if (Properties.Settings.Default.UserMaskedDataInOpenAI) {
                 List<string> beforeTextList = new List<string>();
                 foreach (var jSONChatItem in jSONChatItemList) {
                     beforeTextList.Add(jSONChatItem.Content);
@@ -141,6 +143,19 @@ namespace WpfApp1.Model {
 
             return result;
         }
+        // OpenAIでEmbeddingを生成するコマンド
+        public static void EmbeddingCommandExecute(string text) {
+            // maskingを行うかどうか
+            if (Properties.Settings.Default.UserMaskedDataInOpenAI) {
+                // マスキングデータを取得
+                MaskedData maskedData = PythonExecutor.PythonFunctions.GetMaskedData(new List<string> { text });
+                text = maskedData.AfterTextList[0];
+            }
+            // ステータスバーにメッセージを表示
+            MainWindowViewModel.StatusText.Text = "OpenAIに送信するデータ:\n" + text;
+            // OpenAIにEmbeddingを生成してレスポンスを受け取る
+            PythonExecutor.PythonFunctions.OpenAIEmbedding(text);
+        }
         // OpenAIでテキストを成形するコマンド
         public static string FormatTextCommandExecute(string text) {
             string prompt = "次の文章はWindowsのクリップボードから取得した文章です。これを整形してください。重複した内容がある場合は削除してください。\n";
@@ -149,7 +164,7 @@ namespace WpfApp1.Model {
             prompt += "処理対象の文章\n-----------\n" + text;
             JSONChatItem chatItem = new JSONChatItem(ChatItem.UserRole, text);
             List<JSONChatItem> jSONChatItemList = [chatItem];
-            string result = ChatCommandExecute(jSONChatItemList, Properties.Settings.Default.UserMaskedDataInOpenAI);
+            string result = ChatCommandExecute(jSONChatItemList);
 
             return result;
 
@@ -196,17 +211,19 @@ namespace WpfApp1.Model {
             // mergeToItemを取得(更新時間が一番古いアイテム)
             ClipboardItem mergeToItem = mergedFromItems.Last();
             // mergedFromItemsからmergeToItemを削除
-            mergedFromItems.Remove(mergeToItem);
+            mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
 
             // マージ元のアイテムをマージ先のアイテムにマージ
             mergeToItem.MergeItems(mergedFromItems, false);
+            // マージ先アイテムをnewItemにコピー
+            mergeToItem.CopyTo(item);
             
             // マージしたアイテムを削除
             foreach (var mergedItem in mergedFromItems) {
                 folder.DeleteItem(mergedItem);
             }
-            // mergedItemを更新
-            ClipboardDatabaseController.UpsertItem(mergeToItem);
+            // マージ先アイテムを削除
+            folder.DeleteItem(mergeToItem);
 
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
@@ -224,7 +241,7 @@ namespace WpfApp1.Model {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
                     // TypeがTextのアイテムのみマージ
                     if (item.ContentType == SharpClipboard.ContentTypes.Text) { 
-                        sameTitleItems.Add(newItem);
+                        sameTitleItems.Add(item);
                     }
                 }
             }
@@ -234,18 +251,22 @@ namespace WpfApp1.Model {
             }
             // マージ元のアイテムをマージ先(更新時間が一番古いもの)のアイテムにマージ
             ClipboardItem mergeToItem = folder.Items.Last();
+            // sameTitleItemsの1から最後までをマージ元のアイテムとする
+            sameTitleItems.RemoveAt(sameTitleItems.Count - 1 );
+
             // sameTitleItemsにnewItemを追加
             sameTitleItems.Insert(0, newItem);
-            // sameTitleItemsの1から最後までをマージ元のアイテムとする
-            sameTitleItems.Remove(mergeToItem);
             // マージ元のアイテムをマージ先のアイテムにマージ
+
             mergeToItem.MergeItems(sameTitleItems, false);
+            // newItemにマージしたアイテムをコピー
+            mergeToItem.CopyTo(newItem);
             // マージしたアイテムを削除
             foreach (var mergedItem in sameTitleItems) {
                 folder.DeleteItem(mergedItem);
             }
-            // mergedItemを更新
-            ClipboardDatabaseController.UpsertItem(mergeToItem);
+            // mergedItemを削除
+            folder.DeleteItem(mergeToItem);
         }
     }
 }

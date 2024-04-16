@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WK.Libraries.SharpClipboardNS;
 using WpfApp1.Model;
+using WpfApp1.PythonIF;
 using WpfApp1.Utils;
 
 namespace WpfApp1.View.ClipboardItemView

@@ -55,7 +55,7 @@ namespace WpfApp1.View.OpenAIView {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // OpenAIにチャットを送信してレスポンスを受け取る
-                string result = AutoProcessCommand.ChatCommandExecute(JSONChatItems, Properties.Settings.Default.UserMaskedDataInOpenAI);
+                string result = AutoProcessCommand.ChatCommandExecute(JSONChatItems);
                 // レスポンスをChatItemsに追加
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result));
                 // inputTextをクリア

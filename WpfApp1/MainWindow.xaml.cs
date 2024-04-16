@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using WpfApp1.Model;
+using WpfApp1.PythonIF;
 using WpfApp1.View.SearchView;
 
 
@@ -24,6 +24,8 @@ namespace WpfApp1
         {
             base.OnClosing(e);
 
+            // FaissのIndexの保存
+            PythonExecutor.PythonFunctions.SaveFaissIndex();
             // StatusTextのスレッドを停止
             MainWindowViewModel.StatusText.Dispose();
             // TODO Pythonのスレッドを停止

@@ -202,5 +202,17 @@ namespace WpfApp1.Properties {
                 this["OpenAIBaseURL"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoEmbedding {
+            get {
+                return ((bool)(this["AutoEmbedding"]));
+            }
+            set {
+                this["AutoEmbedding"] = value;
+            }
+        }
     }
 }

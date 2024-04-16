@@ -1,37 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WpfApp1.Model;
 
-namespace WpfApp1.Model {
+namespace WpfApp1.PythonIF
+{
 
-    public class MaskedData {
+    public class MaskedData
+    {
         public HashSet<MaskedEntity> Entities { get; set; } = new HashSet<MaskedEntity>();
         public List<string> BeforeTextList { get; set; } = new List<string>();
         public List<string> AfterTextList { get; set; } = new List<string>();
 
-        public MaskedData(List<string> beforeList) {
+        public MaskedData(List<string> beforeList)
+        {
 
-            foreach (var before in BeforeTextList) {
+            foreach (var before in BeforeTextList)
+            {
                 BeforeTextList.Add(before);
             }
         }
     }
-    public class MaskedEntity {
+    public class MaskedEntity
+    {
         public string Before { get; set; } = "";
         public string After { get; set; } = "";
         public string Label { get; set; } = "";
 
     }
-    public interface IPythonFunctions {
+    public interface IPythonFunctions
+    {
 
         public string ExtractText(string path);
         public string GetMaskedString(string text);
 
         public MaskedData GetMaskedData(List<string> textList);
-       
+
         public string OpenAIChat(List<JSONChatItem> jSONChatItems);
+
+        public void OpenAIEmbedding(string text);
+
+        public void SaveFaissIndex();
+
+        public void LoadFaissIndex();
+
 
         public void RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem);
 

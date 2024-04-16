@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
+using WpfApp1.PythonIF;
 using WpfApp1.Utils;
 using WpfApp1.View.AutoProcessRuleView;
 using WpfApp1.View.ClipboardItemFolderView;
@@ -11,7 +12,8 @@ using WpfApp1.View.StatusMessageView;
 using WpfApp1.View.TagView;
 
 
-namespace WpfApp1 {
+namespace WpfApp1
+{
 
     public class MainWindowViewModel : ObservableObject {
         public static MainWindowViewModel? Instance = null;

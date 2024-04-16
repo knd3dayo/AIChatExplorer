@@ -5,10 +5,12 @@ using System.IO;
 using System.Windows;
 using WK.Libraries.SharpClipboardNS;
 using WpfApp1.Model;
+using WpfApp1.PythonIF;
 using WpfApp1.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfApp1 {
+namespace WpfApp1
+{
     public class ClipboardProcessController {
         // Processとファイル名の対応を保持するハッシュテーブル
         private static Hashtable processOpenedFileHashtable = new Hashtable();
@@ -235,6 +237,7 @@ namespace WpfApp1 {
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
             if (Properties.Settings.Default.AutoDescription) {
                 try {
+                    Tools.Info("自動タイトル設定処理を実行します");
                     AutoProcessCommand.CreateAutoDescription(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動タイトル設定処理が失敗しました。\n{ex.Message}");
@@ -244,15 +247,28 @@ namespace WpfApp1 {
             // AUTO_TAGが設定されている場合は自動でタグを設定する
             if (Properties.Settings.Default.AutoTag) {
                 try {
+                    Tools.Info("自動タグ設定処理を実行します");
                     AutoProcessCommand.CreateAutoTags(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
                 }
             }
+            // ★TODO 
+            // AUTO_EMBEDDINGが設定されている場合は自動で埋め込みを行う
+            if (Properties.Settings.Default.AutoEmbedding) {
+                try {
+                    Tools.Info("自動Embedding処理を実行します");
+                    AutoProcessCommand.EmbeddingCommandExecute(item.Content);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"自動Embedding処理が失敗しました。\n{ex.Message}");
+                }
+            }
+
             // ★TODO 自動処理ルールで処理するようにする。
             // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
             if (Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
+                    Tools.Info("自動マージ処理を実行します");
                     AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");

@@ -5,8 +5,10 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using WpfApp1.Model;
+using WpfApp1.PythonIF;
 
-namespace WpfApp1.Utils {
+namespace WpfApp1.Utils
+{
     public class ClipboardItemAppClient : ApiClient {
 
         public ClipboardItem Post(ClipboardItem clipboardItem) {

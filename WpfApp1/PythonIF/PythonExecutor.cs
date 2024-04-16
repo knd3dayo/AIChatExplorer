@@ -2,33 +2,33 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
-using System.Windows;
 using Python.Runtime;
 using System.ComponentModel;
 using WpfApp1.Utils;
-using WpfApp1.View.OpenAIView;
 using System.Diagnostics;
-using System.Data;
+using WpfApp1.Model;
 
-namespace WpfApp1.Model
+namespace WpfApp1.PythonIF
 {
-    public class PythonExecutor {
+    public class PythonExecutor
+    {
 
-        public enum PythonExecutionType {
+        public enum PythonExecutionType
+        {
             None = 0,
             PythonNet = 1,
             InternalFlask = 2,
             ExternalFlask = 3
         }
-        public static PythonExecutionType PythonExecution {
-            get {
+        public static PythonExecutionType PythonExecution
+        {
+            get
+            {
                 // intからPythonExecutionTypeに変換
                 return (PythonExecutionType)Properties.Settings.Default.PythonExecution;
             }
-            set {
+            set
+            {
                 Properties.Settings.Default.PythonExecution = (int)value;
                 Properties.Settings.Default.Save();
             }
@@ -44,51 +44,62 @@ namespace WpfApp1.Model
         public static string FlaskScript = "python/flask_app.py";
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
-        public static void Init() {
+        public static void Init()
+        {
             // ClipboardAppSettingsのPythonExecutionがPythonNetの場合はInitPythonNetを実行する
-            if (PythonExecution == PythonExecutionType.PythonNet) {
+            if (PythonExecution == PythonExecutionType.PythonNet)
+            {
                 InitPythonNet();
                 PythonFunctions = new PythonNetFunctions();
             }
 
             // ClipboardAppSettingsのPythonExecutionがInternalFlaskの場合はFlaskアプリを起動する
-            if (PythonExecution == PythonExecutionType.InternalFlask) {
+            if (PythonExecution == PythonExecutionType.InternalFlask)
+            {
                 RunFlask();
             }
         }
-        private static void InitPythonNet() {
+        private static void InitPythonNet()
+        {
             // Pythonスクリプトを実行するための準備
             // PythonDLLのパスを設定
             Runtime.PythonDLL = Properties.Settings.Default.PythonDllPath;
 
             // Runtime.PythonDLLのファイルが存在するかチェック
-            if (!File.Exists(Runtime.PythonDLL)) {
+            if (!File.Exists(Runtime.PythonDLL))
+            {
                 string message = "PythonDLLが見つかりません。";
                 message += "\n" + "PythonDLLのパスを確認してください:";
                 Tools.ShowMessage(message + Runtime.PythonDLL);
                 return;
             }
 
-            try {
+            try
+            {
                 PythonEngine.Initialize();
                 PythonEngine.BeginAllowThreads();
 
-            } catch (TypeInitializationException e) {
+            }
+            catch (TypeInitializationException e)
+            {
                 string message = "Pythonの初期化に失敗しました。" + e.Message;
                 message += "\n" + "PythonDLLのパスを確認してください。";
                 Tools.ShowMessage(message);
             }
         }
 
-        public static string GetApiUrl(string path) {
-            if (FlaskPort == -1) {
+        public static string GetApiUrl(string path)
+        {
+            if (FlaskPort == -1)
+            {
                 Tools.Error("Flaskアプリのポート番号を取得できませんでした");
                 return "";
             }
             return "http://localhost:" + FlaskPort + path;
         }
         public static int FlaskPort { get; private set; } = -1;
-        private static void BindFreePort() {
+        private static void BindFreePort()
+        {
             using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.Bind(new IPEndPoint(IPAddress.Any, 0));
             var endPoint = (IPEndPoint?)socket.LocalEndPoint;
@@ -96,12 +107,15 @@ namespace WpfApp1.Model
         }
         private static CancellationTokenSource _tokenSource = new CancellationTokenSource();
 
-        public static void Dispose() {
-            if (_tokenSource != null) {
+        public static void Dispose()
+        {
+            if (_tokenSource != null)
+            {
                 _tokenSource.Cancel();
             }
         }
-        public static Process? CreateProcess() {
+        public static Process? CreateProcess()
+        {
             // FlaskのPythonスクリプトを読み込み別スレッドで実行する
             // スレッドを起動した後、python flask_app.pyを実行する
             // OSはWindowsを想定しているため、python3ではなくpythonを実行する
@@ -112,11 +126,12 @@ namespace WpfApp1.Model
             // Flaskアプリのポート番号を取得
             BindFreePort();
             // FlaskPortを取得できなかった場合はエラーを表示
-            if (FlaskPort == -1) {
+            if (FlaskPort == -1)
+            {
                 Tools.Error("Flaskアプリのポート番号を取得できませんでした");
                 return null;
             }
-            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo();
+            ProcessStartInfo psi = new ProcessStartInfo();
             psi.FileName = "python";
             psi.Arguments = FlaskScript;
             psi.UseShellExecute = false;
@@ -131,27 +146,33 @@ namespace WpfApp1.Model
             psi.EnvironmentVariables["SPACY_MODEL_NAME"] = Properties.Settings.Default.SpacyModel;
             psi.EnvironmentVariables["PORT"] = FlaskPort.ToString();
 
-            System.Diagnostics.Process? p = new System.Diagnostics.Process();
+            Process? p = new Process();
             p.StartInfo = psi;
             p.EnableRaisingEvents = true;
 
-            p.ErrorDataReceived += (sender, e) => {
-                if (e.Data != null) {
+            p.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
                     Tools.Info(e.Data);
                 }
             };
-            p.OutputDataReceived += (sender, e) => {
-                if (e.Data != null) {
+            p.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data != null)
+                {
                     Tools.Info(e.Data);
                 }
             };
             return p;
 
         }
-        public static void FlaskThread(Process process) {
+        public static void FlaskThread(Process process)
+        {
             // Pythonスクリプトを実行する
             process.Start();
-            if (process == null) {
+            if (process == null)
+            {
                 Tools.Error("Flaskアプリの起動に失敗しました");
                 return;
             }
@@ -161,10 +182,12 @@ namespace WpfApp1.Model
             process.WaitForExit();
 
         }
-        public static void RunFlask() {
+        public static void RunFlask()
+        {
             // FlaskのPythonスクリプトを読み込み別スレッドで実行する
             Process? process = CreateProcess();
-            if (process == null) {
+            if (process == null)
+            {
                 Tools.Error("Flaskアプリの起動に失敗しました");
                 return;
             }
@@ -173,10 +196,12 @@ namespace WpfApp1.Model
 
             BackgroundWorker wc = new BackgroundWorker();
             wc.WorkerSupportsCancellation = true;
-            wc.DoWork += (sender, e) => {
+            wc.DoWork += (sender, e) =>
+            {
                 FlaskThread(process);
             };
-            _tokenSource.Token.Register(() => {
+            _tokenSource.Token.Register(() =>
+            {
                 wc.CancelAsync();
             });
             wc.RunWorkerAsync();
@@ -184,13 +209,16 @@ namespace WpfApp1.Model
         }
 
         // Pythonファイルを読み込む
-        public static string LoadPythonScript(string scriptName) {
+        public static string LoadPythonScript(string scriptName)
+        {
             var file = new FileInfo(scriptName);
-            if (!file.Exists) {
+            if (!file.Exists)
+            {
                 // テンプレートファイルを読み込み
 
                 file = new FileInfo(TemplateScript);
-                if (!file.Exists) {
+                if (!file.Exists)
+                {
                     throw new ThisApplicationException("テンプレートファイルが見つかりません");
                 }
                 return File.ReadAllText(file.FullName);
@@ -200,17 +228,21 @@ namespace WpfApp1.Model
 
             return script;
         }
-        public static ObservableCollection<ScriptItem> ScriptItems {
-            get {
+        public static ObservableCollection<ScriptItem> ScriptItems
+        {
+            get
+            {
                 var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
                 return new ObservableCollection<ScriptItem>(collection.FindAll());
             }
         }
-        public static void SaveScriptItem(ScriptItem scriptItem) {
+        public static void SaveScriptItem(ScriptItem scriptItem)
+        {
             var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
             collection.Upsert(scriptItem);
         }
-        public static void DeleteScriptItem(ScriptItem scriptItem) {
+        public static void DeleteScriptItem(ScriptItem scriptItem)
+        {
             var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
             collection.Delete(scriptItem.Id);
         }
