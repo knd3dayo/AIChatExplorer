@@ -128,7 +128,7 @@ namespace WpfApp1.Model {
                     );
 
 
-                var scriptItems = ClipboardController.GetScriptItems();
+                var scriptItems = ClipboardDatabaseController.GetScriptItems();
                 // スクリプトを追加
                 foreach (var scriptItem in scriptItems) {
                     if (scriptItem.Type != ScriptType.Python) {

@@ -133,7 +133,7 @@
             <ListBox
                 ItemsSource="{Binding SelectedFolder.Items}"
                 SelectedItem="{Binding SelectedItem}"
-                Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch"
+                Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,0"
                 SelectionMode="Extended"
                 b:ListBoxBehavior.ScrollSelectedIntoView="True"
                 b:ListBoxBehavior.SelectedItems="{Binding SelectedItems, Mode=TwoWay}"
@@ -142,7 +142,7 @@
                     <DataTemplate>
                     <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
                         <DockPanel 
-                            HorizontalAlignment="Stretch"
+                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
                             ToolTip="{Binding Path=ToolTipString}"
                             >
                             <Grid DockPanel.Dock="Left">
@@ -171,7 +171,6 @@
                                 <Border 
                                     BorderBrush="Black" 
                                     BorderThickness="1"  
-                                    HorizontalAlignment="Stretch" 
                                     Grid.Row="2">
                                     <TextBlock 
                                         Text="{Binding Path=Content}" Name="clipboardText" 
@@ -179,6 +178,7 @@
                                         FontSize="8pt"
                                         MinHeight="50" MaxHeight="100"
                                         HorizontalAlignment="Stretch"
+                                        TextWrapping="Wrap"
                                         />
                                 </Border>
                             </Grid>

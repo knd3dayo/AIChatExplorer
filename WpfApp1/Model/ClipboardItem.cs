@@ -154,9 +154,12 @@ namespace WpfApp1.Model {
                 {
                     return header1 + "[種類]File";
                 }
+                else if (ContentType == SharpClipboard.ContentTypes.Image) {
+                    return header1 + "[種類]Image";
+                }
                 else
                 {
-                    return header1 + " [種類]Unknown";
+                    return header1 + "[種類]Unknown";
                 }
             }
         }

@@ -48,15 +48,18 @@
                      />
             </Grid>
             <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" 
+                     Name="Editor"
                      Margin="10,10,10,10"
                      IsEnabled="True"
                      AcceptsReturn="True"
+                     TextWrapping="Wrap"
                      VerticalScrollBarVisibility="Auto"
                      HorizontalScrollBarVisibility="Auto"
                       >
                 <TextBox.InputBindings>
                     <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" />
                     <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" />
+                    <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectTextCommand}" />
                 </TextBox.InputBindings>
             </TextBox>
         </Grid>

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.TagView;
@@ -7,6 +8,7 @@ namespace WpfApp1.View.ClipboardItemView
 {
     class EditItemWindowViewModel : ObservableObject
     {
+        private bool SingleLineSelected = false;
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
             get {
@@ -81,6 +83,7 @@ namespace WpfApp1.View.ClipboardItemView
                 ItemViewModel = itemViewModel;
             }
             _afterUpdate = afterUpdate;
+
         }
 
         // タグ追加ボタンのコマンド
@@ -107,6 +110,45 @@ namespace WpfApp1.View.ClipboardItemView
             tagWindow.ShowDialog();
 
         }
+        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
+        public SimpleDelegateCommand SelectTextCommand => new SimpleDelegateCommand((parameter) => {
+            object? editorObject = EditItemWindow.Current?.FindName("Editor");
+            if (editorObject == null) {
+                return;
+            }
+            TextBox editor = (TextBox)editorObject;
+            // 選択テキストに改行が含まれていない場合は行選択
+            if (! editor.SelectedText.Contains('\n')) {
+                int pos = editor.SelectionStart;
+                // posがTextの長さを超える場合はTextの最後を指定
+                if (pos >= editor.Text.Length) {
+                    pos = editor.Text.Length - 1;
+                }
+                int lineStart = editor.Text.LastIndexOf('\n', pos) + 1;
+                
+                int lineEnd = editor.Text.IndexOf('\n', pos);
+                if (lineEnd == -1) {
+                    lineEnd = editor.Text.Length;
+                }
+                // EditorTextSelectionを更新
+                SingleLineSelected = true;
+
+                // lineEnd - lineStartが0以下の場合は何もしない
+                if (lineEnd - lineStart <= 0) {
+                    return;
+                }
+                editor.Select(lineStart, lineEnd - lineStart);
+
+                return;
+            } else {
+                // 1行選択の場合は全選択
+                if (SingleLineSelected) {
+                    editor.SelectAll();
+                    SingleLineSelected = false;
+                    return;
+                }
+            }
+        });
 
 
         // OKボタンのコマンド

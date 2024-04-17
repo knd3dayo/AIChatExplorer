@@ -1,137 +1,16 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Windows;
+﻿using System.Collections.ObjectModel;
 using WK.Libraries.SharpClipboardNS;
 using WpfApp1.Model;
 using WpfApp1.PythonIF;
 using WpfApp1.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfApp1
-{
-    public class ClipboardProcessController {
-        // Processとファイル名の対応を保持するハッシュテーブル
-        private static Hashtable processOpenedFileHashtable = new Hashtable();
-        // ProcessとItemの対応を保持するハッシュテーブル
-        private static Hashtable processOpenedItemHashtable = new Hashtable();
-
-        public static void OpenItem(ClipboardItem item, bool openAsNew = false) {
-            if (item == null) {
-                return;
-            }
-            // System.Windows.MessageBox.Show(item.Content);
-
-            if (item.ContentType == SharpClipboard.ContentTypes.Files) {
-                string contentFileName = item.Content;
-                // 新規として開く場合はテンポラリディレクトリにファイルをコピーする
-                if (openAsNew) {
-                    // item.Contentがディレクトリの場合はメッセージを表示して終了
-                    if (System.IO.Directory.Exists(item.Content)) {
-                        throw new ThisApplicationException("ディレクトリは新規として開けません");
-                    }
-                    // item.Contentのファイル名を取得
-                    contentFileName = Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(item.Content));
-
-                    // テンポラリディレクトリにコピー
-                    System.IO.File.Copy(item.Content, contentFileName, true);
-
-                }
-
-                // ファイルを開くプロセスを実行
-                ProcessStartInfo proc = new ProcessStartInfo() {
-                    UseShellExecute = true,
-                    FileName = contentFileName
-                };
-                Process.Start(proc);
-            } else if (item.ContentType == SharpClipboard.ContentTypes.Text) {
-                // テンポラリディレクトリにランダムな名前のファイルを作成
-                string tempFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName() + ".txt");
-
-                System.IO.File.WriteAllText(tempFileName, item.Content);
-
-                ProcessStartInfo procInfo = new ProcessStartInfo() {
-                    UseShellExecute = true,
-                    FileName = tempFileName
-
-                };
-                if (procInfo == null) {
-                    return;
-                }
-                Process? process = Process.Start(procInfo);
-                // 新規として開く場合はイベントハンドラーを設定しない
-                if (openAsNew) {
-                    return;
-                }
-                //プロセス終了時のイベントハンドラーを設定
-                if (process != null) {
-                    process.EnableRaisingEvents = true;
-                    process.Exited += new EventHandler(ProcessExited);
-                    // プロセスとファイル名の対応を保持
-                    processOpenedFileHashtable.Add(process, tempFileName);
-                    // プロセスとitemの対応を保持
-                    processOpenedItemHashtable.Add(process, item);
-                }
-
-            }
-        }
-        // 「開く」で開いたプロセス終了イベントを処理する
-        private static void ProcessExited(object? sender, EventArgs e) {
-            // System.Windows.MessageBox.Show("プロセス終了");
-            if (sender == null) {
-                return;
-            }
-            // プロセス終了時にitemに開いた内容を保存
-            Process? process = (Process)sender;
-            string? tempFileName = (string?)processOpenedFileHashtable[process];
-            if (tempFileName == null) {
-                return;
-            }
-            // プロセスとitemの対応を取得
-            ClipboardItem? item = (ClipboardItem?)processOpenedItemHashtable[process];
-            if (item == null) {
-                return;
-            }
-            // 検索条件がある場合はそのまま保持してLoadする。
-            Application.Current.Dispatcher.Invoke(() => {
-                // ファイルの内容をitemに保存
-                item.Content = System.IO.File.ReadAllText(tempFileName);
-                // itemをDBに保存
-                ClipboardDatabaseController.UpsertItem(item);
-
-            });
-            // テンポラリファイルを削除
-            System.IO.File.Delete(tempFileName);
-            // ハッシュテーブルから削除
-            processOpenedFileHashtable.Remove(process);
-
-            processOpenedItemHashtable.Remove(process);
-
-        }
-
-
-
-    }
+namespace WpfApp1 {
+    /// <summary>
+    /// クリップボード監視機能用のクラス
+    /// </summary>
     public class ClipboardController {
         //--------------------------------------------------------------------------------
-
-
-        public static string CreateChatSessionCollectionName() {
-            // 現在のエポック秒を取得
-            long epoch = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-            return "chat_" + epoch.ToString();
-
-        }
-        public static ObservableCollection<ScriptItem> GetScriptItems() {
-            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
-            var items = collection.FindAll();
-            ObservableCollection<ScriptItem> result = new ObservableCollection<ScriptItem>();
-            foreach (var i in items) {
-                result.Add(i);
-            }
-            return result;
-        }
 
         // 起動時フラグ(起動時のクリップボードを読み捨てるため)
         public static bool IsStartup { get; set; } = true;
@@ -150,9 +29,6 @@ namespace WpfApp1
             clipboard.ClipboardChanged += ClipboardChanged;
             // クリップボードの監視を有効にする
             IsClipboardMonitorEnabled = true;
-
-            // Pythonの初期化
-            PythonExecutor.Init();
 
         }
         // ClipboardItemの内容をクリップボードにコピーする 
@@ -211,7 +87,7 @@ namespace WpfApp1
                 if (Properties.Settings.Default.UseOCR) {
                     try {
                         string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
-                        ProcessClipboardItem(e.ContentType, text, e);
+                        ProcessClipboardItem(SharpClipboard.ContentTypes.Text, text, e);
 
                     } catch (ThisApplicationException ex) {
                         Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
@@ -236,7 +112,7 @@ namespace WpfApp1
                 // 大文字同士で比較
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
                 string upperMonitorTargetAppNames = Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
-                if (upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
+                if (! upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return;
                 }
 

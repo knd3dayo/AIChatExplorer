@@ -37,12 +37,21 @@ namespace WpfApp1
             ReloadFolder();
 
             Instance = this;
+            // クリップボード監視機能の初期化
             ClipboardController.Init(this);
-
+            
+            // Python処理機能の初期化
+            PythonExecutor.Init();
 
             // バックアップ処理を実施
             BackupController.Init();
 
+            // コンテキストメニューの初期化
+            InitContextMenu();
+
+
+        }
+        private void InitContextMenu() {
             // コンテキストメニューの初期化
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("開く", OpenSelectedItemCommand, "Ctrl+O"));
 
@@ -52,7 +61,7 @@ namespace WpfApp1
 
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("コピー", CopyToClipboardCommand, "Ctrl+C"));
             ClipboardItemContextMenuItems.Add(new ClipboardAppMenuItem("削除", DeleteSelectedItemCommand, "Delete"));
-                
+
             // サブメニュー設定
             ClipboardAppMenuItem pythonMenuItems = new ClipboardAppMenuItem("便利機能", SimpleDelegateCommand.EmptyCommand);
             pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", SplitFilePathCommand));
@@ -63,14 +72,14 @@ namespace WpfApp1
             // Pythonスクリプト(ユーザー定義)
             foreach (ScriptItem scriptItem in ClipboardItemViewModel.ScriptItems) {
 
-                pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem(scriptItem.Description , new SimpleDelegateCommand((parameter) => {
+                pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem(scriptItem.Description, new SimpleDelegateCommand((parameter) => {
                     ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute(scriptItem);
                 })
                 ));
             }
             ClipboardItemContextMenuItems.Add(pythonMenuItems);
+        }
 
-            }
         // フォルダ階層を再描写する
         public void ReloadFolder() {
             ClipboardItemFolders.Clear();
@@ -124,6 +133,14 @@ namespace WpfApp1
 
         // Ctrl + C が押された時のClipboardItemFolder
         public ClipboardItemFolderViewModel? CopiedItemFolder { get; set; } = null;
+
+        //-----
+        // ClipboardItemContextMenuItems
+        //-----
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
         // static 
 
         // ステータスバーのテキスト
@@ -134,12 +151,6 @@ namespace WpfApp1
             StatusText.Text = text;
             OnPropertyChanged("StatusText");
         }
-        //-----
-        // ClipboardItemContextMenuItems
-        //-----
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
-
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
 
         //--------------------------------------------------------------------------------
         // コマンド
@@ -156,7 +167,7 @@ namespace WpfApp1
             });
 
         // Ctrl + F が押された時の処理
-        public static SimpleDelegateCommand SearchCommand => new SimpleDelegateCommand((parameter) => {
+        public static SimpleDelegateCommand SearchCommand => new((parameter) => {
             ClipboardFolderCommands.SearchCommandExecute(parameter);
         });
 
