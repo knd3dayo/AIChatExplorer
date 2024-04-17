@@ -18,6 +18,9 @@ namespace WpfApp1.PythonIF
         {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public string ExtractTextFromImage(System.Drawing.Image image) {
+            throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
         public MaskedData GetMaskedData(List<string> beforeTextList)
         {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");

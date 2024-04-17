@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Drawing;
 using Python.Runtime;
 using WpfApp1.Model;
 using WpfApp1.Utils;
@@ -15,11 +16,20 @@ namespace WpfApp1.PythonIF
 
             Task consumerAThread = new Task(() =>
             {
+                // 初期化エラー時にcommandを受け付けないようにする
+                bool initError = false;
                 using (Py.GIL())
                 {
-                    ps = Py.CreateScope();
-                    string script = PythonExecutor.LoadPythonScript(PythonExecutor.ClipboardAppUtilsScript);
-                    ps.Exec(script);
+
+                    try {
+                        ps = Py.CreateScope();
+                        string script = PythonExecutor.LoadPythonScript(PythonExecutor.ClipboardAppUtilsScript);
+                        ps.Exec(script);
+                    } catch (PythonException e) {
+                        string message = CreatePythonExceptionMessage(e);
+                        Tools.Error("Python機能初期化時にエラーが発生しました\n" + message);
+                        initError = true;
+                    }
                 }
                 while (true)
                 {
@@ -28,7 +38,13 @@ namespace WpfApp1.PythonIF
                         break;
                     }
                     Task command = blockingCollection.Take();
-                    command.Start();
+                    if (initError) {
+                        // 初期化エラー時はコマンドをキャンセルする
+                        Tools.Warn("Python機能初期化時にエラーが発生したため、Pythonコマンドをキャンセルします");
+                        command.Dispose();
+                    } else {
+                        command.Start();
+                    }
                 }
             });
             consumerAThread.Start();
@@ -181,6 +197,29 @@ namespace WpfApp1.PythonIF
                 resultContainer.Result = (object)actionResult;
             });
             return (MaskedData)resultContainer.Result;
+        }
+
+        public string ExtractTextFromImage(System.Drawing.Image image) {
+            // Pythonスクリプトを実行する
+            ResultContainer resultContainer = new ResultContainer("");
+            PythonActionTemplate(resultContainer, resultContainer => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic? extract_text_from_image = ps?.Get("extract_text_from_image");
+                // extract_text_from_imageが呼び出せない場合は例外をスロー
+                if (extract_text_from_image == null) {
+                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_text_from_image関数が見つかりません");
+                }
+                // extract_text_from_image関数を呼び出す
+                ImageConverter imageConverter = new ImageConverter();
+                object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]));
+                if (bytesObject == null) {
+                    throw new ThisApplicationException("画像のバイト列に変換できません");
+                }
+                byte[] bytes = (byte[])bytesObject;
+                string result = extract_text_from_image(bytes);
+                resultContainer.Result = (object)result;
+            });
+            return (string)resultContainer.Result;
         }
 
         private List<MaskedEntity> GetMaskedEntities(string label, PyDict pyDict)

@@ -1,4 +1,5 @@
-﻿using WpfApp1.Model;
+﻿using System.Drawing;
+using WpfApp1.Model;
 
 namespace WpfApp1.PythonIF
 {
@@ -30,6 +31,8 @@ namespace WpfApp1.PythonIF
 
         public string ExtractText(string path);
         public string GetMaskedString(string text);
+
+        public string ExtractTextFromImage(Image image);
 
         public MaskedData GetMaskedData(List<string> textList);
 

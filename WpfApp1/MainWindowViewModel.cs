@@ -36,8 +36,8 @@ namespace WpfApp1
             // フォルダ階層を再描写する
             ReloadFolder();
 
-            ClipboardController.Init(this);
             Instance = this;
+            ClipboardController.Init(this);
 
 
             // バックアップ処理を実施

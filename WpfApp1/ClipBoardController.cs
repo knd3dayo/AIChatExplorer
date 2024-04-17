@@ -207,6 +207,19 @@ namespace WpfApp1
             else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
                 // Get the cut/copied image.
                 System.Drawing.Image img = clipboard.ClipboardImage;
+                // UseOCRが設定されている場合はOCRを実行
+                if (Properties.Settings.Default.UseOCR) {
+                    try {
+                        string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
+                        ProcessClipboardItem(e.ContentType, text, e);
+
+                    } catch (ThisApplicationException ex) {
+                        Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+                    }
+
+
+                }
+
             }
             // If the cut/copied content is complex, use 'Other'.
             else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
@@ -219,9 +232,14 @@ namespace WpfApp1
                 return;
             }
             // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
-            if (Properties.Settings.Default.MonitorTargetAppNames != "" 
-                && !Properties.Settings.Default.MonitorTargetAppNames.Contains(e.SourceApplication.Name)) {
-                return;
+            if (Properties.Settings.Default.MonitorTargetAppNames != "") {
+                // 大文字同士で比較
+                string upperSourceApplication = e.SourceApplication.Name.ToUpper();
+                string upperMonitorTargetAppNames = Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
+                if (upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
+                    return;
+                }
+
             }
 
             // RootFolderにClipboardItemを追加

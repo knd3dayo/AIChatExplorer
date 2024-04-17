@@ -214,5 +214,17 @@ namespace WpfApp1.Properties {
                 this["AutoEmbedding"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseOCR {
+            get {
+                return ((bool)(this["UseOCR"]));
+            }
+            set {
+                this["UseOCR"] = value;
+            }
+        }
     }
 }
