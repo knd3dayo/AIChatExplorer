@@ -21,18 +21,18 @@
                  HorizontalAlignment="Stretch" 
                  Margin="10,10,10,10" 
                  VerticalAlignment="Stretch"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal"
-                        Tag="{Binding DataContext, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBox}}}"
                      >
                         <CheckBox Content="{Binding Tag}" IsChecked="{Binding IsChecked}" Width="200"/>
                         <StackPanel.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="削除" 
-                                    Command="{Binding PlacementTarget.Tag.DeleteTagCommand , RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}}"
-                                    CommandParameter="{Binding Tag}"/>
+                                    Command="{Binding DeleteTagCommand}"
+                                    CommandParameter="{Binding}"/>
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>

@@ -75,25 +75,22 @@ namespace WpfApp1.View.TagView {
         }
 
         // タグを削除したときの処理
-        public SimpleDelegateCommand DeleteTagCommand => new SimpleDelegateCommand(DeleteTagCommandExecute);
-
-        private void DeleteTagCommandExecute(object obj) {
-
-            // IsCheckedがTrueのものを削除
-            foreach (var item in TagList) {
-                if (item.IsChecked) {
-                    // LiteDBから削除
-                    ClipboardDatabaseController.DeleteTag(item.Tag);
-                    // TagListから削除
+        public SimpleDelegateCommand DeleteTagCommand => new SimpleDelegateCommand(
+            (parameter) => {
+                // IsCheckedがTrueのものを削除
+                foreach (var item in TagList) {
+                    if (item.IsChecked) {
+                        // LiteDBから削除
+                        ClipboardDatabaseController.DeleteTag(item.Tag);
+                        // TagListから削除
+                    }
                 }
-            }
-            // LiteDBから再読み込み
-            TagList.Clear();
-            foreach (var item in ClipboardDatabaseController.GetTagList()) {
-                TagList.Add(item);
-            }
-
-        }
+                // LiteDBから再読み込み
+                TagList.Clear();
+                foreach (var item in ClipboardDatabaseController.GetTagList()) {
+                    TagList.Add(item);
+                }
+            });
 
         // OKボタンを押したときの処理
         public SimpleDelegateCommand OkCommand => new SimpleDelegateCommand(OkCommandExecute);

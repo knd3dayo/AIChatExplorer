@@ -2,6 +2,8 @@
 sys.path.append("python")
 import clipboard_app_sqlite
 
+nlp = None
+
 def extract_text(filename):
     from unstructured.partition.auto import partition
 

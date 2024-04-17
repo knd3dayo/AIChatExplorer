@@ -7,8 +7,6 @@ import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboar
 
 os.environ["NO_PROXY"] = "*"
 
-nlp = None
-
 clipboard_app_faiss.load_faiss_index()
 
 # spacy関連

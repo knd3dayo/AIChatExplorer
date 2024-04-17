@@ -25,12 +25,14 @@
             SelectedItem="{Binding SelectedItem}"
             Grid.Row="0"
             Margin="10,10,10,10"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
             >
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel
                         Name="stackPanel1" Orientation="Horizontal" 
                         HorizontalAlignment="Stretch"
+
                         >
                         <Grid>
                             <Grid.RowDefinitions>
@@ -39,10 +41,10 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock
-                                            Text="{Binding Role}"
-                                            Width="500"
-                                            FontSize="8pt"
-                                            Grid.Row="0"/>
+                                Text="{Binding Role}"
+                                Width="500"
+                                FontSize="8pt"
+                                Grid.Row="0"/>
                             <Border
                                 BorderBrush="Black" 
                                 BorderThickness="1"  
@@ -59,71 +61,6 @@
                                     />
                             </Border>
                         </Grid>
-                        <StackPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem
-                                    Header="開く"  
-                                    Command="{Binding OpenItemCommand }"
-                                    CommandParameter="{Binding}"/>
-                                <MenuItem
-                                    Header="新規として開く"  
-                                    Command="{Binding OpenItemAsNewCommand }"
-                                    CommandParameter="{Binding}"/>
-                                <MenuItem
-                                    Header="編集"
-                                    Command="{Binding EditItemCommand }"
-                                    CommandParameter="{Binding}"/>
-                                <MenuItem
-                                    Header="コピー・移動"  
-                                    >
-                                    <MenuItem 
-                                        Header="ブックマークにコピー"  
-                                        Command="{Binding BookmarkItemCommand }"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem 
-                                        Header="その他のタブにコピー"  
-                                        Command="{Binding CopyToOtherTabCommand}"
-                                        CommandParameter="{Binding}"/>
-                                    <MenuItem 
-                                        Header="その他のタブに移動"  
-                                        Command="{Binding MoveToOtherTabCommand}"
-                                        CommandParameter="{Binding}"/>
-                                </MenuItem>
-
-                                <MenuItem 
-                                    Header="タグ"  
-                                    Command="{Binding EditTagItemCommand}"
-                                    CommandParameter="{Binding}"/>
-                                <MenuItem
-                                    Header="Pythonスクリプト"  
-                                    >
-                                    <MenuItem
-                                        Header="テキストを抽出"  
-                                        Command="{Binding ExtractTextCommand }"
-                                        CommandParameter="{Binding}"
-                                        Visibility="{Binding FileVisibility}"
-                                        />
-                                    <MenuItem
-                                        Header="データをマスキング"  
-                                        Command="{Binding MaskDataCommand }"
-                                        CommandParameter="{Binding}"
-                                        Visibility="{Binding TextVisibility }"
-                                    />
-                                </MenuItem>
-                                <MenuItem ItemsSource="{Binding ScriptItems}"
-                                    Header="Pythonスクリプト(ユーザー定義)" >
-                                    <MenuItem.ItemTemplate>
-                                        <DataTemplate>
-                                            <MenuItem Header="{Binding Description}" Command="{Binding RunPythonScriptCommand}" CommandParameter="{Binding}"/>
-                                        </DataTemplate>
-                                    </MenuItem.ItemTemplate>
-                                </MenuItem>
-                                <MenuItem
-                                    Header="削除"
-                                    Command="{Binding DeleteItemCommand}"
-                                    CommandParameter="{Binding}"/>
-                            </ContextMenu>
-                        </StackPanel.ContextMenu>
                         <StackPanel.InputBindings>
                             <MouseBinding  MouseAction="LeftDoubleClick" 
                                     Command="{Binding CopyToClipboardCommand}"

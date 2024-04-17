@@ -38,7 +38,12 @@ namespace WpfApp1.PythonIF
             // Pythonスクリプトを実行する
             Task command = new Task(() => {
                 using (Py.GIL()) {
-                    action(container);
+                    try {
+                        action(container);
+                    } catch (PythonException e) {
+                        string message = CreatePythonExceptionMessage(e);
+                        throw new ThisApplicationException(message);
+                    }
                 }
             });
             blockingCollection.Add(command);
@@ -221,7 +226,12 @@ namespace WpfApp1.PythonIF
                 }
                 // open_ai_chat関数を呼び出す
                 string json_string = ClipboardItem.ToJson(jSONChatItems);
-                resultContainer.Result = open_ai_chat(json_string, CreateOpenAIProperties());
+                PyObject pyObject = open_ai_chat(json_string, CreateOpenAIProperties());
+                string? resultString = pyObject.ToString();
+                if (resultString == null) {
+                    throw new ThisApplicationException("OpenAIの応答がありません");
+                }
+                resultContainer.Result = resultString;
             });
             return (string)resultContainer.Result;
         }
