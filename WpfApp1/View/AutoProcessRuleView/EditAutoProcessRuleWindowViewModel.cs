@@ -390,7 +390,7 @@ namespace WpfApp1.View.AutoProcessRuleView
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }
-        public SimpleDelegateCommand AutoProcessItemSelectionChangedCommand => new SimpleDelegateCommand(AutoProcessItemSelectionChangedCommandExecute);
+        public SimpleDelegateCommand AutoProcessItemSelectionChangedCommand => new(AutoProcessItemSelectionChangedCommandExecute);
         public void AutoProcessItemSelectionChangedCommandExecute(object parameter) {
             if (SelectedAutoProcessItem == null) {
                 return;

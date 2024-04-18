@@ -101,13 +101,16 @@
                 <ComboBox ItemsSource="{Binding AutoProcessItems}" 
                           IsSynchronizedWithCurrentItem="True"
                           SelectedValue="{Binding SelectedAutoProcessItem.Name}"
+                          SelectedItem="{Binding SelectedAutoProcessItem}"
                           SelectedValuePath="Name"
                           DisplayMemberPath="DisplayName"
                           Margin="10,10,10,10"
                           >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
+                            <i:InvokeCommandAction
+                                Command="{Binding AutoProcessItemSelectionChangedCommand}" 
+                                />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ComboBox>
