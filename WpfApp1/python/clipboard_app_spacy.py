@@ -12,6 +12,7 @@ def extract_text(filename):
     return "\n".join([element.text for element in elements])
 
 def mask_data(textList: list, props = {}):
+    raise Exception("Not implemented")
     global nlp
     if (nlp is None):
         import spacy

@@ -6,15 +6,20 @@ using WpfApp1.Utils;
 
 namespace WpfApp1.PythonIF
 {
+    public class PythonTask(Action action) : Task(action) {
+
+        public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
+
+    }
     public class PythonNetFunctions : IPythonFunctions
     {
         private PyModule? ps;
-        private BlockingCollection<Task> blockingCollection = new BlockingCollection<Task>();
+        private BlockingCollection<PythonTask> blockingCollection = new BlockingCollection<PythonTask>();
 
         public PythonNetFunctions()
         {
 
-            Task consumerAThread = new Task(() =>
+            Task consumerThread = new(() =>
             {
                 // 初期化エラー時にcommandを受け付けないようにする
                 bool initError = false;
@@ -37,33 +42,45 @@ namespace WpfApp1.PythonIF
                     {
                         break;
                     }
-                    Task command = blockingCollection.Take();
+                    PythonTask command = blockingCollection.Take();
                     if (initError) {
                         // 初期化エラー時はコマンドをキャンセルする
                         Tools.Warn("Python機能初期化時にエラーが発生したため、Pythonコマンドをキャンセルします");
-                        command.Dispose();
+                        command.CancellationTokenSource.Cancel();
                     } else {
-                        command.Start();
+                        try {
+                            command.Start();
+                        } catch (PythonException e) {
+                               string message = CreatePythonExceptionMessage(e);
+                            Tools.Error("Pythonコマンド実行時にエラーが発生しました\n" + message);
+                        }catch (Exception e) {
+                            Tools.Error("Pythonコマンド実行時にエラーが発生しました\n" + e.Message);
+                        }
                     }
                 }
             });
-            consumerAThread.Start();
+            consumerThread.Start();
         }
 
         public object PythonActionTemplate(ResultContainer container, Action<ResultContainer> action) {
             // Pythonスクリプトを実行する
-            Task command = new Task(() => {
+            PythonTask command = new PythonTask(() => {
                 using (Py.GIL()) {
-                    try {
-                        action(container);
-                    } catch (PythonException e) {
-                        string message = CreatePythonExceptionMessage(e);
-                        throw new ThisApplicationException(message);
-                    }
+                    action(container);
                 }
             });
+            // CancellationTokenを設定
+            CancellationToken token = command.CancellationTokenSource.Token;
             blockingCollection.Add(command);
-            command.Wait();
+            try { 
+                command.Wait(token);
+            } catch (OperationCanceledException e) {
+                Tools.Warn("Pythonコマンドがキャンセルされました");
+                throw new ThisApplicationException("Pythonコマンドがキャンセルされました", e);
+
+            } catch (PythonException e) {
+                throw new ThisApplicationException("Pythonコマンド実行時にエラーが発生しました", e);
+            }
             return container.Result;
         }
         public class ResultContainer{
