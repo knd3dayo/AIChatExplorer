@@ -90,7 +90,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- フォルダのTreeView -->
-            <TreeView Grid.Column="0" Grid.Row="0" ItemsSource="{Binding ClipboardItemFolders}">
+            <TreeView Grid.Column="0" Grid.Row="0" ItemsSource="{Binding ClipboardItemFolders}"
+                      >
                 <TreeView.ItemTemplate >
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolderViewModel">
                         <!-- ツリーアイテム-->

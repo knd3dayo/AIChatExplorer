@@ -18,6 +18,9 @@ namespace WpfApp1.PythonIF
         {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public string GetUnmaskedString(string maskedText) {
+            throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
         public string ExtractTextFromImage(System.Drawing.Image image) {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
@@ -25,6 +28,10 @@ namespace WpfApp1.PythonIF
         {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public MaskedData GetUnMaskedData(List<string> maskedTextList) {
+            throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+
         public string OpenAIChat(List<JSONChatItem> jSONChatItems)
         {
             throw new ThisApplicationException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");

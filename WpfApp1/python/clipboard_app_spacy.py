@@ -1,4 +1,5 @@
 ﻿import sys
+from unittest import result
 sys.path.append("python")
 import clipboard_app_sqlite
 
@@ -12,29 +13,24 @@ def extract_text(filename):
     return "\n".join([element.text for element in elements])
 
 def mask_data(textList: list, props = {}):
-    raise Exception("Not implemented")
     global nlp
     if (nlp is None):
         import spacy
         model_name = props.get("SpacyModel", None)
         if model_name is None:
+            raise Exception("SpacyModel is not set.")
             return {}
         else:
             nlp = spacy.load(model_name)
     
-    # text、PERSON、ORG、GPEを格納するdictを作成
+    # TEXTのbeforeのbefore,afterを格納するdictとentityラベル毎のdictを格納するdictを作成
+    # result_dict[TEXT] = result_text_list[] # BEFOREとAFTERを格納したdictのリスト
+    # result_dict{<EntityLabel>} = {<EntityLabel>, result_entity_dict{}} # EntityLabelとBEFOREとAFTERを格納するdict
+            
     result_dict = {}
-    
-    # PERSONの変換前後のdict
-    result_persion_dict = {}
-    # ORGの変換前後のdict
-    result_org_dict = {}
-    # ent.label_がPERSONのent.textと 連番を保持する
-    person_dict = {}
-    # ent.label_がORGのent.textと 連番を保持する
-    org_dict = {}
+    # キーがTEXTのdictを作成
+    result_dict["TEXT"] = {"BEFORE": textList, "AFTER": []}
 
-    result_text_list = []
     # tableが存在しない場合、作成する
     clipboard_app_sqlite.create_masked_data_table()
     
@@ -45,37 +41,28 @@ def mask_data(textList: list, props = {}):
 
         for ent in doc.ents:
             if ent.label_ in ["PERSON", "ORG"]:
-                # PERSONの場合
-                if ent.label_ == "PERSON":
-                    target_dict = result_persion_dict
-                # ORGの場合
-                elif ent.label_ == "ORG":
-                    target_dict = result_org_dict    
                 # masked_data_tableにBEFOREがent.textのデータがあるか確認する
-                masked_data_id = clipboard_app_sqlite.select_masked_data_table(ent.text)
-                if masked_data_id is None:
+                masked_data_string = clipboard_app_sqlite.select_masked_data_table(ent.text)
+                if masked_data_string is None:
                     # text_intテーブルのPERSONのlast_numを取得する
                     num = clipboard_app_sqlite.select_text_int_table(ent.label_)
-                    temp_text = f"[MASKED {ent.label_} {num + 1}]"
-                    afterText = afterText.replace(ent.text, temp_text)
+                    masked_text = f"[MASKED {ent.label_} {num + 1}]"
+                    afterText = afterText.replace(ent.text, masked_text)
+
                     # masked_data_tableにBEFOREがent.textのデータを追加する
-                    clipboard_app_sqlite.insert_masked_data_table(ent.text, temp_text)
+                    clipboard_app_sqlite.insert_masked_data_table(ent.text, masked_text)
                     # text_intテーブルのPERSONのlast_numを+1する
                     clipboard_app_sqlite.update_text_int_table(ent.label_)
-                    
                     # 結果を格納
-                    target_dict[ent.text] = temp_text
+                    result_dict.get(ent.label_,{})[ent.text] = masked_text
                 else:
-                    afterText = afterText.replace(ent.text, masked_data_id)
+                    masked_text = afterText.replace(ent.text, masked_data_string)
                     # 結果を格納
-                    target_dict[ent.text] = masked_data_id
+                    result_dict.get(ent.label_,{})[ent.text] = masked_text
                     
-        result_text_list.append({"BEFORE": beforeText, "AFTER": afterText})
+        result_dict["TEXT"]["AFTER"].append(afterText)
 
     # それぞれのdictをresut_dictに格納する
-    result_dict["PERSON"] = result_persion_dict
-    result_dict["ORG"] = result_org_dict
-    result_dict["TEXT"] = result_text_list
 
     return result_dict
 

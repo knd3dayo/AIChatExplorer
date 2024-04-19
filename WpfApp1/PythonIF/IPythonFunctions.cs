@@ -31,10 +31,14 @@ namespace WpfApp1.PythonIF
 
         public string ExtractText(string path);
         public string GetMaskedString(string text);
+        public string GetUnmaskedString(string maskedText);
 
         public string ExtractTextFromImage(Image image);
 
         public MaskedData GetMaskedData(List<string> textList);
+        
+        public MaskedData GetUnMaskedData(List<string> maskedTextList);
+
 
         public string OpenAIChat(List<JSONChatItem> jSONChatItems);
 
