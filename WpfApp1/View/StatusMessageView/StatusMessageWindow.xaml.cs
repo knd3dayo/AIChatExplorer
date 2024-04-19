@@ -18,10 +18,8 @@ namespace WpfApp1.View.StatusMessageView {
     /// </summary>
     public partial class StatusMessageWindow : Window {
 
-        public static StatusMessageWindow? Current;
         public StatusMessageWindow() {
             InitializeComponent();
-            Current = this;
         }
     }
 }

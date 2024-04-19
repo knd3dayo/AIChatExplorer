@@ -1,13 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reflection.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.ClipboardItemFolderView;
 
-namespace WpfApp1.View.AutoProcessRuleView
-{
-    public class ListAutoProcessRuleWindowViewModel : ObservableObject
-    {
+namespace WpfApp1.View.AutoProcessRuleView {
+    public class ListAutoProcessRuleWindowViewModel : ObservableObject {
         // Instance
         public static ListAutoProcessRuleWindowViewModel? Instance = null;
 
@@ -18,17 +17,14 @@ namespace WpfApp1.View.AutoProcessRuleView
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = new ObservableCollection<AutoProcessRule>();
         // 選択中の自動処理ルール
         private static AutoProcessRule? _selectedAutoProcessRule;
-        public static AutoProcessRule? SelectedAutoProcessRule
-        {
+        public static AutoProcessRule? SelectedAutoProcessRule {
             get => _selectedAutoProcessRule;
-            set
-            {
+            set {
                 _selectedAutoProcessRule = value;
             }
         }
         // 初期化
-        public void Initialize()
-        {
+        public void Initialize() {
             // Instance
             Instance = this;
             // AutoProcessRulesを更新
@@ -37,8 +33,7 @@ namespace WpfApp1.View.AutoProcessRuleView
 
         }
 
-        public void Initialize(ClipboardItemFolderViewModel? targetFolder)
-        {
+        public void Initialize(ClipboardItemFolderViewModel? targetFolder) {
             TargetFolder = targetFolder;
             // AutoProcessRulesを更新
             AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
@@ -49,14 +44,11 @@ namespace WpfApp1.View.AutoProcessRuleView
         public static SimpleDelegateCommand EditAutoProcessRuleCommand => new SimpleDelegateCommand(EditAutoProcessRuleCommandExecute);
 
         // 自動処理ルールを編集する処理
-        public static void EditAutoProcessRuleCommandExecute(object parameter)
-        {
+        public static void EditAutoProcessRuleCommandExecute(object parameter) {
             // AutoProcessRuleが更新された後の処理
-            void AutoProcessRuleUpdated(AutoProcessRule rule)
-            {
+            void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
-                if (Instance == null)
-                {
+                if (Instance == null) {
                     return;
                 }
                 // AutoProcessRulesを更新
@@ -64,8 +56,7 @@ namespace WpfApp1.View.AutoProcessRuleView
                 Instance.OnPropertyChanged("AutoProcessRules");
             }
             // debug
-            if (SelectedAutoProcessRule == null)
-            {
+            if (SelectedAutoProcessRule == null) {
                 System.Windows.MessageBox.Show("自動処理ルールが選択されていません。");
                 return;
             }
@@ -78,14 +69,11 @@ namespace WpfApp1.View.AutoProcessRuleView
         // 自動処理を追加する処理
         public static SimpleDelegateCommand AddAutoProcessRuleCommand => new SimpleDelegateCommand(AddAutoProcessRuleCommandExecute);
 
-        public static void AddAutoProcessRuleCommandExecute(object parameter)
-        {
+        public static void AddAutoProcessRuleCommandExecute(object parameter) {
             // AutoProcessRuleが更新された後の処理
-            void AutoProcessRuleUpdated(AutoProcessRule rule)
-            {
+            void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
-                if (Instance == null)
-                {
+                if (Instance == null) {
                     return;
                 }
                 // AutoProcessRulesを更新
@@ -99,16 +87,13 @@ namespace WpfApp1.View.AutoProcessRuleView
         }
         // 自動処理を削除する処理
         public SimpleDelegateCommand DeleteAutoProcessRuleCommand => new SimpleDelegateCommand(DeleteAutoProcessRuleCommandExecute);
-        public void DeleteAutoProcessRuleCommandExecute(object parameter)
-        {
+        public void DeleteAutoProcessRuleCommandExecute(object parameter) {
             AutoProcessRule? rule = SelectedAutoProcessRule;
-            if (rule == null)
-            {
+            if (rule == null) {
                 System.Windows.MessageBox.Show("自動処理ルールが選択されていません。");
                 return;
             }
-            if (System.Windows.MessageBox.Show($"自動処理ルール{rule.RuleName}を削除しますか？", "確認", System.Windows.MessageBoxButton.YesNo) != System.Windows.MessageBoxResult.Yes)
-            {
+            if (System.Windows.MessageBox.Show($"自動処理ルール{rule.RuleName}を削除しますか？", "確認", System.Windows.MessageBoxButton.YesNo) != System.Windows.MessageBoxResult.Yes) {
                 return;
             }
             AutoProcessRules.Remove(rule);
@@ -118,12 +103,10 @@ namespace WpfApp1.View.AutoProcessRuleView
         }
 
         // CloseCommand
-        public SimpleDelegateCommand CloseCommand => new SimpleDelegateCommand(CloseCommandExecute);
-        public void CloseCommandExecute(object parameter)
-        {
-            ListAutoProcessRuleWindow.Current?.Close();
-        }
-
-
+        public SimpleDelegateCommand CloseCommand => new ((parameter) => {
+            if (parameter is System.Windows.Window window) {
+                window.Close();
+            }
+        });
     }
 }

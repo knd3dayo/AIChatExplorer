@@ -9,9 +9,14 @@
     <Window.DataContext>
         <local:EditItemWindowViewModel/>
     </Window.DataContext>
+
     <Window.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" />
-        <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" />
+        <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    />
+        <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -57,16 +62,31 @@
                      HorizontalScrollBarVisibility="Auto"
                       >
                 <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding OKButtonCommand}" />
-                    <KeyBinding Key="Escape" Command="{Binding CancelButtonCommand}" />
-                    <KeyBinding Key="A" Modifiers="Ctrl" Command="{Binding SelectTextCommand}" />
+                    <KeyBinding Key="Enter"
+                        Command="{Binding OKButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                />
+                    <KeyBinding Key="Escape"
+                        Command="{Binding CancelButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                />
+                    <KeyBinding Key="A" Modifiers="Ctrl" 
+                        Command="{Binding SelectTextCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                />
+                    
                 </TextBox.InputBindings>
             </TextBox>
         </Grid>
         <Grid Grid.Row="2" HorizontalAlignment="Right" Margin="10,0,0,10" VerticalAlignment="Bottom">
             <DockPanel HorizontalAlignment="Right" Width="150" >
-                <Button   Content="OK" Command="{Binding OKButtonCommand}" Width="50" Margin="10,10,10,0"  />
-                <Button DockPanel.Dock="Right" Content="キャンセル" Command="{Binding CancelButtonCommand}" Width="50" Margin="10,10,10,0" />
+                <Button   Content="OK" Command="{Binding OKButtonCommand}" 
+                          CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                          Width="50" Margin="10,10,10,0"  />
+                <Button DockPanel.Dock="Right" Content="キャンセル"
+                        Command="{Binding CancelButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Width="50" Margin="10,10,10,0" />
             </DockPanel>
         </Grid>
     </Grid>

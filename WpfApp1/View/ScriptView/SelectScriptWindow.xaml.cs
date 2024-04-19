@@ -19,11 +19,9 @@ namespace WpfApp1.View.ScriptView
     /// </summary>
     public partial class SelectScriptWindow : Window
     {
-        public static SelectScriptWindow? Current { get; set; }
         public SelectScriptWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

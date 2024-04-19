@@ -40,7 +40,7 @@ def mask_data(textList: list, props = {}):
         doc = nlp(beforeText)
 
         for ent in doc.ents:
-            if ent.label_ in ["PERSON", "ORG"]:
+            if ent.label_ in ['ORG', 'PERSON', 'PRODUCT', 'WORK_OF_ART', 'EVENT']:
                 # masked_data_tableにBEFOREがent.textのデータがあるか確認する
                 masked_data_string = clipboard_app_sqlite.select_masked_data_table(ent.text)
                 if masked_data_string is None:

@@ -11,20 +11,13 @@ namespace WpfApp1.View.ScriptView
     {
         public static ObservableCollection<ScriptItem> ScriptItems { get; } = PythonExecutor.ScriptItems;
 
-
-
         // Scriptを削除したときの処理
-        public static SimpleDelegateCommand DeleteScriptCommand => new SimpleDelegateCommand(DeleteScriptCommandExecute);
-
-        public static void DeleteScriptCommandExecute(object obj)
-        {
-            if (obj is ScriptItem)
-            {
-                ScriptItem scriptItemm = (ScriptItem)obj;
-                PythonExecutor.DeleteScriptItem(scriptItemm);
-                ScriptItems.Remove(scriptItemm);
+        public static SimpleDelegateCommand DeleteScriptCommandExecute => new ((parameter) => {
+            if (parameter is ScriptItem scriptItem) {
+                PythonExecutor.DeleteScriptItem(scriptItem);
+                ScriptItems.Remove(scriptItem);
             }
-        }
+        });
 
         // OKボタンを押したときの処理
         public static void SelectScriptCommandExecute(object obj)
@@ -42,17 +35,19 @@ namespace WpfApp1.View.ScriptView
             }
 
             // ウィンドウを閉じる
-            SelectScriptWindow.Current?.Close();
+            if (obj is SelectScriptWindow selectScriptWindow) {
+                selectScriptWindow.Close();
+            }
 
         }
         // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand CloseCommand => new SimpleDelegateCommand(CloseCommandExecute);
-        private void CloseCommandExecute(object obj)
-        {
+        public SimpleDelegateCommand CloseCommand => new ((parameter) => {
             // ウィンドウを閉じる
-            SelectScriptWindow.Current?.Close();
-        }
+            if (parameter is SelectScriptWindow selectScriptWindow) {
+                selectScriptWindow.Close();
+            }
 
+        });
 
     }
 }

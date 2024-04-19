@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
@@ -77,7 +78,9 @@ namespace WpfApp1.View.OpenAIView {
         // Closeコマンド
         public SimpleDelegateCommand CloseCommand => new SimpleDelegateCommand(CloseCommandExecute);
         public void CloseCommandExecute(object parameter) {
-            OpenAIChatWindow.current?.Close();
+            if (parameter is Window window) {
+                window.Close();
+            }
         }
 
     }

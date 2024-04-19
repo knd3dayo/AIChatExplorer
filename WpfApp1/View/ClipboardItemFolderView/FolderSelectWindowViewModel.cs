@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -60,29 +61,30 @@ namespace WpfApp1.View.ClipboardItemFolderView
             RootFolders.Add(rootFolderViewModel);
             Instance = this;
         }
-        public static SimpleDelegateCommand SelectFolderCommand => new SimpleDelegateCommand(SelectFolderCommandExecute);
-        public static void SelectFolderCommandExecute(object parameter)
-        {
-            if (Instance == null)
-            {
+        public static SimpleDelegateCommand SelectFolderCommand => new ((parameter) => {
+            if (Instance == null) {
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
-            if (Instance.SelectedFolder == null)
-            {
+            if (Instance.SelectedFolder == null) {
                 Tools.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
             Instance.FolderSelectedAction?.Invoke(Instance.SelectedFolder);
-            FolderSelectWindow.Current?.Close();
-        }
-
-        public SimpleDelegateCommand CancelCommand => new SimpleDelegateCommand(CancelCommandExecute);
-        private void CancelCommandExecute(object parameter)
-        {
             // Windowを閉じる
-            FolderSelectWindow.Current?.Close();
-        }
+            if (parameter is FolderSelectWindow folderSelectWindow) {
+                folderSelectWindow.Close();
+            }
+
+        });
+
+        public SimpleDelegateCommand CancelCommand => new((parameter) => {
+            // Windowを閉じる
+            if (parameter is FolderSelectWindow folderSelectWindow) {
+                folderSelectWindow.Close();
+            }
+
+        });
 
         public static void FolderSelectWindowSelectFolderCommandExecute(object parameter)
         {

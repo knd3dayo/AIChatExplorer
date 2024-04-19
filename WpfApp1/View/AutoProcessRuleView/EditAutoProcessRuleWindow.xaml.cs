@@ -19,11 +19,9 @@ namespace WpfApp1.View.AutoProcessRuleView
     /// </summary>
     public partial class EditAutoProcessRuleWindow : Window
     {
-        public static EditAutoProcessRuleWindow? Current;
         public EditAutoProcessRuleWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

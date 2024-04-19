@@ -19,11 +19,9 @@ namespace WpfApp1.View.ClipboardItemFolderView
     /// </summary>
     public partial class FolderSelectWindow : Window
     {
-        public static FolderSelectWindow? Current;
         public FolderSelectWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

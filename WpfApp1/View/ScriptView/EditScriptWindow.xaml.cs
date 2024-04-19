@@ -19,12 +19,9 @@ namespace WpfApp1.View.ScriptView
     /// </summary>
     public partial class EditScriptWindow : Window
     {
-        public static EditScriptWindow? Current;
-
         public EditScriptWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

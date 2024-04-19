@@ -10,8 +10,14 @@
         <local:OpenAIChatWindowViewModel/>
     </Window.DataContext>
     <Window.InputBindings>
-        <KeyBinding Key="Enter" Command="{Binding SendChatCommand}"/>
-        <KeyBinding Key="Escape" Command="{Binding CloseCommand}"/>
+        <KeyBinding Key="Enter" 
+                    Command="{Binding SendChatCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    />
+        <KeyBinding Key="Escape" 
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -82,9 +88,15 @@
             </TextBox.InputBindings>
         </TextBox>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="送信" Command="{Binding SendChatCommand}" Margin="10,10,10,10"/>
+            <Button Content="送信" 
+                    Command="{Binding SendChatCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    Margin="10,10,10,10"/>
             <Button Content="クリア" Command="{Binding ClearChatCommand}" Margin="10,10,10,10"/>
-            <Button Content="閉じる" Command="{Binding CloseCommand}"  Margin="10,10,10,10"/>
+            <Button Content="閉じる"
+                    Command="{Binding CloseCommand}"  
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    Margin="10,10,10,10"/>
         </StackPanel>
     </Grid>
 </Window>

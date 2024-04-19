@@ -19,11 +19,9 @@ namespace WpfApp1.View.OpenAIView
     /// </summary>
     public partial class OpenAIChatWindow : Window
     {
-        public static OpenAIChatWindow? current = null;
         public OpenAIChatWindow()
         {
             InitializeComponent();
-            current = this;
         }
     }
 }

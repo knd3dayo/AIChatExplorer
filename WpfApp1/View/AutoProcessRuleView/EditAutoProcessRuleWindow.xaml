@@ -136,13 +136,15 @@
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0" HorizontalAlignment="Right">
                     <Button Content="OK" 
-                    Margin="10,0,0,0"
-                    Command="{Binding OKButtonClickedCommand}"
+                        Margin="10,0,0,0"
+                        Command="{Binding OKButtonClickedCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
                         Width="50"
                         />
                     <Button Content="Cancel"
-                    Margin="10,0,30,0"
-                    Command="{Binding CancelButtonClickedCommand}"
+                        Margin="10,0,30,0"
+                        Command="{Binding CancelButtonClickedCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
                         DockPanel.Dock="Right"
                         Width="50"
                         />

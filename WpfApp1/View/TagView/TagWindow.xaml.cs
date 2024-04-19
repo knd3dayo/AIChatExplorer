@@ -7,16 +7,9 @@ namespace WpfApp1.View.TagView
     /// </summary>
     public partial class TagWindow : Window
     {
-        public static TagWindow? Current;
-
         public TagWindow()
         {
             InitializeComponent();
-            Current = this;
-        }
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }

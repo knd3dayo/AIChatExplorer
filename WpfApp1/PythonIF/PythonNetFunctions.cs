@@ -433,11 +433,12 @@ namespace WpfApp1.PythonIF {
                 // PythonのリストをC#のHashSetに変換
                 foreach (PyObject item in pyIterable) {
                     string? entity = item.ToString();
-                    if (entity == null) {
-                        continue;
+                    if (entity != null) {
+                        actionResult.Add(entity);
                     }
-                    resultContainer.Result = (object)actionResult;
                 }
+                resultContainer.Result = (object)actionResult;
+
             });
             return (HashSet<string>)resultContainer.Result;
 

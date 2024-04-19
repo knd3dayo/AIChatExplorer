@@ -19,11 +19,9 @@ namespace WpfApp1.View.ClipboardItemView
     /// </summary>
     public partial class EditItemWindow : Window
     {
-        public static EditItemWindow? Current;
         public EditItemWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

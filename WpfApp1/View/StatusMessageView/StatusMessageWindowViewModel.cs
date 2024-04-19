@@ -9,7 +9,7 @@ using WpfApp1.Utils;
 
 namespace WpfApp1.View.StatusMessageView {
     public class StatusMessageWindowViewModel : ObservableObject{
-        public ObservableCollection<string> Messages { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> Messages { get; set; } = [];
 
         public void Initialize() {
             List<string> messages = MainWindowViewModel.StatusText.Messages;
@@ -20,8 +20,13 @@ namespace WpfApp1.View.StatusMessageView {
             OnPropertyChanged("Messages");
         }
 
-        public SimpleDelegateCommand CloseCommand => new SimpleDelegateCommand((parameter) => {
-            StatusMessageWindow.Current?.Close();
+        public SimpleDelegateCommand CloseCommand => new ((parameter) => {
+            // ウィンドウを閉じる
+            if (parameter is not System.Windows.Window window) {
+                return;
+            }
+            window.Close();
+
         });
     }
 }

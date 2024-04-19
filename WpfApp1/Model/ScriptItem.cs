@@ -36,7 +36,7 @@ namespace WpfApp1.Model
             Type = type;
         }
         // コンテキストメニューの「削除」の実行用コマンド
-        public static SimpleDelegateCommand DeleteScriptCommand => new SimpleDelegateCommand(SelectScriptWindowViewModel.DeleteScriptCommandExecute);
+        public static SimpleDelegateCommand DeleteScriptCommand = SelectScriptWindowViewModel.DeleteScriptCommandExecute;
         // コンテキストメニューの「スクリプト」の実行用コマンド
         public static SimpleDelegateCommand RunPythonScriptCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute);
 

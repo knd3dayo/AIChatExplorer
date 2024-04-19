@@ -19,9 +19,8 @@
 
         <ListBox Name="listbox1" ItemsSource="{Binding ScriptItems}" Grid.Row="0"
                  HorizontalAlignment="Left" 
-                 Margin="10,10,0,0" 
+                 Margin="10,10,10,10" 
                  VerticalAlignment="Top"
-                 Width="250" Height="180"
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -42,8 +41,11 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="閉じる" Command="{Binding CloseCommand}" Margin="10"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="閉じる" 
+                    Command="{Binding CloseCommand}" 
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                    Margin="10"/>
         </StackPanel>
 
     </Grid>

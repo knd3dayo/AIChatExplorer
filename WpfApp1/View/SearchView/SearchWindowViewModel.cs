@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Reflection.Metadata;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
@@ -100,9 +101,13 @@ namespace WpfApp1.View.SearchView {
             SearchConditionRule?.SearchCondition?.Clear();
         }
 
-        public SimpleDelegateCommand ApplyCommand => new SimpleDelegateCommand(ApplyCommandExecute);
+        public SimpleDelegateCommand CancelCommand => new((parameter) => {
+            if (parameter is Window window) {
+                window.Close();
+            }
+        });
 
-        private void ApplyCommandExecute(object parameter) {
+        public SimpleDelegateCommand ApplyCommand => new((parameter) => {
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -114,13 +119,14 @@ namespace WpfApp1.View.SearchView {
             _afterUpdate?.Invoke();
 
             // Close the window
-            SearchWindow.Current?.Close();
-        }
+            if (parameter is Window window) {
+                window.Close();
+            }
+        });
 
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
-        public SimpleDelegateCommand OpenSelectSearchFolderWindowCommand => new SimpleDelegateCommand(OpenSelectSearchFolderWindowCommandExecute);
-        public void OpenSelectSearchFolderWindowCommandExecute(object parameter) {
+        public SimpleDelegateCommand OpenSelectSearchFolderWindowCommand => new((parameter) => {
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -139,12 +145,11 @@ namespace WpfApp1.View.SearchView {
             ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.SearchRootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
-        }
 
+        });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new SimpleDelegateCommand(OpenSelectTargetFolderWindowCommandExecute);
-        public void OpenSelectTargetFolderWindowCommandExecute(object parameter) {
+        public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -165,7 +170,8 @@ namespace WpfApp1.View.SearchView {
             ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
-        }
+
+        });
 
     }
 }

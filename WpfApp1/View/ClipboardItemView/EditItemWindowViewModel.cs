@@ -1,14 +1,15 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfApp1.Model;
 using WpfApp1.Utils;
 using WpfApp1.View.TagView;
 
-namespace WpfApp1.View.ClipboardItemView
-{
-    class EditItemWindowViewModel : ObservableObject
-    {
+namespace WpfApp1.View.ClipboardItemView {
+    class EditItemWindowViewModel : ObservableObject {
         private bool SingleLineSelected = false;
+        private bool URLSelected = false;
+
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
             get {
@@ -25,21 +26,17 @@ namespace WpfApp1.View.ClipboardItemView
         }
 
         private string _description = "";
-        public string Description
-        {
+        public string Description {
             get { return _description; }
-            set
-            {
+            set {
                 _description = value;
                 OnPropertyChanged("Description");
             }
         }
         private string _content = "";
-        public string Content
-        {
+        public string Content {
             get { return _content; }
-            set
-            {
+            set {
                 _content = value;
                 OnPropertyChanged("Content");
             }
@@ -71,8 +68,7 @@ namespace WpfApp1.View.ClipboardItemView
 
         private Action? _afterUpdate;
 
-        public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate)
-        {
+        public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
                 ClipboardItem clipboardItem = new ClipboardItem();
                 clipboardItem.CollectionName = MainWindowViewModel.Instance?.SelectedFolder?.AbsoluteCollectionName;
@@ -86,6 +82,7 @@ namespace WpfApp1.View.ClipboardItemView
 
         }
 
+
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand AddTagButtonCommand => new SimpleDelegateCommand(EditTagCommandExecute);
 
@@ -94,7 +91,7 @@ namespace WpfApp1.View.ClipboardItemView
         /// 更新後にフォルダ内のアイテムを再読み込みする
         /// </summary>
         /// <param name="obj"></param>
-        public  void EditTagCommandExecute(object obj) {
+        public void EditTagCommandExecute(object obj) {
 
             if (ItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません");
@@ -111,51 +108,69 @@ namespace WpfApp1.View.ClipboardItemView
 
         }
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand SelectTextCommand => new SimpleDelegateCommand((parameter) => {
-            object? editorObject = EditItemWindow.Current?.FindName("Editor");
+        public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
+
+            if (parameter is not Window window) {
+                return;
+            }
+
+            object? editorObject = window?.FindName("Editor");
             if (editorObject == null) {
                 return;
             }
+
             TextBox editor = (TextBox)editorObject;
             // 選択テキストに改行が含まれていない場合は行選択
-            if (! editor.SelectedText.Contains('\n')) {
+
+            // 1行選択の場合は全選択
+            if (SingleLineSelected) {
+                editor.SelectAll();
+                SingleLineSelected = false;
+                URLSelected = false;
+                return;
+            }
+            // 複数行選択中でない場合
+            if (!editor.SelectedText.Contains('\n')) {
                 int pos = editor.SelectionStart;
                 // posがTextの長さを超える場合はTextの最後を指定
                 if (pos >= editor.Text.Length) {
                     pos = editor.Text.Length - 1;
                 }
                 int lineStart = editor.Text.LastIndexOf('\n', pos) + 1;
-                
+
                 int lineEnd = editor.Text.IndexOf('\n', pos);
                 if (lineEnd == -1) {
                     lineEnd = editor.Text.Length;
                 }
-                // EditorTextSelectionを更新
-                SingleLineSelected = true;
 
                 // lineEnd - lineStartが0以下の場合は何もしない
                 if (lineEnd - lineStart <= 0) {
                     return;
                 }
-                editor.Select(lineStart, lineEnd - lineStart);
-
-                return;
-            } else {
-                // 1行選択の場合は全選択
-                if (SingleLineSelected) {
-                    editor.SelectAll();
-                    SingleLineSelected = false;
+                // 選択対象文字列
+                string selectedText = editor.Text.Substring(lineStart, lineEnd - lineStart);
+                // URLの場合はURL選択にする
+                int[]? ints = Tools.GetURLPosition(selectedText);
+                if (ints != null && URLSelected == false) {
+                    lineStart += ints[0];
+                    lineEnd = lineStart + ints[1] - ints[0];
+                    editor.Select(lineStart, lineEnd - lineStart);
+                    URLSelected = true;
                     return;
                 }
+                // EditorTextSelectionを更新
+                editor.Select(lineStart, lineEnd - lineStart);
+                SingleLineSelected = true;
+                URLSelected = false;
+
+                return;
             }
         });
-
 
         // OKボタンのコマンド
         public SimpleDelegateCommand OKButtonCommand => new SimpleDelegateCommand(OKButtonCommandExecute);
 
-        private void OKButtonCommandExecute(object parameter)
-        {
+        private void OKButtonCommandExecute(object parameter) {
 
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
@@ -167,15 +182,20 @@ namespace WpfApp1.View.ClipboardItemView
             ClipboardDatabaseController.UpsertItem(ItemViewModel.ClipboardItem);
             // 更新後の処理を実行
             _afterUpdate?.Invoke();
+            if (parameter is not Window window) {
+                return;
+            }
             // ウィンドウを閉じる
-            EditItemWindow.Current?.Close();
+            window.Close();
         }
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new SimpleDelegateCommand(CancelButtonCommandExecute);
-        private void CancelButtonCommandExecute(object parameter)
-        {
+        public SimpleDelegateCommand CancelButtonCommand => new(CancelButtonCommandExecute);
+        private void CancelButtonCommandExecute(object parameter) {
+            if (parameter is not Window window) {
+                return;
+            }
             // ウィンドウを閉じる
-            EditItemWindow.Current?.Close();
+            window.Close();
         }
 
     }

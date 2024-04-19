@@ -32,9 +32,15 @@
                  AcceptsReturn="True"
                  ScrollViewer.VerticalScrollBarVisibility="Auto" 
                  />
-            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                <Button Content="OK" Command="{Binding OKButtonCommand}" Margin="10,10,10,10"/>
-                <Button Content="キャンセル" Command="{Binding CancelButtonCommand}" Margin="10,10,10,10"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="OK"
+                        Command="{Binding OKButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                        Margin="10,10,10,10"/>
+                <Button Content="キャンセル" 
+                        Command="{Binding CancelButtonCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                        Margin="10,10,10,10"/>
             </StackPanel>
         </Grid>
 </Window>

@@ -84,7 +84,7 @@ namespace WpfApp1.View.ClipboardItemView
                 Tools.Info("更新しました");
             });
 
-            editItemWindow.ShowDialog();
+            editItemWindow.Show();
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace WpfApp1.View.ClipboardItemView
                 Tools.Info("追加しました");
             });
 
-            editItemWindow.ShowDialog();
+            editItemWindow.Show();
         }
 
         // Ctrl + V が押された時の処理

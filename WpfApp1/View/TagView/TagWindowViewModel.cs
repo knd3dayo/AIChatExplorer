@@ -28,7 +28,6 @@ namespace WpfApp1.View.TagView {
             ClipboardItem = clipboardItem;
             _afterUpdate = afterUpdate;
         }
-
         public TagWindowViewModel() {
             foreach (var item in ClipboardDatabaseController.GetTagList()) {
                 TagList.Add(item);
@@ -46,7 +45,6 @@ namespace WpfApp1.View.TagView {
                 OnPropertyChanged("NewTag");
             }
         }
-
 
         // タグを追加したときの処理
         public SimpleDelegateCommand AddTagCommand => new SimpleDelegateCommand(AddTagCommandExecute);
@@ -93,12 +91,10 @@ namespace WpfApp1.View.TagView {
             });
 
         // OKボタンを押したときの処理
-        public SimpleDelegateCommand OkCommand => new SimpleDelegateCommand(OkCommandExecute);
-        private void OkCommandExecute(object obj) {
+        public SimpleDelegateCommand OkCommand => new((parameter) => {
             if (ClipboardItem == null) {
                 // クリップボードアイテムがnullの場合は何もしない
                 // ウィンドウを閉じる
-                TagWindow.Current?.Close();
                 return;
             }
             // ClipboardItemのタグをクリア
@@ -118,7 +114,20 @@ namespace WpfApp1.View.TagView {
             _afterUpdate?.Invoke();
 
             // ウィンドウを閉じる
-            TagWindow.Current?.Close();
+            if (parameter is not System.Windows.Window window) {
+                return;
+            }
+            window.Close();
+
+        });
+        // キャンセルボタンを押したときの処理
+        public SimpleDelegateCommand CancelCommand => new(CancelCommandExecute);
+        private void CancelCommandExecute(object obj) {
+            if (obj is not System.Windows.Window window) {
+                return;
+            }
+            // ウィンドウを閉じる
+            window.Close();
         }
     }
 }

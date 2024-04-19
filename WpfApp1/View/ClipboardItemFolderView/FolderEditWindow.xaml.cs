@@ -7,11 +7,9 @@ namespace WpfApp1.View.ClipboardItemFolderView
     /// </summary>
     public partial class FolderEditWindow : Window
     {
-        public static FolderEditWindow? Current;
         public FolderEditWindow()
         {
             InitializeComponent();
-            Current = this;
         }
     }
 }

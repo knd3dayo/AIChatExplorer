@@ -55,8 +55,14 @@
                         CommandParameter="{Binding NewTag}" Margin="10,0,10,0" />
         </Grid>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Command="{Binding OkCommand}" Margin="10"  Width="50"/>
-            <Button Content="キャンセル" Click="Cancel_Click" Margin="10"  Width="50"/>
+            <Button Content="OK" 
+                        Command="{Binding OkCommand}" 
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Margin="10"  Width="50"/>
+            <Button Content="キャンセル"
+                        Command="{Binding CancelCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Margin="10"  Width="50"/>
         </StackPanel>
 
     </Grid>
