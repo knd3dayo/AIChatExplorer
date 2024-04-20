@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemView;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemView;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     public class ClipboardAppMenuItem {
         // Title
         public string Title { get; set; }

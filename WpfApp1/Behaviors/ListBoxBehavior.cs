@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace WpfApp1.Behaviors
+namespace ClipboardApp.Behaviors
 {
     public static class ListBoxBehavior
     {

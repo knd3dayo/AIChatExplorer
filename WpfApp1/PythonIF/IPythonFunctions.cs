@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using WpfApp1.Model;
+using ClipboardApp.Model;
 
-namespace WpfApp1.PythonIF
+namespace ClipboardApp.PythonIF
 {
 
     public class MaskedData

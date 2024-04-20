@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace WpfApp1.Utils
+namespace ClipboardApp.Utils
 {
     // Create a class that implements ICommand and accepts a delegate.
     public class SimpleDelegateCommand : ICommand

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using WpfApp1.Model;
+using ClipboardApp.Model;
 
-namespace WpfApp1.Utils
+namespace ClipboardApp.Utils
 {
     public class Tools
     {

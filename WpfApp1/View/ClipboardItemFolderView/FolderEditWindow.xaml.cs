@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WpfApp1.View.ClipboardItemFolderView
+namespace ClipboardApp.View.ClipboardItemFolderView
 {
     /// <summary>
     /// FolderEditWindow.xaml の相互作用ロジック

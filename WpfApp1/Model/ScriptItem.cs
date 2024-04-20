@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiteDB;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemView;
-using WpfApp1.View.ScriptView;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.ScriptView;
 
-namespace WpfApp1.Model
+namespace ClipboardApp.Model
 {
     public enum ScriptType
     {

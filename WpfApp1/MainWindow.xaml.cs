@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using WpfApp1.PythonIF;
-using WpfApp1.View.SearchView;
+using ClipboardApp.PythonIF;
+using ClipboardApp.View.SearchView;
 
 
 
-namespace WpfApp1
+namespace ClipboardApp
 {
 
     /// <summary>

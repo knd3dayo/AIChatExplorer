@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
-using WpfApp1.View.TagView;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
+using ClipboardApp.View.TagView;
 
-namespace WpfApp1.View.ClipboardItemView {
+namespace ClipboardApp.View.ClipboardItemView {
     class EditItemWindowViewModel : ObservableObject {
         private bool SingleLineSelected = false;
         private bool URLSelected = false;

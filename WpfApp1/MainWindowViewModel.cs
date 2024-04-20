@@ -2,17 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
-using WpfApp1.View.AutoProcessRuleView;
-using WpfApp1.View.ClipboardItemFolderView;
-using WpfApp1.View.ClipboardItemView;
-using WpfApp1.View.StatusMessageView;
-using WpfApp1.View.TagView;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
+using ClipboardApp.View.AutoProcessRuleView;
+using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.StatusMessageView;
+using ClipboardApp.View.TagView;
 
 
-namespace WpfApp1
+namespace ClipboardApp
 {
 
     public class MainWindowViewModel : ObservableObject {

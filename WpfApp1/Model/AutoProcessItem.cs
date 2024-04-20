@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using WpfApp1.Utils;
+using ClipboardApp.Utils;
 using LiteDB;
 using WK.Libraries.SharpClipboardNS;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     // 自動処理の引数用のクラス
     public class AutoProcessItemArgs {
 

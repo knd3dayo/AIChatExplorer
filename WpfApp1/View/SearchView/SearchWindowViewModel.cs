@@ -1,11 +1,11 @@
 ﻿using System.Reflection.Metadata;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemFolderView;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemFolderView;
 
-namespace WpfApp1.View.SearchView {
+namespace ClipboardApp.View.SearchView {
     public class SearchWindowViewModel : ObservableObject {
 
         private SearchConditionRule? _searchConditionRule;

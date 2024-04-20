@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfApp1.View.OpenAIView
+namespace ClipboardApp.View.OpenAIView
 {
     /// <summary>
     /// OpenAIChatWindow.xaml の相互作用ロジック

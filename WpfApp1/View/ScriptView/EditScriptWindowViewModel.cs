@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.ScriptView {
+namespace ClipboardApp.View.ScriptView {
     class EditScriptWindowViewModel : ObservableObject {
         private ScriptItem? scriptItem;
         public ScriptItem? ScriptItem {

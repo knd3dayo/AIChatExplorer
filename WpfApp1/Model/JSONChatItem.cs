@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     public class JSONChatItem {
         [JsonPropertyName("role")]
         public string Role { get; set; }

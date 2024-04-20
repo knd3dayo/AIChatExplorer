@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfApp1.View.ClipboardItemFolderView
+namespace ClipboardApp.View.ClipboardItemFolderView
 {
     /// <summary>
     /// FolderSelectWindow.xaml の相互作用ロジック

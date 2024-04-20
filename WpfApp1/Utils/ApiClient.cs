@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace WpfApp1.Utils {
+namespace ClipboardApp.Utils {
     public class ApiClient {
 
 

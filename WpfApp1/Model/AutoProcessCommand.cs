@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
 using WK.Libraries.SharpClipboardNS;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.Model
+namespace ClipboardApp.Model
 {
     public class AutoProcessCommand {
 

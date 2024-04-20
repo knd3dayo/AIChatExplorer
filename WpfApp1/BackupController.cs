@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApp1.Properties;
+using ClipboardApp.Properties;
 
-namespace WpfApp1
+namespace ClipboardApp
 {
     internal class BackupController
     {

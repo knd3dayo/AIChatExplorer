@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using LiteDB;
 using Python.Runtime;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1
+namespace ClipboardApp
 {
     public class ClipboardDatabaseController
     {

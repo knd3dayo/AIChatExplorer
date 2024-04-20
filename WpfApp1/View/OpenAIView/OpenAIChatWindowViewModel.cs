@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.OpenAIView {
+namespace ClipboardApp.View.OpenAIView {
 
     public class OpenAIChatWindowViewModel : ObservableObject {
         public static ChatItem? SelectedItem { get; set; }

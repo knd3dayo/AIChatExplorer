@@ -2,7 +2,7 @@
 using System.Windows.Threading;
 using Python.Runtime;
 
-namespace WpfApp1
+namespace ClipboardApp
 {
     /// <summary>
     /// Interaction logic for App.xaml

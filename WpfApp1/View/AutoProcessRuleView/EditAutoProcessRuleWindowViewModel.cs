@@ -1,11 +1,11 @@
 ﻿
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemFolderView;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemFolderView;
 
-namespace WpfApp1.View.AutoProcessRuleView {
+namespace ClipboardApp.View.AutoProcessRuleView {
     public class EditAutoProcessRuleWindowViewModel : ObservableObject {
         public enum Mode {
             Create,

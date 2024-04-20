@@ -1,8 +1,8 @@
 ﻿using LiteDB;
-using WpfApp1.Utils;
-using WpfApp1.View.AutoProcessRuleView;
+using ClipboardApp.Utils;
+using ClipboardApp.View.AutoProcessRuleView;
 
-namespace WpfApp1.Model
+namespace ClipboardApp.Model
 {
 
     // 自動処理ルールの条件

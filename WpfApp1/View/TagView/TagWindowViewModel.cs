@@ -1,9 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.TagView {
+namespace ClipboardApp.View.TagView {
     public class TagWindowViewModel : ObservableObject {
         public ObservableCollection<TagItem> TagList { get; set; } = new ObservableCollection<TagItem>();
 

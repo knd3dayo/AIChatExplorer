@@ -3,10 +3,10 @@ using System.IO;
 using System.Text.Json.Nodes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemView;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemView;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     public class ClipboardItemFolder : ObservableObject {
 
         // アプリ共通の検索条件

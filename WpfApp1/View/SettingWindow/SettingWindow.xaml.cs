@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace WpfApp1
+namespace ClipboardApp
 {
     /// <summary>
     /// SettingWindow.xaml の相互作用ロジック

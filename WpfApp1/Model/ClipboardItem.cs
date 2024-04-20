@@ -2,12 +2,12 @@
 using WK.Libraries.SharpClipboardNS;
 using LiteDB;
 using System.Text.Json.Nodes;
-using WpfApp1.Utils;
+using ClipboardApp.Utils;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     public class ClipboardItem
     {
         // コンストラクタ

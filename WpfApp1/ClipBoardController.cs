@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using WK.Libraries.SharpClipboardNS;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfApp1 {
+namespace ClipboardApp {
     /// <summary>
     /// クリップボード監視機能用のクラス
     /// </summary>

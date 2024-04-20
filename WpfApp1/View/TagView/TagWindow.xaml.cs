@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WpfApp1.View.TagView
+namespace ClipboardApp.View.TagView
 {
     /// <summary>
     /// TagWindow.xaml の相互作用ロジック

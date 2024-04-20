@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace WpfApp1.Model
+namespace ClipboardApp.Model
 {
     public class StatusText : ObservableObject
     {

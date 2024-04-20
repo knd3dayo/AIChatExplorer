@@ -3,12 +3,12 @@ using System.IO;
 using System.Windows;
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using WpfApp1.Model;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemView;
-using WpfApp1.View.SearchView;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.SearchView;
 
-namespace WpfApp1.View.ClipboardItemFolderView
+namespace ClipboardApp.View.ClipboardItemFolderView
 {
     public class ClipboardFolderCommands
     {

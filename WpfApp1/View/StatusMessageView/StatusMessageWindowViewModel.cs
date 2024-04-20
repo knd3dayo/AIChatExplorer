@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Utils;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.StatusMessageView {
+namespace ClipboardApp.View.StatusMessageView {
     public class StatusMessageWindowViewModel : ObservableObject{
         public ObservableCollection<string> Messages { get; set; } = [];
 

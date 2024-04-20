@@ -4,11 +4,11 @@ using System.Net.Sockets;
 using System.Net;
 using Python.Runtime;
 using System.ComponentModel;
-using WpfApp1.Utils;
+using ClipboardApp.Utils;
 using System.Diagnostics;
-using WpfApp1.Model;
+using ClipboardApp.Model;
 
-namespace WpfApp1.PythonIF
+namespace ClipboardApp.PythonIF
 {
     public class PythonExecutor
     {

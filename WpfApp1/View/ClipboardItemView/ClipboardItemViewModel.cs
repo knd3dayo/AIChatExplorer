@@ -2,11 +2,11 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WK.Libraries.SharpClipboardNS;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.ClipboardItemView
+namespace ClipboardApp.View.ClipboardItemView
 {
     public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject
     {

@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfApp1.View.AutoProcessRuleView
+namespace ClipboardApp.View.AutoProcessRuleView
 {
     /// <summary>
     /// ListAutoProcessRuleWindow.xaml の相互作用ロジック

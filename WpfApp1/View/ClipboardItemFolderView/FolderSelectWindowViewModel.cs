@@ -6,10 +6,10 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.ClipboardItemFolderView
+namespace ClipboardApp.View.ClipboardItemFolderView
 {
 
     public class FolderSelectWindowViewModel : ObservableObject

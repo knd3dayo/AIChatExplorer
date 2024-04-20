@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace WpfApp1.Model
+namespace ClipboardApp.Model
 {
     public class SearchCondition : ObservableObject
     {

@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfApp1.View.ClipboardItemView
+namespace ClipboardApp.View.ClipboardItemView
 {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック

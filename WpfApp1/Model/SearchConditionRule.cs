@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiteDB;
 
-namespace WpfApp1.Model {
+namespace ClipboardApp.Model {
     // 検索条件ルールは
     // - 検索条件
     // 検索結果の保存先フォルダ(検索フォルダ)、検索対象フォルダ、検索対象サブフォルダを含むかどうかを保持する

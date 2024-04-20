@@ -1,4 +1,4 @@
-﻿namespace WpfApp1.Model {
+﻿namespace ClipboardApp.Model {
     public class ChatItem : ClipboardItem {
 
 

@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfApp1.Model;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemView;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemView;
 
-namespace WpfApp1.View.ClipboardItemFolderView
+namespace ClipboardApp.View.ClipboardItemFolderView
 {
     public class ClipboardItemFolderViewModel
         (ClipboardItemFolder clipboardItemFolder) : ObservableObject

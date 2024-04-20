@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.PythonIF
+namespace ClipboardApp.PythonIF
 {
     public class EmptyPythonFunctions : IPythonFunctions
     {

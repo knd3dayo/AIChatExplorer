@@ -1,7 +1,7 @@
-﻿using WpfApp1.Model;
-using WpfApp1.View.ScriptView;
+﻿using ClipboardApp.Model;
+using ClipboardApp.View.ScriptView;
 
-namespace WpfApp1.PythonIF
+namespace ClipboardApp.PythonIF
 {
     public class PythonCommands
     {

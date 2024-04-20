@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WpfApp1.View.SearchView
+namespace ClipboardApp.View.SearchView
 {
     /// <summary>
     /// Window1.xaml の相互作用ロジック

@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using WK.Libraries.SharpClipboardNS;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1 {
+namespace ClipboardApp {
     /// <summary>
     /// このアプリケーションで開いたプロセスを管理するクラス
     /// </summary>

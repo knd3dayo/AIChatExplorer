@@ -1,11 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.View.ScriptView
+namespace ClipboardApp.View.ScriptView
 {
     public class SelectScriptWindowViewModel : ObservableObject
     {

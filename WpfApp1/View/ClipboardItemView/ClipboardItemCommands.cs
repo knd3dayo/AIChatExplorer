@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Windows;
 using WK.Libraries.SharpClipboardNS;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
-using WpfApp1.Utils;
-using WpfApp1.View.ClipboardItemFolderView;
-using WpfApp1.View.OpenAIView;
-using WpfApp1.View.TagView;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
+using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.OpenAIView;
+using ClipboardApp.View.TagView;
 
 
-namespace WpfApp1.View.ClipboardItemView
+namespace ClipboardApp.View.ClipboardItemView
 {
     public class ClipboardItemCommands {
         /// <summary>

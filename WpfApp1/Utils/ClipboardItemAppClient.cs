@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-using WpfApp1.Model;
-using WpfApp1.PythonIF;
+using ClipboardApp.Model;
+using ClipboardApp.PythonIF;
 
-namespace WpfApp1.Utils
+namespace ClipboardApp.Utils
 {
     public class ClipboardItemAppClient : ApiClient {
 

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Drawing;
 using Python.Runtime;
-using WpfApp1.Model;
-using WpfApp1.Utils;
+using ClipboardApp.Model;
+using ClipboardApp.Utils;
 
-namespace WpfApp1.PythonIF {
+namespace ClipboardApp.PythonIF {
 
     public enum SpacyEntityNames {
 
