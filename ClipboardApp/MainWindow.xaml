@@ -68,7 +68,7 @@
                                   Mode="PrimaryMid"
                 >
                 <!-- メニューバー -->
-                <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True" materialDesign:MenuAssist.TopLevelMenuItemHeight="20">
+                <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True" materialDesign:MenuAssist.TopLevelMenuItemHeight="25">
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"

@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:ClipboardApp"
         xmlns:view="clr-namespace:ClipboardApp.View.ClipboardItemFolderView"
         mc:Ignorable="d"
-        Title="{Binding WindowName}" Width="350" Height="200">
+        SizeToContent="WidthAndHeight"
+        Title="{Binding WindowName}">
     <Window.DataContext>
         <view:FolderEditWindowViewModel/>
     </Window.DataContext>
@@ -41,13 +42,13 @@
                 <Button Content="自動処理ルール" 
                Margin="10,10,0,0"
                Command="{Binding OpenListAutoProcessRuleWindowCommand}" 
-                   Width="100"
+                   Width="150"
                   Visibility="{Binding AutoProcessRuleVisibility}"
                    />
                 <Button Content="検索条件を設定" 
               Margin="10,10,0,0"
               Command="{Binding OpenEditSearchConditionWindowCommand}" 
-                  Width="100"
+                  Width="150"
                   Visibility="{Binding SearchConditionVisibility}"
                   />
             </DockPanel>
@@ -56,14 +57,14 @@
                         Margin="10,10,0,0"
                         Command="{Binding CreateCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
-                        Width="50"
+                        Width="100"
                     />
-                <Button Content="Cancel"
+                <Button Content="キャンセル"
                         Margin="10,10,10,0"
                         Command="{Binding CancelCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
                         DockPanel.Dock="Right"
-                        Width="50"
+                        Width="100"
                     />
             </DockPanel>
         </Grid>
