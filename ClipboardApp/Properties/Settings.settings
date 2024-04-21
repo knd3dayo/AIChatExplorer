@@ -1,0 +1,54 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClipboardApp.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AzureOpenAI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="OpenAIKey" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OpenAIEmbeddingModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">text-embedding-3-small</Value>
+    </Setting>
+    <Setting Name="OpenAICompletionModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">gpt-4-1106-preview</Value>
+    </Setting>
+    <Setting Name="SpacyModel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ja_core_news_lg</Value>
+    </Setting>
+    <Setting Name="PythonExecution" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="PythonDllPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files\Python312\python312.dll</Value>
+    </Setting>
+    <Setting Name="BackupGeneration" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">7</Value>
+    </Setting>
+    <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="AutoDescription" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AutoTag" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="UserMaskedDataInOpenAI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="AutoMergeItemsBySourceApplicationTitle" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OpenAIBaseURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseOCR" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
