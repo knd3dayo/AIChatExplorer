@@ -19,6 +19,8 @@ namespace ClipboardApp {
     public class MainWindowViewModel : ObservableObject {
         public static MainWindowViewModel? Instance = null;
 
+        private static MainWindow MainWindow = (MainWindow)Application.Current.MainWindow;
+
         public MainWindowViewModel() {
             // データベースのチェックポイント処理
             ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
@@ -97,6 +99,9 @@ namespace ClipboardApp {
                 return;
             }
             Instance.SelectedFolder.Load();
+            ListBox? listBox = MainWindow.FindName("listBox1") as ListBox;
+            // ListBoxの先頭にスクロール
+            listBox?.ScrollIntoView(listBox.Items[0]);
         }
 
         // クリップボード監視開始終了フラグを反転させる
@@ -189,6 +194,17 @@ namespace ClipboardApp {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
             ClipboardItemFolderViewModel clipboardItemFolderViewModel = (ClipboardItemFolderViewModel)treeView.SelectedItem;
             SelectedFolder = clipboardItemFolderViewModel;
+            });
+        // クリップボードアイテムが選択された時の処理
+        public SimpleDelegateCommand ClipboardItemSelectionChangedCommand => new((parameter) => {
+            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+            ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
+            ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
+            SelectedItems.Clear();
+            foreach (ClipboardItemViewModel item in listBox.SelectedItems) {
+                SelectedItems.Add(item);
+            }
+            SelectedItem = clipboardItemViewModel;
             });
 
         // OpenOpenAIWindowCommand

@@ -8,7 +8,6 @@
         mc:Ignorable="d"
         Title="コピペツール" Height="450" Width="800"
         Name="window1"
-        xmlns:b="clr-namespace:ClipboardApp.Behaviors"
         Style="{StaticResource MaterialDesignWindow}"
         >
     <Window.DataContext>
@@ -139,13 +138,19 @@
             <!-- クリップボードのListBox -->
             <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
             <ListBox
+                Name="listBox1"
                 ItemsSource="{Binding SelectedFolder.Items}"
-                SelectedItem="{Binding SelectedItem}"
                 Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,0"
                 SelectionMode="Extended"
-                b:ListBoxBehavior.ScrollSelectedIntoView="True"
-                b:ListBoxBehavior.SelectedItems="{Binding SelectedItems, Mode=TwoWay}"
                 >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction
+                                Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" 
+                                />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                     <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->

@@ -26,7 +26,7 @@ namespace ClipboardApp {
         }
         // クリップボード監視を開始する
         public static void Start() {
-            if (clipboard != null) {
+            if (clipboard == null) {
                 // Clipboardの監視開始
                 clipboard = new SharpClipboard();
                 clipboard.ClipboardChanged += ClipboardChanged;
