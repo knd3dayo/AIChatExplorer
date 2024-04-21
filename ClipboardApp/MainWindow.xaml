@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:ClipboardApp"
         mc:Ignorable="d"
         Title="コピペツール" Height="450" Width="800"
@@ -61,28 +62,77 @@
         </Grid.RowDefinitions>
 
         <StackPanel  Orientation="Vertical" Grid.Row="0" Margin="0,0,0,0">
-            <!-- メニューバー -->
-            <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True">
-                <MenuItem Header="ファイル">
-                 <MenuItem Header="{Binding ClipboardMonitorButtonText}" Command="{Binding ToggleClipboardMonitor}" />
-                        <MenuItem Header="作成">
-                        <MenuItem Header="アイテム作成" Command="{Binding CreateItemCommand}" />
-                        <MenuItem Header="Pythonスクリプト作成" Command="{Binding CreatePythonScriptCommand}" />
+            <materialDesign:ColorZone 
+                                  materialDesign:ElevationAssist.Elevation="Dp4"
+                                  DockPanel.Dock="Top"
+                                  Mode="PrimaryMid"
+                >
+                <!-- メニューバー -->
+                <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True" materialDesign:MenuAssist.TopLevelMenuItemHeight="20">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="ファイル"
+                    >
+                        <MenuItem 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding ClipboardMonitorButtonText}" Command="{Binding ToggleClipboardMonitor}" />
+                        <MenuItem Header="作成"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            >
+                            <MenuItem Header="アイテム作成" Command="{Binding CreateItemCommand}" 
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                      />
+                            <MenuItem Header="Pythonスクリプト作成" Command="{Binding CreatePythonScriptCommand}" 
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                      />
+                        </MenuItem>
+                        <MenuItem Header="終了" Command="{Binding ExitCommand}" 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                  />
                     </MenuItem>
-                        <MenuItem Header="終了" Command="{Binding ExitCommand}" />
-                </MenuItem>
-                <MenuItem Header="編集">
-                    <MenuItem Header="タグ編集" Command="{Binding OpenTagWindowCommand}" />
-                    <MenuItem Header="自動処理ルール編集" Command="{Binding OpenListAutoProcessRuleWindowCommand}" />
-                    <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" />
-                </MenuItem>
-                <MenuItem Header="ツール">
-                    <MenuItem Header="OpenAIチャット" Command="{Binding OpenOpenAIWindowCommand}" />
-                </MenuItem>
+                    <MenuItem Header="編集"
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                              >
+                        <MenuItem Header="タグ編集" Command="{Binding OpenTagWindowCommand}" 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                  />
+                        <MenuItem Header="自動処理ルール編集" Command="{Binding OpenListAutoProcessRuleWindowCommand}" 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                  />
+                        <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                  />
+                    </MenuItem>
+                    <MenuItem Header="ツール"
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                              >
+                        <MenuItem Header="OpenAIチャット" Command="{Binding OpenOpenAIWindowCommand}" 
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                  />
+                    </MenuItem>
 
-                <MenuItem Header="検索" Command="{Binding SearchCommand}" />
-                <MenuItem Header="設定" Command="{Binding SettingCommand}" />
-            </Menu>
+                    <MenuItem Header="検索" Command="{Binding SearchCommand}" 
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                              />
+                    <MenuItem Header="設定" Command="{Binding SettingCommand}" 
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                              />
+                </Menu>
+            </materialDesign:ColorZone>
         </StackPanel>
         <Grid Grid.Row="1">
             <!-- TreeView, ListBox -->
@@ -228,7 +278,10 @@
                     </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
-        <StatusBar Name="statusBar1" VerticalAlignment="Bottom" Grid.Row="2">
+        <StatusBar Name="statusBar1" VerticalAlignment="Bottom" Grid.Row="2"
+            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                   >
             <StatusBarItem>
                 <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text }" />
             </StatusBarItem>
