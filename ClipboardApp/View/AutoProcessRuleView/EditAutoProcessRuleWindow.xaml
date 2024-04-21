@@ -7,13 +7,13 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
         mc:Ignorable="d"
-        Title="EditAutoProcessRuleWindow" Height="450" Width="600">
+        Title="EditAutoProcessRuleWindow" Height="520" Width="600">
     <Window.DataContext>
         <view:EditAutoProcessRuleWindowViewModel />
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" /> 
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid>
@@ -139,14 +139,14 @@
                         Margin="10,0,0,0"
                         Command="{Binding OKButtonClickedCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
-                        Width="50"
+                        Width="100"
                         />
-                    <Button Content="Cancel"
+                    <Button Content="キャンセル"
                         Margin="10,0,30,0"
                         Command="{Binding CancelButtonClickedCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
                         DockPanel.Dock="Right"
-                        Width="50"
+                        Width="100"
                         />
                 </DockPanel>
             </Grid>

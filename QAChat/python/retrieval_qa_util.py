@@ -1,4 +1,5 @@
 
+from io import BytesIO
 from math import fabs
 import os, json, sys
 from langchain.prompts import PromptTemplate
@@ -165,7 +166,6 @@ class RetrievalQAUtil:
         )
         agent_executor = AgentExecutor(
             agent=chat_agent, tools=self.tools, 
-            verbose=True,
             return_source_documents=True,
             return_intermediate_steps=True,
             )
@@ -220,6 +220,9 @@ ChatAgentExecutorInstance = None
 def langchain_chat( props: dict, prompt: str, chat_history_json: str = None):
     global RetrievalQAUtilInstance, ChatAgentExecutorInstance
     if RetrievalQAUtilInstance is None:
+        import langchain
+        # langchainのログを出力する
+        langchain.verbose = True
 
         vector_db_url = props.get("VectorDBURL")
         if not vector_db_url:
@@ -242,13 +245,27 @@ def langchain_chat( props: dict, prompt: str, chat_history_json: str = None):
     else:
         chat_history = []
 
-    result = ChatAgentExecutorInstance.invoke(
-            {
-                "input": prompt,
-                "chat_history": chat_history,
-            }
-        )
+    # 標準出力をByteIOに保存
+    stdout = sys.stdout
+    import io
+    sys.stdout = io.StringIO()
+    
+    with sys.stdout as buf:
+        # ChatAgentExecutorを呼び出す
+        result = ChatAgentExecutorInstance.invoke(
+                {
+                    "input": prompt,
+                    "chat_history": chat_history,
+                }
+            )
+        # bufに出力された文字列を取得
+        output = buf.getvalue()
+        
+    # 標準出力を戻す
+    sys.stdout = stdout    
+        
     result_dict = {}
+    result_dict["verbose"] = output
     result_dict["output"] = result.get("output", "")
     page_conetnt_list, page_source_list = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
     result_dict["page_content_list"] = page_conetnt_list

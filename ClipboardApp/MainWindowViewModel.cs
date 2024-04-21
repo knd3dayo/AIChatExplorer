@@ -191,6 +191,8 @@ namespace ClipboardApp {
             SelectedFolder = clipboardItemFolderViewModel;
             });
 
+        // OpenOpenAIWindowCommand
+        public static SimpleDelegateCommand OpenOpenAIWindowCommand => ClipboardItemViewModel.OpenAIChatCommand;
 
         // Ctrl + Q が押された時の処理
         public static SimpleDelegateCommand ExitCommand => new((parameter) => {

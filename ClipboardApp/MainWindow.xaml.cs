@@ -19,8 +19,6 @@ namespace ClipboardApp {
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
 
-            // FaissのIndexの保存
-            PythonExecutor.PythonFunctions.SaveFaissIndex();
             // StatusTextのスレッドを停止
             MainWindowViewModel.StatusText.Dispose();
         }

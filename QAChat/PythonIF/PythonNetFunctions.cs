@@ -96,6 +96,7 @@ namespace QAChat.PythonIF {
                     }
                     // open_ai_chat関数を呼び出す
                     string json_string = ChatItem.ToJson(chatHistory);
+
                     // Pythonのoutput: str , referenced_contents: List[str], referenced_file_path: List[str]を持つdictを返す
                     PyDict pyDict = langchain_chat(CreateOpenAIProperties(), prompt, json_string);
                     // outputを取得
@@ -103,6 +104,12 @@ namespace QAChat.PythonIF {
                     if (resultString == null) {
                         throw new ThisApplicationException("OpenAIの応答がありません");
                     }
+                    // verboseを取得
+                    string? verbose = pyDict.GetItem("verbose")?.ToString();
+                    if (verbose != null) {
+                        chatResult.Verbose = verbose;
+                    }
+
                     // referenced_contentsを取得
                     PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                     if (referencedContents != null) {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClipboardApp.View.TagView"
         mc:Ignorable="d"
-        Title="タグ編集" Height="300" Width="400">
+        Title="タグ編集" Height="300" Width="500">
     <Window.DataContext>
         <local:TagWindowViewModel/>
     </Window.DataContext>
@@ -45,12 +45,14 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
-                <TextBlock Text="新規タグ" Margin="10,0,10,0" />
+                <TextBlock Text="新規タグ" Margin="10,0,10,0" 
+                           Style="{StaticResource MaterialDesignBody1TextBlock}"
+                           />
                 <TextBox Name="TagText" Margin="10,0,10,0"  
                          Text="{Binding NewTag}"
                          />
             </DockPanel>
-            <Button Content="追加" Width="50" HorizontalAlignment="Right" Grid.Column="1"
+            <Button Content="追加" Width="100" HorizontalAlignment="Right" Grid.Column="1"
                         Command="{Binding AddTagCommand}"  
                         CommandParameter="{Binding NewTag}" Margin="10,0,10,0" />
         </Grid>
@@ -58,11 +60,11 @@
             <Button Content="OK" 
                         Command="{Binding OkCommand}" 
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Margin="10"  Width="50"/>
+                        Margin="10"  Width="100"/>
             <Button Content="キャンセル"
                         Command="{Binding CancelCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Margin="10"  Width="50"/>
+                        Margin="10"  Width="100"/>
         </StackPanel>
 
     </Grid>

@@ -9,16 +9,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using QAChat.PythonIF;
 using QAChat.Utils;
+using QAChat.View.LogWindow;
 
 namespace QAChat {
     public class MainWindowViewModel : ObservableObject {
         public MainWindowViewModel() {
-            // Pythonの初期化
-            PythonExecutor.Init();
         }
         public static ChatItem? SelectedItem { get; set; }
 
         public ObservableCollection<ChatItem> ChatItems { get; set; } = new ObservableCollection<ChatItem>();
+
 
         public string? LastSendText {
             get {
@@ -47,12 +47,48 @@ namespace QAChat {
             }
 
         }
+
+        public StringBuilder Log = new  StringBuilder();
+
+
+        //  Dictionaryを引数として、そのキーと値をProperties.Settingsに保存する
+
+        public void SaveSettings(Dictionary<string, string> settings) {
+            Properties.Settings.Default.AzureOpenAI = bool.Parse(settings["AzureOpenAI"]);
+            Properties.Settings.Default.OpenAIKey = settings["OpenAIKey"];
+            Properties.Settings.Default.OpenAICompletionModel = settings["OpenAICompletionModel"];
+            Properties.Settings.Default.OpenAIEmbeddingModel = settings["OpenAIEmbeddingModel"];
+            Properties.Settings.Default.AzureOpenAIEndpoint = settings["AzureOpenAIEndpoint"];
+            Properties.Settings.Default.OpenAIBaseURL = settings["OpenAIBaseURL"];
+            Properties.Settings.Default.VectorDBURL = settings["VectorDBURL"];
+            Properties.Settings.Default.SourceDocumentURL = settings["SourceDocumentURL"];
+            Properties.Settings.Default.PythonDllPath = settings["PythonDllPath"];
+
+            Properties.Settings.Default.Save();
+        }
+        // このプロジェクトからの呼び出しか否か
+        private bool isInternalProject = true;
+        public bool IsInternalProject {
+            get {
+                return isInternalProject;
+            }
+            set {
+                isInternalProject = value;
+                OnPropertyChanged("IsInternalProject");
+            }
+        }
+
+
         // チャットを送信するコマンド
         public SimpleDelegateCommand SendChatCommand => new SimpleDelegateCommand(SendChatCommandExecute);
 
         public void SendChatCommandExecute(object parameter) {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
+                // PythonExecutorが初期化されていない場合は初期化
+                if (!PythonExecutor.Initialized) {
+                    PythonExecutor.Init();
+                }
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 ChatResult? result = PythonExecutor.PythonNetFunctions?.OpenAIChat(InputText, ChatItems);
                 if (result == null) {
@@ -62,6 +98,12 @@ namespace QAChat {
                 ChatItems.Add(new ChatItem(ChatItem.UserRole, InputText));
                 // レスポンスをChatItemsに追加
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
+                // verboseがある場合はログに追加
+                if (!string.IsNullOrEmpty(result.Verbose)) {
+                    Log.AppendLine(result.Verbose);
+                }
+
                 // inputTextをクリア
                 InputText = "";
             } catch (Exception e) {
@@ -93,5 +135,13 @@ namespace QAChat {
         }
         
         );
+
+        // ログ画面を開くコマンド
+        public SimpleDelegateCommand LogWindowCommand => new SimpleDelegateCommand((parameter) => {
+            LogWindow logWindow = new LogWindow();
+            LogWindowViewModel logWindowViewModel = (LogWindowViewModel)logWindow.DataContext;
+            logWindowViewModel.LogText = Log.ToString();
+            logWindow.ShowDialog();
+        });
     }
 }

@@ -76,7 +76,9 @@
                     <MenuItem Header="タグ編集" Command="{Binding OpenTagWindowCommand}" />
                     <MenuItem Header="自動処理ルール編集" Command="{Binding OpenListAutoProcessRuleWindowCommand}" />
                     <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" />
-                    
+                </MenuItem>
+                <MenuItem Header="ツール">
+                    <MenuItem Header="OpenAIチャット" Command="{Binding OpenOpenAIWindowCommand}" />
                 </MenuItem>
 
                 <MenuItem Header="検索" Command="{Binding SearchCommand}" />

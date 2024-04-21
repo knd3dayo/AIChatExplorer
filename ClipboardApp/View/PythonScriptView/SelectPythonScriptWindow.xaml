@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClipboardApp.View.PythonScriptView"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
-        Title="スクリプト選択画面" Height="300" Width="300">
+        Title="スクリプト選択画面" Height="300" Width="500">
     <Window.DataContext>
         <local:SelectPythonScriptWindowViewModel />
     </Window.DataContext>

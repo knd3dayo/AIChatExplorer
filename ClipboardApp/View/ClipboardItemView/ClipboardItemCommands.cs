@@ -443,6 +443,26 @@ namespace ClipboardApp.View.ClipboardItemView
         public static void OpenAIChatCommandExecute(object obj) {
 
             QAChat.MainWindow openAIChatWindow = new QAChat.MainWindow();
+            QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
+            // ClipboardAppのプロパティをQAChatにコピー
+            Dictionary<string, string> settings = new Dictionary<string, string>();
+            settings["AzureOpenAI"] = Properties.Settings.Default.AzureOpenAI.ToString();
+            settings["OpenAIKey"] = Properties.Settings.Default.OpenAIKey;
+            settings["OpenAICompletionModel"] = Properties.Settings.Default.OpenAICompletionModel;
+            settings["OpenAIEmbeddingModel"] = Properties.Settings.Default.OpenAIEmbeddingModel;
+            settings["AzureOpenAIEndpoint"] = Properties.Settings.Default.AzureOpenAIEndpoint;
+            settings["OpenAIBaseURL"] = Properties.Settings.Default.OpenAIBaseURL;
+            settings["VectorDBURL"] = Properties.Settings.Default.VectorDBURL;
+            settings["SourceDocumentURL"] = Properties.Settings.Default.SourceDocumentURL;
+            settings["PythonDllPath"] = Properties.Settings.Default.PythonDllPath;
+
+            mainWindowViewModel.SaveSettings(settings);
+            // 外部プロジェクトとして設定
+            mainWindowViewModel.IsInternalProject = false;
+            // InputTextに選択中のアイテムのContentを設定
+            if (MainWindowViewModel.Instance?.SelectedItem != null) {
+                mainWindowViewModel.InputText = MainWindowViewModel.Instance.SelectedItem.ClipboardItem.Content;
+            }
             openAIChatWindow.Show();
         }
 

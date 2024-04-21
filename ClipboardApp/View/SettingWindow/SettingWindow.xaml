@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClipboardApp"
         mc:Ignorable="d"
-        Title="設定" Height="400" Width="600"
+        Title="簡易設定画面" Height="400" Width="600"
         Loaded="Window_Loaded"
         >
     <Grid>
@@ -21,8 +21,8 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="btnOK" Content="OK" Click="btnOK_Click" Grid.Column="0" Margin="10,10,10,10" Width="50" />
-            <Button x:Name="btnCancel" Content="Cancel" Click="btnCancel_Click" Grid.Column="1" Margin="10,10,10,10"  Width="50" />
+            <Button x:Name="btnOK" Content="OK" Click="btnOK_Click" Grid.Column="0" Margin="10,10,10,10" Width="100" />
+            <Button x:Name="btnCancel" Content="Cancel" Click="btnCancel_Click" Grid.Column="1" Margin="10,10,10,10"  Width="100" />
         </Grid>
 
     </Grid>

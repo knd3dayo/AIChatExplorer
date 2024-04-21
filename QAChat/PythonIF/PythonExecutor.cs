@@ -7,6 +7,8 @@ namespace QAChat.PythonIF
 {
     public class PythonExecutor {
 
+        // 初期化完了フラグ
+        public static bool Initialized { get; private set; } = false;
 
         // Pythonスクリプト
         public static string RetrievalScript = "python/retrieval_qa_util.py";
@@ -30,6 +32,7 @@ namespace QAChat.PythonIF
                 PythonEngine.Initialize();
                 PythonEngine.BeginAllowThreads();
                 PythonNetFunctions = new PythonNetFunctions();
+                Initialized = true;
 
             } catch (TypeInitializationException e) {
                 string message = "Pythonの初期化に失敗しました。" + e.Message;

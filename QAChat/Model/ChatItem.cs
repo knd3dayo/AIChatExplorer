@@ -66,6 +66,8 @@ namespace QAChat.Model {
 
         public string Response { get; set; } = "";
 
+        public string Verbose { get; set; } = "";
+
         public ChatResult() {}
 
     }

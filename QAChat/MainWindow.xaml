@@ -29,7 +29,9 @@
         <StackPanel  Orientation="Vertical" Grid.Row="0" Margin="10,0,10,0">
             <!-- メニューバー -->
             <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True" HorizontalAlignment="Right">
-                <MenuItem Header="設定" Command="{Binding SettingCommand}" />
+                <MenuItem Header="ログ" Command="{Binding LogWindowCommand}" />
+                <MenuItem Header="設定" Command="{Binding SettingCommand}" 
+                          IsEnabled="{Binding IsInternalProject}"/>
             </Menu>
         </StackPanel>
 
