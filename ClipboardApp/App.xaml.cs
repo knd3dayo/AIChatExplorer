@@ -19,6 +19,7 @@ namespace ClipboardApp
             Exception ex = e.Exception;
             string message = $"エラーが発生しました\nメッセージ：{ex.Message}\nスタックトレース:\n{ex.StackTrace}";
             System.Windows.MessageBox.Show(message);
+
         }
     }
 

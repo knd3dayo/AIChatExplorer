@@ -16,9 +16,98 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace ClipboardApp {
 
     public class MainWindowViewModel : ObservableObject {
-        public static MainWindowViewModel? Instance = null;
+        // static properties
+        // ステータスバーのテキスト
+        public static StatusText StatusText { get; } = new StatusText();
 
-        private static MainWindow MainWindow = (MainWindow)Application.Current.MainWindow;
+        public static MainWindowViewModel? Instance { get; private set; } = null;
+
+        private static MainWindow MainWindow { get; } = (MainWindow)Application.Current.MainWindow;
+
+
+        // Instance Properties
+
+        // Progress Indicatorの表示フラグ
+        private bool _IsIndeterminate = false;
+        public bool IsIndeterminate {
+            get {
+                return _IsIndeterminate;
+            }
+            set {
+                _IsIndeterminate = value;
+                OnPropertyChanged("IsIndeterminate");
+            }
+        }
+
+        // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string ClipboardMonitorButtonText {
+            get {
+                return IsClipboardMonitor ? "停止" : "開始";
+            }
+        }
+        // クリップボード監視を開始、終了するフラグ
+        private bool _isClipboardMonitor = false;
+        public bool IsClipboardMonitor {
+            get {
+                return _isClipboardMonitor;
+            }
+            set {
+                _isClipboardMonitor = value;
+                OnPropertyChanged("IsClipboardMonitor");
+                if (value) {
+                    ClipboardController.Start();
+                    Tools.Info("クリップボード監視を開始しました");
+                } else {
+                    ClipboardController.Stop();
+                    Tools.Info("クリップボード監視を停止しました");
+                }
+            }
+        }
+        // ClipboardItemFolder
+
+        public static ObservableCollection<ClipboardItemFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
+
+        // Cutフラグ
+        public bool CutFlag { get; set; } = false;
+        // 選択中のアイテム(複数選択)
+        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = new ObservableCollection<ClipboardItemViewModel>();
+
+        // 選択中のアイテム
+        private ClipboardItemViewModel? _selectedItem = null;
+        public ClipboardItemViewModel? SelectedItem {
+            get {
+                return _selectedItem;
+            }
+            set {
+                _selectedItem = value;
+                OnPropertyChanged("SelectedItem");
+            }
+        }
+        // 選択中のフォルダ
+        private ClipboardItemFolderViewModel? _selectedFolder = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+        public ClipboardItemFolderViewModel? SelectedFolder {
+            get {
+                return _selectedFolder;
+            }
+            set {
+                _selectedFolder = value;
+                _selectedFolder?.Load();
+
+                OnPropertyChanged("SelectedFolder");
+            }
+        }
+        // Ctrl + C or X が押された時のClipboardItem
+        public List<ClipboardItemViewModel> CopiedItems { get; set; } = new List<ClipboardItemViewModel>();
+
+        // Ctrl + C or X  が押された時のClipboardItemFolder
+        public ClipboardItemFolderViewModel? CopiedItemFolder { get; set; } = null;
+
+        //-----
+        // ClipboardItemContextMenuItems
+        //-----
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
 
         public MainWindowViewModel() {
             // データベースのチェックポイント処理
@@ -112,90 +201,15 @@ namespace ClipboardApp {
             }
         }
 
+        //--------------------------------------------------------------------------------
+        // コマンド
+        //--------------------------------------------------------------------------------
         // クリップボード監視開始終了フラグを反転させる
         public SimpleDelegateCommand ToggleClipboardMonitor => new((parameter) => {
             IsClipboardMonitor = !IsClipboardMonitor;
             OnPropertyChanged("ClipboardMonitorButtonText");
         });
 
-        // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
-        public string ClipboardMonitorButtonText {
-            get {
-                return IsClipboardMonitor ? "停止" : "開始";
-            }
-        }
-        // クリップボード監視を開始、終了するフラグ
-        private bool _isClipboardMonitor = false;
-        public bool IsClipboardMonitor {
-            get {
-                return _isClipboardMonitor;
-            }
-            set {
-                _isClipboardMonitor = value;
-                OnPropertyChanged("IsClipboardMonitor");
-                if (value) {
-                    ClipboardController.Start();
-                    Tools.Info("クリップボード監視を開始しました");
-                } else {
-                    ClipboardController.Stop();
-                    Tools.Info("クリップボード監視を停止しました");
-                }
-            }
-        }
-        // ClipboardItemFolder
-
-        public static ObservableCollection<ClipboardItemFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
-
-        // Cutフラグ
-        public bool CutFlag { get; set; } = false;
-        // 選択中のアイテム(複数選択)
-        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = new ObservableCollection<ClipboardItemViewModel>();
-
-        // 選択中のアイテム
-        private ClipboardItemViewModel? _selectedItem = null;
-        public ClipboardItemViewModel? SelectedItem {
-            get {
-                return _selectedItem;
-            }
-            set {
-                _selectedItem = value;
-                OnPropertyChanged("SelectedItem");
-            }
-        }
-        // 選択中のフォルダ
-        private ClipboardItemFolderViewModel? _selectedFolder = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
-        public ClipboardItemFolderViewModel? SelectedFolder {
-            get {
-                return _selectedFolder;
-            }
-            set {
-                _selectedFolder = value;
-                _selectedFolder?.Load();
-
-                OnPropertyChanged("SelectedFolder");
-            }
-        }
-        // Ctrl + C or X が押された時のClipboardItem
-        public List<ClipboardItemViewModel> CopiedItems { get; set; } = new List<ClipboardItemViewModel>();
-
-        // Ctrl + C or X  が押された時のClipboardItemFolder
-        public ClipboardItemFolderViewModel? CopiedItemFolder { get; set; } = null;
-
-        //-----
-        // ClipboardItemContextMenuItems
-        //-----
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
-
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
-
-        // static 
-
-        // ステータスバーのテキスト
-        public static StatusText StatusText { get; } = new StatusText();
-
-        //--------------------------------------------------------------------------------
-        // コマンド
-        //--------------------------------------------------------------------------------
         // フォルダが選択された時の処理
         public SimpleDelegateCommand FolderSelectionChangedCommand => new((parameter) => {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
@@ -242,7 +256,13 @@ namespace ClipboardApp {
             if (SelectedFolder == null) {
                 return;
             }
-            ClipboardFolderCommands.ReloadCommandExecute(SelectedFolder);
+            // -- 処理完了までProgressIndicatorを表示
+            try {
+                IsIndeterminate = true;
+                ClipboardFolderCommands.ReloadCommandExecute(SelectedFolder);
+            } finally {
+                IsIndeterminate = false;
+            }
         });
 
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
@@ -493,15 +513,22 @@ namespace ClipboardApp {
             if (clipboardItemViewModel == null) {
                 return;
             }
-            string content = clipboardItemViewModel.ClipboardItem.Content;
-            // テキストを整形
-            content = AutoProcessCommand.FormatTextCommandExecute(content);
-            // 整形したテキストをセット
-            clipboardItemViewModel.ClipboardItem.Content = content;
-            // LiteDBに保存
-            ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
-            // 再描写
-            ReloadClipboardItems();
+            // 処理が終わるまでProgressIndicatorを表示
+            try {
+                IsIndeterminate = true;
+                // テキストを取得
+                string content = clipboardItemViewModel.ClipboardItem.Content;
+                // テキストを整形
+                content = AutoProcessCommand.FormatTextCommandExecute(content);
+                // 整形したテキストをセット
+                clipboardItemViewModel.ClipboardItem.Content = content;
+                // LiteDBに保存
+                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+                // 再描写
+                ReloadClipboardItems();
+            } finally {
+                IsIndeterminate = false;
+            }
         });
         // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
         public SimpleDelegateCommand SplitFilePathCommand => new((parameter) => {
@@ -511,12 +538,18 @@ namespace ClipboardApp {
                 return;
             }
             ClipboardItem clipboardItem = SelectedItem.ClipboardItem;
-            // ファイルパスを分割
-            AutoProcessCommand.SplitFilePathCommandExecute(clipboardItem);
-            // LiteDBに保存
-            ClipboardDatabaseController.UpsertItem(clipboardItem);
-            // 再描写
-            ReloadClipboardItems();
+            // 処理が終わるまでProgressIndicatorを表示
+            try {
+                IsIndeterminate = true;
+                // ファイルパスを分割
+                AutoProcessCommand.SplitFilePathCommandExecute(clipboardItem);
+                // LiteDBに保存
+                ClipboardDatabaseController.UpsertItem(clipboardItem);
+                // 再描写
+                ReloadClipboardItems();
+            } finally {
+                IsIndeterminate = false;
+            }
         });
 
     }

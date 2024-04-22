@@ -1,8 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using WK.Libraries.SharpClipboardNS;
-using ClipboardApp.Model;
+﻿using ClipboardApp.Model;
 using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
+using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp {
@@ -62,7 +61,7 @@ namespace ClipboardApp {
             IsClipboardMonitorEnabled = true;
         }
 
-        private static void ClipboardChanged(Object? sender, ClipboardChangedEventArgs e) {
+        private async static void ClipboardChanged(Object? sender, ClipboardChangedEventArgs e) {
             // 起動時のクリップボードを読み捨てる
             if (IsStartup) {
                 IsStartup = false;
@@ -76,42 +75,47 @@ namespace ClipboardApp {
             if (clipboard == null) {
                 return;
             }
+            // Taskとして実行
+            await Task.Run(() => {
 
-            // Is the content copied of text type?
-            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                // Get the cut/copied text.
-                ProcessClipboardItem(e.ContentType, clipboard.ClipboardText, e);
-            }
-            // Is the content copied of file type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                // Get the cut/copied file/files.
-                for (int i = 0; i < clipboard.ClipboardFiles.Count; i++) {
-                    ProcessClipboardItem(e.ContentType, clipboard.ClipboardFiles[i], e);
+                // Is the content copied of text type?
+                if (e.ContentType == SharpClipboard.ContentTypes.Text) {
+                    // Get the cut/copied text.
+                    ProcessClipboardItem(e.ContentType, clipboard.ClipboardText, e);
                 }
-
-            }
-            // Is the content copied of image type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                // Get the cut/copied image.
-                System.Drawing.Image img = clipboard.ClipboardImage;
-                // UseOCRが設定されている場合はOCRを実行
-                if (Properties.Settings.Default.UseOCR) {
-                    try {
-                        string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
-                        ProcessClipboardItem(SharpClipboard.ContentTypes.Text, text, e);
-
-                    } catch (ClipboardAppException ex) {
-                        Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+                // Is the content copied of file type?
+                else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
+                    // Get the cut/copied file/files.
+                    for (int i = 0; i < clipboard.ClipboardFiles.Count; i++) {
+                        ProcessClipboardItem(e.ContentType, clipboard.ClipboardFiles[i], e);
                     }
 
+                }
+                // Is the content copied of image type?
+                else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
+                    // Get the cut/copied image.
+                    System.Drawing.Image img = clipboard.ClipboardImage;
+                    // UseOCRが設定されている場合はOCRを実行
+                    if (Properties.Settings.Default.UseOCR) {
+                        try {
+                            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
+                            ProcessClipboardItem(SharpClipboard.ContentTypes.Text, text, e);
+
+                        } catch (ClipboardAppException ex) {
+                            Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+                        }
+
+
+                    }
 
                 }
-
-            }
-            // If the cut/copied content is complex, use 'Other'.
-            else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                // System.Windows.MessageBox.Show(clipboard.ClipboardObject.ToString());
-            }
+                // If the cut/copied content is complex, use 'Other'.
+                else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
+                    // System.Windows.MessageBox.Show(clipboard.ClipboardObject.ToString());
+                }
+            });
+            // 現在選択中のClipboardItemFolderに通知
+            MainWindowViewModel?.ReloadClipboardItems();
         }
         private static void ProcessClipboardItem(SharpClipboard.ContentTypes contentTypes, string content, ClipboardChangedEventArgs e) {
             if (clipboard == null) {
@@ -123,7 +127,7 @@ namespace ClipboardApp {
                 // 大文字同士で比較
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
                 string upperMonitorTargetAppNames = Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
-                if (! upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
+                if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return;
                 }
 
@@ -173,8 +177,6 @@ namespace ClipboardApp {
             // RootFolderのAddItemを呼び出す
 
             ClipboardItemFolder.RootFolder.AddItem(item);
-            // 現在選択中のClipboardItemFolderに通知
-            MainWindowViewModel?.ReloadClipboardItems();
 
 
         }

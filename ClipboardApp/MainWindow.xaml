@@ -1,176 +1,249 @@
-﻿<Window x:Class="ClipboardApp.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="clr-namespace:ClipboardApp"
-        mc:Ignorable="d"
-        Title="コピペツール" Height="450" Width="800"
-        x:Name="window1"
-        Style="{StaticResource MaterialDesignWindow}"
-        >
+﻿<Window
+    x:Class="ClipboardApp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="window1"
+    Title="コピペツール"
+    Width="800"
+    Height="450"
+    Style="{StaticResource MaterialDesignWindow}"
+    mc:Ignorable="d">
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <!-- クリップボードアイテムのコンテキストメニューアイテム-->
-        <CollectionViewSource Source="{Binding ClipboardItemContextMenuItems}" x:Key="ClipboardItemContextMenuItems"/>
-        <!-- フォルダのコンテキストメニューアイテム-->
-        <CollectionViewSource Source="{Binding ClipboardItemFolderContextMenuItems}" x:Key="ClipboardItemFolderContextMenuItems"/>
+        <!--  クリップボードアイテムのコンテキストメニューアイテム  -->
+        <CollectionViewSource x:Key="ClipboardItemContextMenuItems" Source="{Binding ClipboardItemContextMenuItems}" />
+        <!--  フォルダのコンテキストメニューアイテム  -->
+        <CollectionViewSource x:Key="ClipboardItemFolderContextMenuItems" Source="{Binding ClipboardItemFolderContextMenuItems}" />
     </Window.Resources>
     <Window.InputBindings>
-        <!-- アプリケーション終了-->
-        <KeyBinding Key="Q" Modifiers="Control" Command="{Binding ExitCommand}" />
-        <!-- 検索ダイアログを表示-->
-        <KeyBinding Key="F" Modifiers="Control" Command="{Binding SearchCommand}" />
-        <!-- アイテムをLiteDBから再読み込みする-->
-        <KeyBinding Key="R" Modifiers="Control" Command="{Binding ReloadCommand}" />
+        <!--  アプリケーション終了  -->
+        <KeyBinding
+            Key="Q"
+            Command="{Binding ExitCommand}"
+            Modifiers="Control" />
+        <!--  検索ダイアログを表示  -->
+        <KeyBinding
+            Key="F"
+            Command="{Binding SearchCommand}"
+            Modifiers="Control" />
+        <!--  アイテムをLiteDBから再読み込みする  -->
+        <KeyBinding
+            Key="R"
+            Command="{Binding ReloadCommand}"
+            Modifiers="Control" />
 
-        <!-- 選択したアイテムを開く-->
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenSelectedItemCommand}" />
-        <!-- 選択したアイテムをファイルとして開く-->
-        <KeyBinding Key="O" Modifiers="Control+Shift" Command="{Binding OpenSelectedItemAsFileCommand}" />
-        <!-- 選択したアイテムを新規ファイルとして開く-->
-        <KeyBinding Key="O" Modifiers="Control+Shift+Alt" Command="{Binding OpenSelectedItemAsNewFileCommand}" />
-        <!-- 選択中のフォルダにアイテムを貼り付け-->
-        <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteFromClipboardCommand}" />
-        <!-- 選択中のアイテムにアイテムをマージ-->
-        <KeyBinding Key="M" Modifiers="Control" Command="{Binding MergeItemCommand}" />
-        <!-- 選択中のアイテムにアイテムをヘッダー付きでマージ-->
-        <KeyBinding Key="M" Modifiers="Control+Shift" Command="{Binding MergeItemWithHeaderCommand}" />
-        <!--選択中のアイテムをクリップボードにコピー-->
-        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyToClipboardCommand}" />
-        <!-- 選択中のアイテムをクリップボードにコピー + CutフラグをTrue-->
-        <KeyBinding Key="X" Modifiers="Control" Command="{Binding CutItemCommand}" />
-        <!-- アイテムを新規作成-->
-        <KeyBinding Key="N" Modifiers="Control" Command="{Binding CreateItemCommand}" />
-        <!-- 選択したアイテムを削除-->
+        <!--  選択したアイテムを開く  -->
+        <KeyBinding
+            Key="O"
+            Command="{Binding OpenSelectedItemCommand}"
+            Modifiers="Control" />
+        <!--  選択したアイテムをファイルとして開く  -->
+        <KeyBinding
+            Key="O"
+            Command="{Binding OpenSelectedItemAsFileCommand}"
+            Modifiers="Control+Shift" />
+        <!--  選択したアイテムを新規ファイルとして開く  -->
+        <KeyBinding
+            Key="O"
+            Command="{Binding OpenSelectedItemAsNewFileCommand}"
+            Modifiers="Control+Shift+Alt" />
+        <!--  選択中のフォルダにアイテムを貼り付け  -->
+        <KeyBinding
+            Key="V"
+            Command="{Binding PasteFromClipboardCommand}"
+            Modifiers="Control" />
+        <!--  選択中のアイテムにアイテムをマージ  -->
+        <KeyBinding
+            Key="M"
+            Command="{Binding MergeItemCommand}"
+            Modifiers="Control" />
+        <!--  選択中のアイテムにアイテムをヘッダー付きでマージ  -->
+        <KeyBinding
+            Key="M"
+            Command="{Binding MergeItemWithHeaderCommand}"
+            Modifiers="Control+Shift" />
+        <!--  選択中のアイテムをクリップボードにコピー  -->
+        <KeyBinding
+            Key="C"
+            Command="{Binding CopyToClipboardCommand}"
+            Modifiers="Control" />
+        <!--  選択中のアイテムをクリップボードにコピー + CutフラグをTrue  -->
+        <KeyBinding
+            Key="X"
+            Command="{Binding CutItemCommand}"
+            Modifiers="Control" />
+        <!--  アイテムを新規作成  -->
+        <KeyBinding
+            Key="N"
+            Command="{Binding CreateItemCommand}"
+            Modifiers="Control" />
+        <!--  選択したアイテムを削除  -->
         <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand}" />
-        <!-- 表示中のアイテムを削除-->
-        <KeyBinding Key="Delete" Modifiers="Control" Command="{Binding DeleteDisplayedItemCommand}" />
+        <!--  表示中のアイテムを削除  -->
+        <KeyBinding
+            Key="Delete"
+            Command="{Binding DeleteDisplayedItemCommand}"
+            Modifiers="Control" />
 
 
     </Window.InputBindings>
-    <Grid x:Name="grid1" >
-        <!-- 1. メニューバー、2. (TreeView,ListBox)、3. StatusTextのGrid.Row 1と3は固定サイズにする。 -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
 
-        <StackPanel  Orientation="Vertical" Grid.Row="0" Margin="0,0,0,0">
-            <materialDesign:ColorZone 
-                                  materialDesign:ElevationAssist.Elevation="Dp4"
-                                  DockPanel.Dock="Top"
-                                  Mode="PrimaryMid"
-                >
-                <!-- メニューバー -->
-                <Menu Name="menu1" VerticalAlignment="Top" IsMainMenu="True" materialDesign:MenuAssist.TopLevelMenuItemHeight="25">
+    <Grid x:Name="grid1">
+        <!--  1. メニューバー、2. (TreeView,ListBox)、3. StatusTextのGrid.Row 1と3は固定サイズにする。  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+
+                <!--  メニューバー  -->
+                <Menu
+                    Name="menu1"
+                    VerticalAlignment="Top"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="25"
+                    IsMainMenu="True">
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="ファイル"
-                    >
-                        <MenuItem 
+                        Header="ファイル">
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding ToggleClipboardMonitor}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding ClipboardMonitorButtonText}" />
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding ClipboardMonitorButtonText}" Command="{Binding ToggleClipboardMonitor}" />
-                        <MenuItem Header="作成"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            >
-                            <MenuItem Header="アイテム作成" Command="{Binding CreateItemCommand}" 
+                            Header="作成">
+                            <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding CreateItemCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                      />
-                            <MenuItem Header="Pythonスクリプト作成" Command="{Binding CreatePythonScriptCommand}" 
+                                Header="アイテム作成" />
+                            <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding CreatePythonScriptCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                      />
+                                Header="Pythonスクリプト作成" />
                         </MenuItem>
-                        <MenuItem Header="終了" Command="{Binding ExitCommand}" 
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding ExitCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                  />
+                            Header="終了" />
                     </MenuItem>
-                    <MenuItem Header="編集"
+                    <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                              >
-                        <MenuItem Header="タグ編集" Command="{Binding OpenTagWindowCommand}" 
+                        Header="編集">
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenTagWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                  />
-                        <MenuItem Header="自動処理ルール編集" Command="{Binding OpenListAutoProcessRuleWindowCommand}" 
+                            Header="タグ編集" />
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenListAutoProcessRuleWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                  />
-                        <MenuItem Header="Pythonスクリプト編集" Command="{Binding EditPythonScriptCommand}" 
+                            Header="自動処理ルール編集" />
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding EditPythonScriptCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                  />
+                            Header="Pythonスクリプト編集" />
                     </MenuItem>
-                    <MenuItem Header="ツール"
+                    <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                              >
-                        <MenuItem Header="OpenAIチャット" Command="{Binding OpenOpenAIWindowCommand}" 
+                        Header="ツール">
+                        <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenOpenAIWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                  />
+                            Header="OpenAIチャット" />
                     </MenuItem>
 
-                    <MenuItem Header="検索" Command="{Binding SearchCommand}" 
+                    <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Command="{Binding SearchCommand}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                              />
-                    <MenuItem Header="設定" Command="{Binding SettingCommand}" 
+                        Header="検索" />
+                    <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Command="{Binding SettingCommand}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                              />
+                        Header="設定" />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
         <Grid Grid.Row="1">
-            <!-- TreeView, ListBox -->
+            <!--  TreeView, ListBox  -->
             <Grid.ColumnDefinitions>
-                <!-- 1. TreeView、2. GridSplitter、3. ListBox-->
-                <!-- TreeViewとListBoxの間にGridSplitterを入れる -->
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <!--  1. TreeView、2. GridSplitter、3. ListBox  -->
+                <!--  TreeViewとListBoxの間にGridSplitterを入れる  -->
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <!-- フォルダのTreeView -->
-            <TreeView Grid.Column="0" Grid.Row="0" 
-                      ItemsSource="{Binding ClipboardItemFolders}"
-                      >
-                <TreeView.ItemTemplate >
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}" DataType="local:ClipboardItemFolderViewModel">
-                        <!-- ツリーアイテム-->
-                        <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
-                        <DockPanel HorizontalAlignment="Stretch" >
-                            <TextBlock Text="{Binding DisplayName}" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+            <!--  フォルダのTreeView  -->
+            <TreeView
+                Grid.Row="0"
+                Grid.Column="0"
+                ItemsSource="{Binding ClipboardItemFolders}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
+                        <!--  ツリーアイテム  -->
+                        <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                DockPanel.Dock="Left"
+                                Text="{Binding DisplayName}" />
                             <DockPanel.InputBindings>
-                                <!-- フォルダを左クリックでそのフォルダを表示-->
+                                <!--  フォルダを左クリックでそのフォルダを表示  -->
                                 <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
                             </DockPanel.InputBindings>
                             <DockPanel.ContextMenu>
-                                <!-- フォルダのコンテキストメニュー -->
+                                <!--  フォルダのコンテキストメニュー  -->
                                 <ContextMenu>
-                                    <MenuItem Header="新規作成" Command="{Binding CreateFolderCommand}" CommandParameter="{Binding}"
-                                              IsEnabled="{Binding IsCreateVisible}"
-                                              />
-                                    <MenuItem Header="編集" Command="{Binding EditFolderCommand}" CommandParameter="{Binding}"
-                                              IsEnabled="{Binding IsEditVisible}"
-                                              />
-                                    <MenuItem Header="削除" Command="{Binding DeleteFolderCommand}" CommandParameter="{Binding}"
-                                              IsEnabled="{Binding IsDeleteVisible}"
-                                              />
-                                    <MenuItem Header="エクスポート" Command="{Binding ExportItemsFromFolderCommand}"  CommandParameter="{Binding}" />
-                                    <MenuItem Header="インポート" Command="{Binding ImportItemsToFolderCommand}"  CommandParameter="{Binding}" />
+                                    <MenuItem
+                                        Command="{Binding CreateFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="新規作成"
+                                        IsEnabled="{Binding IsCreateVisible}" />
+                                    <MenuItem
+                                        Command="{Binding EditFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="編集"
+                                        IsEnabled="{Binding IsEditVisible}" />
+                                    <MenuItem
+                                        Command="{Binding DeleteFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="削除"
+                                        IsEnabled="{Binding IsDeleteVisible}" />
+                                    <MenuItem
+                                        Command="{Binding ExportItemsFromFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="エクスポート" />
+                                    <MenuItem
+                                        Command="{Binding ImportItemsToFolderCommand}"
+                                        CommandParameter="{Binding}"
+                                        Header="インポート" />
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
                         </DockPanel>
@@ -178,116 +251,134 @@
                 </TreeView.ItemTemplate>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
-                        <i:InvokeCommandAction
-                                Command="{Binding FolderSelectionChangedCommand}" PassEventArgsToCommand="True" 
-                                />
+                        <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TreeView>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Center" />
-            <!-- クリップボードのListBox -->
-            <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
+            <GridSplitter
+                Grid.Column="1"
+                Width="5"
+                HorizontalAlignment="Center" />
+            <!--  クリップボードのListBox  -->
+            <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
             <ListBox
                 Name="listBox1"
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Stretch"
                 ItemsSource="{Binding SelectedFolder.Items}"
-                Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" Margin="0,0,0,0"
-                SelectionMode="Extended"
-                >
+                SelectionMode="Extended">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction
-                                Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" 
-                                />
+                        <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                    <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
-                            <DockPanel 
-                            HorizontalAlignment="Stretch" Margin="0,0,0,0"
-                            ToolTip="{Binding Path=ToolTipString}"
-                            >
-                            <Grid DockPanel.Dock="Left">
+                        <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
+                        <materialDesign:Card
+                            Margin="10,10,10,10"
+                            HorizontalAlignment="Stretch"
+                            materialDesign:ElevationAssist.Elevation="Dp12"
+                            ToolTip="{Binding Path=ToolTipString}">
+                            <Grid>
                                 <Grid.RowDefinitions>
-                                    <!-- 1. 説明、 2.詳細情報、 3. クリップボードアイテム-->
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
+                                    <!--  1. 説明、 2.詳細情報、 3. クリップボードアイテム  -->
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Text="{Binding Path=DescriptionText}"
-                                    Name="DescriptionText" 
-                                    TextTrimming="None"
+                                    Name="DescriptionText"
+                                    Grid.Row="0"
+                                    Margin="10,10,10,10"
                                     HorizontalAlignment="Stretch"
                                     FontSize="10pt"
-                                    Grid.Row="0"
-                                    Visibility="{Binding DescriptionVisibility}"
-                                    />
-                                <TextBlock
-                                    Text="{Binding Path=HeaderText}"
-                                    Name="headerText" 
+                                    Text="{Binding Path=DescriptionText}"
                                     TextTrimming="None"
+                                    Visibility="{Binding DescriptionVisibility}" />
+                                <TextBlock
+                                    Name="clipboardText"
+                                    Grid.Row="1"
+                                    MinHeight="50"
+                                    MaxHeight="100"
+                                    Margin="10,10,10,10"
+                                    HorizontalAlignment="Stretch"
+                                    FontSize="8pt"
+                                    Text="{Binding Path=Content}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="Wrap" />
+                                <Separator
+                                    Grid.Row="2"
+                                    Margin="10,0,10,0"
+                                    Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                    BorderThickness="1"
+                                    Style="{StaticResource MaterialDesignLightSeparator}" />
+                                <TextBlock
+                                    Name="headerText"
+                                    Grid.Row="3"
+                                    Margin="10,0,10,10"
                                     HorizontalAlignment="Stretch"
                                     FontSize="6pt"
-                                    Grid.Row="1"/>
-                                <Border 
-                                    BorderBrush="Black" 
-                                    BorderThickness="1"  
-                                    Grid.Row="2">
-                                    <TextBlock 
-                                        Text="{Binding Path=Content}" Name="clipboardText" 
-                                        TextTrimming="CharacterEllipsis"
-                                        FontSize="8pt"
-                                        MinHeight="50" MaxHeight="100"
-                                        HorizontalAlignment="Stretch"
-                                        TextWrapping="Wrap"
-                                        />
-                                </Border>
+                                    Text="{Binding Path=HeaderText}"
+                                    TextTrimming="None" />
                             </Grid>
-                            <DockPanel.ContextMenu>
+                            <materialDesign:Card.ContextMenu>
                                 <ContextMenu>
                                     <ContextMenu.ItemsSource>
                                         <CompositeCollection>
-                                            <CollectionContainer Collection="{Binding Source={StaticResource ClipboardItemContextMenuItems}}"/>
+                                            <CollectionContainer Collection="{Binding Source={StaticResource ClipboardItemContextMenuItems}}" />
                                         </CompositeCollection>
                                     </ContextMenu.ItemsSource>
                                     <ContextMenu.ItemContainerStyle>
                                         <Style TargetType="MenuItem">
-                                            <Setter Property="MenuItem.Header" Value="{Binding Title}"/>
-                                            <Setter Property="MenuItem.Command" Value="{Binding Command}"/>
-                                            <Setter Property="MenuItem.CommandParameter" Value="{Binding}"/>
-                                            <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}"/>
-                                            <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}"/>
+                                            <Setter Property="MenuItem.Header" Value="{Binding Title}" />
+                                            <Setter Property="MenuItem.Command" Value="{Binding Command}" />
+                                            <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
+                                            <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
+                                            <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
                                         </Style>
                                     </ContextMenu.ItemContainerStyle>
 
                                 </ContextMenu>
-                            </DockPanel.ContextMenu>
-                            <DockPanel.InputBindings>
-                                <!-- 選択したアイテムを開く WindowをElementNameで参照して DataContext(=MainWindowViewModel)のコマンドを呼び出す -->
-                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding DataContext.OpenSelectedItemCommand , ElementName=window1}" CommandParameter="{Binding}"/>
-                            </DockPanel.InputBindings>
-                        </DockPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                            </materialDesign:Card.ContextMenu>
+                            <materialDesign:Card.InputBindings>
+                                <!--  選択したアイテムを開く WindowをElementNameで参照して DataContext(=MainWindowViewModel)のコマンドを呼び出す  -->
+                                <MouseBinding
+                                    Command="{Binding DataContext.OpenSelectedItemCommand, ElementName=window1}"
+                                    CommandParameter="{Binding}"
+                                    MouseAction="LeftDoubleClick" />
+                            </materialDesign:Card.InputBindings>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
             </ListBox>
         </Grid>
-        <StatusBar Name="statusBar1" VerticalAlignment="Bottom" Grid.Row="2"
+        <StatusBar
+            Name="statusBar1"
+            Grid.Row="2"
+            VerticalAlignment="Bottom"
             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                   >
+            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
             <StatusBarItem>
-                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text }" />
+                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text}" />
             </StatusBarItem>
             <StatusBar.InputBindings>
-                <MouseBinding MouseAction="LeftClick" Command="{Binding OpenStatusMessageWindowCommand}" />
+                <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" MouseAction="LeftClick" />
             </StatusBar.InputBindings>
         </StatusBar>
+        <ProgressBar
+            Grid.Row="1"
+            IsIndeterminate="{Binding IsIndeterminate}"
+            Style="{StaticResource MaterialDesignCircularProgressBar}"
+            Value="0" />
     </Grid>
 </Window>
