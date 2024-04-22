@@ -187,6 +187,9 @@ class RetrievalQAUtil:
         '''
         page_content_list = []
         page_source_list = []
+        #  verbose情報
+        verbose_list = []
+        
         for step in intermediate_steps:
             observation = step[1]
             source_documents = observation.get("source_documents",[])
@@ -197,8 +200,25 @@ class RetrievalQAUtil:
                 page_content_list.append(source_document.page_content)
                 page_source_list.append(source_document.metadata.get("source",""))
         
-        return page_content_list, page_source_list
-
+            # verbose情報を取得
+            verbose = self.serialize_intermediate_step(step)
+            verbose_list.append(verbose)
+        
+        # verbose情報をjson文字列に変換
+        verbose_json = json.dumps(verbose_list, ensure_ascii=False, indent=4)    
+        
+        return page_content_list, page_source_list, verbose_json
+    
+    # intermediate_stepsをシリアライズする
+    def serialize_intermediate_step(self, step):
+        return {
+            "tool": step[0].tool,
+            "tool_input": step[0].tool_input,
+            "log": step[0].log,
+            "message_log": str(step[0].message_log),
+            "tool_call_id": step[0].tool_call_id,
+            "output": str(step[1]),
+        }
     def convert_to_langchain_chat_history(self, chat_history_json: str):
         # openaiのchat_historyをlangchainのchat_historyに変換
         langchain_chat_history = []
@@ -246,38 +266,27 @@ def langchain_chat( props: dict, prompt: str, chat_history_json: str = None):
     else:
         chat_history = []
 
-    # 標準出力をByteIOに保存
-    stdout = sys.stdout
-    import io
-    sys.stdout = io.StringIO()
     
-    with sys.stdout as buf:
-        # ChatAgentExecutorを呼び出す
-        result = ChatAgentExecutorInstance.invoke(
-                {
-                    "input": prompt,
-                    "chat_history": chat_history,
-                }
-            )
-        # bufに出力された文字列を取得
-        output = buf.getvalue()
-        
-    # 標準出力を戻す
-    sys.stdout = stdout    
+    result = ChatAgentExecutorInstance.invoke(
+            {
+                "input": prompt,
+                "chat_history": chat_history,
+            }
+        )
         
     result_dict = {}
-    result_dict["verbose"] = output
     result_dict["output"] = result.get("output", "")
-    page_conetnt_list, page_source_list = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
+    page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
     result_dict["page_content_list"] = page_conetnt_list
     result_dict["page_source_list"] = page_source_list
+    result_dict["verbose"] = verbose_json
     return result_dict
 
 if __name__ == '__main__':
 
     import env_to_props
     props = env_to_props.get_props()
-    question1 = 'ぽんちょろりん汁の作り方は？'
+    question1 = input("質問をどうぞ:")
     result1 = langchain_chat(props, question1)
 
     print(result1.get("output",""))

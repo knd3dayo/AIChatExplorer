@@ -28,16 +28,14 @@ class LangChainOpenAIClient:
 
         if (azure_openai):
             embeddings = AzureOpenAIEmbeddings(
-                azure_deployment=embedding_model_name,
                 openai_api_version="2023-12-01-preview",
-                base_url=openai_completion_base_url,
+                base_url=openai_embedding_base_url,
                 openai_api_key=openai_api_key,
             )
             llm = AzureChatOpenAI(
-                azure_deployment=azure_openai_endpoint,
                 openai_api_version="2023-12-01-preview",
                 temperature=0.5,
-                base_url=openai_embedding_base_url,
+                base_url=openai_completion_base_url,
                 openai_api_key=openai_api_key
             )
             return embeddings, llm
