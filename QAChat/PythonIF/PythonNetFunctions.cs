@@ -63,9 +63,12 @@ namespace QAChat.PythonIF {
             dict.Add("OpenAICompletionModel", Properties.Settings.Default.OpenAICompletionModel);
             dict.Add("OpenAIEmbeddingModel", Properties.Settings.Default.OpenAIEmbeddingModel);
             dict.Add("AzureOpenAI", Properties.Settings.Default.AzureOpenAI.ToString());
-            dict.Add("AzureOpenAIEndpoint", Properties.Settings.Default.AzureOpenAIEndpoint);
+
             if (Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                dict.Add("OpenAIBaseURL", Properties.Settings.Default.OpenAICompletionBaseURL);
+                dict.Add("OpenAICompletionBaseURL", Properties.Settings.Default.OpenAICompletionBaseURL);
+            }
+            if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
+                dict.Add("OpenAIEmbeddingBaseURL", Properties.Settings.Default.OpenAIEmbeddingBaseURL);
             }
             dict.Add("VectorDBURL", Properties.Settings.Default.VectorDBURL);
             return dict;
