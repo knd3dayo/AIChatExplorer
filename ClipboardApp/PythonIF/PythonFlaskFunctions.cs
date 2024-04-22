@@ -58,7 +58,8 @@ namespace ClipboardApp.PythonIF {
             psi.EnvironmentVariables["OPENAI_API_KEY"] = Properties.Settings.Default.OpenAIKey;
             psi.EnvironmentVariables["AZURE_OPENAI"] = Properties.Settings.Default.AzureOpenAI.ToString();
             psi.EnvironmentVariables["CHAT_MODEL_NAME"] = Properties.Settings.Default.OpenAICompletionModel;
-            psi.EnvironmentVariables["AZURE_OPENAI_ENDPOINT"] = Properties.Settings.Default.AzureOpenAIEndpoint;
+            psi.EnvironmentVariables["OPENAI_EMBEDDING_BASE_URL"] = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+            psi.EnvironmentVariables["OPENAI_COMPLETION_BASE_URL"] = Properties.Settings.Default.OpenAICompletionBaseURL;
             psi.EnvironmentVariables["SPACY_MODEL_NAME"] = Properties.Settings.Default.SpacyModel;
             psi.EnvironmentVariables["PORT"] = FlaskPort.ToString();
 

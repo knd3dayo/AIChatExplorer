@@ -121,19 +121,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AzureOpenAIEndpoint {
-            get {
-                return ((string)(this["AzureOpenAIEndpoint"]));
-            }
-            set {
-                this["AzureOpenAIEndpoint"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoDescription {
             get {
                 return ((bool)(this["AutoDescription"]));
@@ -145,7 +133,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoTag {
             get {
                 return ((bool)(this["AutoTag"]));
@@ -157,7 +145,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool UserMaskedDataInOpenAI {
             get {
                 return ((bool)(this["UserMaskedDataInOpenAI"]));
@@ -169,7 +157,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoMergeItemsBySourceApplicationTitle {
             get {
                 return ((bool)(this["AutoMergeItemsBySourceApplicationTitle"]));
@@ -194,12 +182,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIBaseURL {
+        public string OpenAICompletionBaseURL {
             get {
-                return ((string)(this["OpenAIBaseURL"]));
+                return ((string)(this["OpenAICompletionBaseURL"]));
             }
             set {
-                this["OpenAIBaseURL"] = value;
+                this["OpenAICompletionBaseURL"] = value;
             }
         }
         
@@ -236,6 +224,18 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["SourceDocumentURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OpenAIEmbeddingBaseURL {
+            get {
+                return ((string)(this["OpenAIEmbeddingBaseURL"]));
+            }
+            set {
+                this["OpenAIEmbeddingBaseURL"] = value;
             }
         }
     }

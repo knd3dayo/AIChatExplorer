@@ -12,7 +12,6 @@
     <None Remove="clipboard_app_utils.py" />
     <None Remove="NLog.config" />
     <None Remove="python\clipboard_app_faiss.py" />
-    <None Remove="python\clipboard_app_openai.py" />
     <None Remove="python\clipboard_app_spacy.py" />
     <None Remove="python\clipboard_app_sqlite.py" />
     <None Remove="python\flask_app.py" />
@@ -38,9 +37,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="python\clipboard_app_faiss.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_openai.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\clipboard_app_spacy.py">

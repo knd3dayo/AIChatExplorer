@@ -16,7 +16,7 @@ namespace QAChat.PythonIF
         public static PythonNetFunctions? PythonNetFunctions { get; private set; }
 
         public static void Init(bool IsPythonEngineInitialized) {
-            if (!IsPythonEngineInitialized) {   
+            if (!IsPythonEngineInitialized) {
                 // Pythonスクリプトを実行するための準備
                 // PythonDLLのパスを設定
                 Runtime.PythonDLL = Properties.Settings.Default.PythonDllPath;

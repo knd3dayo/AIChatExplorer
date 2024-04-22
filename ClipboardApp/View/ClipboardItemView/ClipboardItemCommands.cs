@@ -285,8 +285,8 @@ namespace ClipboardApp.View.ClipboardItemView
             settings["OpenAIKey"] = Properties.Settings.Default.OpenAIKey;
             settings["OpenAICompletionModel"] = Properties.Settings.Default.OpenAICompletionModel;
             settings["OpenAIEmbeddingModel"] = Properties.Settings.Default.OpenAIEmbeddingModel;
-            settings["AzureOpenAIEndpoint"] = Properties.Settings.Default.AzureOpenAIEndpoint;
-            settings["OpenAIBaseURL"] = Properties.Settings.Default.OpenAIBaseURL;
+            settings["OpenAIEmbeddingBaseURL"] = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+            settings["OpenAICompletionBaseURL"] = Properties.Settings.Default.OpenAICompletionBaseURL;
             settings["VectorDBURL"] = Properties.Settings.Default.VectorDBURL;
             settings["SourceDocumentURL"] = Properties.Settings.Default.SourceDocumentURL;
             settings["PythonDllPath"] = Properties.Settings.Default.PythonDllPath;

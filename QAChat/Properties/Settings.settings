@@ -20,13 +20,16 @@
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="OpenAIBaseURL" Type="System.String" Scope="User">
+    <Setting Name="OpenAICompletionBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="VectorDBURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SourceDocumentURL" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

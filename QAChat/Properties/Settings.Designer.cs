@@ -98,12 +98,12 @@ namespace QAChat.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIBaseURL {
+        public string OpenAICompletionBaseURL {
             get {
-                return ((string)(this["OpenAIBaseURL"]));
+                return ((string)(this["OpenAICompletionBaseURL"]));
             }
             set {
-                this["OpenAIBaseURL"] = value;
+                this["OpenAICompletionBaseURL"] = value;
             }
         }
         
@@ -128,6 +128,18 @@ namespace QAChat.Properties {
             }
             set {
                 this["SourceDocumentURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OpenAIEmbeddingBaseURL {
+            get {
+                return ((string)(this["OpenAIEmbeddingBaseURL"]));
+            }
+            set {
+                this["OpenAIEmbeddingBaseURL"] = value;
             }
         }
     }

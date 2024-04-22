@@ -58,8 +58,8 @@ namespace QAChat {
             Properties.Settings.Default.OpenAIKey = settings["OpenAIKey"];
             Properties.Settings.Default.OpenAICompletionModel = settings["OpenAICompletionModel"];
             Properties.Settings.Default.OpenAIEmbeddingModel = settings["OpenAIEmbeddingModel"];
-            Properties.Settings.Default.AzureOpenAIEndpoint = settings["AzureOpenAIEndpoint"];
-            Properties.Settings.Default.OpenAIBaseURL = settings["OpenAIBaseURL"];
+            Properties.Settings.Default.OpenAICompletionBaseURL = settings["OpenAICompletionBaseURL"];
+            Properties.Settings.Default.OpenAIEmbeddingBaseURL = settings["OpenAIEmbeddingBaseURL"];
             Properties.Settings.Default.VectorDBURL = settings["VectorDBURL"];
             Properties.Settings.Default.SourceDocumentURL = settings["SourceDocumentURL"];
             Properties.Settings.Default.PythonDllPath = settings["PythonDllPath"];

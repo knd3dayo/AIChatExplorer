@@ -168,6 +168,7 @@ class RetrievalQAUtil:
             agent=chat_agent, tools=self.tools, 
             return_source_documents=True,
             return_intermediate_steps=True,
+            stream_runnable=False
             )
         return agent_executor
 
