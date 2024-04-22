@@ -1,9 +1,9 @@
 import sys
 sys.path.append('..')
 from file_loader import FileLoader
-from common.langchain_vector_db import LangChainVectorDB
-from common.langchain_openai_client import LangChainOpenAIClient
-from common.env_to_props import get_props
+from langchain_vector_db import LangChainVectorDB
+from langchain_openai_client import LangChainOpenAIClient
+from env_to_props import get_props
 if __name__ == "__main__":
     # 第1引数は処理タイプ(update,delete)
     # 第2引数はファイルパス
@@ -31,7 +31,6 @@ if __name__ == "__main__":
         for _id, doc in vector_db.db.docstore._dict.items():
            print(f"{_id} {doc.metadata} {doc.page_content}")
         print(vector_db.db.index.ntotal)
-        vector_db.save()
 
     elif arg1 == "delete":
         props = get_props()
@@ -41,7 +40,6 @@ if __name__ == "__main__":
         for _id, doc in vector_db.db.docstore._dict.items():
            print(f"{_id} {doc.metadata} {doc.page_content}")
         print(vector_db.db.index.ntotal)
-        vector_db.save()
 
     elif arg1 == "summary":
         # 未実装

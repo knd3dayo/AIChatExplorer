@@ -17,7 +17,8 @@ class LangChainVectorDB:
         self.__load_faiss_index()
 
     def __load_faiss_index(self):
-        if not os.path.exists(self.vector_db_url):
+        # ベクトルDB用のディレクトリが存在しない、または空の場合
+        if not os.path.exists(self.vector_db_url) or len(os.listdir(self.vector_db_url)) == 0:    
             # faissのインデックスを読み込む
             docs = [
                 Document(
