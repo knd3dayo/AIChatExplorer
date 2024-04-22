@@ -11,7 +11,7 @@ namespace ClipboardApp.Utils {
         public static void Debug(string message) {
             Logger.Debug(message);
             // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(Application.Current.MainWindow, message);
+            System.Windows.MessageBox.Show(message);
         }
 
         public static void Info(string message) {
@@ -26,7 +26,7 @@ namespace ClipboardApp.Utils {
                 StatusText.Text = message;
             }
             // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(Application.Current.MainWindow, message);
+            System.Windows.MessageBox.Show(message);
         }
 
         public static void Error(string message) {
@@ -34,7 +34,7 @@ namespace ClipboardApp.Utils {
             if (StatusText != null) {
                 StatusText.Text = message;
             }
-            System.Windows.MessageBox.Show(Application.Current.MainWindow, message);
+            System.Windows.MessageBox.Show(message);
         }
         // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
         // Listの要素がNullの場合はNull > と返す
