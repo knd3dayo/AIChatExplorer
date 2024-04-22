@@ -87,11 +87,13 @@ namespace QAChat {
             try {
                 // PythonExecutorが初期化されていない場合は初期化
                 if (!PythonExecutor.Initialized) {
-                    PythonExecutor.Init();
+                    // プロジェクトが内部プロジェクトでない場合はPythonEngineはすでに初期化済み
+                    PythonExecutor.Init(!IsInternalProject);
                 }
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 ChatResult? result = PythonExecutor.PythonNetFunctions?.OpenAIChat(InputText, ChatItems);
                 if (result == null) {
+                    Tools.ShowMessage("チャットの送信に失敗しました。");
                     return;
                 }
                 // inputTextをChatItemsに追加
