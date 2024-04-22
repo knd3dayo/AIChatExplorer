@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:ClipboardApp"
         mc:Ignorable="d"
         Title="コピペツール" Height="450" Width="800"
-        Name="window1"
+        x:Name="window1"
         Style="{StaticResource MaterialDesignWindow}"
         >
     <Window.DataContext>
@@ -53,7 +53,7 @@
 
 
     </Window.InputBindings>
-    <Grid Name="grid1" >
+    <Grid x:Name="grid1" >
         <!-- 1. メニューバー、2. (TreeView,ListBox)、3. StatusTextのGrid.Row 1と3は固定サイズにする。 -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -204,7 +204,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                     <!-- HorizontalAlignmentで左右、外側のサイズと同じになるようにする -->
-                        <DockPanel 
+                            <DockPanel 
                             HorizontalAlignment="Stretch" Margin="0,0,0,0"
                             ToolTip="{Binding Path=ToolTipString}"
                             >
@@ -265,8 +265,8 @@
                                 </ContextMenu>
                             </DockPanel.ContextMenu>
                             <DockPanel.InputBindings>
-                                <!-- 選択したアイテムを開く-->
-                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding OpenSelectedItemCommand}" CommandParameter="{Binding}"/>
+                                <!-- 選択したアイテムを開く WindowをElementNameで参照して DataContext(=MainWindowViewModel)のコマンドを呼び出す -->
+                                <MouseBinding  MouseAction="LeftDoubleClick" Command="{Binding DataContext.OpenSelectedItemCommand , ElementName=window1}" CommandParameter="{Binding}"/>
                             </DockPanel.InputBindings>
                         </DockPanel>
                         </DataTemplate>

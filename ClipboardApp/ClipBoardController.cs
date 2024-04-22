@@ -174,7 +174,7 @@ namespace ClipboardApp {
 
             ClipboardItemFolder.RootFolder.AddItem(item);
             // 現在選択中のClipboardItemFolderに通知
-            MainWindowViewModel.ReloadClipboardItems();
+            MainWindowViewModel?.ReloadClipboardItems();
 
 
         }

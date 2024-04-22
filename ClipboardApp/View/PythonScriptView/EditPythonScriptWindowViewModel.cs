@@ -25,7 +25,7 @@ namespace ClipboardApp.View.PythonScriptView {
             }
             //　descriptionのチェック
             if (string.IsNullOrEmpty(ScriptItem.Description)) {
-                Tools.ShowMessage("説明を入力してください");
+                Tools.Error("説明を入力してください");
                 return;
 
             }

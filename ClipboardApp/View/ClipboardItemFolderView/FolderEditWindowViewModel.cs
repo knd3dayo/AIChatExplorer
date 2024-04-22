@@ -171,7 +171,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand OpenEditSearchConditionWindowCommand => new (ClipboardFolderCommands.SearchCommandExecute);
+        public SimpleDelegateCommand OpenEditSearchConditionWindowCommand => new ((parameter) =>{
+            ClipboardFolderCommands.SearchCommandExecute(FolderViewModel);
+            });
+
         // 検索条件画面表示ボタンを表示するかどうか
         public Visibility SearchConditionVisibility {
             get {

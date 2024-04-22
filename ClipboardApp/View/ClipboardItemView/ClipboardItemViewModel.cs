@@ -116,17 +116,6 @@ namespace ClipboardApp.View.ClipboardItemView
         public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemMaskDataCommandExecute);
-        // コンテキストメニューの「OpenAIチャット」を実行するコマンド
-        public static SimpleDelegateCommand OpenAIChatCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenAIChatCommandExecute);
-
-        // コンテキストメニューの「スクリプト」のItemSource
-        public static ObservableCollection<ScriptItem> ScriptItems => PythonExecutor.ScriptItems;
-        // RunPythonScriptCommand
-        public static SimpleDelegateCommand RunPythonScriptCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute);
-
-        // 選択中のアイテムを開く処理
-        public static SimpleDelegateCommand OpenSelectedItemCommand => new SimpleDelegateCommand(ClipboardItemCommands.OpenItemCommandExecute);
-
-
+     
     }
 }

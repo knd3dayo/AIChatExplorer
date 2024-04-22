@@ -30,67 +30,21 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // ClipboardItemFolderのLoadメソッドを呼び出す
             // Children.Item,SearchCondition,IsApplyingSearchCondition,AlwaysApplySearchConditionを更新
             folderViewModel.Load();
-            UpdateStatusText(folderViewModel);
-        }
-        private static void UpdateStatusText(ClipboardItemFolderViewModel folderViewModel) {
-            StatusText? StatusText = MainWindowViewModel.StatusText;
-            if (StatusText == null) {
-                return;
-            }
-            string message = $"フォルダ[{folderViewModel.DisplayName}]";
-            // AutoProcessRuleが設定されている場合
-            if (ClipboardDatabaseController.GetAutoProcessRules(folderViewModel.ClipboardItemFolder).Count() > 0) {
-                message += " 自動処理が設定されています[";
-                foreach (AutoProcessRule item in ClipboardDatabaseController.GetAutoProcessRules(folderViewModel.ClipboardItemFolder)) {
-                    message += item.RuleName + " ";
-                }
-                message += "]";
-            }
-
-            // folderが検索フォルダの場合
-            SearchConditionRule? searchConditionRule = ClipboardItemFolder.GlobalSearchCondition;
-            if (folderViewModel.ClipboardItemFolder.IsSearchFolder) {
-                searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(folderViewModel.ClipboardItemFolder.AbsoluteCollectionName);
-            }
-            SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
-            // SearchConditionがNullでなく、 Emptyでもない場合
-            if (searchCondition != null) {
-                message += " 検索条件[";
-                message += searchCondition.ToStringSearchCondition();
-                message += "]";
-            }
-            StatusText.Text = message;
-            StatusText.InitText = message;
-
         }
 
         //フォルダを再読み込みする処理
-        public static void ReloadCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                return;
-            }
-            ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
+        public static void ReloadCommandExecute(ClipboardItemFolderViewModel clipboardItemFolder) {
             clipboardItemFolder.Load();
             Tools.Info("リロードしました");
-
         }
 
         // 検索ウィンドウを表示する処理
-        public static void SearchCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("MainWindowViewModelが取得できません");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardItemFolderViewModel folderViewModel = MainWindowViewModel.Instance.SelectedFolder;
-
+        public static void SearchCommandExecute(ClipboardItemFolderViewModel? folderViewModel) {
+            
             SearchWindow searchWindow = new SearchWindow();
             SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
             // 選択されたフォルダが検索フォルダの場合
-            if (folderViewModel.ClipboardItemFolder.IsSearchFolder) {
+            if (folderViewModel != null && folderViewModel.ClipboardItemFolder.IsSearchFolder) {
                 string absoluteCollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
                 SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(absoluteCollectionName);
                 if (searchConditionRule == null) {
@@ -99,12 +53,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                     searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
 
                 }
-                searchWindowViewModel.Initialize(searchConditionRule, MainWindowViewModel.Instance.SelectedFolder, () => {
+                searchWindowViewModel.Initialize(searchConditionRule, folderViewModel, () => {
                     folderViewModel.Load();
                 });
             } else {
                 searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () => {
-                    folderViewModel.Load();
+                    folderViewModel?.Load();
                 });
             }
 
@@ -262,16 +216,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// 削除後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>
-        public static void DeleteDisplayedItemCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
+        public static void DeleteDisplayedItemCommandExecute(ClipboardItemFolderViewModel folderViewModel) {
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show("ピン留めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
-                ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-                foreach (ClipboardItemViewModel item in clipboardItemFolder.Items) {
+                foreach (ClipboardItemViewModel item in folderViewModel.Items) {
                     if (item.ClipboardItem.IsPinned) {
                         continue;
                     }
@@ -279,7 +228,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 }
 
                 // フォルダ内のアイテムを読み込む
-                clipboardItemFolder.Load();
+                folderViewModel.Load();
                 Tools.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
             }
         }

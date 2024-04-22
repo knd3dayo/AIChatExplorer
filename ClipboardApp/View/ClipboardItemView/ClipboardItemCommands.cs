@@ -7,6 +7,7 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
 using System.IO;
+using System.Collections.ObjectModel;
 
 
 namespace ClipboardApp.View.ClipboardItemView
@@ -17,27 +18,14 @@ namespace ClipboardApp.View.ClipboardItemView
         /// 削除後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>        
-        public static void DeleteSelectedItemCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("エラーが発生しました。MainWindowViewModelのインスタンスがない");
-                return;
-            }
-            // 選択中のアイテムがない場合は処理をしない
-            if (MainWindowViewModel.Instance.SelectedItems.Count == 0) {
-                Tools.Error("エラーが発生しました。選択中のアイテムがない");
-                return;
-            }
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                Tools.Error("エラーが発生しました。選択中のフォルダがない");
-                return;
-            }
+        public static void DeleteSelectedItemCommandExecute(
+            ClipboardItemFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
 
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
-                ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
                 // 選択中のアイテムを削除
-                foreach (var item in MainWindowViewModel.Instance.SelectedItems) {
+                foreach (var item in itemViewModels) {
                     if (item is not ClipboardItemViewModel) {
                         continue;
                     }
@@ -49,38 +37,23 @@ namespace ClipboardApp.View.ClipboardItemView
                 Tools.Info("削除しました");
             }
         }
-        public static void ChangePinCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("Instanceがありません");
-                return;
+        public static void ChangePinCommandExecute(ClipboardItemFolderViewModel folderViewModel, IEnumerable<ClipboardItemViewModel> itemViewModels) { 
+            foreach (ClipboardItemViewModel clipboardItemViewModel in itemViewModels) {
+                clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
+                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
             }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
-                Tools.Error("選択中のアイテムがありません");
-                return;
-            }
-            ClipboardItemViewModel clipboardItemViewModel = MainWindowViewModel.Instance.SelectedItem;
-            clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
-            ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
 
             // フォルダ内のアイテムを再読み込み
-            MainWindowViewModel.Instance?.SelectedFolder?.Load();
+            folderViewModel.Load();
 
         }
-        public static void OpenItemCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("Instanceがありません");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
-                Tools.Error("選択中のアイテムがありません");
-                return;
-            }
-            ClipboardItemViewModel clipboardItemViewModel = MainWindowViewModel.Instance.SelectedItem;
+        public static void OpenItemCommandExecute(ClipboardItemFolderViewModel folderViewModel ,ClipboardItemViewModel clipboardItemViewModel) {
+
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
+                folderViewModel.Load();
                 Tools.Info("更新しました");
             });
 
@@ -115,36 +88,18 @@ namespace ClipboardApp.View.ClipboardItemView
         /// 作成後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>
-        public static void CreateItemCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                return;
-            }
+        public static void CreateItemCommandExecute(ClipboardItemFolderViewModel folderViewModel) {
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(null, () => {
                 // フォルダ内のアイテムを再読み込み
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
+                folderViewModel?.Load();
                 Tools.Info("追加しました");
             });
 
             editItemWindow.Show();
         }
 
-        // Ctrl + V が押された時の処理
-        public static void PasteFromClipboardCommandExecute(object obj) {
-            MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-            if (Instance == null) {
-                Tools.Error("Instanceがありません");
-                return;
-            }
-            PasteClipboardItemCommandExecute(
-                Instance,
-                Instance.CopiedItem, Instance.CopiedItemFolder, Instance.SelectedFolder);
-
-            // フォルダ内のアイテムを再読み込み
-            MainWindowViewModel.Instance?.SelectedFolder?.Load();
-
-        }
 
         /// <summary>
         /// Ctrl + V が押された時の処理
@@ -157,78 +112,25 @@ namespace ClipboardApp.View.ClipboardItemView
         /// <param name="fromFolder"></param>
         /// <param name="toFolder"></param>
         /// <returns></returns>
-        public static ClipboardItemViewModel? PasteClipboardItemCommandExecute(
-            MainWindowViewModel Instance,
-            ClipboardItemViewModel? item, ClipboardItemFolderViewModel? fromFolder, ClipboardItemFolderViewModel? toFolder) {
-            if (item == null) {
-                Tools.Error("アイテムがありません");
-                return item;
-            }
-            if (Instance == null) {
-                Tools.Error("Instanceがありません");
-                return item;
-            }
-            if (toFolder == null) {
-                Tools.Error("コピー/移動先のフォルダが選択されていません");
-                return item;
-            }
-            if (fromFolder == null) {
-                Tools.Error("コピー/移動元のフォルダがありません");
-                return item;
-            }
-            try {
+        public static void PasteClipboardItemCommandExecute(bool CutFlag,
+            IEnumerable<ClipboardItemViewModel> items, ClipboardItemFolderViewModel fromFolder, ClipboardItemFolderViewModel toFolder) {
+            foreach (var item in items) {
                 ClipboardItem newItem = item.ClipboardItem.Copy();
                 toFolder.ClipboardItemFolder.AddItem(newItem);
                 // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                if (Instance.CutFlag) {
+                if (CutFlag) {
 
                     fromFolder.ClipboardItemFolder.DeleteItem(item.ClipboardItem);
-                    Instance.CutFlag = false;
                 }
-                // フォルダ内のアイテムを再読み込み
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
-
-                return new ClipboardItemViewModel(newItem);
-
-            } catch (Exception e) {
-                string message = string.Format("エラーが発生しました。\nメッセージ:\n{0]\nスタックトレース:\n[1]", e.Message, e.StackTrace);
-                Tools.ShowMessage(message);
-                return item;
             }
+            // フォルダ内のアイテムを再読み込み
+            toFolder.Load();
+            Tools.Info("貼り付けました");
         }
 
-        /// <summary>
-        /// Ctrl + M が押された時の処理
-        /// コピー中のアイテムを選択中のアイテムにマージする
-        /// マージ後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="parameter"></param>
-        public static void MergeItemCommandExecute(object parameter) {
-            MergeItemCommandExecuteImpl(false);
-        }
-        /// <summary>
-        ///  Ctrl + Shift + M が押された時の処理
-        ///  コピー中のアイテムを選択中のアイテムにマージする
-        ///  ヘッダー情報も本文にマージする
-        ///  マージ後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="parameter"></param>
-        public static void MergeItemWithHeaderCommandExecute(object parameter) {
-            MergeItemCommandExecuteImpl(true);
-        }
+        public static void MergeItemCommandExecute(
+            ClipboardItemFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems,  bool mergeWithHeader) {
 
-        public static void MergeItemCommandExecuteImpl(bool mergeWithHeader) {
-
-            MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-            if (Instance == null) {
-                Tools.Error("Instanceがありません");
-                return;
-            }
-            if (Instance.SelectedItems is null || Instance.SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがありません");
-                return;
-            }
-            IList selectedItems = Instance.SelectedItems;
             if (selectedItems.Count < 2) {
                 Tools.Error("マージするアイテムを2つ選択してください");
                 return;
@@ -256,7 +158,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 ClipboardDatabaseController.DeleteItems(fromItems);
 
                 // フォルダ内のアイテムを再読み込み
-                Instance.SelectedFolder?.Load();
+                folderViewModel.Load();
                 Tools.Info("マージしました");
 
             } catch (Exception e) {
@@ -266,89 +168,22 @@ namespace ClipboardApp.View.ClipboardItemView
 
         }
 
-        // Ctrl + X が押された時の処理
-
-        public static void CutItemCommandExecute(object obj) {
-            // Cutフラグを立てる
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("エラーが発生しました。MainWindowViewModelのインスタンスがない");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
-                Tools.Error("エラーが発生しました。選択中のアイテムがない");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedFolder == null) {
-                Tools.Error("エラーが発生しました。選択中のフォルダがない");
-                return;
-            }
-            MainWindowViewModel.Instance.CutFlag = true;
-            try {
-                MainWindowViewModel.Instance.CopiedItem = MainWindowViewModel.Instance.SelectedItem;
-                MainWindowViewModel.Instance.CopiedItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-                // ClipboardController.CopyToClipboard(MainWindowViewModel.Instance.SelectedItem);
-                Tools.Info("切り取りました");
-
-            } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                Tools.Error(message);
-            }
-        }
-        // Ctrl+Cで実行するコマンド
-        public static void CopyToClipboardCommandExecute(object obj) {
-            MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-            StatusText? StatusText = MainWindowViewModel.StatusText;
-
-            if (Instance == null) {
-                Tools.Error("エラーが発生しました。MainWindowViewModelのインスタンスがない");
-                return;
-            }
-            if (Instance.SelectedItem == null) {
-                Tools.Error("エラーが発生しました。選択中のアイテムがない");
-                return;
-            }
-            // Cutフラグをもとに戻す
-            Instance.CutFlag = false;
-            try {
-                Instance.CopiedItem = Instance.SelectedItem;
-                Instance.CopiedItemFolder = Instance.SelectedFolder;
-                ClipboardController.CopyToClipboard(Instance.SelectedItem.ClipboardItem);
-                Tools.Info("コピーしました");
-
-            } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                Tools.Error(message);
-            }
-        }
-
-
         // 選択中のアイテムを開く処理
-        public static void OpenSelectedItemAsFileCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
-                return;
-            }
+        public static void OpenSelectedItemAsFileCommandExecute(ClipboardItemViewModel itemViewModel) {
             try {
                 // 選択中のアイテムを開く
-                ClipboardProcessController.OpenItem(MainWindowViewModel.Instance.SelectedItem.ClipboardItem);
+                ClipboardProcessController.OpenItem(itemViewModel.ClipboardItem);
+
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
             }
 
         }
         // 選択中のアイテムを新規として開く処理
-        public static void OpenSelectedItemAsNewFileCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
-                return;
-            }
+        public static void OpenSelectedItemAsNewFileCommandExecute(ClipboardItemViewModel itemViewModel) {
             try {
                 // 選択中のアイテムを新規として開く
-                ClipboardProcessController.OpenItem(MainWindowViewModel.Instance.SelectedItem.ClipboardItem, true);
+                ClipboardProcessController.OpenItem(itemViewModel.ClipboardItem, true);
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
             }
@@ -440,7 +275,7 @@ namespace ClipboardApp.View.ClipboardItemView
 
         }
         // OpenAI Chatを開くコマンド
-        public static void OpenAIChatCommandExecute(object obj) {
+        public static void OpenAIChatCommandExecute(ClipboardItemViewModel? itemViewModel) {
 
             QAChat.MainWindow openAIChatWindow = new QAChat.MainWindow();
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
@@ -460,10 +295,10 @@ namespace ClipboardApp.View.ClipboardItemView
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsInternalProject = false;
             // InputTextに選択中のアイテムのContentを設定
-            if (MainWindowViewModel.Instance?.SelectedItem != null) {
-                mainWindowViewModel.InputText = MainWindowViewModel.Instance.SelectedItem.ClipboardItem.Content;
+            if (itemViewModel != null) {
+                mainWindowViewModel.InputText = itemViewModel.ClipboardItem.Content;
             }
-            openAIChatWindow.Show();
+            openAIChatWindow.ShowDialog();
         }
 
         // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
@@ -484,7 +319,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 // ContentTypeをTextに変更
                 clipboardItem.ContentType = SharpClipboard.ContentTypes.Text;
                 // StatusTextにメッセージを表示
-                MainWindowViewModel.StatusText.Text = "ファイルパスをフォルダ名とファイル名に分割しました";
+                Tools.Info( "ファイルパスをフォルダ名とファイル名に分割しました");
             }
         }
 

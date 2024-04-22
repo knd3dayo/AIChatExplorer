@@ -46,7 +46,7 @@ namespace ClipboardApp.PythonIF {
             if (!File.Exists(Runtime.PythonDLL)) {
                 string message = "PythonDLLが見つかりません。";
                 message += "\n" + "PythonDLLのパスを確認してください:";
-                Tools.ShowMessage(message + Runtime.PythonDLL);
+                Tools.Error(message + Runtime.PythonDLL);
                 return;
             }
 
@@ -57,7 +57,7 @@ namespace ClipboardApp.PythonIF {
             } catch (TypeInitializationException e) {
                 string message = "Pythonの初期化に失敗しました。" + e.Message;
                 message += "\n" + "PythonDLLのパスを確認してください。";
-                Tools.ShowMessage(message);
+                Tools.Error(message);
             }
         }
 

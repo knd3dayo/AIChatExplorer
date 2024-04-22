@@ -81,7 +81,7 @@ namespace ClipboardApp.Model {
             }
             string mergeText = "\n";
             // 現在の時刻をYYYY/MM/DD HH:MM:SS形式で取得
-            mergeText += "--- マージ時刻 " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
+            mergeText += "---\n";
 
             foreach ( var item in items) {
 
