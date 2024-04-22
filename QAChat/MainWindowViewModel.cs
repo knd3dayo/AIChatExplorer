@@ -13,6 +13,19 @@ using QAChat.View.LogWindow;
 
 namespace QAChat {
     public class MainWindowViewModel : ObservableObject {
+
+        // Progress Indicatorの表示状態
+        private bool _IsIndeterminate = false;
+        public bool IsIndeterminate {
+            get {
+                return _IsIndeterminate;
+            }
+            set {
+                _IsIndeterminate = value;
+                OnPropertyChanged("IsIndeterminate");
+            }
+        }
+
         public MainWindowViewModel() {
         }
         public static ChatItem? SelectedItem { get; set; }
@@ -82,7 +95,8 @@ namespace QAChat {
         // チャットを送信するコマンド
         public SimpleDelegateCommand SendChatCommand => new SimpleDelegateCommand(SendChatCommandExecute);
 
-        public void SendChatCommandExecute(object parameter) {
+        public async void SendChatCommandExecute(object parameter) {
+            IsIndeterminate = true;
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // PythonExecutorが初期化されていない場合は初期化
@@ -91,13 +105,21 @@ namespace QAChat {
                     PythonExecutor.Init(!IsInternalProject);
                 }
                 // OpenAIにチャットを送信してレスポンスを受け取る
-                ChatResult? result = PythonExecutor.PythonNetFunctions?.OpenAIChat(InputText, ChatItems);
+
+                // inputTextをChatItemsに追加
+                ChatItems.Add(new ChatItem(ChatItem.UserRole, InputText));
+                // inputTextをクリア
+                InputText = "";
+
+                ChatResult? result = null;
+                await Task.Run(() => {
+                      result =  PythonExecutor.PythonNetFunctions?.OpenAIChat(InputText, ChatItems);
+                });
+
                 if (result == null) {
                     Tools.ShowMessage("チャットの送信に失敗しました。");
                     return;
                 }
-                // inputTextをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, InputText));
                 // レスポンスをChatItemsに追加
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
@@ -106,10 +128,10 @@ namespace QAChat {
                     Log.AppendLine(result.Verbose);
                 }
 
-                // inputTextをクリア
-                InputText = "";
             } catch (Exception e) {
                 Tools.ShowMessage($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+            }finally {
+                IsIndeterminate = false;
             }
 
         }
