@@ -12,7 +12,7 @@ namespace QAChat.PythonIF {
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
 
     }
-    public class PythonNetFunctions  {
+    public class PythonNetFunctions {
         private PyModule? ps;
         private BlockingCollection<PythonTask> blockingCollection = new BlockingCollection<PythonTask>();
 
@@ -25,7 +25,7 @@ namespace QAChat.PythonIF {
 
                     try {
                         ps = Py.CreateScope();
-                        string script = PythonExecutor.LoadPythonScript(PythonExecutor.RetrievalScript);
+                        string script = PythonExecutor.LoadPythonScript(PythonExecutor.QAChatScript);
                         ps.Exec(script);
                     } catch (PythonException e) {
                         string message = CreatePythonExceptionMessage(e);
@@ -57,22 +57,6 @@ namespace QAChat.PythonIF {
             consumerThread.Start();
         }
 
-        private Dictionary<string, string> CreateOpenAIProperties() {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("OpenAIKey", Properties.Settings.Default.OpenAIKey);
-            dict.Add("OpenAICompletionModel", Properties.Settings.Default.OpenAICompletionModel);
-            dict.Add("OpenAIEmbeddingModel", Properties.Settings.Default.OpenAIEmbeddingModel);
-            dict.Add("AzureOpenAI", Properties.Settings.Default.AzureOpenAI.ToString());
-
-            if (Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                dict.Add("OpenAICompletionBaseURL", Properties.Settings.Default.OpenAICompletionBaseURL);
-            }
-            if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
-                dict.Add("OpenAIEmbeddingBaseURL", Properties.Settings.Default.OpenAIEmbeddingBaseURL);
-            }
-            dict.Add("VectorDBURL", Properties.Settings.Default.VectorDBURL);
-            return dict;
-        }
 
 
         public static string CreatePythonExceptionMessage(PythonException e) {
@@ -84,8 +68,8 @@ namespace QAChat.PythonIF {
             message += string.Format("メッセージ:\n{0}\nスタックトレース:\n{1}", e.Message, e.StackTrace);
             return message;
         }
-        // IPythonFunctionsのメソッドを実装
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+        // LangChainOpenAIChatを実行する
+        public ChatResult LangChainOpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
             // ChatResultを作成
             ChatResult chatResult = new ChatResult();
             // Pythonスクリプトを実行する
@@ -101,7 +85,7 @@ namespace QAChat.PythonIF {
                     string json_string = ChatItem.ToJson(chatHistory);
 
                     // Pythonのoutput: str , referenced_contents: List[str], referenced_file_path: List[str]を持つdictを返す
-                    PyDict pyDict = langchain_chat(CreateOpenAIProperties(), prompt, json_string);
+                    PyDict pyDict = langchain_chat(QAChatProperties.CreateOpenAIProperties(), prompt, json_string);
                     // outputを取得
                     string? resultString = pyDict["output"].ToString();
                     if (resultString == null) {
@@ -159,7 +143,48 @@ namespace QAChat.PythonIF {
             }
 
         }
+        // 通常のOpenAIChatを実行する
+        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            // ChatResultを作成
+            ChatResult chatResult = new ChatResult();
+            // promptからChatItemを作成
+            ChatItem chatItem = new ChatItem(ChatItem.UserRole, prompt);
+            // chatHistoryをコピーしてChatItemを追加
+            List<ChatItem> chatHistoryList = new List<ChatItem>(chatHistory);
+            chatHistoryList.Add(chatItem);
 
+            // Pythonスクリプトを実行する
+            PythonTask command = new PythonTask(() => {
+                using (Py.GIL()) {
+                    // Pythonスクリプトの関数を呼び出す
+                    dynamic? openai_chat = ps?.Get("openai_chat");
+                    // open_ai_chatが呼び出せない場合は例外をスロー
+                    if (openai_chat == null) {
+                        throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
+                    }
+                    string json_string = ChatItem.ToJson(chatHistoryList);
 
+                    // open_ai_chat関数を呼び出す
+                    string resultString = openai_chat(QAChatProperties.CreateOpenAIProperties(), json_string);
+                    // ChatResultに設定
+                    chatResult.Response = resultString;
+                }
+            });
+            // CancellationTokenを設定
+            CancellationToken token = command.CancellationTokenSource.Token;
+            blockingCollection.Add(command);
+            try {
+                command.Wait(token);
+                return chatResult;
+
+            } catch (OperationCanceledException e) {
+                Tools.Warn("Pythonコマンドがキャンセルされました");
+                throw new ThisApplicationException("Pythonコマンドがキャンセルされました", e);
+
+            } catch (PythonException e) {
+                throw new ThisApplicationException("Pythonコマンド実行時にエラーが発生しました", e);
+            }
+
+        }
     }
 }

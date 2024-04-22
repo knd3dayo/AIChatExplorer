@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using QAChat.PythonIF;
@@ -25,7 +26,22 @@ namespace QAChat {
                 OnPropertyChanged("IsIndeterminate");
             }
         }
-
+        // モードのEnum
+        public enum ModeEnum {
+            Normal = 0,
+            LangChainWithVectorDB = 1,
+        }
+        // モード
+        private int _Mode = (int)ModeEnum.Normal;
+        public int Mode {
+            get {
+                return _Mode;
+            }
+            set {
+                _Mode = value;
+                OnPropertyChanged(nameof(Mode));
+            }
+        }
         public MainWindowViewModel() {
         }
         public static ChatItem? SelectedItem { get; set; }
@@ -57,6 +73,8 @@ namespace QAChat {
             set {
                 inputText = value;
                 OnPropertyChanged("InputText");
+                // ChatItemsをクリア
+                ChatItems.Clear();
             }
 
         }
@@ -66,19 +84,6 @@ namespace QAChat {
 
         //  Dictionaryを引数として、そのキーと値をProperties.Settingsに保存する
 
-        public void SaveSettings(Dictionary<string, string> settings) {
-            Properties.Settings.Default.AzureOpenAI = bool.Parse(settings["AzureOpenAI"]);
-            Properties.Settings.Default.OpenAIKey = settings["OpenAIKey"];
-            Properties.Settings.Default.OpenAICompletionModel = settings["OpenAICompletionModel"];
-            Properties.Settings.Default.OpenAIEmbeddingModel = settings["OpenAIEmbeddingModel"];
-            Properties.Settings.Default.OpenAICompletionBaseURL = settings["OpenAICompletionBaseURL"];
-            Properties.Settings.Default.OpenAIEmbeddingBaseURL = settings["OpenAIEmbeddingBaseURL"];
-            Properties.Settings.Default.VectorDBURL = settings["VectorDBURL"];
-            Properties.Settings.Default.SourceDocumentURL = settings["SourceDocumentURL"];
-            Properties.Settings.Default.PythonDllPath = settings["PythonDllPath"];
-
-            Properties.Settings.Default.Save();
-        }
         // このプロジェクトからの呼び出しか否か
         private bool isInternalProject = true;
         public bool IsInternalProject {
@@ -89,6 +94,11 @@ namespace QAChat {
                 isInternalProject = value;
                 OnPropertyChanged("IsInternalProject");
             }
+        }
+
+        // SaveSettings
+        public void SaveSettings(Dictionary<string, string> settings) {
+            QAChatProperties.SaveSettings(settings);
         }
 
 
@@ -106,20 +116,29 @@ namespace QAChat {
                 }
                 // OpenAIにチャットを送信してレスポンスを受け取る
 
-                // inputTextをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, InputText));
-                // inputTextをクリア
-                InputText = "";
+                string prompt = InputText;
 
                 ChatResult? result = null;
-                await Task.Run(() => {
-                      result =  PythonExecutor.PythonNetFunctions?.OpenAIChat(InputText, ChatItems);
-                });
+                // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
+                if (Mode == (int)ModeEnum.LangChainWithVectorDB) {
+                    await Task.Run(() => {
+                        result = PythonExecutor.PythonNetFunctions?.LangChainOpenAIChat(prompt, ChatItems);
+                    });
+                } else {
+                    // モードがNormalの場合はOpenAIChatでチャットを送信
+                    await Task.Run(() => {
+                        result = PythonExecutor.PythonNetFunctions?.OpenAIChat(prompt, ChatItems);
+                    });
+                }
 
                 if (result == null) {
                     Tools.ShowMessage("チャットの送信に失敗しました。");
                     return;
                 }
+                // inputTextをChatItemsに追加
+                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
+                // inputTextをクリア
+                InputText = "";
                 // レスポンスをChatItemsに追加
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
@@ -167,5 +186,16 @@ namespace QAChat {
             logWindowViewModel.LogText = Log.ToString();
             logWindow.ShowDialog();
         });
+
+        // モードが変更されたときの処理
+        public SimpleDelegateCommand ModeSelectionChangedCommand => new((parameter) => {
+            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // クリア処理
+            ChatItems.Clear();
+            InputText = "";
+
+        });
+
     }
 }

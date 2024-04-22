@@ -258,7 +258,7 @@
             <GridSplitter
                 Grid.Column="1"
                 Width="5"
-                HorizontalAlignment="Center" />
+                HorizontalAlignment="Stretch" />
             <!--  クリップボードのListBox  -->
             <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
             <ListBox

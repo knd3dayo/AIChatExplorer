@@ -370,7 +370,7 @@ namespace ClipboardApp.PythonIF {
         // IPythonFunctionsのメソッドを実装
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory) {
 
-            return QAChatPythonNetFunctions.OpenAIChat(prompt, chatHistory);
+            return QAChatPythonNetFunctions.LangChainOpenAIChat(prompt, chatHistory);
         }
         public void OpenAIEmbedding(string text) {
             ResultContainer resultContainer = new ResultContainer();

@@ -11,7 +11,7 @@ namespace QAChat.PythonIF
         public static bool Initialized { get; private set; } = false;
 
         // Pythonスクリプト
-        public static string RetrievalScript = "python/retrieval_qa_util.py";
+        public static string QAChatScript = "python/qachat_util.py";
 
         public static PythonNetFunctions? PythonNetFunctions { get; private set; }
 

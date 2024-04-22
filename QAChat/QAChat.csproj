@@ -12,7 +12,8 @@
     <None Remove="python\env_to_props.py" />
     <None Remove="python\langchain_openai_client.py" />
     <None Remove="python\langchain_vector_db.py" />
-    <None Remove="python\open_ai_util.py" />
+    <None Remove="python\openai_util.py" />
+    <None Remove="python\qachat_util.py" />
     <None Remove="python\retrieval_qa_util.py" />
     <None Remove="python\tools.json" />
   </ItemGroup>
@@ -27,7 +28,10 @@
     <EmbeddedResource Include="python\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\open_ai_util.py">
+    <EmbeddedResource Include="python\openai_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\qachat_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\retrieval_qa_util.py">
