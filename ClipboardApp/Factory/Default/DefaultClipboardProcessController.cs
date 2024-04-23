@@ -2,39 +2,38 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using WK.Libraries.SharpClipboardNS;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 
-namespace ClipboardApp {
+namespace ClipboardApp.Factory.Default {
     /// <summary>
     /// このアプリケーションで開いたプロセスを管理するクラス
     /// </summary>
-    public class ClipboardProcessController {
+    public class DefaultClipboardProcessController : IClipboardProcessController {
         // Processとファイル名の対応を保持するハッシュテーブル
         private static Hashtable processOpenedFileHashtable = new Hashtable();
         // ProcessとItemの対応を保持するハッシュテーブル
         private static Hashtable processOpenedItemHashtable = new Hashtable();
 
-        public static void OpenItem(ClipboardItem item, bool openAsNew = false) {
+        public void OpenItem(ClipboardItem item, bool openAsNew = false) {
             if (item == null) {
                 return;
             }
             // System.Windows.MessageBox.Show(item.Content);
 
-            if (item.ContentType == SharpClipboard.ContentTypes.Files) {
+            if (item.ContentType == ClipboardContentTypes.Files) {
                 string contentFileName = item.Content;
                 // 新規として開く場合はテンポラリディレクトリにファイルをコピーする
                 if (openAsNew) {
                     // item.Contentがディレクトリの場合はメッセージを表示して終了
-                    if (System.IO.Directory.Exists(item.Content)) {
+                    if (Directory.Exists(item.Content)) {
                         throw new ClipboardAppException("ディレクトリは新規として開けません");
                     }
                     // item.Contentのファイル名を取得
-                    contentFileName = Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetFileName(item.Content));
+                    contentFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(item.Content));
 
                     // テンポラリディレクトリにコピー
-                    System.IO.File.Copy(item.Content, contentFileName, true);
+                    File.Copy(item.Content, contentFileName, true);
 
                 }
 
@@ -44,11 +43,11 @@ namespace ClipboardApp {
                     FileName = contentFileName
                 };
                 Process.Start(proc);
-            } else if (item.ContentType == SharpClipboard.ContentTypes.Text) {
+            } else if (item.ContentType == ClipboardContentTypes.Text) {
                 // テンポラリディレクトリにランダムな名前のファイルを作成
-                string tempFileName = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName() + ".txt");
+                string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
 
-                System.IO.File.WriteAllText(tempFileName, item.Content);
+                File.WriteAllText(tempFileName, item.Content);
 
                 ProcessStartInfo procInfo = new ProcessStartInfo() {
                     UseShellExecute = true,
@@ -95,13 +94,13 @@ namespace ClipboardApp {
             // 検索条件がある場合はそのまま保持してLoadする。
             Application.Current.Dispatcher.Invoke(() => {
                 // ファイルの内容をitemに保存
-                item.Content = System.IO.File.ReadAllText(tempFileName);
-                // itemをDBに保存
-                ClipboardDatabaseController.UpsertItem(item);
+                item.Content = File.ReadAllText(tempFileName);
+                // itemを保存
+                item.Save();
 
             });
             // テンポラリファイルを削除
-            System.IO.File.Delete(tempFileName);
+            File.Delete(tempFileName);
             // ハッシュテーブルから削除
             processOpenedFileHashtable.Remove(process);
 

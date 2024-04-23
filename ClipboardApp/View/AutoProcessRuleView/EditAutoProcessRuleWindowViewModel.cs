@@ -4,8 +4,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.Factory.Default;
 
-namespace ClipboardApp.View.AutoProcessRuleView {
+namespace ClipboardApp.View.AutoProcessRuleView
+{
     public class EditAutoProcessRuleWindowViewModel : ObservableObject {
         public enum Mode {
             Create,
@@ -278,7 +280,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             }
 
             // LiteDBに保存
-            ClipboardDatabaseController.UpsertAutoProcessRule(TargetAutoProcessRule);
+            TargetAutoProcessRule.Save();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);
@@ -313,7 +315,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 return;
             }
             DestinationFolder = folder;
-            folder.IsSelectedOnFolderSelectWindow = true;
+
         }
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand OpenSelectDestinationFolderWindowCommand => new SimpleDelegateCommand(OpenSelectDestinationFolderWindowCommandExecute);

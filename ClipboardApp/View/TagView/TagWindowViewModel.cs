@@ -2,8 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
+using ClipboardApp.Factory;
+using ClipboardApp.Factory.Default;
 
-namespace ClipboardApp.View.TagView {
+namespace ClipboardApp.View.TagView
+{
     public class TagWindowViewModel : ObservableObject {
         public ObservableCollection<TagItem> TagList { get; set; } = new ObservableCollection<TagItem>();
 
@@ -29,7 +32,7 @@ namespace ClipboardApp.View.TagView {
             _afterUpdate = afterUpdate;
         }
         public TagWindowViewModel() {
-            foreach (var item in ClipboardDatabaseController.GetTagList()) {
+            foreach (var item in TagController.GetTagList()) {
                 TagList.Add(item);
             }
         }
@@ -68,7 +71,7 @@ namespace ClipboardApp.View.TagView {
 
             TagItem tagItem = new TagItem { Tag = tag };
             TagList.Add(tagItem);
-            ClipboardDatabaseController.InsertTag(tag);
+            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tag);
             NewTag = "";
         }
 
@@ -79,13 +82,13 @@ namespace ClipboardApp.View.TagView {
                 foreach (var item in TagList) {
                     if (item.IsChecked) {
                         // LiteDBから削除
-                        ClipboardDatabaseController.DeleteTag(item.Tag);
+                        item.Delete();
                         // TagListから削除
                     }
                 }
                 // LiteDBから再読み込み
                 TagList.Clear();
-                foreach (var item in ClipboardDatabaseController.GetTagList()) {
+                foreach (var item in TagController.GetTagList()) {
                     TagList.Add(item);
                 }
             });
@@ -108,7 +111,7 @@ namespace ClipboardApp.View.TagView {
                 }
             }
             // DBに反映
-            ClipboardDatabaseController.UpsertItem(ClipboardItem);
+            ClipboardItem.Save();
 
             // 更新後の処理を実行
             _afterUpdate?.Invoke();

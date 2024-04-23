@@ -1,36 +1,28 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
+using ClipboardApp.Factory;
+using ClipboardApp.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
-using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemView;
 
 namespace ClipboardApp.Model {
     public class ClipboardItemFolder : ObservableObject {
 
         // アプリ共通の検索条件
-        public static SearchConditionRule GlobalSearchCondition = new SearchConditionRule();
+        public static SearchRule GlobalSearchCondition = new SearchRule();
 
         //--------------------------------------------------------------------------------
         public static ClipboardItemFolder RootFolder {
             get {
-                var folder = ClipboardDatabaseController.GetClipboardItemFolder(ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME);
-                if (folder == null) {
-                    folder = new(ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME, "クリップボード");
-                    ClipboardDatabaseController.UpsertFolder(folder);
-                }
-                return folder;
+                IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+                return ClipboardDatabaseController.GetRootFolder();
             }
         }
         public static ClipboardItemFolder SearchRootFolder {
             get {
-                var folder = ClipboardDatabaseController.GetClipboardItemFolder(ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME);
-                if (folder == null) {
-                    folder = new(ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME, "検索フォルダ");
-                    ClipboardDatabaseController.UpsertFolder(folder);
-                }
-                return folder;
+                IClipboardDBController clipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+                return clipboardDatabaseController.GetSearchRootFolder();
             }
         }
 
@@ -57,15 +49,24 @@ namespace ClipboardApp.Model {
                     return children;
                 }
                 // LiteDBから自分が親となっているフォルダを取得
-                var childrenNames = ClipboardDatabaseController.GetClipboardItemFolderChildRelations(AbsoluteCollectionName);
+                IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+                var childrenNames = ClipboardDatabaseController.GetFolderRelations(AbsoluteCollectionName);
                 foreach (var childName in childrenNames) {
-                    var child = ClipboardDatabaseController.GetClipboardItemFolder(childName);
+                    var child = ClipboardDatabaseController.GetFolder(childName);
                     if (child != null) {
                         children.Add(child);
                     }
                 }
                 return children;
             }
+        }
+        public void AddChild(ClipboardItemFolder child) {
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDatabaseController.UpsertFolderRelation(this, child);
+        }
+        public void DeleteChild(ClipboardItemFolder child) {
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDatabaseController.DeleteFolder(child);
         }
 
         // アイテム BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
@@ -78,21 +79,42 @@ namespace ClipboardApp.Model {
                 IEnumerable<ClipboardItem> items = new List<ClipboardItem>();
                 // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
                 // 検索フォルダの場合は、SearchConditionを適用して取得
-                if (IsSearchFolder) {
-                    // 検索フォルダの場合
-                    SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(AbsoluteCollectionName);
-                    if (searchConditionRule != null) {
-                        items = ClipboardDatabaseController.SearchClipboardItems(searchConditionRule);
+                IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+                // フォルダに検索条件が設定されている場合
+                SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(AbsoluteCollectionName);
+                if (searchConditionRule != null) {
+                    // 検索対象フォルダパスの取得
+                    string? targetCollectionName = searchConditionRule.TargetFolder?.AbsoluteCollectionName;
+                    if (targetCollectionName != null) {
+                        items = ClipboardDatabaseController.SearchItems(targetCollectionName, searchConditionRule.SearchCondition);
                     }
+                    // 検索対象フォルダパスがない場合は何もしない。
                 } else {
-                    // 通常のフォルダの場合
-                    items = ClipboardDatabaseController.GetClipboardItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition);
+                    // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
+                    if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
+                        items = ClipboardDatabaseController.SearchItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition);
+
+                    } else {
+                        // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
+                        items = ClipboardDatabaseController.GetItems(AbsoluteCollectionName);
+                    }
                 }
-                
+
                 ObservableCollection<ClipboardItem> result = [.. items];
                 return result;
             }
         }
+        //------------
+        // 親フォルダのパスと子フォルダ名を連結する。LiteDB用
+        private string ConcatenatePath(string parentPath, string childPath) {
+            if (string.IsNullOrEmpty(parentPath))
+                return childPath;
+            if (string.IsNullOrEmpty(childPath))
+                return parentPath;
+            return parentPath + "_" + childPath;
+        }
+
+
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardItemFolder() {
@@ -102,7 +124,7 @@ namespace ClipboardApp.Model {
             if (parent == null) {
                 AbsoluteCollectionName = collectionName;
             } else {
-                AbsoluteCollectionName = ClipboardDatabaseController.ConcatenatePath(parent.AbsoluteCollectionName, collectionName);
+                AbsoluteCollectionName = ConcatenatePath(parent.AbsoluteCollectionName, collectionName);
             }
             DisplayName = displayName;
 
@@ -111,82 +133,56 @@ namespace ClipboardApp.Model {
 
         }
         //--------------------------------------------------------------------------------
-
-        // ClipboardItemを作成
-        public ClipboardItem CreateItem() {
-            ClipboardItem item = new ClipboardItem();
-            item.CollectionName = AbsoluteCollectionName;
-            // Itemsに追加
-            Items.Add(item);
-            // 追加したアイテムをSelectedItemに設定
-            if (MainWindowViewModel.Instance != null) {
-                MainWindowViewModel.Instance.SelectedItem = new ClipboardItemViewModel(item);
-            }
+        // 自分自身を保存
+        public void Save() {
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolder(this);
-            return item;
         }
-        // ClipboardItemを追加
-        public void UpsertItem(ClipboardItem item) {
-            Items.Add(item);
-            // 追加したアイテムをSelectedItemに設定
-            if (MainWindowViewModel.Instance != null) {
-                MainWindowViewModel.Instance.SelectedItem = new ClipboardItemViewModel(item);
-            }
+        // アイテムを追加する処理
+        public ClipboardItem AddItem(ClipboardItem item, Action<ActionMessage> actionMessage) {
+            // AbsoluteCollectionNameを設定
+            item.CollectionName = AbsoluteCollectionName;
 
-            // LiteDBに保存
-            ClipboardDatabaseController.UpsertItem(item);
+            // 自動処理を適用
+            ClipboardItem? result = ApplyAutoProcess(item, actionMessage);
+
+            if (result == null) {
+                // 自動処理で削除または移動された場合は何もしない
+                actionMessage(ActionMessage.Info("自動処理でアイテムが削除または移動されました"));
+                return item;
+            }
+            // 保存
+            result.Save();
+            // Itemsに追加
+            Items.Add(result);
+            // 通知
+            actionMessage(ActionMessage.Info("アイテムを追加しました"));
+            return item;
         }
         // ClipboardItemを削除
         public void DeleteItem(ClipboardItem item) {
             // LiteDBに保存
-            ClipboardDatabaseController.DeleteItem(item);
+            item.Delete();
         }
 
 
-        public bool IsSelected { get; set; } = false;
-
-        // FolderSelectWindowで選択されたフォルダを適用する処理
-        public bool IsSelectedOnFolderSelectWindow { get; set; } = false;
-
         // 自動処理を適用する処理
-        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {
+        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem, Action<ActionMessage> action) {
             ClipboardItem? result = clipboardItem;
             // AutoProcessRulesを取得
-            var AutoProcessRules = ClipboardDatabaseController.GetAutoProcessRules(this);
+            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
             foreach (var rule in AutoProcessRules) {
-                Tools.Info("自動処理を適用します " + rule.GetDescriptionString());
+                action(ActionMessage.Info("自動処理を適用します " + rule.GetDescriptionString()));
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    Tools.Info("自動処理でアイテムが削除されました");
+                    action(ActionMessage.Info("自動処理でアイテムが削除されました"));
                     return null;
                 }
             }
             return result;
         }
 
-        // アイテムを追加する処理
-        public ClipboardItem AddItem(ClipboardItem item) {
-            // AbsoluteCollectionNameを設定
-            item.CollectionName = AbsoluteCollectionName;
-
-            // 自動処理を適用
-            ClipboardItem? result = ApplyAutoProcess(item);
-
-            if (result == null) {
-                // 自動処理で削除または移動された場合は何もしない
-                Tools.Info("自動処理でアイテムが削除または移動されました");
-                return item;
-            }
-
-            // LiteDBに保存
-            ClipboardDatabaseController.UpsertItem(result);
-            // Itemsに追加
-            Items.Add(result);
-
-            return item;
-
-        }
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string directoryPath) {
             JsonArray jsonArray = new JsonArray();
@@ -201,14 +197,16 @@ namespace ClipboardApp.Model {
         }
 
         //exportしたJSONファイルをインポート
-        public void ImportItemsFromJson(string json) {
+        public void ImportItemsFromJson(string json, Action<ActionMessage> action) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                throw new ClipboardAppException("JSON文字列をパースできませんでした");
+                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                throw new ClipboardAppException("JSON文字列をパースできませんでした");
+                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                return;
             }
 
             // Itemsをクリア
@@ -219,14 +217,14 @@ namespace ClipboardApp.Model {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ClipboardItem? item = ClipboardItem.FromJson(jsonString);
+                ClipboardItem? item = ClipboardItem.FromJson(jsonString, action);
                 if (item == null) {
                     continue;
                 }
                 // Itemsに追加
                 Items.Add(item);
-                // LiteDBに保存
-                ClipboardDatabaseController.UpsertItem(item);
+                //保存
+                item.Save();
             }
 
         }

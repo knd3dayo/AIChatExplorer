@@ -32,14 +32,14 @@ namespace ClipboardApp.View.PythonScriptView {
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {
 
-            if (clipboardItem.ContentType != SharpClipboard.ContentTypes.Files) {
+            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
                 throw new ClipboardAppException("ファイル以外のコンテンツはテキストを抽出できません");
             }
             string path = clipboardItem.Content;
             string text = PythonExecutor.PythonFunctions.ExtractText(clipboardItem.Content);
             clipboardItem.Content = text;
             // タイプをテキストに変更
-            clipboardItem.ContentType = SharpClipboard.ContentTypes.Text;
+            clipboardItem.ContentType = ClipboardContentTypes.Text;
             MainWindowViewModel.StatusText.Text = $"{path}のテキストを抽出しました";
             return clipboardItem;
 
@@ -50,7 +50,7 @@ namespace ClipboardApp.View.PythonScriptView {
             if (MainWindowViewModel.Instance == null) {
                 return clipboardItem;
             }
-            if (clipboardItem.ContentType != SharpClipboard.ContentTypes.Text) {
+            if (clipboardItem.ContentType != ClipboardContentTypes.Text) {
                 throw new ClipboardAppException("テキスト以外のコンテンツはマスキングできません");
             }
             Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();

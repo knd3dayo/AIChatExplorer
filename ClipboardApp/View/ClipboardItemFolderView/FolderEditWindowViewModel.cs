@@ -5,8 +5,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
+using ClipboardApp.Factory.Default;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.View.ClipboardItemFolderView
+{
     public class FolderEditWindowViewModel : ObservableObject {
         // 編集モードか新規子フォルダ作成モードか
         public enum Mode {
@@ -119,23 +121,24 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             if (CurrentMode == Mode.Edit) {
                 // DisplayNameを設定
                 FolderViewModel.DisplayName = DisplayName;
+                // フォルダを保存
+                FolderViewModel.ClipboardItemFolder.Save();
 
-                ClipboardDatabaseController.UpsertFolder(FolderViewModel.ClipboardItemFolder);
             }
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild) {
                 // フォルダを作成
                 ClipboardItemFolder child = new ClipboardItemFolder(FolderViewModel.ClipboardItemFolder, CollectionName, DisplayName);
                 // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
-                if (FolderViewModel.ClipboardItemFolder.AbsoluteCollectionName == ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME
+                if (FolderViewModel.ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
                     || FolderViewModel.ClipboardItemFolder.IsSearchFolder) {
                     // 子フォルダも検索フォルダにする
                     child.IsSearchFolder = true;
                 }
-
-                ClipboardDatabaseController.UpsertFolder(child);
+                // フォルダを保存
+                child.Save();
                 // 親フォルダと子フォルダの関係を登録
-                ClipboardDatabaseController.UpsertFolderRelation(FolderViewModel.ClipboardItemFolder, child);
+                FolderViewModel.ClipboardItemFolder.AddChild(child);
 
             }
             // フォルダ作成後に実行するコマンドが設定されている場合

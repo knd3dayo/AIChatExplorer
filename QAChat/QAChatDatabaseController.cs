@@ -26,7 +26,7 @@ namespace QAChat {
         }
         // プロンプトテンプレートを取得する
         public static PromptItem? GetPromptTemplate(string name) {
-            var col = db.GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
             return col.FindOne(x => x.Name == name);
         }
         // 引数として渡されたプロンプトテンプレートを削除する

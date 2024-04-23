@@ -1,26 +1,22 @@
-﻿using LiteDB;
-using ClipboardApp.Utils;
+﻿using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
+using LiteDB;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
 
     // 自動処理ルールの条件
 
-    public class AutoProcessRuleCondition
-    {
+    public class AutoProcessRuleCondition {
         // 条件の種類
         public ConditionType Type { get; set; }
         // 条件のキーワード
         public string Keyword { get; set; } = "";
 
-        public AutoProcessRuleCondition(ConditionType type, string keyword)
-        {
+        public AutoProcessRuleCondition(ConditionType type, string keyword) {
             Type = type;
             Keyword = keyword;
         }
-        public enum ConditionType
-        {
+        public enum ConditionType {
             AllItems,
             DescriptionContains,
             ContentContains,
@@ -31,11 +27,9 @@ namespace ClipboardApp.Model
 
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public static bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword)
-        {
+        public static bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
-            if (clipboardItem.Description == null)
-            {
+            if (clipboardItem.Description == null) {
                 return false;
             }
             Tools.Logger.Debug("Description:" + clipboardItem.Description);
@@ -46,41 +40,33 @@ namespace ClipboardApp.Model
 
         }
         //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public static bool IsContentContains(ClipboardItem clipboardItem, string keyword)
-        {
+        public static bool IsContentContains(ClipboardItem clipboardItem, string keyword) {
             // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null)
-            {
+            if (clipboardItem.Content == null) {
                 return false;
             }
             return clipboardItem.Content.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public static bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword)
-        {
+        public static bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationNameがnullの場合はfalseを返す
-            if (clipboardItem.SourceApplicationName == null)
-            {
+            if (clipboardItem.SourceApplicationName == null) {
                 return false;
             }
             return clipboardItem.SourceApplicationName.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public static bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword)
-        {
+        public static bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationTitleがnullの場合はfalseを返す
-            if (clipboardItem.SourceApplicationTitle == null)
-            {
+            if (clipboardItem.SourceApplicationTitle == null) {
                 return false;
             }
             return clipboardItem.SourceApplicationTitle.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public static bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword)
-        {
+        public static bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationPathがnullの場合はfalseを返す
-            if (clipboardItem.SourceApplicationPath == null)
-            {
+            if (clipboardItem.SourceApplicationPath == null) {
                 return false;
             }
             return clipboardItem.SourceApplicationPath != null && clipboardItem.SourceApplicationPath.Contains(keyword);
@@ -88,10 +74,8 @@ namespace ClipboardApp.Model
 
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
-        public bool ExecuteCondition(ClipboardItem clipboardItem)
-        {
-            switch (Type)
-            {
+        public bool ExecuteCondition(ClipboardItem clipboardItem) {
+            switch (Type) {
                 case ConditionType.DescriptionContains:
                     return IsDescriptionContains(clipboardItem, Keyword);
                 case ConditionType.ContentContains:
@@ -109,8 +93,7 @@ namespace ClipboardApp.Model
 
 
     }
-    public class AutoProcessRule
-    {
+    public class AutoProcessRule {
         public ObjectId? Id { get; set; }
 
         public string RuleName { get; set; } = "";
@@ -124,37 +107,40 @@ namespace ClipboardApp.Model
 
         public ClipboardItemFolder? TargetFolder { get; set; }
 
-        public AutoProcessRule()
-        {
+        public AutoProcessRule() {
         }
 
-        public AutoProcessRule(string ruleName, ClipboardItemFolder clipboardItemFolder)
-        {
+        public AutoProcessRule(string ruleName, ClipboardItemFolder clipboardItemFolder) {
             RuleName = ruleName;
             TargetFolder = clipboardItemFolder;
         }
 
+        // 保存
+        public void Save() {
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertAutoProcessRule(this);
+        }
+        // 削除
+        public void Delete() {
+            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteAutoProcessRule(this);
+            // 削除後はIdをNullにする
+            Id = null;
+        }
 
         // 移動またはコピー先のフォルダ
         public ClipboardItemFolder? DestinationFolder { get; set; }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
-        public bool IsMatch(ClipboardItem clipboardItem)
-        {
-            if (Conditions.Count == 0)
-            {
+        public bool IsMatch(ClipboardItem clipboardItem) {
+            if (Conditions.Count == 0) {
                 return false;
             }
             // IsAllItemsRuleが含まれるかどうか
-            if (Conditions.Any(c => c.Type == AutoProcessRuleCondition.ConditionType.AllItems))
-            {
+            if (Conditions.Any(c => c.Type == AutoProcessRuleCondition.ConditionType.AllItems)) {
                 return true;
             }
             // 全ての条件を満たすかどうか
-            foreach (var condition in Conditions)
-            {
-                if (!condition.ExecuteCondition(clipboardItem))
-                {
+            foreach (var condition in Conditions) {
+                if (!condition.ExecuteCondition(clipboardItem)) {
                     return false;
                 }
             }
@@ -162,35 +148,28 @@ namespace ClipboardApp.Model
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public ClipboardItem? RunAction(ClipboardItem clipboardItem)
-        {
+        public ClipboardItem? RunAction(ClipboardItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
-            if (!IsEnabled)
-            {
+            if (!IsEnabled) {
                 Tools.Info(RuleName + "は無効です");
                 return clipboardItem;
             }
 
-            if (!IsMatch(clipboardItem))
-            {
+            if (!IsMatch(clipboardItem)) {
                 Tools.Info("条件にマッチしませんでした");
                 return clipboardItem;
             }
-            if (RuleAction == null)
-            {
+            if (RuleAction == null) {
                 Tools.Warn("アクションが設定されていません");
                 return clipboardItem;
             }
             return RuleAction.Execute(clipboardItem, DestinationFolder);
         }
-        public string GetDescriptionString()
-        {
+        public string GetDescriptionString() {
             string result = "条件\n";
-            foreach (var condition in Conditions)
-            {
+            foreach (var condition in Conditions) {
                 // ConditionTypeごとに処理
-                switch (condition.Type)
-                {
+                switch (condition.Type) {
                     case AutoProcessRuleCondition.ConditionType.DescriptionContains:
                         result += "Descriptionが" + condition.Keyword + "を含む \n";
                         break;
@@ -208,24 +187,17 @@ namespace ClipboardApp.Model
                         break;
                 }
                 // AutoProcessItemが設定されている場合
-                if (RuleAction != null)
-                {
+                if (RuleAction != null) {
                     result += "アクション:" + RuleAction.Description + "\n";
-                }
-                else
-                {
+                } else {
                     result += "アクション:なし\n";
                 }
                 // Type が CopyToFolderまたはMoveToFolderの場合
-                if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction())
-                {
+                if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
                     // DestinationFolderが設定されている場合
-                    if (DestinationFolder != null)
-                    {
+                    if (DestinationFolder != null) {
                         result += "フォルダ:" + DestinationFolder.AbsoluteCollectionName + "\n";
-                    }
-                    else
-                    {
+                    } else {
                         result += "フォルダ:なし\n";
                     }
                 }
@@ -234,8 +206,7 @@ namespace ClipboardApp.Model
 
         }
         // 無限ループなコピーまたは移動の可能性をチェックする
-        public static bool CheckInfiniteLoop(AutoProcessRule rule)
-        {
+        public static bool CheckInfiniteLoop(AutoProcessRule rule) {
             // ruleがNullの場合はFalseを返す
             if (rule == null) {
                 return false;
@@ -245,15 +216,13 @@ namespace ClipboardApp.Model
                 return false;
             }
             // ruleがCopyToFolderまたはMoveToFolder以外の場合はFalseを返す
-            if (rule.RuleAction.IsCopyOrMoveOrMergeAction() == false)
-            {
+            if (rule.RuleAction.IsCopyOrMoveOrMergeAction() == false) {
                 return false;
             }
-            IEnumerable<AutoProcessRule> copyToMoveToRules = ClipboardDatabaseController.GetCopyToMoveToRules();
+            IEnumerable<AutoProcessRule> copyToMoveToRules = AutoProcessRuleController.GetCopyToMoveToRules();
 
             // ルールがない場合はFalseを返す
-            if (copyToMoveToRules.Count() == 0)
-            {
+            if (copyToMoveToRules.Count() == 0) {
                 return false;
             }
             // copyToMoveToRulesにRuleを追加
@@ -261,14 +230,11 @@ namespace ClipboardApp.Model
 
             // fromとtoを格納するDictionary
             Dictionary<string, List<string>> fromToDictionary = new Dictionary<string, List<string>>();
-            foreach (var r in copyToMoveToRules)
-            {
+            foreach (var r in copyToMoveToRules) {
                 // TargetFolderとDestinationFolderが設定されている場合
-                if (r.TargetFolder != null && r.DestinationFolder != null)
-                {
+                if (r.TargetFolder != null && r.DestinationFolder != null) {
                     // keyが存在しない場合は新しいLinkedListを作成
-                    if (!fromToDictionary.ContainsKey(r.TargetFolder.AbsoluteCollectionName))
-                    {
+                    if (!fromToDictionary.ContainsKey(r.TargetFolder.AbsoluteCollectionName)) {
                         fromToDictionary[r.TargetFolder.AbsoluteCollectionName] = new List<string>();
                     }
                     // DestinationFolderを追加
@@ -277,13 +243,11 @@ namespace ClipboardApp.Model
             }
 
             // fromToDictionaryの中でルールが存在するかどうかを再帰的にチェックする
-            foreach (var from in fromToDictionary.Keys)
-            {
+            foreach (var from in fromToDictionary.Keys) {
                 // PathListを作成
                 List<string> pathList = new List<string>();
                 // ルールが存在する場合はTrueを返す
-                if (CheckInfiniteLoopRecursive(fromToDictionary, from, pathList))
-                {
+                if (CheckInfiniteLoopRecursive(fromToDictionary, from, pathList)) {
                     return true;
                 }
             }
@@ -291,29 +255,24 @@ namespace ClipboardApp.Model
 
         }
         // Dictionaryの中でルールが存在するかどうかを再帰的にチェックする
-        public static bool CheckInfiniteLoopRecursive(Dictionary<string, List<string>> fromToDictionary, string from, List<string> pathList)
-        {
+        public static bool CheckInfiniteLoopRecursive(Dictionary<string, List<string>> fromToDictionary, string from, List<string> pathList) {
             // PathListのコピーを作成
             pathList = new List<string>(pathList);
             // PathListにFromを追加する。
             pathList.Add(from);
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
-            if (pathList.Distinct().Count() != pathList.Count)
-            {
+            if (pathList.Distinct().Count() != pathList.Count) {
                 Tools.Warn($"無限ループを検出しました\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得
-            if (fromToDictionary.ContainsKey(from))
-            {
+            if (fromToDictionary.ContainsKey(from)) {
                 // FromのValueを取得
                 var toList = fromToDictionary[from];
-                foreach (var to in toList)
-                {
+                foreach (var to in toList) {
                     // ToをFromにして再帰的にチェック
                     bool result = CheckInfiniteLoopRecursive(fromToDictionary, to, pathList);
-                    if (result)
-                    {
+                    if (result) {
                         return true;
                     }
                 }

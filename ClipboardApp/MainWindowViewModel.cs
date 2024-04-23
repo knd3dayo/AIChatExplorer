@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Factory;
+using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
 using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
@@ -16,13 +18,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace ClipboardApp {
 
     public class MainWindowViewModel : ObservableObject {
+
         // static properties
         // ステータスバーのテキスト
         public static StatusText StatusText { get; } = new StatusText();
 
         public static MainWindowViewModel? Instance { get; private set; } = null;
-
-        private static MainWindow MainWindow { get; } = (MainWindow)Application.Current.MainWindow;
 
 
         // Instance Properties
@@ -55,10 +56,14 @@ namespace ClipboardApp {
                 _isClipboardMonitor = value;
                 OnPropertyChanged("IsClipboardMonitor");
                 if (value) {
-                    ClipboardController.Start();
+                    ClipboardAppFactory.Instance.GetClipboardController().Start((actionMessage) => {
+                        // クリップボードが変更された時の処理
+                        SelectedFolder?.Load();
+                    });
+                    
                     Tools.Info("クリップボード監視を開始しました");
                 } else {
-                    ClipboardController.Stop();
+                    ClipboardAppFactory.Instance.GetClipboardController().Stop();
                     Tools.Info("クリップボード監視を停止しました");
                 }
             }
@@ -93,7 +98,7 @@ namespace ClipboardApp {
                 _selectedFolder = value;
                 _selectedFolder?.Load();
 
-                OnPropertyChanged("SelectedFolder");
+                OnPropertyChanged(nameof(SelectedFolder));
             }
         }
         // Ctrl + C or X が押された時のClipboardItem
@@ -111,35 +116,25 @@ namespace ClipboardApp {
 
         public MainWindowViewModel() {
             // データベースのチェックポイント処理
-            ClipboardDatabaseController.GetClipboardDatabase().Checkpoint();
+            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
 
             // ロギング設定
             Tools.StatusText = StatusText;
-
-
-            // クリップボードコントローラーの初期化
-            // SearchConditionをLiteDBから取得
-            SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRule(ClipboardDatabaseController.SEARCH_CONDITION_APPLIED_CONDITION_NAME);
-            if (searchConditionRule != null) {
-                ClipboardItemFolder.GlobalSearchCondition = searchConditionRule;
-            }
 
             // フォルダ階層を再描写する
             ReloadFolder();
 
             Instance = this;
-            // クリップボード監視機能の初期化
-            ClipboardController.Init(this);
 
             // Python処理機能の初期化
             PythonExecutor.Init();
 
-            // バックアップ処理を実施
-            BackupController.Init();
-
             // コンテキストメニューの初期化
             InitContextMenu();
 
+            // DBのバックアップの取得
+            IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
+            backupController.BackupNow();
 
         }
         private void InitContextMenu() {
@@ -193,11 +188,16 @@ namespace ClipboardApp {
                 return;
             }
             SelectedFolder.Load();
-            ListBox? listBox = MainWindow.FindName("listBox1") as ListBox;
+            // ListBoxの先頭にスクロール
+            ScrollToTop();
+        }
+
+        private void ScrollToTop() {
+
+            ListBox? listBox = Application.Current.MainWindow.FindName("listBox1") as ListBox;
             // ListBoxの先頭にスクロール
             if (listBox?.Items.Count > 0) {
                 listBox?.ScrollIntoView(listBox.Items[0]);
-
             }
         }
 
@@ -381,12 +381,12 @@ namespace ClipboardApp {
         // Ctrl + C が押された時の処理
         public SimpleDelegateCommand CopyToClipboardCommand => new((parameter) => {
             // 選択中のアイテムがない場合は処理をしない
-            if (Instance!.SelectedItem == null) {
+            if (SelectedItem == null) {
                 Tools.Error("選択中のアイテムがない");
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
-            if (Instance!.SelectedFolder == null) {
+            if (SelectedFolder == null) {
                 Tools.Error("選択中のフォルダがない");
                 return;
             }
@@ -399,7 +399,7 @@ namespace ClipboardApp {
             }
             CopiedItemFolder = SelectedFolder;
             try {
-                ClipboardController.CopyToClipboard(Instance.SelectedItem.ClipboardItem);
+                ClipboardAppFactory.Instance.GetClipboardController().SetDataObject(SelectedItem.ClipboardItem);
                 Tools.Info("コピーしました");
 
             } catch (Exception e) {
@@ -509,7 +509,7 @@ namespace ClipboardApp {
         // コンテキストメニューの「テキストを整形」の実行用コマンド
         public SimpleDelegateCommand FormatTextCommand => new((parameter) => {
             // 選択中のアイテムを取得
-            ClipboardItemViewModel clipboardItemViewModel = Instance!.SelectedItem!;
+            ClipboardItemViewModel clipboardItemViewModel = SelectedItem!;
             if (clipboardItemViewModel == null) {
                 return;
             }
@@ -522,8 +522,8 @@ namespace ClipboardApp {
                 content = AutoProcessCommand.FormatTextCommandExecute(content);
                 // 整形したテキストをセット
                 clipboardItemViewModel.ClipboardItem.Content = content;
-                // LiteDBに保存
-                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+                // 保存
+                clipboardItemViewModel.ClipboardItem.Save();
                 // 再描写
                 ReloadClipboardItems();
             } finally {
@@ -543,8 +543,8 @@ namespace ClipboardApp {
                 IsIndeterminate = true;
                 // ファイルパスを分割
                 AutoProcessCommand.SplitFilePathCommandExecute(clipboardItem);
-                // LiteDBに保存
-                ClipboardDatabaseController.UpsertItem(clipboardItem);
+                // 保存
+                clipboardItem.Save();
                 // 再描写
                 ReloadClipboardItems();
             } finally {

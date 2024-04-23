@@ -8,6 +8,7 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
 using System.IO;
 using System.Collections.ObjectModel;
+using ClipboardApp.Factory.Default;
 
 
 namespace ClipboardApp.View.ClipboardItemView
@@ -40,7 +41,7 @@ namespace ClipboardApp.View.ClipboardItemView
         public static void ChangePinCommandExecute(ClipboardItemFolderViewModel folderViewModel, IEnumerable<ClipboardItemViewModel> itemViewModels) { 
             foreach (ClipboardItemViewModel clipboardItemViewModel in itemViewModels) {
                 clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
-                ClipboardDatabaseController.UpsertItem(clipboardItemViewModel.ClipboardItem);
+                clipboardItemViewModel.ClipboardItem.Save();
             }
 
             // フォルダ内のアイテムを再読み込み
@@ -116,7 +117,7 @@ namespace ClipboardApp.View.ClipboardItemView
             IEnumerable<ClipboardItemViewModel> items, ClipboardItemFolderViewModel fromFolder, ClipboardItemFolderViewModel toFolder) {
             foreach (var item in items) {
                 ClipboardItem newItem = item.ClipboardItem.Copy();
-                toFolder.ClipboardItemFolder.AddItem(newItem);
+                toFolder.ClipboardItemFolder.AddItem(newItem, (actionMessage) => { });
                 // Cutフラグが立っている場合はコピー元のアイテムを削除する
                 if (CutFlag) {
 
@@ -151,11 +152,14 @@ namespace ClipboardApp.View.ClipboardItemView
                     }
                     fromItems.Add(fromItemModelView.ClipboardItem);
                 }
-                toItem.MergeItems(fromItems, mergeWithHeader);
+                toItem.MergeItems(fromItems, mergeWithHeader, Tools.DefaultAction);
+
                 // ClipboardItemをLiteDBに保存
-                ClipboardDatabaseController.UpsertItem(toItem);
+                toItem.Save();
                 // コピー元のアイテムを削除
-                ClipboardDatabaseController.DeleteItems(fromItems);
+                foreach (var fromItem in fromItems) {
+                    fromItem.Delete();
+                }
 
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.Load();
@@ -172,7 +176,7 @@ namespace ClipboardApp.View.ClipboardItemView
         public static void OpenSelectedItemAsFileCommandExecute(ClipboardItemViewModel itemViewModel) {
             try {
                 // 選択中のアイテムを開く
-                ClipboardProcessController.OpenItem(itemViewModel.ClipboardItem);
+                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenItem(itemViewModel.ClipboardItem);
 
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
@@ -183,7 +187,7 @@ namespace ClipboardApp.View.ClipboardItemView
         public static void OpenSelectedItemAsNewFileCommandExecute(ClipboardItemViewModel itemViewModel) {
             try {
                 // 選択中のアイテムを新規として開く
-                ClipboardProcessController.OpenItem(itemViewModel.ClipboardItem, true);
+                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenItem(itemViewModel.ClipboardItem, true);
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
             }
@@ -201,14 +205,14 @@ namespace ClipboardApp.View.ClipboardItemView
                 return;
             }
             // File以外の場合はエラー
-            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != SharpClipboard.ContentTypes.Files) {
+            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != ClipboardContentTypes.Files) {
                 Tools.Error("ファイル以外のコンテンツはテキストを抽出できません");
                 return;
             }
             ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
             AutoProcessCommand.ExtractTextCommandExecute(clipboardItem);
             // 保存
-            ClipboardDatabaseController.UpsertItem(clipboardItem);
+            clipboardItem.Save();
 
             // フォルダ内のアイテムを再読み込み
             MainWindowViewModel.Instance?.SelectedFolder?.Load();
@@ -229,7 +233,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 return;
             }
             // テキスト以外の場合はエラー
-            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != SharpClipboard.ContentTypes.Text) {
+            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != ClipboardContentTypes.Text) {
                 // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("テキスト以外のコンテンツはマスキングできません");
                 return;
@@ -237,7 +241,7 @@ namespace ClipboardApp.View.ClipboardItemView
             ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
             AutoProcessCommand.MaskDataCommandExecute(clipboardItem);
             // 保存
-            ClipboardDatabaseController.UpsertItem(clipboardItem);
+            clipboardItem.Save();
 
             // フォルダ内のアイテムを再読み込み
             MainWindowViewModel.Instance?.SelectedFolder?.Load();
@@ -264,7 +268,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 PythonExecutor.PythonFunctions.RunScript(scriptItem, clipboardItem);
                 MainWindowViewModel.StatusText.Text = "Pythonスクリプトを実行しました";
                 // 保存
-                ClipboardDatabaseController.UpsertItem(clipboardItem);
+                clipboardItem.Save();
 
                 // フォルダ内のアイテムを再読み込み
                 MainWindowViewModel.Instance?.SelectedFolder?.Load();
@@ -304,7 +308,7 @@ namespace ClipboardApp.View.ClipboardItemView
         // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
         public static void SplitFilePathCommandExecute(ClipboardItem clipboardItem) {
 
-            if (clipboardItem.ContentType != SharpClipboard.ContentTypes.Files) {
+            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
                 throw new ClipboardAppException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
             string path = clipboardItem.Content;
@@ -317,7 +321,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 string? fileName = Path.GetFileName(path);
                 clipboardItem.Content = folderPath + "\n" + fileName;
                 // ContentTypeをTextに変更
-                clipboardItem.ContentType = SharpClipboard.ContentTypes.Text;
+                clipboardItem.ContentType = ClipboardContentTypes.Text;
                 // StatusTextにメッセージを表示
                 Tools.Info( "ファイルパスをフォルダ名とファイル名に分割しました");
             }
@@ -326,11 +330,11 @@ namespace ClipboardApp.View.ClipboardItemView
         public static void CreateAutoDescription(ClipboardItem item) {
             string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             // Textの場合
-            if (item.ContentType == SharpClipboard.ContentTypes.Text) {
+            if (item.ContentType == ClipboardContentTypes.Text) {
                 item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
             }
             // Fileの場合
-            else if (item.ContentType == SharpClipboard.ContentTypes.Files) {
+            else if (item.ContentType == ClipboardContentTypes.Files) {
                 item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
@@ -346,7 +350,7 @@ namespace ClipboardApp.View.ClipboardItemView
             HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(item.Content);
             foreach (var entity in entities) {
                 // LiteDBにタグを追加
-                ClipboardDatabaseController.InsertTag(entity);
+                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(entity);
                 // タグを追加
                 item.Tags.Add(entity);
             }

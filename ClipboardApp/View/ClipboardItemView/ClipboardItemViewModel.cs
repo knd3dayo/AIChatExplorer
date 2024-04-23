@@ -1,40 +1,29 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-using WK.Libraries.SharpClipboardNS;
+﻿using System.Windows;
 using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardApp.View.ClipboardItemView
-{
-    public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject
-    {
+namespace ClipboardApp.View.ClipboardItemView {
+    public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject {
 
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; set; } = clipboardItem;
 
         // Content
-        public string Content
-        {
-            get
-            {
+        public string Content {
+            get {
                 return ClipboardItem.Content;
             }
-            set
-            {
+            set {
                 ClipboardItem.Content = value;
                 OnPropertyChanged("Content");
             }
         }
 
-        public string ToolTipString
-        {
-            get
-            {
+        public string ToolTipString {
+            get {
                 string result = "";
-                if (string.IsNullOrEmpty(ClipboardItem.Description) == false)
-                {
+                if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
                     result += DescriptionText + "\n";
                 }
                 result += HeaderText + "\n" + ClipboardItem.Content;
@@ -43,61 +32,42 @@ namespace ClipboardApp.View.ClipboardItemView
         }
         // GUI関連
         // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
-        public Visibility DescriptionVisibility
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ClipboardItem.Description) && ClipboardItem.Tags.Count() == 0)
-                {
+        public Visibility DescriptionVisibility {
+            get {
+                if (string.IsNullOrEmpty(ClipboardItem.Description) && ClipboardItem.Tags.Count() == 0) {
                     return Visibility.Collapsed;
-                }
-                else
-                {
+                } else {
                     return Visibility.Visible;
                 }
             }
         }
         // 分類がFileの場合はVisible,それ以外はCollapsed
-        public Visibility FileVisibility
-        {
-            get
-            {
-                if (ClipboardItem.ContentType == SharpClipboard.ContentTypes.Files)
-                {
+        public Visibility FileVisibility {
+            get {
+                if (ClipboardItem.ContentType == ClipboardContentTypes.Files) {
                     return Visibility.Visible;
-                }
-                else
-                {
+                } else {
                     return Visibility.Collapsed;
                 }
             }
         }
         // 分類がTextの場合はVisible,それ以外はCollapsed
-        public Visibility TextVisibility
-        {
-            get
-            {
-                if (ClipboardItem.ContentType == SharpClipboard.ContentTypes.Text)
-                {
+        public Visibility TextVisibility {
+            get {
+                if (ClipboardItem.ContentType == ClipboardContentTypes.Text) {
                     return Visibility.Visible;
-                }
-                else
-                {
+                } else {
                     return Visibility.Collapsed;
                 }
             }
         }
-        public string DescriptionText
-        {
-            get
-            {
+        public string DescriptionText {
+            get {
                 string result = "";
-                if (string.IsNullOrEmpty(ClipboardItem.Description) == false)
-                {
+                if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
                     result += "【" + ClipboardItem.Description + "】";
                 }
-                if ( ClipboardItem.Tags.Count > 0)
-                {
+                if (ClipboardItem.Tags.Count > 0) {
                     result += "タグ：" + string.Join(",", ClipboardItem.Tags);
                 }
                 return result;
@@ -105,10 +75,8 @@ namespace ClipboardApp.View.ClipboardItemView
         }
 
         // 表示用の文字列
-        public string? HeaderText
-        {
-            get
-            {
+        public string? HeaderText {
+            get {
                 return ClipboardItem.HeaderText;
             }
         }
@@ -116,6 +84,6 @@ namespace ClipboardApp.View.ClipboardItemView
         public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemMaskDataCommandExecute);
-     
+
     }
 }

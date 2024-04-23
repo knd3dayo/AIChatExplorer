@@ -22,7 +22,7 @@ namespace ClipboardApp.Utils
             if (responseJsonNode == null) {
                 throw new Exception("APIサーバーとの通信に失敗しました");
             }
-            ClipboardItem? resultItem = ClipboardItem.FromJson(responseJsonNode);
+            ClipboardItem? resultItem = ClipboardItem.FromJson(responseJsonNode, Tools.DefaultAction);
             if (resultItem == null) {
                 throw new Exception("APIサーバーからのレスポンスが不正です");
             }

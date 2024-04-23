@@ -277,6 +277,10 @@ namespace ClipboardApp.Model
             }
             return description;
         }
+        // 検索対象フォルダ配下を検索するかどうか
+        public bool IsIncludeSubFolder { get; set; }
+
+
     }
 
 }

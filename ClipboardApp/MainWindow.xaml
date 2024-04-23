@@ -279,9 +279,9 @@
                     <DataTemplate>
                         <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
                         <materialDesign:Card
-                            Margin="10,10,10,10"
+                            Margin="5,5,5,5"
                             HorizontalAlignment="Stretch"
-                            materialDesign:ElevationAssist.Elevation="Dp12"
+                            materialDesign:ElevationAssist.Elevation="Dp8"
                             ToolTip="{Binding Path=ToolTipString}">
                             <Grid>
                                 <Grid.RowDefinitions>

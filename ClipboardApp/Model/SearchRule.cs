@@ -12,7 +12,7 @@ namespace ClipboardApp.Model {
     // IsGlobalSearchがTrueの場合は検索フォルダ以外のどのフォルダを読み込んでも、読み込みのタイミングで検索を行う
     // IsGlobalSearchがFalseの場合は検索フォルダのみ検索を行う
     // このクラスのオブジェクトはLiteDBに保存される
-    public class SearchConditionRule {
+    public class SearchRule {
 
         public enum SearchType {
             // 標準 or 検索フォルダ
@@ -35,14 +35,15 @@ namespace ClipboardApp.Model {
         public SearchType Type { get; set; }
 
         // コンストラクタ
-        public SearchConditionRule() {
+        public SearchRule() {
             SearchCondition = new SearchCondition();
             Type = SearchType.Normal;
         }
-        // 検索対象フォルダ配下を検索するかどうか
 
-        public bool IsIncludeSubFolder { get; set; }
-
+        // 保存
+        public void Save() {
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertSearchRule(this);
+        }
 
     }
 }

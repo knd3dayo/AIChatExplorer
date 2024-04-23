@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using Python.Runtime;
 
-namespace ClipboardApp.PythonIF {
+namespace ClipboardApp.PythonIF
+{
     public class PythonExecutor {
 
         public enum PythonExecutionType {
@@ -68,16 +70,16 @@ namespace ClipboardApp.PythonIF {
         }
         public static ObservableCollection<ScriptItem> ScriptItems {
             get {
-                var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
+                var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
                 return new ObservableCollection<ScriptItem>(collection.FindAll());
             }
         }
         public static void SaveScriptItem(ScriptItem scriptItem) {
-            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
+            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Upsert(scriptItem);
         }
         public static void DeleteScriptItem(ScriptItem scriptItem) {
-            var collection = ClipboardDatabaseController.GetClipboardDatabase().GetCollection<ScriptItem>(ClipboardDatabaseController.SCRIPT_COLLECTION_NAME);
+            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Delete(scriptItem.Id);
         }
     }

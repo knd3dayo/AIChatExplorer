@@ -4,64 +4,60 @@ using ClipboardApp.Utils;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp {
+namespace ClipboardApp.Factory.Default {
     /// <summary>
     /// クリップボード監視機能用のクラス
     /// </summary>
-    public class ClipboardController {
+    class DefaultClipboardController : IClipboardController {
         //--------------------------------------------------------------------------------
 
         // 起動時フラグ(起動時のクリップボードを読み捨てるため)
-        public static bool IsStartup { get; set; } = true;
+        private bool IsStartup { get; set; } = true;
         // クリップボード監視有効無効フラグ
-        public static bool IsClipboardMonitorEnabled { get; set; } = false;
-        private static SharpClipboard? clipboard = null;
+        public bool IsClipboardMonitorEnabled { get; set; } = false;
+        private SharpClipboard? _clipboard = null;
+        private Action<ActionMessage> _afterClipboardChanged = (parameter) => {};
 
-        public static MainWindowViewModel? MainWindowViewModel { get; set; }
-        public static void Init(MainWindowViewModel mainWindowViewModel) {
-
-            MainWindowViewModel = mainWindowViewModel;
-
-        }
         // クリップボード監視を開始する
-        public static void Start() {
-            if (clipboard == null) {
+        public void Start(Action<ActionMessage> afterClipboardChanged) {
+            _afterClipboardChanged = afterClipboardChanged;
+            if (_clipboard == null) {
                 // Clipboardの監視開始
-                clipboard = new SharpClipboard();
-                clipboard.ClipboardChanged += ClipboardChanged;
+                _clipboard = new SharpClipboard();
+                _clipboard.ClipboardChanged += ClipboardChanged;
                 // クリップボードの監視を有効にする
             }
             IsClipboardMonitorEnabled = true;
         }
 
         // クリップボード監視を停止する
-        public static void Stop() {
-            if (clipboard != null) {
-                clipboard.Dispose();
+        public void Stop() {
+            if (_clipboard != null) {
+                _clipboard.Dispose();
             }
             IsClipboardMonitorEnabled = false;
         }
         // ClipboardItemの内容をクリップボードにコピーする 
         // Ctrl+Cで実行するコマンド
-        public static void CopyToClipboard(ClipboardItem item) {
+        public void SetDataObject(ClipboardItem item) {
             // System.Windows.MessageBox.Show(item.Content);
 
             IsClipboardMonitorEnabled = false;
             // ContentTypeがTextの場合はクリップボードにコピー
-            if (item.ContentType == SharpClipboard.ContentTypes.Text) {
+            if (item.ContentType == ClipboardContentTypes.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // ContentTypeがFilesの場合はクリップボードにファイルをコピー
-            else if (item.ContentType == SharpClipboard.ContentTypes.Files) {
+            else if (item.ContentType == ClipboardContentTypes.Files) {
                 System.Windows.Clipboard.SetFileDropList(new System.Collections.Specialized.StringCollection { item.Content });
             }
             IsClipboardMonitorEnabled = true;
         }
 
-        private async static void ClipboardChanged(Object? sender, ClipboardChangedEventArgs e) {
+        private async void ClipboardChanged(object? sender, ClipboardChangedEventArgs e) {
             // 起動時のクリップボードを読み捨てる
             if (IsStartup) {
                 IsStartup = false;
@@ -72,34 +68,34 @@ namespace ClipboardApp {
                 // System.Windows.MessageBox.Show("Clipboard monitor disabled");
                 return;
             }
-            if (clipboard == null) {
+            if (_clipboard == null) {
                 return;
             }
             // Taskとして実行
             await Task.Run(() => {
 
                 // Is the content copied of text type?
-                if (e.ContentType == SharpClipboard.ContentTypes.Text) {
+                if (e.ContentType == ContentTypes.Text) {
                     // Get the cut/copied text.
-                    ProcessClipboardItem(e.ContentType, clipboard.ClipboardText, e);
+                    ProcessClipboardItem(ClipboardContentTypes.Text, _clipboard.ClipboardText, e);
                 }
                 // Is the content copied of file type?
-                else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
+                else if (e.ContentType == ContentTypes.Files) {
                     // Get the cut/copied file/files.
-                    for (int i = 0; i < clipboard.ClipboardFiles.Count; i++) {
-                        ProcessClipboardItem(e.ContentType, clipboard.ClipboardFiles[i], e);
+                    for (int i = 0; i < _clipboard.ClipboardFiles.Count; i++) {
+                        ProcessClipboardItem(ClipboardContentTypes.Files, _clipboard.ClipboardFiles[i], e);
                     }
 
                 }
                 // Is the content copied of image type?
-                else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
+                else if (e.ContentType == ContentTypes.Image) {
                     // Get the cut/copied image.
-                    System.Drawing.Image img = clipboard.ClipboardImage;
+                    System.Drawing.Image img = _clipboard.ClipboardImage;
                     // UseOCRが設定されている場合はOCRを実行
                     if (Properties.Settings.Default.UseOCR) {
                         try {
                             string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
-                            ProcessClipboardItem(SharpClipboard.ContentTypes.Text, text, e);
+                            ProcessClipboardItem(ClipboardContentTypes.Text, text, e);
 
                         } catch (ClipboardAppException ex) {
                             Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
@@ -110,15 +106,18 @@ namespace ClipboardApp {
 
                 }
                 // If the cut/copied content is complex, use 'Other'.
-                else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                    // System.Windows.MessageBox.Show(clipboard.ClipboardObject.ToString());
+                else if (e.ContentType == ContentTypes.Other) {
+                    // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
                 }
             });
-            // 現在選択中のClipboardItemFolderに通知
-            MainWindowViewModel?.ReloadClipboardItems();
+            // オブザーバーに通知
+            _afterClipboardChanged?.Invoke(
+                ActionMessage.Info("クリップボードの内容が変更されました")
+            );
+
         }
-        private static void ProcessClipboardItem(SharpClipboard.ContentTypes contentTypes, string content, ClipboardChangedEventArgs e) {
-            if (clipboard == null) {
+        private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, ClipboardChangedEventArgs e) {
+            if (_clipboard == null) {
                 Tools.Error("Clipboard is null");
                 return;
             }
@@ -175,8 +174,7 @@ namespace ClipboardApp {
             }
 
             // RootFolderのAddItemを呼び出す
-
-            ClipboardItemFolder.RootFolder.AddItem(item);
+            ClipboardItemFolder.RootFolder.AddItem(item , _afterClipboardChanged);
 
 
         }

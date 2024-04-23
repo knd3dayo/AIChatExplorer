@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using ClipboardApp.Factory.Default;
 using ClipboardApp.Utils;
 using LiteDB;
 using WK.Libraries.SharpClipboardNS;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     // 自動処理の引数用のクラス
     public class AutoProcessItemArgs {
 
@@ -81,7 +83,7 @@ namespace ClipboardApp.Model {
 
         public static List<AutoProcessItem> GetScriptAutoProcessItems() {
             // DBからスクリプトのScriptItemを取得
-            List<ScriptItem> items = ClipboardDatabaseController.GetScriptItems();
+            List<ScriptItem> items = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()];
             List<AutoProcessItem> result = new List<AutoProcessItem>();
             foreach (var item in items) {
                 result.Add(new AutoProcessItem(item.Description, $"Pythonスクリプト{item.Description}を実行します", item));
@@ -128,7 +130,7 @@ namespace ClipboardApp.Model {
                     );
 
 
-                var scriptItems = ClipboardDatabaseController.GetScriptItems();
+                var scriptItems = ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems();
                 // スクリプトを追加
                 foreach (var scriptItem in scriptItems) {
                     if (scriptItem.Type != ScriptType.Python) {
@@ -158,7 +160,7 @@ namespace ClipboardApp.Model {
                     Tools.Info($"フォルダにコピーします{args.DestinationFolder.AbsoluteCollectionName}");
                     // DestinationFolderにコピー
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    args.DestinationFolder.AddItem(newItem);
+                    args.DestinationFolder.AddItem(newItem, (actionMessage) => { });
                     // コピーの場合は元のアイテムを返す
                     return args.ClipboardItem;
                 };
@@ -171,10 +173,12 @@ namespace ClipboardApp.Model {
                     }
                     // DestinationFolderに追加
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    ClipboardItem result = args.DestinationFolder.AddItem(newItem);
+                    ClipboardItem result = args.DestinationFolder.AddItem(newItem, (actionMessage) => { });
                     // 元のフォルダから削除
                     Tools.Info($"{args.ClipboardItem.CollectionName}から削除します");
-                    ClipboardDatabaseController.DeleteItem(args.ClipboardItem);
+
+                    args.ClipboardItem.Delete();
+
                     // Moveの場合は元のアイテムを返さない
                     return null;
                 };

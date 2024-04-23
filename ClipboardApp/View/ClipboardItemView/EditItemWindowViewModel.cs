@@ -4,8 +4,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.TagView;
+using ClipboardApp.Factory.Default;
 
-namespace ClipboardApp.View.ClipboardItemView {
+namespace ClipboardApp.View.ClipboardItemView
+{
     class EditItemWindowViewModel : ObservableObject {
         private bool SingleLineSelected = false;
         private bool URLSelected = false;
@@ -190,7 +192,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             ItemViewModel.ClipboardItem.Description = Description;
             ItemViewModel.ClipboardItem.Content = Content;
             // ClipboardItemを更新
-            ClipboardDatabaseController.UpsertItem(ItemViewModel.ClipboardItem);
+            ItemViewModel.ClipboardItem.Save();
             // 更新後の処理を実行
             _afterUpdate?.Invoke();
             if (parameter is not Window window) {

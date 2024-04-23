@@ -4,18 +4,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.Factory.Default;
 
-namespace ClipboardApp.View.SearchView {
+namespace ClipboardApp.View.SearchView
+{
     public class SearchWindowViewModel : ObservableObject {
 
-        private SearchConditionRule? _searchConditionRule;
-        public SearchConditionRule? SearchConditionRule {
+        private SearchRule? _searchConditionRule;
+        public SearchRule? SearchConditionRule {
             get {
                 return _searchConditionRule;
             }
             set {
                 _searchConditionRule = value;
-                OnPropertyChanged("SearchConditionRule");
+                OnPropertyChanged("SearchRule");
             }
         }
 
@@ -33,7 +35,7 @@ namespace ClipboardApp.View.SearchView {
         public Visibility SearchFolderVisibility {
 
             get {
-                if (SearchConditionRule?.Type == SearchConditionRule.SearchType.SearchFolder) {
+                if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
@@ -43,7 +45,7 @@ namespace ClipboardApp.View.SearchView {
         // 検索タイプ 標準 or 検索フォルダ
         public string SearchTypeText {
             get {
-                if (SearchConditionRule?.Type == SearchConditionRule.SearchType.SearchFolder) {
+                if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
                     return "検索フォルダ";
                 }   
                 return "標準";
@@ -75,7 +77,7 @@ namespace ClipboardApp.View.SearchView {
         
         private Action? _afterUpdate;
 
-        public void Initialize(SearchConditionRule searchConditionRule, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
+        public void Initialize(SearchRule searchConditionRule, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
             this.SearchConditionRule = searchConditionRule;
 
             _afterUpdate = afterUpdate;
@@ -88,10 +90,9 @@ namespace ClipboardApp.View.SearchView {
 
         }
 
-        public void Initialize(SearchConditionRule searchConditionRule, Action afterUpdate) {
+        public void Initialize(SearchRule searchConditionRule, Action afterUpdate) {
             Initialize(searchConditionRule, null, afterUpdate);
         }
-
         //--------------------------------------------------------------------------------
         // コマンド
         //--------------------------------------------------------------------------------
@@ -113,7 +114,7 @@ namespace ClipboardApp.View.SearchView {
                 return;
             }
             // 検索条件をLiteDBに保存
-            ClipboardDatabaseController.UpsertSearchConditionRule(SearchConditionRule);
+            SearchConditionRule.Save();
 
             // 検索条件を適用後に実行する処理
             _afterUpdate?.Invoke();
@@ -154,7 +155,7 @@ namespace ClipboardApp.View.SearchView {
                 Tools.Error("検索条件がNullです");
                 return;
             }
-            if (SearchConditionRule.Type != SearchConditionRule.SearchType.SearchFolder) {
+            if (SearchConditionRule.Type != SearchRule.SearchType.SearchFolder) {
                 Tools.Error("検索フォルダ以外では選択できません");
                 return;
             }

@@ -44,11 +44,11 @@ namespace ClipboardApp.Utils {
         
         public static int[] GetInAngleBracketPosition(string text) {
             // int[0] = start、int[1] = end
-            // < > で囲まれた文字列のStartとEndを返す
+            // < > で囲まれた文字列のStartとEndを返す。< >は含まない。
             Regex regex = new Regex(@"<[^>]+>");
             Match match = regex.Match(text);
             if (match.Success) {
-                return new int[] { match.Index, match.Index + match.Length };
+                return new int[] { match.Index + 1, match.Index + match.Length - 1 };
             }
             return new int[] { -1, -1 };
         }
@@ -71,5 +71,14 @@ namespace ClipboardApp.Utils {
             // それ以外はNullを返す。
             return null;
         }
+
+        public static Action<ActionMessage> DefaultAction { get; } = (action) => {
+            if (action.MessageType == ActionMessage.MessageTypes.Error) {
+                Error(action.Message);
+            } else {
+                Info(action.Message);
+            }
+
+        };
     }
 }

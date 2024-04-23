@@ -48,6 +48,14 @@ namespace ClipboardApp.Model
                 OnPropertyChanged("IsDeleted");
             }
         }
+        public void Delete() {
+            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteTag(Tag);
+            IsDeleted = true;
+        }
+        public void Save() {
+            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(Tag);
+            IsDeleted = false;
+        }
     }
 
 }

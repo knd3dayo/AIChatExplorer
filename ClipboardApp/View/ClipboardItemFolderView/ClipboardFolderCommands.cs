@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
@@ -7,30 +8,9 @@ using ClipboardApp.View.SearchView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WK.Libraries.SharpClipboardNS;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.View.ClipboardItemFolderView
+{
     public class ClipboardFolderCommands {
-        // 選択中のフォルダを表示する処理
-        public static void OpenFolderCommandExecute(object parameter) {
-            MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-
-            if (Instance == null) {
-                return;
-            }
-            if (parameter == null) {
-                return;
-            }
-            if (parameter is not ClipboardItemFolderViewModel) {
-                return;
-            }
-
-            ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
-            Instance.SelectedFolder = folderViewModel;
-            folderViewModel.IsSelected = true;
-            // フォルダ内のアイテムを読み込む
-            // ClipboardItemFolderのLoadメソッドを呼び出す
-            // Children.Item,SearchCondition,IsApplyingSearchCondition,AlwaysApplySearchConditionを更新
-            folderViewModel.Load();
-        }
 
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardItemFolderViewModel clipboardItemFolder) {
@@ -46,10 +26,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // 選択されたフォルダが検索フォルダの場合
             if (folderViewModel != null && folderViewModel.ClipboardItemFolder.IsSearchFolder) {
                 string absoluteCollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
-                SearchConditionRule? searchConditionRule = ClipboardDatabaseController.GetSearchConditionRuleByCollectionName(absoluteCollectionName);
+                SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(absoluteCollectionName);
                 if (searchConditionRule == null) {
-                    searchConditionRule = new SearchConditionRule();
-                    searchConditionRule.Type = SearchConditionRule.SearchType.SearchFolder;
+                    searchConditionRule = new SearchRule();
+                    searchConditionRule.Type = SearchRule.SearchType.SearchFolder;
                     searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
 
                 }
@@ -76,21 +56,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// 新規フォルダが作成された場合は、リロード処理を行う.
         /// </summary>
         /// <param name="parameter"></param>
-        public static void CreateFolderCommandExecute(object parameter) {
-            if (parameter is not ClipboardItemFolderViewModel) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            // フォルダ作成後に実行するコマンド
-            void AfterUpdate() {
-                // フォルダ構成を更新
-                MainWindowViewModel.Instance?.ReloadFolder();
-                Tools.Info("フォルダを作成しました");
-            }
-            ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
+        public static void CreateFolderCommandExecute(ClipboardItemFolderViewModel folderViewModel, Action afterUpdate) {
+
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, AfterUpdate);
+            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, afterUpdate);
 
             FolderEditWindow.ShowDialog();
 
@@ -173,8 +143,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
                 return;
             } else {
-                string filapath = dialog.FileName;
-                folder.ImportItemsFromJson(filapath);
+                string filaPath = dialog.FileName;
+                folder.ImportItemsFromJson(filaPath, (actionMessage) => {
+                    if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
+                        Tools.Error(actionMessage.Message);
+                    } else {
+                        Tools.Info(actionMessage.Message);
+                    }
+                });
                 // フォルダ内のアイテムを読み込む
                 clipboardItemFolder.Load();
                 Tools.Info("フォルダをインポートしました");
@@ -195,8 +171,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
             ClipboardItemFolder folder = folderViewModel.ClipboardItemFolder;
 
-            if (folder.AbsoluteCollectionName == ClipboardDatabaseController.CLIPBOARD_ROOT_FOLDER_NAME
-                || folder.AbsoluteCollectionName == ClipboardDatabaseController.SEARCH_ROOT_FOLDER_NAME) {
+            if (folder.AbsoluteCollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME
+                || folder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
                 Tools.Error("ルートフォルダは削除できません");
                 return;
             }
@@ -205,7 +181,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             if (MessageBox.Show("フォルダを削除しますか？", "確認", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
-            ClipboardDatabaseController.DeleteFolder(folder);
+            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteFolder(folder);
 
             // RootFolderをリロード
             MainWindowViewModel.Instance?.ReloadFolder();
@@ -224,7 +200,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                     if (item.ClipboardItem.IsPinned) {
                         continue;
                     }
-                    ClipboardDatabaseController.DeleteItem(item.ClipboardItem);
+                    // item.ClipboardItemを削除
+                    item.ClipboardItem.Delete();
                 }
 
                 // フォルダ内のアイテムを読み込む
@@ -242,7 +219,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
             for (int i = folder.Items.Count - 1; i > 0; i--) {
                 // TypeがTextのアイテムのみマージ
-                if (folder.Items[i].ContentType == SharpClipboard.ContentTypes.Text) {
+                if (folder.Items[i].ContentType == ClipboardContentTypes.Text) {
                     mergedFromItems.Add(folder.Items[i]);
                 }
             }
@@ -254,7 +231,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
 
             // マージ元のアイテムをマージ先のアイテムにマージ
-            mergeToItem.MergeItems(mergedFromItems, false);
+            mergeToItem.MergeItems(mergedFromItems, false, Tools.DefaultAction);
+
             // マージ先アイテムをnewItemにコピー
             mergeToItem.CopyTo(item);
 
@@ -280,7 +258,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             foreach (var item in folder.Items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
                     // TypeがTextのアイテムのみマージ
-                    if (item.ContentType == SharpClipboard.ContentTypes.Text) {
+                    if (item.ContentType == ClipboardContentTypes.Text) {
                         sameTitleItems.Add(item);
                     }
                 }
@@ -298,7 +276,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             sameTitleItems.Insert(0, newItem);
             // マージ元のアイテムをマージ先のアイテムにマージ
 
-            mergeToItem.MergeItems(sameTitleItems, false);
+            mergeToItem.MergeItems(sameTitleItems, false, Tools.DefaultAction);
             // newItemにマージしたアイテムをコピー
             mergeToItem.CopyTo(newItem);
             // マージしたアイテムを削除
