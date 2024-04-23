@@ -15,7 +15,7 @@ namespace ClipboardApp.Factory.Default {
         public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
         public static string CHAT_SESSION_COLLECTION_NAME = "chat_session";
 
-        public static string CLIPBOARD_ROOT_FOLDER_NAME = "_clipboard";
+        public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static string SEARCH_ROOT_FOLDER_NAME = "search_folder";
 
         private static LiteDatabase? db;
@@ -47,7 +47,7 @@ namespace ClipboardApp.Factory.Default {
         public static LiteDatabase GetClipboardDatabase() {
             if (db == null) {
                 try {
-                    db = new LiteDatabase("_clipboard.db");
+                    db = new LiteDatabase("clipboard.db");
 
                     // BSonMapperの設定
                     // ClipboardItemFolderのChildren, Items, SearchConditionを無視する

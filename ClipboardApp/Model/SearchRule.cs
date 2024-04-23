@@ -43,7 +43,7 @@ namespace ClipboardApp.Model {
         // 保存
         public void Save() {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertSearchRule(this);
-        }
+        }   
 
     }
 }

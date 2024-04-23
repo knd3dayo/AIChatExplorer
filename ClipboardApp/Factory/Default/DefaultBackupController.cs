@@ -23,8 +23,8 @@ namespace ClipboardApp.Factory.Default {
             BackupGenerations = backupGenerations;
             BackupDir = backupDir;
             // BackupFilesにバックアップ対象ファイルを追加
-            BackupFiles.Add("_clipboard.db");
-            BackupFiles.Add("_clipboard-log.db");
+            BackupFiles.Add("clipboard.db");
+            BackupFiles.Add("clipboard-log.db");
 
             if (BackupDir == null) {
                 return;

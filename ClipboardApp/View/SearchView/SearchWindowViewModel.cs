@@ -17,7 +17,7 @@ namespace ClipboardApp.View.SearchView
             }
             set {
                 _searchConditionRule = value;
-                OnPropertyChanged("SearchRule");
+                OnPropertyChanged("SearchConditionRule");
             }
         }
 
