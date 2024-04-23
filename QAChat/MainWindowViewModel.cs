@@ -11,6 +11,7 @@ using QAChat.Model;
 using QAChat.PythonIF;
 using QAChat.Utils;
 using QAChat.View.LogWindow;
+using QAChat.View.PromptTemplateWindow;
 
 namespace QAChat {
     public class MainWindowViewModel : ObservableObject {
@@ -73,10 +74,27 @@ namespace QAChat {
             set {
                 inputText = value;
                 OnPropertyChanged("InputText");
-                // ChatItemsをクリア
-                ChatItems.Clear();
             }
 
+        }
+        // プロンプトテンプレート
+        private PromptItem? promptTemplate;
+        public PromptItem? PromptTemplate {
+            get {
+                return promptTemplate;
+
+            }
+            set{
+                promptTemplate = value;
+                OnPropertyChanged("PromptTemplate");
+            }
+         }
+
+        // プロンプトテンプレートのテキスト
+        public string PromptTemplateText {
+            get {
+                return PromptTemplate?.Prompt ?? "";
+            }
         }
 
         public StringBuilder Log = new  StringBuilder();
@@ -115,8 +133,17 @@ namespace QAChat {
                     PythonExecutor.Init(!IsInternalProject);
                 }
                 // OpenAIにチャットを送信してレスポンスを受け取る
+                // PromptTemplateがある場合はPromptTemplateを先頭に追加
+                string prompt = "";
+                if (string.IsNullOrEmpty(PromptTemplate?.Prompt) == false) {
 
-                string prompt = InputText;
+                    prompt = PromptTemplate?.Prompt ?? "" + "\n---------\n";
+
+                }
+                prompt += InputText;
+
+                // inputTextをChatItemsに追加
+                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
 
                 ChatResult? result = null;
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
@@ -135,8 +162,6 @@ namespace QAChat {
                     Tools.ShowMessage("チャットの送信に失敗しました。");
                     return;
                 }
-                // inputTextをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
                 // inputTextをクリア
                 InputText = "";
                 // レスポンスをChatItemsに追加
@@ -195,6 +220,17 @@ namespace QAChat {
             ChatItems.Clear();
             InputText = "";
 
+        });
+
+        // プロンプトテンプレート画面を開くコマンド
+        public SimpleDelegateCommand PromptTemplateCommand => new SimpleDelegateCommand((parameter) => {
+            ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
+            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
+            promptTemplateWindowViewModel.Initialize((promptTemplateWindowViewModel) => {
+                PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+
+            });
+            promptTemplateWindow.ShowDialog();
         });
 
     }

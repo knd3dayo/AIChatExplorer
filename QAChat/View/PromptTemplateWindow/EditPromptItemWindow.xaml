@@ -1,0 +1,104 @@
+﻿<Window
+    x:Class="QAChat.View.PromptTemplateWindow.EditPromptItemWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:QAChat.View.PromptTemplateWindow"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding WindowTitle}"
+    Width="800"
+    Height="450"
+    Style="{StaticResource MaterialDesignWindow}"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:EditPromptItemWindowViewModel />
+    </Window.DataContext>
+
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Enter"
+            Command="{Binding OKButtonCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CancelButtonCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="0,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Width="100"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="名前" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding Name}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Width="100"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="説明" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding Description}" />
+            </Grid>
+            <TextBox
+                Name="Editor"
+                Grid.Row="1"
+                Margin="10,10,10,10"
+                AcceptsReturn="True"
+                HorizontalScrollBarVisibility="Auto"
+                IsEnabled="True"
+                Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
+                TextWrapping="Wrap"
+                VerticalScrollBarVisibility="Auto" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    Margin="10,10,10,0"
+                    Command="{Binding OKButtonCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="OK" />
+                <Button
+                    Width="100"
+                    Margin="10,10,10,0"
+                    Command="{Binding CancelButtonCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="キャンセル"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

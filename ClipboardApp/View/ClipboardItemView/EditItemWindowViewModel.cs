@@ -9,6 +9,7 @@ namespace ClipboardApp.View.ClipboardItemView {
     class EditItemWindowViewModel : ObservableObject {
         private bool SingleLineSelected = false;
         private bool URLSelected = false;
+        private bool AngleBracketSelected = false;
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -158,10 +159,20 @@ namespace ClipboardApp.View.ClipboardItemView {
                     URLSelected = true;
                     return;
                 }
+                // AngleBracketの場合はAngleBracket選択にする
+                int[] angleBracketInts = Tools.GetInAngleBracketPosition(selectedText);
+                if (angleBracketInts[0] != -1 && AngleBracketSelected == false) {
+                    lineStart += angleBracketInts[0];
+                    lineEnd = lineStart + angleBracketInts[1] - angleBracketInts[0];
+                    editor.Select(lineStart, lineEnd - lineStart);
+                    AngleBracketSelected = true;
+                    return;
+                }
                 // EditorTextSelectionを更新
                 editor.Select(lineStart, lineEnd - lineStart);
                 SingleLineSelected = true;
                 URLSelected = false;
+                AngleBracketSelected = false;
 
                 return;
             }

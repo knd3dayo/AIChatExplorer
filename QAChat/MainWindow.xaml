@@ -140,11 +140,10 @@
                         Margin="10,0,10,0"
                         materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
                         AcceptsReturn="True"
-                        IsEnabled="False"
-                        Text="{Binding PromptTemplateText, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding PromptTemplate.Prompt, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap">
                         <TextBox.InputBindings>
-                            <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftClick" />
+                            <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
                         </TextBox.InputBindings>
                     </TextBox>
                 </ScrollViewer>

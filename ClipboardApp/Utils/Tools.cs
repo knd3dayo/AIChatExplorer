@@ -41,7 +41,17 @@ namespace ClipboardApp.Utils {
         public static string ListToString(List<string> list) {
             return list == null ? "Null" : string.Join(" > ", list);
         }
-
+        
+        public static int[] GetInAngleBracketPosition(string text) {
+            // int[0] = start、int[1] = end
+            // < > で囲まれた文字列のStartとEndを返す
+            Regex regex = new Regex(@"<[^>]+>");
+            Match match = regex.Match(text);
+            if (match.Success) {
+                return new int[] { match.Index, match.Index + match.Length };
+            }
+            return new int[] { -1, -1 };
+        }
         public static int[]? GetURLPosition(string text) {
             // int[0] = start、int[1] = end
             // 正規表現でURLにマッチした場合にStartとEndを返す.URLには日本語が含まれることがある。
