@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
         public static string DefaultText { get; } = "Ready";
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     //検索条件ルールを管理するクラス
     public class SearchRuleController {
         

@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Factory.Default {
+namespace WpfAppCommon.Factory.Default {
     /// <summary>
     /// このアプリケーションで開いたプロセスを管理するクラス
     /// </summary>
@@ -27,7 +27,7 @@ namespace ClipboardApp.Factory.Default {
                 if (openAsNew) {
                     // item.Contentがディレクトリの場合はメッセージを表示して終了
                     if (Directory.Exists(item.Content)) {
-                        throw new ClipboardAppException("ディレクトリは新規として開けません");
+                        throw new ThisApplicationException("ディレクトリは新規として開けません");
                     }
                     // item.Contentのファイル名を取得
                     contentFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(item.Content));

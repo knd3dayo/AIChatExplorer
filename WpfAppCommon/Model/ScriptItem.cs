@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiteDB;
-using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.View.PythonScriptView;
-using WpfAppCommon.Utils;
-using ClipboardApp.Factory.Default;
+﻿using LiteDB;
+using WpfAppCommon.Factory.Default;
 using System.Collections.ObjectModel;
 
-namespace ClipboardApp.Model
+namespace WpfAppCommon.Model
 {
     public enum ScriptType
     {
@@ -53,15 +44,6 @@ namespace ClipboardApp.Model
             collection.Delete(scriptItem.Id);
         }
 
-
-
-        // コンテキストメニューの「削除」の実行用コマンド
-        public static SimpleDelegateCommand DeleteScriptCommand = SelectPythonScriptWindowViewModel.DeleteScriptCommandExecute;
-        // コンテキストメニューの「スクリプト」の実行用コマンド
-        public static SimpleDelegateCommand RunPythonScriptCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute);
-
-        // スクリプト選択画面でスクリプトをダブルクリックしたときの処理
-        public static SimpleDelegateCommand SelectScriptCommand => new SimpleDelegateCommand(SelectPythonScriptWindowViewModel.SelectScriptCommandExecute);
 
     }
 }

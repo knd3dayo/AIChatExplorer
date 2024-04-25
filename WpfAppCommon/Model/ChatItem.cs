@@ -1,7 +1,12 @@
-﻿using System.Text.Encodings.Web;
+﻿using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using WpfAppCommon;
+using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace QAChat.Model {
     public class ChatItem {
@@ -57,7 +62,6 @@ namespace QAChat.Model {
             };
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
-
 
     }
 }

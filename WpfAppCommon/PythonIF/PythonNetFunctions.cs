@@ -110,7 +110,7 @@ namespace WpfAppCommon.PythonIF {
             // ResultContainerを作成
             string result = "";
 
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? extract_text = ps?.Get("extract_text");
                 // extract_textが呼び出せない場合は例外をスロー
@@ -155,7 +155,7 @@ namespace WpfAppCommon.PythonIF {
                         };
 
             MaskedData actionResult = new(beforeTextList);
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? mask_data = ps?.Get("mask_data");
@@ -211,7 +211,7 @@ namespace WpfAppCommon.PythonIF {
                             { "SpacyModel", SpacyModel }
                         };
             MaskedData actionResult = new MaskedData(maskedTextList);
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? unmask_data = ps?.Get("unmask_data");
                 // unmask_dataが呼び出せない場合は例外をスロー
@@ -256,7 +256,7 @@ namespace WpfAppCommon.PythonIF {
         public string ExtractTextFromImage(Image image) {
             // Pythonスクリプトを実行する
             string result = "";
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? extract_text_from_image = ps?.Get("extract_text_from_image");
                 // extract_text_from_imageが呼び出せない場合は例外をスロー
@@ -359,7 +359,7 @@ namespace WpfAppCommon.PythonIF {
         }
         public void OpenAIEmbedding(string text) {
 
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? open_ai_embedding = ps?.Get("openai_embedding");
                 // open_ai_chatが呼び出せない場合は例外をスロー
@@ -376,7 +376,7 @@ namespace WpfAppCommon.PythonIF {
         // スクリプトの内容とJSON文字列を引数に取り、結果となるJSON文字列を返す
         public string RunScript(string script, string input) {
             string resultString = "";
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? run_script = ps?.Get("run_script");
                 // run_scriptが呼び出せない場合は例外をスロー
@@ -395,7 +395,7 @@ namespace WpfAppCommon.PythonIF {
 
             HashSet<string> actionResult = new HashSet<string>();
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
                 // SPACY_MODEL_NAMEが空の場合は例外をスロー
                 if (string.IsNullOrEmpty(SpacyModel)) {
@@ -427,7 +427,7 @@ namespace WpfAppCommon.PythonIF {
         }
 
         public void SaveFaissIndex() {
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? save_faiss_index = ps?.Get("save_faiss_index");
                 // save_faiss_indexが呼び出せない場合は例外をスロー
@@ -441,7 +441,7 @@ namespace WpfAppCommon.PythonIF {
 
         public void LoadFaissIndex() {
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? load_faiss_index = ps?.Get("load_faiss_index");
                 // load_faiss_indexが呼び出せない場合は例外をスロー

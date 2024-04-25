@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows;
-using ClipboardApp.Model;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class Tools {

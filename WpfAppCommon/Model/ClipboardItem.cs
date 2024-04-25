@@ -1,12 +1,15 @@
 ﻿using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using ClipboardApp.Utils;
+using WpfAppCommon.Utils;
 using LiteDB;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using WpfAppCommon.PythonIF;
+using QAChat.Model;
+using System.IO;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     public  enum ClipboardContentTypes {
         Text,
         Files,
@@ -192,6 +195,126 @@ namespace ClipboardApp.Model {
             // DBから削除したらIdをnullにする
             Id = null;
         }
+
+        public static void CreateAutoDescription(ClipboardItem item) {
+            string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            // Textの場合
+            if (item.ContentType == ClipboardContentTypes.Text) {
+                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
+            }
+            // Fileの場合
+            else if (item.ContentType == ClipboardContentTypes.Files) {
+                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
+                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
+                if (item.Content.Length > 20) {
+                    item.Description += " ファイル：" + item.Content.Substring(0, 20) + "..." + item.Content.Substring(item.Content.Length - 30);
+                } else {
+                    item.Description += " ファイル：" + item.Content;
+                }
+            }
+        }
+
+        // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
+        public static void SplitFilePathCommandExecute(ClipboardItem clipboardItem) {
+
+            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
+                throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
+            }
+            string path = clipboardItem.Content;
+            if (string.IsNullOrEmpty(path) == false) {
+                // ファイルパスをフォルダ名とファイル名に分割
+                string? folderPath = Path.GetDirectoryName(path);
+                if (folderPath == null) {
+                    throw new ThisApplicationException("フォルダパスが取得できません");
+                }
+                string? fileName = Path.GetFileName(path);
+                clipboardItem.Content = folderPath + "\n" + fileName;
+                // ContentTypeをTextに変更
+                clipboardItem.ContentType = ClipboardContentTypes.Text;
+                // StatusTextにメッセージを表示
+                Tools.Info("ファイルパスをフォルダ名とファイル名に分割しました");
+            }
+        }
+
+        // 自動でタグを付与するコマンド
+        public static void CreateAutoTags(ClipboardItem item) {
+            // PythonでItem.ContentからEntityを抽出
+            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
+            foreach (var entity in entities) {
+                // LiteDBにタグを追加
+                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(entity);
+                // タグを追加
+                item.Tags.Add(entity);
+            }
+
+        }
+        // 自動処理でテキストを抽出」を実行するコマンド
+        public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {
+
+            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
+                throw new ThisApplicationException("ファイル以外のコンテンツはテキストを抽出できません");
+            }
+            string path = clipboardItem.Content;
+            string text = PythonExecutor.PythonFunctions.ExtractText(clipboardItem.Content);
+            clipboardItem.Content = text;
+            // タイプをテキストに変更
+            clipboardItem.ContentType = ClipboardContentTypes.Text;
+            Tools.Info($"{path}のテキストを抽出しました");
+
+            return clipboardItem;
+
+        }
+
+        // 自動処理でデータをマスキング」を実行するコマンド
+        public static ClipboardItem MaskDataCommandExecute(ClipboardItem clipboardItem) {
+
+            if (clipboardItem.ContentType != ClipboardContentTypes.Text) {
+                throw new ThisApplicationException("テキスト以外のコンテンツはマスキングできません");
+            }
+            Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();
+            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+            string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, clipboardItem.Content);
+            clipboardItem.Content = result;
+
+            Tools.Info( "データをマスキングしました");
+            return clipboardItem;
+        }
+
+        public static string CovertMaskedDataToOriginalData(MaskedData? maskedData, string maskedText) {
+            if (maskedData == null) {
+                return maskedText;
+            }
+            // マスキングデータをもとに戻す
+            string result = maskedText;
+            foreach (var entity in maskedData.Entities) {
+                // ステータスバーにメッセージを表示
+                Tools.Info($"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n");
+                result = result.Replace(entity.After, entity.Before);
+            }
+            return result;
+        }
+
+        private static ChatItem CreateMaskedDataSystemMessage() {
+            ChatItem chatItem
+                = new ChatItem(ChatItem.SystemRole,
+                "このチャットではマスキングデータ(MASKED_...)を使用している場合があります。" +
+                "マスキングデータの文字列はそのままにしてください");
+            return chatItem;
+        }
+
+        public static string FormatTextCommandExecute(string text) {
+            string prompt = "次の文章はWindowsのクリップボードから取得した文章です。これを整形してください。重複した内容がある場合は削除してください。\n";
+
+            // ChatCommandExecuteを実行
+            prompt += "処理対象の文章\n-----------\n" + text;
+
+            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(prompt, []);
+
+            return result.Response;
+
+        }
+
     }
 
 }

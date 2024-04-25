@@ -3,7 +3,7 @@ using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 
-namespace ClipboardApp.PythonIF {
+namespace WpfAppCommon.PythonIF {
     public class EmptyPythonFunctions : IPythonFunctions {
         public string ExtractText(string path) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");

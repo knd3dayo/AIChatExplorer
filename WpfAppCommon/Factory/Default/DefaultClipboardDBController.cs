@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
-using LiteDB;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using LiteDB;
+using QAChat.Model;
 
-namespace ClipboardApp.Factory.Default {
+namespace WpfAppCommon.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
         public static string CLIPBOARD_FOLDER_RELATION_NAME = "folder_relation";
         public static string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
@@ -18,6 +18,8 @@ namespace ClipboardApp.Factory.Default {
 
         public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static string SEARCH_ROOT_FOLDER_NAME = "search_folder";
+
+        public const string PromptTemplateCollectionName = "PromptTemplate";
 
         private static LiteDatabase? db;
         // static
@@ -378,6 +380,38 @@ namespace ClipboardApp.Factory.Default {
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
             TagItem tagItem = new TagItem { Tag = tag };
             collection.Insert(tagItem);
+        }
+
+        public void UpsertPromptTemplate(PromptItem promptItem) {
+            var db = GetClipboardDatabase();
+
+            var col = db.GetCollection<PromptItem>(PromptTemplateCollectionName);
+            col.Upsert(promptItem);
+        }
+        // プロンプトテンプレートを取得する
+        public static PromptItem? GetPromptTemplate(string name) {
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            return col.FindOne(x => x.Name == name);
+        }
+        // 引数として渡されたプロンプトテンプレートを削除する
+        public  void DeletePromptTemplate(PromptItem promptItem) {
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            col.Delete(promptItem.Id);
+        }
+
+        // プロンプトテンプレートを全て取得する
+        public  ICollection<PromptItem> GetAllPromptTemplates() {
+            ICollection<PromptItem> collation = new List<PromptItem>();
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            foreach (var item in col.FindAll()) {
+                collation.Add(item);
+            }
+            return collation;
+        }
+        // プロンプトテンプレートを全て削除する
+        public static void DeleteAllPromptTemplates() {
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            col.DeleteAll();
         }
 
     }

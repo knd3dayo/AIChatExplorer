@@ -1,4 +1,4 @@
-﻿namespace ClipboardApp.Factory.Default {
+﻿namespace WpfAppCommon.Factory.Default {
     public class DefaultClipboardFactory : IClipboardFactory {
         private IClipboardController? _clipboardController;
 

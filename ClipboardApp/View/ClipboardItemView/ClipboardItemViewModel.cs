@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {

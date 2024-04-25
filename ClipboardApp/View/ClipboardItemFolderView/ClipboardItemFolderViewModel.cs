@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using ClipboardApp.Factory;
-using ClipboardApp.Factory.Default;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Factory.Default;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView

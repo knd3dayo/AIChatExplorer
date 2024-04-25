@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
@@ -8,6 +7,8 @@ using System.Collections.ObjectModel;
 using WpfAppCommon.Utils;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Properties;
+using WpfAppCommon.Model;
+using WpfAppCommon;
 
 namespace ClipboardApp.View.ClipboardItemView
 {
@@ -208,7 +209,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 return;
             }
             ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
-            AutoProcessCommand.ExtractTextCommandExecute(clipboardItem);
+            ClipboardItem.ExtractTextCommandExecute(clipboardItem);
             // 保存
             clipboardItem.Save();
 
@@ -237,7 +238,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 return;
             }
             ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
-            AutoProcessCommand.MaskDataCommandExecute(clipboardItem);
+            ClipboardItem.MaskDataCommandExecute(clipboardItem);
             // 保存
             clipboardItem.Save();
 
@@ -293,59 +294,6 @@ namespace ClipboardApp.View.ClipboardItemView
                 mainWindowViewModel.InputText = itemViewModel.ClipboardItem.Content;
             }
             openAIChatWindow.ShowDialog();
-        }
-
-        // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
-        public static void SplitFilePathCommandExecute(ClipboardItem clipboardItem) {
-
-            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
-                throw new ClipboardAppException("ファイル以外のコンテンツはファイルパスを分割できません");
-            }
-            string path = clipboardItem.Content;
-            if (string.IsNullOrEmpty(path) == false) {
-                // ファイルパスをフォルダ名とファイル名に分割
-                string? folderPath = Path.GetDirectoryName(path);
-                if (folderPath == null) {
-                    throw new ClipboardAppException("フォルダパスが取得できません");
-                }
-                string? fileName = Path.GetFileName(path);
-                clipboardItem.Content = folderPath + "\n" + fileName;
-                // ContentTypeをTextに変更
-                clipboardItem.ContentType = ClipboardContentTypes.Text;
-                // StatusTextにメッセージを表示
-                Tools.Info( "ファイルパスをフォルダ名とファイル名に分割しました");
-            }
-        }
-
-        public static void CreateAutoDescription(ClipboardItem item) {
-            string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
-            // Textの場合
-            if (item.ContentType == ClipboardContentTypes.Text) {
-                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
-            }
-            // Fileの場合
-            else if (item.ContentType == ClipboardContentTypes.Files) {
-                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
-                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
-                if (item.Content.Length > 20) {
-                    item.Description += " ファイル：" + item.Content.Substring(0, 20) + "..." + item.Content.Substring(item.Content.Length - 30);
-                } else {
-                    item.Description += " ファイル：" + item.Content;
-                }
-            }
-        }
-        // 自動でタグを付与するコマンド
-        public static void CreateAutoTags(ClipboardItem item) {
-            // PythonでItem.ContentからEntityを抽出
-            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
-            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
-            foreach (var entity in entities) {
-                // LiteDBにタグを追加
-                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(entity);
-                // タグを追加
-                item.Tags.Add(entity);
-            }
-
         }
 
     }

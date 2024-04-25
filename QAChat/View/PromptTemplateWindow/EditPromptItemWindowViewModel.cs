@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
+using WpfAppCommon;
 using WpfAppCommon.Utils;
 
 namespace QAChat.View.PromptTemplateWindow {
@@ -93,7 +94,7 @@ namespace QAChat.View.PromptTemplateWindow {
                 return;
             }
             // ClipboardItemを更新
-            QAChatDatabaseController.UpsertPromptTemplate(promptItem);
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertPromptTemplate(promptItem);
             
             AfterUpdate(ItemViewModel);
 

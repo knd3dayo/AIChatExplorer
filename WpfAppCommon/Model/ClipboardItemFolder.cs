@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
-using ClipboardApp.Factory;
-using ClipboardApp.Utils;
+using WpfAppCommon.Factory;
+using WpfAppCommon.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     public class ClipboardItemFolder : ObservableObject {
 
         // アプリ共通の検索条件
@@ -228,5 +228,84 @@ namespace ClipboardApp.Model {
             }
 
         }
+        // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
+        public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
+            // NewItemのSourceApplicationTitleが空の場合は何もしない
+            if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
+                return;
+            }
+            if (folder.Items.Count == 0) {
+                return;
+            }
+            List<ClipboardItem> sameTitleItems = new List<ClipboardItem>();
+            // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
+            foreach (var item in folder.Items) {
+                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
+                    // TypeがTextのアイテムのみマージ
+                    if (item.ContentType == ClipboardContentTypes.Text) {
+                        sameTitleItems.Add(item);
+                    }
+                }
+            }
+            // mergeFromItemsが空の場合はnewItemをそのまま返す。
+            if (sameTitleItems.Count == 0) {
+                return;
+            }
+            // マージ元のアイテムをマージ先(更新時間が一番古いもの)のアイテムにマージ
+            ClipboardItem mergeToItem = folder.Items.Last();
+            // sameTitleItemsの1から最後までをマージ元のアイテムとする
+            sameTitleItems.RemoveAt(sameTitleItems.Count - 1);
+
+            // sameTitleItemsにnewItemを追加
+            sameTitleItems.Insert(0, newItem);
+            // マージ元のアイテムをマージ先のアイテムにマージ
+
+            mergeToItem.MergeItems(sameTitleItems, false, Tools.DefaultAction);
+            // newItemにマージしたアイテムをコピー
+            mergeToItem.CopyTo(newItem);
+            // マージしたアイテムを削除
+            foreach (var mergedItem in sameTitleItems) {
+                folder.DeleteItem(mergedItem);
+            }
+            // mergedItemを削除
+            folder.DeleteItem(mergeToItem);
+        }
+        // 指定されたフォルダの全アイテムをマージするコマンド
+        public static void MergeItemsCommandExecute(ClipboardItemFolder folder, ClipboardItem item) {
+            if (folder.Items.Count == 0) {
+                return;
+            }
+
+            // マージ元のアイテム
+            List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
+            for (int i = folder.Items.Count - 1; i > 0; i--) {
+                // TypeがTextのアイテムのみマージ
+                if (folder.Items[i].ContentType == ClipboardContentTypes.Text) {
+                    mergedFromItems.Add(folder.Items[i]);
+                }
+            }
+            // 先頭に引数のアイテムを追加
+            mergedFromItems.Insert(0, item);
+            // mergeToItemを取得(更新時間が一番古いアイテム)
+            ClipboardItem mergeToItem = mergedFromItems.Last();
+            // mergedFromItemsからmergeToItemを削除
+            mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
+
+            // マージ元のアイテムをマージ先のアイテムにマージ
+            mergeToItem.MergeItems(mergedFromItems, false, Tools.DefaultAction);
+
+            // マージ先アイテムをnewItemにコピー
+            mergeToItem.CopyTo(item);
+
+            // マージしたアイテムを削除
+            foreach (var mergedItem in mergedFromItems) {
+                folder.DeleteItem(mergedItem);
+            }
+            // マージ先アイテムを削除
+            folder.DeleteItem(mergeToItem);
+
+        }
+
+
     }
 }

@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using WpfAppCommon.Utils;
 using QAChat.View.PromptTemplateWindow;
+using WpfAppCommon.Factory;
+using WpfAppCommon;
 
 namespace QAChat.View.PromptTemplateWindow {
     public class ListPromptTemplateWindowViewModel : ObservableObject {
@@ -31,7 +33,8 @@ namespace QAChat.View.PromptTemplateWindow {
         public void Reload() {
             // PromptItemsを更新
             PromptItems.Clear();
-            foreach(var item in QAChatDatabaseController.GetAllPromptTemplates()) {
+            IClipboardDBController clipboardDBController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            foreach(var item in clipboardDBController.GetAllPromptTemplates()) {
                 PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
                 PromptItems.Add(itemViewModel);
             }
@@ -105,7 +108,7 @@ namespace QAChat.View.PromptTemplateWindow {
             }
             PromptItems.Remove(itemViewModel);
             // LiteDBを更新
-            QAChatDatabaseController.DeletePromptTemplate(item);
+            ClipboardAppFactory.Instance.GetClipboardDBController().DeletePromptTemplate(item);
             OnPropertyChanged("PromptItems");
         }
 

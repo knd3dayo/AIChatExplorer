@@ -1,9 +1,7 @@
-﻿using ClipboardApp.Utils;
-using ClipboardApp.View.AutoProcessRuleView;
+﻿using WpfAppCommon.Utils;
 using LiteDB;
-using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
 
     // 自動処理ルールの条件
 
@@ -282,9 +280,6 @@ namespace ClipboardApp.Model {
             return pathList.Distinct().Count() != pathList.Count;
 
         }
-
-        // 編集コマンド
-        public static SimpleDelegateCommand EditAutoProcessRuleCommand => new SimpleDelegateCommand(ListAutoProcessRuleWindowViewModel.EditAutoProcessRuleCommandExecute);
 
 
     }

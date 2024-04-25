@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ClipboardApp.Factory.Default {
+namespace WpfAppCommon.Factory.Default {
     class DefaultBackupController : IBackupController {
         public int BackupGenerations { get; set; }
         public string? BackupDir { get; set; }

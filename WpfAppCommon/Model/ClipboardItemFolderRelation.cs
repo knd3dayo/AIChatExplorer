@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LiteDB;
 
-namespace ClipboardApp.Model
+namespace WpfAppCommon.Model
 {
     internal class ClipboardItemFolderRelation
     {

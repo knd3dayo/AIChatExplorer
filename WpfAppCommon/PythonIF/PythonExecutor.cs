@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using ClipboardApp.PythonIF;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.PythonIF {
@@ -26,14 +26,14 @@ namespace WpfAppCommon.PythonIF {
         public static string TemplateScript = "python/template.py";
 
         // クリップボードアプリ用のPythonスクリプト
-        public static string ClipboardAppUtilsScript = "python/clipboard_app_utils.py";
+        public static string WpfAppCommonUtilsScript = "python/clipboard_app_utils.py";
 
         // Pythonスクリプト
         public static string QAChatScript = "python/qachat_util.py";
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
         public static void Init(string pythonPath) {
-            // ClipboardAppSettingsのPythonExecutionがPythonNetの場合はInitPythonNetを実行する
+            // WpfAppCommonSettingsのPythonExecutionがPythonNetの場合はInitPythonNetを実行する
             if (PythonExecution == PythonExecutionType.PythonNet) {
                 PythonFunctions = new PythonNetFunctions(pythonPath);
             }

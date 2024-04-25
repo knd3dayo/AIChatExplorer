@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace ClipboardApp.Model
+namespace WpfAppCommon.Model
 {
     public class TagItem : ObservableObject
     {

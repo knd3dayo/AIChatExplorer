@@ -1,11 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using ClipboardApp.Factory.Default;
-using ClipboardApp.Utils;
-using LiteDB;
-using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Utils;
+using LiteDB;
+using WpfAppCommon.PythonIF;
 
-namespace ClipboardApp.Model
+namespace WpfAppCommon.Model
 {
     // 自動処理の引数用のクラス
     public class AutoProcessItemArgs {
@@ -79,7 +77,7 @@ namespace ClipboardApp.Model
                     return item;
                 }
             }
-            throw new ClipboardAppException("AutoProcessItemが見つかりません");
+            throw new ThisApplicationException("AutoProcessItemが見つかりません");
         }
 
         public static List<AutoProcessItem> GetScriptAutoProcessItems() {
@@ -186,32 +184,32 @@ namespace ClipboardApp.Model
             }
             if (name == ActionName.ExtractText.Name) { 
                     return (args) => {
-                        return AutoProcessCommand.ExtractTextCommandExecute(args.ClipboardItem);
+                        return ClipboardItem.ExtractTextCommandExecute(args.ClipboardItem);
                     };
                 }
             if (name == ActionName.MaskData.Name) {
                 return (args) => {
-                    return AutoProcessCommand.MaskDataCommandExecute(args.ClipboardItem);
+                    return ClipboardItem.MaskDataCommandExecute(args.ClipboardItem);
                 };
             }
             if (name == ActionName.SplitPathToFolderAndFileName.Name) {
                 return (args) => {
-                    AutoProcessCommand.SplitFilePathCommandExecute(args.ClipboardItem);
+                    ClipboardItem.SplitFilePathCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
             if (name == ActionName.MergeAllItems.Name) {
                 return (args) => {
-                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ClipboardAppException("フォルダが選択されていません");
-                    
-                    AutoProcessCommand.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+
+                    ClipboardItemFolder.MergeItemsCommandExecute(folder, args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
             if (name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
                 return (args) => {
-                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ClipboardAppException("フォルダが選択されていません");
-                    AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
+                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardItemFolder.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
@@ -222,7 +220,7 @@ namespace ClipboardApp.Model
 
         public static Func<AutoProcessItemArgs, ClipboardItem?> RunPythonAction(ScriptItem item) {
             return (args) => {
-                AutoProcessCommand.RunPythonScriptCommandExecute(item, args.ClipboardItem);
+                RunPythonScriptCommandExecute(item, args.ClipboardItem);
                 return args.ClipboardItem;
             };
 
@@ -235,6 +233,18 @@ namespace ClipboardApp.Model
             return result;
         }
 
+        // 自動実行でPythonスクリプトを実行するコマンド
+        public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItem clipboardItem) {
+            string inputJson = ClipboardItem.ToJson(clipboardItem);
+
+            string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, inputJson);
+            ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
+                Tools.Info( "Pythonスクリプトを実行しました");
+
+            });
+            resultItem?.CopyTo(clipboardItem);
+
+        }
     }
 
 }

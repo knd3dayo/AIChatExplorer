@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する

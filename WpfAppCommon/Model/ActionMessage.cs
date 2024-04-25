@@ -1,4 +1,4 @@
-﻿namespace ClipboardApp.Model {
+﻿namespace WpfAppCommon.Model {
 
     // アクションの情報を表すクラス
     public class ActionMessage {

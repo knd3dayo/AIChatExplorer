@@ -1,11 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reflection.Metadata;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.Factory.Default;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {

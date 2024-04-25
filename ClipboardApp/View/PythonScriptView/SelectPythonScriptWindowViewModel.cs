@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Model;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView

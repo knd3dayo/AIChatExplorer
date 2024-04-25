@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClipboardApp.Model {
+namespace WpfAppCommon.Model {
     public class TagController {
 
         public static IEnumerable<TagItem> GetTagList() {

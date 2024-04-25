@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClipboardApp.Factory {
+namespace WpfAppCommon.Factory {
     public interface IBackupController {
 
         public void BackupNow();

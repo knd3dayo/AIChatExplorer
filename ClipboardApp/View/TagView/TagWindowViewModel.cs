@@ -1,9 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
-using ClipboardApp.Factory;
-using ClipboardApp.Factory.Default;
+using WpfAppCommon;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView

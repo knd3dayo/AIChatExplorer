@@ -1,11 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using ClipboardApp.View.TagView;
-using ClipboardApp.Factory.Default;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.ClipboardItemView
 {

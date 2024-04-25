@@ -1,12 +1,9 @@
-﻿using System.Data.Common;
-using System.Reflection.Metadata;
-using System.Windows;
+﻿using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
-using ClipboardApp.Factory.Default;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Model;
+using WpfAppCommon.Factory.Default;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {

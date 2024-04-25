@@ -1,12 +1,10 @@
-﻿using ClipboardApp.Model;
-using ClipboardApp.Utils;
-using WK.Libraries.SharpClipboardNS;
-using WpfAppCommon.PythonIF;
+﻿using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using WpfAppCommon.Properties;
+using WpfAppCommon.PythonIF;
+using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Factory.Default {
+namespace WpfAppCommon.Factory.Default {
     /// <summary>
     /// クリップボード監視機能用のクラス
     /// </summary>
@@ -99,7 +97,7 @@ namespace ClipboardApp.Factory.Default {
                             string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
                             ProcessClipboardItem(ClipboardContentTypes.Text, text, e);
 
-                        } catch (ClipboardAppException ex) {
+                        } catch (ThisApplicationException ex) {
                             Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
                         }
 
@@ -148,8 +146,8 @@ namespace ClipboardApp.Factory.Default {
             if (WpfAppCommon.Properties.Settings.Default.AutoDescription) {
                 try {
                     Tools.Info("自動タイトル設定処理を実行します");
-                    AutoProcessCommand.CreateAutoDescription(item);
-                } catch (ClipboardAppException ex) {
+                    ClipboardItem.CreateAutoDescription(item);
+                } catch (ThisApplicationException ex) {
                     Tools.Error($"自動タイトル設定処理が失敗しました。\n{ex.Message}");
                 }
             }
@@ -158,8 +156,8 @@ namespace ClipboardApp.Factory.Default {
             if (WpfAppCommon.Properties.Settings.Default.AutoTag) {
                 try {
                     Tools.Info("自動タグ設定処理を実行します");
-                    AutoProcessCommand.CreateAutoTags(item);
-                } catch (ClipboardAppException ex) {
+                    ClipboardItem.CreateAutoTags(item);
+                } catch (ThisApplicationException ex) {
                     Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
                 }
             }
@@ -169,8 +167,8 @@ namespace ClipboardApp.Factory.Default {
             if (WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
                     Tools.Info("自動マージ処理を実行します");
-                    AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);
-                } catch (ClipboardAppException ex) {
+                    ClipboardItemFolder.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);
+                } catch (ThisApplicationException ex) {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
                 }
             }

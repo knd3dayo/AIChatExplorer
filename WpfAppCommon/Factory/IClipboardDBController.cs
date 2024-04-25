@@ -1,7 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using ClipboardApp.Model;
+﻿using QAChat.Model;
+using WpfAppCommon.Model;
 
-namespace ClipboardApp.Factory {
+namespace WpfAppCommon.Factory {
     public interface IClipboardDBController {
 
 
@@ -54,6 +54,11 @@ namespace ClipboardApp.Factory {
 
         public IEnumerable<ScriptItem> GetScriptItems();
 
+        public void UpsertPromptTemplate(PromptItem promptItem);
+
+        public ICollection<PromptItem> GetAllPromptTemplates();
+
+        public void DeletePromptTemplate(PromptItem promptItem);
         }
 
-    }
+}

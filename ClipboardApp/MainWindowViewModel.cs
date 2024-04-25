@@ -1,16 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Factory;
-using ClipboardApp.Factory.Default;
-using ClipboardApp.Model;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.View.PythonScriptView;
+using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
+using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon;
+using WpfAppCommon.Factory;
+using WpfAppCommon.Factory.Default;
+using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
@@ -520,7 +522,7 @@ namespace ClipboardApp {
                 // テキストを取得
                 string content = clipboardItemViewModel.ClipboardItem.Content;
                 // テキストを整形
-                content = AutoProcessCommand.FormatTextCommandExecute(content);
+                content = ClipboardItem.FormatTextCommandExecute(content);
                 // 整形したテキストをセット
                 clipboardItemViewModel.ClipboardItem.Content = content;
                 // 保存
@@ -543,7 +545,7 @@ namespace ClipboardApp {
             try {
                 IsIndeterminate = true;
                 // ファイルパスを分割
-                AutoProcessCommand.SplitFilePathCommandExecute(clipboardItem);
+                ClipboardItem.SplitFilePathCommandExecute(clipboardItem);
                 // 保存
                 clipboardItem.Save();
                 // 再描写
