@@ -3,6 +3,7 @@ using ClipboardApp.Utils;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Properties;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Factory.Default {
@@ -93,7 +94,7 @@ namespace ClipboardApp.Factory.Default {
                     // Get the cut/copied image.
                     System.Drawing.Image img = _clipboard.ClipboardImage;
                     // UseOCRが設定されている場合はOCRを実行
-                    if (Properties.Settings.Default.UseOCR) {
+                    if (WpfAppCommon.Properties.Settings.Default.UseOCR) {
                         try {
                             string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
                             ProcessClipboardItem(ClipboardContentTypes.Text, text, e);
@@ -123,10 +124,10 @@ namespace ClipboardApp.Factory.Default {
                 return;
             }
             // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
-            if (Properties.Settings.Default.MonitorTargetAppNames != "") {
+            if (WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames != "") {
                 // 大文字同士で比較
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
-                string upperMonitorTargetAppNames = Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
+                string upperMonitorTargetAppNames = WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
                 if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return;
                 }
@@ -144,7 +145,7 @@ namespace ClipboardApp.Factory.Default {
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
-            if (Properties.Settings.Default.AutoDescription) {
+            if (WpfAppCommon.Properties.Settings.Default.AutoDescription) {
                 try {
                     Tools.Info("自動タイトル設定処理を実行します");
                     AutoProcessCommand.CreateAutoDescription(item);
@@ -154,7 +155,7 @@ namespace ClipboardApp.Factory.Default {
             }
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_TAGが設定されている場合は自動でタグを設定する
-            if (Properties.Settings.Default.AutoTag) {
+            if (WpfAppCommon.Properties.Settings.Default.AutoTag) {
                 try {
                     Tools.Info("自動タグ設定処理を実行します");
                     AutoProcessCommand.CreateAutoTags(item);
@@ -165,7 +166,7 @@ namespace ClipboardApp.Factory.Default {
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
-            if (Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
+            if (WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
                     Tools.Info("自動マージ処理を実行します");
                     AutoProcessCommand.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);

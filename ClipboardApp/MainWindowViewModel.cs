@@ -127,7 +127,7 @@ namespace ClipboardApp {
             Instance = this;
 
             // Python処理機能の初期化
-            string pythonDLLPath = Properties.Settings.Default.PythonDllPath;
+            string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
             PythonExecutor.Init(pythonDLLPath);
 
             // コンテキストメニューの初期化

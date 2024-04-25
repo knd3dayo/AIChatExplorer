@@ -7,7 +7,7 @@ using System.IO;
 using System.Collections.ObjectModel;
 using WpfAppCommon.Utils;
 using WpfAppCommon.PythonIF;
-
+using WpfAppCommon.Properties;
 
 namespace ClipboardApp.View.ClipboardItemView
 {
@@ -286,19 +286,6 @@ namespace ClipboardApp.View.ClipboardItemView
 
             QAChat.MainWindow openAIChatWindow = new QAChat.MainWindow();
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
-            // ClipboardAppのプロパティをQAChatにコピー
-            Dictionary<string, string> settings = new Dictionary<string, string>();
-            settings["AzureOpenAI"] = Properties.Settings.Default.AzureOpenAI.ToString();
-            settings["OpenAIKey"] = Properties.Settings.Default.OpenAIKey;
-            settings["OpenAICompletionModel"] = Properties.Settings.Default.OpenAICompletionModel;
-            settings["OpenAIEmbeddingModel"] = Properties.Settings.Default.OpenAIEmbeddingModel;
-            settings["OpenAIEmbeddingBaseURL"] = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
-            settings["OpenAICompletionBaseURL"] = Properties.Settings.Default.OpenAICompletionBaseURL;
-            settings["VectorDBURL"] = Properties.Settings.Default.VectorDBURL;
-            settings["SourceDocumentURL"] = Properties.Settings.Default.SourceDocumentURL;
-            settings["PythonDllPath"] = Properties.Settings.Default.PythonDllPath;
-
-            mainWindowViewModel.SaveSettings(settings);
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsInternalProject = false;
             // InputTextに選択中のアイテムのContentを設定
@@ -350,7 +337,7 @@ namespace ClipboardApp.View.ClipboardItemView
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
             // PythonでItem.ContentからEntityを抽出
-            string spacyModel = Properties.Settings.Default.SpacyModel;
+            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
                 // LiteDBにタグを追加

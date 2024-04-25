@@ -54,7 +54,7 @@ namespace ClipboardApp.View.PythonScriptView {
                 throw new ClipboardAppException("テキスト以外のコンテンツはマスキングできません");
             }
             Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();
-            string spacyModel = Properties.Settings.Default.SpacyModel;
+            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, clipboardItem.Content);
             clipboardItem.Content = result;
 

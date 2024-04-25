@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using ClipboardApp.Properties;
 
 namespace ClipboardApp.Factory.Default {
     class DefaultBackupController : IBackupController {
@@ -12,7 +11,7 @@ namespace ClipboardApp.Factory.Default {
         }
         public void BackupNow() {
             string backupDir = "backup";
-            int backupGenerations = Settings.Default.BackupGeneration;
+            int backupGenerations = WpfAppCommon.Properties.Settings.Default.BackupGeneration;
 
             // バックアップ処理の初期化
             // バックアップ先のリポジトリのパスがない場合はディレクトリ作成を行い、リポジトリを初期化する

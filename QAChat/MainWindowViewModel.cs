@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using QAChat.PythonIF;
 using WpfAppCommon.Utils;
 using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
 
 namespace QAChat {
     public class MainWindowViewModel : ObservableObject {
@@ -115,12 +111,6 @@ namespace QAChat {
             }
         }
 
-        // SaveSettings
-        public void SaveSettings(Dictionary<string, string> settings) {
-            QAChatProperties.SaveSettings(settings);
-        }
-
-
         // チャットを送信するコマンド
         public SimpleDelegateCommand SendChatCommand => new SimpleDelegateCommand(SendChatCommandExecute);
 
@@ -128,11 +118,8 @@ namespace QAChat {
             IsIndeterminate = true;
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                // PythonExecutorが初期化されていない場合は初期化
-                if (!PythonExecutor.Initialized) {
-                    // プロジェクトが内部プロジェクトでない場合はPythonEngineはすでに初期化済み
-                    PythonExecutor.Init(!IsInternalProject);
-                }
+                string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+                PythonExecutor.Init(pythonDLLPath);
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 // PromptTemplateがある場合はPromptTemplateを先頭に追加
                 string prompt = "";
@@ -150,12 +137,12 @@ namespace QAChat {
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 if (Mode == (int)ModeEnum.LangChainWithVectorDB) {
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonNetFunctions?.LangChainOpenAIChat(prompt, ChatItems);
+                        result = WpfAppCommon.PythonIF.PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems);
                     });
                 } else {
                     // モードがNormalの場合はOpenAIChatでチャットを送信
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonNetFunctions?.OpenAIChat(prompt, ChatItems);
+                        result = PythonExecutor.PythonFunctions?.OpenAIChat(prompt, ChatItems);
                     });
                 }
 

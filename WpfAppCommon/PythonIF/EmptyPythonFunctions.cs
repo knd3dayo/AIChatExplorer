@@ -43,5 +43,8 @@ namespace ClipboardApp.PythonIF {
         public HashSet<string> ExtractEntity(string SpacyModel, string text) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
     }
 }

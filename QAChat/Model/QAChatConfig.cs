@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QAChat.Model {
-    public class QAChatProperties {
+namespace WpfAppCommon.Model {
+    public class QAChatConfig {
 
         public static  Dictionary<string, string> CreateOpenAIProperties() {
             Dictionary<string, string> dict = new Dictionary<string, string>();

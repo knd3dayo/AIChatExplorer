@@ -21,7 +21,7 @@ namespace QAChat {
             grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
             grid1.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
 
-            for (int i = 0; i < Properties.Settings.Default.Properties.Count; i++)
+            for (int i = 0; i < WpfAppCommon.Properties.Settings.Default.Properties.Count; i++)
             {
                 RowDefinition row = new RowDefinition();
                 row.Height = GridLength.Auto;
@@ -29,7 +29,7 @@ namespace QAChat {
 
             }
             int rowCounter = 0;
-            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
+            foreach (SettingsProperty currentProperty in WpfAppCommon.Properties.Settings.Default.Properties)
             {
                 TextBlock block = new TextBlock();
                 block.Text = currentProperty.Name;
@@ -39,7 +39,7 @@ namespace QAChat {
                 grid1.Children.Add(block);
 
                 TextBox textBox = new TextBox();
-                textBox.Text = Properties.Settings.Default[currentProperty.Name].ToString();
+                textBox.Text = WpfAppCommon.Properties.Settings.Default[currentProperty.Name].ToString();
                 textBox.Margin = new Thickness(5);
                 textBox.Name = currentProperty.Name;
                 Grid.SetRow(textBox, rowCounter);
@@ -53,24 +53,24 @@ namespace QAChat {
         }
         public void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            foreach (SettingsProperty currentProperty in Properties.Settings.Default.Properties)
+            foreach (SettingsProperty currentProperty in WpfAppCommon.Properties.Settings.Default.Properties)
             {
                 // currentPropertyの型がbool型の場合
                 if (currentProperty.PropertyType == typeof(bool))
                 {
-                    Properties.Settings.Default[currentProperty.Name] = bool.Parse(((TextBox)grid1.FindName(currentProperty.Name)).Text);
+                    WpfAppCommon.Properties.Settings.Default[currentProperty.Name] = bool.Parse(((TextBox)grid1.FindName(currentProperty.Name)).Text);
                 }
                 // currentPropertyの型がint型の場合
                 else if (currentProperty.PropertyType == typeof(int))
                 {
-                    Properties.Settings.Default[currentProperty.Name] = int.Parse(((TextBox)grid1.FindName(currentProperty.Name)).Text);
+                    WpfAppCommon.Properties.Settings.Default[currentProperty.Name] = int.Parse(((TextBox)grid1.FindName(currentProperty.Name)).Text);
                 }
                 else
                 {
-                    Properties.Settings.Default[currentProperty.Name] = ((TextBox)grid1.FindName(currentProperty.Name)).Text;
+                    WpfAppCommon.Properties.Settings.Default[currentProperty.Name] = ((TextBox)grid1.FindName(currentProperty.Name)).Text;
                 }
             }
-            Properties.Settings.Default.Save();
+            WpfAppCommon.Properties.Settings.Default.Save();
             this.Close();
         }
         public void btnCancel_Click(object sender, RoutedEventArgs e)

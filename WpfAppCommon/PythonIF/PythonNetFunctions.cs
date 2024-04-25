@@ -1,10 +1,9 @@
 ﻿using System.Drawing;
 using System.IO;
-using WpfAppCommon.Utils;
-using ClipboardApp.PythonIF;
 using Python.Runtime;
-using WpfAppCommon.Model;
 using QAChat.Model;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.PythonIF {
     public enum SpacyEntityNames {
@@ -312,7 +311,7 @@ namespace WpfAppCommon.PythonIF {
                     throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
                 }
                 // open_ai_chat関数を呼び出す
-                PyDict pyDict = langchain_chat(QAChatProperties.CreateOpenAIProperties(), prompt, chatHistory);
+                PyDict pyDict = langchain_chat(WpfAppCommon.Model.OpenAIConfig.CreateOpenAIProperties(), prompt, chatHistory);
                 // outputを取得
                 string? resultString = pyDict["output"].ToString();
                 if (resultString == null) {
@@ -368,7 +367,7 @@ namespace WpfAppCommon.PythonIF {
                     throw new ThisApplicationException("Pythonスクリプトファイルに、openai_embedding関数が見つかりません");
                 }
                 // open_ai_chat関数を呼び出す
-                open_ai_embedding(text, OpenAIConfig.CreateOpenAIConfig());
+                open_ai_embedding(text, WpfAppCommon.Model.OpenAIConfig.CreateOpenAIProperties());
                 // System.Windows.MessageBox.Show(result);
             });
         }
@@ -453,5 +452,33 @@ namespace WpfAppCommon.PythonIF {
                 load_faiss_index();
             });
         }
+        // 通常のOpenAIChatを実行する
+        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            // ChatResultを作成
+            ChatResult chatResult = new ChatResult();
+            // promptからChatItemを作成
+            ChatItem chatItem = new ChatItem(ChatItem.UserRole, prompt);
+            // chatHistoryをコピーしてChatItemを追加
+            List<ChatItem> chatHistoryList = new List<ChatItem>(chatHistory);
+            chatHistoryList.Add(chatItem);
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.QAChatScript, (ps) => { 
+                    // Pythonスクリプトの関数を呼び出す
+                    dynamic? openai_chat = ps?.Get("openai_chat");
+                    // open_ai_chatが呼び出せない場合は例外をスロー
+                    if (openai_chat == null) {
+                        throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
+                    }
+                    string json_string = ChatItem.ToJson(chatHistoryList);
+
+                    // open_ai_chat関数を呼び出す
+                    string resultString = openai_chat(OpenAIConfig.CreateOpenAIProperties(), json_string);
+                    // ChatResultに設定
+                    chatResult.Response = resultString;
+            });
+            return chatResult;
+
+        }
+
     }
 }
