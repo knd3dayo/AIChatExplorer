@@ -1,6 +1,7 @@
 ﻿using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
 using LiteDB;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model {
 

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model {
     public class ClipboardAppMenuItem {

@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Python.Runtime;
 using QAChat.Model;
-using QAChat.Utils;
+using WpfAppCommon.Utils;
 
 namespace QAChat.PythonIF {
 

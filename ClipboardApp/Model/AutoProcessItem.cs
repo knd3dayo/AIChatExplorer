@@ -3,6 +3,7 @@ using ClipboardApp.Factory.Default;
 using ClipboardApp.Utils;
 using LiteDB;
 using WK.Libraries.SharpClipboardNS;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model
 {

@@ -2,7 +2,7 @@
 using System.Windows;
 using ClipboardApp.Model;
 
-namespace ClipboardApp.Utils {
+namespace WpfAppCommon.Utils {
     public class Tools {
         public static StatusText? StatusText { get; set; }
 

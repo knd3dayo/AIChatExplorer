@@ -2,6 +2,7 @@
 using ClipboardApp.Model;
 using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {
     class EditPythonScriptWindowViewModel : ObservableObject {
@@ -30,7 +31,7 @@ namespace ClipboardApp.View.PythonScriptView {
 
             }
             // Scriptの保存
-            PythonExecutor.SaveScriptItem(ScriptItem);
+            ScriptItem.SaveScriptItem(ScriptItem);
 
             // ウィンドウを閉じる
             if (parameter is EditPythonScriptWindow editScriptWindow) {

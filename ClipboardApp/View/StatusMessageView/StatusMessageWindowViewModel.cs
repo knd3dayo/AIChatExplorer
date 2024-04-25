@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Utils;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.StatusMessageView {
     public class StatusMessageWindowViewModel : ObservableObject{

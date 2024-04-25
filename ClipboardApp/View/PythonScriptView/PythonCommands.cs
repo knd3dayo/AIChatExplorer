@@ -26,7 +26,7 @@ namespace ClipboardApp.View.PythonScriptView {
         public static void DeleteScriptCommandExecute(object obj) {
             if (obj is ScriptItem) {
                 ScriptItem scriptItem = (ScriptItem)obj;
-                PythonExecutor.DeleteScriptItem(scriptItem);
+                ScriptItem.DeleteScriptItem(scriptItem);
             }
         }
         // 自動処理でテキストを抽出」を実行するコマンド
@@ -62,9 +62,14 @@ namespace ClipboardApp.View.PythonScriptView {
         }
         // 自動実行でPythonスクリプトを実行するコマンド
         public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItem clipboardItem) {
+            string inputJson = ClipboardItem.ToJson(clipboardItem);
 
-            PythonExecutor.PythonFunctions.RunScript(scriptItem, clipboardItem);
-            MainWindowViewModel.StatusText.Text = "Pythonスクリプトを実行しました";
+            string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, inputJson);
+            ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
+                MainWindowViewModel.StatusText.Text = "Pythonスクリプトを実行しました";
+
+            });
+            resultItem?.CopyTo(clipboardItem);
 
         }
 

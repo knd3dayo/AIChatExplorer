@@ -6,6 +6,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.Factory.Default;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {

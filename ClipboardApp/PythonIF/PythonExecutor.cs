@@ -43,11 +43,6 @@ namespace ClipboardApp.PythonIF
             if (PythonExecution == PythonExecutionType.PythonNet) {
                 PythonFunctions = new PythonNetFunctions();
             }
-
-            // ClipboardAppSettingsのPythonExecutionがInternalFlaskの場合はFlaskアプリを起動する
-            if (PythonExecution == PythonExecutionType.InternalFlask) {
-                PythonFunctions = new FlaskPythonFunctions();
-            }
         }
 
 
@@ -67,20 +62,6 @@ namespace ClipboardApp.PythonIF
             string script = File.ReadAllText(file.FullName);
 
             return script;
-        }
-        public static ObservableCollection<ScriptItem> ScriptItems {
-            get {
-                var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
-                return new ObservableCollection<ScriptItem>(collection.FindAll());
-            }
-        }
-        public static void SaveScriptItem(ScriptItem scriptItem) {
-            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
-            collection.Upsert(scriptItem);
-        }
-        public static void DeleteScriptItem(ScriptItem scriptItem) {
-            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
-            collection.Delete(scriptItem.Id);
         }
     }
 

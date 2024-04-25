@@ -2,6 +2,7 @@
 using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
 using WK.Libraries.SharpClipboardNS;
+using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Factory.Default {

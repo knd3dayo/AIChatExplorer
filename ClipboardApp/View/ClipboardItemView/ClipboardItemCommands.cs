@@ -9,6 +9,7 @@ using ClipboardApp.View.TagView;
 using System.IO;
 using System.Collections.ObjectModel;
 using ClipboardApp.Factory.Default;
+using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp.View.ClipboardItemView
@@ -265,8 +266,13 @@ namespace ClipboardApp.View.ClipboardItemView
             ScriptItem scriptItem = (ScriptItem)obj;
             ClipboardItem clipboardItem = Instance.SelectedItem.ClipboardItem;
             try {
-                PythonExecutor.PythonFunctions.RunScript(scriptItem, clipboardItem);
-                MainWindowViewModel.StatusText.Text = "Pythonスクリプトを実行しました";
+                // clipboardItemをJsonに変換
+                string clipboardItemJson = ClipboardItem.ToJson(clipboardItem);
+                // Pythonスクリプトを実行
+                string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, clipboardItemJson);
+                // JsonからClipboardItemに変換
+                ClipboardItem? resultItem = ClipboardItem.FromJson(result, Tools.DefaultAction);
+                
                 // 保存
                 clipboardItem.Save();
 

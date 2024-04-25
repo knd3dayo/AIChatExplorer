@@ -6,7 +6,6 @@ using System.Text.Unicode;
 namespace QAChat.Model {
     public class ChatItem {
 
-
         public static string SystemRole = "system";
         public static string AssistantRole = "assistant";
         public static string UserRole = "user";

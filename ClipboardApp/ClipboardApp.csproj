@@ -62,6 +62,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QAChat\QAChat.csproj" />
+    <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

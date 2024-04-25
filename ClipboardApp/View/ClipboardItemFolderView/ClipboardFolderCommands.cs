@@ -7,6 +7,7 @@ using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SearchView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WK.Libraries.SharpClipboardNS;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {

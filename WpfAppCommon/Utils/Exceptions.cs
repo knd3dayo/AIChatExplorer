@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QAChat.Utils
+namespace WpfAppCommon.Utils
 {
     public class ThisApplicationException : Exception
     {

@@ -5,7 +5,6 @@ using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
 using ClipboardApp.PythonIF;
-using ClipboardApp.Utils;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
@@ -13,6 +12,7 @@ using ClipboardApp.View.PythonScriptView;
 using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp {
@@ -165,7 +165,7 @@ namespace ClipboardApp {
                 })));
 
             // Pythonスクリプト(ユーザー定義)
-            foreach (ScriptItem scriptItem in PythonExecutor.ScriptItems) {
+            foreach (ScriptItem scriptItem in ScriptItem.ScriptItems) {
 
                 pythonMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem(scriptItem.Description, new SimpleDelegateCommand((parameter) => {
                     ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute(scriptItem);

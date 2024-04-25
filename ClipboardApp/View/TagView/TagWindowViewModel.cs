@@ -4,6 +4,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView
 {

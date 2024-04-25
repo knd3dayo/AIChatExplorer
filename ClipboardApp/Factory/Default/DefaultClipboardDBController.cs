@@ -2,6 +2,7 @@
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using LiteDB;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {

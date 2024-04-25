@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using Python.Runtime;
-using QAChat.Utils;
+using WpfAppCommon.Utils;
 
 namespace QAChat.PythonIF
 {
@@ -25,7 +25,7 @@ namespace QAChat.PythonIF
                 if (!File.Exists(Runtime.PythonDLL)) {
                     string message = "PythonDLLが見つかりません。";
                     message += "\n" + "PythonDLLのパスを確認してください:";
-                    Tools.ShowMessage(message + Runtime.PythonDLL);
+                    Tools.Error(message + Runtime.PythonDLL);
                     return;
                 }
 
@@ -37,7 +37,7 @@ namespace QAChat.PythonIF
                 } catch (TypeInitializationException e) {
                     string message = "Pythonの初期化に失敗しました。" + e.Message;
                     message += "\n" + "PythonDLLのパスを確認してください。";
-                    Tools.ShowMessage(message);
+                    Tools.Error(message);
                 }
             }
             PythonNetFunctions = new PythonNetFunctions();

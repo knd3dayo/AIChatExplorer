@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardApp", "ClipboardAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QAChat", "QAChat\QAChat.csproj", "{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAppCommon", "WpfAppCommon\WpfAppCommon.csproj", "{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,7 +36,7 @@ namespace ClipboardApp.PythonIF {
             throw new ClipboardAppException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
 
-        public void RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem) {
+        public string RunScript(string script, string inputJson) {
             throw new ClipboardAppException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
         public HashSet<string> ExtractEntity(string text) {

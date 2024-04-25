@@ -7,6 +7,9 @@ using LiteDB;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView;
+using WpfAppCommon.Utils;
+using ClipboardApp.Factory.Default;
+using System.Collections.ObjectModel;
 
 namespace ClipboardApp.Model
 {
@@ -35,6 +38,23 @@ namespace ClipboardApp.Model
             Content = content;
             Type = type;
         }
+        public static ObservableCollection<ScriptItem> ScriptItems {
+            get {
+                var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+                return new ObservableCollection<ScriptItem>(collection.FindAll());
+            }
+        }
+        public static void SaveScriptItem(ScriptItem scriptItem) {
+            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+            collection.Upsert(scriptItem);
+        }
+        public static void DeleteScriptItem(ScriptItem scriptItem) {
+            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+            collection.Delete(scriptItem.Id);
+        }
+
+
+
         // コンテキストメニューの「削除」の実行用コマンド
         public static SimpleDelegateCommand DeleteScriptCommand = SelectPythonScriptWindowViewModel.DeleteScriptCommandExecute;
         // コンテキストメニューの「スクリプト」の実行用コマンド

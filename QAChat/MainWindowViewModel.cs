@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using QAChat.PythonIF;
-using QAChat.Utils;
+using WpfAppCommon.Utils;
 using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
 
@@ -159,7 +159,7 @@ namespace QAChat {
                 }
 
                 if (result == null) {
-                    Tools.ShowMessage("チャットの送信に失敗しました。");
+                    Tools.Error("チャットの送信に失敗しました。");
                     return;
                 }
                 // inputTextをクリア
@@ -173,7 +173,7 @@ namespace QAChat {
                 }
 
             } catch (Exception e) {
-                Tools.ShowMessage($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+                Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
             }finally {
                 IsIndeterminate = false;
             }

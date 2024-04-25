@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using QAChat.Utils;
+using WpfAppCommon.Utils;
 
 namespace QAChat.View.PromptTemplateWindow {
     class EditPromptItemWindowViewModel : ObservableObject {

@@ -5,6 +5,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {

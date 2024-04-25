@@ -49,8 +49,7 @@ namespace ClipboardApp.PythonIF
 
         public void LoadFaissIndex();
 
-
-        public void RunScript(ScriptItem scriptItem, ClipboardItem clipboardItem);
+        public string RunScript(string script, string input);
 
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する
         public HashSet<string> ExtractEntity(string text);

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace QAChat.Utils
+namespace WpfAppCommon.Utils
 {
     // Create a class that implements ICommand and accepts a delegate.
     public class SimpleDelegateCommand : ICommand

@@ -2,6 +2,7 @@
 using ClipboardApp.Model;
 using ClipboardApp.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject {

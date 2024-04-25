@@ -3,7 +3,7 @@ using System.Reflection.Metadata;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using QAChat.Utils;
+using WpfAppCommon.Utils;
 using QAChat.View.PromptTemplateWindow;
 
 namespace QAChat.View.PromptTemplateWindow {

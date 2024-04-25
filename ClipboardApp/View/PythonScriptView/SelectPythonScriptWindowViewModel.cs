@@ -4,17 +4,18 @@ using LiteDB;
 using ClipboardApp.Model;
 using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView
 {
     public class SelectPythonScriptWindowViewModel : ObservableObject
     {
-        public static ObservableCollection<ScriptItem> ScriptItems { get; } = PythonExecutor.ScriptItems;
+        public static ObservableCollection<ScriptItem> ScriptItems { get; } = ScriptItem.ScriptItems;
 
         // Scriptを削除したときの処理
         public static SimpleDelegateCommand DeleteScriptCommandExecute => new ((parameter) => {
             if (parameter is ScriptItem scriptItem) {
-                PythonExecutor.DeleteScriptItem(scriptItem);
+                ScriptItem.DeleteScriptItem(scriptItem);
                 ScriptItems.Remove(scriptItem);
             }
         });
