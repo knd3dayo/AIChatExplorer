@@ -1,15 +1,12 @@
-﻿using System.Collections;
-using System.Windows;
-using WK.Libraries.SharpClipboardNS;
+﻿using System.Windows;
 using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
 using System.IO;
 using System.Collections.ObjectModel;
-using ClipboardApp.Factory.Default;
 using WpfAppCommon.Utils;
+using WpfAppCommon.PythonIF;
 
 
 namespace ClipboardApp.View.ClipboardItemView
@@ -353,7 +350,8 @@ namespace ClipboardApp.View.ClipboardItemView
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
             // PythonでItem.ContentからEntityを抽出
-            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(item.Content);
+            string spacyModel = Properties.Settings.Default.SpacyModel;
+            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
                 // LiteDBにタグを追加
                 ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(entity);

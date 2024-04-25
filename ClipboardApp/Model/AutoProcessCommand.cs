@@ -1,12 +1,7 @@
-﻿using System.IO;
-using System.Linq;
-using WK.Libraries.SharpClipboardNS;
-using ClipboardApp.PythonIF;
-using ClipboardApp.Utils;
-using QAChat.Model;
-using ClipboardApp.View.ClipboardItemView;
+﻿using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
+using WpfAppCommon.PythonIF;
 
 namespace ClipboardApp.Model {
     public class AutoProcessCommand {

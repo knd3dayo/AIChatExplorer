@@ -11,12 +11,6 @@
   <ItemGroup>
     <None Remove="clipboard_app_utils.py" />
     <None Remove="NLog.config" />
-    <None Remove="python\clipboard_app_faiss.py" />
-    <None Remove="python\clipboard_app_openai.py" />
-    <None Remove="python\clipboard_app_spacy.py" />
-    <None Remove="python\clipboard_app_sqlite.py" />
-    <None Remove="python\flask_app.py" />
-    <None Remove="python\template.py" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,30 +28,6 @@
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="pythonnet" Version="3.1.0-preview2024-04-07" />
     <PackageReference Include="SharpClipboard" Version="3.5.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="python\clipboard_app_faiss.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_spacy.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_sqlite.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_utils.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\flask_app.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_openai.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\template.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

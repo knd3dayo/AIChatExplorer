@@ -12,6 +12,7 @@ using QAChat.PythonIF;
 using WpfAppCommon.Utils;
 using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
+using WpfAppCommon.Model;
 
 namespace QAChat {
     public class MainWindowViewModel : ObservableObject {

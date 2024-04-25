@@ -9,40 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="python\env_to_props.py" />
-    <None Remove="python\langchain_openai_client.py" />
-    <None Remove="python\langchain_vector_db.py" />
-    <None Remove="python\openai_util.py" />
-    <None Remove="python\qachat_util.py" />
-    <None Remove="python\retrieval_qa_util.py" />
-    <None Remove="python\tools.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="python\env_to_props.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_openai_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\openai_util.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\qachat_util.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\retrieval_qa_util.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\tools.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="MaterialDesignThemes" Version="5.0.1-ci609" />

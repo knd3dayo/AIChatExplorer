@@ -1,8 +1,8 @@
 ﻿using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
 using QAChat.Model;
-using WK.Libraries.SharpClipboardNS;
+using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
 
 namespace ClipboardApp.View.PythonScriptView {
     public class PythonCommands {
@@ -54,7 +54,8 @@ namespace ClipboardApp.View.PythonScriptView {
                 throw new ClipboardAppException("テキスト以外のコンテンツはマスキングできません");
             }
             Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();
-            string result = PythonExecutor.PythonFunctions.GetMaskedString(clipboardItem.Content);
+            string spacyModel = Properties.Settings.Default.SpacyModel;
+            string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, clipboardItem.Content);
             clipboardItem.Content = result;
 
             MainWindowViewModel.StatusText.Text = "データをマスキングしました";

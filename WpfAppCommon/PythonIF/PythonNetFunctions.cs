@@ -1,14 +1,12 @@
-﻿using System.Collections.Concurrent;
-using System.Drawing;
-using Python.Runtime;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
+﻿using System.Drawing;
 using System.IO;
-using QAChat.Model;
 using WpfAppCommon.Utils;
+using ClipboardApp.PythonIF;
+using Python.Runtime;
+using WpfAppCommon.Model;
+using QAChat.Model;
 
-namespace ClipboardApp.PythonIF {
-
+namespace WpfAppCommon.PythonIF {
     public enum SpacyEntityNames {
 
         PERSON,
@@ -28,7 +26,9 @@ namespace ClipboardApp.PythonIF {
         ORDINAL,
         CARDINAL
     }
+}
 
+namespace WpfAppCommon.PythonIF {
     public class PythonTask(Action action) : Task(action) {
 
 
@@ -51,9 +51,7 @@ namespace ClipboardApp.PythonIF {
             return pyModule;
         }
 
-        private BlockingCollection<PythonTask> blockingCollection = new BlockingCollection<PythonTask>();
-        private QAChat.PythonIF.PythonNetFunctions QAChatPythonNetFunctions;
-        private void InitPythonNet() {
+        private void InitPythonNet(string pythonDLLPath) {
             // Pythonスクリプトを実行するための準備
 
             // 既に初期化されている場合は初期化しない
@@ -62,7 +60,7 @@ namespace ClipboardApp.PythonIF {
             }
 
             // PythonDLLのパスを設定
-            Runtime.PythonDLL = Properties.Settings.Default.PythonDllPath;
+            Runtime.PythonDLL = pythonDLLPath;
 
             // Runtime.PythonDLLのファイルが存在するかチェック
             if (!File.Exists(Runtime.PythonDLL)) {
@@ -83,9 +81,8 @@ namespace ClipboardApp.PythonIF {
             }
         }
 
-        public PythonNetFunctions() {
-            InitPythonNet();
-            QAChatPythonNetFunctions = new QAChat.PythonIF.PythonNetFunctions();
+        public PythonNetFunctions(string pythonDLLPath) {
+            InitPythonNet(pythonDLLPath);
         }
 
         public void ExecPythonScript(string scriptPath, Action<PyModule> action) {
@@ -97,20 +94,6 @@ namespace ClipboardApp.PythonIF {
             }
         }
 
-        private Dictionary<string, string> CreateOpenAIProperties() {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("OpenAIKey", Properties.Settings.Default.OpenAIKey);
-            dict.Add("OpenAICompletionModel", Properties.Settings.Default.OpenAICompletionModel);
-            dict.Add("OpenAIEmbeddingModel", Properties.Settings.Default.OpenAIEmbeddingModel);
-            dict.Add("AzureOpenAI", Properties.Settings.Default.AzureOpenAI.ToString());
-            if (Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                dict.Add("OpenAICompletionBaseURL", Properties.Settings.Default.OpenAICompletionBaseURL);
-            }
-            if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
-                dict.Add("OpenAIEmbeddingBaseURL", Properties.Settings.Default.OpenAIEmbeddingBaseURL);
-            }
-            return dict;
-        }
 
 
         public static string CreatePythonExceptionMessage(PythonException e) {
@@ -133,7 +116,7 @@ namespace ClipboardApp.PythonIF {
                 dynamic? extract_text = ps?.Get("extract_text");
                 // extract_textが呼び出せない場合は例外をスロー
                 if (extract_text == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにextract_text関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_text関数が見つかりません");
                 }
                 // extract_text関数を呼び出す
                 result = extract_text(path);
@@ -145,28 +128,27 @@ namespace ClipboardApp.PythonIF {
 
         // IPythonFunctionsのメソッドを実装
         // データをマスキングする
-        public string GetMaskedString(string text) {
+        public string GetMaskedString(string SpacyModel, string text) {
             List<string> beforeTextList = new List<string>() { text };
-            MaskedData maskedData = GetMaskedData(beforeTextList);
+            MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
             string result = maskedData.AfterTextList[0];
             return result;
         }
 
         // IPythonFunctionsのメソッドを実装
         // マスキングされたデータを元に戻す
-        public string GetUnmaskedString(string maskedText) {
+        public string GetUnmaskedString(string SpacyModel, string maskedText) {
             List<string> beforeTextList = new List<string>() { maskedText };
-            MaskedData maskedData = GetMaskedData(beforeTextList);
+            MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
             string result = maskedData.AfterTextList[0];
             return result;
         }
 
-        public MaskedData GetMaskedData(List<string> beforeTextList) {
-            // PropertiesからSPACY_MODEL_NAMEを取得
-            string SpacyModel = Properties.Settings.Default.SpacyModel;
+        public MaskedData GetMaskedData(string SpacyModel, List<string> beforeTextList) {
+
             // SPACY_MODEL_NAMEが空の場合は例外をスロー
             if (string.IsNullOrEmpty(SpacyModel)) {
-                throw new ClipboardAppException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
+                throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
             }
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
             Dictionary<string, string> dict = new Dictionary<string, string> {
@@ -180,18 +162,18 @@ namespace ClipboardApp.PythonIF {
                 dynamic? mask_data = ps?.Get("mask_data");
                 // mask_dataが呼び出せない場合は例外をスロー
                 if (mask_data == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルに、mask_data関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルに、mask_data関数が見つかりません");
                 }
                 // 結果用のDictionaryを作成
                 PyDict resultDict = new PyDict();
                 resultDict = mask_data(beforeTextList, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ClipboardAppException("マスキング結果がありません");
+                    throw new ThisApplicationException("マスキング結果がありません");
                 }
                 PyObject? textDictObject = resultDict.GetItem("TEXT");
                 if (textDictObject == null) {
-                    throw new ClipboardAppException("マスキングした文字列取得に失敗しました");
+                    throw new ThisApplicationException("マスキングした文字列取得に失敗しました");
                 }
                 // 
                 PyDict textDict = textDictObject.As<PyDict>();
@@ -209,7 +191,7 @@ namespace ClipboardApp.PythonIF {
                     PyObject? entities;
                     try {
                         entities = resultDict.GetItem(entityNameString);
-                    }catch (PythonException) {
+                    } catch (PythonException) {
                         entities = null;
                         return;
                     }
@@ -223,13 +205,8 @@ namespace ClipboardApp.PythonIF {
         }
 
         // GetUnMaskedDataの実装
-        public MaskedData GetUnMaskedData(List<string> maskedTextList) {
-            // PropertiesからSPACY_MODEL_NAMEを取得
-            string SpacyModel = Properties.Settings.Default.SpacyModel;
-            // SPACY_MODEL_NAMEが空の場合は例外をスロー
-            if (string.IsNullOrEmpty(SpacyModel)) {
-                throw new ClipboardAppException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
-            }
+        public MaskedData GetUnMaskedData(string SpacyModel, List<string> maskedTextList) {
+
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
             Dictionary<string, string> dict = new Dictionary<string, string> {
                             { "SpacyModel", SpacyModel }
@@ -240,18 +217,18 @@ namespace ClipboardApp.PythonIF {
                 dynamic? unmask_data = ps?.Get("unmask_data");
                 // unmask_dataが呼び出せない場合は例外をスロー
                 if (unmask_data == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルに、unmask_data関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルに、unmask_data関数が見つかりません");
                 }
                 // 結果用のDictionaryを作成
                 PyDict resultDict = new PyDict();
                 resultDict = unmask_data(actionResult, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ClipboardAppException("マスキング解除結果がありません");
+                    throw new ThisApplicationException("マスキング解除結果がありません");
                 }
                 PyObject? textListObject = resultDict.GetItem("TEXT");
                 if (textListObject == null) {
-                    throw new ClipboardAppException("マスキング解除した文字列取得に失敗しました");
+                    throw new ThisApplicationException("マスキング解除した文字列取得に失敗しました");
                 }
                 PyList textList = textListObject.As<PyList>();
                 foreach (PyObject item in textList) {
@@ -277,7 +254,7 @@ namespace ClipboardApp.PythonIF {
             });
             return actionResult;
         }
-        public string ExtractTextFromImage(System.Drawing.Image image) {
+        public string ExtractTextFromImage(Image image) {
             // Pythonスクリプトを実行する
             string result = "";
             ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
@@ -285,13 +262,13 @@ namespace ClipboardApp.PythonIF {
                 dynamic? extract_text_from_image = ps?.Get("extract_text_from_image");
                 // extract_text_from_imageが呼び出せない場合は例外をスロー
                 if (extract_text_from_image == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにextract_text_from_image関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_text_from_image関数が見つかりません");
                 }
                 // extract_text_from_image関数を呼び出す
                 ImageConverter imageConverter = new ImageConverter();
                 object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]));
                 if (bytesObject == null) {
-                    throw new ClipboardAppException("画像のバイト列に変換できません");
+                    throw new ThisApplicationException("画像のバイト列に変換できません");
                 }
                 byte[] bytes = (byte[])bytesObject;
                 result = extract_text_from_image(bytes);
@@ -325,8 +302,61 @@ namespace ClipboardApp.PythonIF {
         }
         // IPythonFunctionsのメソッドを実装
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            // Pythonスクリプトの関数を呼び出す
+            ChatResult chatResult = new ChatResult();
 
-            return QAChatPythonNetFunctions.LangChainOpenAIChat(prompt, chatHistory);
+            ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
+                dynamic? langchain_chat = ps?.Get("langchain_chat");
+                // open_ai_chatが呼び出せない場合は例外をスロー
+                if (langchain_chat == null) {
+                    throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
+                }
+                // open_ai_chat関数を呼び出す
+                PyDict pyDict = langchain_chat(QAChatProperties.CreateOpenAIProperties(), prompt, chatHistory);
+                // outputを取得
+                string? resultString = pyDict["output"].ToString();
+                if (resultString == null) {
+                    throw new ThisApplicationException("OpenAIの応答がありません");
+                }
+                // verboseを取得
+                string? verbose = pyDict.GetItem("verbose")?.ToString();
+                if (verbose != null) {
+                    chatResult.Verbose = verbose;
+                }
+
+                // referenced_contentsを取得
+                PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
+                if (referencedContents != null) {
+                    List<string> referencedContentsList = new List<string>();
+                    foreach (PyObject item in referencedContents) {
+                        string? itemString = item.ToString();
+                        if (itemString == null) {
+                            continue;
+                        }
+                        referencedContentsList.Add(itemString);
+                    }
+                    chatResult.ReferencedContents = referencedContentsList;
+                }
+                // referenced_file_pathを取得
+                PyList? referencedFilePath = pyDict.GetItem("page_source_list") as PyList;
+                if (referencedFilePath != null) {
+                    List<string> referencedFilePathList = new List<string>();
+                    foreach (PyObject item in referencedFilePath) {
+                        string? itemString = item.ToString();
+                        if (itemString == null) {
+                            continue;
+                        }
+                        referencedFilePathList.Add(itemString);
+                    }
+                    chatResult.ReferencedFilePath = referencedFilePathList;
+
+
+                }
+                // ChatResultに設定
+                chatResult.Response = resultString;
+            });
+            return chatResult;
+
         }
         public void OpenAIEmbedding(string text) {
 
@@ -335,10 +365,10 @@ namespace ClipboardApp.PythonIF {
                 dynamic? open_ai_embedding = ps?.Get("openai_embedding");
                 // open_ai_chatが呼び出せない場合は例外をスロー
                 if (open_ai_embedding == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルに、openai_embedding関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルに、openai_embedding関数が見つかりません");
                 }
                 // open_ai_chat関数を呼び出す
-                open_ai_embedding(text, CreateOpenAIProperties());
+                open_ai_embedding(text, OpenAIConfig.CreateOpenAIConfig());
                 // System.Windows.MessageBox.Show(result);
             });
         }
@@ -347,12 +377,12 @@ namespace ClipboardApp.PythonIF {
         // スクリプトの内容とJSON文字列を引数に取り、結果となるJSON文字列を返す
         public string RunScript(string script, string input) {
             string resultString = "";
-            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript,(ps) => {
+            ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? run_script = ps?.Get("run_script");
                 // run_scriptが呼び出せない場合は例外をスロー
                 if (run_script == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにrun_script関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにrun_script関数が見つかりません");
                 }
                 // run_script関数を呼び出す
                 resultString = run_script(script, input);
@@ -362,17 +392,15 @@ namespace ClipboardApp.PythonIF {
         }
 
         // IPythonFunctionsのメソッドを実装
-        public HashSet<string> ExtractEntity(string text) {
+        public HashSet<string> ExtractEntity(string SpacyModel, string text) {
 
             HashSet<string> actionResult = new HashSet<string>();
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.ClipboardAppUtilsScript, (ps) => {
 
-                // PropertiesからSPACY_MODEL_NAMEを取得
-                string SpacyModel = Properties.Settings.Default.SpacyModel;
                 // SPACY_MODEL_NAMEが空の場合は例外をスロー
                 if (string.IsNullOrEmpty(SpacyModel)) {
-                    throw new ClipboardAppException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
+                    throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
                 }
 
                 Dictionary<string, string> dict = new Dictionary<string, string> {
@@ -383,7 +411,7 @@ namespace ClipboardApp.PythonIF {
                 dynamic? extract_entity = ps?.Get("extract_entity");
                 // extract_entityが呼び出せない場合は例外をスロー
                 if (extract_entity == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにextract_entity関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_entity関数が見つかりません");
                 }
                 PyIterable pyIterable = extract_entity(text, dict);
                 // PythonのリストをC#のHashSetに変換
@@ -405,7 +433,7 @@ namespace ClipboardApp.PythonIF {
                 dynamic? save_faiss_index = ps?.Get("save_faiss_index");
                 // save_faiss_indexが呼び出せない場合は例外をスロー
                 if (save_faiss_index == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにsave_faiss_index関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにsave_faiss_index関数が見つかりません");
                 }
                 // save_faiss_index関数を呼び出す
                 save_faiss_index();
@@ -419,7 +447,7 @@ namespace ClipboardApp.PythonIF {
                 dynamic? load_faiss_index = ps?.Get("load_faiss_index");
                 // load_faiss_indexが呼び出せない場合は例外をスロー
                 if (load_faiss_index == null) {
-                    throw new ClipboardAppException("Pythonスクリプトファイルにload_faiss_index関数が見つかりません");
+                    throw new ThisApplicationException("Pythonスクリプトファイルにload_faiss_index関数が見つかりません");
                 }
                 // load_faiss_index関数を呼び出す
                 load_faiss_index();

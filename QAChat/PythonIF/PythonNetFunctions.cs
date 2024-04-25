@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Python.Runtime;
 using QAChat.Model;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.PythonIF {
@@ -75,56 +76,6 @@ namespace QAChat.PythonIF {
             // Pythonスクリプトを実行する
             PythonTask command = new PythonTask(() => {
                 using (Py.GIL()) {
-                    // Pythonスクリプトの関数を呼び出す
-                    dynamic? langchain_chat = ps?.Get("langchain_chat");
-                    // open_ai_chatが呼び出せない場合は例外をスロー
-                    if (langchain_chat == null) {
-                        throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
-                    }
-                    // open_ai_chat関数を呼び出す
-                    string json_string = ChatItem.ToJson(chatHistory);
-
-                    // Pythonのoutput: str , referenced_contents: List[str], referenced_file_path: List[str]を持つdictを返す
-                    PyDict pyDict = langchain_chat(QAChatProperties.CreateOpenAIProperties(), prompt, json_string);
-                    // outputを取得
-                    string? resultString = pyDict["output"].ToString();
-                    if (resultString == null) {
-                        throw new ThisApplicationException("OpenAIの応答がありません");
-                    }
-                    // verboseを取得
-                    string? verbose = pyDict.GetItem("verbose")?.ToString();
-                    if (verbose != null) {
-                        chatResult.Verbose = verbose;
-                    }
-
-                    // referenced_contentsを取得
-                    PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
-                    if (referencedContents != null) {
-                        List<string> referencedContentsList = new List<string>();
-                        foreach (PyObject item in referencedContents) {
-                            string? itemString = item.ToString();
-                            if (itemString == null) {
-                                continue;
-                            }
-                            referencedContentsList.Add(itemString);
-                        }
-                        chatResult.ReferencedContents = referencedContentsList;
-                    }
-                    // referenced_file_pathを取得
-                    PyList? referencedFilePath = pyDict.GetItem("page_source_list") as PyList;
-                    if (referencedFilePath != null) {
-                        List<string> referencedFilePathList = new List<string>();
-                        foreach (PyObject item in referencedFilePath) {
-                            string? itemString = item.ToString();
-                            if (itemString == null) {
-                                continue;
-                            }
-                            referencedFilePathList.Add(itemString);
-                        }
-                        chatResult.ReferencedFilePath = referencedFilePathList;
-                    }
-                    // ChatResultに設定
-                    chatResult.Response = resultString;
                 }
             });
             // CancellationTokenを設定

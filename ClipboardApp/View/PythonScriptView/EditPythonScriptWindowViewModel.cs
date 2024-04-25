@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
-using ClipboardApp.Utils;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {

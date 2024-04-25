@@ -1,7 +1,7 @@
 ﻿using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
 using ClipboardApp.Utils;
 using WK.Libraries.SharpClipboardNS;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 

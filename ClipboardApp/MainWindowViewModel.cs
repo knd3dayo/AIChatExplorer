@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
-using ClipboardApp.PythonIF;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
@@ -12,6 +11,7 @@ using ClipboardApp.View.PythonScriptView;
 using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 
@@ -127,7 +127,8 @@ namespace ClipboardApp {
             Instance = this;
 
             // Python処理機能の初期化
-            PythonExecutor.Init();
+            string pythonDLLPath = Properties.Settings.Default.PythonDllPath;
+            PythonExecutor.Init(pythonDLLPath);
 
             // コンテキストメニューの初期化
             InitContextMenu();

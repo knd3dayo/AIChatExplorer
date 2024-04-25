@@ -21,19 +21,21 @@ namespace QAChat.Model {
         public List<string> Sources { get; set; } = new List<string>();
 
         [JsonIgnore]
+        public string SourceDocumentURL { get; set; } = "";
+
+        [JsonIgnore]
         // Content + Sourcesを返す
         public string ContentWithSources {
             get {
                 if (Sources.Count == 0) {
                     return Content;
                 }
-                string sourceDocumentURL = Properties.Settings.Default.SourceDocumentURL;
                 // sourceDocumentURLが空の場合は<参照元ドキュメントルート>とする。
-                if (string.IsNullOrEmpty(sourceDocumentURL)) {
-                    sourceDocumentURL = "<参照元ドキュメントルート>";
+                if (string.IsNullOrEmpty(SourceDocumentURL)) {
+                    SourceDocumentURL = "<参照元ドキュメントルート>";
                 }
                 // Sourcesの各要素にSourceDocumentURLを付加する。
-                List<string> SourcesWithLink = Sources.ConvertAll(x => sourceDocumentURL + x);
+                List<string> SourcesWithLink = Sources.ConvertAll(x => SourceDocumentURL + x);
                 return Content + "\n" + string.Join("\n", SourcesWithLink);
             }
         }
@@ -56,18 +58,6 @@ namespace QAChat.Model {
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
 
-
-    }
-    public class ChatResult {
-        
-        public List<string> ReferencedContents { get; set; } = new List<string>();
-        public List<string> ReferencedFilePath { get; set; } = new List<string>();
-
-        public string Response { get; set; } = "";
-
-        public string Verbose { get; set; } = "";
-
-        public ChatResult() {}
 
     }
 }

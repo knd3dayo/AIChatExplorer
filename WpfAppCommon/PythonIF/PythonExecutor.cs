@@ -1,16 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using ClipboardApp.Factory.Default;
-using ClipboardApp.Model;
-using ClipboardApp.Utils;
-using Python.Runtime;
+﻿using System.IO;
+using ClipboardApp.PythonIF;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.PythonIF
-{
+namespace WpfAppCommon.PythonIF {
     public class PythonExecutor {
 
         public enum PythonExecutionType {
@@ -36,12 +28,14 @@ namespace ClipboardApp.PythonIF
         // クリップボードアプリ用のPythonスクリプト
         public static string ClipboardAppUtilsScript = "python/clipboard_app_utils.py";
 
+        // Pythonスクリプト
+        public static string QAChatScript = "python/qachat_util.py";
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
-        public static void Init() {
+        public static void Init(string pythonPath) {
             // ClipboardAppSettingsのPythonExecutionがPythonNetの場合はInitPythonNetを実行する
             if (PythonExecution == PythonExecutionType.PythonNet) {
-                PythonFunctions = new PythonNetFunctions();
+                PythonFunctions = new PythonNetFunctions(pythonPath);
             }
         }
 
@@ -54,7 +48,7 @@ namespace ClipboardApp.PythonIF
 
                 file = new FileInfo(TemplateScript);
                 if (!file.Exists) {
-                    throw new ClipboardAppException("テンプレートファイルが見つかりません");
+                    throw new ThisApplicationException("テンプレートファイルが見つかりません");
                 }
                 return File.ReadAllText(file.FullName);
             }
