@@ -46,7 +46,9 @@ namespace WpfAppCommon.PythonIF {
             PyModule pyModule = Py.CreateScope();
             string script = PythonExecutor.LoadPythonScript(scriptPath);
             pyModule.Exec(script);
-            PythonModules.Add(scriptPath, pyModule);
+            // PythonModulesにscriptPathが存在しない場合は追加
+            PythonModules[scriptPath] = pyModule;
+
             return pyModule;
         }
 

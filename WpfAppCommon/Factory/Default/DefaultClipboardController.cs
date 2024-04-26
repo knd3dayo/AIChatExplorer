@@ -139,7 +139,7 @@ namespace WpfAppCommon.Factory.Default {
             item.ContentType = contentTypes;
             item.SetApplicationInfo(e);
             item.Content = content;
-            item.CollectionName = ClipboardItemFolder.RootFolder.AbsoluteCollectionName;
+            item.CollectionName = ClipboardFolder.RootFolder.AbsoluteCollectionName;
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
@@ -167,14 +167,14 @@ namespace WpfAppCommon.Factory.Default {
             if (WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
                     Tools.Info("自動マージ処理を実行します");
-                    ClipboardItemFolder.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder.RootFolder, item);
+                    ClipboardFolder.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardFolder.RootFolder, item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
                 }
             }
 
             // RootFolderのAddItemを呼び出す
-            ClipboardItemFolder.RootFolder.AddItem(item , _afterClipboardChanged);
+            ClipboardFolder.RootFolder.AddItem(item , _afterClipboardChanged);
 
 
         }

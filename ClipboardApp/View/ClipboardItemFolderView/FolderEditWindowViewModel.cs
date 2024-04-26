@@ -42,7 +42,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 OnPropertyChanged("DisplayName");
             }
         }
-        public ClipboardItemFolderViewModel? FolderViewModel { get; set; }
+        public ClipboardFolderViewModel? FolderViewModel { get; set; }
 
 
         // 検索条件を常時適用するかどうか
@@ -67,7 +67,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         private Action? _afterUpdate;
 
         // 起動時の処理
-        public void Initialize(ClipboardItemFolderViewModel folderViewModel, Mode mode, Action afterUpdate) {
+        public void Initialize(ClipboardFolderViewModel folderViewModel, Mode mode, Action afterUpdate) {
             CurrentMode = mode;
             OnPropertyChanged("IsCollectionNameEditable");
             _afterUpdate = afterUpdate;
@@ -126,7 +126,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild) {
                 // フォルダを作成
-                ClipboardItemFolder child = new ClipboardItemFolder(FolderViewModel.ClipboardItemFolder, CollectionName, DisplayName);
+                ClipboardFolder child = new ClipboardFolder(FolderViewModel.ClipboardItemFolder, CollectionName, DisplayName);
                 // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
                 if (FolderViewModel.ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
                     || FolderViewModel.ClipboardItemFolder.IsSearchFolder) {

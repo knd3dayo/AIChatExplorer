@@ -11,7 +11,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 
 namespace QAChat {
-    public class MainWindowViewModel : ObservableObject {
+    public partial class MainWindowViewModel : ObservableObject {
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -21,16 +21,11 @@ namespace QAChat {
             }
             set {
                 _IsIndeterminate = value;
-                OnPropertyChanged("IsIndeterminate");
+                OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
-        // モードのEnum
-        public enum ModeEnum {
-            Normal = 0,
-            LangChainWithVectorDB = 1,
-        }
         // モード
-        private int _Mode = (int)ModeEnum.Normal;
+        private int _Mode = (int)OpenAIExecutionModeEnum.Normal;
         public int Mode {
             get {
                 return _Mode;
@@ -70,7 +65,7 @@ namespace QAChat {
             }
             set {
                 inputText = value;
-                OnPropertyChanged("InputText");
+                OnPropertyChanged(nameof(InputText));
             }
 
         }
@@ -83,7 +78,7 @@ namespace QAChat {
             }
             set{
                 promptTemplate = value;
-                OnPropertyChanged("PromptTemplate");
+                OnPropertyChanged(nameof(PromptTemplate));
             }
          }
 
@@ -107,7 +102,7 @@ namespace QAChat {
             }
             set {
                 isInternalProject = value;
-                OnPropertyChanged("IsInternalProject");
+                OnPropertyChanged(nameof(IsInternalProject));
             }
         }
 
@@ -115,11 +110,8 @@ namespace QAChat {
         public SimpleDelegateCommand SendChatCommand => new SimpleDelegateCommand(SendChatCommandExecute);
 
         public async void SendChatCommandExecute(object parameter) {
-            IsIndeterminate = true;
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
-                PythonExecutor.Init(pythonDLLPath);
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 // PromptTemplateがある場合はPromptTemplateを先頭に追加
                 string prompt = "";
@@ -130,14 +122,13 @@ namespace QAChat {
                 }
                 prompt += InputText;
 
-                // inputTextをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
-
                 ChatResult? result = null;
+                // プログレスバーを表示
+                IsIndeterminate = true;
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
-                if (Mode == (int)ModeEnum.LangChainWithVectorDB) {
+                if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
-                        result = WpfAppCommon.PythonIF.PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems);
+                        result = PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems);
                     });
                 } else {
                     // モードがNormalの場合はOpenAIChatでチャットを送信
@@ -152,7 +143,7 @@ namespace QAChat {
                 }
                 // inputTextをクリア
                 InputText = "";
-                // レスポンスをChatItemsに追加
+                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
                 // verboseがある場合はログに追加
@@ -214,7 +205,7 @@ namespace QAChat {
         public SimpleDelegateCommand PromptTemplateCommand => new SimpleDelegateCommand((parameter) => {
             ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.Initialize((promptTemplateWindowViewModel) => {
+            promptTemplateWindowViewModel.InitializeEdit((promptTemplateWindowViewModel) => {
                 PromptTemplate = promptTemplateWindowViewModel.PromptItem;
 
             });

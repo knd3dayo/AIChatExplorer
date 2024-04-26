@@ -6,17 +6,17 @@ namespace WpfAppCommon.Factory {
 
 
         //-- ClipboardItem
-        public void UpsertItem(ClipboardItem item);
+        public void UpsertItem(ClipboardItem item, bool updateModifiedTime=true);
         public void DeleteItem(ClipboardItem item);
 
-        //-- ClipboardItemFolder
-        public ClipboardItemFolder GetFolder(string collectionName);
-        public ClipboardItemFolder GetRootFolder();
-        public ClipboardItemFolder GetSearchRootFolder();
-        public void UpsertFolderRelation(ClipboardItemFolder parent, ClipboardItemFolder child);
+        //-- ClipboardFolder
+        public ClipboardFolder GetFolder(string collectionName);
+        public ClipboardFolder GetRootFolder();
+        public ClipboardFolder GetSearchRootFolder();
+        public void UpsertFolderRelation(ClipboardFolder parent, ClipboardFolder child);
 
-        public void DeleteFolder(ClipboardItemFolder folder);
-        public void UpsertFolder(ClipboardItemFolder folder);
+        public void DeleteFolder(ClipboardFolder folder);
+        public void UpsertFolder(ClipboardFolder folder);
 
         public IEnumerable<string> GetFolderRelations(string parentCollectionName);
 
@@ -34,7 +34,7 @@ namespace WpfAppCommon.Factory {
         public void UpsertSearchRule(SearchRule conditionRule);
 
         // -- AutoProcessRule
-        public IEnumerable<AutoProcessRule> GetAutoProcessRules(ClipboardItemFolder? targetFolder);
+        public IEnumerable<AutoProcessRule> GetAutoProcessRules(ClipboardFolder? targetFolder);
 
         public IEnumerable<AutoProcessRule> GetAllAutoProcessRules();
 

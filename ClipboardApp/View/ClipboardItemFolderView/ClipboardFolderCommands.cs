@@ -13,13 +13,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView
     public class ClipboardFolderCommands {
 
         //フォルダを再読み込みする処理
-        public static void ReloadCommandExecute(ClipboardItemFolderViewModel clipboardItemFolder) {
+        public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             clipboardItemFolder.Load();
             Tools.Info("リロードしました");
         }
 
         // 検索ウィンドウを表示する処理
-        public static void SearchCommandExecute(ClipboardItemFolderViewModel? folderViewModel) {
+        public static void SearchCommandExecute(ClipboardFolderViewModel? folderViewModel) {
             
             SearchWindow searchWindow = new SearchWindow();
             SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
@@ -37,7 +37,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                     folderViewModel.Load();
                 });
             } else {
-                searchWindowViewModel.Initialize(ClipboardItemFolder.GlobalSearchCondition, () => {
+                searchWindowViewModel.Initialize(ClipboardFolder.GlobalSearchCondition, () => {
                     folderViewModel?.Load();
                 });
             }
@@ -56,7 +56,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// 新規フォルダが作成された場合は、リロード処理を行う.
         /// </summary>
         /// <param name="parameter"></param>
-        public static void CreateFolderCommandExecute(ClipboardItemFolderViewModel folderViewModel, Action afterUpdate) {
+        public static void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
@@ -72,36 +72,22 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public static void EditFolderCommandExecute(object parameter) {
-            if (parameter is not ClipboardItemFolderViewModel) {
+        public static void EditFolderCommandExecute(object parameter, Action afterUpdate) {
+            if (parameter is not ClipboardFolderViewModel folderViewModel) {
                 Tools.Error("フォルダが選択されていません");
                 return;
             }
-            // フォルダ編集ウィンドウを表示する処理
-            void AfterUpdate() {
-                // フォルダ構成を更新
-                MainWindowViewModel.Instance?.ReloadFolder();
-
-                Tools.Info("フォルダを編集しました");
-
-            }
-            ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
             FolderEditWindow FolderEditWindow = new FolderEditWindow();
             FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.Edit, AfterUpdate);
+            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.Edit, afterUpdate);
 
             FolderEditWindow.ShowDialog();
 
         }
 
         // フォルダーのアイテムをエクスポートする処理
-        public static void ExportItemsFromFolderCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-            ClipboardItemFolder folder = clipboardItemFolder.ClipboardItemFolder;
+        public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
+            ClipboardFolder folder = clipboardItemFolder.ClipboardItemFolder;
             DirectoryInfo directoryInfo = new DirectoryInfo("export");
             // exportフォルダが存在しない場合は作成
             if (!System.IO.Directory.Exists("export")) {
@@ -125,13 +111,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         }
 
         //フォルダーのアイテムをインポートする処理
-        public static void ImportItemsToFolderCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance?.SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardItemFolderViewModel clipboardItemFolder = MainWindowViewModel.Instance.SelectedFolder;
-            ClipboardItemFolder folder = clipboardItemFolder.ClipboardItemFolder;
+        public static void ImportItemsToFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
+            ClipboardFolder folder = clipboardItemFolder.ClipboardItemFolder;
 
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
@@ -164,12 +145,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// <param name="parameter"></param>        
         public static void DeleteFolderCommandExecute(object parameter) {
 
-            if (parameter is not ClipboardItemFolderViewModel) {
+            if (parameter is not ClipboardFolderViewModel folderViewModel) {
                 Tools.Error("フォルダが選択されていません");
                 return;
             }
-            ClipboardItemFolderViewModel folderViewModel = (ClipboardItemFolderViewModel)parameter;
-            ClipboardItemFolder folder = folderViewModel.ClipboardItemFolder;
+            ClipboardFolder folder = folderViewModel.ClipboardItemFolder;
 
             if (folder.AbsoluteCollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME
                 || folder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
@@ -184,7 +164,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteFolder(folder);
 
             // RootFolderをリロード
-            MainWindowViewModel.Instance?.ReloadFolder();
             Tools.Info("フォルダを削除しました");
         }
         /// <summary>
@@ -192,7 +171,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// 削除後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>
-        public static void DeleteDisplayedItemCommandExecute(ClipboardItemFolderViewModel folderViewModel) {
+        public static void DeleteDisplayedItemCommandExecute(ClipboardFolderViewModel folderViewModel) {
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show("ピン留めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {

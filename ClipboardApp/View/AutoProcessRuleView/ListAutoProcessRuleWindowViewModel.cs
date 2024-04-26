@@ -11,7 +11,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public static ListAutoProcessRuleWindowViewModel? Instance = null;
 
         // 処理対象のClipboardItemFolder
-        public static ClipboardItemFolderViewModel? TargetFolder { get; set; } = null;
+        public static ClipboardFolderViewModel? TargetFolder { get; set; } = null;
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = new ObservableCollection<AutoProcessRule>();
@@ -33,7 +33,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         }
 
-        public void Initialize(ClipboardItemFolderViewModel? targetFolder) {
+        public void Initialize(ClipboardFolderViewModel? targetFolder) {
             TargetFolder = targetFolder;
             // AutoProcessRulesを更新
             AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);

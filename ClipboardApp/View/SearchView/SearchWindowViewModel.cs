@@ -19,8 +19,8 @@ namespace ClipboardApp.View.SearchView
             }
         }
 
-        private ClipboardItemFolderViewModel? searchFolderViewModel;
-        public ClipboardItemFolderViewModel? SearchFolderViewModel {
+        private ClipboardFolderViewModel? searchFolderViewModel;
+        public ClipboardFolderViewModel? SearchFolderViewModel {
             get {
                 return searchFolderViewModel;
             }
@@ -75,7 +75,7 @@ namespace ClipboardApp.View.SearchView
         
         private Action? _afterUpdate;
 
-        public void Initialize(SearchRule searchConditionRule, ClipboardItemFolderViewModel? searchFolderViewModel, Action afterUpdate) {
+        public void Initialize(SearchRule searchConditionRule, ClipboardFolderViewModel? searchFolderViewModel, Action afterUpdate) {
             this.SearchConditionRule = searchConditionRule;
 
             _afterUpdate = afterUpdate;
@@ -131,7 +131,7 @@ namespace ClipboardApp.View.SearchView
                 return;
             }
             // フォルダが選択されたら、SearchFolderに設定
-            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
+            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 SearchFolderViewModel = folderViewModel;
                 SearchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
                 SearchFolderPath = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
@@ -141,7 +141,7 @@ namespace ClipboardApp.View.SearchView
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.SearchRootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.SearchRootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
 
@@ -158,7 +158,7 @@ namespace ClipboardApp.View.SearchView
                 return;
             }
             // フォルダが選択されたら、TargetFolderに設定
-            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
+            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 SearchConditionRule.TargetFolder = folderViewModel.ClipboardItemFolder;
                 TargetFolderPath = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName;
                 OnPropertyChanged("TargetFolderPath");
@@ -166,7 +166,7 @@ namespace ClipboardApp.View.SearchView
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
 

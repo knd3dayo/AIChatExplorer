@@ -3,43 +3,20 @@ using WpfAppCommon.Utils;
 using LiteDB;
 using WpfAppCommon.PythonIF;
 
-namespace WpfAppCommon.Model
-{
+namespace WpfAppCommon.Model {
     // 自動処理の引数用のクラス
     public class AutoProcessItemArgs {
 
         public ClipboardItem ClipboardItem { get; set; }
-        public ClipboardItemFolder? DestinationFolder { get; set; }
+        public ClipboardFolder? DestinationFolder { get; set; }
 
-        public AutoProcessItemArgs(ClipboardItem clipboardItem, ClipboardItemFolder? destinationFolder) {
+        public AutoProcessItemArgs(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
             ClipboardItem = clipboardItem;
             DestinationFolder = destinationFolder;
         }
     }
 
-    public class AutoProcessItem {
-        // System処理の名前
-        public class ActionName {
-            public bool IsSystemAction { get; set;}
-            public string Name { get; set; }
-           
-            public  ActionName(bool isSystemAction, string name) {
-                IsSystemAction = isSystemAction;
-                Name = name;
-            }
-
-            public static ActionName CopyToFolder = new ActionName(true, "CopyToFolder");
-            public static ActionName MoveToFolder = new ActionName(true, "MoveToFolder");
-            public static ActionName ExtractText = new ActionName(true, "ExtractText");
-            public static ActionName MaskData = new ActionName(true, "GetMaskedString");
-            public static ActionName SplitPathToFolderAndFileName = new ActionName(true, "SplitPathToFolderAndFileName");
-            public static ActionName MergeAllItems = new ActionName(true, "MergeAllItems");
-            // 同じSourceApplicationTitleを持つアイテムをマージする
-            public static ActionName MergeItemsWithSameSourceApplicationTitle = new ActionName(true, "MergeItemsWithSameSourceApplicationTitle");
-
-            public static ActionName RunPythonScript = new ActionName(false, "RunPythonScript");
-
-        }
+    public partial class AutoProcessItem {
         public ObjectId? Id { get; set; }
         public string Name { get; set; } = "";
 
@@ -59,15 +36,15 @@ namespace WpfAppCommon.Model
         }
         // ユーザーが作成したスクリプトのAutoProcessItemを作成
         public AutoProcessItem(string displayName, string description, ScriptItem scriptItem) : this() {
-            Name = ActionName.RunPythonScript.Name;
+            Name = AutoProcessActionName.RunPythonScript.Name;
             DisplayName = displayName;
             Description = description;
             ScriptItem = scriptItem;
         }
 
         public bool IsCopyOrMoveOrMergeAction() {
-            return Name == ActionName.CopyToFolder.Name || Name == ActionName.MoveToFolder.Name
-                || Name == ActionName.MergeAllItems.Name || Name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name;
+            return Name == AutoProcessActionName.CopyToFolder.Name || Name == AutoProcessActionName.MoveToFolder.Name
+                || Name == AutoProcessActionName.MergeAllItems.Name || Name == AutoProcessActionName.MergeItemsWithSameSourceApplicationTitle.Name;
         }
 
         public static AutoProcessItem GetSystemAutoProcessItem(string name) {
@@ -97,35 +74,35 @@ namespace WpfAppCommon.Model
 
                 // itemにフォルダにコピーするコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.CopyToFolder.Name, "フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします")
+                    new AutoProcessItem(AutoProcessActionName.CopyToFolder.Name, "フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします")
                     );
 
 
                 // itemにフォルダに移動するコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.MoveToFolder.Name,"フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します")
+                    new AutoProcessItem(AutoProcessActionName.MoveToFolder.Name,"フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します")
                     );
 
                 // itemにテキスト抽出コマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.ExtractText.Name,"テキスト抽出", "クリップボードのテキストを抽出します")
+                    new AutoProcessItem(AutoProcessActionName.ExtractText.Name,"テキスト抽出", "クリップボードのテキストを抽出します")
                     );
                 // itemにデータマスキングコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.MaskData.Name,"データマスキング", "クリップボードのテキストをマスキングします")
+                    new AutoProcessItem(AutoProcessActionName.MaskData.Name,"データマスキング", "クリップボードのテキストをマスキングします")
                     );
 
                 // ファイルパスをフォルダ名とファイル名に分割するコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.SplitPathToFolderAndFileName.Name, "コピーしたファイルをフォルダパスとファイル名に分割", "コピーしたファイルをフォルダパスとファイル名に分割")
+                    new AutoProcessItem(AutoProcessActionName.SplitPathToFolderAndFileName.Name, "コピーしたファイルをフォルダパスとファイル名に分割", "コピーしたファイルをフォルダパスとファイル名に分割")
                     );
                 // フォルダ内のアイテムを自動的にマージするコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.MergeAllItems.Name, "フォルダ内のアイテムをマージ", "フォルダ内のアイテムをマージします")
+                    new AutoProcessItem(AutoProcessActionName.MergeAllItems.Name, "フォルダ内のアイテムをマージ", "フォルダ内のアイテムをマージします")
                     );
                 // 同じSourceApplicationTitleを持つアイテムをマージするコマンドを追加
                 items.Add(
-                    new AutoProcessItem(ActionName.MergeItemsWithSameSourceApplicationTitle.Name, "同じSourceApplicationTitleを持つアイテムをマージ", "同じSourceApplicationTitleを持つアイテムをマージします")
+                    new AutoProcessItem(AutoProcessActionName.MergeItemsWithSameSourceApplicationTitle.Name, "同じSourceApplicationTitleを持つアイテムをマージ", "同じSourceApplicationTitleを持つアイテムをマージします")
                     );
 
 
@@ -150,7 +127,7 @@ namespace WpfAppCommon.Model
         // LIteDBにはFuncを保存できないので、AutoProcessItemにはActionTypeを保存し、ActionTypeごとのFuncを返す、staticメソッドを作成
 
         public static Func<AutoProcessItemArgs, ClipboardItem?> GetSystemAction(string name) {
-            if (name == ActionName.CopyToFolder.Name) {
+            if (name == AutoProcessActionName.CopyToFolder.Name) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
                         Tools.Warn("フォルダが選択されていません");
@@ -164,7 +141,7 @@ namespace WpfAppCommon.Model
                     return args.ClipboardItem;
                 };
             }
-            if (name == ActionName.MoveToFolder.Name) {
+            if (name == AutoProcessActionName.MoveToFolder.Name) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
                         Tools.Warn("フォルダが選択されていません");
@@ -182,34 +159,34 @@ namespace WpfAppCommon.Model
                     return null;
                 };
             }
-            if (name == ActionName.ExtractText.Name) { 
+            if (name == AutoProcessActionName.ExtractText.Name) { 
                     return (args) => {
                         return ClipboardItem.ExtractTextCommandExecute(args.ClipboardItem);
                     };
                 }
-            if (name == ActionName.MaskData.Name) {
+            if (name == AutoProcessActionName.MaskData.Name) {
                 return (args) => {
                     return ClipboardItem.MaskDataCommandExecute(args.ClipboardItem);
                 };
             }
-            if (name == ActionName.SplitPathToFolderAndFileName.Name) {
+            if (name == AutoProcessActionName.SplitPathToFolderAndFileName.Name) {
                 return (args) => {
                     ClipboardItem.SplitFilePathCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
-            if (name == ActionName.MergeAllItems.Name) {
+            if (name == AutoProcessActionName.MergeAllItems.Name) {
                 return (args) => {
-                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
 
-                    ClipboardItemFolder.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                    ClipboardFolder.MergeItemsCommandExecute(folder, args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
-            if (name == ActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
+            if (name == AutoProcessActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
                 return (args) => {
-                    ClipboardItemFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
-                    ClipboardItemFolder.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
@@ -225,7 +202,7 @@ namespace WpfAppCommon.Model
             };
 
         }
-        public ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardItemFolder? destinationFolder) {
+        public ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
             // NameがSys
 
             Func<AutoProcessItemArgs, ClipboardItem?> action = GetSystemAction(this.Name);

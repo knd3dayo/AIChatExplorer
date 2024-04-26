@@ -1,17 +1,16 @@
-﻿using System.Windows;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
-using System.IO;
-using System.Collections.ObjectModel;
-using WpfAppCommon.Utils;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Properties;
-using WpfAppCommon.Model;
+using QAChat.Model;
+using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
+using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemView
-{
+namespace ClipboardApp.View.ClipboardItemView {
     public class ClipboardItemCommands {
         /// <summary>
         /// 選択中のアイテムを削除する処理
@@ -19,7 +18,7 @@ namespace ClipboardApp.View.ClipboardItemView
         /// </summary>
         /// <param name="obj"></param>        
         public static void DeleteSelectedItemCommandExecute(
-            ClipboardItemFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
+            ClipboardFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
 
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
@@ -37,21 +36,22 @@ namespace ClipboardApp.View.ClipboardItemView
                 Tools.Info("削除しました");
             }
         }
-        public static void ChangePinCommandExecute(ClipboardItemFolderViewModel folderViewModel, IEnumerable<ClipboardItemViewModel> itemViewModels) { 
+        public static void ChangePinCommandExecute(ClipboardFolderViewModel folderViewModel, IEnumerable<ClipboardItemViewModel> itemViewModels) {
             foreach (ClipboardItemViewModel clipboardItemViewModel in itemViewModels) {
                 clipboardItemViewModel.ClipboardItem.IsPinned = !clipboardItemViewModel.ClipboardItem.IsPinned;
-                clipboardItemViewModel.ClipboardItem.Save();
+                // ピン留めの時は更新日時を変更しない
+                clipboardItemViewModel.ClipboardItem.Save(false);
             }
 
             // フォルダ内のアイテムを再読み込み
             folderViewModel.Load();
 
         }
-        public static void OpenItemCommandExecute(ClipboardItemFolderViewModel folderViewModel ,ClipboardItemViewModel clipboardItemViewModel) {
+        public static void OpenItemCommandExecute(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel clipboardItemViewModel) {
 
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
-            editItemWindowViewModel.Initialize(clipboardItemViewModel, () => {
+            editItemWindowViewModel.Initialize(folderViewModel, clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.Load();
                 Tools.Info("更新しました");
@@ -67,16 +67,13 @@ namespace ClipboardApp.View.ClipboardItemView
         /// <param name="obj"></param>
         public static void EditTagCommandExecute(object obj) {
 
-            if (obj is not ClipboardItemViewModel) {
+            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
             TagWindow tagWindow = new TagWindow();
             TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
-            ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)obj;
             tagWindowViewModel.Initialize(clipboardItemViewModel.ClipboardItem, () => {
-                // フォルダ内のアイテムを再読み込み
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
                 Tools.Info("更新しました");
             });
 
@@ -88,12 +85,12 @@ namespace ClipboardApp.View.ClipboardItemView
         /// 作成後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>
-        public static void CreateItemCommandExecute(ClipboardItemFolderViewModel folderViewModel) {
+        public static void CreateItemCommandExecute(ClipboardFolderViewModel folderViewModel) {
             EditItemWindow editItemWindow = new EditItemWindow();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
-            editItemWindowViewModel.Initialize(null, () => {
+            editItemWindowViewModel.Initialize(folderViewModel, null, () => {
                 // フォルダ内のアイテムを再読み込み
-                folderViewModel?.Load();
+                folderViewModel.Load();
                 Tools.Info("追加しました");
             });
 
@@ -113,7 +110,7 @@ namespace ClipboardApp.View.ClipboardItemView
         /// <param name="toFolder"></param>
         /// <returns></returns>
         public static void PasteClipboardItemCommandExecute(bool CutFlag,
-            IEnumerable<ClipboardItemViewModel> items, ClipboardItemFolderViewModel fromFolder, ClipboardItemFolderViewModel toFolder) {
+            IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 ClipboardItem newItem = item.ClipboardItem.Copy();
                 toFolder.ClipboardItemFolder.AddItem(newItem, (actionMessage) => { });
@@ -129,7 +126,7 @@ namespace ClipboardApp.View.ClipboardItemView
         }
 
         public static void MergeItemCommandExecute(
-            ClipboardItemFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems,  bool mergeWithHeader) {
+            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
 
             if (selectedItems.Count < 2) {
                 Tools.Error("マージするアイテムを2つ選択してください");
@@ -194,88 +191,61 @@ namespace ClipboardApp.View.ClipboardItemView
         }
         // コンテキストメニューの「テキストを抽出」をクリックしたときの処理
         public static void MenuItemExtractTextCommandExecute(object obj) {
-            // 対話処理のため、エラー時はダイアログを表示
-            if (MainWindowViewModel.Instance == null) {
-                Tools.Error("MainWindowViewModelがありません");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
+            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
+                // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
             // File以外の場合はエラー
-            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != ClipboardContentTypes.Files) {
+            if (clipboardItemViewModel.ClipboardItem.ContentType != ClipboardContentTypes.Files) {
                 Tools.Error("ファイル以外のコンテンツはテキストを抽出できません");
                 return;
             }
-            ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
-            ClipboardItem.ExtractTextCommandExecute(clipboardItem);
+            ClipboardItem.ExtractTextCommandExecute(clipboardItemViewModel.ClipboardItem);
             // 保存
-            clipboardItem.Save();
+            clipboardItemViewModel.ClipboardItem.Save();
 
             // フォルダ内のアイテムを再読み込み
-            MainWindowViewModel.Instance?.SelectedFolder?.Load();
+            clipboardItemViewModel.FolderViewModel.Load();
 
         }
 
 
         // コンテキストメニューの「データをマスキング」をクリックしたときの処理
         public static void MenuItemMaskDataCommandExecute(object obj) {
-            if (MainWindowViewModel.Instance == null) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("MainWindowViewModelがありません");
-                return;
-            }
-            if (MainWindowViewModel.Instance.SelectedItem == null) {
+            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
                 // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
             // テキスト以外の場合はエラー
-            if (MainWindowViewModel.Instance.SelectedItem.ClipboardItem.ContentType != ClipboardContentTypes.Text) {
+            if (clipboardItemViewModel.ClipboardItem.ContentType != ClipboardContentTypes.Text) {
                 // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("テキスト以外のコンテンツはマスキングできません");
                 return;
             }
-            ClipboardItem clipboardItem = MainWindowViewModel.Instance.SelectedItem.ClipboardItem;
-            ClipboardItem.MaskDataCommandExecute(clipboardItem);
+            ClipboardItem.MaskDataCommandExecute(clipboardItemViewModel.ClipboardItem);
             // 保存
-            clipboardItem.Save();
-
-            // フォルダ内のアイテムを再読み込み
-            MainWindowViewModel.Instance?.SelectedFolder?.Load();
+            clipboardItemViewModel.ClipboardItem.Save();
+            clipboardItemViewModel.FolderViewModel.Load();
 
         }
 
         // メニューの「Pythonスクリプトを実行」をクリックしたときの処理
-        public static void MenuItemRunPythonScriptCommandExecute(object obj) {
-            MainWindowViewModel? Instance = MainWindowViewModel.Instance;
-
-            if (Instance == null) {
-                throw new ClipboardAppException("MainWindowViewModelがありません");
-            }
-            if (Instance.SelectedItem == null) {
-                throw new ClipboardAppException("SelectedItemがありません");
-            }
-
-            if (obj is not ScriptItem) {
-                throw new ClipboardAppException("ScriptItemがありません");
-            }
-            ScriptItem scriptItem = (ScriptItem)obj;
-            ClipboardItem clipboardItem = Instance.SelectedItem.ClipboardItem;
+        public static void MenuItemRunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItemViewModel itemViewModel) {
             try {
                 // clipboardItemをJsonに変換
-                string clipboardItemJson = ClipboardItem.ToJson(clipboardItem);
+                string clipboardItemJson = ClipboardItem.ToJson(itemViewModel.ClipboardItem);
                 // Pythonスクリプトを実行
                 string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, clipboardItemJson);
                 // JsonからClipboardItemに変換
                 ClipboardItem? resultItem = ClipboardItem.FromJson(result, Tools.DefaultAction);
-                
+
                 // 保存
-                clipboardItem.Save();
+                itemViewModel.ClipboardItem.Save();
 
                 // フォルダ内のアイテムを再読み込み
-                MainWindowViewModel.Instance?.SelectedFolder?.Load();
+                itemViewModel.FolderViewModel.Load();
 
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
@@ -283,9 +253,9 @@ namespace ClipboardApp.View.ClipboardItemView
 
         }
         // OpenAI Chatを開くコマンド
-        public static void OpenAIChatCommandExecute(ClipboardItemViewModel? itemViewModel) {
+        public static void OpenOpenAIChatWindowExecute(ClipboardItemViewModel? itemViewModel) {
 
-            QAChat.MainWindow openAIChatWindow = new QAChat.MainWindow();
+            QAChat.MainWindow openAIChatWindow = new();
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsInternalProject = false;
@@ -296,6 +266,59 @@ namespace ClipboardApp.View.ClipboardItemView
             openAIChatWindow.ShowDialog();
         }
 
+        // プロンプトテンプレート一覧を開いて選択したプロンプトテンプレートを実行するコマンド
+        public static void OpenAIChatCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            // itemViewModelがnullの場合はエラー
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません");
+                return;
+            }
+            ListPromptTemplateWindow promptTemplateWindow = new();
+            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
+            promptTemplateWindowViewModel.InitializeExec((PromptItemViewModel promptItemViewModel, OpenAIExecutionModeEnum mode) => {
+                // OpenAIChatを実行
+                OpenAIChatCommandExecute(mode, itemViewModel);
+            });
+            promptTemplateWindow.ShowDialog();
+        }
+        // OpenAI Chatを実行してその結果をClipboardItemに設定するコマンド
+        public static async void OpenAIChatCommandExecute(OpenAIExecutionModeEnum mode, ClipboardItemViewModel itemViewModel) {
+            try {
+                // プログレスインジケーターを表示
+                MainWindowViewModel.UpdateProgressCircleVisibility(true);
+
+                List<ChatItem> chatItems = new();
+                ChatResult result = new();
+                // modeがRAGの場合はLangChainChatを実行
+                if (mode == OpenAIExecutionModeEnum.RAG) {
+                    // LangChainChatを実行
+                    await Task.Run(() => {
+                        result = PythonExecutor.PythonFunctions.LangChainChat(itemViewModel.ClipboardItem.Content, chatItems);
+                    });
+                }
+                // modeがNormalの場合はOpenAIChatを実行
+                else if (mode == OpenAIExecutionModeEnum.Normal) {
+                    // OpenAIChatを実行
+                    await Task.Run(() => {
+                        result = PythonExecutor.PythonFunctions.OpenAIChat(itemViewModel.ClipboardItem.Content, chatItems);
+                    });
+
+                } else {
+                    return;
+                }
+                // レスポンスをClipboardItemに設定
+                itemViewModel.ClipboardItem.Content = result.Response;
+                itemViewModel.ClipboardItem.Save();
+                // フォルダ内のアイテムを再読み込み
+                itemViewModel.FolderViewModel.Load();
+
+            } catch (Exception e) {
+                Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+            }finally {
+                // プログレスインジケーターを非表示
+                MainWindowViewModel.UpdateProgressCircleVisibility(false);
+            }
+        }
     }
 
 }

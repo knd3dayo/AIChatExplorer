@@ -80,5 +80,6 @@ namespace WpfAppCommon.Utils {
             }
 
         };
+
     }
 }

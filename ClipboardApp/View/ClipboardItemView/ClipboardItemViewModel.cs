@@ -1,13 +1,17 @@
 ﻿using System.Windows;
+using ClipboardApp.View.ClipboardItemFolderView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
-    public class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject {
+    public class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
 
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; set; } = clipboardItem;
+        // FolderViewModel
+        public ClipboardFolderViewModel FolderViewModel { get; set; } = folderViewModel;
 
         // Content
         public string Content {
@@ -84,6 +88,22 @@ namespace ClipboardApp.View.ClipboardItemView {
         public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemMaskDataCommandExecute);
+
+        // プロンプトテンプレート一覧を開いて選択されたプロンプトテンプレートを実行するコマンド
+        // プロンプトテンプレート画面を開くコマンド
+        public SimpleDelegateCommand ExecPromptTemplateCommand => new ((parameter) => {
+            ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
+            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
+            promptTemplateWindowViewModel.InitializeExec((promptItemViewModel, mode) => {
+                // ClipboardItemのContentの先頭にプロンプトテンプレートのContentを追加
+                Content = promptItemViewModel.PromptItem.Prompt + "\n---------\n" + Content;
+                // OpenAIChatを実行
+                ClipboardItemCommands.OpenAIChatCommandExecute(mode, this);
+
+            });
+            promptTemplateWindow.ShowDialog();
+        });
+
 
     }
 }

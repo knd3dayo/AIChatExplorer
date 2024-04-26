@@ -6,7 +6,7 @@ using WpfAppCommon;
 using WpfAppCommon.Utils;
 
 namespace QAChat.View.PromptTemplateWindow {
-    class EditPromptItemWindowViewModel : ObservableObject {
+    public class EditPromptItemWindowViewModel : ObservableObject {
             
         private PromptItemViewModel? itemViewModel;
         public PromptItemViewModel? ItemViewModel {

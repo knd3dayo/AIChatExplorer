@@ -186,7 +186,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 自分自身をDBに保存する
-        public void Save() {
+        public void Save(bool updateModifiedTime = true) {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this);
         }
         // 自分自身をDBから削除する

@@ -9,7 +9,7 @@ namespace WpfAppCommon.Model {
     public class AutoProcessRuleController {
 
         // DBから自動処理ルールのコレクションを取得する
-        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ClipboardItemFolder? targetFolder) {
+        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ClipboardFolder? targetFolder) {
             ObservableCollection<AutoProcessRule> rules = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRules(targetFolder)];
             return rules;
 

@@ -7,19 +7,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
 namespace WpfAppCommon.Model {
-    public class ClipboardItemFolder : ObservableObject {
+    public class ClipboardFolder : ObservableObject {
 
         // アプリ共通の検索条件
         public static SearchRule GlobalSearchCondition = new SearchRule();
 
         //--------------------------------------------------------------------------------
-        public static ClipboardItemFolder RootFolder {
+        public static ClipboardFolder RootFolder {
             get {
                 IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
                 return ClipboardDatabaseController.GetRootFolder();
             }
         }
-        public static ClipboardItemFolder SearchRootFolder {
+        public static ClipboardFolder SearchRootFolder {
             get {
                 IClipboardDBController clipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
                 return clipboardDatabaseController.GetSearchRootFolder();
@@ -41,9 +41,9 @@ namespace WpfAppCommon.Model {
         public bool IsApplyingSearchCondition { get; set; } = false;
 
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
-        public ObservableCollection<ClipboardItemFolder> Children {
+        public ObservableCollection<ClipboardFolder> Children {
             get {
-                ObservableCollection<ClipboardItemFolder> children = new ObservableCollection<ClipboardItemFolder>();
+                ObservableCollection<ClipboardFolder> children = new ObservableCollection<ClipboardFolder>();
                 // AbsoluteCollectionNameが空の場合は空のリストを返す
                 if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
                     return children;
@@ -60,11 +60,11 @@ namespace WpfAppCommon.Model {
                 return children;
             }
         }
-        public void AddChild(ClipboardItemFolder child) {
+        public void AddChild(ClipboardFolder child) {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolderRelation(this, child);
         }
-        public void DeleteChild(ClipboardItemFolder child) {
+        public void DeleteChild(ClipboardFolder child) {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.DeleteFolder(child);
         }
@@ -117,10 +117,10 @@ namespace WpfAppCommon.Model {
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardItemFolder() {
+        public ClipboardFolder() {
         }
 
-        public ClipboardItemFolder(ClipboardItemFolder? parent, string collectionName, string displayName) {
+        public ClipboardFolder(ClipboardFolder? parent, string collectionName, string displayName) {
             if (parent == null) {
                 AbsoluteCollectionName = collectionName;
             } else {
@@ -129,7 +129,7 @@ namespace WpfAppCommon.Model {
             DisplayName = displayName;
 
         }
-        public ClipboardItemFolder(string collectionName, string displayName) : this(null, collectionName, displayName) {
+        public ClipboardFolder(string collectionName, string displayName) : this(null, collectionName, displayName) {
 
         }
         //--------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ namespace WpfAppCommon.Model {
 
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItemFolder folder, ClipboardItem newItem) {
+        public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardFolder folder, ClipboardItem newItem) {
             // NewItemのSourceApplicationTitleが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
                 return;
@@ -271,7 +271,7 @@ namespace WpfAppCommon.Model {
             folder.DeleteItem(mergeToItem);
         }
         // 指定されたフォルダの全アイテムをマージするコマンド
-        public static void MergeItemsCommandExecute(ClipboardItemFolder folder, ClipboardItem item) {
+        public static void MergeItemsCommandExecute(ClipboardFolder folder, ClipboardItem item) {
             if (folder.Items.Count == 0) {
                 return;
             }

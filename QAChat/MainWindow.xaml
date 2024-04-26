@@ -46,13 +46,12 @@
                 Orientation="Vertical">
                 <ComboBox materialDesign:HintAssist.Hint="モード" SelectedIndex="{Binding Mode}">
                     <ComboBoxItem Content="通常" />
-                    <ComboBoxItem Content="LangChain + ベクトルDB" />
+                    <ComboBoxItem Content="RAG" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-
                 </ComboBox>
             </StackPanel>
             <StackPanel

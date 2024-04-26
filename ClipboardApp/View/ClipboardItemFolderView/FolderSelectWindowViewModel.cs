@@ -9,14 +9,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView
     {
         private static FolderSelectWindowViewModel? Instance;
         // フォルダツリーのルート
-        public ObservableCollection<ClipboardItemFolderViewModel> RootFolders { get; set; } = new ObservableCollection<ClipboardItemFolderViewModel>();
+        public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = new ObservableCollection<ClipboardFolderViewModel>();
 
         // フォルダ選択時のAction
-        public Action<ClipboardItemFolderViewModel>? FolderSelectedAction { get; set; }
+        public Action<ClipboardFolderViewModel>? FolderSelectedAction { get; set; }
 
         // 選択されたフォルダ
-        private ClipboardItemFolderViewModel? _selectedFolder { get; set; }
-        public ClipboardItemFolderViewModel? SelectedFolder
+        private ClipboardFolderViewModel? _selectedFolder { get; set; }
+        public ClipboardFolderViewModel? SelectedFolder
         {
             get
             {
@@ -43,7 +43,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
         }
 
-        public void Initialize(ClipboardItemFolderViewModel rootFolderViewModel, Action<ClipboardItemFolderViewModel> _FolderSelectedAction)
+        public void Initialize(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction)
         {
 
             FolderSelectedAction = _FolderSelectedAction;
@@ -86,7 +86,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
-            if (parameter is not ClipboardItemFolderViewModel folder)
+            if (parameter is not ClipboardFolderViewModel folder)
             {
                 Tools.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;

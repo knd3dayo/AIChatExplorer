@@ -1,12 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using System.Reflection.Metadata;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using WpfAppCommon.Utils;
-using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Factory;
 using WpfAppCommon;
+using WpfAppCommon.Model;
 
 namespace QAChat.View.PromptTemplateWindow {
     public class ListPromptTemplateWindowViewModel : ObservableObject {
@@ -21,13 +20,46 @@ namespace QAChat.View.PromptTemplateWindow {
                 _selectedPromptItem = value;
             }
         }
-        private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promptItemViewModel) => { };
+
+        private bool _isExecMode = false;
+        public bool IsExecMode {
+            get => _isExecMode;
+            set {
+                _isExecMode = value;
+                OnPropertyChanged(nameof(IsExecMode));
+            }
+        }
+        // モード
+        private int _Mode = (int)OpenAIExecutionModeEnum.Normal;
+        public int Mode {
+            get {
+                return _Mode;
+            }
+            set {
+                _Mode = value;
+                OnPropertyChanged(nameof(Mode));
+            }
+        }
+        private Action<PromptItemViewModel> AfterEdit { get; set; } = (promptItemViewModel) => { };
+        private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
         // 初期化
-        public void Initialize(Action<PromptItemViewModel> afterUpdate) {
+        public void InitializeEdit(Action<PromptItemViewModel> afterUpdate) {
             // PromptItemsを更新
             Reload();
-            AfterUpdate = afterUpdate;
+            AfterEdit = afterUpdate;
+            // TitleとSelectButtonTextを更新
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(SelectButtonText));
 
+        }
+        public void InitializeExec(Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
+            // PromptItemsを更新
+            Reload();
+            AfterSelect = afterUpdate;
+            IsExecMode = true;
+            // TitleとSelectButtonTextを更新
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(SelectButtonText));
         }
 
         public void Reload() {
@@ -38,8 +70,19 @@ namespace QAChat.View.PromptTemplateWindow {
                 PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
                 PromptItems.Add(itemViewModel);
             }
-            OnPropertyChanged("PromptItems");
+            OnPropertyChanged(nameof(PromptItems));
 
+        }
+
+        public string Title {
+            get {
+                return IsExecMode ? "プロンプトテンプレートを選択" : "プロンプトテンプレート一覧";
+            }
+        }
+        public string SelectButtonText {
+            get {
+                return IsExecMode ? "実行" : "選択";
+            }
         }
 
         public  SimpleDelegateCommand EditPromptItemCommand => new (EditPromptItemCommandExecute);
@@ -73,8 +116,7 @@ namespace QAChat.View.PromptTemplateWindow {
             window.ShowDialog();
         }
         // プロンプトテンプレートを選択する処理
-        public SimpleDelegateCommand SelectPromptItemCommand => new (SelectPromptItemCommandExecute);
-        public void SelectPromptItemCommandExecute(object parameter) {
+        public SimpleDelegateCommand SelectPromptItemCommand => new((object parameter) => {
             // 選択されていない場合はメッセージを表示
             if (SelectedPromptItem == null) {
                 MessageBox.Show("プロンプトテンプレートが選択されていません。");
@@ -83,13 +125,20 @@ namespace QAChat.View.PromptTemplateWindow {
             if (parameter is PromptItemViewModel itemViewModel) {
                 SelectedPromptItem = itemViewModel;
             }
-            AfterUpdate(SelectedPromptItem);
+            if (IsExecMode) {
+                // Mode からOpenAIExecutionModeEnumに変換
+                OpenAIExecutionModeEnum mode = (OpenAIExecutionModeEnum)Mode;
+                AfterSelect(SelectedPromptItem, mode);
+            } else { 
+                AfterEdit(SelectedPromptItem);
+                }
 
             // Windowを閉じる
             if (parameter is System.Windows.Window window) {
                 window.Close();
             }
-        }
+        });
+
         // プロンプトテンプレートを削除する処理
         public SimpleDelegateCommand DeletePromptItemCommand => new(DeletePromptItemCommandExecute);
         public void DeletePromptItemCommandExecute(object parameter) {
@@ -119,5 +168,6 @@ namespace QAChat.View.PromptTemplateWindow {
                 window.Close();
             }
         });
+
     }
 }

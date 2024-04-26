@@ -5,12 +5,11 @@ using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView
-{
-    public class ClipboardItemFolderViewModel
-        (ClipboardItemFolder clipboardItemFolder) : ObservableObject {
-        // ClipboardItemFolder
-        public ClipboardItemFolder ClipboardItemFolder { get; set; } = clipboardItemFolder;
+namespace ClipboardApp.View.ClipboardItemFolderView {
+    public class ClipboardFolderViewModel
+        (ClipboardFolder clipboardItemFolder) : ObservableObject {
+        // ClipboardFolder
+        public ClipboardFolder ClipboardItemFolder { get; set; } = clipboardItemFolder;
 
 
         // Items
@@ -18,7 +17,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             get {
                 ObservableCollection<ClipboardItemViewModel> items = [];
                 foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                    items.Add(new ClipboardItemViewModel(item));
+                    items.Add(new ClipboardItemViewModel(this, item));
                 }
                 return items;
             }
@@ -31,17 +30,17 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
         }
         // 子フォルダ
-        public ObservableCollection<ClipboardItemFolderViewModel> Children {
+        public ObservableCollection<ClipboardFolderViewModel> Children {
             get {
-                ObservableCollection<ClipboardItemFolderViewModel> children = [];
-                foreach (ClipboardItemFolder folder in ClipboardItemFolder.Children) {
-                    children.Add(new ClipboardItemFolderViewModel(folder));
+                ObservableCollection<ClipboardFolderViewModel> children = [];
+                foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
+                    children.Add(new ClipboardFolderViewModel(folder));
                 }
                 return children;
             }
             set {
                 ClipboardItemFolder.Children.Clear();
-                foreach (ClipboardItemFolderViewModel folder in value) {
+                foreach (ClipboardFolderViewModel folder in value) {
                     ClipboardItemFolder.Children.Add(folder.ClipboardItemFolder);
                 }
                 OnPropertyChanged(nameof(Children));
@@ -130,7 +129,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
 
             // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = ClipboardItemFolder.GlobalSearchCondition;
+            SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             if (ClipboardItemFolder.IsSearchFolder) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(ClipboardItemFolder.AbsoluteCollectionName);
             }
@@ -153,7 +152,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         // 新規フォルダ作成コマンド
         public static SimpleDelegateCommand CreateFolderCommand => new((parameter) => {
             // parameterがClipboardItemFolderViewModelではない場合はエラーメッセージを表示
-            if (parameter is not ClipboardItemFolderViewModel folderViewModel) {
+            if (parameter is not ClipboardFolderViewModel folderViewModel) {
                 Tools.Error("フォルダが選択されていません");
                 return;
             }
@@ -162,17 +161,29 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             });
         });
         // フォルダ編集コマンド
-        public static SimpleDelegateCommand EditFolderCommand => new (ClipboardFolderCommands.EditFolderCommandExecute);
+        public SimpleDelegateCommand EditFolderCommand => new((parameter) => {
+            ClipboardFolderCommands.EditFolderCommandExecute(parameter, () => {
+                Load();
+                Tools.Info("フォルダを編集しました");
+            });
+        });
+
         // フォルダ削除コマンド
-        public static SimpleDelegateCommand DeleteFolderCommand => new (ClipboardFolderCommands.DeleteFolderCommandExecute);
+        public SimpleDelegateCommand DeleteFolderCommand => new(ClipboardFolderCommands.DeleteFolderCommandExecute);
 
         // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
-        public static SimpleDelegateCommand FolderSelectWindowSelectFolderCommand => new (FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
+        public static SimpleDelegateCommand FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
 
         // フォルダ内のアイテムをJSON形式でエクスポートする処理
-        public static SimpleDelegateCommand ExportItemsFromFolderCommand => new (ClipboardFolderCommands.ExportItemsFromFolderCommandExecute);
+        public SimpleDelegateCommand ExportItemsFromFolderCommand => new(
+            (parameter) => {
+                ClipboardFolderCommands.ExportItemsFromFolderCommandExecute(this);
+            });
+
         // フォルダ内のアイテムをJSON形式でインポートする処理
-        public static SimpleDelegateCommand ImportItemsToFolderCommand => new (ClipboardFolderCommands.ImportItemsToFolderCommandExecute);
+        public SimpleDelegateCommand ImportItemsToFolderCommand => new((parameter) => {
+            ClipboardFolderCommands.ImportItemsToFolderCommandExecute(this);
+        });
 
     }
 }

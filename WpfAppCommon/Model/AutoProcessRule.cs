@@ -104,12 +104,12 @@ namespace WpfAppCommon.Model {
 
         public AutoProcessItem? RuleAction { get; set; }
 
-        public ClipboardItemFolder? TargetFolder { get; set; }
+        public ClipboardFolder? TargetFolder { get; set; }
 
         public AutoProcessRule() {
         }
 
-        public AutoProcessRule(string ruleName, ClipboardItemFolder clipboardItemFolder) {
+        public AutoProcessRule(string ruleName, ClipboardFolder clipboardItemFolder) {
             RuleName = ruleName;
             TargetFolder = clipboardItemFolder;
         }
@@ -126,7 +126,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 移動またはコピー先のフォルダ
-        public ClipboardItemFolder? DestinationFolder { get; set; }
+        public ClipboardFolder? DestinationFolder { get; set; }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
         public bool IsMatch(ClipboardItem clipboardItem) {

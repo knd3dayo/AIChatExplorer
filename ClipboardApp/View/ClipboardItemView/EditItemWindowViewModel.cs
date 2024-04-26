@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.TagView;
 using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
+using ClipboardApp.View.ClipboardItemFolderView;
 
 namespace ClipboardApp.View.ClipboardItemView
 {
@@ -70,11 +71,14 @@ namespace ClipboardApp.View.ClipboardItemView
 
         private Action? _afterUpdate;
 
-        public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new ClipboardItem();
-                clipboardItem.CollectionName = MainWindowViewModel.Instance?.SelectedFolder?.AbsoluteCollectionName;
-                ItemViewModel = new ClipboardItemViewModel(clipboardItem);
+                ClipboardItem clipboardItem = new() {
+                    // CollectionNameを設定
+                    CollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName
+                };
+
+                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 title = "新規アイテム";
             } else {
                 title = "アイテム編集";
@@ -180,9 +184,7 @@ namespace ClipboardApp.View.ClipboardItemView
         });
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new SimpleDelegateCommand(OKButtonCommandExecute);
-
-        private void OKButtonCommandExecute(object parameter) {
+        public SimpleDelegateCommand OKButtonCommand => new((parameter) => {
 
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
@@ -199,7 +201,8 @@ namespace ClipboardApp.View.ClipboardItemView
             }
             // ウィンドウを閉じる
             window.Close();
-        }
+        });
+
         // キャンセルボタンのコマンド
         public SimpleDelegateCommand CancelButtonCommand => new(CancelButtonCommandExecute);
         private void CancelButtonCommandExecute(object parameter) {

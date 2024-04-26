@@ -13,8 +13,8 @@ namespace ClipboardApp.View.AutoProcessRuleView
             Edit
         }
         // ルール適用対象のClipboardItemFolder
-        private ClipboardItemFolderViewModel? _TargetFolder { get; set; }
-        public ClipboardItemFolderViewModel? TargetFolder {
+        private ClipboardFolderViewModel? _TargetFolder { get; set; }
+        public ClipboardFolderViewModel? TargetFolder {
             get {
                 return _TargetFolder;
             }
@@ -92,8 +92,8 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
 
         // コピーまたは移動先のフォルダ
-        private ClipboardItemFolderViewModel? _DestinationFolder = null;
-        public ClipboardItemFolderViewModel? DestinationFolder {
+        private ClipboardFolderViewModel? _DestinationFolder = null;
+        public ClipboardFolderViewModel? DestinationFolder {
             get {
                 return _DestinationFolder;
             }
@@ -120,7 +120,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         // 
         // 初期化
-        private void Initialize(Mode mode, ClipboardItemFolderViewModel? folderViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+        private void Initialize(Mode mode, ClipboardFolderViewModel? folderViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             CurrentMode = mode;
             TargetFolder = folderViewModel;
             TargetAutoProcessRule = autoProcessRule;
@@ -128,10 +128,10 @@ namespace ClipboardApp.View.AutoProcessRuleView
             _AfterUpdate = afterUpdate;
 
             if (autoProcessRule?.TargetFolder != null) {
-                TargetFolder = new ClipboardItemFolderViewModel(autoProcessRule.TargetFolder);
+                TargetFolder = new ClipboardFolderViewModel(autoProcessRule.TargetFolder);
             }
             if (autoProcessRule?.DestinationFolder != null) {
-                DestinationFolder = new ClipboardItemFolderViewModel(autoProcessRule.DestinationFolder);
+                DestinationFolder = new ClipboardFolderViewModel(autoProcessRule.DestinationFolder);
             }
 
 
@@ -180,12 +180,12 @@ namespace ClipboardApp.View.AutoProcessRuleView
         }
 
         // 初期化 modeがEditの場合
-        public void InitializeEdit(ClipboardItemFolderViewModel? clipboardItemFolder, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+        public void InitializeEdit(ClipboardFolderViewModel? clipboardItemFolder, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             Initialize(Mode.Edit, clipboardItemFolder, autoProcessRule, afterUpdate);
 
         }
         // 初期化 modeがCreateの場合
-        public void InitializeCreate(ClipboardItemFolderViewModel? clipboardItemFolder, Action<AutoProcessRule> afterUpdate) {
+        public void InitializeCreate(ClipboardFolderViewModel? clipboardItemFolder, Action<AutoProcessRule> afterUpdate) {
             Initialize(Mode.Create, clipboardItemFolder, null, afterUpdate);
         }
 
@@ -300,7 +300,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         }
         // OnSelectedFolderChanged
-        public void OnSelectedFolderChanged(ClipboardItemFolderViewModel? folder) {
+        public void OnSelectedFolderChanged(ClipboardFolderViewModel? folder) {
             if (folder == null) {
                 return;
             }
@@ -320,12 +320,12 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public SimpleDelegateCommand OpenSelectDestinationFolderWindowCommand => new SimpleDelegateCommand(OpenSelectDestinationFolderWindowCommandExecute);
         public void OpenSelectDestinationFolderWindowCommandExecute(object parameter) {
             // フォルダが選択されたら、DestinationFolderに設定
-            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
+            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 DestinationFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }
@@ -334,12 +334,12 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new SimpleDelegateCommand(OpenSelectTargetFolderWindowCommandExecute);
         public void OpenSelectTargetFolderWindowCommandExecute(object parameter) {
             // フォルダが選択されたら、TargetFolderに設定
-            void FolderSelectedAction(ClipboardItemFolderViewModel folderViewModel) {
+            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 TargetFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardItemFolderViewModel? rootFolderViewModel = new ClipboardItemFolderViewModel(ClipboardItemFolder.RootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         }

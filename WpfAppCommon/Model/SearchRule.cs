@@ -24,9 +24,9 @@ namespace WpfAppCommon.Model {
 
         public SearchCondition SearchCondition { get; set; }
 
-        public ClipboardItemFolder? SearchFolder { get; set; }
+        public ClipboardFolder? SearchFolder { get; set; }
 
-        public ClipboardItemFolder? TargetFolder { get; set; }
+        public ClipboardFolder? TargetFolder { get; set; }
 
         public string Name { get; set; } = "";
 
