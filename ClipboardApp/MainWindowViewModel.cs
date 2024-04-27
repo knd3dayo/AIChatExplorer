@@ -9,6 +9,7 @@ using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
@@ -55,7 +56,7 @@ namespace ClipboardApp {
             }
             set {
                 _isClipboardMonitor = value;
-                OnPropertyChanged("IsClipboardMonitor");
+                OnPropertyChanged(nameof(IsClipboardMonitor));
                 if (value) {
                     ClipboardAppFactory.Instance.GetClipboardController().Start((actionMessage) => {
                         // クリップボードが変更された時の処理
@@ -86,9 +87,13 @@ namespace ClipboardApp {
             }
             set {
                 _selectedItem = value;
-                OnPropertyChanged("SelectedItem");
+                OnPropertyChanged(nameof(SelectedItem));
+                SelectedItemStatic = value;
             }
         }
+        public static ClipboardItemViewModel? SelectedItemStatic { get; set; } = null;
+
+
         // 選択中のフォルダ
         private ClipboardFolderViewModel? _selectedFolder = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
         public ClipboardFolderViewModel? SelectedFolder {
@@ -456,11 +461,18 @@ namespace ClipboardApp {
                 );
         });
 
-
-        // メニューの「Pythonスクリプト作成」をクリックしたときの処理
-        public SimpleDelegateCommand CreatePythonScriptCommand => new(PythonCommands.CreatePythonScriptCommandExecute);
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand EditPythonScriptCommand => new SimpleDelegateCommand(PythonCommands.EditPythonScriptCommandExecute);
+        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new (PythonCommands.OpenListPythonScriptWindowCommandExecute);
+
+        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
+        public SimpleDelegateCommand OpenListPromptTemplateWindowCommand => new((parameter) => {
+            ListPromptTemplateWindow listPromptTemplateWindow = new ListPromptTemplateWindow();
+            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)listPromptTemplateWindow.DataContext;
+            listPromptTemplateWindowViewModel.InitializeEdit((promptTemplateWindowViewModel) => {
+                // PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+            });
+            listPromptTemplateWindow.ShowDialog();
+        });
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new((parameter) => {
             ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
@@ -474,6 +486,8 @@ namespace ClipboardApp {
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenTagWindowCommand => new((parameter) => {
             TagWindow tagWindow = new TagWindow();
+            TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
+            tagWindowViewModel.Initialize(null, () => { });
             tagWindow.ShowDialog();
 
         });

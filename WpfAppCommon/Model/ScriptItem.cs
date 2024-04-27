@@ -18,13 +18,16 @@ namespace WpfAppCommon.Model
     public class ScriptItem
     {
         public ObjectId? Id { get; set; }
+
+        public string Name { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
 
         public ScriptType Type { get; set; }
 
-        public ScriptItem(string description, string content, ScriptType type)
+        public ScriptItem(string name, string description, string content, ScriptType type)
         {
+            Name = name;
             Description = description;
             Content = content;
             Type = type;

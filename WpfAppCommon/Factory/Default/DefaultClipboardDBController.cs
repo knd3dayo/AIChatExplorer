@@ -356,32 +356,43 @@ namespace WpfAppCommon.Factory.Default {
         }
 
         // 名前を指定してタグを検索する
-        public IEnumerable<TagItem> SearchTag(string tag) {
+        public IEnumerable<TagItem> SearchTag(TagItem tag) {
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var tags = collection.FindAll().Where(x => x.Tag.Contains(tag));
+            var tags = collection.FindAll().Where(x => x.Tag.Contains(tag.Tag));
             return tags;
 
         }
+        public IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
+            if (string.IsNullOrEmpty(tag)) {
+                return GetTagList();
+            }
+            if (exclude) {
+                return GetTagList().Where(x => x.Tag.Contains(tag) == false);
+            } else {
+                return GetTagList().Where(x => x.Tag.Contains(tag));
+            }
+
+        }
         // タグを削除する
-        public void DeleteTag(string tag) {
+        public void DeleteTag(TagItem tag) {
             var tags = SearchTag(tag);
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
             foreach (var i in tags) {
                 collection.Delete(i.Id);
             }
         }
+
         // タグを追加する
-        public void InsertTag(string tag) {
+        public void InsertTag(TagItem tag) {
             // すでに存在するかチェック
             var tags = SearchTag(tag);
             foreach (var i in tags) {
-                if (i.Tag == tag) {
+                if (i.Tag == tag.Tag) {
                     return;
                 }
             }
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            TagItem tagItem = new TagItem { Tag = tag };
-            collection.Insert(tagItem);
+            collection.Insert(tag);
         }
 
         public void UpsertPromptTemplate(PromptItem promptItem) {

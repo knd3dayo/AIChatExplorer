@@ -1,0 +1,106 @@
+﻿<Window
+    x:Class="ClipboardApp.View.PythonScriptView.ListPythonScriptWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ClipboardApp.View.PythonScriptView"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="スクリプト選択画面"
+    Width="700"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:ListPythonScriptWindowViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListView
+            Name="listbox1"
+            Grid.Row="0"
+            Margin="10,10,10,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            ItemsSource="{Binding ScriptItems}"
+            SelectedItem="{Binding SelectedScriptItem}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="160"
+                        DisplayMemberBinding="{Binding Name}"
+                        Header="名前" />
+                    <GridViewColumn
+                        Width="350"
+                        DisplayMemberBinding="{Binding Description}"
+                        Header="説明" />
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding DeleteScriptCommand}"
+                        CommandParameter="{Binding}"
+                        Header="削除" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.InputBindings>
+                <MouseBinding
+                    Command="{Binding SelectScriptCommand}"
+                    CommandParameter="{Binding SelectedItem}"
+                    MouseAction="LeftDoubleClick" />
+            </ListView.InputBindings>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,0,0" Orientation="Horizontal">
+                        <TextBlock Text="{Binding Description}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DockPanel
+                Grid.Column="0"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Left">
+                <Button
+                    Width="180"
+                    Margin="10,0,0,0"
+                    Command="{Binding CreateScriptItemCommand}"
+                    CommandParameter=""
+                    Content="新規Pythonスクリプト" />
+                <Button
+                    Width="180"
+                    Margin="10,0,0,0"
+                    Command="{Binding EditScriptItemCommand}"
+                    Content="Pythonスクリプト編集" />
+            </DockPanel>
+            <DockPanel
+                Grid.Column="1"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Command="{Binding SelectScriptItemCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding SelectButtonText}" />
+                <Button
+                    Width="100"
+                    Margin="10,0,20,0"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="閉じる"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
+        </Grid>
+
+    </Grid>
+</Window>

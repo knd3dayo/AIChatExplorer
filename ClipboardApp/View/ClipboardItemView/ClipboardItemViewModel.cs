@@ -87,11 +87,17 @@ namespace ClipboardApp.View.ClipboardItemView {
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
         // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public static SimpleDelegateCommand MaskDataCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemMaskDataCommandExecute);
+        public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
+            if (MainWindowViewModel.SelectedItemStatic == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
+            ClipboardItemCommands.MenuItemMaskDataCommandExecute(MainWindowViewModel.SelectedItemStatic);
+        });
 
         // プロンプトテンプレート一覧を開いて選択されたプロンプトテンプレートを実行するコマンド
         // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand ExecPromptTemplateCommand => new ((parameter) => {
+        public SimpleDelegateCommand ExecPromptTemplateCommand => new((parameter) => {
             ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
             promptTemplateWindowViewModel.InitializeExec((promptItemViewModel, mode) => {

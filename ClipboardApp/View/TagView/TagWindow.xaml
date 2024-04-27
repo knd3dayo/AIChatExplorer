@@ -1,70 +1,107 @@
-﻿<Window x:Class="ClipboardApp.View.TagView.TagWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClipboardApp.View.TagView"
-        mc:Ignorable="d"
-        Title="タグ編集" Height="300" Width="500">
+﻿<Window
+    x:Class="ClipboardApp.View.TagView.TagWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ClipboardApp.View.TagView"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="タグ編集"
+    Width="500"
+    Height="300"
+    mc:Ignorable="d">
     <Window.DataContext>
-        <local:TagWindowViewModel/>
+        <local:TagWindowViewModel />
     </Window.DataContext>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Enter"
+            Command="{Binding OkCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CancelCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <KeyBinding
+            Key="F"
+            Command="{Binding OpenSearchWindowCommand}"
+            Modifiers="Ctrl" />
+
+    </Window.InputBindings>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox Name="listbox1" ItemsSource="{Binding TagList}" Grid.Row="0"
-                 HorizontalAlignment="Stretch" 
-                 Margin="10,10,10,10" 
-                 VerticalAlignment="Stretch"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 >
+        <ListBox
+            Name="listbox1"
+            Grid.Row="0"
+            Margin="10,10,10,10"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            ItemsSource="{Binding TagList}"
+            ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal"
-                     >
-                        <CheckBox Content="{Binding Tag}" IsChecked="{Binding IsChecked}" Width="200"/>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox
+                            Width="200"
+                            Content="{Binding Tag}"
+                            IsChecked="{Binding IsChecked}" />
                         <StackPanel.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="削除" 
+                                <MenuItem
                                     Command="{Binding DeleteTagCommand}"
-                                    CommandParameter="{Binding}"/>
+                                    CommandParameter="{Binding}"
+                                    Header="削除" />
                             </ContextMenu>
                         </StackPanel.ContextMenu>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Grid  Grid.Row="1" >
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
-                <TextBlock Text="新規タグ" Margin="10,0,10,0" 
-                           Style="{StaticResource MaterialDesignBody1TextBlock}"
-                           />
-                <TextBox Name="TagText" Margin="10,0,10,0"  
-                         Text="{Binding NewTag}"
-                         />
+            <DockPanel Grid.Column="0" HorizontalAlignment="Stretch">
+                <TextBlock
+                    Margin="10,0,10,0"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="新規タグ" />
+                <TextBox
+                    Name="TagText"
+                    Margin="10,0,10,0"
+                    Text="{Binding NewTag}" />
             </DockPanel>
-            <Button Content="追加" Width="100" HorizontalAlignment="Right" Grid.Column="1"
-                        Command="{Binding AddTagCommand}"  
-                        CommandParameter="{Binding NewTag}" Margin="10,0,10,0" />
+            <Button
+                Grid.Column="1"
+                Width="100"
+                Margin="10,0,10,0"
+                HorizontalAlignment="Right"
+                Command="{Binding AddTagCommand}"
+                CommandParameter="{Binding NewTag}"
+                Content="追加" />
         </Grid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" 
-                        Command="{Binding OkCommand}" 
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Margin="10"  Width="100"/>
-            <Button Content="キャンセル"
-                        Command="{Binding CancelCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Margin="10"  Width="100"/>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Width="100"
+                Margin="10"
+                Command="{Binding OkCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                Content="OK" />
+            <Button
+                Width="100"
+                Margin="10"
+                Command="{Binding CancelCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                Content="キャンセル" />
         </StackPanel>
 
     </Grid>

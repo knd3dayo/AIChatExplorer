@@ -379,6 +379,7 @@ namespace WpfAppCommon.PythonIF {
         public string RunScript(string script, string input) {
             string resultString = "";
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? run_script = ps?.Get("run_script");
                 // run_scriptが呼び出せない場合は例外をスロー

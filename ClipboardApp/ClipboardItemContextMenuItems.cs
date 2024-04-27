@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.Views.ClipboardItemView;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
@@ -56,20 +56,10 @@ namespace ClipboardApp {
 
             // ユーザー定義のPythonスクリプトをメニューに追加
             ClipboardAppMenuItem userDefinedPythonScriptsMenu
-                = new ClipboardAppMenuItem("ユーザー定義Pythonスクリプト", SimpleDelegateCommand.EmptyCommand);
-
-
-            // Pythonスクリプト(ユーザー定義)
-            foreach (ScriptItem scriptItem in ScriptItem.ScriptItems) {
-
-                userDefinedPythonScriptsMenu.SubMenuItems.Add(new ClipboardAppMenuItem(scriptItem.Description, new SimpleDelegateCommand((parameter) => {
-                    if (parameter is not ClipboardItemViewModel itemViewModel) {
-                        return;
-                    }
-                    ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute(scriptItem, itemViewModel);
+                = new ClipboardAppMenuItem("Pythonスクリプトを実行", new SimpleDelegateCommand((parameter) => {
+                    PythonCommands.OpenListPythonScriptWindowExecCommandExecute(_mainWindowViewModel.SelectedItem);
                 })
-                ));
-            }
+                );
 
             utilityMenuItems.SubMenuItems.Add(userDefinedPythonScriptsMenu);
             this.Add(utilityMenuItems);

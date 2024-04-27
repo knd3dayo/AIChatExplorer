@@ -6,7 +6,7 @@ namespace WpfAppCommon.Factory {
 
 
         //-- ClipboardItem
-        public void UpsertItem(ClipboardItem item, bool updateModifiedTime=true);
+        public void UpsertItem(ClipboardItem item, bool updateModifiedTime = true);
         public void DeleteItem(ClipboardItem item);
 
         //-- ClipboardFolder
@@ -47,10 +47,11 @@ namespace WpfAppCommon.Factory {
         //-- Tag 要改修
         public IEnumerable<TagItem> GetTagList();
 
-        public void DeleteTag(string tag);
+        public void DeleteTag(TagItem tag);
 
-        public void InsertTag(string tag);
+        public void InsertTag(TagItem tag);
 
+        public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
 
         public IEnumerable<ScriptItem> GetScriptItems();
 
@@ -59,6 +60,6 @@ namespace WpfAppCommon.Factory {
         public ICollection<PromptItem> GetAllPromptTemplates();
 
         public void DeletePromptTemplate(PromptItem promptItem);
-        }
+    }
 
 }

@@ -8,7 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="window1"
-    Title="コピペツール"
+    Title="コピペアプリ"
     Width="800"
     Height="450"
     Style="{StaticResource MaterialDesignWindow}"
@@ -135,11 +135,6 @@
                                 Command="{Binding CreateItemCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="アイテム作成" />
-                            <MenuItem
-                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding CreatePythonScriptCommand}"
-                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="Pythonスクリプト作成" />
                         </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
@@ -163,9 +158,14 @@
                             Header="自動処理ルール編集" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding EditPythonScriptCommand}"
+                            Command="{Binding OpenListPythonScriptWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="Pythonスクリプト編集" />
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenListPromptTemplateWindowCommand}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="プロンプトテンプレート編集" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"

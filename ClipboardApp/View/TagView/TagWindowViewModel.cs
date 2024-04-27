@@ -4,35 +4,30 @@ using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.TagView
-{
+namespace ClipboardApp.View.TagView {
     public class TagWindowViewModel : ObservableObject {
-        public ObservableCollection<TagItem> TagList { get; set; } = new ObservableCollection<TagItem>();
+        public ObservableCollection<TagItemViewModel> TagList { get; set; } = new ObservableCollection<TagItemViewModel>();
 
         private ClipboardItem? _clipboardItem;
-        public ClipboardItem? ClipboardItem {
-            get {
-                return _clipboardItem;
-            }
-            set {
-                _clipboardItem = value;
-                if (value != null) {
-                    foreach (var item in TagList) {
-                        var tagString = item.Tag;
-                        item.IsChecked = value.Tags.Contains(tagString);
-                    }
-                }
-            }
-        }
+
+
         Action? _afterUpdate;
 
-        public void Initialize(ClipboardItem clipboardItem, Action afterUpdate) {
-            ClipboardItem = clipboardItem;
+        public void Initialize(ClipboardItem? clipboardItem, Action afterUpdate) {
+            _clipboardItem = clipboardItem;
             _afterUpdate = afterUpdate;
+            if (clipboardItem == null) {
+                return;
+            }
+            foreach (var item in TagList) {
+                var tagString = item.Tag;
+                item.IsChecked = clipboardItem.Tags.Contains(tagString);
+            }
+
         }
         public TagWindowViewModel() {
             foreach (var item in TagController.GetTagList()) {
-                TagList.Add(item);
+                TagList.Add(new TagItemViewModel(item));
             }
         }
 
@@ -44,7 +39,7 @@ namespace ClipboardApp.View.TagView
             }
             set {
                 _newTag = value;
-                OnPropertyChanged("NewTag");
+                OnPropertyChanged(nameof(NewTag));
             }
         }
 
@@ -69,8 +64,8 @@ namespace ClipboardApp.View.TagView
             }
 
             TagItem tagItem = new TagItem { Tag = tag };
-            TagList.Add(tagItem);
-            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tag);
+            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tagItem);
+            TagList.Add(new TagItemViewModel(tagItem));
             NewTag = "";
         }
 
@@ -81,37 +76,34 @@ namespace ClipboardApp.View.TagView
                 foreach (var item in TagList) {
                     if (item.IsChecked) {
                         // LiteDBから削除
-                        item.Delete();
+                        item.TagItem.Delete();
+
                         // TagListから削除
+                        TagList.Remove(item);
                     }
                 }
                 // LiteDBから再読み込み
                 TagList.Clear();
                 foreach (var item in TagController.GetTagList()) {
-                    TagList.Add(item);
+                    TagList.Add(new TagItemViewModel(item));
                 }
             });
 
         // OKボタンを押したときの処理
         public SimpleDelegateCommand OkCommand => new((parameter) => {
-            if (ClipboardItem == null) {
-                // クリップボードアイテムがnullの場合は何もしない
-                // ウィンドウを閉じる
-                return;
-            }
-            // ClipboardItemのタグをクリア
-            ClipboardItem.Tags.Clear();
-            // TagListのチェックを反映
-            foreach (var item in TagList) {
-                if (item.IsChecked) {
-                    ClipboardItem.Tags.Add(item.Tag);
-                } else {
-                    ClipboardItem.Tags.Remove(item.Tag);
+            if (_clipboardItem != null) {
+                // TagListのチェックを反映
+                foreach (var item in TagList) {
+                    if (item.IsChecked) {
+                        _clipboardItem.Tags.Add(item.Tag);
+                    } else {
+                        _clipboardItem.Tags.Remove(item.Tag);
+                    }
                 }
-            }
-            // DBに反映
-            ClipboardItem.Save();
+                // DBに反映
+                _clipboardItem.Save();
 
+            }
             // 更新後の処理を実行
             _afterUpdate?.Invoke();
 
@@ -131,5 +123,10 @@ namespace ClipboardApp.View.TagView
             // ウィンドウを閉じる
             window.Close();
         }
+        // 検索ウィンドウを開く
+        public SimpleDelegateCommand OpenSearchWindowCommand => new((parameter) => {
+            var searchWindow = new TagSearchWindow();
+            searchWindow.Show();
+        });
     }
 }

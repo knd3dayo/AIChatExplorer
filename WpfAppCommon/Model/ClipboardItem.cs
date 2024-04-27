@@ -3,7 +3,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using WpfAppCommon.Utils;
 using LiteDB;
-using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 using WpfAppCommon.PythonIF;
 using QAChat.Model;
@@ -243,7 +242,8 @@ namespace WpfAppCommon.Model {
             HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
                 // LiteDBにタグを追加
-                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(entity);
+                TagItem tagItem = new TagItem { Tag = entity };
+                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tagItem);
                 // タグを追加
                 item.Tags.Add(entity);
             }

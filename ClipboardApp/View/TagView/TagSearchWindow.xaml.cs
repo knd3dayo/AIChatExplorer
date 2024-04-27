@@ -12,15 +12,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ClipboardApp.View.PythonScriptView
-{
+namespace ClipboardApp.View.TagView {
     /// <summary>
-    /// SelectPythonScriptWindow.xaml の相互作用ロジック
+    /// TagSearchWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class SelectPythonScriptWindow : Window
-    {
-        public SelectPythonScriptWindow()
-        {
+    public partial class TagSearchWindow : Window {
+        public TagSearchWindow() {
             InitializeComponent();
         }
     }

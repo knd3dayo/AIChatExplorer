@@ -55,3 +55,12 @@ def extract_text_from_image(byte_data):
     return txt
 
 
+# run_script関数
+def run_script(script, input_str):
+    try:
+        exec(script)
+        result = execute(input_str)
+        return result
+
+    except Exception as e:
+        return traceback.format_exc()

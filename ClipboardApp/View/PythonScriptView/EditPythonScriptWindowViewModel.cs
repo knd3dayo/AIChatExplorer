@@ -11,7 +11,7 @@ namespace ClipboardApp.View.PythonScriptView {
             }
             set {
                 scriptItem = value;
-                OnPropertyChanged("ScriptItem");
+                OnPropertyChanged(nameof(ScriptItem));
             }
         }
 
@@ -37,13 +37,12 @@ namespace ClipboardApp.View.PythonScriptView {
             }
         }
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new SimpleDelegateCommand(CancelButtonCommandExecute);
-        private void CancelButtonCommandExecute(object parameter) {
+        public SimpleDelegateCommand CancelButtonCommand => new((parameter) => {
             // ウィンドウを閉じる
             if (parameter is EditPythonScriptWindow editScriptWindow) {
                 editScriptWindow.Close();
             }
-        }
+        });
 
     }
 }

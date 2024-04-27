@@ -235,12 +235,12 @@ namespace ClipboardApp.View.ClipboardItemView {
         public static void MenuItemRunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItemViewModel itemViewModel) {
             try {
                 // clipboardItemをJsonに変換
-                string clipboardItemJson = ClipboardItem.ToJson(itemViewModel.ClipboardItem);
+                string input_str = itemViewModel.ClipboardItem.Content;
                 // Pythonスクリプトを実行
-                string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, clipboardItemJson);
-                // JsonからClipboardItemに変換
-                ClipboardItem? resultItem = ClipboardItem.FromJson(result, Tools.DefaultAction);
+                string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, input_str);
 
+                // 結果をClipboardItemに設定
+                itemViewModel.ClipboardItem.Content = result;
                 // 保存
                 itemViewModel.ClipboardItem.Save();
 
