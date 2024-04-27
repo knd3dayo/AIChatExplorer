@@ -9,9 +9,12 @@ namespace ClipboardApp.View.ClipboardItemView {
     public class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
 
         // ClipboardItem
-        public ClipboardItem ClipboardItem { get; set; } = clipboardItem;
+        public ClipboardItem ClipboardItem { get; } = clipboardItem;
         // FolderViewModel
-        public ClipboardFolderViewModel FolderViewModel { get; set; } = folderViewModel;
+        public ClipboardFolderViewModel FolderViewModel { get; } = folderViewModel;
+
+        // MainWindowViewModel
+        public MainWindowViewModel MainWindowViewModel { get; } = folderViewModel.MainWindowViewModel;
 
         // Content
         public string Content {
@@ -20,7 +23,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             set {
                 ClipboardItem.Content = value;
-                OnPropertyChanged("Content");
+                OnPropertyChanged(nameof(Content));
             }
         }
 
@@ -85,7 +88,9 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public static SimpleDelegateCommand ExtractTextCommand => new SimpleDelegateCommand(ClipboardItemCommands.MenuItemExtractTextCommandExecute);
+        public static SimpleDelegateCommand ExtractTextCommand => new((parameter) => {
+            ClipboardItemCommands.MenuItemExtractTextCommandExecute(parameter);
+        });
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
             if (MainWindowViewModel.SelectedItemStatic == null) {
@@ -94,22 +99,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             ClipboardItemCommands.MenuItemMaskDataCommandExecute(MainWindowViewModel.SelectedItemStatic);
         });
-
-        // プロンプトテンプレート一覧を開いて選択されたプロンプトテンプレートを実行するコマンド
-        // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand ExecPromptTemplateCommand => new((parameter) => {
-            ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
-            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.InitializeExec((promptItemViewModel, mode) => {
-                // ClipboardItemのContentの先頭にプロンプトテンプレートのContentを追加
-                Content = promptItemViewModel.PromptItem.Prompt + "\n---------\n" + Content;
-                // OpenAIChatを実行
-                ClipboardItemCommands.OpenAIChatCommandExecute(mode, this);
-
-            });
-            promptTemplateWindow.ShowDialog();
-        });
-
 
     }
 }

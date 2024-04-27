@@ -6,10 +6,11 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
-    public class ClipboardFolderViewModel
-        (ClipboardFolder clipboardItemFolder) : ObservableObject {
+    public class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ObservableObject {
         // ClipboardFolder
-        public ClipboardFolder ClipboardItemFolder { get; set; } = clipboardItemFolder;
+        public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
+        // MainWindowViewModel
+        public MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
 
         // Items
@@ -34,7 +35,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             get {
                 ObservableCollection<ClipboardFolderViewModel> children = [];
                 foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
-                    children.Add(new ClipboardFolderViewModel(folder));
+                    children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
                 }
                 return children;
             }

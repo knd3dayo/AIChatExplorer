@@ -62,7 +62,7 @@ namespace ClipboardApp {
                         // クリップボードが変更された時の処理
                         SelectedFolder?.Load();
                     });
-                    
+
                     Tools.Info("クリップボード監視を開始しました");
                 } else {
                     ClipboardAppFactory.Instance.GetClipboardController().Stop();
@@ -95,7 +95,7 @@ namespace ClipboardApp {
 
 
         // 選択中のフォルダ
-        private ClipboardFolderViewModel? _selectedFolder = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
+        private ClipboardFolderViewModel? _selectedFolder = null;
         public ClipboardFolderViewModel? SelectedFolder {
             get {
                 return _selectedFolder;
@@ -152,8 +152,8 @@ namespace ClipboardApp {
         // フォルダ階層を再描写する
         public void ReloadFolder() {
             ClipboardItemFolders.Clear();
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(ClipboardFolder.RootFolder));
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(ClipboardFolder.SearchRootFolder));
+            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
+            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             OnPropertyChanged("ClipboardItemFolders");
         }
         // ClipboardItemを再描写する
@@ -174,6 +174,9 @@ namespace ClipboardApp {
                 listBox?.ScrollIntoView(listBox.Items[0]);
             }
         }
+        public void NotifyPropertyChanged(string propertyName) {
+            OnPropertyChanged(propertyName);
+        }
 
         //--------------------------------------------------------------------------------
         // コマンド
@@ -183,41 +186,25 @@ namespace ClipboardApp {
         // メニューの「終了」をクリックしたときの処理
 
         public static SimpleDelegateCommand ExitCommand => new((parameter) => {
-            // 終了確認ダイアログを表示。Yesならアプリケーションを終了
-            MessageBoxResult result = MessageBox.Show("終了しますか?", "Confirmation", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-
-                Application.Current.Shutdown();
-            }
+            MainWindowCommand.ExitCommand();
         });
 
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand ToggleClipboardMonitor => new((parameter) => {
-            IsClipboardMonitor = !IsClipboardMonitor;
-            OnPropertyChanged(nameof(ClipboardMonitorButtonText));
+            MainWindowCommand.ToggleClipboardMonitorCommand(this);
         });
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand FolderSelectionChangedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
-            TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
-            SelectedFolder = clipboardItemFolderViewModel;
+            MainWindowCommand.FolderSelectionChangedCommand(this, parameter);
         });
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand ClipboardItemSelectionChangedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
-            ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
-            ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
-            SelectedItems.Clear();
-            foreach (ClipboardItemViewModel item in listBox.SelectedItems) {
-                SelectedItems.Add(item);
-            }
-            SelectedItem = clipboardItemViewModel;
+            MainWindowCommand.ClipboardItemSelectionChangedCommand(this, parameter);
         });
 
 
@@ -225,325 +212,110 @@ namespace ClipboardApp {
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand CreateItemCommand => new((parameter) => {
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardItemCommands.CreateItemCommandExecute(SelectedFolder);
+            MainWindowCommand.CreateItemCommand(this, parameter);
         });
 
         // OpenOpenAIWindowCommand メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand OpenOpenAIWindowCommand => new((parameter) => {
-            ClipboardItemCommands.OpenOpenAIChatWindowExecute(null);
+            MainWindowCommand.OpenOpenAIWindowCommand();
         });
 
 
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand SearchCommand => new((parameter) => {
-            // 選択中のフォルダがない場合でも処理をする
-            ClipboardFolderCommands.SearchCommandExecute(SelectedFolder);
+            MainWindowCommand.SearchCommand(this);
         });
 
 
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand ReloadCommand => new((parameter) => {
-            if (SelectedFolder == null) {
-                return;
-            }
-            // -- 処理完了までProgressIndicatorを表示
-            try {
-                IsIndeterminate = true;
-                ClipboardFolderCommands.ReloadCommandExecute(SelectedFolder);
-            } finally {
-                IsIndeterminate = false;
-            }
+            MainWindowCommand.ReloadCommand(this);
         });
 
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand DeleteDisplayedItemCommand => new((parameter) => {
-            if (SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardFolderCommands.DeleteDisplayedItemCommandExecute(SelectedFolder);
+            MainWindowCommand.DeleteDisplayedItemCommand(this);
         });
-
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand DeleteSelectedItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-
-            ClipboardItemCommands.DeleteSelectedItemCommandExecute(SelectedFolder, SelectedItems);
+            MainWindowCommand.DeleteSelectedItemCommand(this);
         });
 
 
         // メニューの「設定」をクリックしたときの処理
         public static SimpleDelegateCommand SettingCommand => new((parameter) => {
-            SettingWindow settingWindow = new();
-            settingWindow.ShowDialog();
+            MainWindowCommand.SettingCommand();
         });
 
         // ピン留めの切り替え処理 複数アイテム処理可能
         public SimpleDelegateCommand ChangePinCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            ClipboardItemCommands.ChangePinCommandExecute(SelectedFolder, SelectedItems);
+            MainWindowCommand.ChangePinCommand(this);
         });
+
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            ClipboardItemCommands.OpenItemCommandExecute(SelectedFolder, SelectedItem);
+            MainWindowCommand.OpenSelectedItemCommand(this);
         });
+
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemAsFileCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            ClipboardItemCommands.OpenSelectedItemAsFileCommandExecute(SelectedItem);
+            MainWindowCommand.OpenSelectedItemAsFileCommand(this);
         });
 
         // 選択したアイテムを新規として開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemAsNewFileCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            ClipboardItemCommands.OpenSelectedItemAsNewFileCommandExecute(SelectedItem);
+            MainWindowCommand.OpenSelectedItemAsNewFileCommand(this);
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand CutItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            // Cut Flagを立てる
-            CutFlag = true;
-            // CopiedItemsに選択中のアイテムをセット
-            CopiedItems.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
-                CopiedItems.Add(item);
-            }
-            CopiedItemFolder = SelectedFolder;
-            Tools.Info("切り取りしました");
-
+            MainWindowCommand.CutItemCommand(this);
         });
         // Ctrl + C が押された時の処理
         public SimpleDelegateCommand CopyToClipboardCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            // Cutフラグをもとに戻す
-            CutFlag = false;
-            // CopiedItemsに選択中のアイテムをセット
-            CopiedItems.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
-                CopiedItems.Add(item);
-            }
-            CopiedItemFolder = SelectedFolder;
-            try {
-                ClipboardAppFactory.Instance.GetClipboardController().SetDataObject(SelectedItem.ClipboardItem);
-                Tools.Info("コピーしました");
-
-            } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                Tools.Error(message);
-            }
-
+            MainWindowCommand.CopyToClipboardCommand(this);
         });
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand PasteFromClipboardCommand => new((parameter) => {
-            // コピー元のアイテムがない場合は処理をしない
-            if (CopiedItems.Count == 0) {
-                Tools.Info("コピー元のアイテムがない");
-                return;
-            }
-            // コピー元のフォルダがない場合は処理をしない
-            if (CopiedItemFolder == null) {
-                Tools.Error("コピー元のフォルダがない");
-                return;
-            }
-            // 貼り付け先のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("貼り付け先のフォルダがない");
-                return;
-            }
-            ClipboardItemCommands.PasteClipboardItemCommandExecute(
-                this.CutFlag,
-                CopiedItems,
-                CopiedItemFolder,
-                SelectedFolder
-                );
-            // Cutフラグをもとに戻す
-            CutFlag = false;
-            // 貼り付け後にコピー選択中のアイテムをクリア
-            CopiedItems.Clear();
-            CopiedItemFolder = null;
-
+            MainWindowCommand.PasteFromClipboardCommand(this);
         });
 
         // Ctrl + M が押された時の処理
         public SimpleDelegateCommand MergeItemCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            ClipboardItemCommands.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems,
-                false
-                );
+            MainWindowCommand.MergeItemCommand(this);
         });
         // Ctrl + Shift + M が押された時の処理
         public SimpleDelegateCommand MergeItemWithHeaderCommand => new((parameter) => {
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            ClipboardItemCommands.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems,
-                true
-                );
+            MainWindowCommand.MergeItemWithHeaderCommand(this);
         });
 
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new (PythonCommands.OpenListPythonScriptWindowCommandExecute);
+        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new((parameter) =>{
+            MainWindowCommand.OpenListPythonScriptWindowCommand(parameter);
+        });
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenListPromptTemplateWindowCommand => new((parameter) => {
-            ListPromptTemplateWindow listPromptTemplateWindow = new ListPromptTemplateWindow();
-            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)listPromptTemplateWindow.DataContext;
-            listPromptTemplateWindowViewModel.InitializeEdit((promptTemplateWindowViewModel) => {
-                // PromptTemplate = promptTemplateWindowViewModel.PromptItem;
-            });
-            listPromptTemplateWindow.ShowDialog();
+            MainWindowCommand.OpenListPromptTemplateWindowCommand(this);
         });
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new((parameter) => {
-            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
-            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext;
-            ListAutoProcessRuleWindowViewModel.Initialize();
-
-            ListAutoProcessRuleWindow.ShowDialog();
-
+            MainWindowCommand.OpenListAutoProcessRuleWindowCommand();
         });
 
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenTagWindowCommand => new((parameter) => {
-            TagWindow tagWindow = new TagWindow();
-            TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
-            tagWindowViewModel.Initialize(null, () => { });
-            tagWindow.ShowDialog();
-
+            MainWindowCommand.OpenTagWindowCommand();
         });
         // ステータスバーをクリックしたときの処理
         public SimpleDelegateCommand OpenStatusMessageWindowCommand => new((parameter) => {
-            StatusMessageWindow statusMessageWindow = new StatusMessageWindow();
-            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)statusMessageWindow.DataContext;
-            statusMessageWindowViewModel.Initialize();
-            statusMessageWindow.ShowDialog();
-
+            MainWindowCommand.OpenStatusMessageWindowCommand();
         });
 
-        // コンテキストメニューの「テキストを整形」の実行用コマンド
-        public SimpleDelegateCommand FormatTextCommand => new((parameter) => {
-            // 選択中のアイテムを取得
-            ClipboardItemViewModel clipboardItemViewModel = SelectedItem!;
-            if (clipboardItemViewModel == null) {
-                return;
-            }
-            // 処理が終わるまでProgressIndicatorを表示
-            try {
-                IsIndeterminate = true;
-                // テキストを取得
-                string content = clipboardItemViewModel.ClipboardItem.Content;
-                // テキストを整形
-                content = ClipboardItem.FormatTextCommandExecute(content);
-                // 整形したテキストをセット
-                clipboardItemViewModel.ClipboardItem.Content = content;
-                // 保存
-                clipboardItemViewModel.ClipboardItem.Save();
-                // 再描写
-                ReloadClipboardItems();
-            } finally {
-                IsIndeterminate = false;
-            }
-        });
         // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
         public SimpleDelegateCommand SplitFilePathCommand => new((parameter) => {
-            // 選択中のアイテムを取得
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            ClipboardItem clipboardItem = SelectedItem.ClipboardItem;
-            // 処理が終わるまでProgressIndicatorを表示
-            try {
-                IsIndeterminate = true;
-                // ファイルパスを分割
-                ClipboardItem.SplitFilePathCommandExecute(clipboardItem);
-                // 保存
-                clipboardItem.Save();
-                // 再描写
-                ReloadClipboardItems();
-            } finally {
-                IsIndeterminate = false;
-            }
+            MainWindowCommand.SplitFilePathCommand(this);
         });
 
     }

@@ -33,14 +33,10 @@ namespace ClipboardApp.View.PythonScriptView.PythonScriptView {
             SelectScriptWindow.ShowDialog();
         }
         // スクリプト一覧画面を実行モードで開くコマンド
-        public static void OpenListPythonScriptWindowExecCommandExecute(ClipboardItemViewModel? itemViewModel) {
-            if (itemViewModel == null) {
-                Tools.Error("スクリプトを実行するアイテムを選択してください");
-                return;
-            }
+        public static void OpenListPythonScriptWindowExecCommandExecute(Action<ScriptItem> action) {
             ListPythonScriptWindow SelectScriptWindow = new ListPythonScriptWindow();
             ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
-            SelectScriptWindowViewModel.InitializeExec(itemViewModel);
+            SelectScriptWindowViewModel.InitializeExec(action);
             SelectScriptWindow.ShowDialog();
         }
 

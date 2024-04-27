@@ -48,10 +48,7 @@
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.InputBindings>
-                <MouseBinding
-                    Command="{Binding SelectScriptCommand}"
-                    CommandParameter="{Binding SelectedItem}"
-                    MouseAction="LeftDoubleClick" />
+                <MouseBinding Command="{Binding SelectScriptItemCommand}" MouseAction="LeftDoubleClick" />
             </ListView.InputBindings>
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -91,7 +88,8 @@
                     Margin="10,0,0,0"
                     Command="{Binding SelectScriptItemCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding SelectButtonText}" />
+                    Content="実行"
+                    Visibility="{Binding ExecButtonVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"

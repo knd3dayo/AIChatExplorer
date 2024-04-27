@@ -21,14 +21,12 @@ namespace QAChat.View.PromptTemplateWindow {
             }
         }
 
-        private bool _isExecMode = false;
-        public bool IsExecMode {
-            get => _isExecMode;
-            set {
-                _isExecMode = value;
-                OnPropertyChanged(nameof(IsExecMode));
-            }
+        public enum ActionModeEum {
+            Edit,
+            Select,
+            Exec
         }
+        private ActionModeEum ActionMode { get; set; } = ActionModeEum.Edit;
         // モード
         private int _Mode = (int)OpenAIExecutionModeEnum.Normal;
         public int Mode {
@@ -40,26 +38,39 @@ namespace QAChat.View.PromptTemplateWindow {
                 OnPropertyChanged(nameof(Mode));
             }
         }
+        // 実行/選択ボタンの表示
+        public Visibility ExecButtonVisibility {
+            get {
+                // ActionModeがExecまたはSelectの場合は、Visible
+                return ActionMode == ActionModeEum.Exec || ActionMode == ActionModeEum.Select ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // Modeの表示
+        public Visibility ModeVisibility {
+            get {
+                // ActionModeがExecの場合は、Visible
+                return ActionMode == ActionModeEum.Exec ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         private Action<PromptItemViewModel> AfterEdit { get; set; } = (promptItemViewModel) => { };
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
         // 初期化
-        public void InitializeEdit(Action<PromptItemViewModel> afterUpdate) {
-            // PromptItemsを更新
-            Reload();
-            AfterEdit = afterUpdate;
-            // TitleとSelectButtonTextを更新
-            OnPropertyChanged(nameof(Title));
-            OnPropertyChanged(nameof(SelectButtonText));
-
-        }
-        public void InitializeExec(Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
+        public void Initialize(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
             // PromptItemsを更新
             Reload();
             AfterSelect = afterUpdate;
-            IsExecMode = true;
+            // ActionModeを設定
+            ActionMode = actionMode;
+
             // TitleとSelectButtonTextを更新
             OnPropertyChanged(nameof(Title));
             OnPropertyChanged(nameof(SelectButtonText));
+            // 実行モードの場合は、実行/選択ボタンを表示する
+            OnPropertyChanged(nameof(ExecButtonVisibility));
+            // 実行モードの場合は、Modeを表示する
+            OnPropertyChanged(nameof(ModeVisibility));
+
         }
 
         public void Reload() {
@@ -76,19 +87,18 @@ namespace QAChat.View.PromptTemplateWindow {
 
         public string Title {
             get {
-                return IsExecMode ? "プロンプトテンプレートを選択" : "プロンプトテンプレート一覧";
+                // ActionModeがExecまたはSelectの場合は、"プロンプトテンプレートを選択"、それ以外は"プロンプトテンプレート一覧"
+                return ActionMode == ActionModeEum.Exec || ActionMode == ActionModeEum.Select ? "プロンプトテンプレートを選択" : "プロンプトテンプレート一覧";
             }
         }
         public string SelectButtonText {
             get {
-                return IsExecMode ? "実行" : "選択";
+                // ActionModeがExecの場合は、"実行"、それ以外は"選択"
+                return ActionMode == ActionModeEum.Exec ? "実行" : "選択";
             }
         }
 
-        public  SimpleDelegateCommand EditPromptItemCommand => new (EditPromptItemCommandExecute);
-
-        // プロンプトテンプレートを編集する処理
-        public  void EditPromptItemCommandExecute(object parameter) {
+        public SimpleDelegateCommand EditPromptItemCommand => new((parameter) => {
             if (SelectedPromptItem == null) {
                 System.Windows.MessageBox.Show("プロンプトテンプレートが選択されていません。");
                 return;
@@ -100,7 +110,7 @@ namespace QAChat.View.PromptTemplateWindow {
                 Reload();
             });
             window.ShowDialog();
-        }
+        });
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand AddPromptItemCommand => new SimpleDelegateCommand(AddPromptItemCommandExecute);
@@ -122,16 +132,9 @@ namespace QAChat.View.PromptTemplateWindow {
                 MessageBox.Show("プロンプトテンプレートが選択されていません。");
                 return;
             }
-            if (parameter is PromptItemViewModel itemViewModel) {
-                SelectedPromptItem = itemViewModel;
-            }
-            if (IsExecMode) {
-                // Mode からOpenAIExecutionModeEnumに変換
-                OpenAIExecutionModeEnum mode = (OpenAIExecutionModeEnum)Mode;
-                AfterSelect(SelectedPromptItem, mode);
-            } else { 
-                AfterEdit(SelectedPromptItem);
-                }
+            // Mode からOpenAIExecutionModeEnumに変換
+            OpenAIExecutionModeEnum mode = (OpenAIExecutionModeEnum)Mode;
+            AfterSelect(SelectedPromptItem, mode);
 
             // Windowを閉じる
             if (parameter is System.Windows.Window window) {

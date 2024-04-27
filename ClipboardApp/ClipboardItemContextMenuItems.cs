@@ -33,7 +33,6 @@ namespace ClipboardApp {
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", _mainWindowViewModel.SplitFilePathCommand));
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("テキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
-            basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データを整形", _mainWindowViewModel.FormatTextCommand));
 
             utilityMenuItems.SubMenuItems.Add(basicUtilityMenuItems);
 
@@ -56,8 +55,15 @@ namespace ClipboardApp {
 
             // ユーザー定義のPythonスクリプトをメニューに追加
             ClipboardAppMenuItem userDefinedPythonScriptsMenu
-                = new ClipboardAppMenuItem("Pythonスクリプトを実行", new SimpleDelegateCommand((parameter) => {
-                    PythonCommands.OpenListPythonScriptWindowExecCommandExecute(_mainWindowViewModel.SelectedItem);
+                = new("Pythonスクリプトを実行", new SimpleDelegateCommand((parameter) => {
+                    if (_mainWindowViewModel.SelectedItem == null) {
+                        Tools.Error("スクリプトを選択してください");
+                        return;
+                    }
+                    PythonCommands.OpenListPythonScriptWindowExecCommandExecute((scriptItem) => {
+                        ClipboardItemCommands.MenuItemRunPythonScriptCommandExecute(scriptItem, _mainWindowViewModel.SelectedItem);
+                    }
+                    );
                 })
                 );
 

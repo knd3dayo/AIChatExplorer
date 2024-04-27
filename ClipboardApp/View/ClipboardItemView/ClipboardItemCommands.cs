@@ -232,23 +232,27 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
         // メニューの「Pythonスクリプトを実行」をクリックしたときの処理
-        public static void MenuItemRunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItemViewModel itemViewModel) {
+        public async static void MenuItemRunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItemViewModel itemViewModel) {
             try {
+                MainWindowViewModel.UpdateProgressCircleVisibility(true);
                 // clipboardItemをJsonに変換
                 string input_str = itemViewModel.ClipboardItem.Content;
                 // Pythonスクリプトを実行
-                string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, input_str);
-
-                // 結果をClipboardItemに設定
-                itemViewModel.ClipboardItem.Content = result;
-                // 保存
-                itemViewModel.ClipboardItem.Save();
-
-                // フォルダ内のアイテムを再読み込み
-                itemViewModel.FolderViewModel.Load();
+                string result = input_str;
+                await Task.Run(() => {
+                    string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, input_str);
+                    // 結果をClipboardItemに設定
+                    itemViewModel.ClipboardItem.Content = result;
+                    // 保存
+                    itemViewModel.ClipboardItem.Save();
+                    // フォルダ内のアイテムを再読み込み
+                    itemViewModel.FolderViewModel.Load();
+                });
 
             } catch (ClipboardAppException e) {
                 Tools.Error(e.Message);
+            } finally {
+                MainWindowViewModel.UpdateProgressCircleVisibility(false);
             }
 
         }
@@ -275,7 +279,12 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             ListPromptTemplateWindow promptTemplateWindow = new();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.InitializeExec((PromptItemViewModel promptItemViewModel, OpenAIExecutionModeEnum mode) => {
+            promptTemplateWindowViewModel.Initialize(
+                ListPromptTemplateWindowViewModel.ActionModeEum.Exec,
+                (PromptItemViewModel promptItemViewModel, OpenAIExecutionModeEnum mode) => {
+                    // itemViewModelのClipboardItemのContentの先頭にプロンプトテンプレートのPromptに設定
+                    itemViewModel.ClipboardItem.Content = promptItemViewModel.PromptItem.Prompt + "\n----------\n" + itemViewModel.ClipboardItem.Content;
+
                 // OpenAIChatを実行
                 OpenAIChatCommandExecute(mode, itemViewModel);
             });

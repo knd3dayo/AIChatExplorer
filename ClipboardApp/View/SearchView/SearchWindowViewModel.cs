@@ -1,12 +1,12 @@
 ﻿using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.ClipboardItemFolderView;
-using WpfAppCommon.Utils;
+using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.SearchView
-{
+namespace ClipboardApp.View.SearchView {
     public class SearchWindowViewModel : ObservableObject {
+        public MainWindowViewModel? MainWindowViewModel { get; private set; }
 
         private SearchRule? _searchConditionRule;
         public SearchRule? SearchConditionRule {
@@ -45,7 +45,7 @@ namespace ClipboardApp.View.SearchView
             get {
                 if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
                     return "検索フォルダ";
-                }   
+                }
                 return "標準";
             }
         }
@@ -72,10 +72,14 @@ namespace ClipboardApp.View.SearchView
                 OnPropertyChanged("TargetFolderPath");
             }
         }
-        
+
         private Action? _afterUpdate;
 
-        public void Initialize(SearchRule searchConditionRule, ClipboardFolderViewModel? searchFolderViewModel, Action afterUpdate) {
+        public void Initialize(
+            SearchRule searchConditionRule,
+            ClipboardFolderViewModel? searchFolderViewModel,
+            Action afterUpdate
+            ) {
             this.SearchConditionRule = searchConditionRule;
 
             _afterUpdate = afterUpdate;
@@ -130,6 +134,11 @@ namespace ClipboardApp.View.SearchView
                 Tools.Error("検索条件がNullです");
                 return;
             }
+            if (MainWindowViewModel == null) {
+                Tools.Error("MainWindowViewModelがNullです");
+                return;
+            }
+
             // フォルダが選択されたら、SearchFolderに設定
             void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 SearchFolderViewModel = folderViewModel;
@@ -141,7 +150,7 @@ namespace ClipboardApp.View.SearchView
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.SearchRootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(MainWindowViewModel, ClipboardFolder.SearchRootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
 
@@ -149,6 +158,10 @@ namespace ClipboardApp.View.SearchView
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
+            if (MainWindowViewModel == null) {
+                Tools.Error("MainWindowViewModelがNullです");
+                return;
+            }
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -166,7 +179,7 @@ namespace ClipboardApp.View.SearchView
 
             FolderSelectWindow FolderSelectWindow = new FolderSelectWindow();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new ClipboardFolderViewModel(MainWindowViewModel, ClipboardFolder.RootFolder);
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
 

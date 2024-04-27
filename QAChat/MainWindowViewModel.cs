@@ -205,7 +205,7 @@ namespace QAChat {
         public SimpleDelegateCommand PromptTemplateCommand => new SimpleDelegateCommand((parameter) => {
             ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.InitializeEdit((promptTemplateWindowViewModel) => {
+            promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 PromptTemplate = promptTemplateWindowViewModel.PromptItem;
 
             });

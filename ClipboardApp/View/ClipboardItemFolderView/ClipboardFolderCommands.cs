@@ -33,7 +33,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                     searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
 
                 }
-                searchWindowViewModel.Initialize(searchConditionRule, folderViewModel, () => {
+                searchWindowViewModel.Initialize( searchConditionRule, folderViewModel, () => {
                     folderViewModel.Load();
                 });
             } else {

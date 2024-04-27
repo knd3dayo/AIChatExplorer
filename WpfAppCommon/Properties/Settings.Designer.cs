@@ -238,5 +238,17 @@ namespace WpfAppCommon.Properties {
                 this["OpenAIEmbeddingBaseURL"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseOpenAI {
+            get {
+                return ((bool)(this["UseOpenAI"]));
+            }
+            set {
+                this["UseOpenAI"] = value;
+            }
+        }
     }
 }

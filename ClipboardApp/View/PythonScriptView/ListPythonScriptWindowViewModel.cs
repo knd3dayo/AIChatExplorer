@@ -1,10 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using ClipboardApp.View.ClipboardItemView;
+using System.Windows;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {
@@ -36,12 +35,15 @@ namespace ClipboardApp.View.PythonScriptView {
                 return IsExecMode ? "Pythonスクリプトを選択" : "Pythonスクリプト一覧";
             }
         }
-        public string SelectButtonText {
+
+        private Action<ScriptItem> afterSelect = (scriptItem) => { };
+
+        // IsExecModeがTrueの時は、実行ボタンを表示する。
+        public Visibility ExecButtonVisibility {
             get {
-                return IsExecMode ? "実行" : "選択";
+                return IsExecMode ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-        private ClipboardItemViewModel? _itemViewModel;
 
 
         public void InitializeEdit() {
@@ -51,22 +53,26 @@ namespace ClipboardApp.View.PythonScriptView {
                 ScriptItems.Add(item);
             }
             OnPropertyChanged(nameof(ScriptItems));
+            OnPropertyChanged(nameof(ExecButtonVisibility));
         }
 
-        public void InitializeExec(ClipboardItemViewModel itemViewModel) {
+        public void InitializeExec(Action<ScriptItem> afterSelect) {
             IsExecMode = true;
+            this.afterSelect = afterSelect;
+
             ScriptItems.Clear();
             foreach (var item in ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()) {
                 ScriptItems.Add(item);
             }
             OnPropertyChanged(nameof(ScriptItems));
+            OnPropertyChanged(nameof(ExecButtonVisibility));
         }
 
         // Scriptを新規作成するときの処理
         public static SimpleDelegateCommand CreateScriptItemCommand => new(PythonCommands.CreateScriptCommandExecute);
 
         // Scriptを編集するときの処理
-        public  SimpleDelegateCommand EditScriptItemCommand => new((parameter) => {
+        public SimpleDelegateCommand EditScriptItemCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
                 Tools.Error("スクリプトを選択してください");
                 return;
@@ -74,43 +80,29 @@ namespace ClipboardApp.View.PythonScriptView {
             PythonCommands.EditScriptItemCommandExecute(SelectedScriptItem);
         });
         // Scriptを削除したときの処理
-        public static SimpleDelegateCommand DeleteScriptCommand => new((parameter) => {
-            if (parameter is ScriptItem scriptItem) {
-                ScriptItem.DeleteScriptItem(scriptItem);
-                ScriptItems.Remove(scriptItem);
+        public SimpleDelegateCommand DeleteScriptCommand => new((parameter) => {
+            if (SelectedScriptItem == null) {
+                Tools.Error("スクリプトを選択してください");
+                return;
             }
+            ScriptItem.DeleteScriptItem(SelectedScriptItem);
+            ScriptItems.Remove(SelectedScriptItem);
+            OnPropertyChanged(nameof(ScriptItems));
         });
 
         // 選択ボタンを押したときの処理
         public SimpleDelegateCommand SelectScriptItemCommand => new((parameter) => {
-            if (parameter is not ScriptItem scriptItem) {
+            if (_selectedScriptItem == null) {
                 Tools.Error("スクリプトを選択してください");
                 return;
             }
-            if (IsExecMode) {
-                if (_itemViewModel is not null) {
-                    // _itemViewModelをJSON化する。
-                    string json = ClipboardItem.ToJson(_itemViewModel.ClipboardItem);
-                    string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, json);
-                    // jsonを復元する。
-                    ClipboardItem? clipboardItem = ClipboardItem.FromJson(result, Tools.DefaultAction);
-                    if (clipboardItem is not null) {
-                        clipboardItem.CopyTo(_itemViewModel.ClipboardItem);
-                    }
+            // Actionを実行
+            afterSelect(_selectedScriptItem);
+            // ウィンドウを閉じる
+            if (parameter is ListPythonScriptWindow selectScriptWindow) {
+                selectScriptWindow.Close();
 
-                }
-
-            } else {
-
-                // EditScriptWindowを開く
-                EditPythonScriptWindow editScriptWindow = new();
-                // EditScriptWindowのViewModelを取得
-                EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
-                editScriptWindowViewModel.ScriptItem = scriptItem;
-
-                editScriptWindow.ShowDialog();
             }
-
         });
         // キャンセルボタンを押したときの処理
         public SimpleDelegateCommand CloseCommand => new((parameter) => {

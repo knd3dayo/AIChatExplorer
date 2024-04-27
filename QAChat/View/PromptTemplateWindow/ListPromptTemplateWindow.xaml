@@ -27,7 +27,8 @@
             Grid.Column="0"
             Margin="10,10,0,0"
             HorizontalAlignment="Left"
-            Orientation="Vertical">
+            Orientation="Vertical"
+            Visibility="{Binding ModeVisibility}">
             <ComboBox materialDesign:HintAssist.Hint="モード" SelectedIndex="{Binding Mode}">
                 <ComboBoxItem Content="通常" />
                 <ComboBoxItem Content="RAG" />
@@ -87,7 +88,8 @@
                     Margin="10,0,0,0"
                     Command="{Binding SelectPromptItemCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding SelectButtonText}" />
+                    Content="{Binding SelectButtonText}"
+                    Visibility="{Binding ExecButtonVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
