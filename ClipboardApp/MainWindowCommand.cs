@@ -5,6 +5,7 @@ using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
+using ClipboardApp.View.SettingWindow;
 using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
@@ -119,8 +120,8 @@ namespace ClipboardApp {
         // メニューの「設定」をクリックしたときの処理
         public static void SettingCommand() {
             // 簡易版
-            SimpleSettingWindow settingWindow = new SimpleSettingWindow();
-            // SettingWindow settingWindow = new();
+            // SimpleSettingWindow settingWindow = new SimpleSettingWindow();
+            SettingWindow settingWindow = new();
             settingWindow.ShowDialog();
         }
 

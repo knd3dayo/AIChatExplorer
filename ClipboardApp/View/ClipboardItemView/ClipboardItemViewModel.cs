@@ -100,5 +100,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             ClipboardItemCommands.MenuItemMaskDataCommandExecute(MainWindowViewModel.SelectedItemStatic);
         });
 
+
+
     }
 }

@@ -18,7 +18,10 @@ class LangChainVectorDB:
 
     def __load_faiss_index(self):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
-        if not os.path.exists(self.vector_db_url) or len(os.listdir(self.vector_db_url)) == 0:    
+        if not os.path.exists(self.vector_db_url):
+            # ディレクトリを作成
+            os.makedirs(self.vector_db_url)
+        if len(os.listdir(self.vector_db_url)) == 0:    
             # faissのインデックスを読み込む
             docs = [
                 Document(
@@ -27,6 +30,9 @@ class LangChainVectorDB:
                 )
             ]
             self.db = FAISS.from_documents(docs, self.langchain_openai_client.embeddings)
+            # 保存
+            self.__save()
+            
         else:
             self.db = FAISS.load_local(
                 self.vector_db_url, self.langchain_openai_client.embeddings,

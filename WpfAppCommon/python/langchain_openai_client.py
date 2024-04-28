@@ -19,6 +19,7 @@ class LangChainOpenAIClient:
         chat_model_name = props.get("OpenAICompletionModel", None)
         embedding_model_name = props.get("OpenAIEmbeddingModel", None)
         azure_openai_string = props.get("AzureOpenAI", False)
+        azure_openai_endpoint = props.get("AzureOpenAIEndpoint", None)
         openai_completion_base_url = props.get("OpenAICompletionBaseURL", None)
         openai_embedding_base_url = props.get("OpenAIEmbeddingBaseURL", None)
         
@@ -27,17 +28,29 @@ class LangChainOpenAIClient:
         azure_openai = azure_openai_string.upper() == "TRUE"
 
         if (azure_openai):
+            params = {}
+            params["openai_api_key"] = openai_api_key
+            params["openai_api_version"] = "2023-12-01-preview"
+
+            if openai_embedding_base_url:
+                params["base_url"] = openai_embedding_base_url
+            else:
+                params["base_url"] = azure_openai_endpoint
+                
             embeddings = AzureOpenAIEmbeddings(
-                openai_api_version="2023-12-01-preview",
-                base_url=openai_embedding_base_url,
-                openai_api_key=openai_api_key,
+                **params
             )
+
+            params["temperature"] = 0.5
+            if openai_completion_base_url:
+                params["base_url"] = openai_completion_base_url
+            else:
+                params["base_url"] = azure_openai_endpoint
+
             llm = AzureChatOpenAI(
-                openai_api_version="2023-12-01-preview",
-                temperature=0.5,
-                base_url=openai_completion_base_url,
-                openai_api_key=openai_api_key
+                **params
             )
+
             return embeddings, llm
         else:
             embeddings = OpenAIEmbeddings(
@@ -46,6 +59,7 @@ class LangChainOpenAIClient:
             )
             
             llm = ChatOpenAI(
+                temperature=0.5,
                 openai_api_key=openai_api_key,
                 base_url=openai_embedding_base_url,
             )

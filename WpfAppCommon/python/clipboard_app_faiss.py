@@ -3,6 +3,7 @@ import os
 
 index_file_name="index.faiss"
 index = None
+
 def load_faiss_index():
     global index
     # indexファイルが存在しない場合はindexを作成する

@@ -6,12 +6,11 @@ import io
 
 import sys
 sys.path.append("python")
-import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboard_app_spacy
+import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboard_app_spacy, clipboard_app_pyocr
 
-
-os.environ["NO_PROXY"] = "*"
-
-clipboard_app_faiss.load_faiss_index()
+# Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
+if "HTTPS_PROXY" not in os.environ:
+    os.environ["NO_PROXY"] = "*"
 
 # spacy関連
 def extract_text(filename):
@@ -29,6 +28,9 @@ def openai_chat(input_text, props={}):
 def openai_embedding(input_text, props={}):
     return clipboard_app_openai.openai_embedding(input_text, props)
 
+def list_openai_models():
+    return clipboard_app_openai.list_openai_models()
+
 # faiss関連
 def save_faiss_index():
     return clipboard_app_faiss.save_faiss_index()
@@ -36,31 +38,16 @@ def load_faiss_index():
     return clipboard_app_faiss.load_faiss_index()
 
 # pyocr関連
-def extract_text_from_image(byte_data):
-    # OCRエンジンを取得
-    pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-    engines = pyocr.get_available_tools()
-    
-    tool = engines[0]
-
-    # langs = tool.get_available_languages()
-    # print("Available languages: %s" % ", ".join(langs))
-
-
-    txt = tool.image_to_string(
-        Image.open(io.BytesIO(byte_data)),
-        lang="jpn",
-        # builder=pyocr.builders.TextBuilder(tesseract_layout=6)
-        )
-    return txt
+def extract_text_from_image(byte_data,tessercat_exe_path):
+    return clipboard_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
 
 
 # run_script関数
 def run_script(script, input_str):
-    try:
-        exec(script, globals())
-        result = execute(input_str)
-        return result
-
-    except Exception as e:
-        return traceback.format_exc()
+    exec(script, globals())
+    result = execute(input_str)
+    return result
+    
+# テスト用
+def hello_world():
+    return "Hello World"

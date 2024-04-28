@@ -14,7 +14,7 @@ namespace WpfAppCommon.PythonIF {
         public string GetUnmaskedString(string spacyModel, string maskedText) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
-        public string ExtractTextFromImage(System.Drawing.Image image) {
+        public string ExtractTextFromImage(System.Drawing.Image image, string tesseractExePath) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
         public MaskedData GetMaskedData(string spacyModel, List<string> beforeTextList) {
@@ -25,6 +25,9 @@ namespace WpfAppCommon.PythonIF {
         }
 
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
         public void OpenAIEmbedding(string text) {
@@ -44,6 +47,12 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+        public string HelloWorld() {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
     }

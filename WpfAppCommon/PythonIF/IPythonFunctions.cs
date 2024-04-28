@@ -28,7 +28,7 @@ namespace WpfAppCommon.PythonIF {
         public string GetMaskedString(string spacyModel, string text);
         public string GetUnmaskedString(string spacyModel, string maskedText);
 
-        public string ExtractTextFromImage(Image image);
+        public string ExtractTextFromImage(Image image, string tesseractExePath);
 
         public MaskedData GetMaskedData(string spacyModel, List<string> textList);
 
@@ -37,6 +37,7 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory);
 
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
         public void OpenAIEmbedding(string text);
 
         public void SaveFaissIndex();
@@ -50,5 +51,9 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory);
 
+        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
+
+        //テスト用
+        public string HelloWorld();
     }
 }

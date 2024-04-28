@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
-using WpfAppCommon.Utils;
 using LiteDB;
 using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     // 自動処理の引数用のクラス
@@ -80,18 +80,20 @@ namespace WpfAppCommon.Model {
 
                 // itemにフォルダに移動するコマンドを追加
                 items.Add(
-                    new AutoProcessItem(AutoProcessActionName.MoveToFolder.Name,"フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します")
+                    new AutoProcessItem(AutoProcessActionName.MoveToFolder.Name, "フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します")
                     );
 
                 // itemにテキスト抽出コマンドを追加
                 items.Add(
-                    new AutoProcessItem(AutoProcessActionName.ExtractText.Name,"テキスト抽出", "クリップボードのテキストを抽出します")
+                    new AutoProcessItem(AutoProcessActionName.ExtractText.Name, "テキスト抽出", "クリップボードのテキストを抽出します")
                     );
                 // itemにデータマスキングコマンドを追加
-                items.Add(
-                    new AutoProcessItem(AutoProcessActionName.MaskData.Name,"データマスキング", "クリップボードのテキストをマスキングします")
-                    );
-
+                // UseSpacyがTrueの場合のみ追加
+                if (ClipboardAppConfig.UseSpacy) {
+                    items.Add(
+                        new AutoProcessItem(AutoProcessActionName.MaskData.Name, "データマスキング", "クリップボードのテキストをマスキングします")
+                        );
+                }
                 // ファイルパスをフォルダ名とファイル名に分割するコマンドを追加
                 items.Add(
                     new AutoProcessItem(AutoProcessActionName.SplitPathToFolderAndFileName.Name, "コピーしたファイルをフォルダパスとファイル名に分割", "コピーしたファイルをフォルダパスとファイル名に分割")
@@ -159,11 +161,11 @@ namespace WpfAppCommon.Model {
                     return null;
                 };
             }
-            if (name == AutoProcessActionName.ExtractText.Name) { 
-                    return (args) => {
-                        return ClipboardItem.ExtractTextCommandExecute(args.ClipboardItem);
-                    };
-                }
+            if (name == AutoProcessActionName.ExtractText.Name) {
+                return (args) => {
+                    return ClipboardItem.ExtractTextCommandExecute(args.ClipboardItem);
+                };
+            }
             if (name == AutoProcessActionName.MaskData.Name) {
                 return (args) => {
                     return ClipboardItem.MaskDataCommandExecute(args.ClipboardItem);
@@ -216,7 +218,7 @@ namespace WpfAppCommon.Model {
 
             string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, inputJson);
             ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
-                Tools.Info( "Pythonスクリプトを実行しました");
+                Tools.Info("Pythonスクリプトを実行しました");
 
             });
             resultItem?.CopyTo(clipboardItem);

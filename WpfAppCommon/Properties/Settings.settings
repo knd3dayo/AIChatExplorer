@@ -15,13 +15,13 @@
       <Value Profile="(Default)">gpt-4-1106-preview</Value>
     </Setting>
     <Setting Name="SpacyModel" Type="System.String" Scope="User">
-      <Value Profile="(Default)">ja_core_news_lg</Value>
+      <Value Profile="(Default)">ja_core_news_sm</Value>
     </Setting>
     <Setting Name="PythonExecution" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="PythonDllPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files\Python312\python312.dll</Value>
+      <Value Profile="(Default)">C:\Program Files\Python311\python311.dll</Value>
     </Setting>
     <Setting Name="BackupGeneration" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">7</Value>
@@ -48,7 +48,7 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="VectorDBURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">faiss_index</Value>
     </Setting>
     <Setting Name="SourceDocumentURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -58,6 +58,15 @@
     </Setting>
     <Setting Name="UseOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="UseSpacy" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TesseractExePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files\Tesseract-OCR\tesseract.exe</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -1,15 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.View.PythonScriptView.PythonScriptView;
-using ClipboardApp.View.StatusMessageView;
-using ClipboardApp.View.TagView;
 using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
@@ -119,6 +114,21 @@ namespace ClipboardApp {
         public ClipboardItemFolderContextMenuItems? ClipboardItemContextMenuItems { get; set; } = null;
 
         public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+
+        // 表示・非表示の設定
+        public Visibility UsePythonVisibility {
+            get {
+                return ClipboardAppConfig.PythonExecute == 0 ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+        public Visibility UseOpenAIVisibility {
+            get {
+                if (ClipboardAppConfig.UseOpenAI && ClipboardAppConfig.PythonExecute != 0) {
+                    return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
+        }
 
         public MainWindowViewModel() {
             // データベースのチェックポイント処理
@@ -291,7 +301,7 @@ namespace ClipboardApp {
         });
 
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new((parameter) =>{
+        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new((parameter) => {
             MainWindowCommand.OpenListPythonScriptWindowCommand(parameter);
         });
 

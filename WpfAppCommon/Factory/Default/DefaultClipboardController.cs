@@ -92,9 +92,9 @@ namespace WpfAppCommon.Factory.Default {
                     // Get the cut/copied image.
                     System.Drawing.Image img = _clipboard.ClipboardImage;
                     // UseOCRが設定されている場合はOCRを実行
-                    if (WpfAppCommon.Properties.Settings.Default.UseOCR) {
+                    if (ClipboardAppConfig.UseOCR) {
                         try {
-                            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img);
+                            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img , ClipboardAppConfig.TesseractExePath);
                             ProcessClipboardItem(ClipboardContentTypes.Text, text, e);
 
                         } catch (ThisApplicationException ex) {

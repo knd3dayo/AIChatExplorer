@@ -2,6 +2,7 @@
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.Views.ClipboardItemView;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
@@ -13,7 +14,6 @@ namespace ClipboardApp {
             _mainWindowViewModel = mainWindowViewModel;
             InitContextMenu();
         }
-
 
         private void InitContextMenu() {
             // コンテキストメニューの初期化
@@ -32,11 +32,14 @@ namespace ClipboardApp {
 
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", _mainWindowViewModel.SplitFilePathCommand));
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("テキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
-            basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
+            // UseSpacyがTrueの場合
+            if (ClipboardAppConfig.UseSpacy) {
+                basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
+            }
 
             utilityMenuItems.SubMenuItems.Add(basicUtilityMenuItems);
 
-            // AI関連のメニューを追加
+            // AI関連のメニュー
             ClipboardAppMenuItem aiUtilityMenuItems
                 = new ClipboardAppMenuItem("OpenAI", SimpleDelegateCommand.EmptyCommand);
 
@@ -50,10 +53,12 @@ namespace ClipboardApp {
                         ClipboardItemCommands.OpenAIChatCommandExecute(_mainWindowViewModel.SelectedItem);
                     })));
 
-            // 便利機能にAI関連のメニューを追加
-            utilityMenuItems.SubMenuItems.Add(aiUtilityMenuItems);
+            // UseOpenAI=Trueの場合は、便利機能にAI関連のメニューを追加
+            if (ClipboardAppConfig.UseOpenAI) {
+                utilityMenuItems.SubMenuItems.Add(aiUtilityMenuItems);
+            }
 
-            // ユーザー定義のPythonスクリプトをメニューに追加
+            // ユーザー定義のPythonスクリプトをメニュー
             ClipboardAppMenuItem userDefinedPythonScriptsMenu
                 = new("Pythonスクリプトを実行", new SimpleDelegateCommand((parameter) => {
                     if (_mainWindowViewModel.SelectedItem == null) {
@@ -67,7 +72,11 @@ namespace ClipboardApp {
                 })
                 );
 
-            utilityMenuItems.SubMenuItems.Add(userDefinedPythonScriptsMenu);
+            // PythonExecuteが1の場合は、便利機能にユーザー定義のPythonスクリプトを追加
+            if (ClipboardAppConfig.PythonExecute == 1) {
+                utilityMenuItems.SubMenuItems.Add(userDefinedPythonScriptsMenu);
+            }
+
             this.Add(utilityMenuItems);
 
 

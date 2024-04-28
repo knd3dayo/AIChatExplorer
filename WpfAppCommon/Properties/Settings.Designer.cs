@@ -73,7 +73,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ja_core_news_lg")]
+        [global::System.Configuration.DefaultSettingValueAttribute("ja_core_news_sm")]
         public string SpacyModel {
             get {
                 return ((string)(this["SpacyModel"]));
@@ -97,7 +97,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Python312\\python312.dll")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Python311\\python311.dll")]
         public string PythonDllPath {
             get {
                 return ((string)(this["PythonDllPath"]));
@@ -205,7 +205,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("faiss_index")]
         public string VectorDBURL {
             get {
                 return ((string)(this["VectorDBURL"]));
@@ -248,6 +248,42 @@ namespace WpfAppCommon.Properties {
             }
             set {
                 this["UseOpenAI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string AzureOpenAIEndpoint {
+            get {
+                return ((string)(this["AzureOpenAIEndpoint"]));
+            }
+            set {
+                this["AzureOpenAIEndpoint"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseSpacy {
+            get {
+                return ((bool)(this["UseSpacy"]));
+            }
+            set {
+                this["UseSpacy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Tesseract-OCR\\tesseract.exe")]
+        public string TesseractExePath {
+            get {
+                return ((string)(this["TesseractExePath"]));
+            }
+            set {
+                this["TesseractExePath"] = value;
             }
         }
     }

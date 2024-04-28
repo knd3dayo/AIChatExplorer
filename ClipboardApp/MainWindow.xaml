@@ -4,14 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="window1"
     Title="コピペアプリ"
     Width="800"
     Height="450"
-    Style="{StaticResource MaterialDesignWindow}"   
+    Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.DataContext>
         <local:MainWindowViewModel />
@@ -160,12 +160,14 @@
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPythonScriptWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="Pythonスクリプト編集" />
+                            Header="Pythonスクリプト編集"
+                            Visibility="{Binding UsePythonVisibility}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPromptTemplateWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="プロンプトテンプレート編集" />
+                            Header="プロンプトテンプレート編集"
+                            Visibility="{Binding UseOpenAIVisibility}" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
@@ -175,7 +177,8 @@
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenOpenAIWindowCommand}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="OpenAIチャット" />
+                            Header="OpenAIチャット"
+                            Visibility="{Binding UseOpenAIVisibility}" />
                     </MenuItem>
 
                     <MenuItem
