@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -16,6 +16,8 @@
     <None Remove="python\clipboard_app_sqlite.py" />
     <None Remove="python\clipboard_app_utils.py" />
     <None Remove="python\env_to_props.py" />
+    <None Remove="python\file_loader.py" />
+    <None Remove="python\file_processor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_openai_client.py" />
     <None Remove="python\langchain_vector_db.py" />
@@ -48,6 +50,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\env_to_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\file_loader.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\file_processor.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\flask_app.py">
@@ -84,6 +92,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="pythonnet" Version="3.1.0-preview2024-04-07" />

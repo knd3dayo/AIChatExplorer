@@ -6,6 +6,7 @@ using WpfAppCommon.Utils;
 using WpfAppCommon.Factory;
 using WpfAppCommon;
 using WpfAppCommon.Model;
+using QAChat.View.RAGWindow;
 
 namespace QAChat.View.PromptTemplateWindow {
     public class ListPromptTemplateWindowViewModel : ObservableObject {

@@ -8,13 +8,13 @@ namespace ClipboardApp.View.AutoProcessRuleView
 {
     public class ListAutoProcessRuleWindowViewModel : ObservableObject {
         // Instance
-        public static ListAutoProcessRuleWindowViewModel? Instance = null;
+        public static ListAutoProcessRuleWindowViewModel? Instance { get; set; } = null;
 
         // 処理対象のClipboardItemFolder
         public static ClipboardFolderViewModel? TargetFolder { get; set; } = null;
 
         // ルールの一覧
-        public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = new ObservableCollection<AutoProcessRule>();
+        public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];
         // 選択中の自動処理ルール
         private static AutoProcessRule? _selectedAutoProcessRule;
         public static AutoProcessRule? SelectedAutoProcessRule {
@@ -29,7 +29,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
             Instance = this;
             // AutoProcessRulesを更新
             AutoProcessRules = AutoProcessRuleController.GetAllAutoProcessRules();
-            OnPropertyChanged("AutoProcessRules");
+            OnPropertyChanged(nameof(AutoProcessRules));
 
         }
 
@@ -37,7 +37,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
             TargetFolder = targetFolder;
             // AutoProcessRulesを更新
             AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
-            OnPropertyChanged("AutoProcessRules");
+            OnPropertyChanged(nameof(AutoProcessRules));
 
         }
 
@@ -46,47 +46,46 @@ namespace ClipboardApp.View.AutoProcessRuleView
         // 自動処理ルールを編集する処理
         public static void EditAutoProcessRuleCommandExecute(object parameter) {
             // AutoProcessRuleが更新された後の処理
-            void AutoProcessRuleUpdated(AutoProcessRule rule) {
+            static void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
                 if (Instance == null) {
                     return;
                 }
                 // AutoProcessRulesを更新
                 Instance.AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
-                Instance.OnPropertyChanged("AutoProcessRules");
+                Instance.OnPropertyChanged(nameof(AutoProcessRules));
             }
             // debug
             if (SelectedAutoProcessRule == null) {
                 System.Windows.MessageBox.Show("自動処理ルールが選択されていません。");
                 return;
             }
-            EditAutoProcessRuleWindow window = new EditAutoProcessRuleWindow();
+            EditAutoProcessRuleWindow window = new();
             EditAutoProcessRuleWindowViewModel editAutoProcessRuleWindowViewModel = (EditAutoProcessRuleWindowViewModel)window.DataContext;
             editAutoProcessRuleWindowViewModel.InitializeEdit(TargetFolder, SelectedAutoProcessRule, AutoProcessRuleUpdated);
             window.ShowDialog();
         }
 
         // 自動処理を追加する処理
-        public static SimpleDelegateCommand AddAutoProcessRuleCommand => new SimpleDelegateCommand(AddAutoProcessRuleCommandExecute);
-
-        public static void AddAutoProcessRuleCommandExecute(object parameter) {
+        public static SimpleDelegateCommand AddAutoProcessRuleCommand => new((parameter) => {
             // AutoProcessRuleが更新された後の処理
-            void AutoProcessRuleUpdated(AutoProcessRule rule) {
+            static void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
                 if (Instance == null) {
                     return;
                 }
                 // AutoProcessRulesを更新
                 Instance.AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
-                Instance.OnPropertyChanged("AutoProcessRules");
+                Instance.OnPropertyChanged(nameof(AutoProcessRules));
             }
-            EditAutoProcessRuleWindow window = new EditAutoProcessRuleWindow();
+            EditAutoProcessRuleWindow window = new();
             EditAutoProcessRuleWindowViewModel editAutoProcessRuleWindowViewModel = (EditAutoProcessRuleWindowViewModel)window.DataContext;
             editAutoProcessRuleWindowViewModel.InitializeCreate(TargetFolder, AutoProcessRuleUpdated);
             window.ShowDialog();
-        }
+        });
+
         // 自動処理を削除する処理
-        public SimpleDelegateCommand DeleteAutoProcessRuleCommand => new SimpleDelegateCommand(DeleteAutoProcessRuleCommandExecute);
+        public SimpleDelegateCommand DeleteAutoProcessRuleCommand => new(DeleteAutoProcessRuleCommandExecute);
         public void DeleteAutoProcessRuleCommandExecute(object parameter) {
             AutoProcessRule? rule = SelectedAutoProcessRule;
             if (rule == null) {
@@ -99,7 +98,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
             AutoProcessRules.Remove(rule);
             // LiteDBを更新
             rule.Delete();
-            OnPropertyChanged("AutoProcessRules");
+            OnPropertyChanged(nameof(AutoProcessRules));
         }
 
         // CloseCommand

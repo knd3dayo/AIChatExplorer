@@ -6,20 +6,23 @@ using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
-        public static string CLIPBOARD_FOLDER_RELATION_NAME = "folder_relation";
-        public static string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
-        public static string SCRIPT_COLLECTION_NAME = "scripts";
-        public static string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
-        public static string TAG_COLLECTION_NAME = "tags";
+        public static readonly string CLIPBOARD_FOLDER_RELATION_NAME = "folder_relation";
+        public static readonly string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
+        public static readonly string SCRIPT_COLLECTION_NAME = "scripts";
+        public static readonly string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
+        public static readonly string TAG_COLLECTION_NAME = "tags";
 
-        public static string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
-        public static string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
-        public static string CHAT_SESSION_COLLECTION_NAME = "chat_session";
+        public static readonly string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
+        public static readonly string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
+        public static readonly string CHAT_SESSION_COLLECTION_NAME = "chat_session";
 
-        public static string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
-        public static string SEARCH_ROOT_FOLDER_NAME = "search_folder";
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = "search_folder";
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
+
+        // RAGSourceItem
+        public const string RAGSourceItemCollectionName = "RAGSourceItem";
 
         private static LiteDatabase? db;
         // static
@@ -154,7 +157,7 @@ namespace WpfAppCommon.Factory.Default {
 
         // 親フォルダのAbsoluteCollectionNameを指定して子フォルダのリストを取得する
         public IEnumerable<string> GetFolderRelations(string parentCollectionName) {
-            List<string> result = new List<string>();
+            List<string> result = [];
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
 
             var items = collection.FindAll().Where(x => x.ParentCollectionName == parentCollectionName);
@@ -203,7 +206,7 @@ namespace WpfAppCommon.Factory.Default {
         public void UpsertFolderRelation(ClipboardFolder parent, ClipboardFolder child) {
             // parentと、childの関係をLiteDBに追加または更新
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
-            ClipboardItemFolderRelation relation = new ClipboardItemFolderRelation(parent.AbsoluteCollectionName, child.AbsoluteCollectionName);
+            ClipboardItemFolderRelation relation = new(parent.AbsoluteCollectionName, child.AbsoluteCollectionName);
             collection.Upsert(relation);
 
         }
@@ -216,7 +219,7 @@ namespace WpfAppCommon.Factory.Default {
         // ClipboardItemを検索する。
         public IEnumerable<ClipboardItem> SearchItems(string collectionName, SearchCondition searchCondition) {
             // 結果を格納するIEnumerable<ClipboardItem>を作成
-            IEnumerable<ClipboardItem> result = new List<ClipboardItem>();
+            IEnumerable<ClipboardItem> result = [];
             // collectionNameのコレクションを取得
             var folder = GetFolder(collectionName);
             // フォルダが存在しない場合は、結果を返す
@@ -250,7 +253,7 @@ namespace WpfAppCommon.Factory.Default {
 
         // 指定したフォルダの子フォルダのAbsoluteCollectionNameを再帰的に取得する
         public List<string> GetChildFolders(string parentCollectionName) {
-            List<string> result = new List<string>();
+            List<string> result = [];
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
             var items = collection.FindAll().Where(x => x.ParentCollectionName == parentCollectionName);
             foreach (var i in items) {
@@ -414,7 +417,7 @@ namespace WpfAppCommon.Factory.Default {
 
         // プロンプトテンプレートを全て取得する
         public ICollection<PromptItem> GetAllPromptTemplates() {
-            ICollection<PromptItem> collation = new List<PromptItem>();
+            ICollection<PromptItem> collation = [];
             var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
             foreach (var item in col.FindAll()) {
                 collation.Add(item);
@@ -427,5 +430,27 @@ namespace WpfAppCommon.Factory.Default {
             col.DeleteAll();
         }
 
+        //----  RAGSourceItem
+        // update
+        public void UpsertRAGSourceItem(RAGSourceItem item) {
+            // RAGSourceItemコレクションに、itemを追加または更新
+            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
+            collection.Upsert(item);
+
+        }
+        // delete
+        public void DeleteRAGSourceItem(RAGSourceItem item) {
+            // RAGSourceItemコレクションから、itemを削除
+            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
+            collection.Delete(item.Id);
+        }
+
+        // get
+        public IEnumerable<RAGSourceItem> GetRAGSourceItems() {
+            // RAGSourceItemコレクションから、すべてのアイテムを取得
+            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
+            return collection.FindAll();
+
+        }
     }
 }

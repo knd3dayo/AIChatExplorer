@@ -26,6 +26,12 @@
     <Compile Update="View\PromptTemplateWindow\ListPromptTemplateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\RAGWindow\EditRAGSourceWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\RAGWindow\SelectCommitWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

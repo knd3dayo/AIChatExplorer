@@ -52,6 +52,10 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL){
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+
         public string HelloWorld() {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }

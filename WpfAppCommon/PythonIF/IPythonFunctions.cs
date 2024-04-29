@@ -5,9 +5,9 @@ using WpfAppCommon.Model;
 namespace WpfAppCommon.PythonIF {
 
     public class MaskedData {
-        public HashSet<MaskedEntity> Entities { get; set; } = new HashSet<MaskedEntity>();
-        public List<string> BeforeTextList { get; set; } = new List<string>();
-        public List<string> AfterTextList { get; set; } = new List<string>();
+        public HashSet<MaskedEntity> Entities { get; set; } = [];
+        public List<string> BeforeTextList { get; set; } = [];
+        public List<string> AfterTextList { get; set; } = [];
 
         public MaskedData(List<string> beforeList) {
 
@@ -52,6 +52,8 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory);
 
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
+
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL);
 
         //テスト用
         public string HelloWorld();

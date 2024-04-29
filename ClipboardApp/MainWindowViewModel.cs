@@ -229,7 +229,10 @@ namespace ClipboardApp {
         public SimpleDelegateCommand OpenOpenAIWindowCommand => new((parameter) => {
             MainWindowCommand.OpenOpenAIWindowCommand();
         });
-
+        // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand OpenRAGManagementWindowCommand => new((parameter) => {
+            MainWindowCommand.OpenRAGManagementWindowCommand();
+        });
 
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand SearchCommand => new((parameter) => {

@@ -50,9 +50,6 @@
     <Setting Name="VectorDBURL" Type="System.String" Scope="User">
       <Value Profile="(Default)">faiss_index</Value>
     </Setting>
-    <Setting Name="SourceDocumentURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

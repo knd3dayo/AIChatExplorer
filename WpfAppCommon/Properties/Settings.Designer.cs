@@ -218,18 +218,6 @@ namespace WpfAppCommon.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SourceDocumentURL {
-            get {
-                return ((string)(this["SourceDocumentURL"]));
-            }
-            set {
-                this["SourceDocumentURL"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OpenAIEmbeddingBaseURL {
             get {
                 return ((string)(this["OpenAIEmbeddingBaseURL"]));

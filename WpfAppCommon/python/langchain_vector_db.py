@@ -2,6 +2,7 @@
 import os, json, sys
 from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
+from langchain_community.callbacks import get_openai_callback
 
 sys.path.append("python")
 from langchain_openai_client import LangChainOpenAIClient
@@ -49,21 +50,46 @@ class LangChainVectorDB:
 
         return answers
 
-    def add_documents(self, documents=[]):
-        # 新しいDBを作成
-        new_db = FAISS.from_documents(documents, self.langchain_openai_client.embeddings)
+    def add_documents(self, documents: list):
+        token_count = 0
+        with get_openai_callback() as cb:
+            # 新しいDBを作成
+            new_db = FAISS.from_documents(documents, self.langchain_openai_client.embeddings)
+            total_tokens = cb.total_tokens
         # 既存のDBにマージ
         self.db.merge_from(new_db)
         self.__save()
+        
+        return total_tokens
 
-    def delete_doucments_by_sources(self, sources: list):
+    def delete_doucments_by_sources(self, sources :list ):
         doc_ids = []
         # 既存のDBから指定されたsourceを持つドキュメントを削除
+        
         for _id, doc in self.db.docstore._dict.items():
-            if doc.metadata["source"] in sources:
-                doc_ids.append(_id)
+            if not doc.metadata.get("source_url", None):
+                if doc.metadata.get("source_path", None) in [source.metadata.get("source_path",None) for source in sources]:
+                    doc_ids.append(_id)
+            else:
+                source_url_check =  doc.metadata.get("source_url", None)in [source.metadata.get("source_url", None) for source in sources]
+                source_path_check = doc.metadata.get("source_path", None) in [source.metadata.get("source_path", None) for source in sources]
+                if source_url_check and source_path_check:
+                    doc_ids.append(_id)
+
         if len(doc_ids) > 0:
             self.db.delete(doc_ids)
             self.__save()
     
+    def update_documents(self, documents: list, props: dict):
+        token_count = 0
+        client = LangChainOpenAIClient(props)
+        vector_db = LangChainVectorDB(client, props.get("VectorDBURL"))
+        if len(documents) == 0:
+            print("No documents to update.")
+            return token_count
+        
+        # 既存のDBからソースファイルが一致するドキュメントを削除
+        vector_db.delete_doucments_by_sources(documents)
+        return vector_db.add_documents(documents)
+        
     

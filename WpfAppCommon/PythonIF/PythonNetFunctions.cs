@@ -36,17 +36,17 @@ namespace WpfAppCommon.PythonIF {
     }
     public class PythonNetFunctions : IPythonFunctions {
 
-        private Dictionary<string, PyModule> PythonModules = new Dictionary<string, PyModule>();
+        private readonly Dictionary<string, PyModule> PythonModules = [];
 
         public PyModule GetPyModule(string scriptPath) {
-            if (PythonModules.ContainsKey(scriptPath)) {
-                return PythonModules[scriptPath];
+            if (PythonModules.TryGetValue(scriptPath, out PyModule? value)) {
+                return value;
             }
 
             PyModule pyModule = Py.CreateScope();
             string script = PythonExecutor.LoadPythonScript(scriptPath);
             pyModule.Exec(script);
-            // PythonModulesにscriptPathが存在しない場合は追加
+            // PythonModulesに、scriptPathが存在しない場合は追加
             PythonModules[scriptPath] = pyModule;
 
             return pyModule;
@@ -114,11 +114,7 @@ namespace WpfAppCommon.PythonIF {
 
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? extract_text = ps?.Get("extract_text");
-                // extract_textが呼び出せない場合は例外をスロー
-                if (extract_text == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_text関数が見つかりません");
-                }
+                dynamic? extract_text = (ps?.Get("extract_text")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、extract_text関数が見つかりません");
                 // extract_text関数を呼び出す
                 result = extract_text(path);
 
@@ -130,7 +126,7 @@ namespace WpfAppCommon.PythonIF {
         // IPythonFunctionsのメソッドを実装
         // データをマスキングする
         public string GetMaskedString(string SpacyModel, string text) {
-            List<string> beforeTextList = new List<string>() { text };
+            List<string> beforeTextList = [text];
             MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
             string result = maskedData.AfterTextList[0];
             return result;
@@ -139,7 +135,7 @@ namespace WpfAppCommon.PythonIF {
         // IPythonFunctionsのメソッドを実装
         // マスキングされたデータを元に戻す
         public string GetUnmaskedString(string SpacyModel, string maskedText) {
-            List<string> beforeTextList = new List<string>() { maskedText };
+            List<string> beforeTextList = [maskedText];
             MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
             string result = maskedData.AfterTextList[0];
             return result;
@@ -152,7 +148,7 @@ namespace WpfAppCommon.PythonIF {
                 throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
             }
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
-            Dictionary<string, string> dict = new Dictionary<string, string> {
+            Dictionary<string, string> dict = new() {
                             { "SpacyModel", SpacyModel }
                         };
 
@@ -160,22 +156,15 @@ namespace WpfAppCommon.PythonIF {
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? mask_data = ps?.Get("mask_data");
-                // mask_dataが呼び出せない場合は例外をスロー
-                if (mask_data == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、mask_data関数が見つかりません");
-                }
+                dynamic? mask_data = (ps?.Get("mask_data")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、mask_data関数が見つかりません");
                 // 結果用のDictionaryを作成
-                PyDict resultDict = new PyDict();
+                PyDict resultDict = new();
                 resultDict = mask_data(beforeTextList, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
                     throw new ThisApplicationException("マスキング結果がありません");
                 }
-                PyObject? textDictObject = resultDict.GetItem("TEXT");
-                if (textDictObject == null) {
-                    throw new ThisApplicationException("マスキングした文字列取得に失敗しました");
-                }
+                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException("マスキングした文字列取得に失敗しました");
                 // 
                 PyDict textDict = textDictObject.As<PyDict>();
                 PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
@@ -209,28 +198,21 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string SpacyModel, List<string> maskedTextList) {
 
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
-            Dictionary<string, string> dict = new Dictionary<string, string> {
+            Dictionary<string, string> dict = new() {
                             { "SpacyModel", SpacyModel }
                         };
-            MaskedData actionResult = new MaskedData(maskedTextList);
+            MaskedData actionResult = new(maskedTextList);
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? unmask_data = ps?.Get("unmask_data");
-                // unmask_dataが呼び出せない場合は例外をスロー
-                if (unmask_data == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、unmask_data関数が見つかりません");
-                }
+                dynamic? unmask_data = (ps?.Get("unmask_data")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、unmask_data関数が見つかりません");
                 // 結果用のDictionaryを作成
-                PyDict resultDict = new PyDict();
+                PyDict resultDict = new();
                 resultDict = unmask_data(actionResult, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
                     throw new ThisApplicationException("マスキング解除結果がありません");
                 }
-                PyObject? textListObject = resultDict.GetItem("TEXT");
-                if (textListObject == null) {
-                    throw new ThisApplicationException("マスキング解除した文字列取得に失敗しました");
-                }
+                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException("マスキング解除した文字列取得に失敗しました");
                 PyList textList = textListObject.As<PyList>();
                 foreach (PyObject item in textList) {
                     PyObject afterTextObject = item.GetItem("AFTER");
@@ -260,17 +242,11 @@ namespace WpfAppCommon.PythonIF {
             string result = "";
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? extract_text_from_image = ps?.Get("extract_text_from_image");
-                // extract_text_from_imageが呼び出せない場合は例外をスロー
-                if (extract_text_from_image == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_text_from_image関数が見つかりません");
-                }
+                dynamic? extract_text_from_image = (ps?.Get("extract_text_from_image")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、" +
+                    "extract_text_from_image関数が見つかりません");
                 // extract_text_from_image関数を呼び出す
-                ImageConverter imageConverter = new ImageConverter();
-                object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]));
-                if (bytesObject == null) {
-                    throw new ThisApplicationException("画像のバイト列に変換できません");
-                }
+                ImageConverter imageConverter = new();
+                object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[])) ?? throw new ThisApplicationException("画像のバイト列に変換できません");
                 byte[] bytes = (byte[])bytesObject;
                 result = extract_text_from_image(bytes, tesseractExePath);
             });
@@ -279,7 +255,7 @@ namespace WpfAppCommon.PythonIF {
 
         private List<MaskedEntity> GetMaskedEntities(string label, PyDict pyDict) {
 
-            List<MaskedEntity> result = new List<MaskedEntity>();
+            List<MaskedEntity> result = [];
             foreach (var key in pyDict.Keys()) {
                 PyObject? entity = pyDict.GetItem(key);
                 if (entity == null) {
@@ -293,10 +269,11 @@ namespace WpfAppCommon.PythonIF {
                 if (entityString == null) {
                     continue;
                 }
-                MaskedEntity maskedEntity = new MaskedEntity();
-                maskedEntity.Label = label;
-                maskedEntity.Before = keyString;
-                maskedEntity.After = entityString;
+                MaskedEntity maskedEntity = new() {
+                    Label = label,
+                    Before = keyString,
+                    After = entityString
+                };
                 result.Add(maskedEntity);
             }
             return result;
@@ -308,34 +285,27 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             // Pythonスクリプトの関数を呼び出す
-            ChatResult chatResult = new ChatResult();
+            ChatResult chatResult = new();
 
             ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
-                dynamic? langchain_chat = ps?.Get("langchain_chat");
-                // open_ai_chatが呼び出せない場合は例外をスロー
-                if (langchain_chat == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
-                }
+                dynamic? langchain_chat = (ps?.Get("langchain_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
                 // chatHistoryをJSON文字列に変換
                 string json_string = ChatItem.ToJson(chatHistory);
 
                 // open_ai_chat関数を呼び出す
                 PyDict pyDict = langchain_chat(props, prompt, json_string);
                 // outputを取得
-                string? resultString = pyDict["output"].ToString();
-                if (resultString == null) {
-                    throw new ThisApplicationException("OpenAIの応答がありません");
-                }
+                string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException("OpenAIの応答がありません");
                 // verboseを取得
                 string? verbose = pyDict.GetItem("verbose")?.ToString();
                 if (verbose != null) {
-                    chatResult.Verbose = verbose;   
+                    chatResult.Verbose = verbose;
                 }
 
                 // referenced_contentsを取得
                 PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                 if (referencedContents != null) {
-                    List<string> referencedContentsList = new List<string>();
+                    List<string> referencedContentsList = [];
                     foreach (PyObject item in referencedContents) {
                         string? itemString = item.ToString();
                         if (itemString == null) {
@@ -348,7 +318,7 @@ namespace WpfAppCommon.PythonIF {
                 // referenced_file_pathを取得
                 PyList? referencedFilePath = pyDict.GetItem("page_source_list") as PyList;
                 if (referencedFilePath != null) {
-                    List<string> referencedFilePathList = new List<string>();
+                    List<string> referencedFilePathList = [];
                     foreach (PyObject item in referencedFilePath) {
                         string? itemString = item.ToString();
                         if (itemString == null) {
@@ -370,11 +340,7 @@ namespace WpfAppCommon.PythonIF {
 
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? open_ai_embedding = ps?.Get("openai_embedding");
-                // open_ai_chatが呼び出せない場合は例外をスロー
-                if (open_ai_embedding == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、openai_embedding関数が見つかりません");
-                }
+                dynamic? open_ai_embedding = (ps?.Get("openai_embedding")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_embedding関数が見つかりません");
                 // open_ai_chat関数を呼び出す
                 open_ai_embedding(text, WpfAppCommon.Model.ClipboardAppConfig.CreateOpenAIProperties());
                 // System.Windows.MessageBox.Show(result);
@@ -388,11 +354,7 @@ namespace WpfAppCommon.PythonIF {
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? run_script = ps?.Get("run_script");
-                // run_scriptが呼び出せない場合は例外をスロー
-                if (run_script == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにrun_script関数が見つかりません");
-                }
+                dynamic? run_script = (ps?.Get("run_script")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、run_script関数が見つかりません");
                 // run_script関数を呼び出す
                 resultString = run_script(script, input);
             });
@@ -403,7 +365,7 @@ namespace WpfAppCommon.PythonIF {
         // IPythonFunctionsのメソッドを実装
         public HashSet<string> ExtractEntity(string SpacyModel, string text) {
 
-            HashSet<string> actionResult = new HashSet<string>();
+            HashSet<string> actionResult = [];
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
@@ -412,16 +374,12 @@ namespace WpfAppCommon.PythonIF {
                     throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
                 }
 
-                Dictionary<string, string> dict = new Dictionary<string, string> {
+                Dictionary<string, string> dict = new() {
                             { "SpacyModel", SpacyModel }
                         };
                 // 結果用のDictionaryを作成
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? extract_entity = ps?.Get("extract_entity");
-                // extract_entityが呼び出せない場合は例外をスロー
-                if (extract_entity == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにextract_entity関数が見つかりません");
-                }
+                dynamic? extract_entity = (ps?.Get("extract_entity")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、extract_entity関数が見つかりません");
                 PyIterable pyIterable = extract_entity(text, dict);
                 // PythonのリストをC#のHashSetに変換
                 foreach (PyObject item in pyIterable) {
@@ -439,11 +397,7 @@ namespace WpfAppCommon.PythonIF {
         public void SaveFaissIndex() {
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? save_faiss_index = ps?.Get("save_faiss_index");
-                // save_faiss_indexが呼び出せない場合は例外をスロー
-                if (save_faiss_index == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにsave_faiss_index関数が見つかりません");
-                }
+                dynamic? save_faiss_index = (ps?.Get("save_faiss_index")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、save_faiss_index関数が見つかりません");
                 // save_faiss_index関数を呼び出す
                 save_faiss_index();
             });
@@ -453,11 +407,7 @@ namespace WpfAppCommon.PythonIF {
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? load_faiss_index = ps?.Get("load_faiss_index");
-                // load_faiss_indexが呼び出せない場合は例外をスロー
-                if (load_faiss_index == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルにload_faiss_index関数が見つかりません");
-                }
+                dynamic? load_faiss_index = (ps?.Get("load_faiss_index")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、load_faiss_index関数が見つかりません");
                 // load_faiss_index関数を呼び出す
                 load_faiss_index();
             });
@@ -469,20 +419,17 @@ namespace WpfAppCommon.PythonIF {
         // 通常のOpenAIChatを実行する
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             // ChatResultを作成
-            ChatResult chatResult = new ChatResult();
+            ChatResult chatResult = new();
             // promptからChatItemを作成
-            ChatItem chatItem = new ChatItem(ChatItem.UserRole, prompt);
+            ChatItem chatItem = new(ChatItem.UserRole, prompt);
             // chatHistoryをコピーしてChatItemを追加
-            List<ChatItem> chatHistoryList = new List<ChatItem>(chatHistory);
-            chatHistoryList.Add(chatItem);
+            List<ChatItem> chatHistoryList = new(chatHistory) {
+                chatItem
+            };
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? openai_chat = ps?.Get("openai_chat");
-                // open_ai_chatが呼び出せない場合は例外をスロー
-                if (openai_chat == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
-                }
+                dynamic? openai_chat = (ps?.Get("openai_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
                 string json_string = ChatItem.ToJson(chatHistoryList);
 
                 // open_ai_chat関数を呼び出す
@@ -499,18 +446,41 @@ namespace WpfAppCommon.PythonIF {
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                dynamic? HelloWorld = ps?.Get("hello_world");
-                if (HelloWorld == null) {
-                    throw new ThisApplicationException("Pythonスクリプトファイルに、hello_world関数が見つかりません");
-                }
+                dynamic? HelloWorld = (ps?.Get("hello_world")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、hello_world関数が見つかりません");
                 // hello_world関数を呼び出す
                 result = HelloWorld();
 
             });
             return result;
-
-
         }
+
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL) {
+            int tokenCount = 0;
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic? update_index = (ps?.Get("update_index")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、update_vector_db_index関数が見つかりません");
+                // FileStatus.StatusがAdded、Modifiedのの場合は第1引数に"update"、Deletedの場合は"delete"を渡す
+                // それ以外はなにもしない。
+                string mode = "";
+                if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
+                    mode = "update";
+                } else if (fileStatus.Status == FileStatusEnum.Deleted) {
+                    mode = "delete";
+                } else {
+                    return;
+                }
+                // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
+                string filePath = Path.Combine(workingDirPath, fileStatus.Path);
+                if (!File.Exists(filePath)) {
+                    throw new ThisApplicationException("ファイルが存在しません:" + filePath);
+                }
+                // update_vector_db_index関数を呼び出す
+                tokenCount = update_index(ClipboardAppConfig.CreateOpenAIProperties(), mode, workingDirPath, fileStatus.Path, repositoryURL);
+            });
+            return tokenCount;
+        }
+
 
     }
 }

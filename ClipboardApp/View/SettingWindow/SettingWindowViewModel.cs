@@ -243,16 +243,6 @@ namespace ClipboardApp.View.SettingWindow {
                 OnPropertyChanged(nameof(VectorDBURL));
             }
         }
-        // SourceDocumentURL
-        public string SourceDocumentURL {
-            get {
-                return WpfAppCommon.Properties.Settings.Default.SourceDocumentURL;
-            }
-            set {
-                WpfAppCommon.Properties.Settings.Default.SourceDocumentURL = value;
-                OnPropertyChanged(nameof(SourceDocumentURL));
-            }
-        }
         // BackupGeneration
         public int BackupGeneration {
             get {
@@ -316,7 +306,7 @@ namespace ClipboardApp.View.SettingWindow {
         }
         // 設定をチェックする処理
         public string CheckSetting() {
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             if (PythonExecMode == true) {
                 bool pythonOK = true;
                 stringBuilder.AppendLine("Pythonの設定チェック...");
@@ -451,7 +441,7 @@ namespace ClipboardApp.View.SettingWindow {
         }
 
         private TestResult TestPython() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
                 string result = PythonExecutor.PythonFunctions.HelloWorld();
@@ -470,7 +460,7 @@ namespace ClipboardApp.View.SettingWindow {
             return testResult;
         }
         private TestResult TestExtractText() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
                 string result = PythonExecutor.PythonFunctions.ExtractText("TestData/extract_test.txt");
@@ -490,7 +480,7 @@ namespace ClipboardApp.View.SettingWindow {
 
         }
         private TestResult TestOCR() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
                 string result = PythonExecutor.PythonFunctions.ExtractTextFromImage(
@@ -510,7 +500,7 @@ namespace ClipboardApp.View.SettingWindow {
             return testResult;
         }
         private TestResult TestOpenAI() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
                 string resultString = PythonExecutor.PythonFunctions.OpenAIChat("Hello", []).Response;
@@ -529,7 +519,7 @@ namespace ClipboardApp.View.SettingWindow {
         }
         // TestLangChain
         private TestResult TestLangChain() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
 
@@ -549,9 +539,9 @@ namespace ClipboardApp.View.SettingWindow {
         }
 
         private TestResult TestSpacy() {
-            TestResult testResult = new TestResult();
+            TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new();
             stringBuilder.AppendLine("def execute(input_str):");
             stringBuilder.AppendLine("    import spacy");
             stringBuilder.AppendLine("    nlp = spacy.load(\"" + SpacyModel  + "\")");

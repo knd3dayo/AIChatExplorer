@@ -168,6 +168,12 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="プロンプトテンプレート編集"
                             Visibility="{Binding UseOpenAIVisibility}" />
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenRAGManagementWindowCommand}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="RAGソース編集"
+                            Visibility="{Binding UseOpenAIVisibility}" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"

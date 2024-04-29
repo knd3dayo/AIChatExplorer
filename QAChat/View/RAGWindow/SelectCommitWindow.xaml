@@ -1,0 +1,66 @@
+﻿<Window
+    x:Class="QAChat.View.RAGWindow.SelectCommitWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:QAChat.View.RAGWindow"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="SelectCommitWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.DataContext>
+        <local:SelectCommitWindowViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ListView
+            Grid.Row="0"
+            ItemsSource="{Binding CommitInfoList}"
+            SelectedItem="{Binding SelectedCommitInfo}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="250"
+                        DisplayMemberBinding="{Binding Date}"
+                        Header="コミット日時" />
+                    <GridViewColumn
+                        Width="250"
+                        DisplayMemberBinding="{Binding Hash}"
+                        Header="コミットハッシュ" />
+                    <GridViewColumn
+                        Width="250"
+                        DisplayMemberBinding="{Binding Message}"
+                        Header="メッセージ" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <DockPanel
+                Grid.Column="0"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    Margin="10,0,20,0"
+                    Command="{Binding OkCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="OK" />
+                <Button
+                    Width="100"
+                    Margin="10,0,20,0"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="キャンセル"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>

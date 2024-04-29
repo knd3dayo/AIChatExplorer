@@ -60,6 +60,15 @@ namespace WpfAppCommon.Factory {
         public ICollection<PromptItem> GetAllPromptTemplates();
 
         public void DeletePromptTemplate(PromptItem promptItem);
+
+        //----  RAGSourceItem
+        // update
+        public void UpsertRAGSourceItem(RAGSourceItem item);
+        // delete
+        public void DeleteRAGSourceItem(RAGSourceItem item);
+        // get
+        public IEnumerable<RAGSourceItem> GetRAGSourceItems();
+
     }
 
 }

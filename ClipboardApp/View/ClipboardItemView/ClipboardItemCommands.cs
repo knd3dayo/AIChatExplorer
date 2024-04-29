@@ -25,7 +25,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             if (result == MessageBoxResult.Yes) {
                 // 選択中のアイテムを削除
                 foreach (var item in itemViewModels) {
-                    if (item is not ClipboardItemViewModel) {
+                    if (item is null) {
                         continue;
                     }
                     ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)item;
@@ -49,7 +49,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
         public static void OpenItemCommandExecute(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel clipboardItemViewModel) {
 
-            EditItemWindow editItemWindow = new EditItemWindow();
+            EditItemWindow editItemWindow = new();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(folderViewModel, clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
@@ -71,7 +71,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow tagWindow = new TagWindow();
+            TagWindow tagWindow = new();
             TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
             tagWindowViewModel.Initialize(clipboardItemViewModel.ClipboardItem, () => {
                 Tools.Info("更新しました");
@@ -86,7 +86,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         /// </summary>
         /// <param name="obj"></param>
         public static void CreateItemCommandExecute(ClipboardFolderViewModel folderViewModel) {
-            EditItemWindow editItemWindow = new EditItemWindow();
+            EditItemWindow editItemWindow = new();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(folderViewModel, null, () => {
                 // フォルダ内のアイテムを再読み込み
@@ -138,7 +138,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             ClipboardItem toItem = toItemModelView.ClipboardItem;
-            List<ClipboardItem> fromItems = new List<ClipboardItem>();
+            List<ClipboardItem> fromItems = [];
             try {
                 // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
                 for (int i = 1; i < selectedItems.Count; i++) {
@@ -162,7 +162,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Info("マージしました");
 
             } catch (Exception e) {
-                string message = string.Format("エラーが発生しました。\nメッセージ:\n{0]\nスタックトレース:\n[1]", e.Message, e.StackTrace);
+                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
                 Tools.Error(message);
             }
 
@@ -296,7 +296,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 // プログレスインジケーターを表示
                 MainWindowViewModel.UpdateProgressCircleVisibility(true);
 
-                List<ChatItem> chatItems = new();
+                List<ChatItem> chatItems = [];
                 ChatResult result = new();
                 // modeがRAGの場合はLangChainChatを実行
                 if (mode == OpenAIExecutionModeEnum.RAG) {

@@ -39,7 +39,7 @@ namespace WpfAppCommon.Model {
         public ClipboardContentTypes ContentType { get; set; }
 
         //Tags
-        public HashSet<string> Tags { get; set; } = new HashSet<string>();
+        public HashSet<string> Tags { get; set; } = [];
 
         //説明
         public string Description { get; set; } = "";
@@ -61,7 +61,7 @@ namespace WpfAppCommon.Model {
         // -------------------------------------------------------------------
 
         public ClipboardItem Copy() {
-            ClipboardItem newItem = new ClipboardItem();
+            ClipboardItem newItem = new ();
             CopyTo(newItem);
             return newItem;
 
@@ -206,7 +206,7 @@ namespace WpfAppCommon.Model {
                 item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
-                    item.Description += " ファイル：" + item.Content.Substring(0, 20) + "..." + item.Content.Substring(item.Content.Length - 30);
+                    item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
                 } else {
                     item.Description += " ファイル：" + item.Content;
                 }
@@ -222,10 +222,7 @@ namespace WpfAppCommon.Model {
             string path = clipboardItem.Content;
             if (string.IsNullOrEmpty(path) == false) {
                 // ファイルパスをフォルダ名とファイル名に分割
-                string? folderPath = Path.GetDirectoryName(path);
-                if (folderPath == null) {
-                    throw new ThisApplicationException("フォルダパスが取得できません");
-                }
+                string? folderPath = Path.GetDirectoryName(path) ?? throw new ThisApplicationException("フォルダパスが取得できません");
                 string? fileName = Path.GetFileName(path);
                 clipboardItem.Content = folderPath + "\n" + fileName;
                 // ContentTypeをTextに変更
@@ -242,7 +239,7 @@ namespace WpfAppCommon.Model {
             HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
                 // LiteDBにタグを追加
-                TagItem tagItem = new TagItem { Tag = entity };
+                TagItem tagItem = new() { Tag = entity };
                 ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tagItem);
                 // タグを追加
                 item.Tags.Add(entity);
@@ -272,7 +269,7 @@ namespace WpfAppCommon.Model {
             if (clipboardItem.ContentType != ClipboardContentTypes.Text) {
                 throw new ThisApplicationException("テキスト以外のコンテンツはマスキングできません");
             }
-            Dictionary<string, List<string>> maskPatterns = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> maskPatterns = [];
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, clipboardItem.Content);
             clipboardItem.Content = result;
@@ -297,7 +294,7 @@ namespace WpfAppCommon.Model {
 
         private static ChatItem CreateMaskedDataSystemMessage() {
             ChatItem chatItem
-                = new ChatItem(ChatItem.SystemRole,
+                = new(ChatItem.SystemRole,
                 "このチャットではマスキングデータ(MASKED_...)を使用している場合があります。" +
                 "マスキングデータの文字列はそのままにしてください");
             return chatItem;

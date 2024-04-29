@@ -243,7 +243,6 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <!--  Vector DB URL  -->
                     <TextBlock
@@ -258,20 +257,6 @@
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Text="{Binding VectorDBURL}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-
-                    <!--  Source Document URL  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="ベクトル化対象のドキュメントを格納したGitリポジトリのURL"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding SourceDocumentURL}"
                         Visibility="{Binding UseOpenAIVisibility}" />
                 </Grid>
                 <!--  Spacy設定  -->

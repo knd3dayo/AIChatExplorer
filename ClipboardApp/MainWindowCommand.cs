@@ -9,6 +9,7 @@ using ClipboardApp.View.SettingWindow;
 using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
+using QAChat.View.RAGWindow;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -69,6 +70,15 @@ namespace ClipboardApp {
         // OpenOpenAIWindowCommand メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenOpenAIWindowCommand() {
             ClipboardItemCommands.OpenOpenAIChatWindowExecute(null);
+        }
+        // OpenRAGManagementWindowCommand メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
+        public static void OpenRAGManagementWindowCommand() {
+            // RARManagementWindowを開く
+            RagManagementWindow ragManagementWindow = new ();
+            RAGManagementWindowViewModel ragManagementWindowViewModel = (RAGManagementWindowViewModel)ragManagementWindow.DataContext;
+            ragManagementWindowViewModel.Initialize();
+            ragManagementWindow.ShowDialog();
+
         }
 
         // Ctrl + F が押された時の処理
@@ -331,7 +341,7 @@ namespace ClipboardApp {
         }
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public static void OpenListPromptTemplateWindowCommand(MainWindowViewModel windowViewModel) {
-            ListPromptTemplateWindow listPromptTemplateWindow = new ListPromptTemplateWindow();
+            ListPromptTemplateWindow listPromptTemplateWindow = new ();
             ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)listPromptTemplateWindow.DataContext;
             listPromptTemplateWindowViewModel.Initialize(
                 ListPromptTemplateWindowViewModel.ActionModeEum.Edit,
@@ -342,7 +352,7 @@ namespace ClipboardApp {
         }
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public static void OpenListAutoProcessRuleWindowCommand() {
-            ListAutoProcessRuleWindow listAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
+            ListAutoProcessRuleWindow listAutoProcessRuleWindow = new ();
             ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)listAutoProcessRuleWindow.DataContext;
             ListAutoProcessRuleWindowViewModel.Initialize();
 
@@ -351,7 +361,7 @@ namespace ClipboardApp {
         }
         // メニューの「タグ編集」をクリックしたときの処理
         public static void OpenTagWindowCommand() {
-            TagWindow tagWindow = new TagWindow();
+            TagWindow tagWindow = new ();
             TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
             tagWindowViewModel.Initialize(null, () => { });
             tagWindow.ShowDialog();
@@ -359,7 +369,7 @@ namespace ClipboardApp {
         }
         // ステータスバーをクリックしたときの処理
         public static void OpenStatusMessageWindowCommand() {
-            StatusMessageWindow statusMessageWindow = new StatusMessageWindow();
+            StatusMessageWindow statusMessageWindow = new ();
             StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)statusMessageWindow.DataContext;
             statusMessageWindowViewModel.Initialize();
             statusMessageWindow.ShowDialog();

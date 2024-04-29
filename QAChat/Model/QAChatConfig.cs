@@ -24,19 +24,5 @@ namespace WpfAppCommon.Model {
             return dict;
         }
 
-        public static void SaveSettings(Dictionary<string, string> settings) {
-            Properties.Settings.Default.AzureOpenAI = bool.Parse(settings["AzureOpenAI"]);
-            Properties.Settings.Default.OpenAIKey = settings["OpenAIKey"];
-            Properties.Settings.Default.OpenAICompletionModel = settings["OpenAICompletionModel"];
-            Properties.Settings.Default.OpenAIEmbeddingModel = settings["OpenAIEmbeddingModel"];
-            Properties.Settings.Default.OpenAICompletionBaseURL = settings["OpenAICompletionBaseURL"];
-            Properties.Settings.Default.OpenAIEmbeddingBaseURL = settings["OpenAIEmbeddingBaseURL"];
-            Properties.Settings.Default.VectorDBURL = settings["VectorDBURL"];
-            Properties.Settings.Default.SourceDocumentURL = settings["SourceDocumentURL"];
-            Properties.Settings.Default.PythonDllPath = settings["PythonDllPath"];
-
-            Properties.Settings.Default.Save();
-        }
-
     }
 }

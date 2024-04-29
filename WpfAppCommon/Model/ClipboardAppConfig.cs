@@ -39,9 +39,6 @@ namespace WpfAppCommon.Model {
 
         // VectorDBURL
         public static string VectorDBURL { get; set; } = WpfAppCommon.Properties.Settings.Default.VectorDBURL;
-        // SourceDocumentURL
-        public static string SourceDocumentURL { get; set; } = WpfAppCommon.Properties.Settings.Default.SourceDocumentURL;
-
         // UseOCR
         public static bool UseOCR { get; set; } = WpfAppCommon.Properties.Settings.Default.UseOCR;
 
@@ -72,11 +69,12 @@ namespace WpfAppCommon.Model {
 
 
         public static  Dictionary<string, string> CreateOpenAIProperties() {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
-            dict.Add("OpenAIKey", WpfAppCommon.Properties.Settings.Default.OpenAIKey);
-            dict.Add("OpenAICompletionModel", WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel);
-            dict.Add("OpenAIEmbeddingModel", WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel);
-            dict.Add("AzureOpenAI", WpfAppCommon.Properties.Settings.Default.AzureOpenAI.ToString());
+            Dictionary<string, string> dict = new() {
+                { "OpenAIKey", WpfAppCommon.Properties.Settings.Default.OpenAIKey },
+                { "OpenAICompletionModel", WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel },
+                { "OpenAIEmbeddingModel", WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel },
+                { "AzureOpenAI", WpfAppCommon.Properties.Settings.Default.AzureOpenAI.ToString() }
+            };
 
             if (string.IsNullOrEmpty(WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint)) {
                 dict.Add("AzureOpenAIEndpoint", WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint);
@@ -89,7 +87,6 @@ namespace WpfAppCommon.Model {
                 dict.Add("OpenAIEmbeddingBaseURL", WpfAppCommon.    Properties.Settings.Default.OpenAIEmbeddingBaseURL);
             }
             dict.Add("VectorDBURL", WpfAppCommon.Properties.Settings.Default.VectorDBURL);
-
             return dict;
         }
 

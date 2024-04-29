@@ -3,10 +3,10 @@ import os, json
 from PIL import Image
 import pyocr
 import io
-
 import sys
 sys.path.append("python")
 import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboard_app_spacy, clipboard_app_pyocr
+import file_processor
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -30,6 +30,10 @@ def openai_embedding(input_text, props={}):
 
 def list_openai_models():
     return clipboard_app_openai.list_openai_models()
+
+# vector db関連
+def update_index(props, mode, workdir, relative_path, url):
+    return file_processor.update_index(props, mode, workdir, relative_path, url)
 
 # faiss関連
 def save_faiss_index():

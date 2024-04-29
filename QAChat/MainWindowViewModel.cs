@@ -4,11 +4,11 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using WpfAppCommon.Utils;
 using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace QAChat {
     public partial class MainWindowViewModel : ObservableObject {
@@ -39,7 +39,7 @@ namespace QAChat {
         }
         public static ChatItem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatItem> ChatItems { get; set; } = new ObservableCollection<ChatItem>();
+        public ObservableCollection<ChatItem> ChatItems { get; set; } = [];
 
 
         public string? LastSendText {
@@ -76,11 +76,11 @@ namespace QAChat {
                 return promptTemplate;
 
             }
-            set{
+            set {
                 promptTemplate = value;
                 OnPropertyChanged(nameof(PromptTemplate));
             }
-         }
+        }
 
         // プロンプトテンプレートのテキスト
         public string PromptTemplateText {
@@ -89,7 +89,7 @@ namespace QAChat {
             }
         }
 
-        public StringBuilder Log = new  StringBuilder();
+        public StringBuilder Log = new();
 
 
         //  Dictionaryを引数として、そのキーと値をProperties.Settingsに保存する
@@ -107,9 +107,7 @@ namespace QAChat {
         }
 
         // チャットを送信するコマンド
-        public SimpleDelegateCommand SendChatCommand => new SimpleDelegateCommand(SendChatCommandExecute);
-
-        public async void SendChatCommandExecute(object parameter) {
+        public SimpleDelegateCommand SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // OpenAIにチャットを送信してレスポンスを受け取る
@@ -153,39 +151,36 @@ namespace QAChat {
 
             } catch (Exception e) {
                 Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
-            }finally {
+            } finally {
                 IsIndeterminate = false;
             }
 
-        }
+        });
 
         // クリアコマンド
-        public SimpleDelegateCommand ClearChatCommand => new SimpleDelegateCommand(ClearChatCommandExecute);
-
-        public void ClearChatCommandExecute(object parameter) {
+        public SimpleDelegateCommand ClearChatCommand => new((parameter) => {
             ChatItems.Clear();
             InputText = "";
-        }
+        });
 
         // Closeコマンド
-        public SimpleDelegateCommand CloseCommand => new SimpleDelegateCommand(CloseCommandExecute);
-        public void CloseCommandExecute(object parameter) {
+        public SimpleDelegateCommand CloseCommand => new((parameter) => {
             if (parameter is Window window) {
                 window.Close();
             }
-        }
+        });
 
         // 設定画面を開くコマンド
-        public SimpleDelegateCommand SettingCommand => new SimpleDelegateCommand((parameter) => {
-             SettingWindow settingWindow = new SettingWindow();
-             settingWindow.ShowDialog();
+        public SimpleDelegateCommand SettingCommand => new((parameter) => {
+            SettingWindow settingWindow = new();
+            settingWindow.ShowDialog();
         }
-        
+
         );
 
         // ログ画面を開くコマンド
-        public SimpleDelegateCommand LogWindowCommand => new SimpleDelegateCommand((parameter) => {
-            LogWindow logWindow = new LogWindow();
+        public SimpleDelegateCommand LogWindowCommand => new((parameter) => {
+            LogWindow logWindow = new();
             LogWindowViewModel logWindowViewModel = (LogWindowViewModel)logWindow.DataContext;
             logWindowViewModel.LogText = Log.ToString();
             logWindow.ShowDialog();
@@ -202,8 +197,8 @@ namespace QAChat {
         });
 
         // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand PromptTemplateCommand => new SimpleDelegateCommand((parameter) => {
-            ListPromptTemplateWindow promptTemplateWindow = new ListPromptTemplateWindow();
+        public SimpleDelegateCommand PromptTemplateCommand => new((parameter) => {
+            ListPromptTemplateWindow promptTemplateWindow = new();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
             promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 PromptTemplate = promptTemplateWindowViewModel.PromptItem;
