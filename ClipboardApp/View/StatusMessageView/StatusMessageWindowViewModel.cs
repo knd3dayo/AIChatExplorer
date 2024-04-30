@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.Utils;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Control;
 
 namespace ClipboardApp.View.StatusMessageView {
     public class StatusMessageWindowViewModel : ObservableObject{
         public ObservableCollection<string> Messages { get; set; } = [];
 
         public void Initialize() {
-            List<string> messages = MainWindowViewModel.StatusText.Messages;
+            List<string> messages = Tools.StatusText.Messages;
             Messages.Clear();
             foreach (string message in messages) {
                 Messages.Add(message);

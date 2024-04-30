@@ -7,7 +7,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {
-    public class ListPythonScriptWindowViewModel : ObservableObject {
+    public class ListPythonScriptWindowViewModel : MyWindowViewModel {
         public static ObservableCollection<ScriptItem> ScriptItems { get; } = ScriptItem.ScriptItems;
 
         private ScriptItem? _selectedScriptItem;

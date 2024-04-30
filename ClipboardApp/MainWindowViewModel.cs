@@ -6,6 +6,7 @@ using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
+using WpfAppCommon.Control;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
@@ -15,15 +16,15 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
 
-    public class MainWindowViewModel : ObservableObject {
+    public class MainWindowViewModel : MyWindowViewModel {
 
-        // static properties
-        // ステータスバーのテキスト
-        public static StatusText StatusText { get; } = new StatusText();
+
         // プログレスインジケータ表示更新用のアクション
         // 
         public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };
 
+        // Tools
+        public static Tools? Tools { get; private set; }
 
         // Progress Indicatorの表示フラグ
         private bool _IsIndeterminate = false;
@@ -68,6 +69,9 @@ namespace ClipboardApp {
         // ClipboardFolder
 
         public static ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardFolderViewModel>();
+
+        // RootFolderのClipboardViewModel
+        public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; } 
 
         // Cutフラグ
         public bool CutFlag { get; set; } = false;
@@ -133,9 +137,8 @@ namespace ClipboardApp {
         public MainWindowViewModel() {
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
-
-            // ロギング設定
-            Tools.StatusText = StatusText;
+            // ステータスバークリック時に実行するコマンド
+            MyStatusBarViewModel.OpenStatusMessageWindow = MainWindowCommand.OpenStatusMessageWindowCommand;
 
             // フォルダ階層を再描写する
             ReloadFolder();
@@ -155,8 +158,8 @@ namespace ClipboardApp {
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
-
-
+            // RootFolderのViewModel
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
         }
 
         // フォルダ階層を再描写する
@@ -316,14 +319,9 @@ namespace ClipboardApp {
         public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new((parameter) => {
             MainWindowCommand.OpenListAutoProcessRuleWindowCommand();
         });
-
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand OpenTagWindowCommand => new((parameter) => {
             MainWindowCommand.OpenTagWindowCommand();
-        });
-        // ステータスバーをクリックしたときの処理
-        public SimpleDelegateCommand OpenStatusMessageWindowCommand => new((parameter) => {
-            MainWindowCommand.OpenStatusMessageWindowCommand();
         });
 
         // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド

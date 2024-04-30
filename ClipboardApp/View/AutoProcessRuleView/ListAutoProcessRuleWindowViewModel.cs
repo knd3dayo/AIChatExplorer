@@ -6,7 +6,8 @@ using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
-    public class ListAutoProcessRuleWindowViewModel : ObservableObject {
+    public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
+
         // Instance
         public static ListAutoProcessRuleWindowViewModel? Instance { get; set; } = null;
 
@@ -23,15 +24,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 _selectedAutoProcessRule = value;
             }
         }
-        // 初期化
-        public void Initialize() {
-            // Instance
-            Instance = this;
-            // AutoProcessRulesを更新
-            AutoProcessRules = AutoProcessRuleController.GetAllAutoProcessRules();
-            OnPropertyChanged(nameof(AutoProcessRules));
 
-        }
 
         public void Initialize(ClipboardFolderViewModel? targetFolder) {
             TargetFolder = targetFolder;

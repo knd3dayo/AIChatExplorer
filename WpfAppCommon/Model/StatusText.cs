@@ -1,13 +1,39 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
+
+        // StatusTextDictionaryのキー
+        public static string GetStatusTextKey(Window window){
+            Type type = window.GetType();
+            string? key = type.FullName;
+            if (key == null) {
+                key = type.Name;
+            }
+            return key;
+        }
+
+        public static Dictionary<string, StatusText> StatusTextDictionary { get; } = [];
+
+        public static StatusText GetStatusText(Window window) {
+            string key = GetStatusTextKey(window);
+            if (StatusTextDictionary.ContainsKey(key)) {
+                return StatusTextDictionary[key];
+            } else {
+                StatusText statusText = new();
+                StatusTextDictionary.Add(key, statusText);
+                return statusText;
+            }
+        }
+        private static  StatusText CurrentStatusText = new();
+
         public static string DefaultText { get; } = "Ready";
 
         private string _text = DefaultText;
         private CancellationTokenSource? _tokenSource;
 
-        public string InitText { get; set; } = DefaultText;
+        public string ReadyText { get; set; } = DefaultText;
 
         public List<string> Messages { get; } = new List<string>();
 
@@ -18,10 +44,10 @@ namespace WpfAppCommon.Model {
             set {
                 _text = value;
                 // InitText以外の場合はメッセージを追加
-                if (value != InitText) {
+                if (value != ReadyText) {
                     Messages.Add($"{DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")} {value}");
                 }
-                OnPropertyChanged("Text");
+                OnPropertyChanged(nameof(Text));
                 // _tokenSourceがnullの場合は初期化
                 if (_tokenSource != null) {
                     //すでに_tokenSourceが存在する場合はキャンセル
@@ -49,15 +75,20 @@ namespace WpfAppCommon.Model {
             if (token.IsCancellationRequested) {
                 return;
             }
-            Init();
-            OnPropertyChanged("Content");
+            Ready();
         }
-        public void Init() {
-            Text = InitText;
+        public void Ready() {
+            Text = ReadyText;
+            OnPropertyChanged(nameof(Text));
         }
-        public void Dispose() {
+        private void Dispose() {
             if (_tokenSource != null) {
                 _tokenSource.Cancel();
+            }
+        }
+        public static void DisposeAll() {
+            foreach (StatusText statusText in StatusTextDictionary.Values) {
+                statusText.Dispose();
             }
         }
     }

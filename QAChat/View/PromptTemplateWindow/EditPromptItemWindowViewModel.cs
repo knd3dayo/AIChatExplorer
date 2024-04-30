@@ -3,10 +3,11 @@ using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using WpfAppCommon;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.View.PromptTemplateWindow {
-    public class EditPromptItemWindowViewModel : ObservableObject {
+    public class EditPromptItemWindowViewModel : MyWindowViewModel {
             
         private PromptItemViewModel? itemViewModel;
         public PromptItemViewModel? ItemViewModel {

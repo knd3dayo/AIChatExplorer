@@ -5,8 +5,9 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView {
-    public class TagWindowViewModel : ObservableObject {
-        public ObservableCollection<TagItemViewModel> TagList { get; set; } = new ObservableCollection<TagItemViewModel>();
+    public class TagWindowViewModel : MyWindowViewModel {
+
+        public ObservableCollection<TagItemViewModel> TagList { get; set; } = new();
 
         private ClipboardItem? _clipboardItem;
 

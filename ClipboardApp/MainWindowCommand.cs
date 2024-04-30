@@ -354,7 +354,8 @@ namespace ClipboardApp {
         public static void OpenListAutoProcessRuleWindowCommand() {
             ListAutoProcessRuleWindow listAutoProcessRuleWindow = new ();
             ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)listAutoProcessRuleWindow.DataContext;
-            ListAutoProcessRuleWindowViewModel.Initialize();
+                      
+            ListAutoProcessRuleWindowViewModel.Initialize(MainWindowViewModel.RootFolderViewModel);
 
             listAutoProcessRuleWindow.ShowDialog();
 

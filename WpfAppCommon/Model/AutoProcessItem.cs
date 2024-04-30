@@ -181,14 +181,14 @@ namespace WpfAppCommon.Model {
                 return (args) => {
                     ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
 
-                    ClipboardFolder.MergeItemsCommandExecute(folder, args.ClipboardItem);
+                    folder.MergeItemsCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }
             if (name == AutoProcessActionName.MergeItemsWithSameSourceApplicationTitle.Name) {
                 return (args) => {
                     ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
-                    ClipboardFolder.MergeItemsBySourceApplicationTitleCommandExecute(folder, args.ClipboardItem);
+                    folder.MergeItemsBySourceApplicationTitleCommandExecute( args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }

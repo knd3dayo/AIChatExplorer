@@ -13,7 +13,7 @@ namespace QAChat.View.RAGWindow {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class RAGManagementWindowViewModel : ObservableObject {
+    public class RAGManagementWindowViewModel : MyWindowViewModel {
 
         // RagSourceItemのリスト
         public ObservableCollection<RAGSourceItemViewModel> RagSourceItems { get; set; } = [];

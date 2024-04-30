@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using WpfAppCommon.Control;
+using WpfAppCommon.Model;
 
 
 
@@ -19,7 +21,7 @@ namespace ClipboardApp {
             base.OnClosing(e);
 
             // StatusTextのスレッドを停止
-            MainWindowViewModel.StatusText.Dispose();
+            StatusText.DisposeAll();
         }
     }
 

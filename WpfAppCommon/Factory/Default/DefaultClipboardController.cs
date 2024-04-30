@@ -167,7 +167,7 @@ namespace WpfAppCommon.Factory.Default {
             if (WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
                 try {
                     Tools.Info("自動マージ処理を実行します");
-                    ClipboardFolder.MergeItemsBySourceApplicationTitleCommandExecute(ClipboardFolder.RootFolder, item);
+                    ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
                 }

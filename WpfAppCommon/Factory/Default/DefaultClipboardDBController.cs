@@ -63,9 +63,7 @@ namespace WpfAppCommon.Factory.Default {
                     mapper.Entity<ClipboardFolder>()
                         .Ignore(x => x.Items);
                 } catch (Exception e) {
-                    Tools.Error("データベースのオープンに失敗しました。" + e.Message);
-                    // データベースのオープンに失敗した場合は終了
-                    Environment.Exit(1);
+                    throw new Exception("データベースのオープンに失敗しました。" + e.Message);
                 }
             }
             return db;

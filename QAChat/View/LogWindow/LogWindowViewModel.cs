@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
 namespace QAChat.View.LogWindow {
-    internal class LogWindowViewModel :ObservableObject{
+    internal class LogWindowViewModel :MyWindowViewModel{
         public LogWindowViewModel() {
         }
 
@@ -20,5 +23,13 @@ namespace QAChat.View.LogWindow {
                 OnPropertyChanged("LogText");
             }
         }
+
+        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+            // Windowを閉じる
+            if (parameter is Window window) {
+                window.Close();
+            }
+        });
+
     }
 }

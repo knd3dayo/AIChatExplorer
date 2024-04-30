@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.RAGWindow {
-    public class RAGSourceItemViewModel : ObservableObject {
+    public class RAGSourceItemViewModel : MyWindowViewModel {
 
         private RAGSourceItem item;
         public RAGSourceItemViewModel(RAGSourceItem item) {

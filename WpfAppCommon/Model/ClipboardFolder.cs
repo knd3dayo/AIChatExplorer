@@ -60,6 +60,9 @@ namespace WpfAppCommon.Model {
                 return children;
             }
         }
+        // Tools
+        public Tools? Tools { get; set; }
+
         public void AddChild(ClipboardFolder child) {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolderRelation(this, child);
@@ -229,17 +232,17 @@ namespace WpfAppCommon.Model {
 
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public static void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardFolder folder, ClipboardItem newItem) {
+        public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
             // NewItemのSourceApplicationTitleが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
                 return;
             }
-            if (folder.Items.Count == 0) {
+            if (Items.Count == 0) {
                 return;
             }
             List<ClipboardItem> sameTitleItems = new List<ClipboardItem>();
             // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
-            foreach (var item in folder.Items) {
+            foreach (var item in Items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
                     // TypeがTextのアイテムのみマージ
                     if (item.ContentType == ClipboardContentTypes.Text) {
@@ -252,7 +255,7 @@ namespace WpfAppCommon.Model {
                 return;
             }
             // マージ元のアイテムをマージ先(更新時間が一番古いもの)のアイテムにマージ
-            ClipboardItem mergeToItem = folder.Items.Last();
+            ClipboardItem mergeToItem = Items.Last();
             // sameTitleItemsの1から最後までをマージ元のアイテムとする
             sameTitleItems.RemoveAt(sameTitleItems.Count - 1);
 
@@ -265,23 +268,23 @@ namespace WpfAppCommon.Model {
             mergeToItem.CopyTo(newItem);
             // マージしたアイテムを削除
             foreach (var mergedItem in sameTitleItems) {
-                folder.DeleteItem(mergedItem);
+                DeleteItem(mergedItem);
             }
             // mergedItemを削除
-            folder.DeleteItem(mergeToItem);
+            DeleteItem(mergeToItem);
         }
         // 指定されたフォルダの全アイテムをマージするコマンド
-        public static void MergeItemsCommandExecute(ClipboardFolder folder, ClipboardItem item) {
-            if (folder.Items.Count == 0) {
+        public void MergeItemsCommandExecute(ClipboardItem item) {
+            if (Items.Count == 0) {
                 return;
             }
 
             // マージ元のアイテム
             List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
-            for (int i = folder.Items.Count - 1; i > 0; i--) {
+            for (int i = Items.Count - 1; i > 0; i--) {
                 // TypeがTextのアイテムのみマージ
-                if (folder.Items[i].ContentType == ClipboardContentTypes.Text) {
-                    mergedFromItems.Add(folder.Items[i]);
+                if (Items[i].ContentType == ClipboardContentTypes.Text) {
+                    mergedFromItems.Add(Items[i]);
                 }
             }
             // 先頭に引数のアイテムを追加
@@ -299,10 +302,10 @@ namespace WpfAppCommon.Model {
 
             // マージしたアイテムを削除
             foreach (var mergedItem in mergedFromItems) {
-                folder.DeleteItem(mergedItem);
+                DeleteItem(mergedItem);
             }
             // マージ先アイテムを削除
-            folder.DeleteItem(mergeToItem);
+            DeleteItem(mergeToItem);
 
         }
 

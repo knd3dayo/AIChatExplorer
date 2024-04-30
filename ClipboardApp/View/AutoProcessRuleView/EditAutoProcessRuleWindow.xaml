@@ -1,22 +1,60 @@
-﻿<Window x:Class="ClipboardApp.View.AutoProcessRuleView.EditAutoProcessRuleWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClipboardApp"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
-        mc:Ignorable="d"
-        Title="EditAutoProcessRuleWindow" Height="520" Width="600">
+﻿<Window
+    x:Class="ClipboardApp.View.AutoProcessRuleView.EditAutoProcessRuleWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
+    Title="{Binding StringResources.EditAutoProcessRuleWindowTitle}"
+    Width="600"
+    SizeToContent="Height"
+    mc:Ignorable="d">
     <Window.DataContext>
         <view:EditAutoProcessRuleWindowViewModel />
     </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> 
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid>
+        <!--  メニューバー  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <Menu
+                    Name="menu1"
+                    Margin="0,0,0,0"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="False">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="" />
+                </Menu>
+
+            </materialDesign:ColorZone>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,0,0,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -35,121 +73,143 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Label Content="ルール名" Grid.Column="0"  Margin="10,10,10,10"/>
-                <TextBox Text="{Binding RuleName}" Grid.Column="1" Margin="10,10,10,30" HorizontalAlignment="Stretch"
-                     />
-                <CheckBox Content="有効" IsChecked="{Binding IsAutoProcessRuleEnabled}" Grid.Column="2" Margin="10,10,10,10" />
+                <Label
+                    Grid.Column="0"
+                    Margin="10,10,10,10"
+                    Content="ルール名" />
+                <TextBox
+                    Grid.Column="1"
+                    Margin="10,10,10,30"
+                    HorizontalAlignment="Stretch"
+                    Text="{Binding RuleName}" />
+                <CheckBox
+                    Grid.Column="2"
+                    Margin="10,10,10,10"
+                    Content="有効"
+                    IsChecked="{Binding IsAutoProcessRuleEnabled}" />
             </Grid>
-            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch"
-                       >
-                <Label Content="適用対象フォルダ" Margin="10,10,10,10"
-                        Width="250"
-                       />
-                <!-- 適用対象を選択するツリービューを表示するボタン-->
-                <Button Content="選択" 
-                        Command="{Binding OpenSelectTargetFolderWindowCommand}"
-                        Margin="10,10,10,10"
-                        />
-                <TextBox Text="{Binding TargetFolder.AbsoluteCollectionName}" Margin="10,10,10,10" 
-                         IsEnabled="False"
-                         />
+            <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                <Label
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="適用対象フォルダ" />
+                <!--  適用対象を選択するツリービューを表示するボタン  -->
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding OpenSelectTargetFolderWindowCommand}"
+                    Content="選択" />
+                <TextBox
+                    Margin="10,10,10,10"
+                    IsEnabled="False"
+                    Text="{Binding TargetFolder.AbsoluteCollectionName}" />
             </DockPanel>
 
             <DockPanel Grid.Row="2" HorizontalAlignment="Left">
-                <CheckBox Content="すべてのアイテムに適用" IsChecked="{Binding IsAllItemsRuleChecked}" 
-                          Margin="10,10,10,10" DockPanel.Dock="Left"
-                          Width="250"
-                          />
+                <CheckBox
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="すべてのアイテムに適用"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsAllItemsRuleChecked}" />
             </DockPanel>
             <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
-                <CheckBox Content="説明に次の文字が含まれる場合" IsChecked="{Binding IsDescriptionRuleChecked}" 
-                          Margin="10,10,10,10" DockPanel.Dock="Left"
-                          Width="250"
-                          />
-                <TextBox Text="{Binding Description}" Margin="10,10,10,10" />
+                <CheckBox
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="説明に次の文字が含まれる場合"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsDescriptionRuleChecked}" />
+                <TextBox Margin="10,10,10,10" Text="{Binding Description}" />
             </DockPanel>
             <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
-                <CheckBox Content="クリップボードに次の文字列が含まれる場合" IsChecked="{Binding IsContentRuleChecked}" 
-                          Margin="10,10,10,10" DockPanel.Dock="Left"
-                          Width="250"
-                          />
-                <TextBox Text="{Binding Content}" Margin="10,10,10,10" />
+                <CheckBox
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="クリップボードに次の文字列が含まれる場合"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsContentRuleChecked}" />
+                <TextBox Margin="10,10,10,10" Text="{Binding Content}" />
             </DockPanel>
-            <!-- ソースアプリの名前-->
+            <!--  ソースアプリの名前  -->
             <DockPanel Grid.Row="5" HorizontalAlignment="Stretch">
-                <CheckBox Content="ソースアプリの名前に次の文字列が含まれる場合" 
-                          IsChecked="{Binding IsSourceApplicationRuleChecked}" 
-                          Margin="10,10,10,10" DockPanel.Dock="Left"
-                          Width="250"
-                          />
-                <TextBox Text="{Binding SourceApplicationName}" Margin="10,10,10,10" />
+                <CheckBox
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="ソースアプリの名前に次の文字列が含まれる場合"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsSourceApplicationRuleChecked}" />
+                <TextBox Margin="10,10,10,10" Text="{Binding SourceApplicationName}" />
             </DockPanel>
-            <!-- ソースアプリのタイトル-->
+            <!--  ソースアプリのタイトル  -->
             <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
-                <CheckBox Content="ソースアプリのタイトルに次の文字列が含まれる場合" 
-                          IsChecked="{Binding IsSourceApplicationTitleRuleChecked}" 
-                          Margin="10,10,10,10" DockPanel.Dock="Left"
-                          Width="250"
-                          />
-                <TextBox Text="{Binding SourceApplicationTitle}" Margin="10,10,10,10" />
+                <CheckBox
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="ソースアプリのタイトルに次の文字列が含まれる場合"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsSourceApplicationTitleRuleChecked}" />
+                <TextBox Margin="10,10,10,10" Text="{Binding SourceApplicationTitle}" />
             </DockPanel>
-            <!-- AutoProcessItemを選択するComboBox-->
+            <!--  AutoProcessItemを選択するComboBox  -->
             <DockPanel Grid.Row="7" HorizontalAlignment="Stretch">
-                <Label Content="次の処理を実行する" Margin="10,10,10,10"
-                        Width="250"
-                       />
-                <ComboBox ItemsSource="{Binding AutoProcessItems}" 
-                          IsSynchronizedWithCurrentItem="True"
-                          SelectedValue="{Binding SelectedAutoProcessItem.Name}"
-                          SelectedItem="{Binding SelectedAutoProcessItem}"
-                          SelectedValuePath="Name"
-                          DisplayMemberPath="DisplayName"
-                          Margin="10,10,10,10"
-                          >
+                <Label
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="次の処理を実行する" />
+                <ComboBox
+                    Margin="10,10,10,10"
+                    DisplayMemberPath="DisplayName"
+                    IsSynchronizedWithCurrentItem="True"
+                    ItemsSource="{Binding AutoProcessItems}"
+                    SelectedItem="{Binding SelectedAutoProcessItem}"
+                    SelectedValue="{Binding SelectedAutoProcessItem.Name}"
+                    SelectedValuePath="Name">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction
-                                Command="{Binding AutoProcessItemSelectionChangedCommand}" 
-                                />
+                            <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ComboBox>
             </DockPanel>
-            <DockPanel Grid.Row="8" HorizontalAlignment="Stretch" IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}"
-
-                       >
-                <Label Content="コピー/移動/マージ先" Margin="10,10,10,10"
-                        Width="250"
-                       />
-                <!-- コピー/移動/マージ先を選択するツリービューを表示するボタン-->
-                <Button Content="選択" 
-                        Command="{Binding OpenSelectDestinationFolderWindowCommand}"
-                        Margin="10,10,10,10"
-                        />
-                <TextBox Text="{Binding DestinationFolder.AbsoluteCollectionName}" Margin="10,10,10,10" 
-                         IsEnabled="False"
-                         />
+            <DockPanel
+                Grid.Row="8"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
+                <Label
+                    Width="250"
+                    Margin="10,10,10,10"
+                    Content="コピー/移動/マージ先" />
+                <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding OpenSelectDestinationFolderWindowCommand}"
+                    Content="選択" />
+                <TextBox
+                    Margin="10,10,10,10"
+                    IsEnabled="False"
+                    Text="{Binding DestinationFolder.AbsoluteCollectionName}" />
             </DockPanel>
             <Grid Grid.Row="9">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <DockPanel Grid.Column="0" HorizontalAlignment="Right">
-                    <Button Content="OK" 
+                    <Button
+                        Width="100"
                         Margin="10,0,0,0"
                         Command="{Binding OKButtonClickedCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="OK" />
+                    <Button
                         Width="100"
-                        />
-                    <Button Content="キャンセル"
                         Margin="10,0,30,0"
                         Command="{Binding CancelButtonClickedCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"                    
-                        DockPanel.Dock="Right"
-                        Width="100"
-                        />
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="キャンセル"
+                        DockPanel.Dock="Right" />
                 </DockPanel>
             </Grid>
         </Grid>
+        <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

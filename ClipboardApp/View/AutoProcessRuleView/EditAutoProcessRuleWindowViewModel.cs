@@ -7,7 +7,7 @@ using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
-    public class EditAutoProcessRuleWindowViewModel : ObservableObject {
+    public class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
         public enum Mode {
             Create,
             Edit

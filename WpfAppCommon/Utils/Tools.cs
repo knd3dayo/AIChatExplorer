@@ -4,14 +4,21 @@ using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class Tools {
-        public static StatusText? StatusText { get; set; }
+
+        public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
+
+        public static StatusText StatusText {
+            get {
+                return StatusText.GetStatusText(ActiveWindow);
+            }
+        }
 
         public static NLog.Logger Logger { get; } = NLog.LogManager.GetCurrentClassLogger();
 
         public static void Debug(string message) {
             Logger.Debug(message);
             // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(message);
+            System.Windows.MessageBox.Show(ActiveWindow, message);
         }
 
         public static void Info(string message) {
@@ -26,7 +33,7 @@ namespace WpfAppCommon.Utils {
                 StatusText.Text = message;
             }
             // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(message);
+            System.Windows.MessageBox.Show(ActiveWindow, message);
         }
 
         public static void Error(string message) {
@@ -34,23 +41,23 @@ namespace WpfAppCommon.Utils {
             if (StatusText != null) {
                 StatusText.Text = message;
             }
-            System.Windows.MessageBox.Show(message);
+            System.Windows.MessageBox.Show(ActiveWindow, message);
         }
         // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
         // Listの要素がNullの場合はNull > と返す
         public static string ListToString(List<string> list) {
             return list == null ? "Null" : string.Join(" > ", list);
         }
-        
+
         public static int[] GetInAngleBracketPosition(string text) {
             // int[0] = start、int[1] = end
             // < > で囲まれた文字列のStartとEndを返す。< >は含まない。
             Regex regex = new Regex(@"<[^>]+>");
             Match match = regex.Match(text);
             if (match.Success) {
-                return new int[] { match.Index + 1, match.Index + match.Length - 1 };
+                return [match.Index + 1, match.Index + match.Length - 1];
             }
-            return new int[] { -1, -1 };
+            return [-1, -1];
         }
         public static int[]? GetURLPosition(string text) {
             // int[0] = start、int[1] = end
@@ -59,7 +66,7 @@ namespace WpfAppCommon.Utils {
 
             Match match = regex.Match(text);
             if (match.Success) {
-                return new int[] { match.Index, match.Index + match.Length };
+                return [match.Index, match.Index + match.Length];
             }
 
             // 正規表現で \\xxxx の形式、または [A-Za-z]:\\xxxx の形式の場合はファイルパスとみなし、StartとEndを返す
@@ -72,14 +79,19 @@ namespace WpfAppCommon.Utils {
             return null;
         }
 
-        public static Action<ActionMessage> DefaultAction { get; } = (action) => {
-            if (action.MessageType == ActionMessage.MessageTypes.Error) {
-                Error(action.Message);
-            } else {
-                Info(action.Message);
-            }
+        public static Action<ActionMessage> DefaultAction {
+            get {
+                return (action) => {
+                    if (action.MessageType == ActionMessage.MessageTypes.Error) {
+                        Error(action.Message);
 
-        };
+                    } else {
+                        Info(action.Message);
+                    }
+
+                };
+            }
+        }
 
     }
 }

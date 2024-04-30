@@ -78,7 +78,7 @@ namespace WpfAppCommon.Model {
             newItem.Description = Description;
         }
 
-        public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage> action) {
+        public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {
             if (this.ContentType != ClipboardContentTypes.Text) {
                 action(ActionMessage.Error("Text以外のアイテムへのマージはできません"));
                 return;

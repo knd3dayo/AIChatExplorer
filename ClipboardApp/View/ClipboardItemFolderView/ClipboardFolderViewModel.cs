@@ -1,12 +1,14 @@
 ﻿using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Control;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
-    public class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ObservableObject {
+    public class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
+
         // ClipboardFolder
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
         // MainWindowViewModel
@@ -114,10 +116,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
         private void UpdateStatusText() {
-            StatusText? StatusText = MainWindowViewModel.StatusText;
-            if (StatusText == null) {
-                return;
-            }
             string message = $"フォルダ[{DisplayName}]";
             // AutoProcessRuleが設定されている場合
             var rules = AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
@@ -141,8 +139,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 message += searchCondition.ToStringSearchCondition();
                 message += "]";
             }
-            StatusText.InitText = message;
-            StatusText.Text = message;
+            Tools.StatusText.ReadyText = message;
+            Tools.StatusText.Text = message;
 
         }
 

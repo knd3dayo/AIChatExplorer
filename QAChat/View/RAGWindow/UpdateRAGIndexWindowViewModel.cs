@@ -5,7 +5,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.View.RAGWindow {
-    internal class UpdateRAGIndexWindowViewModel : ObservableObject {
+    internal class UpdateRAGIndexWindowViewModel : MyWindowViewModel {
 
         private RAGSourceItemViewModel? itemViewModel;
         private Action<RAGSourceItemViewModel> afterUpdate = (parameter) => { };

@@ -8,7 +8,7 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.SettingWindow {
-    public class SettingWindowViewModel : ObservableObject {
+    public class SettingWindowViewModel : MyWindowViewModel {
         public enum PythonExecModeEnum {
             None,
             PythonNet,
@@ -305,76 +305,82 @@ namespace ClipboardApp.View.SettingWindow {
             }
         }
         // 設定をチェックする処理
+        private void Log(StringBuilder stringBuilder, string message) {
+            stringBuilder.AppendLine(message);
+            Tools.Info(message);
+        }
         public string CheckSetting() {
             StringBuilder stringBuilder = new();
             if (PythonExecMode == true) {
                 bool pythonOK = true;
-                stringBuilder.AppendLine("Pythonの設定チェック...");
+                Log(stringBuilder, "Pythonの設定チェック...");
 
                 if (string.IsNullOrEmpty(PythonDllPath)) {
-                    stringBuilder.AppendLine("[NG]:PythonDLLのパスが設定されていません");
+                    Log(stringBuilder, "[NG]:PythonDLLのパスが設定されていません");
                     pythonOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:PythonDLLのパスが設定されています");
+                    Log(stringBuilder, "[OK]:PythonDLLのパスが設定されています");
                     if (System.IO.File.Exists(PythonDllPath) == false) {
-                        stringBuilder.AppendLine("[NG]:PythonDLLのパスが存在しません");
+                        Log(stringBuilder, "[NG]:PythonDLLのパスが存在しません");
                         pythonOK = false;
                     } else {
-                        stringBuilder.AppendLine("[OK]:PythonDLLのパスが存在します");
-
+                        Log(stringBuilder, "[OK]:PythonDLLのパスが存在します");
                     }
                 }
                 if (pythonOK == true) {
                     // TestPythonを実行
-                    stringBuilder.AppendLine("Pythonスクリプトをテスト実行...");
+                    Log(stringBuilder, "Pythonスクリプトをテスト実行...");
                     TestResult result = TestPython();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
                     // TestExtractTextを実行
-                    stringBuilder.AppendLine("テキスト抽出のテスト実行...");
+                    Log(stringBuilder, "テキスト抽出のテスト実行...");
                     result = TestExtractText();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
 
                 }
 
             }
             if (UseOpenAI == true) {
                 bool openAIOK = true;
-                stringBuilder.AppendLine("OpenAIの設定チェック...");
+                Log(stringBuilder, "OpenAIの設定チェック...");
                 if (string.IsNullOrEmpty(OpenAIKey)) {
-                    stringBuilder.AppendLine("[NG]:OpenAIのAPIキーが設定されていません");
+                    Log(stringBuilder, "[NG]:OpenAIのAPIキーが設定されていません");
                     openAIOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:OpenAIのAPIキーが設定されています");
+                    Log(stringBuilder, "[OK]:OpenAIのAPIキーが設定されています");
                 }
                 if (string.IsNullOrEmpty(OpenAICompletionModel)) {
-                    stringBuilder.AppendLine("[NG]:OpenAIのCompletionModelが設定されていません");
+                    Log(stringBuilder, "[NG]:OpenAIのCompletionModelが設定されていません");
                     openAIOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:OpenAIのCompletionModelが設定されています");
+                    Log(stringBuilder, "[OK]:OpenAIのCompletionModelが設定されています");
                 }
                 if (string.IsNullOrEmpty(OpenAIEmbeddingModel)) {
-                    stringBuilder.AppendLine("[NG]:OpenAIのEmbeddingModelが設定されていません");
+                    Log(stringBuilder, "[NG]:OpenAIのEmbeddingModelが設定されていません");
                     openAIOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:OpenAIのEmbeddingModelが設定されています");
+                    Log(stringBuilder, "[OK]:OpenAIのEmbeddingModelが設定されています");
                 }
                 if (string.IsNullOrEmpty(VectorDBURL)) {
-                    stringBuilder.AppendLine("[NG]:ベクトルDBの格納先が設定されていません");
+                    Log(stringBuilder, "[NG]:ベクトルDBの格納先が設定されていません");
                     openAIOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:ベクトルDBの格納先が設定されています");
+                    Log(stringBuilder, "[OK]:ベクトルDBの格納先が設定されています");
                 }   
                 if (AzureOpenAI == true) {
-                    stringBuilder.AppendLine("Azure OpenAIの設定チェック...");
+
+                    Log(stringBuilder, "Azure OpenAIの設定チェック...");
                     if (string.IsNullOrEmpty(AzureOpenAIEndpoint)) {
-                        stringBuilder.AppendLine("Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック");
+
+                        stringBuilder.AppendLine();
+                        Log(stringBuilder, "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック");
                         if (string.IsNullOrEmpty(OpenAICompletionBaseURL) || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL)) {
-                            stringBuilder.AppendLine("[NG]:Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください");
+                            Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください");
                             openAIOK = false;
                         }
                     } else {
                         if (string.IsNullOrEmpty(OpenAICompletionBaseURL) == false || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL) == false) {
-                            stringBuilder.AppendLine("[NG]:Azure OpenAIのエンドポイント、BaseURLのどちらかのみ設定してください");
+                            Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません");
                             openAIOK = false;
                         }
                     }
@@ -382,29 +388,29 @@ namespace ClipboardApp.View.SettingWindow {
 
                 if (openAIOK == true) {
                     // TestOpenAIを実行
-                    stringBuilder.AppendLine("OpenAIのテスト実行...");
+                    Log(stringBuilder, "OpenAIのテスト実行...");
                     TestResult result = TestOpenAI();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
                     // TestLangChainを実行
-                    stringBuilder.AppendLine("LangChainのテスト実行...");
+                    Log(stringBuilder, "LangChainのテスト実行...");
                     result = TestLangChain();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
 
                 }
             }
             if (UseSpacy == true) {
                 bool spacyOK = true;
-                stringBuilder.AppendLine("Spacyが使用可能かチェック...");
+                Log(stringBuilder, "Spacyが使用可能かチェック...");
                 if (string.IsNullOrEmpty(SpacyModel)) {
-                    stringBuilder.AppendLine("[NG]:Spacyのモデルが設定されていません");
+                    Log(stringBuilder, "[NG]:Spacyのモデルが設定されていません");
                     spacyOK = false;
                 }
                 if (spacyOK == true) {
-                    stringBuilder.AppendLine("[OK]:設定されています");
+                    Log(stringBuilder, "[OK]:Spacyのモデルが設定されています");
                     // TestSpacyを実行
-                    stringBuilder.AppendLine("Spacyのテスト実行...");
+                    Log(stringBuilder, "Spacyのテスト実行...");
                     TestResult result = TestSpacy();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
 
                 }
                 
@@ -412,25 +418,25 @@ namespace ClipboardApp.View.SettingWindow {
             // UseOCRが有効な場合
             if (UseOCR == true) {
                 bool ocrOK = true;
-                stringBuilder.AppendLine("OCRの設定チェック...");
+                Log(stringBuilder, "OCRの設定チェック...");
                 if (string.IsNullOrEmpty(TesseractExePath)) {
-                    stringBuilder.AppendLine("[NG]:Tesseractのパスが設定されていません");
+                    Log(stringBuilder, "[NG]:Tesseractのパスが設定されていません");
                     ocrOK = false;
                 } else {
-                    stringBuilder.AppendLine("[OK]:Tesseractのパスが設定されています");
+                    Log(stringBuilder, "[OK]:Tesseractのパスが設定されています");
                     if (System.IO.File.Exists(TesseractExePath) == false) {
-                        stringBuilder.AppendLine("[NG]:Tesseractのパスが存在しません");
+                        Log(stringBuilder, "[NG]:Tesseractのパスが存在しません");
                         ocrOK = false;
                     } else {
-                        stringBuilder.AppendLine("[OK]:Tesseractのパスが存在します");
+                        Log(stringBuilder, "[OK]:Tesseractのパスが存在します");
 
                     }
                 }
                 if (ocrOK == true) {
                     // TestOCRを実行
-                    stringBuilder.AppendLine("OCRのテスト実行...");
+                    Log(stringBuilder, "OCRのテスト実行...");
                     TestResult result = TestOCR();
-                    stringBuilder.AppendLine(result.Message);
+                    Log(stringBuilder, result.Message);
                 }
             }
             return stringBuilder.ToString();

@@ -5,7 +5,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.SearchView {
-    public class SearchWindowViewModel : ObservableObject {
+    public class SearchWindowViewModel : MyWindowViewModel {
         public MainWindowViewModel? MainWindowViewModel { get; private set; }
 
         private SearchRule? _searchConditionRule;

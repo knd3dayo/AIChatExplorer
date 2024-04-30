@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.TagView {
-    public class TagItemViewModel {
+    public class TagItemViewModel : MyWindowViewModel {
 
         public string Tag { get; set; }
         public bool IsChecked { get; set; }

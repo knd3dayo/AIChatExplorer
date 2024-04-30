@@ -1,9 +1,10 @@
 ﻿using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.View.RAGWindow {
-    public class EditRAGSourceWindowViewModel : ObservableObject {
+    public class EditRAGSourceWindowViewModel : MyWindowViewModel {
 
         private RAGSourceItemViewModel? itemViewModel;
         public RAGSourceItemViewModel? ItemViewModel {

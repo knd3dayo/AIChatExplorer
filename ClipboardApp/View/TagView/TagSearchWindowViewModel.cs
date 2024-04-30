@@ -4,10 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView {
     internal class TagSearchWindowViewModel: ObservableObject{
+
+        // StringResources
+        public StringResources StringResources { get; } = StringResources.Instance;
 
         private bool _excludeTag = false;
         public bool ExcludeTag {

@@ -3,7 +3,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {
-    class EditPythonScriptWindowViewModel : ObservableObject {
+    class EditPythonScriptWindowViewModel : MyWindowViewModel {
         private ScriptItem? scriptItem;
         public ScriptItem? ScriptItem {
             get {

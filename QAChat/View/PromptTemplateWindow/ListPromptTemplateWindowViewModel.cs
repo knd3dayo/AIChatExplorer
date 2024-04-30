@@ -9,7 +9,7 @@ using WpfAppCommon.Model;
 using QAChat.View.RAGWindow;
 
 namespace QAChat.View.PromptTemplateWindow {
-    public class ListPromptTemplateWindowViewModel : ObservableObject {
+    public class ListPromptTemplateWindowViewModel : MyWindowViewModel {
 
         // プロンプトテンプレートの一覧
         public ObservableCollection<PromptItemViewModel> PromptItems { get; set; } = new ObservableCollection<PromptItemViewModel>();

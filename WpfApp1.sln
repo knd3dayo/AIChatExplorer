@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClipboardApp", "ClipboardAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QAChat", "QAChat\QAChat.csproj", "{90586A02-6AD0-4CAD-9E54-A2BAAADBEAB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAppCommon", "WpfAppCommon\WpfAppCommon.csproj", "{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppCommon", "WpfAppCommon\WpfAppCommon.csproj", "{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{B731EF66-0D96-487E-BE6E-31E477E09715}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

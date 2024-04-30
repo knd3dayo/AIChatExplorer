@@ -11,7 +11,7 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace QAChat {
-    public partial class MainWindowViewModel : ObservableObject {
+    public partial class MainWindowViewModel : MyWindowViewModel {
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;

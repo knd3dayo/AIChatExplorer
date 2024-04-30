@@ -10,4 +10,4 @@ spacy==3.7.4
 pyocr==0.8.5
 unstructured==0.11.8
 unstructured[csv,doc,docx,md,pdf, ppt, pptx,tsv, xlsx]
-ja-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_lg-3.7.0/ja_core_news_lg-3.7.0-py3-none-any.whl
+ja-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl
