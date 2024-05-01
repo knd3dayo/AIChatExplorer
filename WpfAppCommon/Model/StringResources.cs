@@ -22,7 +22,7 @@
         // プロンプトテンプレート編集
         public string EditPromptTemplate { get; } = "プロンプトテンプレート編集";
         // RAGソース編集
-        public string EditRagSource { get; } = "RAGソース編集";
+        public string EditGitRagSource { get; } = "RAGソース(git)編集";
         // ツール
         public string Tool { get; } = "ツール";
         // OpenAIチャット
@@ -90,16 +90,16 @@
                 return $"{AppName} - {Setting}";
             }
         }
-        // RAGソース編集
-        public string EditRagSourceWindowTitle {
+        // RAGソース(git)編集
+        public string EditGitRagSourceWindowTitle {
             get {
-                return $"{AppName} - {EditRagSource}";
+                return $"{AppName} - {EditGitRagSource}";
             }
         }
         // RAGソース一覧
-        public string ListRagSourceWindowTitle {
+        public string ListGitRagSourceWindowTitle {
             get {
-                return $"{AppName} - RAGソース一覧";
+                return $"{AppName} - RAGソース(git)一覧";
             }
         }
         // コミット選択

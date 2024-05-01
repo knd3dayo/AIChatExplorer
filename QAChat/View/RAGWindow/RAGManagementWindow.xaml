@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:QAChat.View.RAGWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListRagSourceWindowTitle}"
+    Title="{Binding StringResources.ListGitRagSourceWindowTitle}"
     Width="800"
     Height="450"
     mc:Ignorable="d">
