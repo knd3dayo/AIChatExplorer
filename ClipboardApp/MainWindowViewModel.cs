@@ -167,7 +167,7 @@ namespace ClipboardApp {
             ClipboardItemFolders.Clear();
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
-            OnPropertyChanged("ClipboardItemFolders");
+            OnPropertyChanged(nameof(ClipboardItemFolders));
         }
         // ClipboardItemを再描写する
         public void ReloadClipboardItems() {
