@@ -195,10 +195,11 @@ class RetrievalQAUtil:
             source_documents = observation.get("source_documents",[])
             for source_document in source_documents:
                 source_document: Document = source_document
-                print(source_document.metadata.get("source",""))
-                print(source_document.page_content)
+                source = source_document.metadata.get("source","")
+                source_url = source_document.metadata.get("source_url","")
+                
                 page_content_list.append(source_document.page_content)
-                page_source_list.append(source_document.metadata.get("source",""))
+                page_source_list.append({"source": source, "source_url": source_url})
         
             # verbose情報を取得
             verbose = self.serialize_intermediate_step(step)

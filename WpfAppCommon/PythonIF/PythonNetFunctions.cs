@@ -305,13 +305,25 @@ namespace WpfAppCommon.PythonIF {
                 // referenced_contentsを取得
                 PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                 if (referencedContents != null) {
-                    List<string> referencedContentsList = [];
-                    foreach (PyObject item in referencedContents) {
-                        string? itemString = item.ToString();
-                        if (itemString == null) {
-                            continue;
+                    List<Dictionary<string,string>> referencedContentsList = [];
+                    foreach (PyDict item in referencedContents) {
+                        Dictionary<string,string> dict = new();
+                        foreach (var key in item.Keys()) {
+                            PyObject? entity = item.GetItem(key);
+                            if (entity == null) {
+                                continue;
+                            }
+                            string? keyString = key.ToString();
+                            if (keyString == null) {
+                                continue;
+                            }
+                            string? entityString = entity.ToString();
+                            if (entityString == null) {
+                                continue;
+                            }
+                            dict[keyString] = entityString;
                         }
-                        referencedContentsList.Add(itemString);
+                        referencedContentsList.Add(dict);
                     }
                     chatResult.ReferencedContents = referencedContentsList;
                 }

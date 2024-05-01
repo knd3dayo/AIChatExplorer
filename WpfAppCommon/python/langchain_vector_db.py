@@ -68,11 +68,11 @@ class LangChainVectorDB:
         
         for _id, doc in self.db.docstore._dict.items():
             if not doc.metadata.get("source_url", None):
-                if doc.metadata.get("source_path", None) in [source.metadata.get("source_path",None) for source in sources]:
+                if doc.metadata.get("source", None) in [source.metadata.get("source",None) for source in sources]:
                     doc_ids.append(_id)
             else:
                 source_url_check =  doc.metadata.get("source_url", None)in [source.metadata.get("source_url", None) for source in sources]
-                source_path_check = doc.metadata.get("source_path", None) in [source.metadata.get("source_path", None) for source in sources]
+                source_path_check = doc.metadata.get("source", None) in [source.metadata.get("source", None) for source in sources]
                 if source_url_check and source_path_check:
                     doc_ids.append(_id)
 

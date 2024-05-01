@@ -53,5 +53,5 @@ class FileLoader:
         return text_list
     
     def get_document_list(self):
-        return [ Document(page_content=text, metadata={"source_url": self.repository_url, "source_path": self.relative_file_path}) for text in self.text_with_overview_list]
+        return [ Document(page_content=text, metadata={"source_url": self.repository_url, "source": self.relative_file_path}) for text in self.text_with_overview_list]
 

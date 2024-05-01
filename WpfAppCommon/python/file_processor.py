@@ -35,7 +35,7 @@ def update_index(props, mode, workdir, relative_path, url):
         client = LangChainOpenAIClient(props)
         vector_db = LangChainVectorDB(client, props.get("VectorDBURL"))
         # 第2引数、第3引数からドキュメントを作成
-        document: Document = Document(page_content="", metadata={"source_url": url, "source_path": relative_path})
+        document: Document = Document(page_content="", metadata={"source_url": url, "source": relative_path})
         vector_db.delete_doucments_by_sources([document])
         for _id, doc in vector_db.db.docstore._dict.items():
            print(f"{_id} {doc.metadata} {doc.page_content}")

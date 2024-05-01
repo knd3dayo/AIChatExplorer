@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WpfAppCommon.Model {
     public class ChatResult {
 
-        public List<string> ReferencedContents { get; set; } = new List<string>();
+        public List<Dictionary<string,string>> ReferencedContents { get; set; } = [];
         public List<string> ReferencedFilePath { get; set; } = new List<string>();
 
         public string Response { get; set; } = "";
