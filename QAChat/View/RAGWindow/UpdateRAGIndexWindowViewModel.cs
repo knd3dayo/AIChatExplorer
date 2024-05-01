@@ -282,8 +282,6 @@ namespace QAChat.View.RAGWindow {
                                     System.Threading.Thread.Sleep(1000);
                                 }
                             });
-                            // テスト用 Sleep 30秒
-                            // System.Threading.Thread.Sleep(30000);
                             result = itemViewModel.Item.UpdateIndex(file);
                             totalTokenCount += result?.TokenCount ?? 0;
                         });
