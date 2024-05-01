@@ -597,6 +597,7 @@ namespace ClipboardApp.View.SettingWindow {
             }
             try {
                 IsIndeterminate = true;
+                Tools.StatusText.ReadyText = "設定チェック中...";
                 string resultString = "";
                 await Task.Run(() => {
                     resultString = CheckSetting();
@@ -610,6 +611,7 @@ namespace ClipboardApp.View.SettingWindow {
 
             } finally {
                 IsIndeterminate = false;
+                Tools.StatusText.InitText();
             }
         });
         // SaveCommand

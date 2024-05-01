@@ -77,6 +77,10 @@ namespace WpfAppCommon.Model {
             }
             Ready();
         }
+        public void InitText() {
+            ReadyText = DefaultText;
+            Ready();
+        }
         public void Ready() {
             Text = ReadyText;
             OnPropertyChanged(nameof(Text));
