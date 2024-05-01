@@ -131,16 +131,16 @@ namespace WpfAppCommon.Model {
         }
         // 最初のコミットから最後のコミットで処理されたファイルのリストを取得
         public List<FileStatus> GetFileStatusList() {
-            return GetFileStatusList(null, null, false);
+            return GetFileStatusList(null, null);
         }
         // 指定したコミットの次のコミットで処理されたファイルのリストを取得
         public List<FileStatus> GetAfterIndexedCommitFileStatusList() {
             string? startHash = LastIndexCommitHash;
-            return GetFileStatusList(startHash, null, true);
+            return GetFileStatusList(startHash, null);
         }
         // 指定したコミット以後に処理されたファイルのリストを取得
         public List<FileStatus> GetFileStatusList(string startHash) {
-            return GetFileStatusList(startHash, "HEAD", false);
+            return GetFileStatusList(startHash, "HEAD");
         }
         // HEADのコミットハッシュを取得
         public string GetHeadCommitHash() {
@@ -154,7 +154,7 @@ namespace WpfAppCommon.Model {
 
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        private List<FileStatus> GetFileStatusList(string? startHash, string? endHash, bool startNext) {
+        private List<FileStatus> GetFileStatusList(string? startHash, string? endHash) {
             List<FileStatus> fileStatusList = [];
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
@@ -167,18 +167,6 @@ namespace WpfAppCommon.Model {
                 // 開始コミットが指定されていない場合は最初のコミットのハッシュを取得
                 if (string.IsNullOrEmpty(startHash)) {
                     startHash = commitsToRewrite.Last().Sha;
-                } else if (startNext) {
-                    // 次のコミットのハッシュを取得
-                    Commit startCommit = repository.Lookup<Commit>(startHash);
-                    int startNextIndex = commitsToRewrite.IndexOf(startCommit) - 1;
-                    if (startNextIndex < 0) {
-                        // startHash が最初のコミットの場合は処理を終了
-                        return fileStatusList;
-                    } else {
-                        startHash = commitsToRewrite[startNextIndex].Sha;
-                    }
-
-
                 }
                 // 終了コミットが指定されていない場合は最後のコミットのハッシュを取得
                 if (string.IsNullOrEmpty(endHash)) {

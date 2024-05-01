@@ -8,6 +8,8 @@ from env_to_props import get_props
 
 
 def update_index(props, mode, workdir, relative_path, url):
+    with open("test.txt", "w") as f:
+        f.write(f"{mode} {workdir} {relative_path} {url}")
         
     if mode == "update":
         # ドキュメントを取得
