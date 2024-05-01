@@ -6,11 +6,17 @@ import io
 import sys
 sys.path.append("python")
 # sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
-# https://github.com/huggingface/transformers/issues/24047
+# see: https://github.com/huggingface/transformers/issues/24047
 if sys.stdout is None:
     sys.stdout = open(os.devnull, "w")
 if sys.stderr is None:
     sys.stderr = open(os.devnull, "w")
+
+# FaissのIndex更新後にretrieveを行うと
+# OMP: Error #15: Initializing libomp140.x86_64.dll, but found libiomp5md.dll already initialized.
+# が出力されることへの対応。
+# see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboard_app_spacy, clipboard_app_pyocr
 import file_processor
