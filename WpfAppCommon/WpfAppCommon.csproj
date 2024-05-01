@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Nlog.config" />
     <None Remove="python\clipboard_app_faiss.py" />
     <None Remove="python\clipboard_app_openai.py" />
     <None Remove="python\clipboard_app_pyocr.py" />
@@ -31,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python\clipboard_app_faiss.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
