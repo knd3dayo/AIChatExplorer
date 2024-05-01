@@ -38,7 +38,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -96,7 +95,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="5" />
-                <RowDefinition Height="150" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <ListBox
                 Grid.Row="0"
@@ -111,20 +110,26 @@
                             Margin="10,10,10,10"
                             HorizontalAlignment="Stretch"
                             materialDesign:ElevationAssist.Elevation="Dp6">
-                            <Grid Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=Width}" Margin="0,0,0,0">
+                            <Grid Margin="0,0,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock
+                                <TextBox
                                     Grid.Row="0"
+                                    Margin="10,10,10,10"
+                                    HorizontalAlignment="Left"
                                     FontSize="8pt"
+                                    IsReadOnly="True"
                                     Text="{Binding Role}" />
-                                <TextBlock
+                                <TextBox
                                     Grid.Row="1"
                                     MinHeight="30"
+                                    Margin="10,10,10,10"
+                                    HorizontalAlignment="Left"
                                     FontSize="8pt"
-                                    Text="{Binding ContentWithSources}"
+                                    IsReadOnly="True"
+                                    Text="{Binding ContentWithSources, Mode=OneWay}"
                                     TextWrapping="Wrap" />
                             </Grid>
                         </materialDesign:Card>
