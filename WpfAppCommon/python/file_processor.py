@@ -6,23 +6,9 @@ from langchain_openai_client import LangChainOpenAIClient
 from langchain.docstore.document import Document
 from env_to_props import get_props
 
-if __name__ == "__main__":
-    props = get_props()
-
-    # 第1引数は処理タイプ(update,delete)
-    # 第2引数は作業ディレクトリからの相対パス
-    # 第3引数はソースURL
-    
-    arg1 = sys.argv[1]
-    arg2 = sys.argv[2]
-    # optional
-    if len(sys.argv) > 3:
-        arg3 = sys.argv[3]
-    else:
-        arg3 = ""
 
 def update_index(props, mode, workdir, relative_path, url):
-    
+        
     if mode == "update":
         # ドキュメントを取得
         loader = FileLoader(workdir, relative_path, url)
@@ -58,4 +44,22 @@ def update_index(props, mode, workdir, relative_path, url):
         print("第1引数はupdate、deleteを指定してください。", file=sys.stderr)
         return 0
     
+if __name__ == "__main__":
+    props = get_props()
+
+    # 第1引数は処理タイプ(update,delete)
+    # 第2引数は作業ディレクトリ
+    # 第3引数は作業ディレクトリからの相対パス
+    # 第4引数はソースURL
+    
+    arg1 = sys.argv[1]
+    arg2 = sys.argv[2]
+    arg3 = sys.argv[3]
+    # optional
+    if len(sys.argv) > 4:
+        arg4 = sys.argv[4]
+    else:
+        arg4 = ""
+        
+    update_index(props, arg1, arg2, arg3, arg4)
     
