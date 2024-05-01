@@ -214,7 +214,7 @@
         </StackPanel>
         <control:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
         <ProgressBar
-            Grid.Row="1"
+            Grid.Row="2"
             IsIndeterminate="{Binding IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />

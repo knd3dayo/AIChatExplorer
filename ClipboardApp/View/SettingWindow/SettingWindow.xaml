@@ -468,7 +468,7 @@
             Margin="0,0,0,0"
             VerticalAlignment="Bottom" />
         <ProgressBar
-            Grid.Row="0"
+            Grid.Row="1"
             IsIndeterminate="{Binding IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
