@@ -8,6 +8,10 @@ from env_to_props import get_props
 
 
 def update_index(props, mode, workdir, relative_path, url):
+    # sys.stdoutとsys.stderrをutf-8に設定
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+    
     if mode == "update":
         # ドキュメントを取得
         loader = FileLoader(workdir, relative_path, url)
@@ -17,7 +21,7 @@ def update_index(props, mode, workdir, relative_path, url):
         vector_db = LangChainVectorDB(client, props.get("VectorDBURL"))
         if len(documents) == 0:
             print("No documents to update.")
-            return
+            return 0
         
         # DBを更新
         token_count = vector_db.update_documents(documents, props)

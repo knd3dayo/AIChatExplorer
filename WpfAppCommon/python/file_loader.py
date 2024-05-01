@@ -1,3 +1,4 @@
+from tkinter import SE
 from unstructured.partition.auto import partition
 from langchain.docstore.document import Document
 import os
@@ -11,15 +12,23 @@ class FileLoader:
         self.file_path = os.path.join(workdir_path, relative_file_path)
         
         self.text_list = self.__load_file()
-        document_overview = self.text_list[0]
-        if len(self.text_list) == 1:
-            self.text_with_overview_list = [ document_overview ]
+        if len(self.text_list) == 0:
+            self.text_with_overview_list = []
         else:
-            self.text_with_overview_list = [ document_overview + '\n' + text for text in self.text_list[1:]]
+            document_overview = self.text_list[0]
+            if len(self.text_list) == 1:
+                self.text_with_overview_list = [ document_overview ]
+            else:
+                self.text_with_overview_list = [ document_overview + '\n' + text for text in self.text_list[1:]]
     
     def __load_file(self, chunk_size=1000):
+        text_list = []
         # 絶対パスを取得
         absolute_file_path = os.path.join (self.workdir_path, self.relative_file_path)
+        
+        # ファイルサイズが0の場合は空のリストを返す
+        if os.path.getsize(absolute_file_path) == 0:
+            return text_list
         # python-magicが2バイトファイル名を扱うとエラーになる場合があるため、ファイルを一時ファイルにコピーして処理する
         # 一時ファイルの拡張子は元のファイルの拡張子と同じにする
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(self.relative_file_path)[1]) as temp_file:
@@ -29,7 +38,6 @@ class FileLoader:
 
 
         elements = partition(filename=absolute_file_path)
-        text_list = []
         text = ""
         for el in elements:
             text += str(el)
