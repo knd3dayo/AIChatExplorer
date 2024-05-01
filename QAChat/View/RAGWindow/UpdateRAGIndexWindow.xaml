@@ -118,17 +118,22 @@
         </Grid>
         <Grid
             Grid.Row="2"
-            Height="150"
             Margin="10,10,10,10"
             Visibility="{Binding TargetFilesVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Margin="10,10,10,10" Text="{Binding TargetFilesInfo}" />
+            <TextBlock
+                Grid.Row="0"
+                Margin="10,10,10,10"
+                Text="{Binding TargetFilesInfo}" />
             <ListView
+                Grid.Row="1"
+                MaxHeight="250"
                 Margin="10,10,10,10"
                 ItemsSource="{Binding TargetFiles}"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
                 SelectionMode="Single">
                 <ListView.View>
                     <GridView>
@@ -140,7 +145,6 @@
         </Grid>
         <Grid
             Grid.Row="3"
-            Height="150"
             Margin="10,10,10,10"
             Visibility="{Binding IndexingStatusVisibility}">
             <Grid.RowDefinitions>
@@ -163,13 +167,15 @@
                 Grid.Row="2"
                 Margin="10,10,10,10"
                 Text="インデックス化処理の状況詳細" />
-            <TextBox
+            <ScrollViewer
                 Grid.Row="3"
                 Margin="10,10,10,10"
-                IsReadOnly="True"
-                Text="{Binding IndexingStatusText}"
-                TextWrapping="Wrap"
-                VerticalScrollBarVisibility="Auto" />
+                VerticalScrollBarVisibility="Auto">
+                <TextBox
+                    IsReadOnly="True"
+                    Text="{Binding IndexingStatusText}"
+                    TextWrapping="Wrap" />
+            </ScrollViewer>
         </Grid>
         <Grid
             Grid.Row="4"
