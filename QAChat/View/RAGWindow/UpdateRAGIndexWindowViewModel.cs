@@ -284,7 +284,6 @@ namespace QAChat.View.RAGWindow {
                             });
                             // テスト用 Sleep 30秒
                             // System.Threading.Thread.Sleep(30000);
-
                             result = itemViewModel.Item.UpdateIndex(file);
                             totalTokenCount += result?.TokenCount ?? 0;
                         });
@@ -314,7 +313,7 @@ namespace QAChat.View.RAGWindow {
                     Tools.Info("インデックス作成処理を中断しました");
                     SetMode(1);
                 } catch (Exception e) {
-                    Tools.Error(e.Message);
+                    Tools.Error($"エラーが発生しました\n[メッセージ]\n{ e.Message}\n[スタックトレース]\n{e.StackTrace}" );
                     SetMode(1);
 
                 } finally {
