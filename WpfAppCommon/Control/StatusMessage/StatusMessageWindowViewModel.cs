@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.Utils;
 using WpfAppCommon.Utils;
-using WpfAppCommon.Control;
 
-namespace ClipboardApp.View.StatusMessageView {
+namespace WpfCommonApp.Control.StatusMessage {
     public class StatusMessageWindowViewModel : ObservableObject{
         public ObservableCollection<string> Messages { get; set; } = [];
 
@@ -19,7 +12,7 @@ namespace ClipboardApp.View.StatusMessageView {
             foreach (string message in messages) {
                 Messages.Add(message);
             }
-            OnPropertyChanged("Messages");
+            OnPropertyChanged(nameof(Messages));
         }
 
         public SimpleDelegateCommand CloseCommand => new ((parameter) => {

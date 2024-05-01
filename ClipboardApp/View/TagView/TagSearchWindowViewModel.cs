@@ -8,10 +8,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView {
-    internal class TagSearchWindowViewModel: ObservableObject{
-
-        // StringResources
-        public StringResources StringResources { get; } = StringResources.Instance;
+    public class TagSearchWindowViewModel: MyWindowViewModel{
 
         private bool _excludeTag = false;
         public bool ExcludeTag {
@@ -20,7 +17,7 @@ namespace ClipboardApp.View.TagView {
             }
             set {
                 _excludeTag = value;
-                OnPropertyChanged("ExcludeTag");
+                OnPropertyChanged(nameof(ExcludeTag));
             }
         }
 
@@ -31,7 +28,7 @@ namespace ClipboardApp.View.TagView {
             }
             set {
                 _tagName = value;
-                OnPropertyChanged("TagName");
+                OnPropertyChanged(nameof(TagName));
             }
         }
 

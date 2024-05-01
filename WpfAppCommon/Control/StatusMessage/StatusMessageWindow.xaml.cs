@@ -12,11 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ClipboardApp.View.StatusMessageView {
+namespace WpfCommonApp.Control.StatusMessage {
     /// <summary>
     /// StatusMessageWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class StatusMessageWindow : Window {
+    public partial class StatusMessageWindow : UserControl {
 
         public StatusMessageWindow() {
             InitializeComponent();

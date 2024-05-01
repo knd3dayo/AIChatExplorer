@@ -41,7 +41,6 @@ namespace QAChat {
 
         public ObservableCollection<ChatItem> ChatItems { get; set; } = [];
 
-
         public string? LastSendText {
             get {
                 // ChatItemsのうち、ユーザー発言の最後のものを取得

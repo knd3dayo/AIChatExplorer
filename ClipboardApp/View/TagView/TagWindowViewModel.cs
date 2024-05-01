@@ -7,10 +7,9 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.View.TagView {
     public class TagWindowViewModel : MyWindowViewModel {
 
-        public ObservableCollection<TagItemViewModel> TagList { get; set; } = new();
+        public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
         private ClipboardItem? _clipboardItem;
-
 
         Action? _afterUpdate;
 

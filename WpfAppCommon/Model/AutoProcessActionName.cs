@@ -11,16 +11,15 @@
                 Name = name;
             }
 
-            public static AutoProcessActionName CopyToFolder = new AutoProcessActionName(true, "CopyToFolder");
-            public static AutoProcessActionName MoveToFolder = new AutoProcessActionName(true, "MoveToFolder");
-            public static AutoProcessActionName ExtractText = new AutoProcessActionName(true, "ExtractText");
-            public static AutoProcessActionName MaskData = new AutoProcessActionName(true, "GetMaskedString");
-            public static AutoProcessActionName SplitPathToFolderAndFileName = new AutoProcessActionName(true, "SplitPathToFolderAndFileName");
-            public static AutoProcessActionName MergeAllItems = new AutoProcessActionName(true, "MergeAllItems");
+            public static AutoProcessActionName CopyToFolder = new(true, "CopyToFolder");
+            public static AutoProcessActionName MoveToFolder = new (true, "MoveToFolder");
+            public static AutoProcessActionName ExtractText = new (true, "ExtractText");
+            public static AutoProcessActionName MaskData = new (true, "GetMaskedString");
+            public static AutoProcessActionName SplitPathToFolderAndFileName = new (true, "SplitPathToFolderAndFileName");
+            public static AutoProcessActionName MergeAllItems = new (true, "MergeAllItems");
             // 同じSourceApplicationTitleを持つアイテムをマージする
-            public static AutoProcessActionName MergeItemsWithSameSourceApplicationTitle = new AutoProcessActionName(true, "MergeItemsWithSameSourceApplicationTitle");
-
-            public static AutoProcessActionName RunPythonScript = new AutoProcessActionName(false, "RunPythonScript");
+            public static AutoProcessActionName MergeItemsWithSameSourceApplicationTitle = new (true, "MergeItemsWithSameSourceApplicationTitle");
+            public static AutoProcessActionName RunPythonScript = new (false, "RunPythonScript");
 
         }
     }

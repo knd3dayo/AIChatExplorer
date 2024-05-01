@@ -6,13 +6,13 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.View.SettingWindow;
-using ClipboardApp.View.StatusMessageView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using WpfCommonApp.Control.StatusMessage;
 
 namespace ClipboardApp {
     public class MainWindowCommand {
@@ -370,10 +370,14 @@ namespace ClipboardApp {
         }
         // ステータスバーをクリックしたときの処理
         public static void OpenStatusMessageWindowCommand() {
-            StatusMessageWindow statusMessageWindow = new ();
-            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)statusMessageWindow.DataContext;
+            UserControl userControl = new StatusMessageWindow();
+            Window window = new() {
+                Title = "Status Message",
+                Content = userControl
+            };
+            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)userControl.DataContext;
             statusMessageWindowViewModel.Initialize();
-            statusMessageWindow.ShowDialog();
+            window.ShowDialog();
 
         }
 
