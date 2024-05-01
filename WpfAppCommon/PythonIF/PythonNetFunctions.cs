@@ -476,7 +476,11 @@ namespace WpfAppCommon.PythonIF {
                     throw new ThisApplicationException("ファイルが存在しません:" + filePath);
                 }
                 // update_vector_db_index関数を呼び出す
-                tokenCount = update_index(ClipboardAppConfig.CreateOpenAIProperties(), mode, workingDirPath, fileStatus.Path, repositoryURL);
+                tokenCount = update_index(
+                    ClipboardAppConfig.CreateOpenAIProperties(), 
+                    mode, 
+                    new PyString(workingDirPath), 
+                    new PyString(fileStatus.Path), repositoryURL);
             });
             return tokenCount;
         }
