@@ -141,6 +141,8 @@ namespace QAChat {
                 }
                 // inputTextをクリア
                 InputText = "";
+                // リクエストをChatItemsに追加
+                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 

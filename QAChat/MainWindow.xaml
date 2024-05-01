@@ -117,7 +117,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBox
                                     Grid.Row="0"
-                                    Margin="10,10,10,10"
+                                    Margin="10,5,10,5"
                                     HorizontalAlignment="Left"
                                     FontSize="8pt"
                                     IsReadOnly="True"
@@ -125,7 +125,7 @@
                                 <TextBox
                                     Grid.Row="1"
                                     MinHeight="30"
-                                    Margin="10,10,10,10"
+                                    Margin="10,5,10,5"
                                     HorizontalAlignment="Left"
                                     FontSize="8pt"
                                     IsReadOnly="True"
