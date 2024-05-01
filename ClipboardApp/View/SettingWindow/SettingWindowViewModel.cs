@@ -460,7 +460,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:Pythonの実行に失敗しました。" + ex.Message;
+                testResult.Message = "[NG]:Pythonの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -479,7 +479,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:テキストファイルからのテキスト抽出に失敗しました。" + ex.Message;
+                testResult.Message = "[NG]:テキストファイルからのテキスト抽出に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -500,7 +500,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:画像ファイルからのテキスト抽出に失敗しました。" + ex.Message;
+                testResult.Message = "[NG]:画像ファイルからのテキスト抽出に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -518,7 +518,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:OpenAIの実行に失敗しました。" + ex.Message;
+                testResult.Message = "[NG]:OpenAIの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -538,7 +538,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:LangChainの実行に失敗しました。" + ex.StackTrace;
+                testResult.Message = "[NG]:LangChainの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -565,7 +565,7 @@ namespace ClipboardApp.View.SettingWindow {
                     testResult.Result = true;
                 }
             } catch (Exception ex) {
-                testResult.Message = "[NG]:Spacyの実行に失敗しました。" + ex.Message;
+                testResult.Message = "[NG]:Spacyの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -603,6 +603,7 @@ namespace ClipboardApp.View.SettingWindow {
                     resultString = CheckSetting();
                 });
                 IsIndeterminate = false;
+                Tools.StatusText.InitText();
                 // 結果をTestResultWindowで表示
                 TestResultWindow testResultWindow = new();
                 TestResultWindowViewModel testResultWindowViewModel = (TestResultWindowViewModel)testResultWindow.DataContext;
