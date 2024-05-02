@@ -305,8 +305,10 @@ namespace WpfAppCommon.Model {
 
             // ChatCommandExecuteを実行
             prompt += "処理対象の文章\n-----------\n" + text;
+            // Vector DBのアイテムを取得
+            IEnumerable<VectorDBItem> vectorDBItems = VectorDBItem.GetEnabledItems();
 
-            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(prompt, []);
+            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(prompt, [], vectorDBItems);
 
             return result.Response;
 

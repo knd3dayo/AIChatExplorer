@@ -9,6 +9,7 @@ using ClipboardApp.View.SettingWindow;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
+using QAChat.View.VectorDBWindow;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -78,6 +79,15 @@ namespace ClipboardApp {
             RAGManagementWindowViewModel ragManagementWindowViewModel = (RAGManagementWindowViewModel)ragManagementWindow.DataContext;
             ragManagementWindowViewModel.Initialize();
             ragManagementWindow.ShowDialog();
+
+        }
+        // OpenVectorDBManagementWindowCommand メニューの「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
+        public static void OpenVectorDBManagementWindowCommand() {
+            // VectorDBManagementWindowを開く
+            ListVectorDBWindow vectorDBManagementWindow = new ();
+            ListVectorDBWindowViewModel vectorDBManagementWindowViewModel = (ListVectorDBWindowViewModel)vectorDBManagementWindow.DataContext;
+            vectorDBManagementWindowViewModel.Initialize();
+            vectorDBManagementWindow.ShowDialog();
 
         }
 

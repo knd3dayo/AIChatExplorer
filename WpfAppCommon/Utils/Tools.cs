@@ -27,6 +27,13 @@ namespace WpfAppCommon.Utils {
                 StatusText.Text = message;
             }
         }
+        public static void Info(string message, bool showMessageBox) {
+            Logger.Info(message);
+            if (showMessageBox) {
+                System.Windows.MessageBox.Show(ActiveWindow, message);
+            }
+        }
+
         public static void Warn(string message) {
             Logger.Warn(message);
             if (StatusText != null) {

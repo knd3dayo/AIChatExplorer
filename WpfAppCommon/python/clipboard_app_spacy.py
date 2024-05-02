@@ -1,4 +1,4 @@
-﻿import sys
+import sys
 from unittest import result
 sys.path.append("python")
 import clipboard_app_sqlite

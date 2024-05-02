@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,8 +37,6 @@ namespace WpfAppCommon.Model {
         // OpenAIEmbeddingBaseURL
         public static string OpenAIEmbeddingBaseURL { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
 
-        // VectorDBURL
-        public static string VectorDBURL { get; set; } = WpfAppCommon.Properties.Settings.Default.VectorDBURL;
         // UseOCR
         public static bool UseOCR { get; set; } = WpfAppCommon.Properties.Settings.Default.UseOCR;
 
@@ -86,7 +84,6 @@ namespace WpfAppCommon.Model {
             if (WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
                 dict.Add("OpenAIEmbeddingBaseURL", WpfAppCommon.    Properties.Settings.Default.OpenAIEmbeddingBaseURL);
             }
-            dict.Add("VectorDBURL", WpfAppCommon.Properties.Settings.Default.VectorDBURL);
             return dict;
         }
 

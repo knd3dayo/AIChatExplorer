@@ -18,44 +18,56 @@ from langchain_vector_db import LangChainVectorDB
 
 class RetrievalQAUtil:
 
-    def __init__(self, client: LangChainOpenAIClient, vector_db_url: str, tools_json_object):
-        self.vector_db_url = vector_db_url
+    def __init__(self, client: LangChainOpenAIClient, vector_db_items:dict):
         self.client = client
-        # Toolオブジェクトを作成
-        self.load_tools = self.__create_tool_list(tools_json_object)
+
+        # ツールのリストを作成
+        self.load_tools = self.__create_tool_list(vector_db_items)
         self.tools = self.load_tools
 
-    def __create_tool_list(self, json_object=None):
+    def __create_tool_list(self, vector_db_items=None):
 
         tools = []
 
-        for item in json_object:
-            name = item["name"]
-            collection_name = item["collection_name"]
-            prompt = item["prompt"]
-            description = item["description"]
-            tools.append(self.__create_tool(name, self.vector_db_url, collection_name, prompt, description))
+        for item in vector_db_items:
+            name = item.get("name", "")
+            collection_name = item.get("collection_name", "")
+            description = item.get("description", "")
+            prompt = item.get("prompt", "")
+            vector_db_url = item.get("vector_db_url", "")
+            vector_db_type_string = item.get("vector_db_type_string", "")
+
+            tools.append(self.__create_tool(name, vector_db_type_string, vector_db_url, collection_name, prompt, description))
   
         return tools
 
-    def __create_tool(self, name, vector_db_url, collection_name, prompt_str, description):
+    def __create_tool(self, name, vector_db_type_string, vector_db_url, collection_name, prompt_str, description):
         '''
         # 関数の説明
         # ツールを追加する。
-        # 
+        #
         # 引数
         # name: str
-        #   ツールの名前
+        #   ツール名
+        # vector_db_type_string: str
+        #   ベクトルDBのタイプ
+        # vector_db_url: str
+        #   ベクトルDBのURL
+        # collection_name: str
+        #   コレクション名
+        # prompt_str: str
+        #   プロンプト
         # description: str
         #   ツールの説明
         # 戻り値
-        # なし
-        # 例
-        # create_tool(name, func, description)
+        # tool: Tool
+        #   ツール
         '''
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
-        qa = self.__create_retrieval_qa(vector_db_url, collection_name, prompt_str)
-
+        qa = self.__create_retrieval_qa(vector_db_type_string, vector_db_url, collection_name, prompt_str)
+        print(name)
+        print(qa)
+        print(description)
         tool = Tool(
                 name=name,
                 func=qa,
@@ -89,7 +101,7 @@ class RetrievalQAUtil:
         return prompt_template_str
 
     
-    def __create_retrieval_qa(self, vector_db_url: str, collection_name: str, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
+    def __create_retrieval_qa(self, vector_db_type_string: str , vector_db_url: str, collection_name: str, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
         '''
         # 関数の説明
         # prompt_template_strからPromptTemplateを作成する。
@@ -104,7 +116,7 @@ class RetrievalQAUtil:
         # 例:
         # retrieval_qa = create_retrieval_qa(vectorstore, llm, prompt_template_str)
         '''
-        if prompt_template_str is None:
+        if not prompt_template_str:
             # デフォルトのプロンプトのテンプレート文字列を作成
             prompt_template_str = self.__create_default_prompt_template()
 
@@ -116,11 +128,16 @@ class RetrievalQAUtil:
         chain_type_kwargs = {"prompt": prompt}
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
-        langChainVectorDB = LangChainVectorDB(self.client, vector_db_url)
-        retriever = langChainVectorDB.db.as_retriever(
-            search_kwargs={"score_threshold": 0.5}
-        )
-
+        # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
+        if vector_db_type_string == "Faiss":
+            langChainVectorDB = LangChainVectorDB(self.client, vector_db_url)
+            retriever = langChainVectorDB.db.as_retriever(
+                search_kwargs={"score_threshold": 0.5}
+            )
+        # それ以外の場合は現在未対応のためExceptionを発生させる
+        else:
+            raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
+            
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
         # 料理に関する質問が来た場合、料理に関する質問に答えるツールを呼び出す。
@@ -239,26 +256,18 @@ class RetrievalQAUtil:
 RetrievalQAUtilInstance: RetrievalQAUtil = None
 ChatAgentExecutorInstance = None
 
-def langchain_chat( props: dict, prompt: str, chat_history_json: str = None):
+def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
     global RetrievalQAUtilInstance, ChatAgentExecutorInstance
     if RetrievalQAUtilInstance is None:
         import langchain
         # langchainのログを出力する
         langchain.verbose = True
-
-        vector_db_url = props.get("VectorDBURL")
-        if not vector_db_url:
-            raise ValueError("VectorDBURL is not set.")
         
-        json_path = props.get("ToolsJSONPath")
-        if json_path is None or os.path.exists(json_path) == False:
-            json_path = os.path.join("python", "tools.json")
-
-        with open(json_path, "r", encoding="utf-8") as f:
-            tool_json_object = json.load(f)
+        # vector_db_items_jsonをjsonオブジェクトに変換
+        vector_db_items = json.loads(vector_db_items_json)
 
         client = LangChainOpenAIClient(props)
-        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_url, tool_json_object)
+        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
         ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
 
     # openaiのchat_historyのjson文字列をlangchainのchat_historyに変換
@@ -287,8 +296,10 @@ if __name__ == '__main__':
 
     import env_to_props
     props = env_to_props.get_props()
+    vector_db_items_json = env_to_props.get_vector_db_settings()
+
     question1 = input("質問をどうぞ:")
-    result1 = langchain_chat(props, question1)
+    result1 = langchain_chat(props, vector_db_items_json, question1)
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])

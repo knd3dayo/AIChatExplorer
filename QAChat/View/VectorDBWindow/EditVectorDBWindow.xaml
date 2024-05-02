@@ -1,11 +1,11 @@
 <Window
-    x:Class="QAChat.View.RAGWindow.EditRAGSourceWindow"
+    x:Class="QAChat.View.VectorDBWindow.EditVectorDBWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.View.RAGWindow"
+    xmlns:local="clr-namespace:QAChat.View.VectorDBWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding WindowTitle}"
@@ -14,7 +14,7 @@
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.DataContext>
-        <local:EditRAGSourceWindowViewModel />
+        <local:EditVectorDBWindowViewModel />
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -64,6 +64,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="180" />
@@ -75,62 +76,66 @@
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="作業ディレクトリ" />
+                    Text="名前" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
                     Margin="10,10,10,10"
                     IsEnabled="True"
-                    Text="{Binding ItemViewModel.WorkingDirectory}" />
+                    Text="{Binding ItemViewModel.Name}" />
                 <TextBlock
                     Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="説明" />
+                <TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="10,10,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.Description}" />
+                <TextBlock
+                    Grid.Row="2"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="GitリポジトリURL" />
+                    Text="ベクトルDBの場所" />
                 <TextBox
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
-                    IsReadOnly="True"
-                    Text="{Binding ItemViewModel.SourceURL, Mode=OneWay}">
-                    <TextBox.InputBindings>
-                        <MouseBinding Command="{Binding CheckWorkingDirCommand}" Gesture="LeftDoubleClick" />
-                    </TextBox.InputBindings>
-                </TextBox>
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="最後にインデックス化したコミット" />
-                <TextBox
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Margin="10,0,10,10"
-                    IsReadOnly="True"
-                    Text="{Binding ItemViewModel.LastIndexedCommitInfo, Mode=OneWay}"
-                    TextWrapping="Wrap" />
+                    Text="{Binding ItemViewModel.VectorDBURL}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="ベクトルDB" />
+                    Text="ベクトルDBのタイプ" />
                 <ComboBox
                     Grid.Row="3"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    DisplayMemberPath="Name"
                     IsEnabled="True"
-                    ItemsSource="{Binding ItemViewModel.VectorDBItems}"
-                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBItem}"
-                    SelectedValue="{Binding ItemViewModel.SelectedVectorDBItem.Name}"
-                    SelectedValuePath="Name" />
+                    ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
+                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="有効" />
+                <CheckBox
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsChecked="{Binding ItemViewModel.IsEnabled}"
+                    IsEnabled="True" />
             </Grid>
         </ScrollViewer>
         <Grid
@@ -143,7 +148,7 @@
                     Margin="10,10,10,0"
                     Command="{Binding UpdateIndexButtonCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="インデックス更新" />
+                    Content="接続テスト" />
             </DockPanel>
             <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
                 <Button

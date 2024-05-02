@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,31 @@ namespace QAChat.View.RAGWindow {
                 OnPropertyChanged(nameof(LastIndexCommitHash));
             }
         }
+
+        // VectorDBItem
+        public VectorDBItem? VectorDBItem {
+            get => Item.VectorDBItem;
+            set {
+                Item.VectorDBItem = value;
+                OnPropertyChanged(nameof(VectorDBItem));
+            }
+        }
+        // ComboBoxの選択肢
+        public ObservableCollection<VectorDBItem> VectorDBItems {
+            get {
+                return [.. VectorDBItem.GetItems()];
+            }
+        }
+        public VectorDBItem? SelectedVectorDBItem {
+            get {
+                return Item.VectorDBItem;
+            }
+            set {
+                Item.VectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
+            }
+        }
+
         // 最後にインデックス化したコミットの情報
         public string LastIndexedCommitInfo {
             get {
@@ -58,7 +84,18 @@ namespace QAChat.View.RAGWindow {
 
             }
         }
-
-
+        // save
+        public void Save() {
+            Item.Save();
+        }
+        // delete
+        public void Delete() {
+            Item.Delete();
+        }
+        // checkWorkingDirectory
+        public bool CheckWorkingDirectory() {
+            return Item.CheckWorkingDirectory();
+        }
     }
+
 }

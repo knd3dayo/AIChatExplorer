@@ -125,7 +125,7 @@ namespace QAChat {
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems);
+                        result = PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems, VectorDBItem.GetEnabledItems());
                     });
                 } else {
                     // モードがNormalの場合はOpenAIChatでチャットを送信

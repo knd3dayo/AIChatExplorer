@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.IO;
 using Python.Runtime;
 using QAChat.Model;
@@ -279,21 +279,27 @@ namespace WpfAppCommon.PythonIF {
             return result;
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory) {
-            return LangChainChat(prompt, chatHistory, ClipboardAppConfig.CreateOpenAIProperties());
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems) {
+            return LangChainChat(prompt, chatHistory, ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItems);
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems) {
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
             ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
-                dynamic? langchain_chat = (ps?.Get("langchain_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
+                dynamic? langchain_chat = (ps?.Get("langchain_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、langchain_chat関数が見つかりません");
                 // chatHistoryをJSON文字列に変換
-                string json_string = ChatItem.ToJson(chatHistory);
+                string chatItemsJSon = ChatItem.ToJson(chatHistory);
+                // VectorDBItemsのサイズが0の場合は例外をスロー
+                if (vectorDBItems.Count() == 0) {
+                    throw new ThisApplicationException("VectorDBItemsが空です");
+                }
+                // VectorDBItemのリストをJSON文字列に変換
+                string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
 
                 // open_ai_chat関数を呼び出す
-                PyDict pyDict = langchain_chat(props, prompt, json_string);
+                PyDict pyDict = langchain_chat(props, vectorDBItemsJson, prompt, chatItemsJSon );
                 // outputを取得
                 string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException("OpenAIの応答がありません");
                 // verboseを取得
@@ -466,7 +472,7 @@ namespace WpfAppCommon.PythonIF {
             return result;
         }
 
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL) {
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
             int tokenCount = 0;
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
@@ -487,9 +493,12 @@ namespace WpfAppCommon.PythonIF {
                 if (!File.Exists(filePath)) {
                     throw new ThisApplicationException("ファイルが存在しません:" + filePath);
                 }
+                // propsにVectorDBURLを追加
+                var props = ClipboardAppConfig.CreateOpenAIProperties();
+                props["VectorDBURL"] = vectorDBItem.VectorDBURL;
                 // update_vector_db_index関数を呼び出す
                 tokenCount = update_index(
-                    ClipboardAppConfig.CreateOpenAIProperties(), 
+                    props, 
                     mode, 
                     new PyString(workingDirPath), 
                     new PyString(fileStatus.Path), repositoryURL);

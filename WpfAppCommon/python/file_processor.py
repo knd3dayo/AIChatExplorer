@@ -1,4 +1,4 @@
-import sys
+import sys, json
 sys.path.append('python')
 from file_loader import FileLoader
 from langchain_vector_db import LangChainVectorDB

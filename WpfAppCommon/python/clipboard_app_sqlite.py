@@ -1,4 +1,4 @@
-﻿import sqlite3
+import sqlite3
 dbname = 'clipboard_pyhton.db'
 
 

@@ -23,14 +23,14 @@ class FileLoader:
     
     def __load_file(self, chunk_size=1000):
         text_list = []
-        # â‘ÎƒpƒX‚ğæ“¾
+        # çµ¶å¯¾ãƒ‘ã‚¹ã‚’å–å¾—
         absolute_file_path = os.path.join (self.workdir_path, self.relative_file_path)
         
-        # ƒtƒ@ƒCƒ‹ƒTƒCƒY‚ª0‚Ìê‡‚Í‹ó‚ÌƒŠƒXƒg‚ğ•Ô‚·
+        # ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºãŒ0ã®å ´åˆã¯ç©ºã®ãƒªã‚¹ãƒˆã‚’è¿”ã™
         if os.path.getsize(absolute_file_path) == 0:
             return text_list
-        # python-magic‚ª2ƒoƒCƒgƒtƒ@ƒCƒ‹–¼‚ğˆµ‚¤‚ÆƒGƒ‰[‚É‚È‚éê‡‚ª‚ ‚é‚½‚ßAƒtƒ@ƒCƒ‹‚ğˆêƒtƒ@ƒCƒ‹‚ÉƒRƒs[‚µ‚Äˆ—‚·‚é
-        # ˆêƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ÍŒ³‚Ìƒtƒ@ƒCƒ‹‚ÌŠg’£q‚Æ“¯‚¶‚É‚·‚é
+        # python-magicãŒ2ãƒã‚¤ãƒˆãƒ•ã‚¡ã‚¤ãƒ«åã‚’æ‰±ã†ã¨ã‚¨ãƒ©ãƒ¼ã«ãªã‚‹å ´åˆãŒã‚ã‚‹ãŸã‚ã€ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚³ãƒ”ãƒ¼ã—ã¦å‡¦ç†ã™ã‚‹
+        # ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã¯å…ƒã®ãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã¨åŒã˜ã«ã™ã‚‹
         with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(self.relative_file_path)[1]) as temp_file:
             with open(absolute_file_path, 'rb') as f:
                 temp_file.write(f.read())
@@ -47,7 +47,7 @@ class FileLoader:
                 text = ""
         if len(text) > 0:
             text_list.append(text)
-        # ˆêƒtƒ@ƒCƒ‹‚ğíœ
+        # ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‰Šé™¤
         os.remove(absolute_file_path)
 
         return text_list

@@ -205,18 +205,6 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("faiss_index")]
-        public string VectorDBURL {
-            get {
-                return ((string)(this["VectorDBURL"]));
-            }
-            set {
-                this["VectorDBURL"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string OpenAIEmbeddingBaseURL {
             get {

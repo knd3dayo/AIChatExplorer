@@ -1,7 +1,5 @@
-﻿using System.Drawing;
 using QAChat.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 
 namespace WpfAppCommon.PythonIF {
     public class EmptyPythonFunctions : IPythonFunctions {
@@ -24,10 +22,10 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory) {
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
         public void OpenAIEmbedding(string text) {
@@ -52,7 +50,7 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL){
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
 

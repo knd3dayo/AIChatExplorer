@@ -32,6 +32,12 @@
     <Compile Update="View\RAGWindow\SelectCommitWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\VectorDBWindow\EditVectorDBWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\VectorDBWindow\ListVectorDBWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

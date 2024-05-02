@@ -233,16 +233,7 @@ namespace ClipboardApp.View.SettingWindow {
                 OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
             }
         }
-        // VectorDBURL
-        public string VectorDBURL {
-            get {
-                return WpfAppCommon.Properties.Settings.Default.VectorDBURL;
-            }
-            set {
-                WpfAppCommon.Properties.Settings.Default.VectorDBURL = value;
-                OnPropertyChanged(nameof(VectorDBURL));
-            }
-        }
+
         // BackupGeneration
         public int BackupGeneration {
             get {
@@ -361,12 +352,7 @@ namespace ClipboardApp.View.SettingWindow {
                 } else {
                     Log(stringBuilder, "[OK]:OpenAIのEmbeddingModelが設定されています");
                 }
-                if (string.IsNullOrEmpty(VectorDBURL)) {
-                    Log(stringBuilder, "[NG]:ベクトルDBの格納先が設定されていません");
-                    openAIOK = false;
-                } else {
-                    Log(stringBuilder, "[OK]:ベクトルDBの格納先が設定されています");
-                }   
+
                 if (AzureOpenAI == true) {
 
                     Log(stringBuilder, "Azure OpenAIの設定チェック...");
@@ -390,10 +376,6 @@ namespace ClipboardApp.View.SettingWindow {
                     // TestOpenAIを実行
                     Log(stringBuilder, "OpenAIのテスト実行...");
                     TestResult result = TestOpenAI();
-                    Log(stringBuilder, result.Message);
-                    // TestLangChainを実行
-                    Log(stringBuilder, "LangChainのテスト実行...");
-                    result = TestLangChain();
                     Log(stringBuilder, result.Message);
 
                 }
@@ -519,26 +501,6 @@ namespace ClipboardApp.View.SettingWindow {
                 }
             } catch (Exception ex) {
                 testResult.Message = "[NG]:OpenAIの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
-                testResult.Result = false;
-            }
-            return testResult;
-        }
-        // TestLangChain
-        private TestResult TestLangChain() {
-            TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath);
-            try {
-
-                ChatResult result = PythonExecutor.PythonFunctions.LangChainChat("Hello", []);
-                if (string.IsNullOrEmpty(result.Response)) {
-                    testResult.Message = "[NG]:LangChainの実行に失敗しました。";
-                    testResult.Result = false;
-                } else {
-                    testResult.Message = "[OK]:LangChainの実行が可能です。";
-                    testResult.Result = true;
-                }
-            } catch (Exception ex) {
-                testResult.Message = "[NG]:LangChainの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;

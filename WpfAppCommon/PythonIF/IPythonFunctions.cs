@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using QAChat.Model;
 using WpfAppCommon.Model;
 
@@ -35,9 +35,9 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList);
 
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory);
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems);
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
+        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems);
         public void OpenAIEmbedding(string text);
 
         public void SaveFaissIndex();
@@ -53,7 +53,7 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
 
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL);
+        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
 
         //テスト用
         public string HelloWorld();

@@ -181,6 +181,12 @@
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.EditGitRagSource}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding OpenVectorDBManagementWindowCommand}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.EditVectorDB}"
+                                Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"

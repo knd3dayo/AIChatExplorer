@@ -1,4 +1,4 @@
-﻿import faiss
+import faiss
 import os
 
 index_file_name="index.faiss"

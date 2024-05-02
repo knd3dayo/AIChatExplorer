@@ -58,6 +58,12 @@
         // タグ
         public string Tag { get; } = "タグ";
 
+        // ベクトルDB一覧
+        public string ListVectorDB { get; } = "ベクトルDB一覧";
+        // ベクトルDB編集
+        public string EditVectorDB { get; } = "ベクトルDB編集";
+
+
         // --- 画面タイトル ---
 
         // 自動処理ルール一覧
@@ -100,6 +106,18 @@
         public string ListGitRagSourceWindowTitle {
             get {
                 return $"{AppName} - RAGソース(git)一覧";
+            }
+        }
+        // ベクトルDB一覧
+        public string ListVectorDBWindowTitle {
+            get {
+                return $"{AppName} - {ListVectorDB}";
+            }
+        }
+        // ベクトルDB編集
+        public string EditVectorDBWindowTitle {
+            get {
+                return $"{AppName} - {EditVectorDB}";
             }
         }
         // コミット選択

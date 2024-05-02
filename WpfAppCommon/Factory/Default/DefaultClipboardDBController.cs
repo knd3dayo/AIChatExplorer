@@ -23,6 +23,8 @@ namespace WpfAppCommon.Factory.Default {
 
         // RAGSourceItem
         public const string RAGSourceItemCollectionName = "RAGSourceItem";
+        // VectorDBItem
+        public const string VectorDBItemCollectionName = "VectorDBItem";
 
         private static LiteDatabase? db;
         // static
@@ -448,7 +450,26 @@ namespace WpfAppCommon.Factory.Default {
             // RAGSourceItemコレクションから、すべてのアイテムを取得
             var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
             return collection.FindAll();
+        }
+        //----  RAGSourceItem
+        // update
+        public void UpsertVectorDBItem(VectorDBItem item) {
+            // VectorDBItemコレクションに、itemを追加または更新
+            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
+            collection.Upsert(item);
 
+        }
+        // delete
+        public void DeleteVectorDBItem(VectorDBItem item) {
+            // VectorDBItemコレクションから、itemを削除
+            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
+            collection.Delete(item.Id);
+        }
+        // get
+        public IEnumerable<VectorDBItem> GetVectorDBItems() {
+            // VectorDBItemコレクションから、すべてのアイテムを取得
+            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
+            return collection.FindAll();
         }
     }
 }

@@ -53,6 +53,7 @@ namespace WpfAppCommon.Factory {
 
         public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
 
+        // --- Python Script
         public IEnumerable<ScriptItem> GetScriptItems();
 
         public void UpsertPromptTemplate(PromptItem promptItem);
@@ -68,6 +69,14 @@ namespace WpfAppCommon.Factory {
         public void DeleteRAGSourceItem(RAGSourceItem item);
         // get
         public IEnumerable<RAGSourceItem> GetRAGSourceItems();
+
+        //--- -  VectorDBItem
+        // update
+        public void UpsertVectorDBItem(VectorDBItem item);
+        // delete
+        public void DeleteVectorDBItem(VectorDBItem item);
+        // get
+        public IEnumerable<VectorDBItem> GetVectorDBItems();
 
     }
 

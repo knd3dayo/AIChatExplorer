@@ -1,4 +1,4 @@
-﻿import traceback
+import traceback
 import os, json
 from PIL import Image
 import pyocr

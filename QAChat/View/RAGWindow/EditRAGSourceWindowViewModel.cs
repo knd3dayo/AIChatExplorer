@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -16,35 +16,7 @@ namespace QAChat.View.RAGWindow {
                 OnPropertyChanged(nameof(ItemViewModel));
             }
         }
-        public string SourceURL {
-            get => ItemViewModel?.Item.SourceURL ?? "";
-            set {
-                if (ItemViewModel == null) {
-                    return;
-                }
-                ItemViewModel.Item.SourceURL = value;
-                OnPropertyChanged(nameof(SourceURL));
-            }
-        }
-        // 最後にインデックス化したコミットの情報
-        public string LastIndexedCommitInfo {
-            get {
-                return ItemViewModel?.LastIndexedCommitInfo ?? "";
-            }
-        }
 
-        public string WorkingDirectory {
-            get => ItemViewModel?.Item.WorkingDirectory ?? "";
-            set {
-                if (ItemViewModel == null) {
-                    return;
-                }
-                ItemViewModel.Item.WorkingDirectory = value;
-                OnPropertyChanged(nameof(WorkingDirectory));
-                OnPropertyChanged(nameof(SourceURL));
-                OnPropertyChanged(nameof(LastIndexedCommitInfo));
-            }
-        }
         // Windowのタイトル　ItemViewModelがnullの場合は新規作成、それ以外は編集
         public string WindowTitle {
             get {
@@ -56,14 +28,13 @@ namespace QAChat.View.RAGWindow {
         // 初期化
         public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
             ItemViewModel = itemViewModel;
-            AfterUpdate = afterUpdate;
-            SourceURL = itemViewModel.Item.SourceURL;
 
             // Windowのタイトルを更新
             OnPropertyChanged(nameof(WindowTitle));
-            // WorkingDirectoryが指定されている場合
-            if (!string.IsNullOrEmpty(itemViewModel.Item.WorkingDirectory)) {
-                WorkingDirectory = itemViewModel.Item.WorkingDirectory;
+
+            // test
+            if (ItemViewModel != null) {
+                ItemViewModel.SelectedVectorDBItem = itemViewModel?.SelectedVectorDBItem;
             }
 
             AfterUpdate = afterUpdate;
@@ -74,13 +45,8 @@ namespace QAChat.View.RAGWindow {
             if (ItemViewModel == null) {
                 return;
             }
-            if (ItemViewModel.Item == null) {
-                return;
-            }
             // RAGSourceItemを更新
-            ItemViewModel.Item.Save();
-
-
+            ItemViewModel.Save();
             AfterUpdate(ItemViewModel);
 
             if (parameter is not Window window) {
@@ -121,14 +87,9 @@ namespace QAChat.View.RAGWindow {
                     Tools.Error("ItemViewModelがnullです");
                     return;
                 }
-                // SourceURLをクリア
-                SourceURL = "";
+                ItemViewModel.SourceURL = "";
 
-                ItemViewModel.Item.CheckWorkingDirectory(WorkingDirectory);
-                // SourceURLを更新
-                OnPropertyChanged(nameof(SourceURL));
-                // LastIndexedCommitInfoを更新
-                OnPropertyChanged(nameof(LastIndexedCommitInfo));
+                ItemViewModel.CheckWorkingDirectory();
 
             } catch (Exception e) {
                 Tools.Error(e.Message);

@@ -236,6 +236,10 @@ namespace ClipboardApp {
         public SimpleDelegateCommand OpenRAGManagementWindowCommand => new((parameter) => {
             MainWindowCommand.OpenRAGManagementWindowCommand();
         });
+        // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand OpenVectorDBManagementWindowCommand => new((parameter) => {
+            MainWindowCommand.OpenVectorDBManagementWindowCommand();
+        });
 
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand SearchCommand => new((parameter) => {

@@ -1,4 +1,4 @@
-﻿using LibGit2Sharp;
+using LibGit2Sharp;
 using LiteDB;
 using WpfAppCommon.Factory;
 using WpfAppCommon.PythonIF;
@@ -48,6 +48,24 @@ namespace WpfAppCommon.Model {
 
         public string LastIndexCommitHash { get; set; } = "";
 
+        // ベクトルを格納するためのVectorDBItemのId
+        private LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
+
+        // VectorDBItemの取得
+        public VectorDBItem? VectorDBItem {
+            get {
+                return VectorDBItem.GetItemById(VectorDBItemId);
+            }
+            set {
+                if (value == null) {
+                    VectorDBItemId = LiteDB.ObjectId.Empty;
+                } else {
+                    VectorDBItemId = value.Id;
+                }
+            }
+        }
+
+        // --- RAGSourceItem
         // Save
         public void Save() {
             // DBControllerのインスタンスを取得
@@ -74,7 +92,8 @@ namespace WpfAppCommon.Model {
 
 
         // Git作業ディレクトリの確認を行う。
-        public bool CheckWorkingDirectory(string path) {
+        public bool CheckWorkingDirectory() {
+            string path = WorkingDirectory;
             if (string.IsNullOrEmpty(path)) {
                 throw new Exception("作業ディレクトリが指定されていません");
             }
@@ -210,12 +229,15 @@ namespace WpfAppCommon.Model {
         // 更新処理
         public UpdateIndexResult UpdateIndex(FileStatus fileStatus) {
 
+            if (VectorDBItem == null) {
+                throw new Exception("ベクトルDBが設定されていません");
+            }
             // PythonNetのメソッドを実行
             UpdateIndexResult result = new() {
                 Success = false,
                 Message = ""
             };
-            int token = PythonExecutor.PythonFunctions.UpdateVectorDBIndex(fileStatus, WorkingDirectory, SourceURL);
+            int token = PythonExecutor.PythonFunctions.UpdateVectorDBIndex(fileStatus, WorkingDirectory, SourceURL, VectorDBItem);
             result.TokenCount = token;
             result.Success = true;
             return result;

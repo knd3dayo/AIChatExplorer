@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +21,6 @@ namespace WpfAppCommon.Model {
             if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
                 dict.Add("OpenAIEmbeddingBaseURL", Properties.Settings.Default.OpenAIEmbeddingBaseURL);
             }
-            dict.Add("VectorDBURL", Properties.Settings.Default.VectorDBURL);
             return dict;
         }
 
