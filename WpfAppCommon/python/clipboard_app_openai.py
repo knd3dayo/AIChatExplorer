@@ -1,4 +1,6 @@
 import importlib, json
+import base64
+from mimetypes import guess_type
 
 class OpenAIUtil:
     def __init__(self):
@@ -74,6 +76,21 @@ class OpenAIUtil:
         return completion, embedding
     
 
+# Function to encode a local image into data URL 
+def local_image_to_data_url(image_path):
+    # Guess the MIME type of the image based on the file extension
+    mime_type, _ = guess_type(image_path)
+    if mime_type is None:
+        mime_type = 'application/octet-stream'  # Default MIME type if none is found
+
+    # Read and encode the image file
+    with open(image_path, "rb") as image_file:
+        base64_encoded_data = base64.b64encode(image_file.read()).decode('utf-8')
+
+    # Construct the data URL
+    return f"data:{mime_type};base64,{base64_encoded_data}"
+
+
 def list_openai_models(props={}):
     
     # OpenAIのchatを実行する
@@ -87,7 +104,7 @@ def list_openai_models(props={}):
     model_id_list = [ model.id for model in response.data]
     return model_id_list
 
-def openai_json_chat(input_json, props={}):
+def run_openai_chat(props: dict, params: dict):
     # OpenAIのchatを実行する
     openai_util = OpenAIUtil()
     openai_util.init(props)
@@ -95,36 +112,25 @@ def openai_json_chat(input_json, props={}):
     
     # chat_model_nameを取得する
     chat_model_name = props.get("OpenAICompletionModel", None)
-
-    json_obj = json.loads(input_json)
-
+    params["model"] = chat_model_name
+    
     response = client.chat.completions.create(
-        model=chat_model_name,
-        messages=json_obj,
-        response_format={"type": "json_object"}    
+        **params
         )
     return response.choices[0].message.content
     
-
-def openai_chat(input_json, props ={}):
-    
-    # OpenAIのchatを実行する
-    openai_util = OpenAIUtil()
-    openai_util.init(props)
-    client = openai_util.completion
-    
-    # chat_model_nameを取得する
-    chat_model_name = props.get("OpenAICompletionModel", None)
-
+def openai_chat(props: dict, input_json: str, json_mode: bool = False):
+    # 入力パラメーターの設定
     json_obj = json.loads(input_json)
+    input_dict = {}
+    input_dict["messages"] = json_obj
+    if json_mode:
+        input_dict["response_format"] = {"type": "json_object"}
 
-    response = client.chat.completions.create(
-        model=chat_model_name,
-        messages=json_obj
-    )
-    return response.choices[0].message.content
+    return run_openai_chat(props, input_dict)
 
-def openai_embedding(input_text, props={}):
+
+def openai_embedding(props: dict, input_text: str):
     
     # OpenAIのchatを実行する
     openai_util = OpenAIUtil()
@@ -167,21 +173,39 @@ if __name__ == "__main__":
         }
     ]
     """
-        
+    
+    # GPT4-Vのテスト
+    image_data_url = local_image_to_data_url("../TestData/extract_test.png")
+    input_json_obj_003 =[]
+    content = [
+        {"type": "text", "text": "画像に「Hello World!」という文字列が含まれている場合Yes,そうでない場合はNoと答えてください"},
+        {"type": "image_url", "image_url": {"url": image_data_url}}
+        ]
+    role_system_dict = {"role": "system", "content": "You are a helpful assistant."}
+    role_user_dict = {"role": "user", "content": content}
+    input_json_obj_003.append(role_system_dict)
+    input_json_obj_003.append(role_user_dict)
+    input_json_003 = json.dumps(input_json_obj_003)
+    
     import env_to_props
     # envファイルからpropsを取得する
     props = env_to_props.get_props()
 
     # chatを実行
-    result = openai_chat(input_json_001, props)
+    result = openai_chat(props,input_json_001)
     print(result)
     # embeddingを実行
     result = openai_embedding("Hello, world", props)
     print(result)
-    # chatを実行
-    result = openai_json_chat(input_json_002, props)
+    # json_modeのchatを実行
+    result = openai_chat(props,input_json_002, True)
     print(result)
     # list_openai_modelsを実行
     result = list_openai_models()
     print(result)
+    
+    # gpt4-vのchatを実行
+    result = openai_chat(props,input_json_003)
+    print(result)
+
     

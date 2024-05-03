@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Utils;
 
@@ -18,9 +19,19 @@ namespace WpfAppCommon.Model {
         private Window? window;
         public SimpleDelegateCommand LoadedCommand => new((parameter) => {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
-            Window window = (Window)routedEventArgs.Source;
-            this.window = window;
-            Tools.ActiveWindow = window;
+            if (routedEventArgs.Source is  Window) {
+                Window window = (Window)routedEventArgs.Source;
+                this.window = window;
+                Tools.ActiveWindow = window;
+                return;
+            }
+            if (routedEventArgs.Source is UserControl) {
+                UserControl userControl = (UserControl)routedEventArgs.Source;
+                Window window = Window.GetWindow(userControl);
+                this.window = window;
+                Tools.ActiveWindow = window;
+                return;
+            }
 
         });
 

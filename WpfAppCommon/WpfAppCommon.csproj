@@ -98,6 +98,7 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.0.1-ci619" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="pythonnet" Version="3.1.0-preview2024-04-07" />
@@ -107,6 +108,12 @@
 
   <ItemGroup>
     <Compile Update="Control\MyStatusBar.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Control\Settings\SettingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Control\Settings\TestResultWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Control\StatusMessage\StatusMessageWindow.xaml.cs">

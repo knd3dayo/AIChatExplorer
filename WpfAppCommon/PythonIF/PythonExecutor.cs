@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
@@ -27,9 +27,6 @@ namespace WpfAppCommon.PythonIF {
 
         // クリップボードアプリ用のPythonスクリプト
         public static string WpfAppCommonUtilsScript = "python/clipboard_app_utils.py";
-
-        // Pythonスクリプト
-        public static string QAChatScript = "python/qachat_util.py";
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
         public static void Init(string pythonPath) {

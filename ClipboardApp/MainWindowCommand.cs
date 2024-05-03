@@ -11,6 +11,7 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon;
+using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
@@ -139,10 +140,14 @@ namespace ClipboardApp {
 
         // メニューの「設定」をクリックしたときの処理
         public static void SettingCommand() {
-            // 簡易版
-            // SimpleSettingWindow settingWindow = new SimpleSettingWindow();
-            SettingWindow settingWindow = new();
-            settingWindow.ShowDialog();
+            // UserControlの設定ウィンドウを開く
+            SettingsControl settingsControl = new();
+            Window window = new() {
+                Title = StringResources.Instance.SettingWindowTitle,
+                Content = settingsControl
+            };
+            window.ShowDialog();
+
         }
 
         // ピン留めの切り替え処理 複数アイテム処理可能
@@ -374,7 +379,7 @@ namespace ClipboardApp {
         }
         // ステータスバーをクリックしたときの処理
         public static void OpenStatusMessageWindowCommand() {
-            UserControl userControl = new StatusMessageWindow();
+            StatusMessageWindow userControl = new StatusMessageWindow();
             Window window = new() {
                 Title = "Status Message",
                 Content = userControl

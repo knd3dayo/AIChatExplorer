@@ -34,12 +34,16 @@ def extract_entity(text, props = {}):
     return clipboard_app_spacy.extract_entity(text, props)
 
 # openai関連
-def openai_json_chat(input_json, props={}):
-    return clipboard_app_openai.openai_chat(input_json, props)
-def openai_chat(input_text, props={}):
-    return clipboard_app_openai.openai_chat(input_text, props)
-def openai_embedding(input_text, props={}):
-    return clipboard_app_openai.openai_embedding(input_text, props)
+def openai_chat(props: dict, input_json: str, json_mode:bool = False):
+    return clipboard_app_openai.openai_chat(props, input_json, json_mode)
+
+def openai_embedding(props: dict, input_text: str):
+    return clipboard_app_openai.openai_embedding(props, input_text)
+
+import retrieval_qa_util
+
+def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
+    return retrieval_qa_util.langchain_chat(props, vector_db_items_json, prompt, chat_history_json)
 
 def list_openai_models():
     return clipboard_app_openai.list_openai_models()

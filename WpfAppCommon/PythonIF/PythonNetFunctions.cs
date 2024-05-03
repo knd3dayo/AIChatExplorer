@@ -287,7 +287,7 @@ namespace WpfAppCommon.PythonIF {
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
-            ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 dynamic? langchain_chat = (ps?.Get("langchain_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、langchain_chat関数が見つかりません");
                 // chatHistoryをJSON文字列に変換
                 string chatItemsJSon = ChatItem.ToJson(chatHistory);
@@ -445,7 +445,7 @@ namespace WpfAppCommon.PythonIF {
                 chatItem
             };
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.QAChatScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic? openai_chat = (ps?.Get("openai_chat")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat関数が見つかりません");
                 string json_string = ChatItem.ToJson(chatHistoryList);
