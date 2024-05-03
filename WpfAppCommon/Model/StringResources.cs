@@ -17,6 +17,9 @@ namespace WpfAppCommon.Model {
         public string Start { get; } = "開始";
         // 停止
         public string Stop { get; } = "停止";
+        // 選択
+        public string Select { get; } = "選択";
+
         // クリップボード監視を開始しました
         public string StartClipboardWatch { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました

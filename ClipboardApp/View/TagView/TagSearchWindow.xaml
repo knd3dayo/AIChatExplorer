@@ -10,6 +10,14 @@
     ResizeMode="NoResize"
     SizeToContent="Height"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="Auto" />
+        </Style>
+    </Window.Resources>
     <Window.DataContext>
         <local:TagSearchWindowViewModel />
     </Window.DataContext>
@@ -55,12 +63,10 @@
                 HorizontalAlignment="Left">
                 <Button
                     Width="100"
-                    Height="Auto"
                     Margin="10,10,10,10"
                     Command="{Binding ClearCommand}"
                     Content="クリア"
-                    DockPanel.Dock="Left"
-                    FontSize="12" />
+                    DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -68,21 +74,17 @@
                 HorizontalAlignment="Right">
                 <Button
                     Width="100"
-                    Height="Auto"
                     Margin="10,10,10,10"
                     Command="{Binding SearchCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK"
-                    FontSize="12" />
+                    Content="OK" />
                 <Button
                     Width="100"
-                    Height="Auto"
                     Margin="10,10,10,10"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="キャンセル"
-                    DockPanel.Dock="Right"
-                    FontSize="12" />
+                    DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
 

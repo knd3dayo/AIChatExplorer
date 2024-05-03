@@ -327,38 +327,36 @@ namespace ClipboardApp.View.AutoProcessRuleView
         }
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand OpenSelectDestinationFolderWindowCommand => new((parameter) => {
-            if (MainWindowViewModel == null) {
-                Tools.Error("MainWindowViewModelがNullです。");
-                return;
-            }
             // フォルダが選択されたら、DestinationFolderに設定
             void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 DestinationFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new ();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new (
-                MainWindowViewModel,
-                ClipboardFolder.RootFolder);
+
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
+            if (rootFolderViewModel == null) {
+                Tools.Error("RootFolderViewModelがNullです。");
+                return;
+            }
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            if (MainWindowViewModel == null) {
-                Tools.Error("MainWindowViewModelがNullです。");
-                return;
-            }
             // フォルダが選択されたら、TargetFolderに設定
             void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
                 TargetFolder = folderViewModel;
             }
             FolderSelectWindow FolderSelectWindow = new();
             FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new (
-                MainWindowViewModel,
-                ClipboardFolder.RootFolder);
+
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
+            if (rootFolderViewModel == null) {
+                Tools.Error("RootFolderViewModelがNullです。");
+                return;
+            }
             FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
             FolderSelectWindow.ShowDialog();
         });

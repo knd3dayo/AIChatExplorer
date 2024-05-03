@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="QAChat.View.VectorDBWindow.ListVectorDBWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,6 +12,14 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="Auto" />
+        </Style>
+    </Window.Resources>
     <Window.DataContext>
         <local:ListVectorDBWindowViewModel />
     </Window.DataContext>
@@ -57,7 +65,7 @@
             SelectedItem="{Binding SelectedVectorDBItem}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="100" Header="有効">
+                    <GridViewColumn Width="Auto" Header="有効">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -65,15 +73,15 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn
-                        Width="250"
+                        Width="Auto"
                         DisplayMemberBinding="{Binding Name}"
                         Header="名前" />
                     <GridViewColumn
-                        Width="250"
+                        Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBURL}"
                         Header="ベクトルDBの場所" />
                     <GridViewColumn
-                        Width="250"
+                        Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBTypeString}"
                         Header="ベクトルDBのタイプ" />
                 </GridView>
