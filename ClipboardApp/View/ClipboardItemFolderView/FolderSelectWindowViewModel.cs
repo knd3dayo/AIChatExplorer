@@ -1,60 +1,50 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView
-{
+namespace ClipboardApp.View.ClipboardItemFolderView {
 
-    public class FolderSelectWindowViewModel : ObservableObject
-    {
+    public class FolderSelectWindowViewModel : ObservableObject {
         private static FolderSelectWindowViewModel? Instance;
         // フォルダツリーのルート
-        public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = new ObservableCollection<ClipboardFolderViewModel>();
+        public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = [];
 
         // フォルダ選択時のAction
         public Action<ClipboardFolderViewModel>? FolderSelectedAction { get; set; }
 
         // 選択されたフォルダ
-        private ClipboardFolderViewModel? _selectedFolder { get; set; }
-        public ClipboardFolderViewModel? SelectedFolder
-        {
-            get
-            {
-                return _selectedFolder;
+        private ClipboardFolderViewModel? selectedFolder;
+        public ClipboardFolderViewModel? SelectedFolder {
+            get {
+                return selectedFolder;
             }
-            set
-            {
-                _selectedFolder = value;
-                OnPropertyChanged("SelectedFolder");
+            set {
+                selectedFolder = value;
+                OnPropertyChanged(nameof(SelectedFolder));
             }
         }
 
         private string _selectedFolderAbsoluteCollectionName = "";
-        public string SelectedFolderAbsoluteCollectionName
-        {
-            get
-            {
+        public string SelectedFolderAbsoluteCollectionName {
+            get {
                 return _selectedFolderAbsoluteCollectionName;
             }
-            set
-            {
+            set {
                 _selectedFolderAbsoluteCollectionName = value;
-                OnPropertyChanged("SelectedFolderAbsoluteCollectionName");
+                OnPropertyChanged(nameof(SelectedFolderAbsoluteCollectionName));
             }
         }
 
-        public void Initialize(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction)
-        {
+        public void Initialize(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction) {
 
             FolderSelectedAction = _FolderSelectedAction;
-            if (rootFolderViewModel == null)
-            {
+            if (rootFolderViewModel == null) {
                 return;
             }
             RootFolders.Add(rootFolderViewModel);
             Instance = this;
         }
-        public static SimpleDelegateCommand SelectFolderCommand => new ((parameter) => {
+        public static SimpleDelegateCommand SelectFolderCommand => new((parameter) => {
             if (Instance == null) {
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
@@ -79,20 +69,17 @@ namespace ClipboardApp.View.ClipboardItemFolderView
 
         });
 
-        public static void FolderSelectWindowSelectFolderCommandExecute(object parameter)
-        {
-            if (Instance == null)
-            {
+        public static void FolderSelectWindowSelectFolderCommandExecute(object parameter) {
+            if (Instance == null) {
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
-            if (parameter is not ClipboardFolderViewModel folder)
-            {
+            if (parameter is not ClipboardFolderViewModel folder) {
                 Tools.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
             Instance.SelectedFolder = folder;
-            Instance.SelectedFolderAbsoluteCollectionName = folder.ClipboardItemFolder.AbsoluteCollectionName;
+            Instance.SelectedFolderAbsoluteCollectionName = folder.AbsoluteCollectionName;
 
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace WpfAppCommon.Model {
 
-    public partial class AutoProcessItem {
+    public partial class SystemAutoProcessItem {
         // System処理の名前
         public class AutoProcessActionName {
             public bool IsSystemAction { get; set;}

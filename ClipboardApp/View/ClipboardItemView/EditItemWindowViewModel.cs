@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.TagView;
@@ -20,9 +20,9 @@ namespace ClipboardApp.View.ClipboardItemView
             }
             set {
                 itemViewModel = value;
-                TagsString = string.Join(",", itemViewModel?.ClipboardItem?.Tags ?? new HashSet<string>());
-                Description = itemViewModel?.ClipboardItem?.Description ?? "";
-                Content = itemViewModel?.ClipboardItem?.Content ?? "";
+                TagsString = string.Join(",", itemViewModel?.Tags ?? []);
+                Description = itemViewModel?.Description ?? "";
+                Content = itemViewModel?.Content ?? "";
 
                 OnPropertyChanged("ClipboardItemViewModel");
             }
@@ -33,7 +33,7 @@ namespace ClipboardApp.View.ClipboardItemView
             get { return _description; }
             set {
                 _description = value;
-                OnPropertyChanged("Description");
+                OnPropertyChanged(nameof(Description));
             }
         }
         private string _content = "";
@@ -41,7 +41,7 @@ namespace ClipboardApp.View.ClipboardItemView
             get { return _content; }
             set {
                 _content = value;
-                OnPropertyChanged("Content");
+                OnPropertyChanged(nameof(Content));
             }
         }
 
@@ -52,7 +52,7 @@ namespace ClipboardApp.View.ClipboardItemView
             }
             set {
                 title = value;
-                OnPropertyChanged("Title");
+                OnPropertyChanged(nameof(Title));
             }
         }
 
@@ -65,7 +65,7 @@ namespace ClipboardApp.View.ClipboardItemView
             }
             set {
                 _tagsString = value;
-                OnPropertyChanged("TagsString");
+                OnPropertyChanged(nameof(TagsString));
             }
         }
 
@@ -75,7 +75,7 @@ namespace ClipboardApp.View.ClipboardItemView
             if (itemViewModel == null) {
                 ClipboardItem clipboardItem = new() {
                     // CollectionNameを設定
-                    CollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName
+                    CollectionName = folderViewModel.AbsoluteCollectionName
                 };
 
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
@@ -90,29 +90,22 @@ namespace ClipboardApp.View.ClipboardItemView
 
 
         // タグ追加ボタンのコマンド
-        public SimpleDelegateCommand AddTagButtonCommand => new SimpleDelegateCommand(EditTagCommandExecute);
-
-        /// <summary>
-        /// コンテキストメニューのタグをクリックしたときの処理
-        /// 更新後にフォルダ内のアイテムを再読み込みする
-        /// </summary>
-        /// <param name="obj"></param>
-        public void EditTagCommandExecute(object obj) {
+        public SimpleDelegateCommand AddTagButtonCommand => new((obj) => {
 
             if (ItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow tagWindow = new TagWindow();
+            TagWindow tagWindow = new();
             TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
-            tagWindowViewModel.Initialize(ItemViewModel.ClipboardItem, () => {
+            tagWindowViewModel.Initialize(ItemViewModel, () => {
                 // TagsStringを更新
-                TagsString = string.Join(",", ItemViewModel.ClipboardItem.Tags);
+                TagsString = string.Join(",", ItemViewModel.Tags);
             });
 
             tagWindow.ShowDialog();
 
-        }
+        });
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
 
@@ -154,7 +147,7 @@ namespace ClipboardApp.View.ClipboardItemView
                     return;
                 }
                 // 選択対象文字列
-                string selectedText = editor.Text.Substring(lineStart, lineEnd - lineStart);
+                string selectedText = editor.Text[lineStart..lineEnd];
                 // URLの場合はURL選択にする
                 int[]? ints = Tools.GetURLPosition(selectedText);
                 if (ints != null && URLSelected == false) {
@@ -190,10 +183,10 @@ namespace ClipboardApp.View.ClipboardItemView
             if (ItemViewModel == null) {
                 return;
             }
-            ItemViewModel.ClipboardItem.Description = Description;
-            ItemViewModel.ClipboardItem.Content = Content;
+            ItemViewModel.Description = Description;
+            ItemViewModel.Content = Content;
             // ClipboardItemを更新
-            ItemViewModel.ClipboardItem.Save();
+            ItemViewModel.Save();
             // 更新後の処理を実行
             _afterUpdate?.Invoke();
             if (parameter is not Window window) {

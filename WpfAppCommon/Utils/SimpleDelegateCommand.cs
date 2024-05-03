@@ -1,4 +1,4 @@
-﻿using System.Windows.Input;
+using System.Windows.Input;
 
 namespace WpfAppCommon.Utils
 {
@@ -10,7 +10,7 @@ namespace WpfAppCommon.Utils
         public ModifierKeys GestureModifier { get; set; }
         public MouseAction MouseGesture { get; set; }
 
-        Action<object?> _executeDelegate;
+        readonly Action<object?> _executeDelegate;
 
         public SimpleDelegateCommand(Action<object> executeDelegate)
         {

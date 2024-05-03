@@ -1,18 +1,12 @@
 ﻿
 using System.Text;
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.SettingWindow {
-    public class SettingWindowViewModel : MyWindowViewModel {
-        public enum PythonExecModeEnum {
-            None,
-            PythonNet,
-        }
+    public partial class SettingWindowViewModel : MyWindowViewModel {
 
         // MonitorTargetAppNames
         public string MonitorTargetAppNames {
@@ -52,7 +46,7 @@ namespace ClipboardApp.View.SettingWindow {
                 OnPropertyChanged(nameof(UseOpenAIVisibility));
                 OnPropertyChanged(nameof(AzureOpenAIVisibility));
                 OnPropertyChanged(nameof(UseSpacyVisibility));
-
+                OnPropertyChanged(nameof(UseOCRVisibility));
 
             }
         }

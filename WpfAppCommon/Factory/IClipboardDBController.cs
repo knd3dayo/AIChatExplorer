@@ -1,4 +1,4 @@
-﻿using QAChat.Model;
+using QAChat.Model;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Factory {
@@ -34,7 +34,7 @@ namespace WpfAppCommon.Factory {
         public void UpsertSearchRule(SearchRule conditionRule);
 
         // -- AutoProcessRule
-        public IEnumerable<AutoProcessRule> GetAutoProcessRules(ClipboardFolder? targetFolder);
+        public List<AutoProcessRule> GetAutoProcessRules(ClipboardFolder targetFolder);
 
         public IEnumerable<AutoProcessRule> GetAllAutoProcessRules();
 
@@ -49,7 +49,8 @@ namespace WpfAppCommon.Factory {
 
         public void DeleteTag(TagItem tag);
 
-        public void InsertTag(TagItem tag);
+        public void UpsertTag(TagItem tag);
+
 
         public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
 

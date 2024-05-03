@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
 using WpfAppCommon.Factory;
@@ -10,7 +10,7 @@ namespace WpfAppCommon.Model {
     public class ClipboardFolder : ObservableObject {
 
         // アプリ共通の検索条件
-        public static SearchRule GlobalSearchCondition = new SearchRule();
+        public static SearchRule GlobalSearchCondition { get; set; } = new ();
 
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
@@ -28,11 +28,27 @@ namespace WpfAppCommon.Model {
 
         // プロパティ
         // LiteDBのID
-        public ObjectId? Id { get; set; }
+        public ObjectId Id { get; set; } = ObjectId.Empty;
         // フォルダの表示名
         public string DisplayName { get; set; } = "";
         // フォルダの絶対パス
         public string AbsoluteCollectionName { get; set; } = "";
+
+        // AutoProcessRuleのIdのリスト
+        public IEnumerable<int> AutoProcessRuleIds { get; set; } = [];
+
+        // AutoProcessRuleのリスト
+        public ObservableCollection<AutoProcessRule> AutoProcessRules {
+            get {
+                ObservableCollection<AutoProcessRule> autoProcessRules = [.. AutoProcessRuleController.GetAutoProcessRules(this)];
+                return autoProcessRules;
+            }
+        }
+        // AddAutoProcessRule
+        public void AddAutoProcessRule(AutoProcessRule rule) {
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDatabaseController.UpsertAutoProcessRule(rule);
+        }
 
         // 検索フォルダかどうか
         public bool IsSearchFolder { get; set; } = false;
@@ -43,7 +59,7 @@ namespace WpfAppCommon.Model {
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
         public ObservableCollection<ClipboardFolder> Children {
             get {
-                ObservableCollection<ClipboardFolder> children = new ObservableCollection<ClipboardFolder>();
+                ObservableCollection<ClipboardFolder> children = [];
                 // AbsoluteCollectionNameが空の場合は空のリストを返す
                 if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
                     return children;
@@ -60,16 +76,16 @@ namespace WpfAppCommon.Model {
                 return children;
             }
         }
-        // Tools
-        public Tools? Tools { get; set; }
-
-        public void AddChild(ClipboardFolder child) {
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            ClipboardDatabaseController.UpsertFolderRelation(this, child);
-        }
         public void DeleteChild(ClipboardFolder child) {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.DeleteFolder(child);
+        }
+        public ClipboardFolder CreateChild(string collectionName, string displayName) {
+            ClipboardFolder child = new (this, collectionName, displayName);
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDatabaseController.UpsertFolderRelation(this, child);
+
+            return child;
         }
 
         // アイテム BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
@@ -77,9 +93,9 @@ namespace WpfAppCommon.Model {
             get {
                 // AbsoluteCollectionNameが空の場合は空のリストを返す
                 if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
-                    return new ObservableCollection<ClipboardItem>();
+                    return [];
                 }
-                IEnumerable<ClipboardItem> items = new List<ClipboardItem>();
+                IEnumerable<ClipboardItem> items = [];
                 // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
                 // 検索フォルダの場合は、SearchConditionを適用して取得
                 IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
@@ -167,6 +183,11 @@ namespace WpfAppCommon.Model {
             // LiteDBに保存
             item.Delete();
         }
+        // Delete
+        public void Delete() {
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            ClipboardDatabaseController.DeleteFolder(this);
+        }
 
 
         // 自動処理を適用する処理
@@ -188,7 +209,7 @@ namespace WpfAppCommon.Model {
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string directoryPath) {
-            JsonArray jsonArray = new JsonArray();
+            JsonArray jsonArray = [];
             foreach (ClipboardItem item in Items) {
                 jsonArray.Add(ClipboardItem.ToJson(item));
             }
@@ -215,7 +236,7 @@ namespace WpfAppCommon.Model {
             // Itemsをクリア
             Items.Clear();
 
-            foreach (JsonValue? jsonValue in jsonArray) {
+            foreach (JsonValue? jsonValue in jsonArray.Cast<JsonValue?>()) {
                 if (jsonValue == null) {
                     continue;
                 }
@@ -240,7 +261,7 @@ namespace WpfAppCommon.Model {
             if (Items.Count == 0) {
                 return;
             }
-            List<ClipboardItem> sameTitleItems = new List<ClipboardItem>();
+            List<ClipboardItem> sameTitleItems = [];
             // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
             foreach (var item in Items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
@@ -250,7 +271,7 @@ namespace WpfAppCommon.Model {
                     }
                 }
             }
-            // mergeFromItemsが空の場合はnewItemをそのまま返す。
+            // mergeFromItemsが空の場合は、newItemをそのまま返す。
             if (sameTitleItems.Count == 0) {
                 return;
             }
@@ -259,7 +280,7 @@ namespace WpfAppCommon.Model {
             // sameTitleItemsの1から最後までをマージ元のアイテムとする
             sameTitleItems.RemoveAt(sameTitleItems.Count - 1);
 
-            // sameTitleItemsにnewItemを追加
+            // sameTitleItemsに、newItemを追加
             sameTitleItems.Insert(0, newItem);
             // マージ元のアイテムをマージ先のアイテムにマージ
 
@@ -280,7 +301,7 @@ namespace WpfAppCommon.Model {
             }
 
             // マージ元のアイテム
-            List<ClipboardItem> mergedFromItems = new List<ClipboardItem>();
+            List<ClipboardItem> mergedFromItems = [];
             for (int i = Items.Count - 1; i > 0; i--) {
                 // TypeがTextのアイテムのみマージ
                 if (Items[i].ContentType == ClipboardContentTypes.Text) {
@@ -291,13 +312,13 @@ namespace WpfAppCommon.Model {
             mergedFromItems.Insert(0, item);
             // mergeToItemを取得(更新時間が一番古いアイテム)
             ClipboardItem mergeToItem = mergedFromItems.Last();
-            // mergedFromItemsからmergeToItemを削除
+            // mergedFromItemsから、mergeToItemを削除
             mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
 
             // マージ元のアイテムをマージ先のアイテムにマージ
             mergeToItem.MergeItems(mergedFromItems, false, Tools.DefaultAction);
 
-            // マージ先アイテムをnewItemにコピー
+            // マージ先アイテムを、newItemにコピー
             mergeToItem.CopyTo(item);
 
             // マージしたアイテムを削除

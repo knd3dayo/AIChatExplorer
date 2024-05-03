@@ -292,7 +292,7 @@ namespace WpfAppCommon.PythonIF {
                 // chatHistoryをJSON文字列に変換
                 string chatItemsJSon = ChatItem.ToJson(chatHistory);
                 // VectorDBItemsのサイズが0の場合は例外をスロー
-                if (vectorDBItems.Count() == 0) {
+                if (!vectorDBItems.Any()) {
                     throw new ThisApplicationException("VectorDBItemsが空です");
                 }
                 // VectorDBItemのリストをJSON文字列に変換
@@ -312,8 +312,8 @@ namespace WpfAppCommon.PythonIF {
                 PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                 if (referencedContents != null) {
                     List<Dictionary<string,string>> referencedContentsList = [];
-                    foreach (PyDict item in referencedContents) {
-                        Dictionary<string,string> dict = new();
+                    foreach (PyDict item in referencedContents.Cast<PyDict>()) {
+                        Dictionary<string,string> dict = [];
                         foreach (var key in item.Keys()) {
                             PyObject? entity = item.GetItem(key);
                             if (entity == null) {

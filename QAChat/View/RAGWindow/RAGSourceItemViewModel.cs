@@ -10,7 +10,7 @@ using WpfAppCommon.Model;
 namespace QAChat.View.RAGWindow {
     public class RAGSourceItemViewModel : MyWindowViewModel {
 
-        private RAGSourceItem item;
+        private readonly RAGSourceItem item;
         public RAGSourceItemViewModel(RAGSourceItem item) {
             this.item = item;
         }

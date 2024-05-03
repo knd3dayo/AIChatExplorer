@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
+using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
@@ -9,26 +10,17 @@ namespace ClipboardApp.View.TagView {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
-        private ClipboardItem? _clipboardItem;
+        private ClipboardItemViewModel? itemViewModel;
 
         Action? _afterUpdate;
 
-        public void Initialize(ClipboardItem? clipboardItem, Action afterUpdate) {
-            _clipboardItem = clipboardItem;
+        public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+            this.itemViewModel = itemViewModel;
             _afterUpdate = afterUpdate;
-            if (clipboardItem == null) {
-                return;
-            }
-            foreach (var item in TagList) {
-                var tagString = item.Tag;
-                item.IsChecked = clipboardItem.Tags.Contains(tagString);
-            }
+            ReloadTagList();
 
         }
         public TagWindowViewModel() {
-            foreach (var item in TagController.GetTagList()) {
-                TagList.Add(new TagItemViewModel(item));
-            }
         }
 
         //新規タグのテキスト
@@ -44,7 +36,7 @@ namespace ClipboardApp.View.TagView {
         }
 
         // タグを追加したときの処理
-        public SimpleDelegateCommand AddTagCommand => new SimpleDelegateCommand(AddTagCommandExecute);
+        public SimpleDelegateCommand AddTagCommand => new (AddTagCommandExecute);
 
         private void AddTagCommandExecute(object parameter) {
             if (parameter is not string) {
@@ -54,6 +46,7 @@ namespace ClipboardApp.View.TagView {
             string tag = (string)parameter;
             if (string.IsNullOrEmpty(tag)) {
                 Tools.Error("タグが空です");
+                return;
             }
             //tagが既に存在するかチェック
             foreach (var item in TagList) {
@@ -63,45 +56,52 @@ namespace ClipboardApp.View.TagView {
                 }
             }
 
-            TagItem tagItem = new TagItem { Tag = tag };
-            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tagItem);
+            TagItem tagItem = new () { Tag = tag };
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
             TagList.Add(new TagItemViewModel(tagItem));
             NewTag = "";
+            // LiteDBから再読み込み
+            ReloadTagList();
+
+        }
+        // LiteDBから再読み込み
+        public void ReloadTagList() {
+            TagList.Clear();
+            foreach (var item in TagItem.GetTagList()) {
+                TagList.Add(new TagItemViewModel(item));
+                if (itemViewModel != null) {
+                    var tagString = item.Tag;
+                    TagList.Last().IsChecked = itemViewModel.Tags.Contains(tagString);
+                }
+            }
         }
 
         // タグを削除したときの処理
-        public SimpleDelegateCommand DeleteTagCommand => new SimpleDelegateCommand(
-            (parameter) => {
+        public SimpleDelegateCommand DeleteTagCommand => new ((parameter) => {
                 // IsCheckedがTrueのものを削除
                 foreach (var item in TagList) {
                     if (item.IsChecked) {
                         // LiteDBから削除
                         item.TagItem.Delete();
-
-                        // TagListから削除
-                        TagList.Remove(item);
                     }
                 }
                 // LiteDBから再読み込み
-                TagList.Clear();
-                foreach (var item in TagController.GetTagList()) {
-                    TagList.Add(new TagItemViewModel(item));
-                }
+                ReloadTagList();
             });
 
         // OKボタンを押したときの処理
         public SimpleDelegateCommand OkCommand => new((parameter) => {
-            if (_clipboardItem != null) {
+            if (itemViewModel != null) {
                 // TagListのチェックを反映
                 foreach (var item in TagList) {
                     if (item.IsChecked) {
-                        _clipboardItem.Tags.Add(item.Tag);
+                        itemViewModel.Tags.Add(item.Tag);
                     } else {
-                        _clipboardItem.Tags.Remove(item.Tag);
+                        itemViewModel.Tags.Remove(item.Tag);
                     }
                 }
                 // DBに反映
-                _clipboardItem.Save();
+                itemViewModel.Save();
 
             }
             // 更新後の処理を実行
@@ -126,6 +126,19 @@ namespace ClipboardApp.View.TagView {
         // 検索ウィンドウを開く
         public SimpleDelegateCommand OpenSearchWindowCommand => new((parameter) => {
             var searchWindow = new TagSearchWindow();
+            var searchWindowViewModel = (TagSearchWindowViewModel)searchWindow.DataContext;
+            searchWindowViewModel.Initialize((tag, exclude) => {
+                // タグを検索
+                TagList.Clear();
+                foreach (var item in TagItem.FilterTag(tag, exclude)) {
+                    TagList.Add(new TagItemViewModel(item));
+                    if (itemViewModel != null) {
+                        var tagString = item.Tag;
+                        TagList.Last().IsChecked = itemViewModel.Tags.Contains(tagString);
+                    }
+                }
+
+            });
             searchWindow.Show();
         });
     }

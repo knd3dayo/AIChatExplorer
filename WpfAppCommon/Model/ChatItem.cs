@@ -1,19 +1,14 @@
-﻿using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using WpfAppCommon;
-using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 
 namespace QAChat.Model {
     public class ChatItem {
 
-        public static string SystemRole = "system";
-        public static string AssistantRole = "assistant";
-        public static string UserRole = "user";
+        public static string SystemRole { get; } = "system";
+        public static string AssistantRole { get; } = "assistant";
+        public static string UserRole { get; } = "user";
 
         [JsonPropertyName("role")]
         public string Role { get; set; } = SystemRole;
@@ -23,7 +18,7 @@ namespace QAChat.Model {
 
         // JSON化しないプロパティ
         [JsonIgnore]
-        public List<string> Sources { get; set; } = new List<string>();
+        public List<string> Sources { get; set; } = [];
 
         [JsonIgnore]
         public string SourceDocumentURL { get; set; } = "";
@@ -56,10 +51,11 @@ namespace QAChat.Model {
         }
         // ChatItemsをJSON文字列に変換する
         public static string ToJson(IEnumerable<ChatItem> items) {
-            var options = new JsonSerializerOptions {
+            JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
+            JsonSerializerOptions options = jsonSerializerOptions;
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
 

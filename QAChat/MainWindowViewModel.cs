@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,7 +24,7 @@ namespace QAChat {
                 OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
-        // モード
+        // モード 0:Normal 1:LangChainWithVectorDB
         private int _Mode = (int)OpenAIExecutionModeEnum.Normal;
         public int Mode {
             get {
@@ -34,8 +34,6 @@ namespace QAChat {
                 _Mode = value;
                 OnPropertyChanged(nameof(Mode));
             }
-        }
-        public MainWindowViewModel() {
         }
         public static ChatItem? SelectedItem { get; set; }
 

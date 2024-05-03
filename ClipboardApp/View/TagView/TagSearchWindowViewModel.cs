@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,11 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.TagView {
     public class TagSearchWindowViewModel: MyWindowViewModel{
+        private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
+        public void Initialize(Action<string, bool> afterUpdate) {
+            _afterUpdate = afterUpdate;
+        }
         private bool _excludeTag = false;
         public bool ExcludeTag {
             get {
@@ -48,6 +52,8 @@ namespace ClipboardApp.View.TagView {
 
         // 検索ボタンの処理
         public SimpleDelegateCommand SearchCommand => new((parameter) => {
+            _afterUpdate(TagName, ExcludeTag);
+
             if (parameter is not System.Windows.Window window) {
                 return;
             }

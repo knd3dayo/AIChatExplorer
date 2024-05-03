@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.Model;
@@ -97,18 +97,23 @@ namespace WpfAppCommon.Factory.Default {
         }
 
         // 指定したTargetFolderを持つAutoProcessRuleを取得する
-        public IEnumerable<AutoProcessRule> GetAutoProcessRules(ClipboardFolder? targetFolder) {
+        public List<AutoProcessRule> GetAutoProcessRules(ClipboardFolder targetFolder) {
+            List<AutoProcessRule> result = [];
             if (targetFolder == null) {
-                return GetAllAutoProcessRules();
+                return result;
             }
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
-            var items = collection.FindAll()
-                .Where(x => x.TargetFolder != null && x.TargetFolder.AbsoluteCollectionName == targetFolder.AbsoluteCollectionName)
-                .OrderBy(x => x.RuleName);
+            // targetFolderのAutoProcessRuleIdsに対応するAutoProcessRuleを取得
+            foreach (var i in targetFolder.AutoProcessRuleIds) {
+                var item = collection.FindById(i);
+                if (item != null) {
+                    result.Add(item);
+                }
+            }
 
-            ObservableCollection<AutoProcessRule> result = [.. items];
             return result;
         }
+
         // すべてのAutoProcessRuleを取得する
         public IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
@@ -131,8 +136,8 @@ namespace WpfAppCommon.Factory.Default {
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
             var items = collection.FindAll().Where(
                 x => x.RuleAction != null
-                && (x.RuleAction.Name == AutoProcessItem.AutoProcessActionName.CopyToFolder.Name
-                    || x.RuleAction.Name == AutoProcessItem.AutoProcessActionName.MoveToFolder.Name));
+                && (x.RuleAction.Name == SystemAutoProcessItem.AutoProcessActionName.CopyToFolder.Name
+                    || x.RuleAction.Name == SystemAutoProcessItem.AutoProcessActionName.MoveToFolder.Name));
             return items;
 
         }
@@ -361,7 +366,7 @@ namespace WpfAppCommon.Factory.Default {
         // 名前を指定してタグを検索する
         public IEnumerable<TagItem> SearchTag(TagItem tag) {
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var tags = collection.FindAll().Where(x => x.Tag.Contains(tag.Tag));
+            var tags = collection.FindAll().Where(x => x.Tag != null && x.Tag.Contains(tag.Tag));
             return tags;
 
         }
@@ -378,15 +383,13 @@ namespace WpfAppCommon.Factory.Default {
         }
         // タグを削除する
         public void DeleteTag(TagItem tag) {
-            var tags = SearchTag(tag);
+
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            foreach (var i in tags) {
-                collection.Delete(i.Id);
-            }
+            collection.Delete(tag.Id);
         }
 
         // タグを追加する
-        public void InsertTag(TagItem tag) {
+        public void UpsertTag(TagItem tag) {
             // すでに存在するかチェック
             var tags = SearchTag(tag);
             foreach (var i in tags) {

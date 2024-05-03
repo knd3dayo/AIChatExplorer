@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="ClipboardApp.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -128,36 +128,43 @@
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding StringResources.File}">
+                            <!--  Toggle Clipbord Monitoring  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding ToggleClipboardMonitor}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding ClipboardMonitorButtonText}" />
+                                Header="{Binding ClipboardMonitorButtonText}"
+                                ToolTip="{Binding StringResources.ToggleClipboardWatchToolTop}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.Create}">
+                                <!--  Create Item  -->
                                 <MenuItem
                                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                     Command="{Binding CreateItemCommand}"
                                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                    Header="{Binding StringResources.CreateItem}" />
+                                    Header="{Binding StringResources.CreateItem}"
+                                    ToolTip="{Binding StringResources.CreateItemToolTip}" />
                             </MenuItem>
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding ExitCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.Exit}" />
+                                Header="{Binding StringResources.Exit}"
+                                ToolTip="{Binding StringResources.ExitToolTip}" />
                         </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding StringResources.Edit}">
+                            <!--  Edit Tag  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenTagWindowCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditTag}" />
+                                Header="{Binding StringResources.EditTag}"
+                                ToolTip="{Binding StringResources.EditTagToolTip}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenListAutoProcessRuleWindowCommand}"

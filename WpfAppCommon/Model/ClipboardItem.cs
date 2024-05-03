@@ -1,15 +1,15 @@
-﻿using System.Text.Encodings.Web;
+using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using WpfAppCommon.Utils;
 using LiteDB;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
-using WpfAppCommon.PythonIF;
 using QAChat.Model;
-using System.IO;
+using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
+using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace WpfAppCommon.Model {
-    public  enum ClipboardContentTypes {
+    public enum ClipboardContentTypes {
         Text,
         Files,
         Image,
@@ -61,7 +61,7 @@ namespace WpfAppCommon.Model {
         // -------------------------------------------------------------------
 
         public ClipboardItem Copy() {
-            ClipboardItem newItem = new ();
+            ClipboardItem newItem = new();
             CopyTo(newItem);
             return newItem;
 
@@ -79,8 +79,8 @@ namespace WpfAppCommon.Model {
         }
 
         public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {
-            if (this.ContentType != ClipboardContentTypes.Text) {
-                action(ActionMessage.Error("Text以外のアイテムへのマージはできません"));
+            if (ContentType != ClipboardContentTypes.Text) {
+                action?.Invoke(ActionMessage.Error("Text以外のアイテムへのマージはできません"));
                 return;
             }
             string mergeText = "\n";
@@ -91,7 +91,7 @@ namespace WpfAppCommon.Model {
 
                 // Itemの種別がFileが含まれている場合はマージしない
                 if (item.ContentType != ClipboardContentTypes.Files && item.ContentType != ClipboardContentTypes.Text) {
-                    action(ActionMessage.Error("Fileが含まれているアイテムはマージできません"));
+                    action?.Invoke(ActionMessage.Error("Fileが含まれているアイテムはマージできません"));
                     return;
                 }
             }
@@ -162,18 +162,20 @@ namespace WpfAppCommon.Model {
 
         // ClipboardItemをJSON文字列に変換する
         public static string ToJson(ClipboardItem item) {
-            var options = new JsonSerializerOptions {
+            JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
+            var options = jsonSerializerOptions;
             return System.Text.Json.JsonSerializer.Serialize(item, options);
         }
         // JSON文字列をClipboardItemに変換する
         public static ClipboardItem? FromJson(string json, Action<ActionMessage> action) {
-            var options = new JsonSerializerOptions {
+            JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
+            var options = jsonSerializerOptions;
             ClipboardItem? item = System.Text.Json.JsonSerializer.Deserialize<ClipboardItem>(json, options);
             if (item == null) {
                 action(ActionMessage.Error("JSON文字列をClipboardItemに変換できませんでした"));
@@ -214,19 +216,19 @@ namespace WpfAppCommon.Model {
         }
 
         // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
-        public static void SplitFilePathCommandExecute(ClipboardItem clipboardItem) {
+        public void SplitFilePathCommandExecute() {
 
-            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
+            if (this.ContentType != ClipboardContentTypes.Files) {
                 throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
-            string path = clipboardItem.Content;
+            string path = this.Content;
             if (string.IsNullOrEmpty(path) == false) {
                 // ファイルパスをフォルダ名とファイル名に分割
                 string? folderPath = Path.GetDirectoryName(path) ?? throw new ThisApplicationException("フォルダパスが取得できません");
                 string? fileName = Path.GetFileName(path);
-                clipboardItem.Content = folderPath + "\n" + fileName;
+                this.Content = folderPath + "\n" + fileName;
                 // ContentTypeをTextに変更
-                clipboardItem.ContentType = ClipboardContentTypes.Text;
+                this.ContentType = ClipboardContentTypes.Text;
                 // StatusTextにメッセージを表示
                 Tools.Info("ファイルパスをフォルダ名とファイル名に分割しました");
             }
@@ -240,7 +242,7 @@ namespace WpfAppCommon.Model {
             foreach (var entity in entities) {
                 // LiteDBにタグを追加
                 TagItem tagItem = new() { Tag = entity };
-                ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(tagItem);
+                ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
                 // タグを追加
                 item.Tags.Add(entity);
             }
@@ -264,18 +266,17 @@ namespace WpfAppCommon.Model {
         }
 
         // 自動処理でデータをマスキング」を実行するコマンド
-        public static ClipboardItem MaskDataCommandExecute(ClipboardItem clipboardItem) {
+        public ClipboardItem MaskDataCommandExecute() {
 
-            if (clipboardItem.ContentType != ClipboardContentTypes.Text) {
+            if (this.ContentType != ClipboardContentTypes.Text) {
                 throw new ThisApplicationException("テキスト以外のコンテンツはマスキングできません");
             }
-            Dictionary<string, List<string>> maskPatterns = [];
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
-            string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, clipboardItem.Content);
-            clipboardItem.Content = result;
+            string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, this.Content);
+            this.Content = result;
 
-            Tools.Info( "データをマスキングしました");
-            return clipboardItem;
+            Tools.Info("データをマスキングしました");
+            return this;
         }
 
         public static string CovertMaskedDataToOriginalData(MaskedData? maskedData, string maskedText) {

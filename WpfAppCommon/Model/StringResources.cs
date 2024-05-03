@@ -1,4 +1,4 @@
-﻿namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model {
     public class StringResources {
 
         public static StringResources Instance { get; } = new StringResources();
@@ -13,6 +13,15 @@
         public string Exit { get; } = "終了";
         // 編集
         public string Edit { get; } = "編集";
+        // 開始
+        public string Start { get; } = "開始";
+        // 停止
+        public string Stop { get; } = "停止";
+        // クリップボード監視を開始しました
+        public string StartClipboardWatch { get; } = "クリップボード監視を開始しました";
+        // クリップボード監視を停止しました
+        public string StopClipboardWatch { get; } = "クリップボード監視を停止しました";
+
         // タグ編集
         public string EditTag { get; } = "タグ編集";
         // 自動処理ルール編集
@@ -63,6 +72,17 @@
         // ベクトルDB編集
         public string EditVectorDB { get; } = "ベクトルDB編集";
 
+        // --- ToolTip ---
+        // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
+        public string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
+
+        // 選択中のフォルダにアイテムを作成します。
+        public string CreateItemToolTip { get; } = "選択中のフォルダにアイテムを作成します。";
+
+        // アプリケーションを終了します。
+        public string ExitToolTip { get; } = "アプリケーションを終了します。";
+        // タグを編集します。
+        public string EditTagToolTip { get; } = "タグを編集します。";
 
         // --- 画面タイトル ---
 

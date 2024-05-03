@@ -1,10 +1,9 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.Views.ClipboardItemView;
-using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Control;
 using WpfAppCommon.Factory;
@@ -18,13 +17,42 @@ namespace ClipboardApp {
 
     public class MainWindowViewModel : MyWindowViewModel {
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// 
+
+        public MainWindowViewModel() {
+            // データベースのチェックポイント処理
+            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
+            // ステータスバークリック時に実行するコマンド
+            MyStatusBarViewModel.OpenStatusMessageWindow = MainWindowCommand.OpenStatusMessageWindowCommand;
+
+            // フォルダ階層を再描写する
+            ReloadFolder();
+
+            // Python処理機能の初期化
+            string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+            PythonExecutor.Init(pythonDLLPath);
+
+            // コンテキストメニューの初期化
+            ClipboardItemContextMenuItems = new ClipboardItemFolderContextMenuItems(this);
+
+            // DBのバックアップの取得
+            IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
+            backupController.BackupNow();
+
+            // ProgressIndicatorの表示更新用のアクションをセット
+            UpdateProgressCircleVisibility = (visible) => {
+                IsIndeterminate = visible;
+            };
+            // RootFolderのViewModel
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+        }
 
         // プログレスインジケータ表示更新用のアクション
         // 
         public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };
-
-        // Tools
-        public static Tools? Tools { get; private set; }
 
         // Progress Indicatorの表示フラグ
         private bool _IsIndeterminate = false;
@@ -34,19 +62,19 @@ namespace ClipboardApp {
             }
             set {
                 _IsIndeterminate = value;
-                OnPropertyChanged("IsIndeterminate");
+                OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
 
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
-                return IsClipboardMonitor ? "停止" : "開始";
+                return IsClipboardMonitor ? StringResources.Stop : StringResources.Start;
             }
         }
         // クリップボード監視を開始、終了するフラグ
         private bool _isClipboardMonitor = false;
-        public bool IsClipboardMonitor {
+        public bool IsClipboardMonitor {    
             get {
                 return _isClipboardMonitor;
             }
@@ -58,17 +86,16 @@ namespace ClipboardApp {
                         // クリップボードが変更された時の処理
                         SelectedFolder?.Load();
                     });
-
-                    Tools.Info("クリップボード監視を開始しました");
+                    Tools.Info(StringResources.StartClipboardWatch);
                 } else {
                     ClipboardAppFactory.Instance.GetClipboardController().Stop();
-                    Tools.Info("クリップボード監視を停止しました");
+                    Tools.Info(StringResources.StopClipboardWatch);
                 }
             }
         }
         // ClipboardFolder
 
-        public static ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = new ObservableCollection<ClipboardFolderViewModel>();
+        public static ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
 
         // RootFolderのClipboardViewModel
         public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; } 
@@ -76,7 +103,7 @@ namespace ClipboardApp {
         // Cutフラグ
         public bool CutFlag { get; set; } = false;
         // 選択中のアイテム(複数選択)
-        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = new ObservableCollection<ClipboardItemViewModel>();
+        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = [];
 
         // 選択中のアイテム
         private ClipboardItemViewModel? _selectedItem = null;
@@ -107,7 +134,7 @@ namespace ClipboardApp {
             }
         }
         // Ctrl + C or X が押された時のClipboardItem
-        public List<ClipboardItemViewModel> CopiedItems { get; set; } = new List<ClipboardItemViewModel>();
+        public List<ClipboardItemViewModel> CopiedItems { get; set; } = [];
 
         // Ctrl + C or X  が押された時のClipboardItemFolder
         public ClipboardFolderViewModel? CopiedItemFolder { get; set; } = null;
@@ -117,7 +144,7 @@ namespace ClipboardApp {
         //-----
         public ClipboardItemFolderContextMenuItems? ClipboardItemContextMenuItems { get; set; } = null;
 
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = [];
 
         // 表示・非表示の設定
         public Visibility UsePythonVisibility {
@@ -132,34 +159,6 @@ namespace ClipboardApp {
                 }
                 return Visibility.Collapsed;
             }
-        }
-
-        public MainWindowViewModel() {
-            // データベースのチェックポイント処理
-            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
-            // ステータスバークリック時に実行するコマンド
-            MyStatusBarViewModel.OpenStatusMessageWindow = MainWindowCommand.OpenStatusMessageWindowCommand;
-
-            // フォルダ階層を再描写する
-            ReloadFolder();
-
-            // Python処理機能の初期化
-            string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
-            PythonExecutor.Init(pythonDLLPath);
-
-            // コンテキストメニューの初期化
-            ClipboardItemContextMenuItems = new ClipboardItemFolderContextMenuItems(this);
-
-            // DBのバックアップの取得
-            IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
-            backupController.BackupNow();
-
-            // ProgressIndicatorの表示更新用のアクションをセット
-            UpdateProgressCircleVisibility = (visible) => {
-                IsIndeterminate = visible;
-            };
-            // RootFolderのViewModel
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
         }
 
         // フォルダ階層を再描写する

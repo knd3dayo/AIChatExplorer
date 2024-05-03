@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Utils;
@@ -29,7 +29,9 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public void Initialize(ClipboardFolderViewModel? targetFolder) {
             TargetFolder = targetFolder;
             // AutoProcessRulesを更新
-            AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
+            if (TargetFolder != null) {
+                AutoProcessRules = TargetFolder.GetAutoProcessRules();
+            }
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
@@ -44,8 +46,11 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 if (Instance == null) {
                     return;
                 }
+                if (TargetFolder == null) {
+                    return;
+                }
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
+                Instance.AutoProcessRules = TargetFolder.GetAutoProcessRules();
                 Instance.OnPropertyChanged(nameof(AutoProcessRules));
             }
             // debug
@@ -67,8 +72,11 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 if (Instance == null) {
                     return;
                 }
+                if (TargetFolder == null) {
+                    return;
+                }
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(TargetFolder?.ClipboardItemFolder);
+                Instance.AutoProcessRules = TargetFolder.GetAutoProcessRules();
                 Instance.OnPropertyChanged(nameof(AutoProcessRules));
             }
             EditAutoProcessRuleWindow window = new();

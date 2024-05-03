@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
@@ -208,7 +208,6 @@ namespace ClipboardApp {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
-            ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems.Count == 0) {
@@ -227,7 +226,6 @@ namespace ClipboardApp {
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 CopiedItems.Add(item);
             }
-            CopiedItemFolder = SelectedFolder;
             Tools.Info("切り取りしました");
 
         }
@@ -237,7 +235,6 @@ namespace ClipboardApp {
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
-            ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItem == null) {
@@ -256,9 +253,8 @@ namespace ClipboardApp {
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 CopiedItems.Add(item);
             }
-            CopiedItemFolder = SelectedFolder;
             try {
-                ClipboardAppFactory.Instance.GetClipboardController().SetDataObject(SelectedItem.ClipboardItem);
+                SelectedItem.SetDataObject();
                 Tools.Info("コピーしました");
 
             } catch (Exception e) {
@@ -269,7 +265,6 @@ namespace ClipboardApp {
         }
         // Ctrl + V が押された時の処理
         public static void PasteFromClipboardCommand(MainWindowViewModel windowViewModel) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
@@ -299,7 +294,6 @@ namespace ClipboardApp {
             windowViewModel.CutFlag = false;
             // 貼り付け後にコピー選択中のアイテムをクリア
             CopiedItems.Clear();
-            CopiedItemFolder = null;
 
         }
         // Ctrl + M が押された時の処理
@@ -394,20 +388,18 @@ namespace ClipboardApp {
         // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
         public static void SplitFilePathCommand(MainWindowViewModel windowViewModel) {
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             // 選択中のアイテムを取得
             if (SelectedItem == null) {
                 Tools.Error("選択中のアイテムがない");
                 return;
             }
-            ClipboardItem clipboardItem = SelectedItem.ClipboardItem;
             // 処理が終わるまでProgressIndicatorを表示
             try {
                 windowViewModel.IsIndeterminate = true;
                 // ファイルパスを分割
-                ClipboardItem.SplitFilePathCommandExecute(clipboardItem);
+                SelectedItem.SplitFilePathCommandExecute();
                 // 保存
-                clipboardItem.Save();
+                SelectedItem.Save();
                 // 再描写
                 windowViewModel.ReloadClipboardItems();
             } finally {

@@ -1,7 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemView;
-using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Control;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -10,10 +8,20 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
     public class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
 
         // ClipboardFolder
-        public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
+        private ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
         // MainWindowViewModel
         public MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
+        // 検索フォルダかどうか
+        public bool IsSearchFolder {
+            get {
+                return ClipboardItemFolder.IsSearchFolder;
+            }
+            set {
+                ClipboardItemFolder.IsSearchFolder = value;
+                OnPropertyChanged(nameof(IsSearchFolder));
+            }
+        }
 
         // Items
         public ObservableCollection<ClipboardItemViewModel> Items {
@@ -27,11 +35,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             set {
                 ClipboardItemFolder.Items.Clear();
                 foreach (ClipboardItemViewModel item in value) {
-                    ClipboardItemFolder.Items.Add(item.ClipboardItem);
+                    this.Items.Add(item);
                 }
                 OnPropertyChanged(nameof(Items));
             }
         }
+
         // 子フォルダ
         public ObservableCollection<ClipboardFolderViewModel> Children {
             get {
@@ -58,6 +67,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 OnPropertyChanged(nameof(DisplayName));
             }
         }
+        public ClipboardFolderViewModel CreateChild(string collectionName, string displayName) {
+            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(collectionName, displayName);
+            ClipboardItemFolder.Children.Add(childFolder);
+            return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
+        }
 
         public string AbsoluteCollectionName {
             get {
@@ -70,6 +84,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         }
 
+        // Delete
+        public void Delete() {
+            ClipboardItemFolder.Delete();
+        }
         // Load
         public void Load() {
             // Children.Item,SearchCondition,AutoProcessRule を更新
@@ -80,7 +98,15 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             UpdateStatusText();
 
         }
+        // AddItem
+        public ClipboardItemViewModel AddItem(ClipboardItemViewModel item, Action<ActionMessage> actionMessage) {
+            return ClipboardItemViewModel.AddItem(this.ClipboardItemFolder, item, actionMessage);
+        }
+        public void DeleteItem(ClipboardItemViewModel item) {
+            item.Delete();
+            Items.Remove(item);
 
+        }
         // - コンテキストメニューの削除を表示するかどうか
         public bool IsDeleteVisible {
             get {
@@ -142,6 +168,47 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             Tools.StatusText.ReadyText = message;
             Tools.StatusText.Text = message;
 
+        }
+        public void SetSearchFolder(SearchRule searchRule) {
+            searchRule.SearchFolder = ClipboardItemFolder;
+        }
+        public void SetSearchTargetFolder(SearchRule searchRule) {
+            searchRule.TargetFolder = ClipboardItemFolder;
+        }
+        // AutoProcessRuleのTargetFolderを設定
+        public void SetAutoProcessRuleTargetFolder(AutoProcessRule autoProcessRule) {
+            autoProcessRule.TargetFolder = ClipboardItemFolder;
+        }
+        // AutoProcessRuleのDestinationFolderを設定
+        public void SetAutoProcessRuleDestinationFolder(AutoProcessRule autoProcessRule) {
+            autoProcessRule.DestinationFolder = ClipboardItemFolder;
+        }
+        // AutoProcessRuleを取得
+        public ObservableCollection<AutoProcessRule> GetAutoProcessRules() {
+            return AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
+        }
+        // AutoProcessRuleを追加
+        public void  AddAutoProcessRule(AutoProcessRule rule) {
+            ClipboardItemFolder.AddAutoProcessRule( rule);
+        }
+
+        // AddChild
+        public void AddChild(ClipboardFolderViewModel child) {
+            ClipboardItemFolder.Children.Add(child.ClipboardItemFolder);
+        }
+        // Save
+        public void Save() {
+            ClipboardItemFolder.Save();
+        }
+
+        // フォルダ内のアイテムをJSON形式でExport
+        public void ExportItemsToJson(string directoryPath) {
+            this.ClipboardItemFolder.ExportItemsToJson(directoryPath);
+        }
+
+        //exportしたJSONファイルをインポート
+        public void ImportItemsFromJson(string json, Action<ActionMessage> action) {
+            this.ClipboardItemFolder.ImportItemsFromJson(json, action);
         }
 
         //--------------------------------------------------------------------------------

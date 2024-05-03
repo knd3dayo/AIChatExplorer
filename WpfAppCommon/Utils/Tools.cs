@@ -1,9 +1,9 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Windows;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
-    public class Tools {
+    public partial class Tools {
 
         public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
 
@@ -59,7 +59,7 @@ namespace WpfAppCommon.Utils {
         public static int[] GetInAngleBracketPosition(string text) {
             // int[0] = start、int[1] = end
             // < > で囲まれた文字列のStartとEndを返す。< >は含まない。
-            Regex regex = new Regex(@"<[^>]+>");
+            Regex regex = MyRegex();
             Match match = regex.Match(text);
             if (match.Success) {
                 return [match.Index + 1, match.Index + match.Length - 1];
@@ -69,18 +69,18 @@ namespace WpfAppCommon.Utils {
         public static int[]? GetURLPosition(string text) {
             // int[0] = start、int[1] = end
             // 正規表現でURLにマッチした場合にStartとEndを返す.URLには日本語が含まれることがある。
-            Regex regex = new Regex(@"(https?|ftp|file)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#ぁ-んァ-ヴー一-龠]+)");
+            Regex regex = MyRegex1();
 
             Match match = regex.Match(text);
             if (match.Success) {
                 return [match.Index, match.Index + match.Length];
             }
 
-            // 正規表現で \\xxxx の形式、または [A-Za-z]:\\xxxx の形式の場合はファイルパスとみなし、StartとEndを返す
-            regex = new Regex(@"(\\\\[a-zA-Z0-9_\-]+)+\\[a-zA-Z0-9_\-ぁ-んァ-ヴー一-龠]+");
+            // 正規表現で \\xxx の形式、または [A-Za-z]:\\xxx の形式の場合はファイルパスとみなし、StartとEndを返す
+            regex = MyRegex2();
             match = regex.Match(text);
             if (match.Success) {
-                return new int[] { match.Index, match.Index + match.Length };
+                return [match.Index, match.Index + match.Length];
             }
             // それ以外はNullを返す。
             return null;
@@ -100,5 +100,11 @@ namespace WpfAppCommon.Utils {
             }
         }
 
+        [GeneratedRegex(@"<[^>]+>")]
+        private static partial Regex MyRegex();
+        [GeneratedRegex(@"(https?|ftp|file)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#ぁ-んァ-ヴー一-龠]+)")]
+        private static partial Regex MyRegex1();
+        [GeneratedRegex(@"(\\\\[a-zA-Z0-9_\-]+)+\\[a-zA-Z0-9_\-ぁ-んァ-ヴー一-龠]+")]
+        private static partial Regex MyRegex2();
     }
 }

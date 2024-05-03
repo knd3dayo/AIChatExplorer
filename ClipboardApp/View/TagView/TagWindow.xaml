@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="ClipboardApp.View.TagView.TagWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -85,17 +85,17 @@
                             Width="200"
                             Content="{Binding Tag}"
                             IsChecked="{Binding IsChecked}" />
-                        <StackPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem
-                                    Command="{Binding DeleteTagCommand}"
-                                    CommandParameter="{Binding}"
-                                    Header="{Binding StringResources.Delete}" />
-                            </ContextMenu>
-                        </StackPanel.ContextMenu>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding DeleteTagCommand}"
+                        CommandParameter="{Binding ElementName=listbox1, Path=SelectedItem}"
+                        Header="{Binding StringResources.Delete}" />
+                </ContextMenu>
+            </ListBox.ContextMenu>
         </ListBox>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -103,23 +103,19 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" HorizontalAlignment="Stretch">
-                <TextBlock
-                    Margin="10,0,10,0"
-                    Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{Binding StringResources.NewTag}" />
-                <TextBox
-                    Name="TagText"
-                    Margin="10,0,10,0"
-                    Text="{Binding NewTag}" />
+                <TextBlock Margin="10,0,10,0" Text="{Binding StringResources.NewTag}" />
+                <TextBox Margin="10,0,10,0" Text="{Binding NewTag}" />
             </DockPanel>
             <Button
                 Grid.Column="1"
                 Width="100"
+                Height="Auto"
                 Margin="10,0,10,0"
                 HorizontalAlignment="Right"
                 Command="{Binding AddTagCommand}"
                 CommandParameter="{Binding NewTag}"
-                Content="{Binding StringResources.Add}" />
+                Content="{Binding StringResources.Add}"
+                FontSize="12" />
         </Grid>
         <StackPanel
             Grid.Row="3"
@@ -127,16 +123,20 @@
             Orientation="Horizontal">
             <Button
                 Width="100"
+                Height="Auto"
                 Margin="10"
                 Command="{Binding OkCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.OK}" />
+                Content="{Binding StringResources.OK}"
+                FontSize="12" />
             <Button
                 Width="100"
+                Height="Auto"
                 Margin="10"
                 Command="{Binding CancelCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Cancel}" />
+                Content="{Binding StringResources.Cancel}"
+                FontSize="12" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
     </Grid>

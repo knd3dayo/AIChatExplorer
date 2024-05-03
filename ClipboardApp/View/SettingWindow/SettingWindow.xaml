@@ -26,7 +26,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -54,11 +54,10 @@
         </StackPanel>
         <ScrollViewer
             Grid.Row="1"
-            Height="300"
+            Height="Auto"
             VerticalScrollBarVisibility="Auto">
             <Grid Margin="0,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -88,6 +87,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
                         Text="{Binding MonitorTargetAppNames}" />
 
                     <!--  Backup Generation  -->
@@ -100,6 +100,7 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="clipbord.db,clipboard-log.dbのバックアップ世代数"
                         Text="{Binding BackupGeneration}" />
                 </Grid>
                 <!--  Python設定  -->
@@ -117,12 +118,12 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="Pythonの使用"
-                        ToolTip="Pythonを使用します" />
+                        Text="Pythonの使用" />
                     <CheckBox
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="Pythonを使用します。多くの機能はPythonを使用しますので、Pythonのインストールと有効化をお勧めします。"
                         IsChecked="{Binding PythonExecMode}" />
                     <!--  PythonPath  -->
                     <!--  PythonDLLPath  -->
@@ -136,6 +137,7 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="Pythonインストール先のpython3**.dllを指定。例"
                         Text="{Binding PythonDllPath}"
                         Visibility="{Binding UsePythonVisibility}" />
                     <!--  OpenAI設定  -->
@@ -167,6 +169,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="OpenAIまたはAzure OpenAIを使用します。API Keyが必要です。"
                         IsChecked="{Binding UseOpenAI}"
                         Visibility="{Binding UsePythonVisibility}" />
                     <!--  OpenAI  API Key  -->
@@ -180,6 +183,7 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのAPIキーを設定。"
                         Text="{Binding OpenAIKey}"
                         Visibility="{Binding UseOpenAIVisibility}" />
 
@@ -195,6 +199,7 @@
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="OpenAIの代わりにAzure OpenAIを使用します"
                         IsChecked="{Binding AzureOpenAI}"
                         Visibility="{Binding UseOpenAIVisibility}" />
 
@@ -209,6 +214,7 @@
                         Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する。"
                         Text="{Binding AzureOpenAIEndpoint}"
                         Visibility="{Binding AzureOpenAIVisibility}" />
 
@@ -223,6 +229,7 @@
                         Grid.Row="4"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど"
                         Text="{Binding OpenAICompletionModel}"
                         Visibility="{Binding UseOpenAIVisibility}" />
 
@@ -237,6 +244,7 @@
                         Grid.Row="5"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど"
                         Text="{Binding OpenAIEmbeddingModel}"
                         Visibility="{Binding UseOpenAIVisibility}" />
                     <!--  OpenAI Complition Base URL  -->
@@ -250,6 +258,7 @@
                         Grid.Row="6"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
                         Text="{Binding OpenAICompletionBaseURL}"
                         Visibility="{Binding UseOpenAIVisibility}" />
 
@@ -264,36 +273,13 @@
                         Grid.Row="7"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
                         Text="{Binding OpenAIEmbeddingBaseURL}"
                         Visibility="{Binding UseOpenAIVisibility}" />
                 </Grid>
 
-                <!--  RAG設定  -->
-                <Grid Grid.Row="3">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <!--  Vector DB URL  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="ベクトルDB(Faiss)のインデックス格納先フォルダ"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-
-                    <TextBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding VectorDBURL}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                </Grid>
                 <!--  Spacy設定  -->
-                <Grid Grid.Row="4">
+                <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="320" />
                         <ColumnDefinition Width="*" />
@@ -307,12 +293,13 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="Spacyを使用してエンティティ抽出を行う"
+                        Text="Spacyを使用"
                         Visibility="{Binding UsePythonVisibility}" />
                     <CheckBox
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います"
                         IsChecked="{Binding UseSpacy}"
                         Visibility="{Binding UsePythonVisibility}" />
 
@@ -327,11 +314,12 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど"
                         Text="{Binding SpacyModel}"
                         Visibility="{Binding UseSpacyVisibility}" />
                 </Grid>
                 <!--  そのほかのPython設定  -->
-                <Grid Grid.Row="5">
+                <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="320" />
                         <ColumnDefinition Width="*" />
@@ -351,6 +339,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="クリップボードの画像をPyOCRを使用してテキスト抽出します"
                         IsChecked="{Binding UseOCR}"
                         Visibility="{Binding UsePythonVisibility}" />
                     <!--  TesseractExePath  -->
@@ -369,7 +358,7 @@
                 </Grid>
 
                 <!--  自動処理  -->
-                <Grid Grid.Row="6">
+                <Grid Grid.Row="5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="320" />
                         <ColumnDefinition Width="*" />
@@ -389,6 +378,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="クリップボードへのコピー元アプリが同じ場合、同一フォルダ内のアイテムを自動的にマージします"
                         IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
                     <TextBlock
                         Grid.Row="1"
@@ -400,6 +390,7 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="クリップボードの内容から自動的にタグを生成します"
                         IsChecked="{Binding AutoTag}"
                         Visibility="{Binding UseSpacyVisibility}" />
 
@@ -413,6 +404,7 @@
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="クリップボードの内容から自動的にタイトルを生成します"
                         IsChecked="{Binding AutoDescription}"
                         Visibility="{Binding UseSpacyVisibility}" />
 
@@ -426,6 +418,7 @@
                         Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
                         IsChecked="{Binding UserMaskedDataInOpenAI}"
                         Visibility="{Binding UseOpenAIVisibility}" />
                 </Grid>

@@ -1,4 +1,4 @@
-﻿
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
@@ -14,8 +14,17 @@ namespace WpfAppCommon.Model {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteTag(this);
         }
         public void Save() {
-            ClipboardAppFactory.Instance.GetClipboardDBController().InsertTag(this);
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(this);
         }
+
+        public static IEnumerable<TagItem> GetTagList() {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetTagList();
+        }
+        // タグを検索
+        public static IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().FilterTag(tag, exclude);
+        }
+
     }
 
 }

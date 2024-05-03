@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.AutoProcessRuleView;
 using WpfAppCommon.Utils;
@@ -7,7 +7,7 @@ using WpfAppCommon.Factory.Default;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {
-    public class FolderEditWindowViewModel : ObservableObject {
+    public partial class FolderEditWindowViewModel : ObservableObject {
         // 編集モードか新規子フォルダ作成モードか
         public enum Mode {
             Edit,
@@ -28,7 +28,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             set {
                 _collectionName = value;
                 // プロパティが変更されたことを通知
-                OnPropertyChanged("CollectionName");
+                OnPropertyChanged(nameof(CollectionName));
             }
         }
         private string _displayName = "";
@@ -39,7 +39,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             set {
                 _displayName = value;
                 // プロパティが変更されたことを通知
-                OnPropertyChanged("DisplayName");
+                OnPropertyChanged(nameof(DisplayName));
             }
         }
         public ClipboardFolderViewModel? FolderViewModel { get; set; }
@@ -53,7 +53,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
             set {
                 _alwaysApplySearchCondition = value;
-                OnPropertyChanged("AlwaysApplySearchCondition");
+                OnPropertyChanged(nameof(AlwaysApplySearchCondition));
             }
         }
 
@@ -69,7 +69,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         // 起動時の処理
         public void Initialize(ClipboardFolderViewModel folderViewModel, Mode mode, Action afterUpdate) {
             CurrentMode = mode;
-            OnPropertyChanged("IsCollectionNameEditable");
+            OnPropertyChanged(nameof(IsCollectionNameEditable));
             _afterUpdate = afterUpdate;
 
             FolderViewModel = folderViewModel;
@@ -77,9 +77,9 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             if (CurrentMode == Mode.Edit) {
                 // CollectionNameを設定
                 // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
-                CollectionName = folderViewModel.ClipboardItemFolder.AbsoluteCollectionName.Split('_').Last();
+                CollectionName = folderViewModel.AbsoluteCollectionName.Split('_').Last();
 
-                DisplayName = folderViewModel.ClipboardItemFolder.DisplayName;
+                DisplayName = folderViewModel.DisplayName;
             }
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild) {
@@ -89,8 +89,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
 
             // Visibilityを更新
-            OnPropertyChanged("SearchConditionVisibility");
-            OnPropertyChanged("AutoProcessRuleVisibility");
+            OnPropertyChanged(nameof(SearchConditionVisibility));
+            OnPropertyChanged(nameof(AutoProcessRuleVisibility));
 
 
         }
@@ -110,7 +110,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return;
             }
             // CollectionNameが[a-Z$_]以外の場合はエラー
-            if (!System.Text.RegularExpressions.Regex.IsMatch(CollectionName, "^[a-zA-Z0-9]+$")) {
+            if (!MyRegex().IsMatch(CollectionName)) {
                 Tools.Error("フォルダ名は英文字で入力してください");
                 return;
             }
@@ -120,29 +120,25 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 // DisplayNameを設定
                 FolderViewModel.DisplayName = DisplayName;
                 // フォルダを保存
-                FolderViewModel.ClipboardItemFolder.Save();
+                FolderViewModel.Save();
 
             }
             // 新規子フォルダ作成モードの場合
             else if (CurrentMode == Mode.CreateChild) {
                 // フォルダを作成
-                ClipboardFolder child = new ClipboardFolder(FolderViewModel.ClipboardItemFolder, CollectionName, DisplayName);
+                ClipboardFolderViewModel child =  FolderViewModel.CreateChild(CollectionName, DisplayName);
                 // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
-                if (FolderViewModel.ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
-                    || FolderViewModel.ClipboardItemFolder.IsSearchFolder) {
+                if (FolderViewModel.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
+                    || FolderViewModel.IsSearchFolder) {
                     // 子フォルダも検索フォルダにする
                     child.IsSearchFolder = true;
                 }
                 // フォルダを保存
                 child.Save();
-                // 親フォルダと子フォルダの関係を登録
-                FolderViewModel.ClipboardItemFolder.AddChild(child);
 
             }
             // フォルダ作成後に実行するコマンドが設定されている場合
-            if (_afterUpdate != null) {
-                _afterUpdate();
-            }
+            _afterUpdate?.Invoke();
             // ウィンドウを閉じる
             if (parameter is Window window) {
                 window.Close();
@@ -164,7 +160,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 Tools.Error("フォルダが指定されていません");
                 return;
             }
-            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ListAutoProcessRuleWindow();
+            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ();
             ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext;
             ListAutoProcessRuleWindowViewModel.Initialize(FolderViewModel);
 
@@ -184,7 +180,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                     return Visibility.Collapsed;
                 }
                 // folderがSelectFolderの場合は表示する
-                if (FolderViewModel != null && FolderViewModel.ClipboardItemFolder.IsSearchFolder) {
+                if (FolderViewModel != null && FolderViewModel.IsSearchFolder) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
@@ -198,13 +194,15 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                     return Visibility.Collapsed;
                 }
                 // folderがSelectFolderの場合は表示する
-                if (FolderViewModel != null && !FolderViewModel.ClipboardItemFolder.IsSearchFolder) {
+                if (FolderViewModel != null && !FolderViewModel.IsSearchFolder) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
             }
         }
 
+        [System.Text.RegularExpressions.GeneratedRegex("^[a-zA-Z0-9]+$")]
+        private static partial System.Text.RegularExpressions.Regex MyRegex();
     }
 
 }

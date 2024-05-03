@@ -9,7 +9,7 @@ using WpfAppCommon.Model;
 namespace QAChat.View.VectorDBWindow {
     public class VectorDBItemViewModel : MyWindowViewModel {
 
-        private VectorDBItem item;
+        private readonly VectorDBItem item;
         public VectorDBItemViewModel(VectorDBItem item) {
             this.item = item;
         }

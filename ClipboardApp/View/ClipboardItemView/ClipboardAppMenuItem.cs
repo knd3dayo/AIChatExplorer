@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Views.ClipboardItemView {
@@ -6,7 +6,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
         // Title
         public string Title { get; set; }
 
-        public ObservableCollection<ClipboardAppMenuItem> SubMenuItems { get; set; } = new ObservableCollection<ClipboardAppMenuItem>();
+        public ObservableCollection<ClipboardAppMenuItem> SubMenuItems { get; set; } = [];
 
         // Command
         public SimpleDelegateCommand Command { get; set; }

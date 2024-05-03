@@ -1,4 +1,4 @@
-﻿using WpfAppCommon.Utils;
+using WpfAppCommon.Utils;
 using LiteDB;
 
 namespace WpfAppCommon.Model {
@@ -48,7 +48,7 @@ namespace WpfAppCommon.Model {
         }
         // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
         public static bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword) {
-            // SourceApplicationNameがnullの場合はfalseを返す
+            // SourceApplicationNameがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationName == null) {
                 return false;
             }
@@ -56,7 +56,7 @@ namespace WpfAppCommon.Model {
         }
         // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
         public static bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword) {
-            // SourceApplicationTitleがnullの場合はfalseを返す
+            // SourceApplicationTitleがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationTitle == null) {
                 return false;
             }
@@ -64,7 +64,7 @@ namespace WpfAppCommon.Model {
         }
         // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
         public static bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword) {
-            // SourceApplicationPathがnullの場合はfalseを返す
+            // SourceApplicationPathがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationPath == null) {
                 return false;
             }
@@ -74,44 +74,41 @@ namespace WpfAppCommon.Model {
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
         public bool ExecuteCondition(ClipboardItem clipboardItem) {
-            switch (Type) {
-                case ConditionType.DescriptionContains:
-                    return IsDescriptionContains(clipboardItem, Keyword);
-                case ConditionType.ContentContains:
-                    return IsContentContains(clipboardItem, Keyword);
-                case ConditionType.SourceApplicationNameContains:
-                    return IsSourceApplicationNameContains(clipboardItem, Keyword);
-                case ConditionType.SourceApplicationTitleContains:
-                    return IsSourceApplicationTitleContains(clipboardItem, Keyword);
-                case ConditionType.SourceApplicationPathContains:
-                    return IsSourceApplicationPathContains(clipboardItem, Keyword);
-                default:
-                    return false;
-            }
+            return Type switch {
+                ConditionType.DescriptionContains => IsDescriptionContains(clipboardItem, Keyword),
+                ConditionType.ContentContains => IsContentContains(clipboardItem, Keyword),
+                ConditionType.SourceApplicationNameContains => IsSourceApplicationNameContains(clipboardItem, Keyword),
+                ConditionType.SourceApplicationTitleContains => IsSourceApplicationTitleContains(clipboardItem, Keyword),
+                ConditionType.SourceApplicationPathContains => IsSourceApplicationPathContains(clipboardItem, Keyword),
+                _ => false,
+            };
         }
 
 
     }
     public class AutoProcessRule {
-        public ObjectId? Id { get; set; }
+        public ObjectId Id { get; set; } = ObjectId.Empty;
 
         public string RuleName { get; set; } = "";
 
         // このルールを有効にするかどうか
         public bool IsEnabled { get; set; } = true;
 
-        public List<AutoProcessRuleCondition> Conditions { get; set; } = new List<AutoProcessRuleCondition>();
+        public List<AutoProcessRuleCondition> Conditions { get; set; } = [];
 
-        public AutoProcessItem? RuleAction { get; set; }
+        public SystemAutoProcessItem? RuleAction { get; set; }
 
         public ClipboardFolder? TargetFolder { get; set; }
 
         public AutoProcessRule() {
         }
 
-        public AutoProcessRule(string ruleName, ClipboardFolder clipboardItemFolder) {
+        /// <summary>
+        /// 指定した名前のルールを作成する
+        /// </summary>
+        /// <param name="ruleName"></param>
+        public AutoProcessRule(string ruleName) {
             RuleName = ruleName;
-            TargetFolder = clipboardItemFolder;
         }
 
         // 保存
@@ -122,7 +119,7 @@ namespace WpfAppCommon.Model {
         public void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteAutoProcessRule(this);
             // 削除後はIdをNullにする
-            Id = null;
+            Id = LiteDB.ObjectId.Empty;
         }
 
         // 移動またはコピー先のフォルダ
@@ -221,30 +218,31 @@ namespace WpfAppCommon.Model {
             IEnumerable<AutoProcessRule> copyToMoveToRules = AutoProcessRuleController.GetCopyToMoveToRules();
 
             // ルールがない場合はFalseを返す
-            if (copyToMoveToRules.Count() == 0) {
+            if (!copyToMoveToRules.Any()) {
                 return false;
             }
             // copyToMoveToRulesにRuleを追加
             copyToMoveToRules = copyToMoveToRules.Append(rule);
 
             // fromとtoを格納するDictionary
-            Dictionary<string, List<string>> fromToDictionary = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> fromToDictionary = [];
             foreach (var r in copyToMoveToRules) {
                 // TargetFolderとDestinationFolderが設定されている場合
                 if (r.TargetFolder != null && r.DestinationFolder != null) {
                     // keyが存在しない場合は新しいLinkedListを作成
-                    if (!fromToDictionary.ContainsKey(r.TargetFolder.AbsoluteCollectionName)) {
-                        fromToDictionary[r.TargetFolder.AbsoluteCollectionName] = new List<string>();
+                    if (!fromToDictionary.TryGetValue(r.TargetFolder.AbsoluteCollectionName, out List<string>? value)) {
+                        value = [];
+                        fromToDictionary[r.TargetFolder.AbsoluteCollectionName] = value;
                     }
-                    // DestinationFolderを追加
-                    fromToDictionary[r.TargetFolder.AbsoluteCollectionName].Add(r.DestinationFolder.AbsoluteCollectionName);
+
+                    value.Add(r.DestinationFolder.AbsoluteCollectionName);
                 }
             }
 
             // fromToDictionaryの中でルールが存在するかどうかを再帰的にチェックする
             foreach (var from in fromToDictionary.Keys) {
                 // PathListを作成
-                List<string> pathList = new List<string>();
+                List<string> pathList = [];
                 // ルールが存在する場合はTrueを返す
                 if (CheckInfiniteLoopRecursive(fromToDictionary, from, pathList)) {
                     return true;
@@ -256,18 +254,19 @@ namespace WpfAppCommon.Model {
         // Dictionaryの中でルールが存在するかどうかを再帰的にチェックする
         public static bool CheckInfiniteLoopRecursive(Dictionary<string, List<string>> fromToDictionary, string from, List<string> pathList) {
             // PathListのコピーを作成
-            pathList = new List<string>(pathList);
-            // PathListにFromを追加する。
-            pathList.Add(from);
+            pathList = new(pathList) {
+                // PathListにFromを追加する。
+                from
+            };
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
             if (pathList.Distinct().Count() != pathList.Count) {
                 Tools.Warn($"無限ループを検出しました\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得
-            if (fromToDictionary.ContainsKey(from)) {
+            if (fromToDictionary.TryGetValue(from, out List<string>? value)) {
                 // FromのValueを取得
-                var toList = fromToDictionary[from];
+                var toList = value;
                 foreach (var to in toList) {
                     // ToをFromにして再帰的にチェック
                     bool result = CheckInfiniteLoopRecursive(fromToDictionary, to, pathList);
