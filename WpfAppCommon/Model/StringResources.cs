@@ -116,6 +116,13 @@ namespace WpfAppCommon.Model {
                 return $"{AppName} - {Setting}";
             }
         }
+        // 設定チェック結果
+        public string SettingCheckResultWindowTitle {
+            get {
+                return $"{AppName} - 設定チェック結果";
+            }
+        }
+
         // RAGソース(git)編集
         public string EditGitRagSourceWindowTitle {
             get {

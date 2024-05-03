@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -24,12 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\QAChat\QAChat.csproj" />
     <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="View\SettingWindow\TestResultWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

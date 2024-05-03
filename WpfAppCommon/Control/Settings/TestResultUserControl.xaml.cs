@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,12 +12,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ClipboardApp.View.SettingWindow {
+namespace WpfAppCommon.Control.Settings {
     /// <summary>
-    /// SimpleSettingWindow.xaml の相互作用ロジック
+    /// TestResultUserControl.xaml の相互作用ロジック
     /// </summary>
-    public partial class SettingWindow : Window {
-        public SettingWindow() {
+    public partial class TestResultUserControl : UserControl {
+        public TestResultUserControl() {
             InitializeComponent();
         }
     }

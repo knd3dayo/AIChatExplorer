@@ -1,12 +1,12 @@
-﻿
+
 using System.Text;
 using System.Windows;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.SettingWindow {
-    public partial class SettingWindowViewModel : MyWindowViewModel {
+namespace WpfAppCommon.Control.Settings {
+    public partial class SettingUserControlViewModel : MyWindowViewModel {
 
         // MonitorTargetAppNames
         public string MonitorTargetAppNames {
@@ -561,10 +561,15 @@ namespace ClipboardApp.View.SettingWindow {
                 IsIndeterminate = false;
                 Tools.StatusText.InitText();
                 // 結果をTestResultWindowで表示
-                TestResultWindow testResultWindow = new();
-                TestResultWindowViewModel testResultWindowViewModel = (TestResultWindowViewModel)testResultWindow.DataContext;
+                // UserControlの設定ウィンドウを開く
+                TestResultUserControl testResultWindow = new();
+                TestResultUserControlViewModel testResultWindowViewModel = (TestResultUserControlViewModel)testResultWindow.DataContext;
                 testResultWindowViewModel.LogText = resultString;
-                testResultWindow.ShowDialog();
+                Window window = new() {
+                    Title = StringResources.Instance.SettingCheckResultWindowTitle,
+                    Content = testResultWindow
+                };
+                window.ShowDialog();
 
             } finally {
                 IsIndeterminate = false;

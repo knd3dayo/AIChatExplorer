@@ -110,10 +110,10 @@
     <Compile Update="Control\MyStatusBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Control\Settings\SettingControl.xaml.cs">
+    <Compile Update="Control\Settings\SettingUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Control\Settings\TestResultWindow.xaml.cs">
+    <Compile Update="Control\Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Control\StatusMessage\StatusMessageWindow.xaml.cs">

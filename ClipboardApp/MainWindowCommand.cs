@@ -5,7 +5,6 @@ using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
-using ClipboardApp.View.SettingWindow;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
@@ -141,7 +140,7 @@ namespace ClipboardApp {
         // メニューの「設定」をクリックしたときの処理
         public static void SettingCommand() {
             // UserControlの設定ウィンドウを開く
-            SettingsControl settingsControl = new();
+            SettingsUserControl settingsControl = new();
             Window window = new() {
                 Title = StringResources.Instance.SettingWindowTitle,
                 Content = settingsControl

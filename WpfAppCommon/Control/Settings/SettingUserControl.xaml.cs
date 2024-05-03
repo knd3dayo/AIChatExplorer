@@ -16,8 +16,8 @@ namespace WpfAppCommon.Control.Settings {
     /// <summary>
     /// SimpleSettingWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class SettingsControl : UserControl {
-        public SettingsControl() {
+    public partial class SettingsUserControl : UserControl {
+        public SettingsUserControl() {
             InitializeComponent();
         }
     }

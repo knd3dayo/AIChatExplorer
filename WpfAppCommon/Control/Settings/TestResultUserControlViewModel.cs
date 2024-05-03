@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +7,9 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.SettingWindow {
-    internal class TestResultWindowViewModel :ObservableObject{
-        public TestResultWindowViewModel() {
+namespace WpfAppCommon.Control.Settings {
+    internal class TestResultUserControlViewModel :ObservableObject{
+        public TestResultUserControlViewModel() {
         }
 
         private string logText = "";

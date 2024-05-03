@@ -1,5 +1,5 @@
 namespace WpfAppCommon.Control.Settings {
-    public partial class SettingControlViewModel {
+    public partial class SettingUserControlViewModel {
         public enum PythonExecModeEnum {
             None,
             PythonNet,
