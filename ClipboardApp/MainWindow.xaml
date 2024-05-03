@@ -18,76 +18,76 @@
         <local:MainWindowViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <!--  クリップボードアイテムのコンテキストメニューアイテム  -->
+        <!--  Clipboard item context menu items  -->
         <CollectionViewSource x:Key="ClipboardItemContextMenuItems" Source="{Binding ClipboardItemContextMenuItems}" />
-        <!--  フォルダのコンテキストメニューアイテム  -->
+        <!--  Folder context menu items  -->
         <CollectionViewSource x:Key="ClipboardItemFolderContextMenuItems" Source="{Binding ClipboardItemFolderContextMenuItems}" />
     </Window.Resources>
     <Window.InputBindings>
-        <!--  アプリケーション終了  -->
+        <!--  Exit application  -->
         <KeyBinding
             Key="Q"
             Command="{Binding ExitCommand}"
             Modifiers="Control" />
-        <!--  検索ダイアログを表示  -->
+        <!--  Show search dialog  -->
         <KeyBinding
             Key="F"
             Command="{Binding SearchCommand}"
             Modifiers="Control" />
-        <!--  アイテムをLiteDBから再読み込みする  -->
+        <!--  Reload items from LiteDB  -->
         <KeyBinding
             Key="R"
             Command="{Binding ReloadCommand}"
             Modifiers="Control" />
 
-        <!--  選択したアイテムを開く  -->
+        <!--  Open selected item  -->
         <KeyBinding
             Key="O"
             Command="{Binding OpenSelectedItemCommand}"
             Modifiers="Control" />
-        <!--  選択したアイテムをファイルとして開く  -->
+        <!--  Open selected item as file  -->
         <KeyBinding
             Key="O"
             Command="{Binding OpenSelectedItemAsFileCommand}"
             Modifiers="Control+Shift" />
-        <!--  選択したアイテムを新規ファイルとして開く  -->
+        <!--  Open selected item as new file  -->
         <KeyBinding
             Key="O"
             Command="{Binding OpenSelectedItemAsNewFileCommand}"
             Modifiers="Control+Shift+Alt" />
-        <!--  選択中のフォルダにアイテムを貼り付け  -->
+        <!--  Paste items into selected folder  -->
         <KeyBinding
             Key="V"
             Command="{Binding PasteFromClipboardCommand}"
             Modifiers="Control" />
-        <!--  選択中のアイテムにアイテムをマージ  -->
+        <!--  Merge items into selected item  -->
         <KeyBinding
             Key="M"
             Command="{Binding MergeItemCommand}"
             Modifiers="Control" />
-        <!--  選択中のアイテムにアイテムをヘッダー付きでマージ  -->
+        <!--  Merge items into selected item with header  -->
         <KeyBinding
             Key="M"
             Command="{Binding MergeItemWithHeaderCommand}"
             Modifiers="Control+Shift" />
-        <!--  選択中のアイテムをクリップボードにコピー  -->
+        <!--  Copy selected item to clipboard  -->
         <KeyBinding
             Key="C"
             Command="{Binding CopyToClipboardCommand}"
             Modifiers="Control" />
-        <!--  選択中のアイテムをクリップボードにコピー + CutフラグをTrue  -->
+        <!--  Copy selected item to clipboard with Cut flag set to True  -->
         <KeyBinding
             Key="X"
             Command="{Binding CutItemCommand}"
             Modifiers="Control" />
-        <!--  アイテムを新規作成  -->
+        <!--  Create new item  -->
         <KeyBinding
             Key="N"
             Command="{Binding CreateItemCommand}"
             Modifiers="Control" />
-        <!--  選択したアイテムを削除  -->
+        <!--  Delete selected item  -->
         <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand}" />
-        <!--  表示中のアイテムを削除  -->
+        <!--  Delete displayed item  -->
         <KeyBinding
             Key="Delete"
             Command="{Binding DeleteDisplayedItemCommand}"
@@ -103,7 +103,7 @@
     </i:Interaction.Triggers>
     <materialDesign:DialogHost>
         <Grid x:Name="grid1">
-            <!--  1. メニューバー、2. (TreeView,ListBox)、3. StatusTextのGrid.Row 1と3は固定サイズにする。  -->
+            <!--  1. Menu bar, 2. (TreeView, ListBox), 3. StatusText - Grid.Row 1 and 3 are fixed size  -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -118,7 +118,7 @@
                     DockPanel.Dock="Top"
                     Mode="PrimaryMid">
 
-                    <!--  メニューバー  -->
+                    <!--  Menu bar  -->
                     <Menu
                         Name="menu1"
                         VerticalAlignment="Top"
@@ -223,32 +223,32 @@
             <Grid Grid.Row="1">
                 <!--  TreeView, ListBox  -->
                 <Grid.ColumnDefinitions>
-                    <!--  1. TreeView、2. GridSplitter、3. ListBox  -->
-                    <!--  TreeViewとListBoxの間にGridSplitterを入れる  -->
+                    <!--  1. TreeView, 2. GridSplitter, 3. ListBox  -->
+                    <!--  Insert GridSplitter between TreeView and ListBox  -->
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--  フォルダのTreeView  -->
+                <!--  Folder TreeView  -->
                 <TreeView
                     Grid.Row="0"
                     Grid.Column="0"
                     ItemsSource="{Binding ClipboardItemFolders}">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
-                            <!--  ツリーアイテム  -->
-                            <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
+                            <!--  Tree item  -->
+                            <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                             <DockPanel HorizontalAlignment="Stretch">
                                 <TextBlock
                                     Margin="0,0,10,0"
                                     DockPanel.Dock="Left"
                                     Text="{Binding DisplayName}" />
                                 <DockPanel.InputBindings>
-                                    <!--  フォルダを左クリックでそのフォルダを表示  -->
+                                    <!--  Open folder on left click  -->
                                     <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
                                 </DockPanel.InputBindings>
                                 <DockPanel.ContextMenu>
-                                    <!--  フォルダのコンテキストメニュー  -->
+                                    <!--  Folder context menu  -->
                                     <ContextMenu>
                                         <MenuItem
                                             Command="{Binding CreateFolderCommand}"
@@ -288,8 +288,8 @@
                     Grid.Column="1"
                     Width="5"
                     HorizontalAlignment="Stretch" />
-                <!--  クリップボードのListBox  -->
-                <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
+                <!--  Clipboard ListBox  -->
+                <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                 <ListBox
                     Name="listBox1"
                     Grid.Row="0"
@@ -306,7 +306,7 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <!--  HorizontalAlignmentで左右、外側のサイズと同じになるようにする  -->
+                            <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                             <materialDesign:Card
                                 Margin="5,5,5,5"
                                 HorizontalAlignment="Stretch"
@@ -314,7 +314,7 @@
                                 ToolTip="{Binding Path=ToolTipString}">
                                 <Grid>
                                     <Grid.RowDefinitions>
-                                        <!--  1. 説明、 2.詳細情報、 3. クリップボードアイテム  -->
+                                        <!--  1. Description, 2. Content, 3. Clipboard item, 4. Header  -->
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -375,7 +375,7 @@
                                     </ContextMenu>
                                 </materialDesign:Card.ContextMenu>
                                 <materialDesign:Card.InputBindings>
-                                    <!--  選択したアイテムを開く WindowをElementNameで参照して DataContext(=MainWindowViewModel)のコマンドを呼び出す  -->
+                                    <!--  Open selected item window by double-clicking  -->
                                     <MouseBinding
                                         Command="{Binding DataContext.OpenSelectedItemCommand, ElementName=window1}"
                                         CommandParameter="{Binding}"
