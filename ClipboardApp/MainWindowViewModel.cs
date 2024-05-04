@@ -32,8 +32,7 @@ namespace ClipboardApp {
             ReloadFolder();
 
             // Python処理機能の初期化
-            string pythonDLLPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
-            PythonExecutor.Init(pythonDLLPath);
+            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
 
             // コンテキストメニューの初期化
             ClipboardItemContextMenuItems = new ClipboardItemFolderContextMenuItems(this);

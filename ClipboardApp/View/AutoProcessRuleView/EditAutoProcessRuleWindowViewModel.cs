@@ -143,7 +143,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
 
             // autoProcessRuleがNullでない場合は初期化
-            if (TargetAutoProcessRule != null) {
+            if (TargetAutoProcessRule != null && TargetAutoProcessRule.RuleAction != null) {
                 RuleName = TargetAutoProcessRule.RuleName;
                 OnPropertyChanged(nameof(RuleName));
                 Conditions = new ObservableCollection<AutoProcessRuleCondition>(TargetAutoProcessRule.Conditions);

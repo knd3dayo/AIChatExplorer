@@ -1,8 +1,9 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using WpfCommonApp.Control.StatusMessage;
 
 namespace WpfAppCommon.Control {
     public class MyStatusBarViewModel : ObservableObject {
@@ -22,7 +23,14 @@ namespace WpfAppCommon.Control {
 
         // ステータスバーをクリックしたときの処理
         public static SimpleDelegateCommand OpenStatusMessageWindowCommand => new((parameter) => {
-            OpenStatusMessageWindow?.Invoke();
+            StatusMessageWindow userControl = new StatusMessageWindow();
+            Window window = new() {
+                Title = "Status Message",
+                Content = userControl
+            };
+            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)userControl.DataContext;
+            statusMessageWindowViewModel.Initialize();
+            window.ShowDialog();
         });
 
         // ロード時の処理

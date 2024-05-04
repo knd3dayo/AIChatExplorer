@@ -27,6 +27,7 @@
             Grid.Row="0"
             Margin="10,10,10,10"
             ItemsSource="{Binding Messages}"
+            ScrollViewer.CanContentScroll="False"
             ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>

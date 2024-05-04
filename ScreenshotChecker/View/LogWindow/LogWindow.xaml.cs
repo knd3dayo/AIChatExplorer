@@ -12,18 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfCommonApp.Control.StatusMessage {
+namespace ScreenshotChecker.View.LogWindow {
     /// <summary>
-    /// StatusMessageWindow.xaml の相互作用ロジック
+    /// LogWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class StatusMessageWindow : UserControl {
-
-        public StatusMessageWindow() {
+    public partial class LogWindow : Window {
+        public LogWindow() {
             InitializeComponent();
-        }
-
-        private void ListBox_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e) {
-
         }
     }
 }

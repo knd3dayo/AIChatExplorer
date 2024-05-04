@@ -31,6 +31,13 @@ namespace WpfAppCommon.PythonIF {
         public void OpenAIEmbedding(string text) {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props) {
+            throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
+        }
+
         public void SaveFaissIndex() {
             throw new NotImplementedException("Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。");
         }

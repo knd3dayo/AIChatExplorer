@@ -299,7 +299,7 @@ namespace WpfAppCommon.PythonIF {
                 string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
 
                 // open_ai_chat関数を呼び出す
-                PyDict pyDict = langchain_chat(props, vectorDBItemsJson, prompt, chatItemsJSon );
+                PyDict pyDict = langchain_chat(props, vectorDBItemsJson, prompt, chatItemsJSon);
                 // outputを取得
                 string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException("OpenAIの応答がありません");
                 // verboseを取得
@@ -311,9 +311,9 @@ namespace WpfAppCommon.PythonIF {
                 // referenced_contentsを取得
                 PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                 if (referencedContents != null) {
-                    List<Dictionary<string,string>> referencedContentsList = [];
+                    List<Dictionary<string, string>> referencedContentsList = [];
                     foreach (PyDict item in referencedContents.Cast<PyDict>()) {
-                        Dictionary<string,string> dict = [];
+                        Dictionary<string, string> dict = [];
                         foreach (var key in item.Keys()) {
                             PyObject? entity = item.GetItem(key);
                             if (entity == null) {
@@ -458,6 +458,31 @@ namespace WpfAppCommon.PythonIF {
             return chatResult;
 
         }
+
+        // OpenAIChatWithVisionを実行する
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames) {
+            return OpenAIChatWithVision(prompt, imageFileNames, ClipboardAppConfig.CreateOpenAIProperties());
+        }
+
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props) {
+
+            // ChatResultを作成
+            ChatResult chatResult = new();
+
+            // chatHistoryをコピーしてChatItemを追加
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic? openai_chat_with_vision = (ps?.Get("openai_chat_with_vision")) ?? throw new ThisApplicationException("Pythonスクリプトファイルに、openai_chat_with_vision関数が見つかりません");
+
+                // open_ai_chat関数を呼び出す
+                string resultString = openai_chat_with_vision(props, prompt, imageFileNames);
+                // ChatResultに設定
+                chatResult.Response = resultString;
+            });
+            return chatResult;
+        }
+
         // テスト用
         public string HelloWorld() {
             string result = "";
@@ -498,9 +523,9 @@ namespace WpfAppCommon.PythonIF {
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
                 // update_vector_db_index関数を呼び出す
                 tokenCount = update_index(
-                    props, 
-                    mode, 
-                    new PyString(workingDirPath), 
+                    props,
+                    mode,
+                    new PyString(workingDirPath),
                     new PyString(fileStatus.Path), repositoryURL);
             });
             return tokenCount;

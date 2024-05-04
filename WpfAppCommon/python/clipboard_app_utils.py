@@ -48,6 +48,9 @@ def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_hi
 def list_openai_models():
     return clipboard_app_openai.list_openai_models()
 
+def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list):
+    return clipboard_app_openai.openai_chat_with_vision(props, prompt, image_file_name_list)
+
 # vector db関連
 def update_index(props, mode, workdir, relative_path, url):
     return file_processor.update_index(props, mode, workdir, relative_path, url)

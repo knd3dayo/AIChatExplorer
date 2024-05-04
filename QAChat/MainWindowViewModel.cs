@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
+using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -120,6 +121,10 @@ namespace QAChat {
                 ChatResult? result = null;
                 // プログレスバーを表示
                 IsIndeterminate = true;
+
+                // Python処理機能の初期化
+                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
@@ -171,8 +176,13 @@ namespace QAChat {
 
         // 設定画面を開くコマンド
         public SimpleDelegateCommand SettingCommand => new((parameter) => {
-            SettingWindow settingWindow = new();
-            settingWindow.ShowDialog();
+            // SettingUserControlを生成してWindowを表示する。
+            SettingsUserControl settingsControl = new();
+            Window window = new() {
+                Title = StringResources.Instance.SettingWindowTitle,
+                Content = settingsControl
+            };
+            window.ShowDialog();
         }
 
         );

@@ -104,7 +104,7 @@ def list_openai_models(props={}):
     model_id_list = [ model.id for model in response.data]
     return model_id_list
 
-def run_openai_chat(props: dict, params: dict):
+def run_openai_chat(props: dict, params: dict, temperature=None):
     # OpenAIのchatを実行する
     openai_util = OpenAIUtil()
     openai_util.init(props)
@@ -113,13 +113,15 @@ def run_openai_chat(props: dict, params: dict):
     # chat_model_nameを取得する
     chat_model_name = props.get("OpenAICompletionModel", None)
     params["model"] = chat_model_name
+    if temperature:
+        params["temperature"] = temperature
     
     response = client.chat.completions.create(
         **params
         )
     return response.choices[0].message.content
     
-def openai_chat(props: dict, input_json: str, json_mode: bool = False):
+def openai_chat(props: dict, input_json: str, json_mode: bool = False, temperature=None):
     # 入力パラメーターの設定
     json_obj = json.loads(input_json)
     input_dict = {}
@@ -127,9 +129,29 @@ def openai_chat(props: dict, input_json: str, json_mode: bool = False):
     if json_mode:
         input_dict["response_format"] = {"type": "json_object"}
 
-    return run_openai_chat(props, input_dict)
+    return run_openai_chat(props, input_dict, temperature)
 
+def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list):
+    # 入力パラメーターの設定
+    input_list = []
+    
+    # image_file_name_listが空の場合は"[]"を返す
+    if len(image_file_name_list) == 0:
+        return "[]"
+    
+    content = [{"type": "text", "text": prompt}]
 
+    for image_file_name in image_file_name_list:
+        image_data_url = local_image_to_data_url(image_file_name)
+        content.append({"type": "image_url", "image_url": {"url": image_data_url}})
+
+    role_system_dict = {"role": "system", "content": "You are a helpful assistant."}
+    role_user_dict = {"role": "user", "content": content}
+    input_list.append(role_system_dict)
+    input_list.append(role_user_dict)
+    
+    return openai_chat(props, json.dumps(input_list), True, temperature=0)
+    
 def openai_embedding(props: dict, input_text: str):
     
     # OpenAIのchatを実行する

@@ -53,6 +53,11 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
 
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames);
+
+        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props);
+
+
         public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
 
         //テスト用
