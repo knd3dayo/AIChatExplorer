@@ -322,7 +322,7 @@
                                 ToolTip="{Binding Path=ToolTipString}">
                                 <Grid>
                                     <Grid.RowDefinitions>
-                                        <!--  1. Description, 2. Content, 3. Clipboard item, 4. Header  -->
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
@@ -348,15 +348,23 @@
                                         Text="{Binding Path=Content}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="Wrap" />
-                                    <Separator
+                                    <Image
+                                        Name="image1"
                                         Grid.Row="2"
+                                        MaxHeight="100"
+                                        Margin="10,10,10,10"
+                                        HorizontalAlignment="Left"
+                                        Source="{Binding ThumbnailImage}"
+                                        Stretch="Uniform" />
+                                    <Separator
+                                        Grid.Row="3"
                                         Margin="10,0,10,0"
                                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                         BorderThickness="1"
                                         Style="{StaticResource MaterialDesignLightSeparator}" />
                                     <TextBlock
                                         Name="headerText"
-                                        Grid.Row="3"
+                                        Grid.Row="4"
                                         Margin="10,0,10,10"
                                         HorizontalAlignment="Stretch"
                                         FontSize="6pt"

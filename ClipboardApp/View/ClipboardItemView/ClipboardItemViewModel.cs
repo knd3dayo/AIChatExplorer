@@ -1,4 +1,7 @@
+using System.Drawing;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ClipboardApp.View.ClipboardItemFolderView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
@@ -29,6 +32,21 @@ namespace ClipboardApp.View.ClipboardItemView {
                 OnPropertyChanged(nameof(Content));
             }
         }
+        // Image
+        public ImageSource? Image {
+            get {
+                return ClipboardItem.ClipboardItemImage?.GetBitmapImage();
+            }
+
+        }
+        // ThumbnailImage
+        public ImageSource? ThumbnailImage {
+            get {
+                BitmapImage? thumbnailBitmapImage = ClipboardItem.ClipboardItemImage?.GetThumbnailBitmapImage();
+                return thumbnailBitmapImage;
+            }
+        }
+
         // Description
         public string Description {
             get {

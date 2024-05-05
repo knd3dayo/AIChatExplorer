@@ -18,6 +18,7 @@ namespace WpfAppCommon.Factory.Default {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static readonly string SEARCH_ROOT_FOLDER_NAME = "search_folder";
+        public static readonly string CLIPBOARD_IMAGE_COLLECTION_NAME = "clipboard_image";
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
 
@@ -64,6 +65,9 @@ namespace WpfAppCommon.Factory.Default {
                         .Ignore(x => x.Children);
                     mapper.Entity<ClipboardFolder>()
                         .Ignore(x => x.Items);
+                    mapper.Entity<ClipboardItem>()
+                        .Ignore(x => x.ClipboardItemImage);
+
                 } catch (Exception e) {
                     throw new Exception("データベースのオープンに失敗しました。" + e.Message);
                 }
@@ -184,6 +188,10 @@ namespace WpfAppCommon.Factory.Default {
             if (updateModifiedTime) {
                 item.UpdatedAt = DateTime.Now;
             }
+            // 画像イメージがある場合は、追加または更新
+            if (item.ClipboardItemImage != null) {
+                UpsertItemImage(item.ClipboardItemImage);
+            }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(item.CollectionName);
             collection.Upsert(item);
         }
@@ -191,6 +199,10 @@ namespace WpfAppCommon.Factory.Default {
         public void DeleteItem(ClipboardItem item) {
             if (item.Id == null) {
                 return;
+            }
+            // 画像イメージがある場合は、削除
+            if (item.ClipboardItemImage != null) {
+                DeleteItemImage(item.ClipboardItemImage);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(item.CollectionName);
             // System.Windows.MessageBox.Show(item.CollectionName);
@@ -474,5 +486,25 @@ namespace WpfAppCommon.Factory.Default {
             var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();
         }
+
+        //-- ClipboardItemImage
+        // ClipboardItemImageを追加または更新する
+        public void UpsertItemImage(ClipboardItemImage item) {
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
+            collection.Upsert(item);
+        }
+        // ClipboardItemImageを削除する
+        public void DeleteItemImage(ClipboardItemImage item) {
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
+            collection.Delete(item.Id);
+        }
+
+        // 指定したIDに対応するClipboardItemImageを取得する
+        public ClipboardItemImage? GetItemImage(ObjectId id) {
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
+            var item = collection.FindById(id);
+            return item;
+        }
+
     }
 }

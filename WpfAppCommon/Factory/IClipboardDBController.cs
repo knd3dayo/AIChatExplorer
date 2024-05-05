@@ -1,3 +1,4 @@
+using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.Model;
 
@@ -8,6 +9,14 @@ namespace WpfAppCommon.Factory {
         //-- ClipboardItem
         public void UpsertItem(ClipboardItem item, bool updateModifiedTime = true);
         public void DeleteItem(ClipboardItem item);
+        public IEnumerable<ClipboardItem> SearchItems(string collectionName, SearchCondition searchCondition);
+        public IEnumerable<ClipboardItem> GetItems(string collectionName);
+
+        //-- ClipboardItemImage
+        public void UpsertItemImage(ClipboardItemImage item);
+        public void DeleteItemImage(ClipboardItemImage item);
+
+        public ClipboardItemImage? GetItemImage(ObjectId id);
 
         //-- ClipboardFolder
         public ClipboardFolder GetFolder(string collectionName);
@@ -19,10 +28,6 @@ namespace WpfAppCommon.Factory {
         public void UpsertFolder(ClipboardFolder folder);
 
         public IEnumerable<string> GetFolderRelations(string parentCollectionName);
-
-        public IEnumerable<ClipboardItem> SearchItems(string collectionName, SearchCondition searchCondition);
-
-        public IEnumerable<ClipboardItem> GetItems(string collectionName);
 
 
         // public void DeleteItems(List<ClipboardItem> items);

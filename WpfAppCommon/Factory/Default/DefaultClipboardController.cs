@@ -1,8 +1,10 @@
-﻿using WpfAppCommon.Model;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfAppCommon.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using System.Drawing;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WpfAppCommon.Factory.Default {
     /// <summary>
@@ -77,13 +79,13 @@ namespace WpfAppCommon.Factory.Default {
                 // Is the content copied of text type?
                 if (e.ContentType == ContentTypes.Text) {
                     // Get the cut/copied text.
-                    ProcessClipboardItem(ClipboardContentTypes.Text, _clipboard.ClipboardText, e);
+                    ProcessClipboardItem(ClipboardContentTypes.Text, _clipboard.ClipboardText, null, e);
                 }
                 // Is the content copied of file type?
                 else if (e.ContentType == ContentTypes.Files) {
                     // Get the cut/copied file/files.
                     for (int i = 0; i < _clipboard.ClipboardFiles.Count; i++) {
-                        ProcessClipboardItem(ClipboardContentTypes.Files, _clipboard.ClipboardFiles[i], e);
+                        ProcessClipboardItem(ClipboardContentTypes.Files, _clipboard.ClipboardFiles[i], null, e);
                     }
 
                 }
@@ -91,18 +93,7 @@ namespace WpfAppCommon.Factory.Default {
                 else if (e.ContentType == ContentTypes.Image) {
                     // Get the cut/copied image.
                     System.Drawing.Image img = _clipboard.ClipboardImage;
-                    // UseOCRが設定されている場合はOCRを実行
-                    if (ClipboardAppConfig.UseOCR) {
-                        try {
-                            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(img , ClipboardAppConfig.TesseractExePath);
-                            ProcessClipboardItem(ClipboardContentTypes.Text, text, e);
-
-                        } catch (ThisApplicationException ex) {
-                            Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
-                        }
-
-
-                    }
+                    ProcessClipboardItem(ClipboardContentTypes.Image, "", img , e);
 
                 }
                 // If the cut/copied content is complex, use 'Other'.
@@ -116,7 +107,7 @@ namespace WpfAppCommon.Factory.Default {
             );
 
         }
-        private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, ClipboardChangedEventArgs e) {
+        private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
             if (_clipboard == null) {
                 Tools.Error("Clipboard is null");
                 return;
@@ -135,11 +126,18 @@ namespace WpfAppCommon.Factory.Default {
             // RootFolderにClipboardItemを追加
 
             // ★TODO 関数化
-            ClipboardItem item = new ClipboardItem();
+            ClipboardItem item = new();
             item.ContentType = contentTypes;
             item.SetApplicationInfo(e);
             item.Content = content;
             item.CollectionName = ClipboardFolder.RootFolder.AbsoluteCollectionName;
+
+            // ContentTypeがImageの場合は画像データを設定
+            if (contentTypes == ClipboardContentTypes.Image && image != null) {
+                ClipboardItemImage imageItem = new();
+                imageItem.SetImage(image);
+                item.ClipboardItemImage = imageItem;
+            }
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
@@ -170,6 +168,17 @@ namespace WpfAppCommon.Factory.Default {
                     ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
+                }
+            }
+            // ★TODO 自動処理ルールで処理するようにする。
+            // UseOCRが設定されている場合はOCRを実行
+            if (ClipboardAppConfig.UseOCR && image != null) {
+                try {
+                    string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+                    item.Content = text;
+
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
                 }
             }
 

@@ -131,7 +131,7 @@ def openai_chat(props: dict, input_json: str, json_mode: bool = False, temperatu
 
     return run_openai_chat(props, input_dict, temperature)
 
-def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list):
+def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list, temperature=None):
     # 入力パラメーターの設定
     input_list = []
     
@@ -150,7 +150,7 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list)
     input_list.append(role_system_dict)
     input_list.append(role_user_dict)
     
-    return openai_chat(props, json.dumps(input_list), True, temperature=0)
+    return openai_chat(props, json.dumps(input_list), True, temperature)
     
 def openai_embedding(props: dict, input_text: str):
     

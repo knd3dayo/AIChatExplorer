@@ -1,3 +1,4 @@
+using System.Drawing;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -35,6 +36,31 @@ namespace WpfAppCommon.Model {
 
         // クリップボードの内容
         public string Content { get; set; } = "";
+
+        //　画像イメージのObjectId
+        public ObjectId? ImageObjectId { get; set; }
+
+        public ClipboardItemImage? ClipboardItemImage {
+            get {
+                if (ImageObjectId == null) {
+                    return new ClipboardItemImage();
+                }
+                return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(ImageObjectId);
+            }set {
+                if (value == null) {
+                    //Imageを削除
+                    if (ClipboardItemImage != null) {
+                        ClipboardItemImage.Delete();
+                    }
+                    ImageObjectId = null;
+                    return;
+                }
+                //Imageを保存
+                value.Save();
+                ImageObjectId = value.Id;
+            }
+        }
+
         // クリップボードの内容の種類
         public ClipboardContentTypes ContentType { get; set; }
 
@@ -76,6 +102,13 @@ namespace WpfAppCommon.Model {
             newItem.SourceApplicationPath = SourceApplicationPath;
             newItem.Tags = new HashSet<string>(Tags);
             newItem.Description = Description;
+
+            //-- 画像がある場合はコピー
+            if (ImageObjectId != null) {
+                ClipboardItemImage newImage = new ClipboardItemImage();
+                newImage.ImageBase64 = ClipboardItemImage?.ImageBase64;
+                newItem.ClipboardItemImage = newImage;
+            }
         }
 
         public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {
@@ -89,9 +122,9 @@ namespace WpfAppCommon.Model {
 
             foreach (var item in items) {
 
-                // Itemの種別がFileが含まれている場合はマージしない
-                if (item.ContentType != ClipboardContentTypes.Files && item.ContentType != ClipboardContentTypes.Text) {
-                    action?.Invoke(ActionMessage.Error("Fileが含まれているアイテムはマージできません"));
+                // Itemの種別がText以外が含まれている場合はマージしない
+                if (item.ContentType != ClipboardContentTypes.Text) {
+                    action?.Invoke(ActionMessage.Error("Text以外のアイテムが含まれているアイテムはマージできません"));
                     return;
                 }
             }

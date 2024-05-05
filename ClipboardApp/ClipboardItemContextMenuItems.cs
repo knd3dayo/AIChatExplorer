@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.Views.ClipboardItemView;
