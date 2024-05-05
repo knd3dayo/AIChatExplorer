@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WpfCommonApp.Control.StatusMessage"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="{Binding ActualWidth}"
     mc:Ignorable="d">
@@ -20,11 +21,34 @@
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ScrollViewer
+        <!--  メニューバー  -->
+        <StackPanel
             Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <Menu
+                    Name="menu1"
+                    Margin="0,0,0,0"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="False">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="" />
+                </Menu>
+
+            </materialDesign:ColorZone>
+        </StackPanel>
+        <ScrollViewer
+            Grid.Row="1"
             Margin="10,10,10,10"
             CanContentScroll="False"
             VerticalScrollBarVisibility="Auto">
@@ -33,7 +57,7 @@
                 IsReadOnly="True"
                 Text="{Binding Message}" />
         </ScrollViewer>
-        <DockPanel Grid.Row="1">
+        <DockPanel Grid.Row="2">
             <Button
                 Width="100"
                 Margin="10,10,10,10"
