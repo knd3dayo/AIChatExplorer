@@ -92,7 +92,7 @@
                         Command="{Binding SettingCommand}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="設定"
-                        IsEnabled="{Binding IsInternalProject}" />
+                        IsEnabled="{Binding IsStartFromInternalApp}" />
                 </Menu>
 
             </Grid>

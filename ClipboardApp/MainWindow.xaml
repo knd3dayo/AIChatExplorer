@@ -195,6 +195,7 @@
                                 Header="{Binding StringResources.EditVectorDB}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
+                        <!--  Tools  -->
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
@@ -204,6 +205,12 @@
                                 Command="{Binding OpenOpenAIWindowCommand}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.OpenAIChat}"
+                                Visibility="{Binding UseOpenAIVisibility}" />
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding OpenScreenshotCheckerWindow}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.ImageEvidenceChecker}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
 

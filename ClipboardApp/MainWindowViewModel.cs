@@ -230,6 +230,11 @@ namespace ClipboardApp {
         public SimpleDelegateCommand OpenOpenAIWindowCommand => new((parameter) => {
             MainWindowCommand.OpenOpenAIWindowCommand();
         });
+        // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand OpenScreenshotCheckerWindow => new((parameter) => {
+            MainWindowCommand.OpenScreenshotCheckerWindowExecute();
+        });
+
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand OpenRAGManagementWindowCommand => new((parameter) => {
             MainWindowCommand.OpenRAGManagementWindowCommand();

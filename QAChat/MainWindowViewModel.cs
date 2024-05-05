@@ -89,18 +89,15 @@ namespace QAChat {
 
         public StringBuilder Log = new();
 
-
-        //  Dictionaryを引数として、そのキーと値をProperties.Settingsに保存する
-
-        // このプロジェクトからの呼び出しか否か
-        private bool isInternalProject = true;
-        public bool IsInternalProject {
+        // 内部から起動されたか否か
+        private bool isStartFromInternalApp = true;
+        public bool IsStartFromInternalApp {
             get {
-                return isInternalProject;
+                return isStartFromInternalApp;
             }
             set {
-                isInternalProject = value;
-                OnPropertyChanged(nameof(IsInternalProject));
+                isStartFromInternalApp = value;
+                OnPropertyChanged(nameof(IsStartFromInternalApp));
             }
         }
 

@@ -13,7 +13,7 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ScreenshotChecker {
-    internal class MainWindowViewModel : MyWindowViewModel {
+    public class MainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public MainWindowViewModel() {
             // DataGridの初期化。 1行追加
@@ -28,6 +28,18 @@ namespace ScreenshotChecker {
             set {
                 _IsIndeterminate = value;
                 OnPropertyChanged(nameof(IsIndeterminate));
+            }
+        }
+
+        // 内部から起動されたか否か
+        private bool isStartFromInternalApp = true;
+        public bool IsStartFromInternalApp {
+            get {
+                return isStartFromInternalApp;
+            }
+            set {
+                isStartFromInternalApp = value;
+                OnPropertyChanged(nameof(IsStartFromInternalApp));
             }
         }
 

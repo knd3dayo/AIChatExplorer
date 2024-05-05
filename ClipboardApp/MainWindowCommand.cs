@@ -72,6 +72,17 @@ namespace ClipboardApp {
         public static void OpenOpenAIWindowCommand() {
             ClipboardItemCommands.OpenOpenAIChatWindowExecute(null);
         }
+        // 画像エビデンスチェッカーを開くコマンド
+        public static void OpenScreenshotCheckerWindowExecute() {
+            ScreenshotChecker.MainWindow imageEvidenceCheckerWindow = new();
+            ScreenshotChecker.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ScreenshotChecker.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
+            // 内部プロジェクトからの起動をFalse
+            imageEvidenceCheckerWindowViewModel.IsStartFromInternalApp = false;
+            imageEvidenceCheckerWindow.Show();
+        }
+
+
+
         // OpenRAGManagementWindowCommand メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenRAGManagementWindowCommand() {
             // RARManagementWindowを開く

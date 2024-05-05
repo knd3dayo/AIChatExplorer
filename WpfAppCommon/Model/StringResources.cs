@@ -39,6 +39,9 @@ namespace WpfAppCommon.Model {
         public string Tool { get; } = "ツール";
         // OpenAIチャット
         public string OpenAIChat { get; } = "OpenAIチャット";
+        // 画像エビデンスチェッカー
+        public string ImageEvidenceChecker { get; } = "画像エビデンスチェッカー";
+
         // 検索
         public string Search { get; } = "検索";
         // 設定
