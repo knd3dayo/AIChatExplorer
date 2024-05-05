@@ -31,7 +31,11 @@ namespace ClipboardApp {
             ClipboardAppMenuItem basicUtilityMenuItems = new ClipboardAppMenuItem("基本機能", SimpleDelegateCommand.EmptyCommand);
 
             basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", _mainWindowViewModel.SplitFilePathCommand));
-            basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("テキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
+            basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルからテキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
+            basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("画像からテキストを抽出",
+                new SimpleDelegateCommand((parameter) => {
+                    ClipboardItemCommands.MenuItemExtractTextFromImageCommandExecute(_mainWindowViewModel.SelectedItem);
+                })));
             // UseSpacyがTrueの場合
             if (ClipboardAppConfig.UseSpacy) {
                 basicUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));

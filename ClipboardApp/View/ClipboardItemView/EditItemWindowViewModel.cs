@@ -21,27 +21,8 @@ namespace ClipboardApp.View.ClipboardItemView {
             set {
                 itemViewModel = value;
                 TagsString = string.Join(",", itemViewModel?.Tags ?? []);
-                Description = itemViewModel?.Description ?? "";
-                Content = itemViewModel?.Content ?? "";
 
                 OnPropertyChanged(nameof(ItemViewModel));
-            }
-        }
-
-        private string _description = "";
-        public string Description {
-            get { return _description; }
-            set {
-                _description = value;
-                OnPropertyChanged(nameof(Description));
-            }
-        }
-        private string _content = "";
-        public string Content {
-            get { return _content; }
-            set {
-                _content = value;
-                OnPropertyChanged(nameof(Content));
             }
         }
 
@@ -131,8 +112,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             if (ItemViewModel == null) {
                 return;
             }
-            ItemViewModel.Description = Description;
-            ItemViewModel.Content = Content;
             // ClipboardItemを更新
             ItemViewModel.Save();
             // 更新後の処理を実行

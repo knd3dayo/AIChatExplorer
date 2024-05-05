@@ -347,7 +347,20 @@ namespace WpfAppCommon.Model {
             return result.Response;
 
         }
+        // 画像からイメージを抽出するコマンド
+        public static ClipboardItem ExtractTextFromImageCommandExecute(ClipboardItem clipboardItem) {
+            if (clipboardItem.ContentType != ClipboardContentTypes.Image) {
+                throw new ThisApplicationException("画像以外のコンテンツはテキストを抽出できません");
+            }
+            Image? image = clipboardItem.ClipboardItemImage?.GetImage();
+            if (image == null) {
+                throw new ThisApplicationException("画像が取得できません");
+            }
+            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+            clipboardItem.Content = text;
 
+            return clipboardItem;
+        }
     }
 
 }

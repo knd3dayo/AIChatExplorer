@@ -6,6 +6,7 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
@@ -179,6 +180,14 @@ namespace ClipboardApp.View.ClipboardItemView {
         // SplitFilePathCommandExecute
         public void SplitFilePathCommandExecute() {
             ClipboardItem.SplitFilePathCommandExecute();
+        }
+
+        // Extract Image
+        public static void ExtractTextFromImage(ClipboardItemViewModel clipboardItemViewModel) {
+            ClipboardItem.ExtractTextFromImageCommandExecute(clipboardItemViewModel.ClipboardItem);
+
+            // 保存
+            clipboardItemViewModel.ClipboardItem.Save();
         }
 
         // Copy

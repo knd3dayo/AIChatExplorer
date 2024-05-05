@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -227,6 +228,31 @@ namespace ClipboardApp.View.ClipboardItemView {
             // 保存
             clipboardItemViewModel.Save();
             clipboardItemViewModel.FolderViewModel.Load();
+
+        }
+        // コンテキストメニューの「画像からテキストを抽出」をクリックしたときの処理
+        public static void MenuItemExtractTextFromImageCommandExecute(ClipboardItemViewModel? clipboardItemViewModel) {
+            if (clipboardItemViewModel == null) {
+                // 対話処理のため、エラー時はダイアログを表示
+                Tools.Error("クリップボードアイテムが選択されていません");
+                return;
+            }
+            // 画像以外の場合はエラー
+            if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Image) {
+                // 対話処理のため、エラー時はダイアログを表示
+                Tools.Error("画像以外のコンテンツはテキストを抽出できません");
+                return;
+            }
+            // OCRが使用不可の場合はエラー
+            if (!ClipboardAppConfig.UseOCR) {
+                Tools.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
+                return;
+            }
+            try {
+                ClipboardItemViewModel.ExtractTextFromImage(clipboardItemViewModel);
+            } catch (Exception ex) {
+                Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+            }
 
         }
 
