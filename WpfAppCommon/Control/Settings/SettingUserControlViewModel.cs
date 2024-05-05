@@ -6,8 +6,12 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.Settings {
+    /// <summary>
+    /// 設定画面のViewModel
+    /// </summary>
     public partial class SettingUserControlViewModel : MyWindowViewModel {
-
+        // プロパティが変更されたか否か
+        private bool isPropertyChanged = false;
         // MonitorTargetAppNames
         public string MonitorTargetAppNames {
             get {
@@ -16,6 +20,8 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames = value;
                 OnPropertyChanged(nameof(MonitorTargetAppNames));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // PythonDLLのパス
@@ -26,6 +32,8 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
                 OnPropertyChanged(nameof(PythonDllPath));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         public bool PythonExecMode {
@@ -48,6 +56,8 @@ namespace WpfAppCommon.Control.Settings {
                 OnPropertyChanged(nameof(UseSpacyVisibility));
                 OnPropertyChanged(nameof(UseOCRVisibility));
 
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAIを使用するかどうか
@@ -62,6 +72,9 @@ namespace WpfAppCommon.Control.Settings {
                 OnPropertyChanged(nameof(UseOpenAIVisibility));
                 OnPropertyChanged(nameof(AzureOpenAIVisibility));
                 OnPropertyChanged(nameof(UseSpacyVisibility));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // Azure OpenAIを使用するかどうか
@@ -74,6 +87,9 @@ namespace WpfAppCommon.Control.Settings {
                 OnPropertyChanged(nameof(AzureOpenAI));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(AzureOpenAIVisibility));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAIのAPIキー
@@ -84,6 +100,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.OpenAIKey = value;
                 OnPropertyChanged(nameof(OpenAIKey));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAICompletionModel
@@ -94,6 +113,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel = value;
                 OnPropertyChanged(nameof(OpenAICompletionModel));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAIEmbeddingModel
@@ -104,6 +126,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingModel));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -115,6 +140,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint = value;
                 OnPropertyChanged(nameof(AzureOpenAIEndpoint));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAICompletionBaseURL
@@ -125,6 +153,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL = value;
                 OnPropertyChanged(nameof(OpenAICompletionBaseURL));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // OpenAIEmbeddingBaseURL
@@ -135,6 +166,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingBaseURL));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // UseOCR
@@ -147,6 +181,9 @@ namespace WpfAppCommon.Control.Settings {
                 OnPropertyChanged(nameof(UseOCR));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UseOCRVisibility));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // TesseractExePath
@@ -157,6 +194,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
                 OnPropertyChanged(nameof(TesseractExePath));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -171,10 +211,11 @@ namespace WpfAppCommon.Control.Settings {
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UseSpacyVisibility));
 
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // SpacyModel
-
         public string SpacyModel {
             get {
                 return WpfAppCommon.Properties.Settings.Default.SpacyModel;
@@ -182,6 +223,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
                 OnPropertyChanged(nameof(SpacyModel));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -193,6 +237,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
                 OnPropertyChanged(nameof(AutoMergeItemsBySourceApplicationTitle));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -204,6 +251,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.AutoTag = value;
                 OnPropertyChanged(nameof(AutoTag));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -215,6 +265,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
                 OnPropertyChanged(nameof(AutoDescription));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // UserMaskedDataInOpenAI
@@ -225,6 +278,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI = value;
                 OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -236,6 +292,9 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 WpfAppCommon.Properties.Settings.Default.BackupGeneration = value;
                 OnPropertyChanged(nameof(BackupGeneration));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
         // 表示/非表示の制御
@@ -578,8 +637,11 @@ namespace WpfAppCommon.Control.Settings {
         });
         // SaveCommand
         public SimpleDelegateCommand SaveCommand => new((parameter) => {
-            WpfAppCommon.Properties.Settings.Default.Save();
-            MessageBox.Show("設定を保存しました。アプリケーションを再起動してください");
+
+            if (isPropertyChanged) {
+                WpfAppCommon.Properties.Settings.Default.Save();
+                MessageBox.Show("設定を保存しました。アプリケーションを再起動してください");
+            }
             // Windowを閉じる
             if (parameter is Window window) {
                 window.Close();
