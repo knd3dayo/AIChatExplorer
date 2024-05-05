@@ -98,7 +98,7 @@
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
-                    Text="{Binding Description}" />
+                    Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
                     Grid.Row="1"
                     Grid.Column="0"

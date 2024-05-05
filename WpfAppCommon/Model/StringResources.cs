@@ -173,5 +173,12 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // ログ表示
+        public string LogWindowTitle {
+            get {
+                return $"{AppName} - ログ表示";
+            }
+        }
+
     }
 }

@@ -1,17 +1,17 @@
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.View.TagView;
-using WpfAppCommon.Utils;
-using WpfAppCommon.Model;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.TagView;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemView
-{
-    class EditItemWindowViewModel : ObservableObject {
-        private bool SingleLineSelected = false;
-        private bool URLSelected = false;
-        private bool AngleBracketSelected = false;
+namespace ClipboardApp.View.ClipboardItemView {
+    /// <summary>
+    /// クリップボードアイテム編集ウィンドウのViewModel
+    /// </summary>
+    class EditItemWindowViewModel : MyWindowViewModel {
+
+        private TextSelector TextSelector = new();
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -24,7 +24,7 @@ namespace ClipboardApp.View.ClipboardItemView
                 Description = itemViewModel?.Description ?? "";
                 Content = itemViewModel?.Content ?? "";
 
-                OnPropertyChanged("ClipboardItemViewModel");
+                OnPropertyChanged(nameof(ItemViewModel));
             }
         }
 
@@ -68,8 +68,8 @@ namespace ClipboardApp.View.ClipboardItemView
                 OnPropertyChanged(nameof(TagsString));
             }
         }
-
-        private Action? _afterUpdate;
+        // 更新後の処理
+        private Action _afterUpdate = () => {};
 
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
@@ -119,61 +119,9 @@ namespace ClipboardApp.View.ClipboardItemView
             }
 
             TextBox editor = (TextBox)editorObject;
-            // 選択テキストに改行が含まれていない場合は行選択
-
-            // 1行選択の場合は全選択
-            if (SingleLineSelected) {
-                editor.SelectAll();
-                SingleLineSelected = false;
-                URLSelected = false;
-                return;
-            }
-            // 複数行選択中でない場合
-            if (!editor.SelectedText.Contains('\n')) {
-                int pos = editor.SelectionStart;
-                // posがTextの長さを超える場合はTextの最後を指定
-                if (pos >= editor.Text.Length) {
-                    pos = editor.Text.Length - 1;
-                }
-                int lineStart = editor.Text.LastIndexOf('\n', pos) + 1;
-
-                int lineEnd = editor.Text.IndexOf('\n', pos);
-                if (lineEnd == -1) {
-                    lineEnd = editor.Text.Length;
-                }
-
-                // lineEnd - lineStartが0以下の場合は何もしない
-                if (lineEnd - lineStart <= 0) {
-                    return;
-                }
-                // 選択対象文字列
-                string selectedText = editor.Text[lineStart..lineEnd];
-                // URLの場合はURL選択にする
-                int[]? ints = Tools.GetURLPosition(selectedText);
-                if (ints != null && URLSelected == false) {
-                    lineStart += ints[0];
-                    lineEnd = lineStart + ints[1] - ints[0];
-                    editor.Select(lineStart, lineEnd - lineStart);
-                    URLSelected = true;
-                    return;
-                }
-                // AngleBracketの場合はAngleBracket選択にする
-                int[] angleBracketInts = Tools.GetInAngleBracketPosition(selectedText);
-                if (angleBracketInts[0] != -1 && AngleBracketSelected == false) {
-                    lineStart += angleBracketInts[0];
-                    lineEnd = lineStart + angleBracketInts[1] - angleBracketInts[0];
-                    editor.Select(lineStart, lineEnd - lineStart);
-                    AngleBracketSelected = true;
-                    return;
-                }
-                // EditorTextSelectionを更新
-                editor.Select(lineStart, lineEnd - lineStart);
-                SingleLineSelected = true;
-                URLSelected = false;
-                AngleBracketSelected = false;
-
-                return;
-            }
+            // テキスト選択
+            TextSelector.SelectText(editor);
+            return;
         });
 
         // OKボタンのコマンド
@@ -188,7 +136,7 @@ namespace ClipboardApp.View.ClipboardItemView
             // ClipboardItemを更新
             ItemViewModel.Save();
             // 更新後の処理を実行
-            _afterUpdate?.Invoke();
+            _afterUpdate.Invoke();
             if (parameter is not Window window) {
                 return;
             }
