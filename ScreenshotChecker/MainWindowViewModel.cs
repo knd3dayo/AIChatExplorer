@@ -40,7 +40,7 @@ namespace ScreenshotChecker {
               1.setting_itemの値が画像に含まれているかチェックします。
               - setting_itemの値が画像に含まれていない場合は、result_string:Unknownとactual_value: ""を設定してください。
               - setting_itemの値が画像に存在する場合は、2の処理を実行します。
-              2.setting_itemの値の付近にsetting_valueの値が存在するかチェックします。
+              2.setting_itemの値の付近にsetting_valueの値が存在するかチェックします。　
               - 存在しない場合は、result_string:NG, actual_value: 画像内の文字列 を設定します。
               - 存在する場合は、result_string:OK, actual_value: 画像内の文字列 を設定します。
 

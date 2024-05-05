@@ -65,7 +65,10 @@
             </materialDesign:ColorZone>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            Grid.Row="1"
+            CanContentScroll="False"
+            VerticalScrollBarVisibility="Auto">
             <TextBox
                 Margin="10,10,0,0"
                 HorizontalAlignment="Left"

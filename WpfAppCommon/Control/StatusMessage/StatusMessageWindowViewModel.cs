@@ -1,18 +1,19 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Utils;
 
 namespace WpfCommonApp.Control.StatusMessage {
     public class StatusMessageWindowViewModel : ObservableObject{
-        public ObservableCollection<string> Messages { get; set; } = [];
+        private string _message = string.Empty;
+        public string Message {
+            get { return _message; }
+            set { _message = value; OnPropertyChanged(nameof(Message)); }
+        }
+
 
         public void Initialize() {
-            List<string> messages = Tools.StatusText.Messages;
-            Messages.Clear();
-            foreach (string message in messages) {
-                Messages.Add(message);
-            }
-            OnPropertyChanged(nameof(Messages));
+            // メッセージを初期化
+            Message = string.Join("\n", Tools.StatusText.Messages);
         }
 
         public SimpleDelegateCommand CloseCommand => new ((parameter) => {
