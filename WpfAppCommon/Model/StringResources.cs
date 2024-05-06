@@ -207,6 +207,10 @@ namespace WpfAppCommon.Model {
         // OCR処理が失敗しました
         public string OCRFailed { get; } = "OCR処理が失敗しました";
 
+        // --- namespace WpfAppCommon.PythonIF ---
+        // --- EmptyPythonFunctions.cs ---
+        // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
+        public string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
 
     }
 }
