@@ -7,7 +7,6 @@ using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace WpfAppCommon.Model {
     public enum ClipboardContentTypes {
@@ -186,12 +185,6 @@ namespace WpfAppCommon.Model {
             return string.Join(",", Tags);
         }
 
-        public void SetApplicationInfo(ClipboardChangedEventArgs sender) {
-            SourceApplicationName = sender.SourceApplication.Name;
-            SourceApplicationTitle = sender.SourceApplication.Title;
-            SourceApplicationID = sender.SourceApplication.ID;
-            SourceApplicationPath = sender.SourceApplication.Path;
-        }
 
         public string? HeaderText {
             get {
