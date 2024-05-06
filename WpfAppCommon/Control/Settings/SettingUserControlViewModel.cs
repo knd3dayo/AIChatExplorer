@@ -618,7 +618,7 @@ namespace WpfAppCommon.Control.Settings {
                     resultString = CheckSetting();
                 });
                 IsIndeterminate = false;
-                Tools.StatusText.InitText();
+                Tools.StatusText.Init();
                 // 結果をTestResultWindowで表示
                 // UserControlの設定ウィンドウを開く
                 TestResultUserControl testResultWindow = new();
@@ -632,7 +632,7 @@ namespace WpfAppCommon.Control.Settings {
 
             } finally {
                 IsIndeterminate = false;
-                Tools.StatusText.InitText();
+                Tools.StatusText.Init();
             }
         });
         // SaveCommand

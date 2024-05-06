@@ -1,6 +1,5 @@
 
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Utils;
 using WpfAppCommon.Model;

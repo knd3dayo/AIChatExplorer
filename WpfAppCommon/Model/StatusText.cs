@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WpfAppCommon.Model {
@@ -65,7 +65,7 @@ namespace WpfAppCommon.Model {
                 return;
             }
             CancellationToken token = (CancellationToken)obj;
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 50; i++) {
                 if (token.IsCancellationRequested) {
                     return;
                 }
@@ -77,7 +77,7 @@ namespace WpfAppCommon.Model {
             }
             Ready();
         }
-        public void InitText() {
+        public void Init() {
             ReadyText = DefaultText;
             Ready();
         }

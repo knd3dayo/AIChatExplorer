@@ -15,40 +15,43 @@ namespace WpfAppCommon.Utils {
 
         public static NLog.Logger Logger { get; } = NLog.LogManager.GetCurrentClassLogger();
 
-        public static void Debug(string message) {
-            Logger.Debug(message);
-            // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(ActiveWindow, message);
-        }
-
         public static void Info(string message) {
-            Logger.Info(message);
-            if (StatusText != null) {
-                StatusText.Text = message;
-            }
+            Application.Current.Dispatcher.Invoke(() => {
+                Logger.Info(message);
+                if (StatusText != null) {
+                    StatusText.Text = message;
+                }
+            });
         }
         public static void Info(string message, bool showMessageBox) {
-            Logger.Info(message);
-            if (showMessageBox) {
-                System.Windows.MessageBox.Show(ActiveWindow, message);
-            }
+            Application.Current.Dispatcher.Invoke(() => {
+                Logger.Info(message);
+                if (showMessageBox) {
+                    System.Windows.MessageBox.Show(ActiveWindow, message);
+                }
+            });
         }
 
         public static void Warn(string message) {
-            Logger.Warn(message);
-            if (StatusText != null) {
-                StatusText.Text = message;
-            }
-            // 開発中はメッセージボックスを表示する
-            System.Windows.MessageBox.Show(ActiveWindow, message);
+            Application.Current.Dispatcher.Invoke(() => {
+                Logger.Warn(message);
+                if (StatusText != null) {
+                    StatusText.Text = message;
+                }
+                // 開発中はメッセージボックスを表示する
+                System.Windows.MessageBox.Show(ActiveWindow, message);
+            });
         }
 
         public static void Error(string message) {
-            Logger.Error(message);
-            if (StatusText != null) {
-                StatusText.Text = message;
-            }
-            System.Windows.MessageBox.Show(ActiveWindow, message);
+            Application.Current.Dispatcher.Invoke(() => {
+                Error(message);
+                Logger.Error(message);
+                if (StatusText != null) {
+                    StatusText.Text = message;
+                }
+                System.Windows.MessageBox.Show(ActiveWindow, message);
+            });
         }
         // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
         // Listの要素がNullの場合はNull > と返す
