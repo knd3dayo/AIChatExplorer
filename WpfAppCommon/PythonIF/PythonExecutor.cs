@@ -1,9 +1,11 @@
 using System.IO;
-using WpfAppCommon.PythonIF;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.PythonIF {
     public class PythonExecutor {
+        // String definition instance
+        public static StringResources StringResources { get; } = StringResources.Instance;
 
         public enum PythonExecutionType {
             None = 0,
@@ -13,43 +15,39 @@ namespace WpfAppCommon.PythonIF {
         }
         public static PythonExecutionType PythonExecution {
             get {
-                // intからPythonExecutionTypeに変換
-                return (PythonExecutionType)Properties.Settings.Default.PythonExecution;
+                // Convert from int to PythonExecutionType
+                return (PythonExecutionType)ClipboardAppConfig.PythonExecute;
             }
-            set {
-                Properties.Settings.Default.PythonExecution = (int)value;
-                Properties.Settings.Default.Save();
-            }
+
         }
 
-        // カスタムPythonスクリプトの、templateファイル
-        public static string TemplateScript = "python/template.py";
+        // Template file for custom Python scripts
+        public static string TemplateScript { get; } = StringResources.TemplateScript;
 
-        // クリップボードアプリ用のPythonスクリプト
-        public static string WpfAppCommonUtilsScript = "python/clipboard_app_utils.py";
+        // Python script for clipboard app
+        public static string WpfAppCommonUtilsScript { get; } = StringResources.WpfAppCommonUtilsScript;
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
         public static void Init(string pythonPath) {
-            // WpfAppCommonSettingsのPythonExecutionがPythonNetの場合はInitPythonNetを実行する
+            // If PythonExecution in WpfAppCommonSettings is PythonNet, execute InitPythonNet
             if (PythonExecution == PythonExecutionType.PythonNet) {
                 PythonFunctions = new PythonNetFunctions(pythonPath);
             }
         }
 
-
-        // Pythonファイルを読み込む
+        // Load Python script
         public static string LoadPythonScript(string scriptName) {
             var file = new FileInfo(scriptName);
             if (!file.Exists) {
-                // テンプレートファイルを読み込み
+                // Load the template file
 
                 file = new FileInfo(TemplateScript);
                 if (!file.Exists) {
-                    throw new ThisApplicationException("テンプレートファイルが見つかりません");
+                    throw new ThisApplicationException(StringResources.TemplateScriptNotFound);
                 }
                 return File.ReadAllText(file.FullName);
             }
-            // fileを読み込む
+            // Load the file
             string script = File.ReadAllText(file.FullName);
 
             return script;

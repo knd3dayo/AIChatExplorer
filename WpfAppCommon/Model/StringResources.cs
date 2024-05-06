@@ -212,6 +212,15 @@ namespace WpfAppCommon.Model {
         // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
         public string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
 
+        // --- PythonExecutor.cs ---
+        // カスタムPythonスクリプトの、templateファイル
+        public string TemplateScript { get; } = "python/template.py";
+
+        // クリップボードアプリ用のPythonスクリプト
+        public string WpfAppCommonUtilsScript { get; } = "python/clipboard_app_utils.py";
+
+        // テンプレートファイルが見つかりません
+        public string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";
     }
 }
     
