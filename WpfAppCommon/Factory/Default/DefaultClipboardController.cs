@@ -12,8 +12,6 @@ namespace WpfAppCommon.Factory.Default {
     class DefaultClipboardController : IClipboardController {
         //--------------------------------------------------------------------------------
 
-        // 起動時フラグ(起動時のクリップボードを読み捨てるため)
-        private bool IsStartup { get; set; } = true;
         // クリップボード監視有効無効フラグ
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard? _clipboard = null;
@@ -58,12 +56,8 @@ namespace WpfAppCommon.Factory.Default {
             IsClipboardMonitorEnabled = true;
         }
 
+        // クリップボードの内容が変更されたときの処理
         private void ClipboardChanged(object? sender, ClipboardChangedEventArgs e) {
-            // 起動時のクリップボードを読み捨てる
-            if (IsStartup) {
-                IsStartup = false;
-                return;
-            }
 
             if (IsClipboardMonitorEnabled == false) {
                 // System.Windows.MessageBox.Show("Clipboard monitor disabled");
@@ -103,10 +97,6 @@ namespace WpfAppCommon.Factory.Default {
 
         }
         private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            if (_clipboard == null) {
-                Tools.Error("Clipboard is null");
-                return;
-            }
             // 監視対象アプリケーションかどうかを判定
             if (!IsMonitorTargetApp(e)) {
                 return;
@@ -136,7 +126,7 @@ namespace WpfAppCommon.Factory.Default {
         }
 
         // クリップボードアイテムが監視対象かどうかを判定
-        public bool IsMonitorTargetApp(ClipboardChangedEventArgs e) {
+        public static bool IsMonitorTargetApp(ClipboardChangedEventArgs e) {
             // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
             if (ClipboardAppConfig.MonitorTargetAppNames != "") {
                 // 大文字同士で比較
@@ -151,7 +141,7 @@ namespace WpfAppCommon.Factory.Default {
 
         // ClipboardItemを作成
         // ★TODO ClipboardITemに移動
-        public ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
+        public static ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
             ClipboardItem item = new() {
                 ContentType = contentTypes
             };
@@ -175,7 +165,7 @@ namespace WpfAppCommon.Factory.Default {
         }
 
         // 自動処理を適用
-        public void ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
+        public static void ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
             // ★TODO 自動処理ルールで処理するようにする。
 
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
