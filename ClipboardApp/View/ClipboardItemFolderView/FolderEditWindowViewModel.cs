@@ -154,7 +154,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
 
         });
 
-        // OpenListAutoProcessRuleWindowCommand
+        // OpenListAutoProcessRuleWindowCommandExecute
         public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new ((parameter) => {
             if (FolderViewModel == null) {
                 Tools.Error("フォルダが指定されていません");
@@ -169,7 +169,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenEditSearchConditionWindowCommand => new ((parameter) =>{
-            ClipboardFolderCommands.SearchCommandExecute(FolderViewModel);
+            ClipboardFolderViewModel.SearchCommandExecute(FolderViewModel);
             });
 
         // 検索条件画面表示ボタンを表示するかどうか

@@ -23,6 +23,8 @@ namespace ClipboardApp.View.ClipboardItemView {
                 TagsString = string.Join(",", itemViewModel?.Tags ?? []);
 
                 OnPropertyChanged(nameof(ItemViewModel));
+                OnPropertyChanged(nameof(ImageTabVisibility));
+                OnPropertyChanged(nameof(FileTabVisibility));
             }
         }
 
@@ -34,6 +36,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             set {
                 title = value;
                 OnPropertyChanged(nameof(Title));
+
             }
         }
 
@@ -49,6 +52,20 @@ namespace ClipboardApp.View.ClipboardItemView {
                 OnPropertyChanged(nameof(TagsString));
             }
         }
+
+        // イメージタブの表示可否
+        public Visibility ImageTabVisibility {
+            get {
+                return ItemViewModel?.ContentType == ClipboardContentTypes.Image ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // ファイルタブの表示可否
+        public Visibility FileTabVisibility {
+            get {
+                return ItemViewModel?.ContentType == ClipboardContentTypes.Files ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         // 更新後の処理
         private Action _afterUpdate = () => {};
 

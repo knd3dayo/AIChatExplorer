@@ -17,12 +17,6 @@
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
-    <Window.Resources>
-        <!--  Clipboard item context menu items  -->
-        <CollectionViewSource x:Key="ClipboardItemContextMenuItems" Source="{Binding ClipboardItemContextMenuItems}" />
-        <!--  Folder context menu items  -->
-        <CollectionViewSource x:Key="ClipboardItemFolderContextMenuItems" Source="{Binding ClipboardItemFolderContextMenuItems}" />
-    </Window.Resources>
     <Window.InputBindings>
         <!--  Exit application  -->
         <KeyBinding
@@ -256,7 +250,7 @@
                                 </DockPanel.InputBindings>
                                 <DockPanel.ContextMenu>
                                     <!--  Folder context menu  -->
-                                    <ContextMenu>
+                                    <ContextMenu FontSize="12">
                                         <MenuItem
                                             Command="{Binding CreateFolderCommand}"
                                             CommandParameter="{Binding}"
@@ -372,12 +366,7 @@
                                         TextTrimming="None" />
                                 </Grid>
                                 <materialDesign:Card.ContextMenu>
-                                    <ContextMenu>
-                                        <ContextMenu.ItemsSource>
-                                            <CompositeCollection>
-                                                <CollectionContainer Collection="{Binding Source={StaticResource ClipboardItemContextMenuItems}}" />
-                                            </CompositeCollection>
-                                        </ContextMenu.ItemsSource>
+                                    <ContextMenu FontSize="12" ItemsSource="{Binding ContextMenuItems}">
                                         <ContextMenu.ItemContainerStyle>
                                             <Style TargetType="MenuItem">
                                                 <Setter Property="MenuItem.Header" Value="{Binding Title}" />

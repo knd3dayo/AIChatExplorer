@@ -40,13 +40,19 @@ namespace WpfAppCommon.Model {
         //　画像イメージのObjectId
         public ObjectId? ImageObjectId { get; set; }
 
+        // ファイルのObjectId
+        public ObjectId? FileObjectId { get; set; }
+
+
+        // 画像イメージ
         public ClipboardItemImage? ClipboardItemImage {
             get {
                 if (ImageObjectId == null) {
                     return new ClipboardItemImage();
                 }
                 return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(ImageObjectId);
-            }set {
+            }
+            set {
                 if (value == null) {
                     //Imageを削除
                     if (ClipboardItemImage != null) {
@@ -58,6 +64,27 @@ namespace WpfAppCommon.Model {
                 //Imageを保存
                 value.Save();
                 ImageObjectId = value.Id;
+            }
+        }
+
+        // ファイル
+        public ClipboardItemFile? ClipboardItemFile {
+            get {
+                if (FileObjectId == null) {
+                    return null;
+                }
+                return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(FileObjectId);
+            }
+            set {
+                if (value == null) {
+                    //Fileを削除
+                    ClipboardItemFile?.Delete();
+                    FileObjectId = null;
+                    return;
+                }
+                //Fileを保存
+                value.Save();
+                FileObjectId = value.Id;
             }
         }
 
@@ -105,9 +132,15 @@ namespace WpfAppCommon.Model {
 
             //-- 画像がある場合はコピー
             if (ImageObjectId != null) {
-                ClipboardItemImage newImage = new ClipboardItemImage();
-                newImage.ImageBase64 = ClipboardItemImage?.ImageBase64;
+                ClipboardItemImage newImage = new ();
+                newImage.ImageBase64 = ClipboardItemImage?.ImageBase64 ?? string.Empty;
                 newItem.ClipboardItemImage = newImage;
+            }
+            //-- ファイルがある場合はコピー
+            if (FileObjectId != null) {
+                ClipboardItemFile newFile = new(ClipboardItemFile?.FileName ?? string.Empty);
+                newFile.ExtractedText = ClipboardItemFile?.ExtractedText ?? string.Empty;
+                newItem.ClipboardItemFile = newFile;
             }
         }
 
@@ -254,7 +287,9 @@ namespace WpfAppCommon.Model {
             if (this.ContentType != ClipboardContentTypes.Files) {
                 throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
-            string path = this.Content;
+            
+            string? path = ClipboardItemFile?.FileName;
+
             if (string.IsNullOrEmpty(path) == false) {
                 // ファイルパスをフォルダ名とファイル名に分割
                 string? folderPath = Path.GetDirectoryName(path) ?? throw new ThisApplicationException("フォルダパスが取得できません");
@@ -287,11 +322,17 @@ namespace WpfAppCommon.Model {
             if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
                 throw new ThisApplicationException("ファイル以外のコンテンツはテキストを抽出できません");
             }
-            string path = clipboardItem.Content;
-            string text = PythonExecutor.PythonFunctions.ExtractText(clipboardItem.Content);
-            clipboardItem.Content = text;
-            // タイプをテキストに変更
-            clipboardItem.ContentType = ClipboardContentTypes.Text;
+            ClipboardItemFile? clipboardItemFile = clipboardItem.ClipboardItemFile;
+            if (clipboardItemFile == null) {
+                throw new ThisApplicationException("ファイルが取得できません");
+            }
+            string path = clipboardItemFile.FileName;
+            if (string.IsNullOrEmpty(path)) {
+                throw new ThisApplicationException("ファイルパスが取得できません");
+            }
+            string text = PythonExecutor.PythonFunctions.ExtractText(path);
+            clipboardItemFile.ExtractedText = text;
+
             Tools.Info($"{path}のテキストを抽出しました");
 
             return clipboardItem;

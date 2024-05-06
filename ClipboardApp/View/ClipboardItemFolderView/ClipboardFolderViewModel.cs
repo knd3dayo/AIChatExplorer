@@ -5,7 +5,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
-    public class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
+    public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
 
         // ClipboardFolder
         private ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
@@ -222,20 +222,20 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 Tools.Error("フォルダが選択されていません");
                 return;
             }
-            ClipboardFolderCommands.CreateFolderCommandExecute(folderViewModel, () => {
+            ClipboardFolderViewModel.CreateFolderCommandExecute(folderViewModel, () => {
                 folderViewModel.Load();
             });
         });
         // フォルダ編集コマンド
         public SimpleDelegateCommand EditFolderCommand => new((parameter) => {
-            ClipboardFolderCommands.EditFolderCommandExecute(parameter, () => {
+            ClipboardFolderViewModel.EditFolderCommandExecute(parameter, () => {
                 Load();
                 Tools.Info("フォルダを編集しました");
             });
         });
 
         // フォルダ削除コマンド
-        public SimpleDelegateCommand DeleteFolderCommand => new(ClipboardFolderCommands.DeleteFolderCommandExecute);
+        public SimpleDelegateCommand DeleteFolderCommand => new(ClipboardFolderViewModel.DeleteFolderCommandExecute);
 
         // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
         public static SimpleDelegateCommand FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
@@ -243,12 +243,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // フォルダ内のアイテムをJSON形式でエクスポートする処理
         public SimpleDelegateCommand ExportItemsFromFolderCommand => new(
             (parameter) => {
-                ClipboardFolderCommands.ExportItemsFromFolderCommandExecute(this);
+                ClipboardFolderViewModel.ExportItemsFromFolderCommandExecute(this);
             });
 
         // フォルダ内のアイテムをJSON形式でインポートする処理
         public SimpleDelegateCommand ImportItemsToFolderCommand => new((parameter) => {
-            ClipboardFolderCommands.ImportItemsToFolderCommandExecute(this);
+            ClipboardFolderViewModel.ImportItemsToFolderCommandExecute(this);
         });
 
     }

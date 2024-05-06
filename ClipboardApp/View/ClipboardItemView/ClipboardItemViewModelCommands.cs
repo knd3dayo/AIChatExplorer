@@ -12,7 +12,7 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
-    public class ClipboardItemCommands {
+    public partial class ClipboardItemViewModel {
         /// <summary>
         /// 選択中のアイテムを削除する処理
         /// 削除後にフォルダ内のアイテムを再読み込む
@@ -61,26 +61,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             editItemWindow.Show();
         }
 
-        /// <summary>
-        /// コンテキストメニューのタグをクリックしたときの処理
-        /// 更新後にフォルダ内のアイテムを再読み込みする
-        /// </summary>
-        /// <param name="obj"></param>
-        public static void EditTagCommandExecute(object obj) {
-
-            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
-                Tools.Error("クリップボードアイテムが選択されていません");
-                return;
-            }
-            TagWindow tagWindow = new();
-            TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
-            tagWindowViewModel.Initialize(clipboardItemViewModel, () => {
-                Tools.Info("更新しました");
-            });
-
-            tagWindow.ShowDialog();
-
-        }
         /// <summary>
         /// クリップボードアイテムを新規作成する処理
         /// 作成後にフォルダ内のアイテムを再読み込む
@@ -189,9 +169,11 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
 
         }
-        // コンテキストメニューの「テキストを抽出」をクリックしたときの処理
-        public static void MenuItemExtractTextCommandExecute(object obj) {
-            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
+
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド
+        public static SimpleDelegateCommand ExtractTextCommand => new((parameter) => {
+            if (parameter is not ClipboardItemViewModel clipboardItemViewModel) {
                 // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
@@ -201,19 +183,21 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("ファイル以外のコンテンツはテキストを抽出できません");
                 return;
             }
-            clipboardItemViewModel.ExtractTextCommandExecute();
+            ClipboardItem.ExtractTextCommandExecute(clipboardItemViewModel.ClipboardItem);
             // 保存
             clipboardItemViewModel.Save();
 
             // フォルダ内のアイテムを再読み込み
             clipboardItemViewModel.FolderViewModel.Load();
+        });
 
-        }
-
-
-        // コンテキストメニューの「データをマスキング」をクリックしたときの処理
-        public static void MenuItemMaskDataCommandExecute(object obj) {
-            if (obj is not ClipboardItemViewModel clipboardItemViewModel) {
+        // コンテキストメニューの「データをマスキング」の実行用コマンド
+        public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
+            if (MainWindowViewModel.SelectedItemStatic == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
+            if (parameter is not ClipboardItemViewModel clipboardItemViewModel) {
                 // 対話処理のため、エラー時はダイアログを表示
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
@@ -229,7 +213,8 @@ namespace ClipboardApp.View.ClipboardItemView {
             clipboardItemViewModel.Save();
             clipboardItemViewModel.FolderViewModel.Load();
 
-        }
+        });
+
         // コンテキストメニューの「画像からテキストを抽出」をクリックしたときの処理
         public static void MenuItemExtractTextFromImageCommandExecute(ClipboardItemViewModel? clipboardItemViewModel) {
             if (clipboardItemViewModel == null) {

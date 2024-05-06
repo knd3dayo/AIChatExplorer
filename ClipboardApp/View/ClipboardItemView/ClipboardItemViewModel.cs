@@ -1,16 +1,14 @@
-using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
-    public class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
+    public partial class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
         // ClipboardItem
         private ClipboardItem ClipboardItem { get; } = clipboardItem;
         // FolderViewModel
@@ -40,6 +38,30 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
 
         }
+        // ファイル
+        public string? FileName {
+            get {
+                return ClipboardItem.ClipboardItemFile?.FileName;
+            }
+        }
+        //ファイルから抽出したテキスト
+        public string? ExtractedText {
+            get {
+                return ClipboardItem.ClipboardItemFile?.ExtractedText;
+            }
+            set {
+                if (ClipboardItem.ClipboardItemFile == null) {
+                    return;
+                }
+                if (value == null) {
+                    ClipboardItem.ClipboardItemFile.ExtractedText = "";
+                    return;
+                }
+                ClipboardItem.ClipboardItemFile.ExtractedText = value;
+            }
+        }
+
+
         // ThumbnailImage
         public ImageSource? ThumbnailImage {
             get {
@@ -84,7 +106,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             return new ClipboardItemViewModel(item.FolderViewModel, newItem);
         }
 
-        public  ClipboardItemViewModel MaskDataCommandExecute() {
+        public ClipboardItemViewModel MaskDataCommandExecute() {
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.MaskDataCommandExecute());
         }
         public void SetDataObject() {
@@ -198,24 +220,14 @@ namespace ClipboardApp.View.ClipboardItemView {
         public void OpenItem(bool openAsNew = false) {
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenItem(ClipboardItem, true);
         }
-        // ExtractTextCommandExecute
-        public ClipboardItem ExtractTextCommandExecute() {
-            return ClipboardItem.ExtractTextCommandExecute(ClipboardItem);
-        }
 
-        // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public static SimpleDelegateCommand ExtractTextCommand => new((parameter) => {
-            ClipboardItemCommands.MenuItemExtractTextCommandExecute(parameter);
-        });
-        // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
-            if (MainWindowViewModel.SelectedItemStatic == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
+
+        // コンテキストメニュー
+        public ClipboardItemFolderContextMenuItems ContextMenuItems {
+            get {
+                return new ClipboardItemFolderContextMenuItems(this);
             }
-            ClipboardItemCommands.MenuItemMaskDataCommandExecute(MainWindowViewModel.SelectedItemStatic);
-        });
-
+        }
 
 
     }

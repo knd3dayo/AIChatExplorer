@@ -10,7 +10,7 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {
-    public class ClipboardFolderCommands {
+    public partial class ClipboardFolderViewModel {
 
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {

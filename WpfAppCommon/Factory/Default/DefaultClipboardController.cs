@@ -113,10 +113,10 @@ namespace WpfAppCommon.Factory.Default {
                 return;
             }
             // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
-            if (WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames != "") {
+            if (ClipboardAppConfig.MonitorTargetAppNames != "") {
                 // 大文字同士で比較
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
-                string upperMonitorTargetAppNames = WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames.ToUpper();
+                string upperMonitorTargetAppNames = ClipboardAppConfig.MonitorTargetAppNames.ToUpper();
                 if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return;
                 }
@@ -126,8 +126,9 @@ namespace WpfAppCommon.Factory.Default {
             // RootFolderにClipboardItemを追加
 
             // ★TODO 関数化
-            ClipboardItem item = new();
-            item.ContentType = contentTypes;
+            ClipboardItem item = new() {
+                ContentType = contentTypes
+            };
             item.SetApplicationInfo(e);
             item.Content = content;
             item.CollectionName = ClipboardFolder.RootFolder.AbsoluteCollectionName;
@@ -138,10 +139,15 @@ namespace WpfAppCommon.Factory.Default {
                 imageItem.SetImage(image);
                 item.ClipboardItemImage = imageItem;
             }
+            // ContentTypeがFilesの場合はファイルデータを設定
+            else if (contentTypes == ClipboardContentTypes.Files) {
+                ClipboardItemFile clipboardItemFile = new(content);
+                item.ClipboardItemFile = clipboardItemFile;
+            }
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
-            if (WpfAppCommon.Properties.Settings.Default.AutoDescription) {
+            if (ClipboardAppConfig.AutoDescription) {
                 try {
                     Tools.Info("自動タイトル設定処理を実行します");
                     ClipboardItem.CreateAutoDescription(item);
@@ -151,7 +157,7 @@ namespace WpfAppCommon.Factory.Default {
             }
             // ★TODO 自動処理ルールで処理するようにする。
             // AUTO_TAGが設定されている場合は自動でタグを設定する
-            if (WpfAppCommon.Properties.Settings.Default.AutoTag) {
+            if (ClipboardAppConfig.AutoTag) {
                 try {
                     Tools.Info("自動タグ設定処理を実行します");
                     ClipboardItem.CreateAutoTags(item);
@@ -162,7 +168,7 @@ namespace WpfAppCommon.Factory.Default {
 
             // ★TODO 自動処理ルールで処理するようにする。
             // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
-            if (WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle) {
+            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
                 try {
                     Tools.Info("自動マージ処理を実行します");
                     ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);

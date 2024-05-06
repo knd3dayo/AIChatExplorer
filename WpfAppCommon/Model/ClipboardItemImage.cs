@@ -14,7 +14,7 @@ namespace WpfAppCommon.Model {
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
         // 画像イメージのBase64文字列
-        public string? ImageBase64 { get; set; }
+        public string ImageBase64 { get; set; } = String.Empty;
 
         // 画像イメージ
         public void SetImage(Image image) {
@@ -23,7 +23,7 @@ namespace WpfAppCommon.Model {
             ImageBase64 = Convert.ToBase64String(ms.ToArray());
         }
         public Image? GetImage() {
-            if (ImageBase64 == null) {
+            if (string.IsNullOrEmpty(ImageBase64)) {
                 return null;
             }
             byte[] imageBytes = Convert.FromBase64String(ImageBase64);
@@ -31,7 +31,7 @@ namespace WpfAppCommon.Model {
             return Image.FromStream(ms);
         }   
         public BitmapImage? GetBitmapImage() {
-            if (ImageBase64 == null) {
+            if (string.IsNullOrEmpty(ImageBase64)) {
                 return null;
             }
             byte[] binaryData = Convert.FromBase64String(ImageBase64);

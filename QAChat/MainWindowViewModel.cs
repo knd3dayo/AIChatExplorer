@@ -14,6 +14,16 @@ using WpfAppCommon.Utils;
 namespace QAChat {
     public partial class MainWindowViewModel : MyWindowViewModel {
 
+        //初期化
+        public void Initialize(ClipboardItem? clipboardItem) {
+            // クリップボードアイテムを設定
+            ClipboardItem = clipboardItem;
+            // InputTextを設定
+            InputText = clipboardItem?.Content ?? "";
+        }
+
+        public ClipboardItem? ClipboardItem { get; set; }
+
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
         public bool IsIndeterminate {
@@ -36,6 +46,7 @@ namespace QAChat {
                 OnPropertyChanged(nameof(Mode));
             }
         }
+
         public static ChatItem? SelectedItem { get; set; }
 
         public ObservableCollection<ChatItem> ChatItems { get; set; } = [];
@@ -114,6 +125,14 @@ namespace QAChat {
 
                 }
                 prompt += InputText;
+
+                // 初回実行時の処理
+                if (ChatItems.Count == 0) {
+                    // ClipboardItemのContentTypeがImageの場合は、Base64を取得してPromptに追加
+                    if (ClipboardItem?.ContentType == ClipboardContentTypes.Image && ClipboardItem.ClipboardItemImage != null) {
+                        prompt += ChatItem.GenerateImageVContent(prompt, ClipboardItem.ClipboardItemImage.ImageBase64);
+                    }
+                }
 
                 ChatResult? result = null;
                 // プログレスバーを表示

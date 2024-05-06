@@ -15,8 +15,12 @@ namespace WpfAppCommon.Factory {
         //-- ClipboardItemImage
         public void UpsertItemImage(ClipboardItemImage item);
         public void DeleteItemImage(ClipboardItemImage item);
-
         public ClipboardItemImage? GetItemImage(ObjectId id);
+
+        //-- ClipboardItemFile
+        public void UpsertItemFile(ClipboardItemFile item);
+        public void DeleteItemFile(ClipboardItemFile item);
+        public ClipboardItemFile? GetItemFile(ObjectId id);
 
         //-- ClipboardFolder
         public ClipboardFolder GetFolder(string collectionName);

@@ -19,6 +19,8 @@ namespace WpfAppCommon.Factory.Default {
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
         public static readonly string SEARCH_ROOT_FOLDER_NAME = "search_folder";
         public static readonly string CLIPBOARD_IMAGE_COLLECTION_NAME = "clipboard_image";
+        public static readonly string CLIPBOARD_FILE_COLLECTION_NAME = "clipboard_file";
+
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
 
@@ -208,8 +210,6 @@ namespace WpfAppCommon.Factory.Default {
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(item.Id);
         }
-
-
 
         // ClipboardItemFolderをLiteDBに追加または更新する
         public void UpsertFolder(ClipboardFolder folder) {
@@ -505,6 +505,21 @@ namespace WpfAppCommon.Factory.Default {
             var item = collection.FindById(id);
             return item;
         }
+
+        public void UpsertItemFile(ClipboardItemFile item) { 
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
+            collection.Upsert(item);
+        }
+        public void DeleteItemFile(ClipboardItemFile item) { 
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
+            collection.Delete(item.Id);
+        }
+        public ClipboardItemFile? GetItemFile(ObjectId id) { 
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
+            var item = collection.FindById(id);
+            return item;
+        }
+
 
     }
 }
