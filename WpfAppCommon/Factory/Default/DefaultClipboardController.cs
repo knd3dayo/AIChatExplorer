@@ -7,56 +7,70 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace WpfAppCommon.Factory.Default {
     /// <summary>
-    /// クリップボード監視機能用のクラス
+    /// Class for clipboard monitoring feature
     /// </summary>
     class DefaultClipboardController : IClipboardController {
         //--------------------------------------------------------------------------------
 
-        // クリップボード監視有効無効フラグ
+        // String definition
+        private static StringResources StringResources { get; } = StringResources.Instance;
+
+        // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard? _clipboard = null;
         private Action<ActionMessage> _afterClipboardChanged = (parameter) => { };
 
-        // クリップボード監視を開始する
+        /// <summary>
+        /// Start clipboard monitoring
+        /// </summary>
+        /// <param name="afterClipboardChanged"></param>
         public void Start(Action<ActionMessage> afterClipboardChanged) {
             _afterClipboardChanged = afterClipboardChanged;
             if (_clipboard == null) {
-                // Clipboardの監視開始
+                // Register ClipboardChanged event
                 _clipboard = new SharpClipboard();
                 _clipboard.ClipboardChanged += ClipboardChanged;
-                // クリップボードの監視を有効にする
             }
+            // Enable clipboard monitoring
             IsClipboardMonitorEnabled = true;
         }
 
-        // クリップボード監視を停止する
+        /// <summary>
+        /// Stop clipboard monitoring
+        /// </summary>
         public void Stop() {
             if (_clipboard != null) {
                 _clipboard.Dispose();
             }
             IsClipboardMonitorEnabled = false;
         }
-        // ClipboardItemの内容をクリップボードにコピーする 
-        // Ctrl+Cで実行するコマンド
+        /// <summary>
+        /// Copy the content of ClipboardItem to the clipboard
+        /// </summary>
+        /// <param name="item"></param>
         public void SetDataObject(ClipboardItem item) {
             // System.Windows.MessageBox.Show(item.Content);
 
             IsClipboardMonitorEnabled = false;
-            // ContentTypeがTextの場合はクリップボードにコピー
+            // If ContentType is Text, copy to clipboard
             if (item.ContentType == ClipboardContentTypes.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
-            // ContentTypeがFilesの場合はクリップボードにファイルをコピー
+            // If ContentType is Files, copy files to clipboard
             else if (item.ContentType == ClipboardContentTypes.Files) {
                 System.Windows.Clipboard.SetFileDropList(new System.Collections.Specialized.StringCollection { item.Content });
             }
             IsClipboardMonitorEnabled = true;
         }
 
-        // クリップボードの内容が変更されたときの処理
+        /// <summary>
+        /// Processing when the content of the clipboard is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClipboardChanged(object? sender, ClipboardChangedEventArgs e) {
 
             if (IsClipboardMonitorEnabled == false) {
@@ -88,35 +102,43 @@ namespace WpfAppCommon.Factory.Default {
             }
             // If the cut/copied content is complex, use 'Other'.
             else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
+                // Do nothing
                 // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
             }
-            // オブザーバーに通知
+            // Notify the observer
             _afterClipboardChanged?.Invoke(
-                ActionMessage.Info("クリップボードの内容が変更されました")
+                ActionMessage.Info(StringResources.ClipboardChangedMessage)
             );
 
         }
+        /// <summary>
+        /// Process clipboard item
+        /// </summary>
+        /// <param name="contentTypes"></param>
+        /// <param name="content"></param>
+        /// <param name="image"></param>
+        /// <param name="e"></param>
         private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            // 監視対象アプリケーションかどうかを判定
+            // Determine if it is a target application for monitoring
             if (!IsMonitorTargetApp(e)) {
                 return;
             }
 
             ClipboardItem item = CreateClipboardItem(contentTypes, content, image, e);
 
-            // 別スレッドで実行
+            // Execute in a separate thread
             Task.Run(() => {
                 string oldReadyText = Tools.StatusText.ReadyText;
                 Application.Current.Dispatcher.Invoke(() => {
-                    Tools.StatusText.ReadyText = "自動処理を実行中";
+                    Tools.StatusText.ReadyText = StringResources.AutoProcessing;
                 });
                 try {
-                    // 自動処理を適用
+                    // Apply automatic processing
                     ApplyAutoAction(item, image);
-                    // RootFolderにClipboardItemを追加
+                    // Add ClipboardItem to RootFolder
                     ClipboardFolder.RootFolder.AddItem(item, _afterClipboardChanged);
                 } catch (ThisApplicationException ex) {
-                    Tools.Error($"クリップボードアイテムの追加処理が失敗しました。\n{ex.Message}");
+                    Tools.Error($"{StringResources.AddItemFailed}\n{ex.Message}");
                 } finally {
                     Application.Current.Dispatcher.Invoke(() => {
                         Tools.StatusText.ReadyText = oldReadyText;
@@ -125,11 +147,15 @@ namespace WpfAppCommon.Factory.Default {
             });
         }
 
-        // クリップボードアイテムが監視対象かどうかを判定
+        /// <summary>
+        /// Determine if the clipboard item is a monitoring target
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private static bool IsMonitorTargetApp(ClipboardChangedEventArgs e) {
-            // MonitorTargetAppNamesが空文字列ではなく、MonitorTargetAppNamesに含まれていない場合は処理しない
+            // If MonitorTargetAppNames is not an empty string and does not contain in MonitorTargetAppNames, do not process
             if (ClipboardAppConfig.MonitorTargetAppNames != "") {
-                // 大文字同士で比較
+                // Compare uppercase letters
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
                 string upperMonitorTargetAppNames = ClipboardAppConfig.MonitorTargetAppNames.ToUpper();
                 if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
@@ -139,7 +165,7 @@ namespace WpfAppCommon.Factory.Default {
             return true;
         }
 
-        // ClipboardItemを作成
+        /// Create ClipboardItem
         private static ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
             ClipboardItem item = new() {
                 ContentType = contentTypes
@@ -148,13 +174,13 @@ namespace WpfAppCommon.Factory.Default {
             item.Content = content;
             item.CollectionName = ClipboardFolder.RootFolder.AbsoluteCollectionName;
 
-            // ContentTypeがImageの場合は画像データを設定
+            // If ContentType is Image, set image data
             if (contentTypes == ClipboardContentTypes.Image && image != null) {
                 ClipboardItemImage imageItem = new();
                 imageItem.SetImage(image);
                 item.ClipboardItemImage = imageItem;
             }
-            // ContentTypeがFilesの場合はファイルデータを設定
+            // If ContentType is Files, set file data
             else if (contentTypes == ClipboardContentTypes.Files) {
                 ClipboardItemFile clipboardItemFile = new(content);
                 item.ClipboardItemFile = clipboardItemFile;
@@ -163,7 +189,11 @@ namespace WpfAppCommon.Factory.Default {
 
         }
 
-
+        /// <summary>
+        /// Set application information from ClipboardChangedEventArgs
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="sender"></param>
         private static void SetApplicationInfo(ClipboardItem item, ClipboardChangedEventArgs sender) {
             item.SourceApplicationName = sender.SourceApplication.Name;
             item.SourceApplicationTitle = sender.SourceApplication.Title;
@@ -171,49 +201,53 @@ namespace WpfAppCommon.Factory.Default {
             item.SourceApplicationPath = sender.SourceApplication.Path;
         }
 
-        // 自動処理を適用
+        /// <summary>
+        /// Apply automatic processing
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="image"></param>
         private static void ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
-            // ★TODO 自動処理ルールで処理するようにする。
+            // ★TODO Implement processing based on automatic processing rules.
 
-            // AUTO_DESCRIPTIONが設定されている場合は自動でDescriptionを設定する
+            // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
                 try {
-                    Tools.Info("自動タイトル設定処理を実行します");
+                    Tools.Info(StringResources.AutoSetTitle);
                     ClipboardItem.CreateAutoDescription(item);
                 } catch (ThisApplicationException ex) {
-                    Tools.Error($"自動タイトル設定処理が失敗しました。\n{ex.Message}");
+                    Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
                 }
             }
-            // ★TODO 自動処理ルールで処理するようにする。
-            // AUTO_TAGが設定されている場合は自動でタグを設定する
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
-                Tools.Info("自動タグ設定処理を実行します");
+                Tools.Info(StringResources.AutoSetTag);
                 try {
                     ClipboardItem.CreateAutoTags(item);
                 } catch (ThisApplicationException ex) {
-                    Tools.Error($"自動タグ設定処理が失敗しました。\n{ex.Message}");
+                    Tools.Error($"{StringResources.SetTagFailed}\n{ex.Message}");
                 }
             }
 
-            // ★TODO 自動処理ルールで処理するようにする。
-            // AutoMergeItemsBySourceApplicationTitleが設定されている場合は自動でマージする
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
             if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                Tools.Info("自動マージ処理を実行します");
+                Tools.Info(StringResources.AutoMerge);
                 try {
                     ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
                 } catch (ThisApplicationException ex) {
-                    Tools.Error($"自動マージ処理が失敗しました。\n{ex.Message}");
+                    Tools.Error($"{StringResources.MergeFailed}\n{ex.Message}");
                 }
             }
-            // ★TODO 自動処理ルールで処理するようにする。
-            // UseOCRが設定されている場合はOCRを実行
+            // ★TODO Implement processing based on automatic processing rules.
+            // If UseOCR is set, perform OCR
             if (ClipboardAppConfig.UseOCR && image != null) {
-                Tools.Info("OCR処理を実行します");
+                Tools.Info(StringResources.OCR);
                 try {
                     string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                     item.Content = text;
                 } catch (ThisApplicationException ex) {
-                    Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+                    Tools.Error($"{StringResources.OCRFailed}\n{ex.Message}");
                 }
             }
         }
