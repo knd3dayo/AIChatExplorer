@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiteDB;
 
 namespace WpfAppCommon.Model {
@@ -10,12 +5,21 @@ namespace WpfAppCommon.Model {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
+        // ファイルパス
+        public string FilePath { get; set; } = fileName;
+        // フォルダ名
+        public string FolderName {
+            get {
+                return System.IO.Path.GetDirectoryName(FilePath) ?? "";
+            }
+        }
         // ファイル名
-        public string FileName { get; set; } = fileName;
-
-        // ファイルからテキスト抽出した結果
-        public string ExtractedText { get; set; } = String.Empty;
-
+        public string FileName {
+            get {
+                return System.IO.Path.GetFileName(FilePath);
+            }
+        }
+        
         // 削除
         public void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemFile(this);

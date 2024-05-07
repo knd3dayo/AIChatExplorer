@@ -24,40 +24,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
         // Items
-        public ObservableCollection<ClipboardItemViewModel> Items {
-            get {
-                ObservableCollection<ClipboardItemViewModel> items = [];
-                foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                    items.Add(new ClipboardItemViewModel(this, item));
-                }
-                return items;
-            }
-            set {
-                ClipboardItemFolder.Items.Clear();
-                foreach (ClipboardItemViewModel item in value) {
-                    this.Items.Add(item);
-                }
-                OnPropertyChanged(nameof(Items));
-            }
-        }
+        public ObservableCollection<ClipboardItemViewModel> Items { get; } = [];
 
         // 子フォルダ
-        public ObservableCollection<ClipboardFolderViewModel> Children {
-            get {
-                ObservableCollection<ClipboardFolderViewModel> children = [];
-                foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
-                    children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
-                }
-                return children;
-            }
-            set {
-                ClipboardItemFolder.Children.Clear();
-                foreach (ClipboardFolderViewModel folder in value) {
-                    ClipboardItemFolder.Children.Add(folder.ClipboardItemFolder);
-                }
-                OnPropertyChanged(nameof(Children));
-            }
-        }
+        public ObservableCollection<ClipboardFolderViewModel> Children { get; } = [];
+
         public string DisplayName {
             get {
                 return ClipboardItemFolder.DisplayName;
@@ -90,17 +61,25 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
         // Load
         public void Load() {
-            // Children.Item,SearchCondition,AutoProcessRule を更新
-            OnPropertyChanged(nameof(Items));
-            // Childrenを更新
-            OnPropertyChanged(nameof(Children));
-            // StatusTextを更新
+
+            Items.Clear();
+            // DBから読み込み
+            ClipboardItemFolder.Load();
+
+            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
+                Items.Add(new ClipboardItemViewModel(this, item));
+            }
+            Children.Clear();
+            foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
+                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
+                // StatusTextを更新
+            }
             UpdateStatusText();
 
         }
         // AddItem
-        public ClipboardItemViewModel AddItem(ClipboardItemViewModel item, Action<ActionMessage> actionMessage) {
-            return ClipboardItemViewModel.AddItem(this.ClipboardItemFolder, item, actionMessage);
+        public ClipboardItemViewModel AddItem(ClipboardItemViewModel item) {
+            return ClipboardItemViewModel.AddItem(this.ClipboardItemFolder, item);
         }
         public void DeleteItem(ClipboardItemViewModel item) {
             item.Delete();

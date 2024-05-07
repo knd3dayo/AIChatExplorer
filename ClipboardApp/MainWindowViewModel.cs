@@ -216,7 +216,7 @@ namespace ClipboardApp {
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand CreateItemCommand => new((parameter) => {
-            CreateItemCommandExecute(this);
+            ClipboardItemViewModel.CreateItemCommandExecute(this.SelectedFolder);
         });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
@@ -271,17 +271,26 @@ namespace ClipboardApp {
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemCommand => new((parameter) => {
-            OpenSelectedItemCommandExecute(this);
+            ClipboardItemViewModel.OpenItemCommandExecute(this.SelectedFolder, this.SelectedItem);
+
         });
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemAsFileCommand => new((parameter) => {
-            OpenSelectedItemAsFileCommandExecute(this);
+            ClipboardItemViewModel.OpenSelectedItemAsFileCommandExecute(this.SelectedItem);
         });
 
-        // 選択したアイテムを新規として開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenSelectedItemAsNewFileCommand => new((parameter) => {
-            OpenSelectedItemAsNewFileCommandExecute(this);
+        // 選択したアイテムのフォルダを開く処理 複数アイテム処理不可
+        public SimpleDelegateCommand OpenFolderCommand => new((parameter) => {
+            ClipboardItemViewModel.OpenFolderCommandExecute(this.SelectedItem);
+        });
+        // 選択したアイテムを開く処理 複数アイテム処理不可
+        public SimpleDelegateCommand OpenFileCommand => new((parameter) => {
+            ClipboardItemViewModel.OpenFileCommandExecute(this.SelectedItem);
+        });
+        // 選択したアイテムを一時フォルダで開く処理 複数アイテム処理不可
+        public SimpleDelegateCommand OpenFileInTempFolderCommand => new((parameter) => {
+            ClipboardItemViewModel.OpenFileInTempFolderCommandExecute(this.SelectedItem);
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能

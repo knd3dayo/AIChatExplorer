@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -8,12 +8,13 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Factory.Default {
     /// <summary>
     /// このアプリケーションで開いたプロセスを管理するクラス
+    /// ファイルを閉じたときにテキストの内容をContentに保存する
     /// </summary>
     public class DefaultClipboardProcessController : IClipboardProcessController {
         // Processとファイル名の対応を保持するハッシュテーブル
-        private static Hashtable processOpenedFileHashtable = new Hashtable();
+        private static Hashtable processOpenedFileHashTable = [];
         // ProcessとItemの対応を保持するハッシュテーブル
-        private static Hashtable processOpenedItemHashtable = new Hashtable();
+        private static Hashtable processOpenedItemHashTable = [];
 
         public void OpenItem(ClipboardItem item, bool openAsNew = false) {
             if (item == null) {
@@ -67,9 +68,9 @@ namespace WpfAppCommon.Factory.Default {
                     process.EnableRaisingEvents = true;
                     process.Exited += new EventHandler(ProcessExited);
                     // プロセスとファイル名の対応を保持
-                    processOpenedFileHashtable.Add(process, tempFileName);
-                    // プロセスとitemの対応を保持
-                    processOpenedItemHashtable.Add(process, item);
+                    processOpenedFileHashTable.Add(process, tempFileName);
+                    // プロセスとItemの対応を保持
+                    processOpenedItemHashTable.Add(process, item);
                 }
 
             }
@@ -80,14 +81,14 @@ namespace WpfAppCommon.Factory.Default {
             if (sender == null) {
                 return;
             }
-            // プロセス終了時にitemに開いた内容を保存
+            // プロセス終了時にItemに開いた内容を保存
             Process? process = (Process)sender;
-            string? tempFileName = (string?)processOpenedFileHashtable[process];
+            string? tempFileName = (string?)processOpenedFileHashTable[process];
             if (tempFileName == null) {
                 return;
             }
-            // プロセスとitemの対応を取得
-            ClipboardItem? item = (ClipboardItem?)processOpenedItemHashtable[process];
+            // プロセスとItemの対応を取得
+            ClipboardItem? item = (ClipboardItem?)processOpenedItemHashTable[process];
             if (item == null) {
                 return;
             }
@@ -102,9 +103,9 @@ namespace WpfAppCommon.Factory.Default {
             // テンポラリファイルを削除
             File.Delete(tempFileName);
             // ハッシュテーブルから削除
-            processOpenedFileHashtable.Remove(process);
+            processOpenedFileHashTable.Remove(process);
 
-            processOpenedItemHashtable.Remove(process);
+            processOpenedItemHashTable.Remove(process);
 
         }
 

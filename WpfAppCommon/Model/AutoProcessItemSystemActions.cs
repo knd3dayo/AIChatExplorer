@@ -67,7 +67,7 @@ namespace WpfAppCommon.Model {
                     Tools.Info($"フォルダにコピーします{args.DestinationFolder.AbsoluteCollectionName}");
                     // DestinationFolderにコピー
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    args.DestinationFolder.AddItem(newItem, (actionMessage) => { });
+                    args.DestinationFolder.AddItem(newItem);
                     // コピーの場合は元のアイテムを返す
                     return args.ClipboardItem;
                 };
@@ -80,7 +80,7 @@ namespace WpfAppCommon.Model {
                     }
                     // DestinationFolderに追加
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    ClipboardItem result = args.DestinationFolder.AddItem(newItem, (actionMessage) => { });
+                    ClipboardItem result = args.DestinationFolder.AddItem(newItem);
                     // 元のフォルダから削除
                     Tools.Info($"{args.ClipboardItem.CollectionName}から削除します");
 

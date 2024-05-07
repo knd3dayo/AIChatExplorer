@@ -149,6 +149,12 @@
                                 Command="{Binding SelectTextCommand}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                 Modifiers="Ctrl" />
+                            <!--  選択したテキストをプロセスとして実行  -->
+                            <KeyBinding
+                                Key="O"
+                                Command="{Binding ExecuteSelectedTextCommand}"
+                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                Modifiers="Ctrl" />
 
                         </TextBox.InputBindings>
                     </TextBox>
@@ -162,24 +168,63 @@
                     Header="ファイル"
                     Visibility="{Binding FileTabVisibility}">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="10,10,10,10"
+                            Text="ファイルパス" />
                         <TextBox
                             Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,10,10,10"
+                            IsReadOnly="True"
+                            Text="{Binding ItemViewModel.FilePath, Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10,10,10,10"
+                            Text="フォルダ" />
+                        <TextBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,10,10,10"
+                            IsReadOnly="True"
+                            Text="{Binding ItemViewModel.FolderName, Mode=OneWay}" />
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Margin="10,10,10,10"
+                            Text="ファイル名" />
+                        <TextBox
+                            Grid.Row="2"
+                            Grid.Column="1"
                             Margin="10,10,10,10"
                             IsReadOnly="True"
                             Text="{Binding ItemViewModel.FileName, Mode=OneWay}" />
-                        <ScrollViewer
-                            Grid.Row="1"
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
                             Margin="10,10,10,10"
-                            CanContentScroll="False">
-                            <TextBox
-                                Margin="10,10,10,10"
-                                IsReadOnly="True"
-                                Text="{Binding ItemViewModel.ExtractedText}" />
-                        </ScrollViewer>
+                            Text="フォルダ名とファイル名" />
+                        <TextBox
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10,10,10,10"
+                            IsReadOnly="True"
+                            Text="{Binding ItemViewModel.FolderAndFileName, Mode=OneWay}" />
+
                     </Grid>
                 </TabItem>
                 <TabItem

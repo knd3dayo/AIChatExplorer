@@ -18,13 +18,13 @@ namespace WpfAppCommon.Factory.Default {
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard? _clipboard = null;
-        private Action<ActionMessage> _afterClipboardChanged = (parameter) => { };
+        private Action<ClipboardItem> _afterClipboardChanged = (parameter) => { };
 
         /// <summary>
         /// Start clipboard monitoring
         /// </summary>
         /// <param name="afterClipboardChanged"></param>
-        public void Start(Action<ActionMessage> afterClipboardChanged) {
+        public void Start(Action<ClipboardItem> afterClipboardChanged) {
             _afterClipboardChanged = afterClipboardChanged;
             if (_clipboard == null) {
                 // Register ClipboardChanged event
@@ -105,10 +105,6 @@ namespace WpfAppCommon.Factory.Default {
                 // Do nothing
                 // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
             }
-            // Notify the observer
-            _afterClipboardChanged?.Invoke(
-                ActionMessage.Info(StringResources.ClipboardChangedMessage)
-            );
 
         }
         /// <summary>
@@ -135,8 +131,8 @@ namespace WpfAppCommon.Factory.Default {
                 try {
                     // Apply automatic processing
                     ApplyAutoAction(item, image);
-                    // Add ClipboardItem to RootFolder
-                    ClipboardFolder.RootFolder.AddItem(item, _afterClipboardChanged);
+                    // Notify the completion of processing
+                    _afterClipboardChanged(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"{StringResources.AddItemFailed}\n{ex.Message}");
                 } finally {

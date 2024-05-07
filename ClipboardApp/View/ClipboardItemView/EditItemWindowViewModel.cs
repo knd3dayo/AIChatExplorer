@@ -121,6 +121,24 @@ namespace ClipboardApp.View.ClipboardItemView {
             TextSelector.SelectText(editor);
             return;
         });
+        // 選択中のテキストをプロセスとして実行
+        public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
+
+            if (parameter is not Window window) {
+                return;
+            }
+
+            object? editorObject = window?.FindName("Editor");
+            if (editorObject == null) {
+                return;
+            }
+
+            TextBox editor = (TextBox)editorObject;
+            // 選択中のテキストをプロセスとして実行
+            TextSelector.ExecuteSelectedText(editor);
+
+        });
+
 
         // OKボタンのコマンド
         public SimpleDelegateCommand OKButtonCommand => new((parameter) => {

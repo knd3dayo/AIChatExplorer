@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Controls;
 
 namespace WpfAppCommon.Utils {
@@ -63,6 +60,37 @@ namespace WpfAppCommon.Utils {
                 URLSelected = false;
                 AngleBracketSelected = false;
 
+            }
+        }
+        // 選択中のテキストをプロセスとして実行
+        public void ExecuteSelectedText(TextBox editor) {
+            string selectedText = editor.SelectedText;
+            if (string.IsNullOrEmpty(selectedText)) {
+                return;
+            }
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(selectedText) {
+                UseShellExecute = true
+            };
+            try {
+                p.Start();
+            } catch (Exception ex) {
+                Tools.Info("ファイルを実行できませんでした。テキストファイルとして開きます。" + ex.Message);
+                OpenTextFile(selectedText);
+            }
+        }
+        private void OpenTextFile(string text) {
+            // テキストをテキストファイルに保存して、プロセスを実行
+            string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
+            File.WriteAllText(tempFileName, text);
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(tempFileName) {
+                UseShellExecute = true
+            };
+            try {
+                p.Start();
+            } catch (Exception ex) {
+                Tools.Error("ファイルを実行できませんでした:" + ex.Message);
             }
         }
     }

@@ -38,26 +38,28 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
 
         }
-        // ファイル
+        // ファイルパス
+        public string? FilePath {
+            get {
+                return ClipboardItem.ClipboardItemFile?.FilePath;
+            }
+        }
+        // フォルダ名
+        public string? FolderName {
+            get {
+                return ClipboardItem.ClipboardItemFile?.FolderName;
+            }
+        }
+        // ファイル名
         public string? FileName {
             get {
                 return ClipboardItem.ClipboardItemFile?.FileName;
             }
         }
-        //ファイルから抽出したテキスト
-        public string? ExtractedText {
+        // フォルダ名 + \n + ファイル名
+        public string? FolderAndFileName {
             get {
-                return ClipboardItem.ClipboardItemFile?.ExtractedText;
-            }
-            set {
-                if (ClipboardItem.ClipboardItemFile == null) {
-                    return;
-                }
-                if (value == null) {
-                    ClipboardItem.ClipboardItemFile.ExtractedText = "";
-                    return;
-                }
-                ClipboardItem.ClipboardItemFile.ExtractedText = value;
+                return FolderName + "\n" + FileName;
             }
         }
 
@@ -101,8 +103,8 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return result;
             }
         }
-        public static ClipboardItemViewModel AddItem(ClipboardFolder folder, ClipboardItemViewModel item, Action<ActionMessage> actionMessage) {
-            ClipboardItem newItem = folder.AddItem(item.ClipboardItem, actionMessage);
+        public static ClipboardItemViewModel AddItem(ClipboardFolder folder, ClipboardItemViewModel item) {
+            ClipboardItem newItem = folder.AddItem(item.ClipboardItem);
             return new ClipboardItemViewModel(item.FolderViewModel, newItem);
         }
 

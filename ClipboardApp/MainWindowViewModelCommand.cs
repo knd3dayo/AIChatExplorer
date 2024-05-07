@@ -37,10 +37,14 @@ namespace ClipboardApp {
         public static void ToggleClipboardMonitorCommand(MainWindowViewModel windowViewModel) {
             windowViewModel.IsClipboardMonitor = !windowViewModel.IsClipboardMonitor;
             if (windowViewModel.IsClipboardMonitor) {
-                ClipboardAppFactory.Instance.GetClipboardController().Start((actionMessage) => {
-                    // クリップボードが変更された時の処理
-                    windowViewModel.SelectedFolder?.Load();
+                ClipboardAppFactory.Instance.GetClipboardController().Start((clipboardItem) => {
+                    // クリップボードアイテムが追加された時の処理
+                    Application.Current.Dispatcher.Invoke(() => {
+                        RootFolderViewModel?.AddItem(new ClipboardItemViewModel(RootFolderViewModel, clipboardItem));
+                        windowViewModel.SelectedFolder?.Load();
+                    });
                 });
+
                 Tools.Info(StringResources.Instance.StartClipboardWatch);
             } else {
                 ClipboardAppFactory.Instance.GetClipboardController().Stop();
@@ -73,18 +77,7 @@ namespace ClipboardApp {
             }
             windowViewModel.SelectedItem = clipboardItemViewModel;
         }
-        // クリップボードアイテムを作成する。
-        // Ctrl + N が押された時の処理
-        // メニューの「アイテム作成」をクリックしたときの処理
-        public static void CreateItemCommandExecute(MainWindowViewModel windowViewModel) {
-            // 選択中のフォルダがない場合は処理をしない
-            if (windowViewModel.SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            ClipboardItemViewModel.CreateItemCommandExecute(windowViewModel.SelectedFolder);
-        }
-
+        
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenOpenAIWindowCommandExecute() {
@@ -196,45 +189,6 @@ namespace ClipboardApp {
             ClipboardItemViewModel.ChangePinCommandExecute(SelectedFolder, SelectedItems);
         }
 
-        // 選択中のアイテムを開く処理 複数アイテム処理不可
-        public static void OpenSelectedItemCommandExecute(MainWindowViewModel windowViewModel) {
-            ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
-            ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
-                return;
-            }
-            ClipboardItemViewModel.OpenItemCommandExecute(SelectedFolder, SelectedItem);
-        }
-
-
-        // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
-        public static void OpenSelectedItemAsFileCommandExecute(MainWindowViewModel windowViewModel) {
-            ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            ClipboardItemViewModel.OpenSelectedItemAsFileCommandExecute(SelectedItem);
-        }
-
-        // 選択したアイテムを新規として開く処理 複数アイテム処理不可
-        public static void OpenSelectedItemAsNewFileCommandExecute(MainWindowViewModel windowViewModel) {
-            ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            ClipboardItemViewModel.OpenSelectedItemAsNewFileCommandExecute(SelectedItem);
-        }
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public static void CutItemCommandExecute(MainWindowViewModel windowViewModel) {

@@ -137,8 +137,7 @@ namespace WpfAppCommon.Model {
             }
             //-- ファイルがある場合はコピー
             if (FileObjectId != null) {
-                ClipboardItemFile newFile = new(ClipboardItemFile?.FileName ?? string.Empty);
-                newFile.ExtractedText = ClipboardItemFile?.ExtractedText ?? string.Empty;
+                ClipboardItemFile newFile = new(ClipboardItemFile?.FilePath ?? string.Empty);
                 newItem.ClipboardItemFile = newFile;
             }
         }
@@ -281,7 +280,7 @@ namespace WpfAppCommon.Model {
                 throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
             
-            string? path = ClipboardItemFile?.FileName;
+            string? path = ClipboardItemFile?.FilePath;
 
             if (string.IsNullOrEmpty(path) == false) {
                 // ファイルパスをフォルダ名とファイル名に分割
@@ -319,12 +318,12 @@ namespace WpfAppCommon.Model {
             if (clipboardItemFile == null) {
                 throw new ThisApplicationException("ファイルが取得できません");
             }
-            string path = clipboardItemFile.FileName;
+            string path = clipboardItemFile.FilePath;
             if (string.IsNullOrEmpty(path)) {
                 throw new ThisApplicationException("ファイルパスが取得できません");
             }
             string text = PythonExecutor.PythonFunctions.ExtractText(path);
-            clipboardItemFile.ExtractedText = text;
+            clipboardItem.Content = text;
 
             Tools.Info($"{path}のテキストを抽出しました");
 

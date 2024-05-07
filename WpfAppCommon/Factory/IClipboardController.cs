@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +9,7 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Factory {
     public interface IClipboardController {
 
-        public void Start(Action<ActionMessage> afterClipboardChanged);
+        public void Start(Action<ClipboardItem> afterClipboardChanged);
 
         public void Stop();
 

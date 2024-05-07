@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -29,8 +31,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                     if (item is null) {
                         continue;
                     }
-                    ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)item;
-                    clipboardItemFolder.DeleteItem(clipboardItemViewModel);
+                    item.ClipboardItem.Delete();
                 }
                 // フォルダ内のアイテムを再読み込む
                 clipboardItemFolder.Load();
@@ -48,7 +49,15 @@ namespace ClipboardApp.View.ClipboardItemView {
             folderViewModel.Load();
 
         }
-        public static void OpenItemCommandExecute(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel clipboardItemViewModel) {
+        public static void OpenItemCommandExecute(ClipboardFolderViewModel? folderViewModel, ClipboardItemViewModel? clipboardItemViewModel) {
+            if (clipboardItemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
+            if (folderViewModel == null) {
+                Tools.Error("フォルダが選択されていません。");
+                return;
+            }
 
             EditItemWindow editItemWindow = new();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
@@ -66,7 +75,11 @@ namespace ClipboardApp.View.ClipboardItemView {
         /// 作成後にフォルダ内のアイテムを再読み込む
         /// </summary>
         /// <param name="obj"></param>
-        public static void CreateItemCommandExecute(ClipboardFolderViewModel folderViewModel) {
+        public static void CreateItemCommandExecute(ClipboardFolderViewModel? folderViewModel) {
+            if (folderViewModel == null) {
+                Tools.Error("フォルダが選択されていません。");
+                return;
+            }
             EditItemWindow editItemWindow = new();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(folderViewModel, null, () => {
@@ -94,7 +107,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 ClipboardItemViewModel newItem = item.Copy();
-                toFolder.AddItem(newItem, (actionMessage) => { });
+                toFolder.AddItem(newItem);
                 // Cutフラグが立っている場合はコピー元のアイテムを削除する
                 if (CutFlag) {
 
@@ -149,7 +162,11 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
         // 選択中のアイテムを開く処理
-        public static void OpenSelectedItemAsFileCommandExecute(ClipboardItemViewModel itemViewModel) {
+        public static void OpenSelectedItemAsFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
             try {
                 // 選択中のアイテムを開く
                 itemViewModel.OpenItem();
@@ -159,26 +176,84 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
 
         }
-        // 選択中のアイテムを新規として開く処理
-        public static void OpenSelectedItemAsNewFileCommandExecute(ClipboardItemViewModel itemViewModel) {
-            try {
-                // 選択中のアイテムを新規として開く
-                itemViewModel.OpenItem(true);
-            } catch (ClipboardAppException e) {
-                Tools.Error(e.Message);
+
+        // ContentTypeがFileの場合にフォルダを開く処理
+        public static void OpenFolderCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
+            // ContentTypeがFileの場合のみフォルダを開く
+            if (itemViewModel.ContentType != ClipboardContentTypes.Files) {
+                Tools.Error("ファイル以外のコンテンツはフォルダを開けません");
+                return;
+            }
+            // Process.Startでフォルダを開く
+            string? folderPath = itemViewModel.FolderName;
+            if (folderPath != null) {
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(folderPath) {
+                    UseShellExecute = true
+                };
+                p.Start();
             }
 
         }
+        // ContentTypeがFileの場合にファイルを開く処理
+        public static void OpenFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
 
+            // ContentTypeがFileの場合のみファイルを開く
+            if (itemViewModel.ContentType != ClipboardContentTypes.Files) {
+                Tools.Error("ファイル以外のコンテンツはファイルを開けません");
+                return;
+            }
+            // Process.Startでファイルを開く
+            string? filePath = itemViewModel.FilePath;
+            if (filePath != null) {
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(filePath) {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+        }
+        // 一時フォルダでファイルを開く処理
+        public static void OpenFileInTempFolderCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
+            }
+            // ContentTypeがFileの場合のみファイルを開く
+            if (itemViewModel.ContentType != ClipboardContentTypes.Files) {
+                Tools.Error("ファイル以外のコンテンツはファイルを開けません");
+                return;
+            }
+            string? filePath = itemViewModel.FilePath;
+            if (filePath != null) {
+                // テンポラリディレクトリにファイルをコピーして開く
+                string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(filePath));
+                // ファイルの先頭に[temp]を付ける
+                tempFilePath = Path.Combine(Path.GetTempPath(), "[temp]" + Path.GetFileName(tempFilePath));
+                File.Copy(filePath, tempFilePath, true);
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(tempFilePath) {
+                    UseShellExecute = true
+                };
+                p.Start();
+            }
+        }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public static SimpleDelegateCommand ExtractTextCommand => new((parameter) => {
-            if (parameter is not ClipboardItemViewModel clipboardItemViewModel) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("クリップボードアイテムが選択されていません");
+            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
+            if (clipboardItemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
                 return;
-            }
-            // File以外の場合はエラー
+            }            // File以外の場合はエラー
             if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Files) {
                 Tools.Error("ファイル以外のコンテンツはテキストを抽出できません");
                 return;
@@ -193,15 +268,11 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
-            if (MainWindowViewModel.SelectedItemStatic == null) {
+            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
+            if (clipboardItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません。");
                 return;
-            }
-            if (parameter is not ClipboardItemViewModel clipboardItemViewModel) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("クリップボードアイテムが選択されていません");
-                return;
-            }
+            } 
             // テキスト以外の場合はエラー
             if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Text) {
                 // 対話処理のため、エラー時はダイアログを表示

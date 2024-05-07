@@ -22,9 +22,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
         private void InitContextMenu() {
             // コンテキストメニューの初期化
             Add(new ClipboardAppMenuItem("開く", _mainWindowViewModel.OpenSelectedItemCommand, "Ctrl+O"));
-
-            Add(new ClipboardAppMenuItem("ファイルとして開く", _mainWindowViewModel.OpenSelectedItemAsFileCommand, "Ctrl+Shit+O"));
-            Add(new ClipboardAppMenuItem("新規ファイルとして開く", _mainWindowViewModel.OpenSelectedItemAsNewFileCommand, "Ctrl+Shit+Alt+O"));
+            Add(new ClipboardAppMenuItem("テキストファイルとして開く", _mainWindowViewModel.OpenSelectedItemAsFileCommand, "Ctrl+Shit+O"));
             Add(new ClipboardAppMenuItem("ピン留め", _mainWindowViewModel.ChangePinCommand));
 
             Add(new ClipboardAppMenuItem("コピー", _mainWindowViewModel.CopyToClipboardCommand, "Ctrl+C"));
@@ -34,7 +32,9 @@ namespace ClipboardApp.Views.ClipboardItemView {
             ClipboardAppMenuItem utilityMenuItems = new("ツール", SimpleDelegateCommand.EmptyCommand);
             // タイプがFileの場合
             if (_itemViewModel.ContentType == ClipboardContentTypes.Files) {
-                utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルのパスを分割", _mainWindowViewModel.SplitFilePathCommand));
+                utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("フォルダを開く", _mainWindowViewModel.OpenFolderCommand));
+                utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルを開く", _mainWindowViewModel.OpenFileCommand));
+                utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("一時フォルダでファイルを開く", _mainWindowViewModel.OpenFileInTempFolderCommand));
                 utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("ファイルからテキストを抽出", ClipboardItemViewModel.ExtractTextCommand));
             }
             // タイプがImageの場合
@@ -44,12 +44,9 @@ namespace ClipboardApp.Views.ClipboardItemView {
                         ClipboardItemViewModel.MenuItemExtractTextFromImageCommandExecute(_mainWindowViewModel.SelectedItem);
                     })));
             }
-            // タイプがTextの場合
-            if (_itemViewModel.ContentType == ClipboardContentTypes.Text) {
-                // UseSpacyがTrue && PythonExecute != 0 の場合
-                if (ClipboardAppConfig.UseSpacy && ClipboardAppConfig.PythonExecute != 0) {
-                    utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
-                }
+            // 全タイプ共通
+            if (ClipboardAppConfig.UseSpacy && ClipboardAppConfig.PythonExecute != 0) {
+                utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("データをマスキング", ClipboardItemViewModel.MaskDataCommand));
             }
 
             Add(utilityMenuItems);

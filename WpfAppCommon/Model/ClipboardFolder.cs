@@ -88,39 +88,11 @@ namespace WpfAppCommon.Model {
             return child;
         }
 
+        private List<ClipboardItem> _items = [];
         // アイテム BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
-        public ObservableCollection<ClipboardItem> Items {
+        public List<ClipboardItem> Items {
             get {
-                // AbsoluteCollectionNameが空の場合は空のリストを返す
-                if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
-                    return [];
-                }
-                IEnumerable<ClipboardItem> items = [];
-                // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
-                // 検索フォルダの場合は、SearchConditionを適用して取得
-                IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-                // フォルダに検索条件が設定されている場合
-                SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(AbsoluteCollectionName);
-                if (searchConditionRule != null) {
-                    // 検索対象フォルダパスの取得
-                    string? targetCollectionName = searchConditionRule.TargetFolder?.AbsoluteCollectionName;
-                    if (targetCollectionName != null) {
-                        items = ClipboardDatabaseController.SearchItems(targetCollectionName, searchConditionRule.SearchCondition);
-                    }
-                    // 検索対象フォルダパスがない場合は何もしない。
-                } else {
-                    // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
-                    if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                        items = ClipboardDatabaseController.SearchItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition);
-
-                    } else {
-                        // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                        items = ClipboardDatabaseController.GetItems(AbsoluteCollectionName);
-                    }
-                }
-
-                ObservableCollection<ClipboardItem> result = [.. items];
-                return result;
+                return _items;
             }
         }
         //------------
@@ -146,6 +118,8 @@ namespace WpfAppCommon.Model {
                 AbsoluteCollectionName = ConcatenatePath(parent.AbsoluteCollectionName, collectionName);
             }
             DisplayName = displayName;
+            // クリップボードアイテムのロード
+            Load();
 
         }
         public ClipboardFolder(string collectionName, string displayName) : this(null, collectionName, displayName) {
@@ -158,16 +132,16 @@ namespace WpfAppCommon.Model {
             ClipboardDatabaseController.UpsertFolder(this);
         }
         // アイテムを追加する処理
-        public ClipboardItem AddItem(ClipboardItem item, Action<ActionMessage> actionMessage) {
+        public ClipboardItem AddItem(ClipboardItem item) {
             // AbsoluteCollectionNameを設定
             item.CollectionName = AbsoluteCollectionName;
 
             // 自動処理を適用
-            ClipboardItem? result = ApplyAutoProcess(item, actionMessage);
+            ClipboardItem? result = ApplyAutoProcess(item);
 
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
-                actionMessage(ActionMessage.Info("自動処理でアイテムが削除または移動されました"));
+                Tools.Info("自動処理でアイテムが削除または移動されました");
                 return item;
             }
             // 保存
@@ -175,7 +149,7 @@ namespace WpfAppCommon.Model {
             // Itemsに追加
             Items.Add(result);
             // 通知
-            actionMessage(ActionMessage.Info("アイテムを追加しました"));
+            Tools.Info("アイテムを追加しました");
             return item;
         }
         // ClipboardItemを削除
@@ -188,19 +162,46 @@ namespace WpfAppCommon.Model {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.DeleteFolder(this);
         }
+        public void Load() {
+            // AbsoluteCollectionNameが空の場合は空のリストを返す
+            if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
+                return;
+            }
+            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+            // 検索フォルダの場合は、SearchConditionを適用して取得
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            // フォルダに検索条件が設定されている場合
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(AbsoluteCollectionName);
+            if (searchConditionRule != null) {
+                // 検索対象フォルダパスの取得
+                string? targetCollectionName = searchConditionRule.TargetFolder?.AbsoluteCollectionName;
+                if (targetCollectionName != null) {
+                    _items = [.. ClipboardDatabaseController.SearchItems(targetCollectionName, searchConditionRule.SearchCondition)];
+                }
+                // 検索対象フォルダパスがない場合は何もしない。
+            } else {
+                // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
+                if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
+                    _items = [.. ClipboardDatabaseController.SearchItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition)];
 
+                } else {
+                    // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
+                    _items = [.. ClipboardDatabaseController.GetItems(AbsoluteCollectionName)];
+                }
+            }
+        }
 
         // 自動処理を適用する処理
-        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem, Action<ActionMessage> action) {
+        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {
             ClipboardItem? result = clipboardItem;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
             foreach (var rule in AutoProcessRules) {
-                action(ActionMessage.Info("自動処理を適用します " + rule.GetDescriptionString()));
+                Tools.Info("自動処理を適用します " + rule.GetDescriptionString());
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    action(ActionMessage.Info("自動処理でアイテムが削除されました"));
+                    Tools.Info("自動処理でアイテムが削除されました");
                     return null;
                 }
             }
