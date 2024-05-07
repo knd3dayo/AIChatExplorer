@@ -259,6 +259,8 @@ namespace ClipboardApp {
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 CopiedItems.Add(item);
             }
+            windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
+
             Tools.Info("切り取りしました");
 
         }
@@ -267,10 +269,12 @@ namespace ClipboardApp {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            List<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
-
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItem == null) {
+                Tools.Error("選択中のアイテムがない");
+                return;
+            }
+            if (SelectedItems.Count == 0) {
                 Tools.Error("選択中のアイテムがない");
                 return;
             }
@@ -279,13 +283,16 @@ namespace ClipboardApp {
                 Tools.Error("選択中のフォルダがない");
                 return;
             }
+
             // Cutフラグをもとに戻す
             windowViewModel.CutFlag = false;
             // CopiedItemsに選択中のアイテムをセット
-            CopiedItems.Clear();
+            windowViewModel.CopiedItems.Clear();
             foreach (ClipboardItemViewModel item in SelectedItems) {
-                CopiedItems.Add(item);
+                windowViewModel.CopiedItems.Add(item);
             }
+            windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
+
             try {
                 SelectedItem.SetDataObject();
                 Tools.Info("コピーしました");
