@@ -1,6 +1,7 @@
 import importlib, json
 import base64
 from mimetypes import guess_type
+import openai
 
 class OpenAIUtil:
     def __init__(self):
@@ -23,15 +24,13 @@ class OpenAIUtil:
     
         self.azure_openai_endpoint = props.get("AzureOpenAIEndpoint", None)
         # azure_openai_endpointがNoneまたは空文字の場合は以下のBaseURLを使用する
-        if not self.azure_openai_endpoint:
+        # base_urlを取得する
+        self.completion_base_url = props.get("OpenAICompletionBaseURL", None)
+        self.embedding_base_url = props.get("OpenAIEmbeddingBaseURL", None)
         
-            # base_urlを取得する
-            self.completion_base_url = props.get("OpenAICompletionBaseURL", None)
-            self.embedding_base_url = props.get("OpenAIEmbeddingBaseURL", None)
-        
-        self.completion, self.embedding = self.__create_openai_object()
+        self.completion, self.embedding = self.__create_client_object()
 
-    def __create_openai_object(self):
+    def __create_client_object(self):
         # OpenAIオブジェクトを作成
         if self.azure_openai:
             return self.__create_azure_openai_object()
@@ -39,12 +38,10 @@ class OpenAIUtil:
             return self.__create_openai_object()
         
     def __create_azure_openai_object(self):
-        openai = importlib.import_module("openai")
 
         params = {}
         params["api_key"] = self.openai_api_key
-        params["api_key"] = self
-        params["api_version"] = "2023-12-01-preview"
+        params["api_version"] = "2024-02-01"
         if self.completion_base_url:
             params["base_url"] = self.completion_base_url
         else:
@@ -53,7 +50,10 @@ class OpenAIUtil:
         completion = openai.AzureOpenAI(
             **params
         )
-        if self.completion_base_url:
+        # base_urlがある場合は削除する
+        params.pop("base_url", None)
+        
+        if self.embedding_base_url:
             params["base_url"] = self.embedding_base_url
         else:
             params["azure_endpoint"] = self.azure_openai_endpoint
@@ -64,14 +64,22 @@ class OpenAIUtil:
         return completion, embedding
 
     def __create_openai_object(self):
-        openai = importlib.import_module("openai")
+
+        params = {}
+        params["api_key"] = self.openai_api_key
+        if self.completion_base_url:
+            params["base_url"] = self.completion_base_url
+
         completion = openai.OpenAI(
-            api_key=self.openai_api_key,
-            base_url = self.completion_base_url
+            **params
         )
+        # base_urlがある場合は削除する
+        params.pop("base_url", None)
+        if self.embedding_base_url:
+            params["base_url"] = self.embedding_base_url
+
         embedding = openai.OpenAI(
-            api_key=self.openai_api_key,
-            base_url = self.embedding_base_url
+            **params
         )
         return completion, embedding
     
@@ -217,7 +225,7 @@ if __name__ == "__main__":
     result = openai_chat(props,input_json_001)
     print(result)
     # embeddingを実行
-    result = openai_embedding("Hello, world", props)
+    result = openai_embedding(props, "Hello, world")
     print(result)
     # json_modeのchatを実行
     result = openai_chat(props,input_json_002, True)
