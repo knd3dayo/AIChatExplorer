@@ -45,7 +45,6 @@ namespace WpfAppCommon.Utils {
 
         public static void Error(string message) {
             Application.Current.Dispatcher.Invoke(() => {
-                Error(message);
                 Logger.Error(message);
                 if (StatusText != null) {
                     StatusText.Text = message;
