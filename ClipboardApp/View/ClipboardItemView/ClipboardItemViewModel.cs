@@ -10,7 +10,7 @@ using WpfAppCommon.Model;
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
         // ClipboardItem
-        private ClipboardItem ClipboardItem { get; } = clipboardItem;
+        public ClipboardItem ClipboardItem { get; } = clipboardItem;
         // FolderViewModel
         public ClipboardFolderViewModel FolderViewModel { get; } = folderViewModel;
 

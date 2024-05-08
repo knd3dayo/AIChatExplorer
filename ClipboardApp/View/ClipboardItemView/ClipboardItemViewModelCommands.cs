@@ -344,10 +344,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
-            // InputTextに選択中のアイテムのContentを設定
-            if (itemViewModel != null) {
-                mainWindowViewModel.InputText = itemViewModel.Content;
-            }
+            mainWindowViewModel.Initialize(itemViewModel?.ClipboardItem);
             openAIChatWindow.Show();
         }
         // プロンプトテンプレート一覧を開いて選択したプロンプトテンプレートを実行するコマンド

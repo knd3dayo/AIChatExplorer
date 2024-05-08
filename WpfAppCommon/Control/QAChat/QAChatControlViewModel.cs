@@ -1,47 +1,37 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using QAChat.View.LogWindow;
-using QAChat.View.PromptTemplateWindow;
-using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
-namespace QAChat {
-    public partial class MainWindowViewModel : MyWindowViewModel {
-
+namespace WpfAppCommon.Control.QAChat {
+    public class QAChatControlViewModel : ObservableObject{
         //初期化
         public void Initialize(ClipboardItem? clipboardItem) {
             // クリップボードアイテムを設定
             ClipboardItem = clipboardItem;
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
-            QAChatControlViewModel.Initialize(clipboardItem);
-            QAChatControlViewModel.PromptTemplateCommandExecute = PromptTemplateCommandExecute;
-
+            // ClipboardItemがある場合は、ChatItemsを設定
+            if (ClipboardItem != null) {
+                ChatItems.Clear();
+                foreach (var chatItem in ClipboardItem.ChatItems) {
+                    ChatItems.Add(chatItem);
+                }
+            }
         }
-
-        // QAChatControlのViewModel
-        public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
 
         public ClipboardItem? ClipboardItem { get; set; }
-
-        // 内部から起動されたか否か
-        private bool isStartFromInternalApp = true;
-        public bool IsStartFromInternalApp {
-            get {
-                return isStartFromInternalApp;
-            }
-            set {
-                isStartFromInternalApp = value;
-                OnPropertyChanged(nameof(IsStartFromInternalApp));
-            }
-        }
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -172,6 +162,12 @@ namespace QAChat {
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
                 ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
+                // ClipboardItemがある場合は、結果をClipboardItemに設定
+                if (ClipboardItem != null) {
+                    ClipboardItem.ChatItems.Clear();
+                    ClipboardItem.ChatItems.AddRange(ChatItems);
+                }
+
                 // verboseがある場合はログに追加
                 if (!string.IsNullOrEmpty(result.Verbose)) {
                     Log.AppendLine(result.Verbose);
@@ -191,34 +187,6 @@ namespace QAChat {
             InputText = "";
         });
 
-        // Closeコマンド
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
-            if (parameter is Window window) {
-                window.Close();
-            }
-        });
-
-        // 設定画面を開くコマンド
-        public SimpleDelegateCommand SettingCommand => new((parameter) => {
-            // SettingUserControlを生成してWindowを表示する。
-            SettingsUserControl settingsControl = new();
-            Window window = new() {
-                Title = StringResources.Instance.SettingWindowTitle,
-                Content = settingsControl
-            };
-            window.ShowDialog();
-        }
-
-        );
-
-        // ログ画面を開くコマンド
-        public SimpleDelegateCommand LogWindowCommand => new((parameter) => {
-            LogWindow logWindow = new();
-            LogWindowViewModel logWindowViewModel = (LogWindowViewModel)logWindow.DataContext;
-            logWindowViewModel.LogText = Log.ToString();
-            logWindow.ShowDialog();
-        });
-
         // モードが変更されたときの処理
         public SimpleDelegateCommand ModeSelectionChangedCommand => new((parameter) => {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
@@ -229,16 +197,17 @@ namespace QAChat {
 
         });
 
-        
-        private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow promptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                QAChatControlViewModel.PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+        // プロンプトテンプレート画面を開くコマンド
+        public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
+        public SimpleDelegateCommand PromptTemplateCommand => new((parameter) => { 
+            PromptTemplateCommandExecute(parameter);
+        });
 
-            });
-            promptTemplateWindow.ShowDialog();
-        }
-
+        // Closeコマンド
+        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+            if (parameter is Window window) {
+                window.Close();
+            }
+        });
     }
 }

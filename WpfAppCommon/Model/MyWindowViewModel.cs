@@ -14,6 +14,7 @@ namespace WpfAppCommon.Model {
         // StringResources
         public StringResources StringResources { get; } = StringResources.Instance;
 
+        public virtual void OnLoadAction() { }
 
         // ロード時の処理
         private Window? window;
@@ -23,6 +24,8 @@ namespace WpfAppCommon.Model {
                 Window window = (Window)routedEventArgs.Source;
                 this.window = window;
                 Tools.ActiveWindow = window;
+                // 追加処理
+                OnLoadAction();
                 return;
             }
             if (routedEventArgs.Source is UserControl) {
@@ -30,6 +33,8 @@ namespace WpfAppCommon.Model {
                 Window window = Window.GetWindow(userControl);
                 this.window = window;
                 Tools.ActiveWindow = window;
+                // 追加処理
+                OnLoadAction();
                 return;
             }
 

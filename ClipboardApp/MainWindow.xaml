@@ -44,11 +44,6 @@
             Key="O"
             Command="{Binding OpenSelectedItemAsFileCommand}"
             Modifiers="Control+Shift" />
-        <!--  Open selected item as new file  -->
-        <KeyBinding
-            Key="O"
-            Command="{Binding OpenSelectedItemAsNewFileCommand}"
-            Modifiers="Control+Shift+Alt" />
         <!--  Paste items into selected folder  -->
         <KeyBinding
             Key="V"

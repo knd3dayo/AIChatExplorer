@@ -87,6 +87,9 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // OpenAIチャットのChatItemコレクション
+        public List<ChatItem> ChatItems { get; set; } = new();
+
         // クリップボードの内容の種類
         public ClipboardContentTypes ContentType { get; set; }
 
@@ -140,6 +143,9 @@ namespace WpfAppCommon.Model {
                 ClipboardItemFile newFile = new(ClipboardItemFile?.FilePath ?? string.Empty);
                 newItem.ClipboardItemFile = newFile;
             }
+            //-- ChatItemsをコピー
+            newItem.ChatItems = new List<ChatItem>(ChatItems);
+
         }
 
         public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {

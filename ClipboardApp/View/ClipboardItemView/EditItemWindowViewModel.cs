@@ -2,6 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.TagView;
+using QAChat.View.PromptTemplateWindow;
+using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -69,6 +71,10 @@ namespace ClipboardApp.View.ClipboardItemView {
         // 更新後の処理
         private Action _afterUpdate = () => {};
 
+        // QAChatControlのViewModel
+        public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
+
+
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
                 ClipboardItem clipboardItem = new() {
@@ -82,6 +88,9 @@ namespace ClipboardApp.View.ClipboardItemView {
                 title = "アイテム編集";
                 ItemViewModel = itemViewModel;
             }
+            // QAChatControlの初期化
+            QAChatControlViewModel.Initialize(ItemViewModel.ClipboardItem);
+
             _afterUpdate = afterUpdate;
 
         }
@@ -166,6 +175,17 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             // ウィンドウを閉じる
             window.Close();
+        }
+
+        // プロンプトテンプレートを開くコマンド
+        private void PromptTemplateCommandExecute(object parameter) {
+            ListPromptTemplateWindow promptTemplateWindow = new();
+            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
+            promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                QAChatControlViewModel.PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+
+            });
+            promptTemplateWindow.ShowDialog();
         }
 
     }
