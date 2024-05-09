@@ -534,10 +534,11 @@ namespace WpfAppCommon.PythonIF {
                 }
                 // propsにVectorDBURLを追加
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
+                props["VectorDBType"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
 
                 // Pythonスクリプトの関数を呼び出す
-                string function_name = "update_vector_db_index";
+                string function_name = "update_index";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
                 tokenCount = function_object(

@@ -14,7 +14,6 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 sys.path.append("python")
 from langchain_openai_client import LangChainOpenAIClient
-from langchain_vector_db import LangChainVectorDB
 
 class RetrievalQAUtil:
 

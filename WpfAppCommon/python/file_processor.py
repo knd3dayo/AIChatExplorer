@@ -6,11 +6,12 @@ from langchain.docstore.document import Document
 from env_to_props import get_props
 
 
-def update_index(props, mode, workdir, relative_path, vector_db_type_string, url):
+def update_index(props, mode, workdir, relative_path, url):
     # sys.stdoutとsys.stderrをutf-8に設定
     sys.stdout.reconfigure(encoding="utf-8")
     sys.stderr.reconfigure(encoding="utf-8")
-    
+    vector_db_type_string = props.get("VectorDBType")
+    vector_db_url = props.get("VectorDBURL")
     if mode == "update":
         # ドキュメントを取得
         loader = FileLoader(workdir, relative_path, url)
@@ -19,7 +20,7 @@ def update_index(props, mode, workdir, relative_path, vector_db_type_string, url
         client = LangChainOpenAIClient(props)
         if vector_db_type_string == "Faiss":
             from langchain_vector_db_faiss import LangChainVectorDBFaiss
-            vector_db = LangChainVectorDBFaiss(client, props.get("VectorDBURL"))
+            vector_db = LangChainVectorDBFaiss(client, vector_db_url)
         if len(documents) == 0:
             print("No documents to update.")
             return 0

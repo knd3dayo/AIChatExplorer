@@ -68,9 +68,9 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list)
     return clipboard_app_openai.openai_chat_with_vision(props, prompt, image_file_name_list)
 
 # vector db関連
-def update_index(props, mode, workdir, relative_path, vector_db_type_string, url):
+def update_index(props, mode, workdir, relative_path, url):
     import file_processor
-    return file_processor.update_index(props, mode, workdir, relative_path, vector_db_type_string,  url)
+    return file_processor.update_index(props, mode, workdir, relative_path,  url)
 
 # faiss関連
 def save_faiss_index():
