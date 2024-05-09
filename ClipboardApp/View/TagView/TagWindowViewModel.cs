@@ -117,6 +117,10 @@ namespace ClipboardApp.View.TagView {
                 if (item.IsChecked) {
                     // LiteDBから削除
                     item.TagItem.Delete();
+                    // itemViewModel.Tagsから削除
+                    if (itemViewModel != null) {
+                        itemViewModel.Tags.Remove(item.Tag);
+                    }
                 }
             }
             // LiteDBから再読み込み

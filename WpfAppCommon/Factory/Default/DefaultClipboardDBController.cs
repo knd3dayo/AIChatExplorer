@@ -395,6 +395,9 @@ namespace WpfAppCommon.Factory.Default {
         }
         // タグを削除する
         public void DeleteTag(TagItem tag) {
+            if (tag.Id == null) {
+                return;
+            }
 
             var collection = GetClipboardDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
             collection.Delete(tag.Id);
