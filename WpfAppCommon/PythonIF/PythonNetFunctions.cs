@@ -36,6 +36,8 @@ namespace WpfAppCommon.PythonIF {
     public class PythonNetFunctions : IPythonFunctions {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
+        
+        private static StringResources StringResources { get; } = StringResources.Instance;
 
         public PyModule GetPyModule(string scriptPath) {
             if (PythonModules.TryGetValue(scriptPath, out PyModule? value)) {
@@ -64,7 +66,7 @@ namespace WpfAppCommon.PythonIF {
 
             // Runtime.PythonDLLのファイルが存在するかチェック
             if (!File.Exists(Runtime.PythonDLL)) {
-                string message = "PythonDLLが見つかりません。PythonDLLのパスを確認してください:";
+                string message = StringResources.PythonDLLNotFound;
                 Tools.Error(message + Runtime.PythonDLL);
                 return;
             }
@@ -74,7 +76,7 @@ namespace WpfAppCommon.PythonIF {
                 PythonEngine.BeginAllowThreads();
 
             } catch (TypeInitializationException e) {
-                string message = "Pythonの初期化に失敗しました。" + e.Message;
+                string message =StringResources.PythonInitFailed + e.Message;
                 Tools.Error(message);
             }
         }
@@ -95,18 +97,18 @@ namespace WpfAppCommon.PythonIF {
         public dynamic GetPythonFunction(PyModule ps, string function_name) {
             // Pythonスクリプトの関数を呼び出す
             dynamic? function_object = (ps?.Get(function_name)) 
-                ?? throw new ThisApplicationException($"Pythonスクリプトファイルに、{function_name}関数が見つかりません");
+                ?? throw new ThisApplicationException(StringResources.FunctionNotFound(function_name));
             return function_object;
         }
 
 
         public static string CreatePythonExceptionMessage(PythonException e) {
             string pythonErrorMessage = e.Message;
-            string message = "Pythonスクリプトの実行中にエラーが発生しました\n";
+            string message = StringResources.PythonExecuteError + "\n";
             if (pythonErrorMessage.Contains("No module named")) {
-                message += "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。\n";
+                message += StringResources.ModuleNotFound + "\n";
             }
-            message += $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+            message += StringResources.PythonExecuteErrorDetail(e);
             return message;
         }
 
@@ -147,7 +149,7 @@ namespace WpfAppCommon.PythonIF {
 
             // SPACY_MODEL_NAMEが空の場合は例外をスロー
             if (string.IsNullOrEmpty(SpacyModel)) {
-                throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
+                throw new ThisApplicationException(StringResources.SpacyModelNameNotSet);
             }
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
             Dictionary<string, string> dict = new() {
@@ -165,10 +167,10 @@ namespace WpfAppCommon.PythonIF {
                 resultDict = function_object(beforeTextList, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ThisApplicationException("マスキング結果がありません");
+                    throw new ThisApplicationException(StringResources.MaskingResultNotFound);
                 }
-                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException("マスキングした文字列取得に失敗しました");
-                // 
+                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException(StringResources.MaskingResultFailed);
+
                 PyDict textDict = textDictObject.As<PyDict>();
                 PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
                 foreach (PyObject item in afterList) {
@@ -214,9 +216,10 @@ namespace WpfAppCommon.PythonIF {
                 resultDict = function_object(actionResult, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ThisApplicationException("マスキング解除結果がありません");
+                    throw new ThisApplicationException(StringResources.UnmaskingResultNotFound);
                 }
-                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException("マスキング解除した文字列取得に失敗しました");
+
+                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException(StringResources.UnmaskingResultFailed);
                 PyList textList = textListObject.As<PyList>();
                 foreach (PyObject item in textList) {
                     PyObject afterTextObject = item.GetItem("AFTER");
@@ -251,7 +254,7 @@ namespace WpfAppCommon.PythonIF {
                 // extract_text_from_image関数を呼び出す
                 ImageConverter imageConverter = new();
                 object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]))
-                ?? throw new ThisApplicationException("画像のバイト列に変換できません");
+                ?? throw new ThisApplicationException(StringResources.ImageByteFailed);
                 byte[] bytes = (byte[])bytesObject;
                 result = function_object(bytes, tesseractExePath);
             });
@@ -299,7 +302,7 @@ namespace WpfAppCommon.PythonIF {
                 string chatItemsJSon = ChatItem.ToJson(chatHistory);
                 // VectorDBItemsのサイズが0の場合は例外をスロー
                 if (!vectorDBItems.Any()) {
-                    throw new ThisApplicationException("VectorDBItemsが空です");
+                    throw new ThisApplicationException(StringResources.VectorDBItemsEmpty);
                 }
                 // VectorDBItemのリストをJSON文字列に変換
                 string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
@@ -307,7 +310,7 @@ namespace WpfAppCommon.PythonIF {
                 // open_ai_chat関数を呼び出す
                 PyDict pyDict = function_object(props, vectorDBItemsJson, prompt, chatItemsJSon);
                 // outputを取得
-                string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException("OpenAIの応答がありません");
+                string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
                 // verboseを取得
                 string? verbose = pyDict.GetItem("verbose")?.ToString();
                 if (verbose != null) {
@@ -397,7 +400,7 @@ namespace WpfAppCommon.PythonIF {
 
                 // SPACY_MODEL_NAMEが空の場合は例外をスロー
                 if (string.IsNullOrEmpty(SpacyModel)) {
-                    throw new ThisApplicationException("Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください");
+                    throw new ThisApplicationException(StringResources.SpacyModelNameNotSet);
                 }
 
                 Dictionary<string, string> dict = new() {
@@ -527,7 +530,7 @@ namespace WpfAppCommon.PythonIF {
                 // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
                 string filePath = Path.Combine(workingDirPath, fileStatus.Path);
                 if (!File.Exists(filePath)) {
-                    throw new ThisApplicationException("ファイルが存在しません:" + filePath);
+                    throw new ThisApplicationException(StringResources.FileNotFound + ":" + filePath);
                 }
                 // propsにVectorDBURLを追加
                 var props = ClipboardAppConfig.CreateOpenAIProperties();

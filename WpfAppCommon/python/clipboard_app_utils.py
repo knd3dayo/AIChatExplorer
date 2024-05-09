@@ -4,6 +4,8 @@ from PIL import Image
 import pyocr
 import io
 import sys
+import tempfile
+
 sys.path.append("python")
 # sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
 # see: https://github.com/huggingface/transformers/issues/24047
@@ -25,9 +27,24 @@ import file_processor
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 
-# spacy関連
+
 def extract_text(filename):
-    return clipboard_app_spacy.extract_text(filename)
+    from unstructured.partition.auto import partition
+    result = ""
+    # python-magicが2バイトファイル名を扱うとエラーになる場合があるため、ファイルを一時ファイルにコピーして処理する
+    # 一時ファイルの拡張子は元のファイルの拡張子と同じにする
+    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[1]) as temp_file:
+        with open(filename, 'rb') as f:
+            temp_file.write(f.read())
+
+    # filenameのファイルからテキストを抽出する
+    elements = partition(filename=temp_file.name)
+    result = "\n".join([element.text for element in elements])
+    # 一時ファイルを削除
+    os.remove(temp_file.name)    
+    return result
+
+# spacy関連
 def mask_data(textList: list, props = {}):
     return clipboard_app_spacy.mask_data(textList, props)
 def extract_entity(text, props = {}):

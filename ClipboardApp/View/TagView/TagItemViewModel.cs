@@ -9,6 +9,17 @@ namespace ClipboardApp.View.TagView {
     public class TagItemViewModel : MyWindowViewModel {
 
         public string Tag { get; set; }
+
+        private bool _isCommonTag;
+        public bool IsCommonTag {
+            get {
+                return _isCommonTag;
+            }
+            set {
+                _isCommonTag = value;
+                OnPropertyChanged(nameof(IsCommonTag));
+            }
+        }
         public bool IsChecked { get; set; }
 
         private TagItem _tagItem;

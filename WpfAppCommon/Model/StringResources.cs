@@ -90,6 +90,13 @@ namespace WpfAppCommon.Model {
         // タグを編集します。
         public string EditTagToolTip { get; } = "タグを編集します。";
 
+        // 選択したタグを削除します。
+        public string DeleteSelectedTag { get; } = "選択したタグを削除";
+        // すべて選択します。
+        public string SelectAll { get; } = "すべて選択";
+        // すべて選択解除します。
+        public string UnselectAll { get; } = "すべて選択解除";
+
         // --- 画面タイトル ---
 
         // 自動処理ルール一覧
@@ -180,6 +187,8 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // --- namespace WpfAppCommon.PythonIF ---
+
         // --- DefaultClipboardController.cs ---
         // クリップボードの内容が変更されました
         public string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
@@ -207,7 +216,6 @@ namespace WpfAppCommon.Model {
         // OCR処理が失敗しました
         public string OCRFailed { get; } = "OCR処理が失敗しました";
 
-        // --- namespace WpfAppCommon.PythonIF ---
         // --- EmptyPythonFunctions.cs ---
         // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
         public string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
@@ -221,6 +229,55 @@ namespace WpfAppCommon.Model {
 
         // テンプレートファイルが見つかりません
         public string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";
+
+        // --- PythonNetFunctions.cs ---
+        // "PythonDLLが見つかりません。PythonDLLのパスを確認してください:"
+        public string PythonDLLNotFound { get; } = "PythonDLLが見つかりません。PythonDLLのパスを確認してください:";
+        //  "Pythonの初期化に失敗しました。"
+        public string PythonInitFailed { get; } = "Pythonの初期化に失敗しました。";
+
+        // "Pythonスクリプトファイルに、{function_name}関数が見つかりません"
+        public string FunctionNotFound(string function_name) {
+            return $"Pythonスクリプトファイルに、{function_name}関数が見つかりません";
+        }
+        // "Pythonスクリプトの実行中にエラーが発生しました
+        public string PythonExecuteError { get; } = "Pythonスクリプトの実行中にエラーが発生しました";
+
+        // "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。
+        public string ModuleNotFound { get; } = "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。";
+
+        // $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+        public string PythonExecuteErrorDetail(Exception e) {
+            return $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+        }
+        // "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください"
+        public string SpacyModelNameNotSet { get; } = "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください";
+
+        // "マスキング結果がありません"
+        public string MaskingResultNotFound { get; } = "マスキング結果がありません";
+
+        // "マスキングした文字列取得に失敗しました"
+        public string MaskingResultFailed { get; } = "マスキングした文字列取得に失敗しました";
+
+        // "マスキング解除結果がありません"
+        public string UnmaskingResultNotFound { get; } = "マスキング解除結果がありません";
+        // "マスキング解除した文字列取得に失敗しました"
+        public string UnmaskingResultFailed { get; } = "マスキング解除した文字列取得に失敗しました";
+
+        // "画像のバイト列に変換できません"
+        public string ImageByteFailed { get; } = "画像のバイト列に変換できません";
+
+        // "VectorDBItemsが空です"
+        public string VectorDBItemsEmpty { get; } = "VectorDBItemsが空です";
+
+        // "OpenAIの応答がありません"
+        public string OpenAIResponseEmpty { get; } = "OpenAIの応答がありません";
+
+        // ファイルが存在しません
+        public string FileNotFound { get; } = "ファイルが存在しません";
+
+
+
     }
 }
     

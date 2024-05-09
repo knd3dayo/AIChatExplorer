@@ -306,9 +306,7 @@ namespace WpfAppCommon.Model {
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
-                // LiteDBにタグを追加
-                TagItem tagItem = new() { Tag = entity };
-                ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
+
                 // タグを追加
                 item.Tags.Add(entity);
             }

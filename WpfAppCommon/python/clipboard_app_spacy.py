@@ -5,13 +5,6 @@ import clipboard_app_sqlite
 
 nlp = None
 
-def extract_text(filename):
-    from unstructured.partition.auto import partition
-
-    # filenameのファイルからテキストを抽出する
-    elements = partition(filename=filename)
-    return "\n".join([element.text for element in elements])
-
 def mask_data(textList: list, props = {}):
     global nlp
     if (nlp is None):

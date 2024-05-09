@@ -36,6 +36,10 @@
             Key="F"
             Command="{Binding OpenSearchWindowCommand}"
             Modifiers="Ctrl" />
+        <KeyBinding
+            Key="A"
+            Command="{Binding SelectAllCommand}"
+            Modifiers="Ctrl" />
 
     </Window.InputBindings>
     <i:Interaction.Triggers>
@@ -98,10 +102,10 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem
-                        Command="{Binding DeleteTagCommand}"
-                        CommandParameter="{Binding ElementName=listbox1, Path=SelectedItem}"
-                        Header="{Binding StringResources.Delete}" />
+                    <MenuItem Command="{Binding DeleteSelectedTagCommand}" Header="{Binding StringResources.DeleteSelectedTag}" />
+                    <MenuItem Command="{Binding SelectAllCommand}" Header="{Binding StringResources.SelectAll}" />
+                    <MenuItem Command="{Binding UnselectAllCommand}" Header="{Binding StringResources.UnselectAll}" />
+
                 </ContextMenu>
             </ListBox.ContextMenu>
         </ListBox>
