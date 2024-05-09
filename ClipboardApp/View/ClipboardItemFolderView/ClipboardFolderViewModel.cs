@@ -60,22 +60,28 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardItemFolder.Delete();
         }
         // Load
-        public void Load() {
+        public async void Load() {
 
+            MainWindowViewModel.IsIndeterminate = true;
             Items.Clear();
-            // DBから読み込み
-            ClipboardItemFolder.Load();
-
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
-            }
             Children.Clear();
-            foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
-                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
-                // StatusTextを更新
-            }
-            UpdateStatusText();
+            try {
+                await Task.Run(() => {
+                    // DBから読み込み
+                    ClipboardItemFolder.Load();
+                });
 
+                foreach (ClipboardItem item in ClipboardItemFolder.Items) {
+                    Items.Add(new ClipboardItemViewModel(this, item));
+                }
+                foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
+                    Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
+                    // StatusTextを更新
+                }
+                UpdateStatusText();
+            } finally {
+                MainWindowViewModel.IsIndeterminate = false;
+            }
         }
         // AddItem
         public ClipboardItemViewModel AddItem(ClipboardItemViewModel item) {
@@ -167,8 +173,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             return AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
         }
         // AutoProcessRuleを追加
-        public void  AddAutoProcessRule(AutoProcessRule rule) {
-            ClipboardItemFolder.AddAutoProcessRule( rule);
+        public void AddAutoProcessRule(AutoProcessRule rule) {
+            ClipboardItemFolder.AddAutoProcessRule(rule);
         }
 
         // AddChild

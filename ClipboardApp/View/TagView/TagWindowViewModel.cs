@@ -36,7 +36,6 @@ namespace ClipboardApp.View.TagView {
         }
 
 
-
         //新規タグのテキスト
         private string _newTag = "";
         public string NewTag {
