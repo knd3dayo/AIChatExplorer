@@ -63,6 +63,9 @@ namespace ClipboardApp {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
             ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
             windowViewModel.SelectedFolder = clipboardItemFolderViewModel;
+            // Load
+            windowViewModel.SelectedFolder.Load();
+
         }
 
         // クリップボードアイテムが選択された時の処理
@@ -77,7 +80,7 @@ namespace ClipboardApp {
             }
             windowViewModel.SelectedItem = clipboardItemViewModel;
         }
-        
+
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenOpenAIWindowCommandExecute() {
@@ -119,7 +122,7 @@ namespace ClipboardApp {
             ClipboardFolderViewModel.SearchCommandExecute(windowViewModel.SelectedFolder);
         }
 
-        public static void ReloadCommandExecute(MainWindowViewModel windowViewModel) {
+        public static  void ReloadCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             if (SelectedFolder == null) {
                 return;

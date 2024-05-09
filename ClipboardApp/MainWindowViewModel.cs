@@ -106,7 +106,6 @@ namespace ClipboardApp {
             }
             set {
                 _selectedFolder = value;
-                _selectedFolder?.Load();
 
                 OnPropertyChanged(nameof(SelectedFolder));
             }

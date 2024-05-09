@@ -293,8 +293,9 @@
                     Margin="0,0,0,0"
                     HorizontalAlignment="Stretch"
                     ItemsSource="{Binding SelectedFolder.Items}"
-                    ScrollViewer.CanContentScroll="False"
-                    SelectionMode="Extended">
+                    SelectionMode="Extended"
+                    VirtualizingPanel.VirtualizationMode="Recycling"
+                    VirtualizingStackPanel.IsVirtualizing="True">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
