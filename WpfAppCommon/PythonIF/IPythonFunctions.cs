@@ -40,10 +40,6 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems);
         public void OpenAIEmbedding(string text);
 
-        public void SaveFaissIndex();
-
-        public void LoadFaissIndex();
-
         public string RunScript(string script, string input);
 
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する

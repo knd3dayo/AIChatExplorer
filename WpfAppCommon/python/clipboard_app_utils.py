@@ -72,14 +72,6 @@ def update_index(props, mode, workdir, relative_path, url):
     import file_processor
     return file_processor.update_index(props, mode, workdir, relative_path,  url)
 
-# faiss関連
-def save_faiss_index():
-    import clipboard_app_faiss
-    return clipboard_app_faiss.save_faiss_index()
-def load_faiss_index():
-    import clipboard_app_faiss
-    return clipboard_app_faiss.load_faiss_index()
-
 # pyocr関連
 def extract_text_from_image(byte_data,tessercat_exe_path):
     return clipboard_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)

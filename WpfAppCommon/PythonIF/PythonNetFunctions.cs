@@ -422,26 +422,6 @@ namespace WpfAppCommon.PythonIF {
             return actionResult;
         }
 
-        public void SaveFaissIndex() {
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "save_faiss_index";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // save_faiss_index関数を呼び出す
-                function_object();
-            });
-        }
-
-        public void LoadFaissIndex() {
-            // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "load_faiss_index";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // load_faiss_index関数を呼び出す
-                function_object();
-            });
-        }
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
             return OpenAIChat(prompt, chatHistory, ClipboardAppConfig.CreateOpenAIProperties());
         }

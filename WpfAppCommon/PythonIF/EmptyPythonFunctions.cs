@@ -39,13 +39,6 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public void SaveFaissIndex() {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
-        public void LoadFaissIndex() {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
-
         public string RunScript(string script, string inputJson) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
