@@ -10,17 +10,6 @@ namespace ClipboardApp.View.TagView {
 
         public string Tag { get; set; }
 
-        private bool _isChecked = false;
-        public bool IsChecked {
-            get {
-                return _isChecked;
-            }
-            set {
-                _isChecked = value;
-                OnPropertyChanged(nameof(IsChecked));
-            }
-        }
-
         private bool _isCommonTag;
         public bool IsCommonTag {
             get {
@@ -31,6 +20,7 @@ namespace ClipboardApp.View.TagView {
                 OnPropertyChanged(nameof(IsCommonTag));
             }
         }
+        public bool IsChecked { get; set; }
 
         private TagItem _tagItem;
         public TagItem TagItem {
