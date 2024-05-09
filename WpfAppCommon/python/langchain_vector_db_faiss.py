@@ -7,7 +7,7 @@ from langchain_community.callbacks import get_openai_callback
 sys.path.append("python")
 from langchain_openai_client import LangChainOpenAIClient
 
-class LangChainVectorDB:
+class LangChainVectorDBFaiss:
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient,
                  vector_db_url, collection : str = None):
@@ -83,7 +83,7 @@ class LangChainVectorDB:
     def update_documents(self, documents: list, props: dict):
         token_count = 0
         client = LangChainOpenAIClient(props)
-        vector_db = LangChainVectorDB(client, props.get("VectorDBURL"))
+        vector_db = LangChainVectorDBFaiss(client, props.get("VectorDBURL"))
         if len(documents) == 0:
             print("No documents to update.")
             return token_count

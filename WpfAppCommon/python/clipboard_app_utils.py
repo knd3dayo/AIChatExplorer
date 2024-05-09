@@ -20,8 +20,7 @@ if sys.stderr is None:
 # see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_faiss, clipboard_app_spacy, clipboard_app_pyocr
-import file_processor
+import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_spacy, clipboard_app_pyocr
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -69,13 +68,16 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list)
     return clipboard_app_openai.openai_chat_with_vision(props, prompt, image_file_name_list)
 
 # vector db関連
-def update_index(props, mode, workdir, relative_path, url):
-    return file_processor.update_index(props, mode, workdir, relative_path, url)
+def update_index(props, mode, workdir, relative_path, vector_db_type_string, url):
+    import file_processor
+    return file_processor.update_index(props, mode, workdir, relative_path, vector_db_type_string,  url)
 
 # faiss関連
 def save_faiss_index():
+    import clipboard_app_faiss
     return clipboard_app_faiss.save_faiss_index()
 def load_faiss_index():
+    import clipboard_app_faiss
     return clipboard_app_faiss.load_faiss_index()
 
 # pyocr関連

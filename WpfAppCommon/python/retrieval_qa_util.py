@@ -130,6 +130,7 @@ class RetrievalQAUtil:
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
         if vector_db_type_string == "Faiss":
+            from langchain_vector_db_faiss import LangChainVectorDBFaiss
             langChainVectorDB = LangChainVectorDB(self.client, vector_db_url)
             retriever = langChainVectorDB.db.as_retriever(
                 search_kwargs={"score_threshold": 0.5}

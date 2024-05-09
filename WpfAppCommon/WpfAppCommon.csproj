@@ -21,7 +21,7 @@
     <None Remove="python\file_processor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_openai_client.py" />
-    <None Remove="python\langchain_vector_db.py" />
+    <None Remove="python\langchain_vector_db_faiss.py" />
     <None Remove="python\retrieval_qa_util.py" />
     <None Remove="python\template.py" />
     <None Remove="python\tools.json" />
@@ -66,7 +66,7 @@
     <EmbeddedResource Include="python\langchain_openai_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db.py">
+    <EmbeddedResource Include="python\langchain_vector_db_faiss.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\retrieval_qa_util.py">
