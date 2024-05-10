@@ -15,6 +15,17 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 sys.path.append("python")
 from langchain_openai_client import LangChainOpenAIClient
 
+# DB取得用の関数
+def get_vector_db(client:LangChainOpenAIClient, vector_db_type_string: str, vector_db_url:str , collection:str = None):
+    if vector_db_type_string == "Faiss":
+        from langchain_vector_db_faiss import LangChainVectorDBFaiss
+        return LangChainVectorDBFaiss(client, vector_db_url)
+    elif vector_db_type_string == "Chroma":
+        from langchain_vector_db_chroma import LangChainVectorDBChroma
+        return LangChainVectorDBChroma(client, vector_db_url)
+    else:
+        raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
+
 class RetrievalQAUtil:
 
     def __init__(self, client: LangChainOpenAIClient, vector_db_items:dict):
@@ -128,15 +139,10 @@ class RetrievalQAUtil:
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
-        if vector_db_type_string == "Faiss":
-            from langchain_vector_db_faiss import LangChainVectorDBFaiss
-            langChainVectorDB = LangChainVectorDB(self.client, vector_db_url)
-            retriever = langChainVectorDB.db.as_retriever(
-                search_kwargs={"score_threshold": 0.5}
-            )
-        # それ以外の場合は現在未対応のためExceptionを発生させる
-        else:
-            raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
+        langChainVectorDB = get_vector_db(self.client, vector_db_type_string, vector_db_url, collection_name)
+        retriever = langChainVectorDB.db.as_retriever(
+            search_kwargs={"score_threshold": 0.5}
+        )
             
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
@@ -252,6 +258,7 @@ class RetrievalQAUtil:
                 langchain_chat_history.append(AIMessage(content))
         return langchain_chat_history
 
+
 # グローバル変数
 RetrievalQAUtilInstance: RetrievalQAUtil = None
 ChatAgentExecutorInstance = None
@@ -308,3 +315,4 @@ if __name__ == '__main__':
         print(page_source)
         print(page_content)
         print('---------------------')
+

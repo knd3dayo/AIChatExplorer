@@ -22,6 +22,9 @@ class LangChainVectorDB:
     def __save(self, _vector_db_url, documents:list=None):
         pass
 
+    def __delete(self, _vector_db_url, sources:list=None):
+        pass
+
     def vector_search(self, query, k=10 , score_threshold=0.0):
         answers = self.db.similarity_search_with_relevance_scores(
             query, k=k, score_threshold=score_threshold)
@@ -37,22 +40,7 @@ class LangChainVectorDB:
         return total_tokens
 
     def delete_doucments_by_sources(self, sources :list ):
-        doc_ids = []
-        # 既存のDBから指定されたsourceを持つドキュメントを削除
-        
-        for _id, doc in self.db.docstore._dict.items():
-            if not doc.metadata.get("source_url", None):
-                if doc.metadata.get("source", None) in [source.metadata.get("source",None) for source in sources]:
-                    doc_ids.append(_id)
-            else:
-                source_url_check =  doc.metadata.get("source_url", None)in [source.metadata.get("source_url", None) for source in sources]
-                source_path_check = doc.metadata.get("source", None) in [source.metadata.get("source", None) for source in sources]
-                if source_url_check and source_path_check:
-                    doc_ids.append(_id)
-
-        if len(doc_ids) > 0:
-            self.db.delete(doc_ids)
-            self.__save(self.vector_db_url)
+        self.__delete(sources)
             
         return 0
     

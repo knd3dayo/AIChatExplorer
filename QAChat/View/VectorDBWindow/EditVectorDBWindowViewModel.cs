@@ -105,11 +105,17 @@ namespace QAChat.View.VectorDBWindow {
             if (ItemViewModel == null) {
                 return;
             }
-            // 現在はFaissのみ
+
             if (parameter is not VectorDBTypeEnum selectedVectorDBType) {
-                Tools.Error("現在選択可能なVectorDBTypeはFaissのみです。");
+                Tools.Error("ベクトルDBタイプが指定されていません");
                 return;
             }
+            // 現在はFaiss,Chroma(インメモリ)のみ
+            if (selectedVectorDBType != VectorDBTypeEnum.Faiss && selectedVectorDBType != VectorDBTypeEnum.Chroma) {
+                Tools.Error("Faiss,Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません");
+                return;
+            }
+
             ItemViewModel.SelectedVectorDBType = selectedVectorDBType;
         });
 

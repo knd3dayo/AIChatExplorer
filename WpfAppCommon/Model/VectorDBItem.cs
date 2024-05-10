@@ -10,7 +10,7 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Model {
 
     /// <summary>
-    /// VectorDBの種類。現在はFaissのみ
+    /// VectorDBの種類。現在はFaiss,Chroma(インメモリ)のみ
     /// </summary>
     public enum VectorDBTypeEnum {
         [Description("Faiss")]

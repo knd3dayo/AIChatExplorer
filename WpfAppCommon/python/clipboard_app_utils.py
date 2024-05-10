@@ -56,10 +56,10 @@ def openai_chat(props: dict, input_json: str, json_mode:bool = False):
 def openai_embedding(props: dict, input_text: str):
     return clipboard_app_openai.openai_embedding(props, input_text)
 
-import retrieval_qa_util
 
 def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
-    return retrieval_qa_util.langchain_chat(props, vector_db_items_json, prompt, chat_history_json)
+    import langchain_util
+    return langchain_util.langchain_chat(props, vector_db_items_json, prompt, chat_history_json)
 
 def list_openai_models():
     return clipboard_app_openai.list_openai_models()

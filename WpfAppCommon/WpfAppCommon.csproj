@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -20,9 +20,10 @@
     <None Remove="python\file_processor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_openai_client.py" />
+    <None Remove="python\langchain_util.py" />
     <None Remove="python\langchain_vector_db.py" />
+    <None Remove="python\langchain_vector_db_chroma.py" />
     <None Remove="python\langchain_vector_db_faiss.py" />
-    <None Remove="python\retrieval_qa_util.py" />
     <None Remove="python\template.py" />
     <None Remove="python\tools.json" />
     <None Remove="TestData\extract_test.png" />
@@ -66,10 +67,13 @@
     <EmbeddedResource Include="python\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_vector_db_faiss.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\retrieval_qa_util.py">
+    <EmbeddedResource Include="python\langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\template.py">
