@@ -13,7 +13,7 @@ namespace ClipboardApp.View.ClipboardItemView {
     /// </summary>
     class EditItemWindowViewModel : MyWindowViewModel {
 
-        private TextSelector TextSelector = new();
+        private readonly TextSelector TextSelector = new();
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -116,35 +116,23 @@ namespace ClipboardApp.View.ClipboardItemView {
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
 
-            if (parameter is not Window window) {
+            if (parameter is not TextBox textBox) {
                 return;
             }
 
-            object? editorObject = window?.FindName("Editor");
-            if (editorObject == null) {
-                return;
-            }
-
-            TextBox editor = (TextBox)editorObject;
             // テキスト選択
-            TextSelector.SelectText(editor);
+            TextSelector.SelectText(textBox);
             return;
         });
         // 選択中のテキストをプロセスとして実行
         public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
 
-            if (parameter is not Window window) {
+            if (parameter is not TextBox textbox) {
                 return;
             }
 
-            object? editorObject = window?.FindName("Editor");
-            if (editorObject == null) {
-                return;
-            }
-
-            TextBox editor = (TextBox)editorObject;
             // 選択中のテキストをプロセスとして実行
-            TextSelector.ExecuteSelectedText(editor);
+            TextSelector.ExecuteSelectedText(textbox);
 
         });
 
