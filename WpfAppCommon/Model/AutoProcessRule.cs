@@ -121,6 +121,10 @@ namespace WpfAppCommon.Model {
             // 削除後はIdをNullにする
             Id = LiteDB.ObjectId.Empty;
         }
+        // 取得
+        public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetAllAutoProcessRules();
+        }
 
         // 移動またはコピー先のフォルダ
         public ClipboardFolder? DestinationFolder { get; set; }

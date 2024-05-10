@@ -142,8 +142,8 @@ namespace WpfAppCommon.Factory.Default {
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
             var items = collection.FindAll().Where(
                 x => x.RuleAction != null
-                && (x.RuleAction.Name == SystemAutoProcessItem.AutoProcessActionName.CopyToFolder.Name
-                    || x.RuleAction.Name == SystemAutoProcessItem.AutoProcessActionName.MoveToFolder.Name));
+                && (x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.CopyToFolder.ToString()
+                    || x.RuleAction.Name == SystemAutoProcessItem.TypeEnum.MoveToFolder.ToString()));
             return items;
 
         }

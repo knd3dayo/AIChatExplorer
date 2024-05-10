@@ -8,11 +8,6 @@ namespace ClipboardApp.View.AutoProcessRuleView
 {
     public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
 
-        // Instance
-        public static ListAutoProcessRuleWindowViewModel? Instance { get; set; } = null;
-
-        // 処理対象のClipboardItemFolder
-        public static ClipboardFolderViewModel? TargetFolder { get; set; } = null;
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];
@@ -24,64 +19,49 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 _selectedAutoProcessRule = value;
             }
         }
-
-
-        public void Initialize(ClipboardFolderViewModel? targetFolder) {
-            TargetFolder = targetFolder;
+        private static MainWindowViewModel? _mainWindowViewModel;
+        public void Initialize(MainWindowViewModel mainWindowViewModel) {
+            _mainWindowViewModel = mainWindowViewModel;
             // AutoProcessRulesを更新
-            if (TargetFolder != null) {
-                AutoProcessRules = TargetFolder.GetAutoProcessRules();
-            }
+            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
 
-        public static SimpleDelegateCommand EditAutoProcessRuleCommand => new (EditAutoProcessRuleCommandExecute);
+        public SimpleDelegateCommand EditAutoProcessRuleCommand => new (EditAutoProcessRuleCommandExecute);
 
         // 自動処理ルールを編集する処理
-        public static void EditAutoProcessRuleCommandExecute(object parameter) {
+        public void EditAutoProcessRuleCommandExecute(object parameter) {
             // AutoProcessRuleが更新された後の処理
-            static void AutoProcessRuleUpdated(AutoProcessRule rule) {
-                // InstanceがNullの場合は処理を終了
-                if (Instance == null) {
-                    return;
-                }
-                if (TargetFolder == null) {
-                    return;
-                }
+            void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = TargetFolder.GetAutoProcessRules();
-                Instance.OnPropertyChanged(nameof(AutoProcessRules));
+                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                OnPropertyChanged(nameof(AutoProcessRules));
             }
             // debug
             if (SelectedAutoProcessRule == null) {
                 System.Windows.MessageBox.Show("自動処理ルールが選択されていません。");
                 return;
             }
+            //
             EditAutoProcessRuleWindow window = new();
             EditAutoProcessRuleWindowViewModel editAutoProcessRuleWindowViewModel = (EditAutoProcessRuleWindowViewModel)window.DataContext;
-            editAutoProcessRuleWindowViewModel.InitializeEdit(TargetFolder, SelectedAutoProcessRule, AutoProcessRuleUpdated);
+            editAutoProcessRuleWindowViewModel.InitializeEdit(_mainWindowViewModel, SelectedAutoProcessRule, AutoProcessRuleUpdated);
             window.ShowDialog();
         }
 
         // 自動処理を追加する処理
-        public static SimpleDelegateCommand AddAutoProcessRuleCommand => new((parameter) => {
+        public SimpleDelegateCommand AddAutoProcessRuleCommand => new((parameter) => {
             // AutoProcessRuleが更新された後の処理
-            static void AutoProcessRuleUpdated(AutoProcessRule rule) {
+            void AutoProcessRuleUpdated(AutoProcessRule rule) {
                 // InstanceがNullの場合は処理を終了
-                if (Instance == null) {
-                    return;
-                }
-                if (TargetFolder == null) {
-                    return;
-                }
                 // AutoProcessRulesを更新
-                Instance.AutoProcessRules = TargetFolder.GetAutoProcessRules();
-                Instance.OnPropertyChanged(nameof(AutoProcessRules));
+                AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+                OnPropertyChanged(nameof(AutoProcessRules));
             }
             EditAutoProcessRuleWindow window = new();
             EditAutoProcessRuleWindowViewModel editAutoProcessRuleWindowViewModel = (EditAutoProcessRuleWindowViewModel)window.DataContext;
-            editAutoProcessRuleWindowViewModel.InitializeCreate(TargetFolder, AutoProcessRuleUpdated);
+            editAutoProcessRuleWindowViewModel.InitializeCreate(_mainWindowViewModel, AutoProcessRuleUpdated);
             window.ShowDialog();
         });
 

@@ -11,8 +11,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
             Create,
             Edit
         }
-        // MainWindowViewModel
-        public MainWindowViewModel? MainWindowViewModel { get; private set; }
+
         // ルール適用対象のClipboardItemFolder
         private ClipboardFolderViewModel? targetFolder;
         public ClipboardFolderViewModel? TargetFolder {
@@ -120,24 +119,28 @@ namespace ClipboardApp.View.AutoProcessRuleView
         // 自動処理を更新したあとの処理
         private Action<AutoProcessRule>? _AfterUpdate;
 
+        // MainWindowViewModel
+        public MainWindowViewModel? MainWindowViewModel { get; set; }
         // 
         // 初期化
         private void Initialize(
-            Mode mode, ClipboardFolderViewModel? folderViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
-            CurrentMode = mode;
-            TargetFolder = folderViewModel;
-            TargetAutoProcessRule = autoProcessRule;
-            IsAutoProcessRuleEnabled = autoProcessRule?.IsEnabled ?? true;
-            _AfterUpdate = afterUpdate;
-            if (folderViewModel?.MainWindowViewModel == null) {
+            Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+            if (mainWindowViewModel == null) {
                 Tools.Error("MainWindowViewModelがNullです。");
                 return;
             }
+            CurrentMode = mode;
+            MainWindowViewModel = mainWindowViewModel;
+            TargetAutoProcessRule = autoProcessRule;
+            IsAutoProcessRuleEnabled = autoProcessRule?.IsEnabled ?? true;
+            _AfterUpdate = afterUpdate;
+
             if (autoProcessRule?.TargetFolder != null) {
-                TargetFolder = new ClipboardFolderViewModel(folderViewModel.MainWindowViewModel, autoProcessRule.TargetFolder);
+                TargetFolder = new ClipboardFolderViewModel(MainWindowViewModel, autoProcessRule.TargetFolder);
             }
+
             if (autoProcessRule?.DestinationFolder != null) {
-                DestinationFolder = new ClipboardFolderViewModel(folderViewModel.MainWindowViewModel, autoProcessRule.DestinationFolder);
+                DestinationFolder = new ClipboardFolderViewModel(MainWindowViewModel, autoProcessRule.DestinationFolder);
             }
 
 
@@ -187,15 +190,15 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         // 初期化 modeがEditの場合
         public void InitializeEdit(
-            ClipboardFolderViewModel? clipboardItemFolder, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+            MainWindowViewModel? mainWindowViewModel, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             Initialize(
-                Mode.Edit, clipboardItemFolder, autoProcessRule, afterUpdate);
+                Mode.Edit, mainWindowViewModel, autoProcessRule, afterUpdate);
 
         }
         // 初期化 modeがCreateの場合
         public void InitializeCreate(
-            ClipboardFolderViewModel? clipboardItemFolder, Action<AutoProcessRule> afterUpdate) {
-            Initialize(Mode.Create, clipboardItemFolder, null, afterUpdate);
+            MainWindowViewModel? mainWindowViewModel, Action<AutoProcessRule> afterUpdate) {
+            Initialize(Mode.Create, mainWindowViewModel, null, afterUpdate);
         }
 
         // OKボタンが押されたときの処理
@@ -279,7 +282,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
                     Tools.Error("同じフォルダにはコピーまたは移動できません。");
                     return;
                 }
-                TargetFolder.SetAutoProcessRuleDestinationFolder(TargetAutoProcessRule);
+                DestinationFolder.SetAutoProcessRuleDestinationFolder(TargetAutoProcessRule);
             }
             // 無限ループのチェック処理
             if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {

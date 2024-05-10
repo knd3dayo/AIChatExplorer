@@ -48,15 +48,15 @@ namespace WpfAppCommon.Model {
         }
         // ユーザーが作成したスクリプトのAutoProcessItemを作成
         public SystemAutoProcessItem(string displayName, string description, ScriptItem scriptItem) : this() {
-            Name = AutoProcessActionName.RunPythonScript.Name;
+            Name = TypeEnum.RunPythonScript.ToString();
             DisplayName = displayName;
             Description = description;
             ScriptItem = scriptItem;
         }
 
         public bool IsCopyOrMoveOrMergeAction() {
-            return Name == AutoProcessActionName.CopyToFolder.Name || Name == AutoProcessActionName.MoveToFolder.Name
-                || Name == AutoProcessActionName.MergeAllItems.Name || Name == AutoProcessActionName.MergeItemsWithSameSourceApplicationTitle.Name;
+            return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString()
+                || Name == TypeEnum.MergeAllItems.ToString() || Name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString();
         }
 
         public static SystemAutoProcessItem GetSystemAutoProcessItem(string name) {

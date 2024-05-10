@@ -14,13 +14,6 @@ namespace ClipboardApp.View.ClipboardItemView {
         // FolderViewModel
         public ClipboardFolderViewModel FolderViewModel { get; } = folderViewModel;
 
-        // MainWindowViewModel
-        public MainWindowViewModel MainWindowViewModel {
-            get {
-                return FolderViewModel.MainWindowViewModel;
-            }
-        }
-
         // Content
         public string Content {
             get {

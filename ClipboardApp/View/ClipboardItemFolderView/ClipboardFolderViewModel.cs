@@ -59,25 +59,30 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public void Delete() {
             ClipboardItemFolder.Delete();
         }
+        // LoadChildren
+        public void LoadChildren() {
+            Children.Clear();
+            foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
+                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
+            }
+        }
+        // LoadItems
+        public void LoadItems() {
+            Items.Clear();
+            // DBから読み込み
+            ClipboardItemFolder.Load();
+            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
+                Items.Add(new ClipboardItemViewModel(this, item));
+            }
+        }
         // Load
-        public async void Load() {
+        public void Load() {
 
             MainWindowViewModel.IsIndeterminate = true;
-            Items.Clear();
-            Children.Clear();
             try {
-                await Task.Run(() => {
-                    // DBから読み込み
-                    ClipboardItemFolder.Load();
-                });
+                LoadChildren();
+                LoadItems();
 
-                foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                    Items.Add(new ClipboardItemViewModel(this, item));
-                }
-                foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
-                    Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
-                    // StatusTextを更新
-                }
                 UpdateStatusText();
             } finally {
                 MainWindowViewModel.IsIndeterminate = false;

@@ -1,10 +1,11 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
 
-    public class FolderSelectWindowViewModel : ObservableObject {
+    public class FolderSelectWindowViewModel : MyWindowViewModel {
         private static FolderSelectWindowViewModel? Instance;
         // フォルダツリーのルート
         public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = [];
@@ -20,6 +21,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
             set {
                 selectedFolder = value;
+                selectedFolder?.LoadChildren();
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }

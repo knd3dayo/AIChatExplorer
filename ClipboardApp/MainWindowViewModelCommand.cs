@@ -352,11 +352,11 @@ namespace ClipboardApp {
             listPromptTemplateWindow.ShowDialog();
         }
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
-        public static void OpenListAutoProcessRuleWindowCommandExecute() {
+        public void OpenListAutoProcessRuleWindowCommandExecute() {
             ListAutoProcessRuleWindow listAutoProcessRuleWindow = new();
             ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)listAutoProcessRuleWindow.DataContext;
 
-            ListAutoProcessRuleWindowViewModel.Initialize(MainWindowViewModel.RootFolderViewModel);
+            ListAutoProcessRuleWindowViewModel.Initialize(this);
 
             listAutoProcessRuleWindow.ShowDialog();
 

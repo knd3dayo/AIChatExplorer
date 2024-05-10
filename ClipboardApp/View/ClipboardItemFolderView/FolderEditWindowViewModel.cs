@@ -7,7 +7,7 @@ using WpfAppCommon.Factory.Default;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {
-    public partial class FolderEditWindowViewModel : ObservableObject {
+    public partial class FolderEditWindowViewModel : MyWindowViewModel {
         // 編集モードか新規子フォルダ作成モードか
         public enum Mode {
             Edit,
@@ -88,11 +88,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 DisplayName = "";
             }
 
-            // Visibilityを更新
-            OnPropertyChanged(nameof(SearchConditionVisibility));
-            OnPropertyChanged(nameof(AutoProcessRuleVisibility));
-
-
         }
         public SimpleDelegateCommand CreateCommand => new ((parameter) => {
             if (FolderViewModel == null) {
@@ -153,53 +148,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
 
         });
-
-        // OpenListAutoProcessRuleWindowCommandExecute
-        public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new ((parameter) => {
-            if (FolderViewModel == null) {
-                Tools.Error("フォルダが指定されていません");
-                return;
-            }
-            ListAutoProcessRuleWindow ListAutoProcessRuleWindow = new ();
-            ListAutoProcessRuleWindowViewModel ListAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)ListAutoProcessRuleWindow.DataContext;
-            ListAutoProcessRuleWindowViewModel.Initialize(FolderViewModel);
-
-            ListAutoProcessRuleWindow.ShowDialog();
-        });
-
-        // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand OpenEditSearchConditionWindowCommand => new ((parameter) =>{
-            ClipboardFolderViewModel.SearchCommandExecute(FolderViewModel);
-            });
-
-        // 検索条件画面表示ボタンを表示するかどうか
-        public Visibility SearchConditionVisibility {
-            get {
-                // モードがCreateChildの場合は非表示
-                if (CurrentMode == Mode.CreateChild) {
-                    return Visibility.Collapsed;
-                }
-                // folderがSelectFolderの場合は表示する
-                if (FolderViewModel != null && FolderViewModel.IsSearchFolder) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
-        // 自動処理ルール画面表示ボタンを表示するかどうか
-        public Visibility AutoProcessRuleVisibility {
-            get {
-                // モードがCreateChildの場合は非表示
-                if (CurrentMode == Mode.CreateChild) {
-                    return Visibility.Collapsed;
-                }
-                // folderがSelectFolderの場合は表示する
-                if (FolderViewModel != null && !FolderViewModel.IsSearchFolder) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
 
         [System.Text.RegularExpressions.GeneratedRegex("^[a-zA-Z0-9]+$")]
         private static partial System.Text.RegularExpressions.Regex MyRegex();

@@ -18,6 +18,15 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 OnPropertyChanged(nameof(Name));
             }
         }
+        public string DisplayName {
+            get {
+                return autoProcessItem.DisplayName;
+            }
+            set {
+                autoProcessItem.DisplayName = value;
+                OnPropertyChanged(nameof(DisplayName));
+            }
+        }
 
         // コンストラクタ
         public AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) {
@@ -36,9 +45,6 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public bool IsCopyOrMoveOrMergeAction() {
             return autoProcessItem.IsCopyOrMoveOrMergeAction();
         }
-
-        // 編集コマンド
-        public static SimpleDelegateCommand EditAutoProcessRuleCommand => new(ListAutoProcessRuleWindowViewModel.EditAutoProcessRuleCommandExecute);
 
     }
 }

@@ -74,12 +74,6 @@
                     </TextBlock>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
-            <TreeView.ItemContainerStyle>
-                <!--  TreeViewのアイテムがクリックされた場合に色を変更  -->
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelectedOnFolderSelectWindow}" />
-                </Style>
-            </TreeView.ItemContainerStyle>
         </TreeView>
         <TextBlock
             Grid.Row="2"
