@@ -31,8 +31,10 @@ namespace WpfAppCommon.Model {
         public ObjectId Id { get; set; } = ObjectId.Empty;
         // フォルダの表示名
         public string DisplayName { get; set; } = "";
-        // フォルダの絶対パス
-        public string AbsoluteCollectionName { get; set; } = "";
+        // フォルダの絶対パス LiteDB用
+        public string CollectionName { get; set; } = "";
+        // フォルダの絶対パス ファイルシステム用
+        public string FolderPath { get; set; } = "";
 
         // AutoProcessRuleのIdのリスト
         public IEnumerable<int> AutoProcessRuleIds { get; set; } = [];
@@ -61,12 +63,12 @@ namespace WpfAppCommon.Model {
             get {
                 ObservableCollection<ClipboardFolder> children = [];
                 // AbsoluteCollectionNameが空の場合は空のリストを返す
-                if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
+                if (string.IsNullOrEmpty(CollectionName)) {
                     return children;
                 }
                 // LiteDBから自分が親となっているフォルダを取得
                 IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-                var childrenNames = ClipboardDatabaseController.GetFolderRelations(AbsoluteCollectionName);
+                var childrenNames = ClipboardDatabaseController.GetFolderRelations(CollectionName);
                 foreach (var childName in childrenNames) {
                     var child = ClipboardDatabaseController.GetFolder(childName);
                     if (child != null) {
@@ -97,12 +99,20 @@ namespace WpfAppCommon.Model {
         }
         //------------
         // 親フォルダのパスと子フォルダ名を連結する。LiteDB用
-        private string ConcatenatePath(string parentPath, string childPath) {
+        private string ConcatenateCollectionPath(string parentPath, string childPath) {
             if (string.IsNullOrEmpty(parentPath))
                 return childPath;
             if (string.IsNullOrEmpty(childPath))
                 return parentPath;
             return parentPath + "_" + childPath;
+        }
+        // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
+        private string ConcatenateFileSystemPath(string parentPath, string childPath) {
+            if (string.IsNullOrEmpty(parentPath))
+                return childPath;
+            if (string.IsNullOrEmpty(childPath))
+                return parentPath;
+            return Path.Combine(parentPath, childPath);
         }
 
 
@@ -113,9 +123,14 @@ namespace WpfAppCommon.Model {
 
         public ClipboardFolder(ClipboardFolder? parent, string collectionName, string displayName) {
             if (parent == null) {
-                AbsoluteCollectionName = collectionName;
+                // LiteDB用のパス
+                CollectionName = collectionName;
+                // ファイルシステム用のパス
+                FolderPath = collectionName;
+
             } else {
-                AbsoluteCollectionName = ConcatenatePath(parent.AbsoluteCollectionName, collectionName);
+                CollectionName = ConcatenateCollectionPath(parent.CollectionName, collectionName);
+                FolderPath = ConcatenateFileSystemPath(parent.FolderPath, collectionName);
             }
             DisplayName = displayName;
             // クリップボードアイテムのロード
@@ -134,7 +149,9 @@ namespace WpfAppCommon.Model {
         // アイテムを追加する処理
         public ClipboardItem AddItem(ClipboardItem item) {
             // AbsoluteCollectionNameを設定
-            item.CollectionName = AbsoluteCollectionName;
+            item.CollectionName = CollectionName;
+            // AbsoluteFolderPathを設定
+            item.FolderPath = FolderPath;
 
             // 自動処理を適用
             ClipboardItem? result = ApplyAutoProcess(item);
@@ -164,17 +181,17 @@ namespace WpfAppCommon.Model {
         }
         public void Load() {
             // AbsoluteCollectionNameが空の場合は空のリストを返す
-            if (string.IsNullOrEmpty(AbsoluteCollectionName)) {
+            if (string.IsNullOrEmpty(CollectionName)) {
                 return;
             }
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // フォルダに検索条件が設定されている場合
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(AbsoluteCollectionName);
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(CollectionName);
             if (searchConditionRule != null) {
                 // 検索対象フォルダパスの取得
-                string? targetCollectionName = searchConditionRule.TargetFolder?.AbsoluteCollectionName;
+                string? targetCollectionName = searchConditionRule.TargetFolder?.CollectionName;
                 if (targetCollectionName != null) {
                     _items = [.. ClipboardDatabaseController.SearchItems(targetCollectionName, searchConditionRule.SearchCondition)];
                 }
@@ -182,11 +199,11 @@ namespace WpfAppCommon.Model {
             } else {
                 // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
                 if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                    _items = [.. ClipboardDatabaseController.SearchItems(AbsoluteCollectionName, GlobalSearchCondition.SearchCondition)];
+                    _items = [.. ClipboardDatabaseController.SearchItems(CollectionName, GlobalSearchCondition.SearchCondition)];
 
                 } else {
                     // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                    _items = [.. ClipboardDatabaseController.GetItems(AbsoluteCollectionName)];
+                    _items = [.. ClipboardDatabaseController.GetItems(CollectionName)];
                 }
             }
         }
@@ -215,7 +232,7 @@ namespace WpfAppCommon.Model {
                 jsonArray.Add(ClipboardItem.ToJson(item));
             }
             string jsonString = jsonArray.ToString();
-            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.AbsoluteCollectionName + ".json";
+            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.CollectionName + ".json";
 
             File.WriteAllText(Path.Combine(directoryPath, fileName), jsonString);
 

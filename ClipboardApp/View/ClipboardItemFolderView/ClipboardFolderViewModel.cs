@@ -44,15 +44,24 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
         }
 
-        public string AbsoluteCollectionName {
+        public string CollectionName {
             get {
-                return ClipboardItemFolder.AbsoluteCollectionName;
+                return ClipboardItemFolder.CollectionName;
             }
             set {
-                ClipboardItemFolder.AbsoluteCollectionName = value;
-                OnPropertyChanged(nameof(AbsoluteCollectionName));
+                ClipboardItemFolder.CollectionName = value;
+                OnPropertyChanged(nameof(CollectionName));
             }
 
+        }
+        public string FolderPath {
+            get {
+                return ClipboardItemFolder.FolderPath;
+            }
+            set {
+                ClipboardItemFolder.FolderPath = value;
+                OnPropertyChanged(nameof(FolderPath));
+            }
         }
 
         // Delete
@@ -101,11 +110,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsDeleteVisible {
             get {
                 // RootFolderは削除不可
-                if (ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 // SearchRootFolderは削除不可
-                if (ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 return true;
@@ -115,7 +124,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsEditVisible {
             get {
                 // SearchRootFolderは編集不可
-                if (ClipboardItemFolder.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 return true;
@@ -146,7 +155,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // folderが検索フォルダの場合
             SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             if (ClipboardItemFolder.IsSearchFolder) {
-                searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(ClipboardItemFolder.AbsoluteCollectionName);
+                searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(ClipboardItemFolder.CollectionName);
             }
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合

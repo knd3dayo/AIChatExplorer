@@ -163,22 +163,23 @@ namespace WpfAppCommon.Factory.Default {
 
         /// Create ClipboardItem
         private static ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            ClipboardItem item = new() {
+            ClipboardItem item = new(ClipboardFolder.RootFolder.CollectionName, ClipboardFolder.RootFolder.FolderPath) {
                 ContentType = contentTypes
             };
             SetApplicationInfo(item, e);
             item.Content = content;
-            item.CollectionName = ClipboardFolder.RootFolder.AbsoluteCollectionName;
+            item.CollectionName = ClipboardFolder.RootFolder.CollectionName;
+            item.FolderPath = ClipboardFolder.RootFolder.FolderPath;
 
             // If ContentType is Image, set image data
             if (contentTypes == ClipboardContentTypes.Image && image != null) {
-                ClipboardItemImage imageItem = new();
+                ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
                 imageItem.SetImage(image);
                 item.ClipboardItemImage = imageItem;
             }
             // If ContentType is Files, set file data
             else if (contentTypes == ClipboardContentTypes.Files) {
-                ClipboardItemFile clipboardItemFile = new(content);
+                ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, content);
                 item.ClipboardItemFile = clipboardItemFile;
             }
             return item;

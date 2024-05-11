@@ -64,7 +64,7 @@ namespace WpfAppCommon.Model {
                         Tools.Warn("フォルダが選択されていません");
                         return args.ClipboardItem;
                     }
-                    Tools.Info($"フォルダにコピーします{args.DestinationFolder.AbsoluteCollectionName}");
+                    Tools.Info($"フォルダにコピーします{args.DestinationFolder.CollectionName}");
                     // DestinationFolderにコピー
                     ClipboardItem newItem = args.ClipboardItem.Copy();
                     args.DestinationFolder.AddItem(newItem);

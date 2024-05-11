@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -77,10 +78,8 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new() {
-                    // CollectionNameを設定
-                    CollectionName = folderViewModel.AbsoluteCollectionName
-                };
+                ClipboardItem clipboardItem = new(folderViewModel.CollectionName, folderViewModel.FolderPath);
+
 
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 title = "新規アイテム";

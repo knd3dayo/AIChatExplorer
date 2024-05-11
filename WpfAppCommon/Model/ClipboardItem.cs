@@ -17,15 +17,19 @@ namespace WpfAppCommon.Model {
     }
     public class ClipboardItem {
         // コンストラクタ
-        public ClipboardItem() {
+        public ClipboardItem(string collectionName, string folderPath ) {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
+            CollectionName = collectionName;
+            FolderPath = folderPath;
         }
         // プロパティ
 
         public ObjectId? Id { get; set; }
 
-        public string? CollectionName { get; set; }
+        public string CollectionName { get; set; }
+
+        public string FolderPath { get; set; }
 
         // 生成日時
         public DateTime CreatedAt { get; set; }
@@ -47,7 +51,7 @@ namespace WpfAppCommon.Model {
         public ClipboardItemImage? ClipboardItemImage {
             get {
                 if (ImageObjectId == null) {
-                    return new ClipboardItemImage();
+                    return null;
                 }
                 return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(ImageObjectId);
             }
@@ -116,7 +120,7 @@ namespace WpfAppCommon.Model {
         // -------------------------------------------------------------------
 
         public ClipboardItem Copy() {
-            ClipboardItem newItem = new();
+            ClipboardItem newItem = new(this.CollectionName, this.FolderPath);
             CopyTo(newItem);
             return newItem;
 
@@ -134,13 +138,13 @@ namespace WpfAppCommon.Model {
 
             //-- 画像がある場合はコピー
             if (ImageObjectId != null) {
-                ClipboardItemImage newImage = new ();
+                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, ClipboardItemImage?.GetImage() ?? throw new ThisApplicationException("画像が取得できません"));
                 newImage.ImageBase64 = ClipboardItemImage?.ImageBase64 ?? string.Empty;
                 newItem.ClipboardItemImage = newImage;
             }
             //-- ファイルがある場合はコピー
             if (FileObjectId != null) {
-                ClipboardItemFile newFile = new(ClipboardItemFile?.FilePath ?? string.Empty);
+                ClipboardItemFile newFile = ClipboardItemFile.Create(newItem, ClipboardItemFile?.FilePath ?? string.Empty);
                 newItem.ClipboardItemFile = newFile;
             }
             //-- ChatItemsをコピー
@@ -253,12 +257,49 @@ namespace WpfAppCommon.Model {
         // 自分自身をDBに保存する
         public void Save(bool updateModifiedTime = true) {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this);
+            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
+            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                // 保存先フォルダを取得
+                string syncFolder = ClipboardAppConfig.SyncFolderName;
+                // フォルダが存在しない場合は作成
+                if (Directory.Exists(syncFolder) == false) {
+                    Directory.CreateDirectory(syncFolder);
+                }
+                // syncFolder/フォルダ名を作成
+                string folderPath = Path.Combine(syncFolder, FolderPath);
+                // フォルダが存在しない場合は作成
+                if (Directory.Exists(folderPath) == false) {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // folderPath + Id + .txtをファイル名として保存
+                string filePath = Path.Combine(folderPath, Id + ".txt");
+                // 保存
+                File.WriteAllText(filePath, this.Content);
+            }
         }
         // 自分自身をDBから削除する
         public void Delete() {
+            // ファイルが存在する場合は削除
+            ClipboardItemImage?.Delete();
+            // イメージが存在する場合は削除
+            ClipboardItemFile?.Delete();
+
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
-            // DBから削除したらIdをnullにする
-            Id = null;
+            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
+            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                // 保存先フォルダを取得
+                string folderPath = ClipboardAppConfig.SyncFolderName;
+                // syncFolder/フォルダ名を取得
+                folderPath = Path.Combine(folderPath, FolderPath);
+
+                // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
+                string filePath = Path.Combine(folderPath, Id + ".txt");
+                // ファイルが存在する場合は削除
+                if (File.Exists(filePath)) {
+                    File.Delete(filePath);
+                }
+            }
         }
 
         public static void CreateAutoDescription(ClipboardItem item) {
@@ -321,6 +362,9 @@ namespace WpfAppCommon.Model {
             ClipboardItemFile? clipboardItemFile = clipboardItem.ClipboardItemFile;
             if (clipboardItemFile == null) {
                 throw new ThisApplicationException("ファイルが取得できません");
+            }
+            if (clipboardItemFile.FilePath == null) {
+                throw new ThisApplicationException("ファイルパスが取得できません");
             }
             string path = clipboardItemFile.FilePath;
             if (string.IsNullOrEmpty(path)) {

@@ -45,6 +45,11 @@ namespace WpfAppCommon.Model {
         // SpacyModel
         public static string SpacyModel { get; set; } = WpfAppCommon.Properties.Settings.Default.SpacyModel;
 
+        // SyncClipboardItemAndOSFolder
+        public static bool SyncClipboardItemAndOSFolder { get; set; } = WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+        // SyncFolderName
+        public static string SyncFolderName { get; set; } = WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+
         // AutoMergeItemsBySourceApplicationTitle
         public static bool AutoMergeItemsBySourceApplicationTitle { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
 

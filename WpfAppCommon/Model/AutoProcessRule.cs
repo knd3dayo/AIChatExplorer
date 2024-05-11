@@ -196,7 +196,7 @@ namespace WpfAppCommon.Model {
                 if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
                     // DestinationFolderが設定されている場合
                     if (DestinationFolder != null) {
-                        result += "フォルダ:" + DestinationFolder.AbsoluteCollectionName + "\n";
+                        result += "フォルダ:" + DestinationFolder.CollectionName + "\n";
                     } else {
                         result += "フォルダ:なし\n";
                     }
@@ -234,12 +234,12 @@ namespace WpfAppCommon.Model {
                 // TargetFolderとDestinationFolderが設定されている場合
                 if (r.TargetFolder != null && r.DestinationFolder != null) {
                     // keyが存在しない場合は新しいLinkedListを作成
-                    if (!fromToDictionary.TryGetValue(r.TargetFolder.AbsoluteCollectionName, out List<string>? value)) {
+                    if (!fromToDictionary.TryGetValue(r.TargetFolder.CollectionName, out List<string>? value)) {
                         value = [];
-                        fromToDictionary[r.TargetFolder.AbsoluteCollectionName] = value;
+                        fromToDictionary[r.TargetFolder.CollectionName] = value;
                     }
 
-                    value.Add(r.DestinationFolder.AbsoluteCollectionName);
+                    value.Add(r.DestinationFolder.CollectionName);
                 }
             }
 

@@ -13,6 +13,19 @@ namespace WpfAppCommon.Model {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
+        public ClipboardItem? ClipboardItem { get; set; }
+
+        public ClipboardItemImage() {
+
+        }
+        public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
+            ClipboardItemImage itemImage = new();
+            itemImage.ClipboardItem = clipboardItem;
+            itemImage.SetImage(image);
+            return itemImage;
+        }
+
+
         // 画像イメージのBase64文字列
         public string ImageBase64 { get; set; } = String.Empty;
 
@@ -68,10 +81,41 @@ namespace WpfAppCommon.Model {
         // 削除
         public void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemImage(this);
+            // クリップボードアイテムとファイルを同期する
+            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                // SyncFolderName/フォルダ名/ファイル名を削除する
+                string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                if (ClipboardItem == null) {
+                    throw new Exception("FilePath is null");
+                }
+                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
+                string syncFilePath = System.IO.Path.Combine(syncFolder,Id.ToString());
+                if (System.IO.File.Exists(syncFilePath)) {
+                    System.IO.File.Delete(syncFilePath);
+                }
+            }
         }
         // 保存
         public void Save() {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItemImage(this);
+            // クリップボードアイテムとファイルを同期する
+            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                if (ClipboardItem == null) {
+                    throw new Exception("FilePath is null");
+                }
+                // SyncFolderName/フォルダ名/ファイル名にファイルを保存する
+                string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
+                string syncFilePath = System.IO.Path.Combine(syncFolder, Id.ToString());
+                if (!System.IO.Directory.Exists(syncFolder)) {
+                    System.IO.Directory.CreateDirectory(syncFolder);
+                }
+                Image? image = GetImage();
+                if (image == null) {
+                    throw new Exception("image is null");
+                }
+                image.Save(syncFilePath, System.Drawing.Imaging.ImageFormat.Png);
+            }
         }
         // 取得
         public static ClipboardItemImage? GetItems(ObjectId objectId) {

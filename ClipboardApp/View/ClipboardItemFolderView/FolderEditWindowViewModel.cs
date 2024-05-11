@@ -77,7 +77,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             if (CurrentMode == Mode.Edit) {
                 // CollectionNameを設定
                 // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
-                CollectionName = folderViewModel.AbsoluteCollectionName.Split('_').Last();
+                CollectionName = folderViewModel.CollectionName.Split('_').Last();
 
                 DisplayName = folderViewModel.DisplayName;
             }
@@ -123,7 +123,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 // フォルダを作成
                 ClipboardFolderViewModel child =  FolderViewModel.CreateChild(CollectionName, DisplayName);
                 // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
-                if (FolderViewModel.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
+                if (FolderViewModel.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
                     || FolderViewModel.IsSearchFolder) {
                     // 子フォルダも検索フォルダにする
                     child.IsSearchFolder = true;

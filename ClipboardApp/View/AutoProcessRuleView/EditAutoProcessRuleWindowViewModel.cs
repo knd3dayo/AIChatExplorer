@@ -278,7 +278,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
                     return;
                 }
                 // TargetFolderとDestinationFolderが同じ場合はエラー
-                if (TargetFolder.AbsoluteCollectionName == DestinationFolder.AbsoluteCollectionName) {
+                if (TargetFolder.CollectionName == DestinationFolder.CollectionName) {
                     Tools.Error("同じフォルダにはコピーまたは移動できません。");
                     return;
                 }
@@ -316,7 +316,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 return;
             }
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.AbsoluteCollectionName == TargetFolder?.AbsoluteCollectionName) {
+            if (folder.CollectionName == TargetFolder?.CollectionName) {
                 Tools.Error("同じフォルダにはコピーまたは移動できません。");
                 return;
             }// コピーor移動先が検索フォルダの場合はエラー

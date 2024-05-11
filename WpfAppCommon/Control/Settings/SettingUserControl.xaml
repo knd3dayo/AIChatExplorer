@@ -323,7 +323,7 @@
                         Text="{Binding SpacyModel}"
                         Visibility="{Binding UseSpacyVisibility}" />
                 </Grid>
-                <!--  そのほかのPython設定  -->
+                <!--  その他の設定  -->
                 <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="320" />
@@ -332,16 +332,44 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <!--  UseOCR  -->
+                    <!--  クリップボードアイテムをOS上のフォルダと同期させる。  -->
                     <TextBlock
                         Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="10,10,10,0"
+                        Text="クリップボードアイテムをOS上のフォルダと同期させる" />
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Content="クリップボードアイテムをOS上のフォルダと同期させます。"
+                        IsChecked="{Binding SyncClipboardItemAndOSFolder}" />
+                    <!--  同期先のフォルダ名  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="10,10,10,0"
+                        Text="同期先のフォルダ名"
+                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="クリップボードアイテムを同期するOS上のフォルダ名を指定。"
+                        Text="{Binding SyncFolderName}"
+                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
+                    <!--  UseOCR  -->
+                    <TextBlock
+                        Grid.Row="2"
                         Grid.Column="0"
                         Margin="10,10,10,0"
                         Text="PyOCRで画像からテキスト抽出する"
                         Visibility="{Binding UsePythonVisibility}" />
                     <CheckBox
-                        Grid.Row="0"
+                        Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Content="クリップボードの画像をPyOCRを使用してテキスト抽出します"
@@ -349,13 +377,13 @@
                         Visibility="{Binding UsePythonVisibility}" />
                     <!--  TesseractExePath  -->
                     <TextBlock
-                        Grid.Row="1"
+                        Grid.Row="3"
                         Grid.Column="0"
                         Margin="10,10,10,0"
                         Text="Tesseractのパス"
                         Visibility="{Binding UseOCRVisibility}" />
                     <TextBox
-                        Grid.Row="1"
+                        Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Text="{Binding TesseractExePath}"

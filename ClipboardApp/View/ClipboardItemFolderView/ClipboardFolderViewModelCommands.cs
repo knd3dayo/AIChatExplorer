@@ -25,7 +25,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
             // 選択されたフォルダが検索フォルダの場合
             if (folderViewModel != null && folderViewModel.IsSearchFolder) {
-                string absoluteCollectionName = folderViewModel.AbsoluteCollectionName;
+                string absoluteCollectionName = folderViewModel.CollectionName;
                 SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(absoluteCollectionName);
                 if (searchConditionRule == null) {
                     searchConditionRule = new() {
@@ -149,8 +149,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return;
             }
 
-            if (folderViewModel.AbsoluteCollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME
-                || folderViewModel.AbsoluteCollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+            if (folderViewModel.CollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME
+                || folderViewModel.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
                 Tools.Error("ルートフォルダは削除できません");
                 return;
             }

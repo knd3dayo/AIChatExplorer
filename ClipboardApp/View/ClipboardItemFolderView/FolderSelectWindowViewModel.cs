@@ -81,7 +81,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 return;
             }
             Instance.SelectedFolder = folder;
-            Instance.SelectedFolderAbsoluteCollectionName = folder.AbsoluteCollectionName;
+            Instance.SelectedFolderAbsoluteCollectionName = folder.CollectionName;
 
         }
     }

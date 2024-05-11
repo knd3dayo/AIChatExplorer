@@ -36,17 +36,17 @@ namespace WpfAppCommon.Factory.Default {
         public void DeleteFolder(ClipboardFolder folder) {
             // folderの子フォルダを再帰的に削除
             foreach (var i in folder.Children) {
-                ClipboardFolder child = GetFolder(i.AbsoluteCollectionName);
+                ClipboardFolder child = GetFolder(i.CollectionName);
                 DeleteFolder(child);
             }
 
             // folderを削除
-            var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(folder.AbsoluteCollectionName);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(folder.CollectionName);
             collection.DeleteAll();
             // folderと親フォルダの関係を削除
             var parentCollection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
-            foreach (var i in parentCollection.FindAll().Where(x => x.ChildCollectionName == folder.AbsoluteCollectionName)) {
-                if (i.ChildCollectionName == folder.AbsoluteCollectionName) {
+            foreach (var i in parentCollection.FindAll().Where(x => x.ChildCollectionName == folder.CollectionName)) {
+                if (i.ChildCollectionName == folder.CollectionName) {
                     parentCollection.Delete(i.Id);
                 }
             }
@@ -79,7 +79,7 @@ namespace WpfAppCommon.Factory.Default {
         // AbsoluteCollectionNameを指定してClipboardItemFolderを取得する
         public ClipboardFolder GetFolder(string collectionName) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            var item = collection.FindOne(x => x.AbsoluteCollectionName == collectionName);
+            var item = collection.FindOne(x => x.CollectionName == collectionName);
 
             return item;
         }
@@ -161,7 +161,7 @@ namespace WpfAppCommon.Factory.Default {
         // 指定したAbsoluteCollectionNameに対応する検索条件を取得する
         public SearchRule? GetSearchRuleByFolderName(string collectionName) {
             var collection = GetClipboardDatabase().GetCollection<SearchRule>(SEARCH_CONDITION_RULES_COLLECTION_NAME);
-            var item = collection.FindOne(x => x.SearchFolder != null && x.SearchFolder.AbsoluteCollectionName == collectionName);
+            var item = collection.FindOne(x => x.SearchFolder != null && x.SearchFolder.CollectionName == collectionName);
             return item;
         }
         // --------------------------------------------------------------
@@ -223,7 +223,7 @@ namespace WpfAppCommon.Factory.Default {
         public void UpsertFolderRelation(ClipboardFolder parent, ClipboardFolder child) {
             // parentと、childの関係をLiteDBに追加または更新
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
-            ClipboardItemFolderRelation relation = new(parent.AbsoluteCollectionName, child.AbsoluteCollectionName);
+            ClipboardItemFolderRelation relation = new(parent.CollectionName, child.CollectionName);
             collection.Upsert(relation);
 
         }
@@ -249,14 +249,14 @@ namespace WpfAppCommon.Factory.Default {
             }
 
             // folder内のアイテムを保持するコレクションを取得
-            var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(folder.AbsoluteCollectionName);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(folder.CollectionName);
             // Filterの結果を結果に追加
             result = Filter(collection, searchCondition);
 
             // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
             if (searchCondition.IsIncludeSubFolder) {
                 // 対象フォルダの子フォルダを取得
-                var childFolders = GetChildFolders(folder.AbsoluteCollectionName);
+                var childFolders = GetChildFolders(folder.CollectionName);
                 foreach (var childFolder in childFolders) {
                     // サブフォルダのアイテムを検索
                     var subFolderResult = SearchItems(childFolder, searchCondition);
@@ -283,7 +283,7 @@ namespace WpfAppCommon.Factory.Default {
 
         private void LoadFolderTree(ClipboardFolder targetFolder) {
             // LiteDBから自分が親となっているフォルダを取得
-            var childrenNames = GetFolderRelations(targetFolder.AbsoluteCollectionName);
+            var childrenNames = GetFolderRelations(targetFolder.CollectionName);
             // Childrenをクリア
             targetFolder.Children.Clear();
             // childrenNamesからClipboardItemFolderを取得する

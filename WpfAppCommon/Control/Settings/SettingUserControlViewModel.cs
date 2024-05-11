@@ -242,7 +242,35 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // -------------------------------------
+        // その他の設定
+        // -------------------------------------
+        // クリップボードアイテムとOS上のフォルダを同期するかどうか
+        public bool SyncClipboardItemAndOSFolder {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+            }
+            set {
+                WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
+                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolder));
+                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolderVisibility));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+        // SyncFolderName
+        public string SyncFolderName {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+            }
+            set {
+                WpfAppCommon.Properties.Settings.Default.SyncFolderName = value;
+                OnPropertyChanged(nameof(SyncFolderName));
 
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
         // AutoTag
         public bool AutoTag {
             get {
@@ -332,6 +360,16 @@ namespace WpfAppCommon.Control.Settings {
         public Visibility UseSpacyVisibility {
             get {
                 if (UseSpacy == true && PythonExecMode == true) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+        // SyncClipboardItemAndOSFolderが有効かどうか
+        public Visibility SyncClipboardItemAndOSFolderVisibility {
+            get {
+                if (SyncClipboardItemAndOSFolder == true) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
