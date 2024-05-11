@@ -1,8 +1,9 @@
 from tkinter import SE
-from unstructured.partition.auto import partition
 from langchain.docstore.document import Document
 import os
 import tempfile
+import clipboard_app_extractor
+
 
 class FileLoader:
     def __init__(self, workdir_path:str, relative_file_path: str, repository_url: str):
@@ -29,26 +30,11 @@ class FileLoader:
         # ファイルサイズが0の場合は空のリストを返す
         if os.path.getsize(absolute_file_path) == 0:
             return text_list
-        # python-magicが2バイトファイル名を扱うとエラーになる場合があるため、ファイルを一時ファイルにコピーして処理する
-        # 一時ファイルの拡張子は元のファイルの拡張子と同じにする
-        with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(self.relative_file_path)[1]) as temp_file:
-            with open(absolute_file_path, 'rb') as f:
-                temp_file.write(f.read())
-            absolute_file_path = temp_file.name
-
-
-        elements = partition(filename=absolute_file_path)
-        text = ""
-        for el in elements:
-            text += str(el)
-            # print(text)
-            if len(text) > chunk_size:
-                text_list.append(text)
-                text = ""
-        if len(text) > 0:
-            text_list.append(text)
-        # 一時ファイルを削除
-        os.remove(absolute_file_path)
+        # テキスト抽出
+        text = clipboard_app_extractor.extract_text(absolute_file_path)
+        # テキストをchunk_sizeで分割
+        for i in range(0, len(text), chunk_size):
+            text_list.append(text[i:i + chunk_size])
 
         return text_list
     

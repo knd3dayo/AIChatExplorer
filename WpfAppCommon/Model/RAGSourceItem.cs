@@ -2,6 +2,7 @@ using LibGit2Sharp;
 using LiteDB;
 using WpfAppCommon.Factory;
 using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
 
@@ -18,9 +19,17 @@ namespace WpfAppCommon.Model {
         Conflicted,
         Unknown
     }
+
     // Index更新処理結果を格納するクラス
     public class UpdateIndexResult {
-        public bool Success { get; set; } = false;
+        public enum UpdateIndexResultEnum {
+            Success,
+            Failed_FileNotFound,
+            Failed_InvalidFileType,
+            Failed_Other
+        }
+        public UpdateIndexResultEnum Result { get; set; } = UpdateIndexResultEnum.Failed_Other;
+
         public string Message { get; set; } = "";
 
         public int TokenCount { get; set; } = 0;
@@ -154,7 +163,7 @@ namespace WpfAppCommon.Model {
 
         // 指定したコミットハッシュのコミットを取得
         public CommitInfo GetCommit(string hash) {
-            CommitInfo commitInfo = new ();
+            CommitInfo commitInfo = new();
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
                 // リポジトリのコミットを取得
@@ -244,19 +253,26 @@ namespace WpfAppCommon.Model {
         }
 
         // 更新処理
-        public UpdateIndexResult UpdateIndex(FileStatus fileStatus) {
+        public UpdateIndexResult UpdateIndex(FileStatus fileStatus, UpdateIndexResult result) {
 
             if (VectorDBItem == null) {
                 throw new Exception("ベクトルDBが設定されていません");
             }
-            // PythonNetのメソッドを実行
-            UpdateIndexResult result = new() {
-                Success = false,
-                Message = ""
-            };
-            int token = PythonExecutor.PythonFunctions.UpdateVectorDBIndex(fileStatus, WorkingDirectory, SourceURL, VectorDBItem);
+            int token = 0;
+            try {
+                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(fileStatus, WorkingDirectory, SourceURL, VectorDBItem);
+            } catch (UnsupportedFileTypeException e) {
+                // ファイルタイプが未対応の場合
+                result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
+                result.Message = e.Message;
+            } catch ( Exception e) {
+                // その他のエラー
+                result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
+                result.Message = e.Message;
+            }
             result.TokenCount = token;
-            result.Success = true;
+            result.Result = UpdateIndexResult.UpdateIndexResultEnum.Success;
+
             return result;
 
         }

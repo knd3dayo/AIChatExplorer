@@ -1,14 +1,16 @@
-faiss-cpu==1.8.0
-langchain==0.1.16
-langchain-openai==0.1.3
-openai==1.27.0
-openpyxl==3.1.2
-pillow==10.3.0
-python-dotenv==1.0.1
-python-magic-bin==0.4.14
-spacy==3.7.4
-pyocr==0.8.5
-unstructured==0.11.8
-chromadb==0.4.24
-unstructured[csv,doc,docx,md,pdf, ppt, pptx,tsv, xlsx]
+pillow
+pyocr
+python-docx
+python-dotenv
+python-pptx
+tiktoken
+beautifulsoup4
+chromadb
+faiss-cpu
+langchain
+magika
+openai
+openpyxl
+pdfminer.six
+spacy
 ja-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="Nlog.config" />
+    <None Remove="python\clipboard_app_extractor.py" />
     <None Remove="python\clipboard_app_openai.py" />
     <None Remove="python\clipboard_app_pyocr.py" />
     <None Remove="python\clipboard_app_spacy.py" />
@@ -50,6 +51,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\env_to_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\clipboard_app_extractor.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\file_loader.py">

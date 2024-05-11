@@ -326,9 +326,13 @@ namespace WpfAppCommon.Model {
             if (string.IsNullOrEmpty(path)) {
                 throw new ThisApplicationException("ファイルパスが取得できません");
             }
-            string text = PythonExecutor.PythonFunctions.ExtractText(path);
-            clipboardItem.Content = text;
-
+            try {
+                string text = PythonExecutor.PythonFunctions.ExtractText(path);
+                clipboardItem.Content = text;
+            } catch(UnsupportedFileTypeException) {
+                Tools.Error("サポートされていないファイル形式です");
+                return clipboardItem;
+            }
             Tools.Info($"{path}のテキストを抽出しました");
 
             return clipboardItem;

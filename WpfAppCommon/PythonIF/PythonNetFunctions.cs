@@ -36,7 +36,7 @@ namespace WpfAppCommon.PythonIF {
     public class PythonNetFunctions : IPythonFunctions {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
-        
+
         private static StringResources StringResources { get; } = StringResources.Instance;
 
         public PyModule GetPyModule(string scriptPath) {
@@ -76,7 +76,7 @@ namespace WpfAppCommon.PythonIF {
                 PythonEngine.BeginAllowThreads();
 
             } catch (TypeInitializationException e) {
-                string message =StringResources.PythonInitFailed + e.Message;
+                string message = StringResources.PythonInitFailed + e.Message;
                 Tools.Error(message);
             }
         }
@@ -96,7 +96,7 @@ namespace WpfAppCommon.PythonIF {
 
         public dynamic GetPythonFunction(PyModule ps, string function_name) {
             // Pythonスクリプトの関数を呼び出す
-            dynamic? function_object = (ps?.Get(function_name)) 
+            dynamic? function_object = (ps?.Get(function_name))
                 ?? throw new ThisApplicationException(StringResources.FunctionNotFound(function_name));
             return function_object;
         }
@@ -122,7 +122,15 @@ namespace WpfAppCommon.PythonIF {
                 string function_name = "extract_text";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
-                result = function_object(path);
+                try {
+                    result = function_object(path);
+                } catch (PythonException e) {
+                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                    if (e.Message.Contains("Unsupported file type")) {
+                        throw new UnsupportedFileTypeException(e.Message);
+                    }
+                    throw;
+                }
             });
             return result;
         }
@@ -521,11 +529,19 @@ namespace WpfAppCommon.PythonIF {
                 string function_name = "update_index";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
-                tokenCount = function_object(
-                    props,
-                    mode,
-                    new PyString(workingDirPath),
-                    new PyString(fileStatus.Path), repositoryURL);
+                try {
+                    tokenCount = function_object(
+                        props,
+                        mode,
+                        new PyString(workingDirPath),
+                        new PyString(fileStatus.Path), repositoryURL);
+                } catch (PythonException e) {
+                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                    if (e.Message.Contains("Unsupported file type")) {
+                        throw new UnsupportedFileTypeException(e.Message);
+                    }
+                    throw;
+                }
             });
             return tokenCount;
         }

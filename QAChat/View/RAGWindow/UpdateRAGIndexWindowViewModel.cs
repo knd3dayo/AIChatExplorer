@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -11,7 +10,7 @@ namespace QAChat.View.RAGWindow {
         private Action<RAGSourceItemViewModel> afterUpdate = (parameter) => { };
 
         // Taskキャンセル用のトークン
-        private System.Threading.CancellationTokenSource tokenSource = new ();
+        private System.Threading.CancellationTokenSource tokenSource = new();
 
         // LastProcessedCommit
         public string LastIndexCommitHash {
@@ -272,9 +271,9 @@ namespace QAChat.View.RAGWindow {
                         IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}]";
 
                         // 更新処理を開始
-                        UpdateIndexResult? result;
+                        UpdateIndexResult result = new();
                         IndexingStatusText += $"[{i + 1}/{fileCount}] {file.Path} インデックス作成中...";
-                        Task task = new (() => {
+                        Task task = new(() => {
                             // キャンセル用タスクの実行
                             Task.Run(() => {
                                 while (IsIndeterminate) {
@@ -285,13 +284,21 @@ namespace QAChat.View.RAGWindow {
                                     System.Threading.Thread.Sleep(1000);
                                 }
                             });
-                            result = itemViewModel.Item.UpdateIndex(file);
+                            itemViewModel.Item.UpdateIndex(file, result);
                             totalTokenCount += result?.TokenCount ?? 0;
                         });
                         task.Start();
                         await task.WaitAsync(tokenSource.Token);
 
-                        IndexingStatusText += "完了\n";
+                        // resultがSuccessの場合
+                        if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Success) {
+                            IndexingStatusText += "完了\n";
+                        } else if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType) {
+                            IndexingStatusText += "未対応ファイルタイプのためスキップ";
+                        } else {
+                            IndexingStatusText += $"失敗:{result.Message}\n";
+                        }
+
                         // IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}] トークン数:[{totalTokenCount}]";
                         IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}]";
 
@@ -314,7 +321,7 @@ namespace QAChat.View.RAGWindow {
                     Tools.Info("インデックス作成処理を中断しました");
                     SetMode(1);
                 } catch (Exception e) {
-                    Tools.Error($"エラーが発生しました\n[メッセージ]\n{ e.Message}\n[スタックトレース]\n{e.StackTrace}" );
+                    Tools.Error($"エラーが発生しました\n[メッセージ]\n{e.Message}\n[スタックトレース]\n{e.StackTrace}");
                     SetMode(1);
 
                 } finally {

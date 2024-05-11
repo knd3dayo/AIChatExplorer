@@ -28,20 +28,8 @@ if "HTTPS_PROXY" not in os.environ:
 
 
 def extract_text(filename):
-    from unstructured.partition.auto import partition
-    result = ""
-    # python-magicが2バイトファイル名を扱うとエラーになる場合があるため、ファイルを一時ファイルにコピーして処理する
-    # 一時ファイルの拡張子は元のファイルの拡張子と同じにする
-    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(filename)[1]) as temp_file:
-        with open(filename, 'rb') as f:
-            temp_file.write(f.read())
-
-    # filenameのファイルからテキストを抽出する
-    elements = partition(filename=temp_file.name)
-    result = "\n".join([element.text for element in elements])
-    # 一時ファイルを削除
-    os.remove(temp_file.name)    
-    return result
+    import clipboard_app_extractor
+    return clipboard_app_extractor.extract_text(filename)
 
 # spacy関連
 def mask_data(textList: list, props = {}):
