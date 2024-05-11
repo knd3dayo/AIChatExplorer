@@ -90,6 +90,23 @@ namespace WpfAppCommon.Model {
             return dbController.GetRAGSourceItems();
         }
 
+        public string SeekSourceURL(string path) {
+            try {
+                // pathが存在するか確認
+                if (!System.IO.Directory.Exists(path)) {
+                    return "";
+                }
+                LibGit2Sharp.Repository repo = new(path);
+                // リモートリポジトリのURLを取得
+                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception("リモートリポジトリが設定されていません");
+                // リモートリポジトリのURLをSourceURLに設定
+                return remoteURL.Value;
+
+            } catch (LibGit2Sharp.RepositoryNotFoundException) {
+                return "";
+            }
+        }
+
 
         // Git作業ディレクトリの確認を行う。
         public bool CheckWorkingDirectory() {

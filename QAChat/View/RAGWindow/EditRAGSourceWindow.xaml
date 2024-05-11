@@ -89,7 +89,7 @@
                     Grid.Column="1"
                     Margin="10,10,10,10"
                     IsEnabled="True"
-                    Text="{Binding ItemViewModel.WorkingDirectory}" />
+                    Text="{Binding ItemViewModel.WorkingDirectory, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"

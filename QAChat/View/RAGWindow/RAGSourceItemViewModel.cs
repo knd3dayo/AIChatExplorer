@@ -32,7 +32,10 @@ namespace QAChat.View.RAGWindow {
             get => Item.WorkingDirectory;
             set {
                 Item.WorkingDirectory = value;
+                // フォルダが存在する場合はソースURLを取得してSourceURLを更新
+                SourceURL = Item.SeekSourceURL(value);
                 OnPropertyChanged(nameof(WorkingDirectory));
+
             }
         }
         // LastIndexCommitHash
