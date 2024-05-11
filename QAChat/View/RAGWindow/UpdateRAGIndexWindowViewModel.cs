@@ -148,6 +148,9 @@ namespace QAChat.View.RAGWindow {
                 Tools.Error("RAGSourceItemViewModelが設定されていません");
                 return;
             }
+            // ラジオボタンの選択をIsRangeに変更
+            IsRange = true;
+
             var selectWindow = new SelectCommitWindow();
             SelectCommitWindowViewModel viewModel = (SelectCommitWindowViewModel)selectWindow.DataContext;
             viewModel.Initialize(itemViewModel, (hash) => {
