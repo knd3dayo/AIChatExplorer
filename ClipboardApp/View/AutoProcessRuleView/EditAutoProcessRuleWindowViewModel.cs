@@ -216,6 +216,29 @@ namespace ClipboardApp.View.AutoProcessRuleView
                             break;
                     }
                 }
+                // DestinationFolderが設定されている場合はFolderSelectionPanelEnabledをTrueにする
+                if (TargetAutoProcessRule.DestinationFolder != null) {
+                    FolderSelectionPanelEnabled = true;
+                    DestinationFolder = new ClipboardFolderViewModel(MainWindowViewModel, TargetAutoProcessRule.DestinationFolder);
+
+                }
+                // PromptAutoProcessItemの場合
+                if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
+                    if (promptAutoProcessItem.PromptItem == null) {
+                        return;
+                    }
+                    IsPromptTemplateChecked = true;
+                    SelectedPromptItem = new PromptItemViewModel(promptAutoProcessItem.PromptItem);
+                }
+                // ScriptAutoProcessItemの場合
+                else if (TargetAutoProcessRule.RuleAction is ScriptAutoProcessItem scriptAutoProcessItem) {
+                    if (scriptAutoProcessItem.ScriptItem == null) {
+                        return;
+                    }
+                    IsPythonScriptChecked = true;
+                    SelectedScriptItem = scriptAutoProcessItem.ScriptItem;
+                }
+
                 OnPropertyChanged(nameof(Conditions));
             }
         }

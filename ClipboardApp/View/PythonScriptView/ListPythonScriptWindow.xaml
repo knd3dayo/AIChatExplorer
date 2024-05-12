@@ -66,7 +66,7 @@
             Grid.Row="1"
             MinHeight="300"
             Margin="10,10,10,10"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             ItemsSource="{Binding ScriptItems}"
             SelectedItem="{Binding SelectedScriptItem}">
@@ -131,7 +131,7 @@
                     Margin="10,0,0,0"
                     Command="{Binding SelectScriptItemCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="実行"
+                    Content="{Binding SelectButtonText}"
                     Visibility="{Binding ExecButtonVisibility}" />
                 <Button
                     Width="100"

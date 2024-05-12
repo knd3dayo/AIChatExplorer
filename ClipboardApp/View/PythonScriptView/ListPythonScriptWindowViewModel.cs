@@ -38,10 +38,16 @@ namespace ClipboardApp.View.PythonScriptView {
 
         private Action<ScriptItem> afterSelect = (scriptItem) => { };
 
-        // IsExecModeがTrueの時は、実行ボタンを表示する。
+        // ExecモードまたはSelectモード時は、実行ボタンを表示する。
         public Visibility ExecButtonVisibility {
             get {
-                return ActionMode == ActionModeEnum.Exec ? Visibility.Visible : Visibility.Collapsed;
+                return (ActionMode == ActionModeEnum.Exec || ActionMode == ActionModeEnum.Select)? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // Selectボタンのテキスト Selectモード時は「選択」、Execモード時は「実行」
+        public string SelectButtonText {
+            get {
+                return ActionMode == ActionModeEnum.Exec ? "実行" : "選択";
             }
         }
 
