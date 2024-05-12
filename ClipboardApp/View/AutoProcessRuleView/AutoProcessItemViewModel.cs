@@ -33,15 +33,27 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             this.autoProcessItem = autoProcessItem;
         }
 
+        // システムデフォルトのAutoProcessItemを取得
         public static ObservableCollection<AutoProcessItemViewModel> SystemAutoProcesses {
             get {
                 ObservableCollection<AutoProcessItemViewModel> autoProcesses = [];
-                foreach (SystemAutoProcessItem item in AutoProcessItemSystemActions.SystemAutoProcesses) {
+                foreach (SystemAutoProcessItem item in SystemAutoProcessItem.SystemAutoProcesses) {
                     autoProcesses.Add(new AutoProcessItemViewModel(item));
                 }
                 return autoProcesses;
             }
         }
+        // ScriptAutoProcessItemを取得
+        public static ObservableCollection<AutoProcessItemViewModel> ScriptAutoProcesses {
+            get {
+                ObservableCollection<AutoProcessItemViewModel> autoProcesses = [];
+                foreach (ScriptAutoProcessItem item in ScriptAutoProcessItem.GetScriptAutoProcessItems()) {
+                    autoProcesses.Add(new AutoProcessItemViewModel(item));
+                }
+                return autoProcesses;
+            }
+        }
+
         public bool IsCopyOrMoveOrMergeAction() {
             return autoProcessItem.IsCopyOrMoveOrMergeAction();
         }

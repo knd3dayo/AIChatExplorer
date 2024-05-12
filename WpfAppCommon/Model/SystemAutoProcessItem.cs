@@ -1,8 +1,61 @@
+using LiteDB;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
-using static WpfAppCommon.Model.SystemAutoProcessItem;
 
 namespace WpfAppCommon.Model {
-    public class AutoProcessItemSystemActions {
+    public partial class SystemAutoProcessItem {
+        public enum TypeEnum {
+            CopyToFolder,
+            MoveToFolder,
+            ExtractText,
+            MaskData,
+            SplitPathToFolderAndFileName,
+            MergeAllItems,
+            MergeItemsWithSameSourceApplicationTitle,
+            RunPythonScript,
+            PromptTemplate,
+        }
+        public ObjectId? Id { get; set; } = LiteDB.ObjectId.Empty;
+        public string Name { get; set; } = "";
+
+        public string DisplayName { get; set; } = "";
+
+        public string Description { get; set; } = "";
+
+        public TypeEnum Type { get; set; } = TypeEnum.CopyToFolder;
+
+        public SystemAutoProcessItem() {
+        }
+
+        // システムデフォルトのAutoProcessItemを作成
+        public SystemAutoProcessItem(string name, string displayName, string description) : this() {
+            Name = name;
+            DisplayName = displayName;
+            Description = description;
+        }
+
+        public bool IsCopyOrMoveOrMergeAction() {
+            return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString()
+                || Name == TypeEnum.MergeAllItems.ToString() || Name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString();
+        }
+
+        public static SystemAutoProcessItem GetSystemAutoProcessItem(string name) {
+            // システムデフォルトのAutoProcessItemを取得
+            foreach (var item in SystemAutoProcessItem.SystemAutoProcesses) {
+                if (item.Name == name) {
+                    return item;
+                }
+            }
+            throw new ThisApplicationException("AutoProcessItemが見つかりません");
+        }
+
+        public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
+            // NameがSys
+
+            Func<AutoProcessItemArgs, ClipboardItem?> action = SystemAutoProcessItem.GetAction(this.Name);
+            ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
+            return result;
+        }
 
         public static List<SystemAutoProcessItem> SystemAutoProcesses {
             get {
@@ -37,27 +90,11 @@ namespace WpfAppCommon.Model {
                 items.Add(
                     new SystemAutoProcessItem("MergeItemsWithSameSourceApplicationTitle", "同じSourceApplicationTitleを持つアイテムをマージ", "同じSourceApplicationTitleを持つアイテムをマージします")
                     );
-
-
-                var scriptItems = ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems();
-                // スクリプトを追加
-                foreach (var scriptItem in scriptItems) {
-                    if (scriptItem.Type != ScriptType.Python) {
-                        continue;
-                    }
-                    if (scriptItem.Description == null) {
-                        continue;
-                    }
-                    if (scriptItem.Content == null) {
-                        continue;
-                    }
-                    items.Add(new SystemAutoProcessItem(scriptItem.Description, $"Pythonスクリプト{scriptItem.Description}を実行します", scriptItem));
-                }
                 return items;
             }
         }
 
-        public static Func<AutoProcessItemArgs, ClipboardItem?> GetSystemAction(string name) {
+        public static Func<AutoProcessItemArgs, ClipboardItem?> GetAction(string name) {
             if (name == TypeEnum.CopyToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
@@ -128,4 +165,5 @@ namespace WpfAppCommon.Model {
 
 
     }
+
 }

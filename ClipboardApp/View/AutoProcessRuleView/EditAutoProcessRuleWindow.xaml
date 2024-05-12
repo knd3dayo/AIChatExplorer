@@ -36,7 +36,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  メニューバー  -->
@@ -72,7 +72,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
@@ -109,7 +109,7 @@
                 <TextBox
                     Margin="10,10,10,10"
                     IsEnabled="False"
-                    Text="{Binding TargetFolder.AbsoluteCollectionName}" />
+                    Text="{Binding TargetFolder.CollectionName}" />
             </DockPanel>
 
             <DockPanel Grid.Row="2" HorizontalAlignment="Left">
@@ -159,45 +159,89 @@
                 <TextBox Margin="10,10,10,10" Text="{Binding SourceApplicationTitle}" />
             </DockPanel>
             <!--  AutoProcessItemを選択するComboBox  -->
-            <DockPanel Grid.Row="7" HorizontalAlignment="Stretch">
-                <Label
-                    Width="250"
-                    Margin="10,10,10,10"
-                    Content="次の処理を実行する" />
-                <ComboBox
-                    Margin="10,10,10,10"
-                    DisplayMemberPath="DisplayName"
-                    IsSynchronizedWithCurrentItem="True"
-                    ItemsSource="{Binding AutoProcessItems}"
-                    SelectedItem="{Binding SelectedAutoProcessItem}"
-                    SelectedValue="{Binding SelectedAutoProcessItem.Name}"
-                    SelectedValuePath="Name">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ComboBox>
-            </DockPanel>
-            <DockPanel
-                Grid.Row="8"
-                HorizontalAlignment="Stretch"
-                IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
-                <Label
-                    Width="250"
-                    Margin="10,10,10,10"
-                    Content="コピー/移動/マージ先" />
-                <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
-                <Button
-                    Margin="10,10,10,10"
-                    Command="{Binding OpenSelectDestinationFolderWindowCommand}"
-                    Content="{Binding StringResources.Select}" />
-                <TextBox
-                    Margin="10,10,10,10"
-                    IsEnabled="False"
-                    Text="{Binding DestinationFolder.AbsoluteCollectionName}" />
-            </DockPanel>
-            <Grid Grid.Row="9">
+            <Grid Grid.Row="7">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <DockPanel Grid.Row="0" Margin="0,0,0,0">
+                    <RadioButton
+                        Width="250"
+                        Margin="10,10,10,10"
+                        Content="次の処理を実行する"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsBasicProcessChecked}" />
+                    <ComboBox
+                        Margin="10,10,10,10"
+                        DisplayMemberPath="DisplayName"
+                        IsSynchronizedWithCurrentItem="True"
+                        ItemsSource="{Binding AutoProcessItems}"
+                        SelectedItem="{Binding SelectedAutoProcessItem}"
+                        SelectedValue="{Binding SelectedAutoProcessItem.Name}"
+                        SelectedValuePath="Name">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
+                    <Label
+                        Width="250"
+                        Margin="10,10,10,10"
+                        Content="コピー/移動/マージ先" />
+                    <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding OpenSelectDestinationFolderWindowCommand}"
+                        Content="{Binding StringResources.Select}" />
+                    <TextBox
+                        Margin="10,10,10,10"
+                        IsEnabled="False"
+                        Text="{Binding DestinationFolder.CollectionName}" />
+                </DockPanel>
+                <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+                    <RadioButton
+                        Width="250"
+                        Margin="10,10,10,10"
+                        Content="Pythonスクリプトを実行する"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsPythonScriptChecked}" />
+                    <!--  Pythonスクリプト一覧画面を表示するボタン  -->
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding OpenSelectScriptWindowCommand}"
+                        Content="{Binding StringResources.Select}" />
+                    <TextBox
+                        Margin="10,10,10,10"
+                        IsEnabled="False"
+                        Text="{Binding SelectedScriptItem.Name}" />
+                </DockPanel>
+                <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                    <RadioButton
+                        Width="250"
+                        Margin="10,10,10,10"
+                        Content="OpenAIのプロンプトを実行する"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsPromptTemplateChecked}" />
+                    <!--  プロンプトテンプレート一覧画面を表示するボタン  -->
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding OpenSelectPromptTemplateWindowCommand}"
+                        Content="{Binding StringResources.Select}" />
+                    <TextBox
+                        Margin="10,10,10,10"
+                        IsEnabled="False"
+                        Text="{Binding SelectedPromptItem.Name}" />
+                </DockPanel>
+            </Grid>
+            <Grid Grid.Row="8" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -218,6 +262,9 @@
                 </DockPanel>
             </Grid>
         </Grid>
-        <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar
+            Grid.Row="2"
+            Margin="0,0,0,0"
+            VerticalAlignment="Bottom" />
     </Grid>
 </Window>

@@ -37,7 +37,7 @@ namespace WpfAppCommon.Model {
         public string FolderPath { get; set; } = "";
 
         // AutoProcessRuleのIdのリスト
-        public IEnumerable<int> AutoProcessRuleIds { get; set; } = [];
+        public List<ObjectId> AutoProcessRuleIds { get; set; } = [];
 
         // AutoProcessRuleのリスト
         public ObservableCollection<AutoProcessRule> AutoProcessRules {
@@ -48,8 +48,8 @@ namespace WpfAppCommon.Model {
         }
         // AddAutoProcessRule
         public void AddAutoProcessRule(AutoProcessRule rule) {
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            ClipboardDatabaseController.UpsertAutoProcessRule(rule);
+            AutoProcessRuleIds.Add(rule.Id);
+            Save();
         }
 
         // 検索フォルダかどうか
@@ -62,7 +62,7 @@ namespace WpfAppCommon.Model {
         public ObservableCollection<ClipboardFolder> Children {
             get {
                 ObservableCollection<ClipboardFolder> children = [];
-                // AbsoluteCollectionNameが空の場合は空のリストを返す
+                // CollectionNameが空の場合は空のリストを返す
                 if (string.IsNullOrEmpty(CollectionName)) {
                     return children;
                 }
@@ -148,7 +148,7 @@ namespace WpfAppCommon.Model {
         }
         // アイテムを追加する処理
         public ClipboardItem AddItem(ClipboardItem item) {
-            // AbsoluteCollectionNameを設定
+            // CollectionNameを設定
             item.CollectionName = CollectionName;
             // AbsoluteFolderPathを設定
             item.FolderPath = FolderPath;
@@ -180,7 +180,7 @@ namespace WpfAppCommon.Model {
             ClipboardDatabaseController.DeleteFolder(this);
         }
         public void Load() {
-            // AbsoluteCollectionNameが空の場合は空のリストを返す
+            // CollectionNameが空の場合は空のリストを返す
             if (string.IsNullOrEmpty(CollectionName)) {
                 return;
             }

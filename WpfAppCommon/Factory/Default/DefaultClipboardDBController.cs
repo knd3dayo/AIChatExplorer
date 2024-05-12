@@ -76,7 +76,7 @@ namespace WpfAppCommon.Factory.Default {
             }
             return db;
         }
-        // AbsoluteCollectionNameを指定してClipboardItemFolderを取得する
+        // CollectionNameを指定してClipboardItemFolderを取得する
         public ClipboardFolder GetFolder(string collectionName) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
             var item = collection.FindOne(x => x.CollectionName == collectionName);
@@ -158,7 +158,7 @@ namespace WpfAppCommon.Factory.Default {
             var item = collection.FindOne(x => x.Name == name);
             return item;
         }
-        // 指定したAbsoluteCollectionNameに対応する検索条件を取得する
+        // 指定したCollectionNameに対応する検索条件を取得する
         public SearchRule? GetSearchRuleByFolderName(string collectionName) {
             var collection = GetClipboardDatabase().GetCollection<SearchRule>(SEARCH_CONDITION_RULES_COLLECTION_NAME);
             var item = collection.FindOne(x => x.SearchFolder != null && x.SearchFolder.CollectionName == collectionName);
@@ -166,7 +166,7 @@ namespace WpfAppCommon.Factory.Default {
         }
         // --------------------------------------------------------------
 
-        // 親フォルダのAbsoluteCollectionNameを指定して子フォルダのリストを取得する
+        // 親フォルダのCollectionNameを指定して子フォルダのリストを取得する
         public IEnumerable<string> GetFolderRelations(string parentCollectionName) {
             List<string> result = [];
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
@@ -177,7 +177,7 @@ namespace WpfAppCommon.Factory.Default {
             }
             return result;
         }
-        // 子フォルダのAbsoluteCollectionNameを指定して親フォルダを取得する。
+        // 子フォルダのCollectionNameを指定して親フォルダを取得する。
         public string GetClipboardItemFolderParentRelation(string childCollectionName) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
             var item = collection.FindOne(x => x.ChildCollectionName == childCollectionName);
@@ -268,7 +268,7 @@ namespace WpfAppCommon.Factory.Default {
 
         }
 
-        // 指定したフォルダの子フォルダのAbsoluteCollectionNameを再帰的に取得する
+        // 指定したフォルダの子フォルダのCollectionNameを再帰的に取得する
         public List<string> GetChildFolders(string parentCollectionName) {
             List<string> result = [];
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);

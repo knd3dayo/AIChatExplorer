@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,6 +8,14 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.PythonScriptView {
     public class ListPythonScriptWindowViewModel : MyWindowViewModel {
+
+        public enum ActionModeEnum {
+            Edit,
+            Select,
+            Exec
+        }
+        private ActionModeEnum ActionMode { get; set; } = ActionModeEnum.Edit;
+
         public static ObservableCollection<ScriptItem> ScriptItems { get; } = ScriptItem.ScriptItems;
 
         private ScriptItem? _selectedScriptItem;
@@ -22,17 +30,9 @@ namespace ClipboardApp.View.PythonScriptView {
             }
         }
 
-        private bool _isExecMode = false;
-        public bool IsExecMode {
-            get => _isExecMode;
-            set {
-                _isExecMode = value;
-                OnPropertyChanged(nameof(IsExecMode));
-            }
-        }
         public string Title {
             get {
-                return IsExecMode ? "Pythonスクリプトを選択" : "Pythonスクリプト一覧";
+                return ActionMode == ActionModeEnum.Exec ? "Pythonスクリプトを選択" : "Pythonスクリプト一覧";
             }
         }
 
@@ -41,23 +41,13 @@ namespace ClipboardApp.View.PythonScriptView {
         // IsExecModeがTrueの時は、実行ボタンを表示する。
         public Visibility ExecButtonVisibility {
             get {
-                return IsExecMode ? Visibility.Visible : Visibility.Collapsed;
+                return ActionMode == ActionModeEnum.Exec ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
 
-        public void InitializeEdit() {
-            IsExecMode = false;
-            ScriptItems.Clear();
-            foreach (var item in ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()) {
-                ScriptItems.Add(item);
-            }
-            OnPropertyChanged(nameof(ScriptItems));
-            OnPropertyChanged(nameof(ExecButtonVisibility));
-        }
-
-        public void InitializeExec(Action<ScriptItem> afterSelect) {
-            IsExecMode = true;
+        public void Initialize(ActionModeEnum actionModeEnum ,Action<ScriptItem> afterSelect) {
+            ActionMode = actionModeEnum;
             this.afterSelect = afterSelect;
 
             ScriptItems.Clear();
@@ -67,6 +57,7 @@ namespace ClipboardApp.View.PythonScriptView {
             OnPropertyChanged(nameof(ScriptItems));
             OnPropertyChanged(nameof(ExecButtonVisibility));
         }
+
 
         // Scriptを新規作成するときの処理
         public static SimpleDelegateCommand CreateScriptItemCommand => new(PythonCommands.CreateScriptCommandExecute);

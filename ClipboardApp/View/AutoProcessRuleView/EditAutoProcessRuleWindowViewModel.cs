@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
+using QAChat.View.PromptTemplateWindow;
+using static QAChat.View.PromptTemplateWindow.ListPromptTemplateWindowViewModel;
+using ClipboardApp.View.PythonScriptView;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
@@ -40,9 +43,13 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 OnPropertyChanged(nameof(IsAutoProcessRuleEnabled));
             }
         }
-        // AutoProcessRuleのリスト
+        // SystemAutoProcessRuleのリスト
         public ObservableCollection<AutoProcessItemViewModel> AutoProcessItems { get; set; } 
             = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.SystemAutoProcesses);
+
+        // ScriptAutoProcessRuleのリスト
+        public ObservableCollection<AutoProcessItemViewModel> ScriptAutoProcessItems { get; set; } 
+            = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.ScriptAutoProcesses);
 
         // 自動処理ルールの条件リスト
         public ObservableCollection<AutoProcessRuleCondition> Conditions { get; set; } = [];
@@ -115,6 +122,32 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 OnPropertyChanged(nameof(FolderSelectionPanelEnabled));
             }
         }
+        // promptItemViewModel
+        private PromptItemViewModel? _selectedPromptItem;
+        public PromptItemViewModel? SelectedPromptItem {
+            get => _selectedPromptItem;
+            set {
+                _selectedPromptItem = value;
+                OnPropertyChanged(nameof(SelectedPromptItem));
+            }
+        }
+        // ScriptItem
+        private ScriptItem? _selectedScriptItem;
+        public ScriptItem? SelectedScriptItem {
+            get => _selectedScriptItem;
+            set {
+                _selectedScriptItem = value;
+                OnPropertyChanged(nameof(SelectedScriptItem));
+            }
+        }
+        // 基本処理のラジオボタンが選択中かどうか
+
+        public bool IsBasicProcessChecked { get; set; } = true;
+        // PromptTemplateのラジオボタンが選択中かどうか
+        public bool IsPromptTemplateChecked { get; set; } = false;
+        // PythonScriptのラジオボタンが選択中かどうか
+        public bool IsPythonScriptChecked { get; set; } = false;
+
 
         // 自動処理を更新したあとの処理
         private Action<AutoProcessRule>? _AfterUpdate;
@@ -142,7 +175,6 @@ namespace ClipboardApp.View.AutoProcessRuleView
             if (autoProcessRule?.DestinationFolder != null) {
                 DestinationFolder = new ClipboardFolderViewModel(MainWindowViewModel, autoProcessRule.DestinationFolder);
             }
-
 
             // autoProcessRuleがNullでない場合は初期化
             if (TargetAutoProcessRule != null && TargetAutoProcessRule.RuleAction != null) {
@@ -270,28 +302,49 @@ namespace ClipboardApp.View.AutoProcessRuleView
                     AutoProcessRuleCondition.ConditionType.SourceApplicationTitleContains, SourceApplicationTitle));
             }
             // アクションを追加
-            TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem.AutoProcessItem;
-            // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
-            if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
-                if (DestinationFolder == null) {
-                    Tools.Error("コピーまたは移動先のフォルダを選択してください。");
+            // IsBasicProcessCheckedがTrueの場合はSelectedAutoProcessItemを追加
+            if (IsBasicProcessChecked) {
+                TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem.AutoProcessItem;
+                // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
+                if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
+                    if (DestinationFolder == null) {
+                        Tools.Error("コピーまたは移動先のフォルダを選択してください。");
+                        return;
+                    }
+                    // TargetFolderとDestinationFolderが同じ場合はエラー
+                    if (TargetFolder.CollectionName == DestinationFolder.CollectionName) {
+                        Tools.Error("同じフォルダにはコピーまたは移動できません。");
+                        return;
+                    }
+                    DestinationFolder.SetAutoProcessRuleDestinationFolder(TargetAutoProcessRule);
+                }
+                // 無限ループのチェック処理
+                if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
+                    Tools.Error("コピー/移動処理の無限ループを検出しました。");
                     return;
                 }
-                // TargetFolderとDestinationFolderが同じ場合はエラー
-                if (TargetFolder.CollectionName == DestinationFolder.CollectionName) {
-                    Tools.Error("同じフォルダにはコピーまたは移動できません。");
-                    return;
-                }
-                DestinationFolder.SetAutoProcessRuleDestinationFolder(TargetAutoProcessRule);
             }
-            // 無限ループのチェック処理
-            if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
-                Tools.Error("コピー/移動処理の無限ループを検出しました。");
-                return;
+            // IsPromptTemplateCheckedがTrueの場合はSelectedPromptItemを追加
+            else if (IsPromptTemplateChecked) {
+                if (SelectedPromptItem == null) {
+                    Tools.Error("PromptTemplateを選択してください。");
+                    return;
+                }
+                TargetAutoProcessRule.RuleAction = new PromptAutoProcessItem(SelectedPromptItem.PromptItem);
+            }
+            // IsPythonScriptCheckedがTrueの場合はSelectedScriptItemを追加
+            else if (IsPythonScriptChecked) {
+                if (SelectedScriptItem == null) {
+                    Tools.Error("PythonScriptを選択してください。");
+                    return;
+                }
+                TargetAutoProcessRule.RuleAction = new ScriptAutoProcessItem(SelectedScriptItem);
             }
 
             // LiteDBに保存
             TargetAutoProcessRule.Save();
+            // ClipboardItemFolderにAutoProcessRuleIdを追加
+            TargetFolder.AddAutoProcessRule(TargetAutoProcessRule);
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);
@@ -365,6 +418,10 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         public SimpleDelegateCommand AutoProcessItemSelectionChangedCommand => new(AutoProcessItemSelectionChangedCommandExecute);
         public void AutoProcessItemSelectionChangedCommandExecute(object parameter) {
+            // ラジオボタンをIsBasicProcessChecked = trueにする
+            IsBasicProcessChecked = true;
+            OnPropertyChanged(nameof(IsBasicProcessChecked));
+
             if (SelectedAutoProcessItem == null) {
                 return;
             }
@@ -374,5 +431,34 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 FolderSelectionPanelEnabled = false;
             }
         }
+
+        // OpenSelectPromptTemplateWindowCommand
+        public SimpleDelegateCommand OpenSelectPromptTemplateWindowCommand => new((parameter) => {
+            // ラジオボタンをIsPromptTemplateChecked = trueにする
+            IsPromptTemplateChecked = true;
+            OnPropertyChanged(nameof(IsPromptTemplateChecked));
+            ListPromptTemplateWindow PromptTemplateSelectWindow = new();
+            ListPromptTemplateWindowViewModel PromptTemplateSelectWindowViewModel = (ListPromptTemplateWindowViewModel)PromptTemplateSelectWindow.DataContext;
+            PromptTemplateSelectWindowViewModel.Initialize(
+                // PromptTemplateが選択されたら、PromptTemplateに設定
+                ActionModeEum.Select, ((promptItemViewModel, mode) => {
+                    SelectedPromptItem = promptItemViewModel;
+                }));
+            PromptTemplateSelectWindow.ShowDialog();
+        });
+
+        //OpenSelectScriptWindowCommand
+        public SimpleDelegateCommand OpenSelectScriptWindowCommand => new((parameter) => {
+            // ラジオボタンをIsPythonScriptChecked = trueにする
+            IsPythonScriptChecked = true;
+            OnPropertyChanged(nameof(IsPythonScriptChecked));
+            ListPythonScriptWindow ScriptSelectWindow = new();
+            ListPythonScriptWindowViewModel ScriptSelectWindowViewModel = (ListPythonScriptWindowViewModel)ScriptSelectWindow.DataContext;
+            ScriptSelectWindowViewModel.Initialize( ListPythonScriptWindowViewModel.ActionModeEnum.Select, (scriptItem) => {
+                SelectedScriptItem = scriptItem;
+            });
+            ScriptSelectWindow.ShowDialog();
+        });
+
     }
 }

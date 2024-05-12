@@ -1,4 +1,4 @@
-﻿using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.ClipboardItemView;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -29,14 +29,14 @@ namespace ClipboardApp.View.PythonScriptView.PythonScriptView {
         public static void OpenListPythonScriptWindowCommandExecute(object obj) {
             ListPythonScriptWindow SelectScriptWindow = new ListPythonScriptWindow();
             ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
-            SelectScriptWindowViewModel.InitializeEdit();
+            SelectScriptWindowViewModel.Initialize(ListPythonScriptWindowViewModel.ActionModeEnum.Edit, (scriptItem) => { });
             SelectScriptWindow.ShowDialog();
         }
         // スクリプト一覧画面を実行モードで開くコマンド
         public static void OpenListPythonScriptWindowExecCommandExecute(Action<ScriptItem> action) {
             ListPythonScriptWindow SelectScriptWindow = new ListPythonScriptWindow();
             ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
-            SelectScriptWindowViewModel.InitializeExec(action);
+            SelectScriptWindowViewModel.Initialize(ListPythonScriptWindowViewModel.ActionModeEnum.Exec, action);
             SelectScriptWindow.ShowDialog();
         }
 

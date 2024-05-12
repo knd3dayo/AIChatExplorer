@@ -76,7 +76,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             // 編集モードの場合
             if (CurrentMode == Mode.Edit) {
                 // CollectionNameを設定
-                // AbsoluteCollectionNameを_で分割して最後の要素をCollectionNameに設定
+                // CollectionNameを_で分割して最後の要素をCollectionNameに設定
                 CollectionName = folderViewModel.CollectionName.Split('_').Last();
 
                 DisplayName = folderViewModel.DisplayName;

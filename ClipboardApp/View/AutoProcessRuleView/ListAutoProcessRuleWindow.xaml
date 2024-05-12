@@ -78,7 +78,7 @@
                             Header="適用対象フォルダ" />
                         <GridViewColumn
                             Width="200"
-                            DisplayMemberBinding="{Binding TargetFolder.AbsoluteCollectionName}"
+                            DisplayMemberBinding="{Binding TargetFolder.CollectionName}"
                             Header="適用対象フォルダ(パス)" />
                         <GridViewColumn
                             Width="350"
