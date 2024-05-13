@@ -83,12 +83,6 @@
                     <MenuItem
                         Height="Auto"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding LogWindowCommand}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="ログ" />
-                    <MenuItem
-                        Height="Auto"
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding SettingCommand}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="設定"

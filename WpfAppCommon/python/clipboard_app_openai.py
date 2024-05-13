@@ -158,7 +158,7 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list,
     input_list.append(role_system_dict)
     input_list.append(role_user_dict)
     
-    return openai_chat(props, json.dumps(input_list), True, temperature)
+    return openai_chat(props, json.dumps(input_list), False, temperature)
     
 def openai_embedding(props: dict, input_text: str):
     

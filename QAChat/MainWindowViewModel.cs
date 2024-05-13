@@ -2,9 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using QAChat.View.LogWindow;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Control.Settings;
@@ -211,14 +209,6 @@ namespace QAChat {
 
         );
 
-        // ログ画面を開くコマンド
-        public SimpleDelegateCommand LogWindowCommand => new((parameter) => {
-            LogWindow logWindow = new();
-            LogWindowViewModel logWindowViewModel = (LogWindowViewModel)logWindow.DataContext;
-            logWindowViewModel.LogText = Log.ToString();
-            logWindow.ShowDialog();
-        });
-
         // モードが変更されたときの処理
         public SimpleDelegateCommand ModeSelectionChangedCommand => new((parameter) => {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
@@ -228,7 +218,6 @@ namespace QAChat {
             InputText = "";
 
         });
-
         
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow promptTemplateWindow = new();

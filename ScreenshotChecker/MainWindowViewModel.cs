@@ -1,12 +1,9 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using ScreenshotChecker.View.LogWindow;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
@@ -274,14 +271,6 @@ namespace ScreenshotChecker {
         }
 
         );
-
-        // ログ画面を開くコマンド
-        public SimpleDelegateCommand LogWindowCommand => new((parameter) => {
-            LogWindow logWindow = new();
-            LogWindowViewModel logWindowViewModel = (LogWindowViewModel)logWindow.DataContext;
-            logWindowViewModel.LogText = Log.ToString();
-            logWindow.ShowDialog();
-        });
 
         private static readonly string[] separator = ["\r\n", "\r", "\n"];
     }

@@ -31,7 +31,10 @@
             Background="{DynamicResource MaterialDesign.Brush.Primary}"
             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
             <StatusBarItem>
-                <TextBlock Name="statusBarTextBlock1" Text="{Binding Path=StatusText.Text}" />
+                <TextBox
+                    Name="statusBarTextBlock1"
+                    IsReadOnly="True"
+                    Text="{Binding Path=StatusText.Text, Mode=OneWay}" />
             </StatusBarItem>
             <StatusBar.InputBindings>
                 <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" MouseAction="LeftClick" />

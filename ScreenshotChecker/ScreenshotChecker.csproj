@@ -21,9 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\LogWindow\LogWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Folder Include="View\" />
   </ItemGroup>
 
 </Project>
