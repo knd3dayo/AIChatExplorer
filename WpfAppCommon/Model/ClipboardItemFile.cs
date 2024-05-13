@@ -77,4 +77,5 @@ namespace WpfAppCommon.Model {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(objectId);
         }
     }
+
 }

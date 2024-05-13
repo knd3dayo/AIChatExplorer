@@ -79,7 +79,7 @@ namespace WpfAppCommon.Model {
                 { "AzureOpenAI", WpfAppCommon.Properties.Settings.Default.AzureOpenAI.ToString() }
             };
 
-            if (string.IsNullOrEmpty(WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint)) {
+            if (string.IsNullOrEmpty(WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint) == false) {
                 dict.Add("AzureOpenAIEndpoint", WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint);
             }
 
