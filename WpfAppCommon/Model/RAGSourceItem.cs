@@ -265,11 +265,8 @@ namespace WpfAppCommon.Model {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
                 result.Message = e.Message;
-            } catch ( Exception e) {
-                // その他のエラー
-                result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
-                result.Message = e.Message;
-            }
+            } 
+
             result.TokenCount = token;
             result.Result = UpdateIndexResult.UpdateIndexResultEnum.Success;
 

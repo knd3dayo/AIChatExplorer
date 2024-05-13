@@ -8,6 +8,7 @@ beautifulsoup4==4.12.3
 chromadb
 faiss-cpu==1.8.0
 langchain==0.1.16
+langchain-openai==0.1.6
 magika==0.5.1
 openai==1.27.0
 openpyxl==3.1.2

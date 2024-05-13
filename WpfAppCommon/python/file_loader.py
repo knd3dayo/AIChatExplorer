@@ -12,7 +12,7 @@ class FileLoader:
         self.repository_url = repository_url
         self.file_path = os.path.join(workdir_path, relative_file_path)
         
-        self.text_list = self.__load_file()
+        self.text_list = self.load_file()
         if len(self.text_list) == 0:
             self.text_with_overview_list = []
         else:
@@ -22,7 +22,7 @@ class FileLoader:
             else:
                 self.text_with_overview_list = [ document_overview + '\n' + text for text in self.text_list[1:]]
     
-    def __load_file(self, chunk_size=1000):
+    def load_file(self, chunk_size=1000):
         text_list = []
         # 絶対パスを取得
         absolute_file_path = os.path.join (self.workdir_path, self.relative_file_path)

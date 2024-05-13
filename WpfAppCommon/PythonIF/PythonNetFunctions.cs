@@ -540,7 +540,7 @@ namespace WpfAppCommon.PythonIF {
                     if (e.Message.Contains("Unsupported file type")) {
                         throw new UnsupportedFileTypeException(e.Message);
                     }
-                    throw;
+                    throw   ;
                 }
             });
             return tokenCount;

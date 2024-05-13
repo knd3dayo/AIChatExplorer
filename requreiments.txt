@@ -8,6 +8,7 @@ beautifulsoup4
 chromadb
 faiss-cpu
 langchain
+langchain-openai
 magika
 openai
 openpyxl

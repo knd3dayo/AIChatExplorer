@@ -24,10 +24,12 @@ def update_index(props, mode, workdir, relative_path, url):
             print("No documents to update.")
             return 0
         
+        #  sourceを指定してドキュメントを削除
+        delete_token_count = vector_db.delete([relative_path])
         # DBを更新
-        token_count = vector_db.update_documents(documents, props)
+        add_token_count = vector_db.add_documents(documents)
  
-        return token_count
+        return delete_token_count + add_token_count
     
     elif mode == "delete":
         client = LangChainOpenAIClient(props)
@@ -36,9 +38,8 @@ def update_index(props, mode, workdir, relative_path, url):
         if not vector_db:
             return 0
 
-        # 第2引数、第3引数からドキュメントを作成
-        document: Document = Document(page_content="", metadata={"source_url": url, "source": relative_path})
-        vector_db.delete_doucments_by_sources([document])
+        #  sourceを指定してドキュメントを削除
+        vector_db.delete([relative_path])
 
         return 0
     

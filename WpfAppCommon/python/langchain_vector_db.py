@@ -14,15 +14,15 @@ class LangChainVectorDB:
         self.vector_db_url = vector_db_url
         self.collection = collection
 
-        self.__load(vector_db_url)
+        self.load(vector_db_url)
 
-    def __load(self, _vector_db_url=None):
+    def load(self, _vector_db_url=None):
         pass
 
-    def __save(self, _vector_db_url, documents:list=None):
-        pass
+    def save(self, _vector_db_url, documents:list=None):
+        print("ok")
 
-    def __delete(self, _vector_db_url, sources:list=None):
+    def delete(self, _vector_db_url, sources:list=None):
         pass
 
     def vector_search(self, query, k=10 , score_threshold=0.0):
@@ -34,24 +34,17 @@ class LangChainVectorDB:
     def add_documents(self, documents: list):
         total_tokens = 0
         with get_openai_callback() as cb:
-            self.__save(self.vector_db_url, documents)
+            self.save(self.vector_db_url, documents)
             total_tokens = cb.total_tokens
         
         return total_tokens
 
     def delete_doucments_by_sources(self, sources :list ):
-        self.__delete(sources)
+        self.delete(sources)
             
         return 0
     
-    def update_documents(self, documents: list, props: dict):
-        token_count = 0
-        if len(documents) == 0:
-            print("No documents to update.")
-            return token_count
-        
-        # 既存のDBからソースファイルが一致するドキュメントを削除
-        self.delete_doucments_by_sources(documents)
-        return self.add_documents(documents)
+
+
         
     
