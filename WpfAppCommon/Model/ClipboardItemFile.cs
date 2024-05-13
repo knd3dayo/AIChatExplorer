@@ -67,7 +67,9 @@ namespace WpfAppCommon.Model {
                 if (!System.IO.Directory.Exists(syncFolder)) {
                     System.IO.Directory.CreateDirectory(syncFolder);
                 }
-                System.IO.File.Copy(FilePath, syncFilePath, true);
+                if (System.IO.File.Exists(FilePath)) {
+                    System.IO.File.Copy(FilePath, syncFilePath, true);
+                }
             }
         }
         // 取得
