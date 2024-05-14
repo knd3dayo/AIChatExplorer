@@ -112,18 +112,12 @@ def list_openai_models(props={}):
     model_id_list = [ model.id for model in response.data]
     return model_id_list
 
-def run_openai_chat(props: dict, params: dict, temperature=None):
+def run_openai_chat(props: dict, params: dict):
     # OpenAIのchatを実行する
     openai_util = OpenAIUtil()
     openai_util.init(props)
     client = openai_util.completion
-    
-    # chat_model_nameを取得する
-    chat_model_name = props.get("OpenAICompletionModel", None)
-    params["model"] = chat_model_name
-    if temperature:
-        params["temperature"] = temperature
-    
+        
     response = client.chat.completions.create(
         **params
         )
@@ -134,12 +128,20 @@ def openai_chat(props: dict, input_json: str, json_mode: bool = False, temperatu
     json_obj = json.loads(input_json)
     input_dict = {}
     input_dict["messages"] = json_obj
+    
+    # chat_model_nameを取得する
+    chat_model_name = props.get("OpenAICompletionModel", None)
+    input_dict["model"] = chat_model_name
+    if temperature:
+        input_dict["temperature"] = temperature
+
+    # json_modeがTrueの場合、response_formatを設定する
     if json_mode:
         input_dict["response_format"] = {"type": "json_object"}
 
     return run_openai_chat(props, input_dict, temperature)
 
-def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list, temperature=None):
+def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list, temperature=None, json_mode=False):
     # 入力パラメーターの設定
     input_list = []
     
@@ -157,8 +159,23 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list,
     role_user_dict = {"role": "user", "content": content}
     input_list.append(role_system_dict)
     input_list.append(role_user_dict)
-    
-    return openai_chat(props, json.dumps(input_list), False, temperature)
+
+    input_dict = {}
+    # azure_openaiがTrueの場合、max_tokensを設定する
+    if props.get("AzureOpenAI", "").upper() == "TRUE":
+        input_dict["max_tokens"] = 4096
+    # json_modeがTrueの場合、response_formatを設定する
+    if json_mode:
+        input_dict["response_format"] = {"type": "json_object"}
+    input_dict["messages"] = input_list
+
+    # chat_model_nameを取得する
+    chat_model_name = props.get("OpenAICompletionModel", None)
+    input_dict["model"] = chat_model_name
+    if temperature:
+        input_dict["temperature"] = temperature
+
+    return run_openai_chat(props, input_dict)
     
 def openai_embedding(props: dict, input_text: str):
     
