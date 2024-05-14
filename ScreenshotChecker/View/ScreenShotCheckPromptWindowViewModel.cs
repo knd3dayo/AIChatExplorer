@@ -28,8 +28,24 @@ namespace ImageChat.View {
                 OnPropertyChanged(nameof(SelectedCheckType));
             }
         }
+
+        Action<string> Action { get; set; } = (parameter) => { };
+
+        // Initialize
+        public void Initialize(Action<string> action) {
+            Action = action;
+        }
+
         // OKCommand
         public SimpleDelegateCommand OKCommand => new((parameter) => {
+            // ScreenShotCheckItemsを文字列に変換
+            string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
+            foreach (ScreenShotCheckItem item in ScreenShotCheckItems) {
+                result += "- " + item.ToPromptString() + "\n";
+            }
+            // Actionを実行
+            Action(result);
+
             // Windowを閉じる
             if (parameter is Window window) {
                 window.Close();

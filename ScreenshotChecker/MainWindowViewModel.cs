@@ -74,18 +74,11 @@ namespace ImageChat {
         public SimpleDelegateCommand ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
             ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
-            ScreenShotCheckPromptWindowViewModel viewModel = new();
-            screenShotCheckPromptWindow.DataContext = viewModel;
-            if (screenShotCheckPromptWindow.ShowDialog() == true) {
-                // ScreenShotCheckPromptWindowでOKが押された場合は、ScreenShotCheckItemsを取得
-                ObservableCollection<ScreenShotCheckItem> items = viewModel.ScreenShotCheckItems;
-                // ScreenShotCheckItemsの内容をInputTextに追加
-                StringBuilder sb = new();
-                foreach (ScreenShotCheckItem item in items) {
-                    sb.AppendLine(item.ToPromptString());
-                }
-                InputText += sb.ToString();
-            }
+            ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
+            viewModel.Initialize((parameter) => {
+                InputText = parameter;
+            });
+            screenShotCheckPromptWindow.ShowDialog();
         });
 
         // チャットを送信するコマンド

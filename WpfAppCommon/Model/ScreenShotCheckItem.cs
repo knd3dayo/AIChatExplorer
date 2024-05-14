@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -80,6 +81,7 @@ namespace WpfAppCommon.Model {
         }
     }
     public class CheckTypes {
+
         public enum CheckTypeEnum {
             [Description("等しい")]
             Equal,
@@ -109,9 +111,9 @@ namespace WpfAppCommon.Model {
                 return EnumDescription.GetEnumDescription<CheckTypeEnum>(CheckType);
             }
         }
-        public static List<CheckTypes> CheckTypeList {
+        public static ObservableCollection<CheckTypes> CheckTypeList {
             get {
-                List<CheckTypes> result = [];
+                ObservableCollection<CheckTypes> result = [];
                 foreach (CheckTypeEnum checkType in Enum.GetValues(typeof(CheckTypeEnum))) {
                     result.Add(new CheckTypes() {
                         CheckType = checkType,
