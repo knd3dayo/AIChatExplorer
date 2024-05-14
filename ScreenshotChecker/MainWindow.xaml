@@ -150,7 +150,7 @@
                         Margin="10,0,10,0"
                         materialDesign:HintAssist.Hint="ここに回答が表示されます"
                         AcceptsReturn="True"
-                        FontSize="8"
+                        FontSize="10"
                         IsReadOnly="True"
                         Text="{Binding ResultText, Mode=OneWay}"
                         TextWrapping="Wrap" />
@@ -170,7 +170,7 @@
                         Margin="10,0,10,0"
                         materialDesign:HintAssist.Hint="ここに質問を入力"
                         AcceptsReturn="True"
-                        FontSize="8"
+                        FontSize="10"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap">
                         <TextBox.InputBindings>
