@@ -90,7 +90,7 @@
                     Width="Auto"
                     DisplayMemberPath="CheckTypeString"
                     Header="チェックタイプ"
-                    SelectedValueBinding="{Binding SelectedCheckType}">
+                    SelectedValueBinding="{Binding CheckType}">
                     <DataGridComboBoxColumn.ElementStyle>
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource" Value="{Binding Path=DataContext.CheckTypeList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />

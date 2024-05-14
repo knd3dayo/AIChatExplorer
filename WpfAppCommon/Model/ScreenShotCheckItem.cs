@@ -152,7 +152,7 @@ namespace WpfAppCommon.Model {
         // チェック内容
         private CheckTypes? _checkType;
         [JsonPropertyName("check_type")]
-        public CheckTypes? CheckContent {
+        public CheckTypes? CheckType {
             get {
                 return _checkType;
             }
@@ -163,47 +163,47 @@ namespace WpfAppCommon.Model {
 
         public string ToPromptString() {
             string result = $"{SettingItem}の値は{SettingValue}である";
-            if (CheckContent == null) {
+            if (CheckType == null) {
                 return result;
             }
-            // CheckContent.CheckTypeがEqualの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.Equal) {
+            // CheckType.CheckTypeがEqualの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.Equal) {
                 result = $"{SettingItem}の値は{SettingValue}である";
             }
-            // CheckContent.CheckTypeがNotEqualの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.NotEqual) {
+            // CheckType.CheckTypeがNotEqualの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.NotEqual) {
                 result = $"{SettingItem}の値は{SettingValue}でない";
             }
-            // CheckContent.CheckTypeがIncludeの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.Include) {
+            // CheckType.CheckTypeがIncludeの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.Include) {
                 result = $"{SettingItem}の値に{SettingValue}が含まれている";
             }
-            // CheckContent.CheckTypeがNotIncludeの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.NotInclude) {
+            // CheckType.CheckTypeがNotIncludeの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.NotInclude) {
                 result = $"{SettingItem}の値に{SettingValue}が含まれていない";
             }
-            // CheckContent.CheckTypeがStartWithの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.StartWith) {
+            // CheckType.CheckTypeがStartWithの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.StartWith) {
                 result = $"{SettingItem}の値が{SettingValue}で始まっている";
             }
-            // CheckContent.CheckTypeがNotStartWithの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.NotStartWith) {
+            // CheckType.CheckTypeがNotStartWithの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.NotStartWith) {
                 result = $"{SettingItem}の値が{SettingValue}で始まっていない";
             }
-            // CheckContent.CheckTypeがEndWithの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.EndWith) {
+            // CheckType.CheckTypeがEndWithの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.EndWith) {
                 result = $"{SettingItem}の値が{SettingValue}で終わっている";
             }
-            // CheckContent.CheckTypeがNotEndWithの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.NotEndWith) {
+            // CheckType.CheckTypeがNotEndWithの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.NotEndWith) {
                 result = $"{SettingItem}の値が{SettingValue}で終わっていない";
             }
-            // CheckContent.CheckTypeがEmptyの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.Empty) {
+            // CheckType.CheckTypeがEmptyの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.Empty) {
                 result = $"{SettingItem}の値が空である";
             }
-            // CheckContent.CheckTypeがCheckBoxの場合
-            if (CheckContent.CheckType == CheckTypes.CheckTypeEnum.CheckBox) {
+            // CheckType.CheckTypeがCheckBoxの場合
+            if (CheckType.CheckType == CheckTypes.CheckTypeEnum.CheckBox) {
                 result = $"{SettingItem}のチェックボックスが{SettingValue}になっている";
             }
             return result;

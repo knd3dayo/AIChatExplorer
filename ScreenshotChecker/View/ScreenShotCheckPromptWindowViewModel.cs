@@ -17,17 +17,7 @@ namespace ImageChat.View {
         // CheckTypeList
         public ObservableCollection<CheckTypes> CheckTypeList { get; set; } = [.. CheckTypes.CheckTypeList];
 
-        // 選択されたチェックタイプ
-        private CheckTypes _selectedCheckType = CheckTypes.CheckTypeList[0];
-        public CheckTypes SelectedCheckType {
-            get {
-                return _selectedCheckType;
-            }
-            set {
-                _selectedCheckType = value;
-                OnPropertyChanged(nameof(SelectedCheckType));
-            }
-        }
+
 
         Action<string> Action { get; set; } = (parameter) => { };
 
