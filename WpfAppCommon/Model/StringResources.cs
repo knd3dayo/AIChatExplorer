@@ -40,7 +40,7 @@ namespace WpfAppCommon.Model {
         // OpenAIチャット
         public string OpenAIChat { get; } = "OpenAIチャット";
         // 画像エビデンスチェッカー
-        public string ImageEvidenceChecker { get; } = "画像エビデンスチェッカー";
+        public string ImageChat { get; } = "イメージチャット";
 
         // 検索
         public string Search { get; } = "検索";
@@ -184,6 +184,12 @@ namespace WpfAppCommon.Model {
         public string LogWindowTitle {
             get {
                 return $"{AppName} - ログ表示";
+            }
+        }
+        // スクリーンショットチェック用プロンプト生成
+        public string ScreenShotCheckPromptWindowTitle {
+            get {
+                return $"{AppName} - スクリーンショットチェック用プロンプト生成";
             }
         }
 

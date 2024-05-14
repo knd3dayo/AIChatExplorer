@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace ScreenshotChecker {
+namespace ImageChat {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>

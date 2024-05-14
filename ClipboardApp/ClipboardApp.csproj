@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QAChat\QAChat.csproj" />
-    <ProjectReference Include="..\ScreenshotChecker\ScreenshotChecker.csproj" />
+    <ProjectReference Include="..\ScreenshotChecker\ImageChat.csproj" />
     <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
   </ItemGroup>
 

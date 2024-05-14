@@ -199,7 +199,7 @@
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenScreenshotCheckerWindow}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.ImageEvidenceChecker}"
+                                Header="{Binding StringResources.ImageChat}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
 

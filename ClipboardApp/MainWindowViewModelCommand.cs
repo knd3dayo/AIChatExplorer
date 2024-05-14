@@ -88,8 +88,8 @@ namespace ClipboardApp {
         }
         // 画像エビデンスチェッカーを開くコマンド
         public static void OpenScreenshotCheckerWindowExecute() {
-            ScreenshotChecker.MainWindow imageEvidenceCheckerWindow = new();
-            ScreenshotChecker.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ScreenshotChecker.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
+            ImageChat.MainWindow imageEvidenceCheckerWindow = new();
+            ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
             // 内部プロジェクトからの起動をFalse
             imageEvidenceCheckerWindowViewModel.IsStartFromInternalApp = false;
             imageEvidenceCheckerWindow.Show();

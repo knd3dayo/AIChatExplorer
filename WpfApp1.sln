@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppCommon", "WpfAppCommo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{B731EF66-0D96-487E-BE6E-31E477E09715}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenshotChecker", "ScreenshotChecker\ScreenshotChecker.csproj", "{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageChat", "ScreenshotChecker\ImageChat.csproj", "{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
