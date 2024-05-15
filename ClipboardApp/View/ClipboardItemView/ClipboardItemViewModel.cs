@@ -96,10 +96,6 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return result;
             }
         }
-        public static ClipboardItemViewModel AddItem(ClipboardFolder folder, ClipboardItemViewModel item) {
-            ClipboardItem newItem = folder.AddItem(item.ClipboardItem);
-            return new ClipboardItemViewModel(item.FolderViewModel, newItem);
-        }
 
         public ClipboardItemViewModel MaskDataCommandExecute() {
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.MaskDataCommandExecute());
