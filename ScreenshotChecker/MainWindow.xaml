@@ -109,23 +109,25 @@
         </materialDesign:ColorZone>
         <Grid Grid.Row="1" Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
+                <ColumnDefinition Name="Grid1" Width="250" />
                 <ColumnDefinition Width="3" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+
             <!--  選択した画像ファイル名一覧を表示するListBox  -->
             <ListBox
+                Name="ListBox1"
                 Grid.Column="0"
-                Margin="10,0,10,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
+                Margin="0,0,10,0"
                 ItemsSource="{Binding ImageFileNames}"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                ScrollViewer.VerticalScrollBarVisibility="Auto"
-                SelectionMode="Single">
+                SelectionMode="Extended">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Margin="0,0,0,0" Text="{Binding}" />
+                        <TextBlock
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Left"
+                            Text="{Binding}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -134,6 +136,7 @@
                 Width="3"
                 VerticalAlignment="Stretch"
                 Background="Gray"
+                IsEnabled="False"
                 ShowsPreview="True" />
             <Grid Grid.Column="2" Margin="0,0,0,0">
                 <Grid.RowDefinitions>
