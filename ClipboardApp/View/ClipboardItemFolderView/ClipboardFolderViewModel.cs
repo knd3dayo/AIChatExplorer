@@ -98,9 +98,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
         // AddItem
-        public ClipboardItemViewModel AddItem(ClipboardItemViewModel item) {
-            ClipboardItem newItem = ClipboardItemFolder.AddItem(item.ClipboardItem);
-            return new ClipboardItemViewModel(item.FolderViewModel, newItem);
+        public void AddItem(ClipboardItemViewModel item) {
+            ClipboardItemFolder.AddItem(item.ClipboardItem);
 
         }
         public void DeleteItem(ClipboardItemViewModel item) {
