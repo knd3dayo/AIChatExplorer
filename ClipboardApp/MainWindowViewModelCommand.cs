@@ -37,10 +37,13 @@ namespace ClipboardApp {
         public static void ToggleClipboardMonitorCommand(MainWindowViewModel windowViewModel) {
             windowViewModel.IsClipboardMonitor = !windowViewModel.IsClipboardMonitor;
             if (windowViewModel.IsClipboardMonitor) {
-                ClipboardAppFactory.Instance.GetClipboardController().Start((clipboardItem) => {
+                ClipboardAppFactory.Instance.GetClipboardController().Start(async (clipboardItem) => {
                     // クリップボードアイテムが追加された時の処理
-                    Application.Current.Dispatcher.Invoke(() => {
+                    await Task.Run(() => {
                         RootFolderViewModel?.AddItem(new ClipboardItemViewModel(RootFolderViewModel, clipboardItem));
+                    });
+
+                    Application.Current.Dispatcher.Invoke(() => {
                         windowViewModel.SelectedFolder?.Load();
                     });
                 });
