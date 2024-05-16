@@ -25,16 +25,6 @@
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
-    <Window.InputBindings>
-        <KeyBinding
-            Key="Enter"
-            Command="{Binding SendChatCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-        <KeyBinding
-            Key="Escape"
-            Command="{Binding CloseCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-    </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
@@ -85,10 +75,5 @@
             Grid.Row="2"
             DataContext="{Binding QAChatControlViewModel}" />
         <control:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
-        <ProgressBar
-            Grid.Row="2"
-            IsIndeterminate="{Binding IsIndeterminate}"
-            Style="{StaticResource MaterialDesignCircularProgressBar}"
-            Value="0" />
     </Grid>
 </Window>

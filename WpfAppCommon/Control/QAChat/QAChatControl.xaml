@@ -143,7 +143,7 @@
                         Margin="10,0,10,0"
                         materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
                         AcceptsReturn="True"
-                        Text="{Binding PromptTemplate.Prompt, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap">
                         <TextBox.InputBindings>
                             <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />

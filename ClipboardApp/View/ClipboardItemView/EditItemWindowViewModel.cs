@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -88,7 +87,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 ItemViewModel = itemViewModel;
             }
             // QAChatControlの初期化
-            QAChatControlViewModel.Initialize(ItemViewModel.ClipboardItem);
+            QAChatControlViewModel.Initialize(ItemViewModel.ClipboardItem, PromptTemplateCommandExecute);
 
             _afterUpdate = afterUpdate;
 
@@ -169,7 +168,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             ListPromptTemplateWindow promptTemplateWindow = new();
             ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
             promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                QAChatControlViewModel.PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+                QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
 
             });
             promptTemplateWindow.ShowDialog();

@@ -17,7 +17,7 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Control.QAChat {
     public class QAChatControlViewModel : ObservableObject{
         //初期化
-        public void Initialize(ClipboardItem? clipboardItem) {
+        public void Initialize(ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
             // クリップボードアイテムを設定
             ClipboardItem = clipboardItem;
             // InputTextを設定
@@ -29,9 +29,15 @@ namespace WpfAppCommon.Control.QAChat {
                     ChatItems.Add(chatItem);
                 }
             }
+            // PromptTemplateCommandExecuteを設定
+            if (PromptTemplateCommandExecute != null) {
+                this.PromptTemplateCommandExecute = PromptTemplateCommandExecute;
+            }
         }
 
         public ClipboardItem? ClipboardItem { get; set; }
+
+        public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -89,23 +95,15 @@ namespace WpfAppCommon.Control.QAChat {
         }
         private readonly TextSelector TextSelector = new();
 
-        // プロンプトテンプレート
-        private PromptItem? promptTemplate;
-        public PromptItem? PromptTemplate {
+        // プロンプトの文字列
+        private string promptText = "";
+        public string PromptText {
             get {
-                return promptTemplate;
-
+                return promptText;
             }
             set {
-                promptTemplate = value;
-                OnPropertyChanged(nameof(PromptTemplate));
-            }
-        }
-
-        // プロンプトテンプレートのテキスト
-        public string PromptTemplateText {
-            get {
-                return PromptTemplate?.Prompt ?? "";
+                promptText = value;
+                OnPropertyChanged(nameof(PromptText));
             }
         }
 
@@ -119,9 +117,9 @@ namespace WpfAppCommon.Control.QAChat {
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 // PromptTemplateがある場合はPromptTemplateを先頭に追加
                 string prompt = "";
-                if (string.IsNullOrEmpty(PromptTemplate?.Prompt) == false) {
+                if (string.IsNullOrEmpty(PromptText) == false) {
 
-                    prompt = PromptTemplate?.Prompt ?? "" + "\n---------\n";
+                    prompt = PromptText  + "\n---------\n";
 
                 }
                 prompt += InputText;
@@ -200,7 +198,6 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // プロンプトテンプレート画面を開くコマンド
-        public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
         public SimpleDelegateCommand PromptTemplateCommand => new((parameter) => { 
             PromptTemplateCommandExecute(parameter);
         });

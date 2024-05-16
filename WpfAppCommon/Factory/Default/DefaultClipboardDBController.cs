@@ -317,37 +317,37 @@ namespace WpfAppCommon.Factory.Default {
             // SearchConditionの内容に従ってフィルタリング
             if (string.IsNullOrEmpty(searchCondition.Description) == false) {
                 if (searchCondition.ExcludeDescription) {
-                    results = results.Where(x => x.Description.Contains(searchCondition.Description) == false);
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
                 } else {
-                    results = results.Where(x => x.Description.Contains(searchCondition.Description));
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
                 }
             }
             if (string.IsNullOrEmpty(searchCondition.Content) == false) {
                 if (searchCondition.ExcludeContent) {
-                    results = results.Where(x => x.Content.Contains(searchCondition.Content) == false);
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
                 } else {
-                    results = results.Where(x => x.Content.Contains(searchCondition.Content));
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
                 }
             }
             if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
                 if (searchCondition.ExcludeTags) {
-                    results = results.Where(x => x.Tags.Contains(searchCondition.Tags) == false);
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
                 } else {
-                    results = results.Where(x => x.Tags.Contains(searchCondition.Tags));
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
                 }
             }
             if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
                 if (searchCondition.ExcludeSourceApplicationName) {
-                    results = results.Where(x => x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
                 } else {
-                    results = results.Where(x => x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
                 }
             }
             if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
                 if (searchCondition.ExcludeSourceApplicationTitle) {
-                    results = results.Where(x => x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
                 } else {
-                    results = results.Where(x => x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
                 }
             }
             if (searchCondition.EnableStartTime) {

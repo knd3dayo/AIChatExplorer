@@ -19,6 +19,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return CurrentMode == Mode.Edit ? "フォルダ編集" : "新規フォルダ作成";
             }
         }
+
+
         public Mode CurrentMode { get; set; }
         private string _collectionName = "";
         public string CollectionName {

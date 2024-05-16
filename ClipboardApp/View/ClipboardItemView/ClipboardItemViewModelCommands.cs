@@ -92,6 +92,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
 
+
         /// <summary>
         /// Ctrl + V が押された時の処理
         /// コピー中のアイテムを選択中のフォルダにコピー/移動する
@@ -103,6 +104,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         /// <param name="fromFolder"></param>
         /// <param name="toFolder"></param>
         /// <returns></returns>
+
         public static void PasteClipboardItemCommandExecute(bool CutFlag,
             IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {

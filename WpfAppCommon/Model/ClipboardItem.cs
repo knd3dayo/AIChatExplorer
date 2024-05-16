@@ -92,7 +92,7 @@ namespace WpfAppCommon.Model {
         }
 
         // OpenAIチャットのChatItemコレクション
-        public List<ChatItem> ChatItems { get; set; } = new();
+        public List<ChatItem> ChatItems { get; set; } = [];
 
         // クリップボードの内容の種類
         public ClipboardContentTypes ContentType { get; set; }

@@ -24,7 +24,9 @@ namespace WpfAppCommon.Model {
             if (PromptItem == null) {
                 return null;
             }
-            
+            // promptTextを作成。 PromptItemのPrompt + クリップボードのContent
+            string promptText = PromptItem.Prompt + "\n----\n" + clipboardItem.Content;
+
             List<ChatItem> chatItems = [];
             ChatResult result = new();
             // ★ OpenAIExecutionModeEnumを選択可能にする
@@ -32,15 +34,20 @@ namespace WpfAppCommon.Model {
             // modeがRAGの場合はLangChainChatを実行
             if (mode == OpenAIExecutionModeEnum.RAG) {
                 // LangChainChatを実行
-                result = PythonExecutor.PythonFunctions.LangChainChat(clipboardItem.Content, chatItems, VectorDBItem.GetEnabledItems());
+                result = PythonExecutor.PythonFunctions.LangChainChat(promptText, chatItems, VectorDBItem.GetEnabledItems());
             }
             // modeがNormalの場合はOpenAIChatを実行
             else if (mode == OpenAIExecutionModeEnum.Normal) {
                 // OpenAIChatを実行
-                result = PythonExecutor.PythonFunctions.OpenAIChat(clipboardItem.Content, chatItems);
+                result = PythonExecutor.PythonFunctions.OpenAIChat(promptText, chatItems);
             } else {
                 return clipboardItem;
             }
+            // リクエストをChatItemsに追加
+            clipboardItem.ChatItems.Add(new ChatItem(ChatItem.UserRole, promptText));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            clipboardItem.ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
             // レスポンスをClipboardItemに設定
             clipboardItem.Content = result.Response;
             return clipboardItem;
