@@ -6,6 +6,8 @@ using WpfAppCommon.Model;
 using QAChat.View.PromptTemplateWindow;
 using static QAChat.View.PromptTemplateWindow.ListPromptTemplateWindowViewModel;
 using ClipboardApp.View.PythonScriptView;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
@@ -144,10 +146,32 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         public bool IsBasicProcessChecked { get; set; } = true;
         // PromptTemplateのラジオボタンが選択中かどうか
-        public bool IsPromptTemplateChecked { get; set; } = false;
-        // PythonScriptのラジオボタンが選択中かどうか
+        private bool _isPromptTemplateChecked = false;
+        public bool IsPromptTemplateChecked {
+            get {
+                return _isPromptTemplateChecked;
+            }
+            set {
+                _isPromptTemplateChecked = value;
+                OnPropertyChanged(nameof(IsPromptTemplateChecked));
+            }
+        }
         public bool IsPythonScriptChecked { get; set; } = false;
 
+        // OpenAIExecutionMode
+        public OpenAIExecutionModeEnum OpenAIExecutionModeEnum { get; set; } = OpenAIExecutionModeEnum.Normal;
+
+        // OpenAIExecutionModeSelectedIndex
+        private int _openAIExecutionModeSelectedIndex = 0;
+        public int OpenAIExecutionModeSelectedIndex {
+            get {
+                return _openAIExecutionModeSelectedIndex;
+            }
+            set {
+                _openAIExecutionModeSelectedIndex = value;
+                OnPropertyChanged(nameof(OpenAIExecutionModeSelectedIndex));
+            }
+        }
 
         // 自動処理を更新したあとの処理
         private Action<AutoProcessRule>? _AfterUpdate;
@@ -229,6 +253,9 @@ namespace ClipboardApp.View.AutoProcessRuleView
                     }
                     IsPromptTemplateChecked = true;
                     SelectedPromptItem = new PromptItemViewModel(promptAutoProcessItem.PromptItem);
+                    // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
+                    OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
+
                 }
                 // ScriptAutoProcessItemの場合
                 else if (TargetAutoProcessRule.RuleAction is ScriptAutoProcessItem scriptAutoProcessItem) {
@@ -353,7 +380,10 @@ namespace ClipboardApp.View.AutoProcessRuleView
                     Tools.Error("PromptTemplateを選択してください。");
                     return;
                 }
-                TargetAutoProcessRule.RuleAction = new PromptAutoProcessItem(SelectedPromptItem.PromptItem);
+                PromptAutoProcessItem promptAutoProcessItem = new(SelectedPromptItem.PromptItem);
+                // OpenAIExecutionModeEnumを設定
+                promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
+                TargetAutoProcessRule.RuleAction = promptAutoProcessItem;
             }
             // IsPythonScriptCheckedがTrueの場合はSelectedScriptItemを追加
             else if (IsPythonScriptChecked) {
@@ -483,5 +513,26 @@ namespace ClipboardApp.View.AutoProcessRuleView
             ScriptSelectWindow.ShowDialog();
         });
 
+        // OpenAIExecutionModeSelectionChangeCommand
+        public SimpleDelegateCommand OpenAIExecutionModeSelectionChangeCommand => new((parameter) => {
+            // parameterがRoutedEventArgsでない場合はエラー
+            if (parameter is not RoutedEventArgs routedEventArgs) {
+                return;
+            }
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択中のアイテムを取得
+            var selectedItem = comboBox.SelectedItem;
+            // 選択中のアイテムのインデックスを取得
+            int selectedIndex = comboBox.SelectedIndex;
+            // インデックスが0の場合はModeをNormalにする, 1の場合はModeをLangChainWithVectorDBにする.それ以外はエラー
+            if (selectedIndex == 0) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.Normal;
+            } else if (selectedIndex == 1) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.RAG;
+            } else {
+                return;
+            }
+
+        });
     }
 }

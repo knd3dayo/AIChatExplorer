@@ -165,6 +165,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" Margin="0,0,0,0">
                     <RadioButton
@@ -239,6 +240,27 @@
                         Margin="10,10,10,10"
                         IsEnabled="False"
                         Text="{Binding SelectedPromptItem.Name}" />
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="4"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding IsPromptTemplateChecked}">
+                    <Label
+                        Width="250"
+                        Margin="10,10,10,10"
+                        Content="OpenAIの実行モード" />
+                    <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
+                    <ComboBox Margin="10,10,10,10"
+                              SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}"
+                              >
+                        <ComboBoxItem Name="Normal">通常</ComboBoxItem>
+                        <ComboBoxItem Name="RAG">RAG</ComboBoxItem>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding OpenAIExecutionModeSelectionChangeCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
                 </DockPanel>
             </Grid>
             <Grid Grid.Row="8" VerticalAlignment="Bottom">

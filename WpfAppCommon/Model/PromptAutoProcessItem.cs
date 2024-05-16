@@ -8,6 +8,7 @@ namespace WpfAppCommon.Model {
     public  class PromptAutoProcessItem : SystemAutoProcessItem{
         public PromptItem? PromptItem { get; set; }
 
+        public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
         public PromptAutoProcessItem() {
         }
         public PromptAutoProcessItem(PromptItem promptItem){
@@ -29,16 +30,15 @@ namespace WpfAppCommon.Model {
 
             List<ChatItem> chatItems = [];
             ChatResult result = new();
-            // ★ OpenAIExecutionModeEnumを選択可能にする
-            OpenAIExecutionModeEnum mode = OpenAIExecutionModeEnum.Normal;
             // modeがRAGの場合はLangChainChatを実行
-            if (mode == OpenAIExecutionModeEnum.RAG) {
-                // LangChainChatを実行
+            if (Mode == OpenAIExecutionModeEnum.RAG) {
+                Tools.Info("LangChainChatを実行");
                 result = PythonExecutor.PythonFunctions.LangChainChat(promptText, chatItems, VectorDBItem.GetEnabledItems());
             }
             // modeがNormalの場合はOpenAIChatを実行
-            else if (mode == OpenAIExecutionModeEnum.Normal) {
+            else if (Mode == OpenAIExecutionModeEnum.Normal) {
                 // OpenAIChatを実行
+                Tools.Info("OpenAIChatを実行");
                 result = PythonExecutor.PythonFunctions.OpenAIChat(promptText, chatItems);
             } else {
                 return clipboardItem;
