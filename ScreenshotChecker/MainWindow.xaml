@@ -109,7 +109,7 @@
         </materialDesign:ColorZone>
         <Grid Grid.Row="1" Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Name="Grid1" Width="250" />
+                <ColumnDefinition Name="Grid1" Width="200" />
                 <ColumnDefinition Width="3" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -119,15 +119,45 @@
                 Name="ListBox1"
                 Grid.Column="0"
                 Margin="0,0,10,0"
-                ItemsSource="{Binding ImageFileNames}"
+                ItemsSource="{Binding ImageFiles}"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 SelectionMode="Extended">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock
-                            Margin="0,0,10,0"
-                            HorizontalAlignment="Left"
-                            Text="{Binding}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Image
+                                Grid.Row="0"
+                                Height="100"
+                                Margin="0,0,0,0"
+                                Source="{Binding BitmapImage}" />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Margin="0,0,10,0"
+                                Text="{Binding FileName}" />
+                            <Grid.InputBindings>
+                                <MouseBinding
+                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    CommandParameter="{Binding}"
+                                    Gesture="LeftDoubleClick" />
+                            </Grid.InputBindings>
+                            <Grid.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem
+                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Header="開く" />
+                                    <MenuItem
+                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Header="削除" />
+                                </ContextMenu>
+                            </Grid.ContextMenu>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

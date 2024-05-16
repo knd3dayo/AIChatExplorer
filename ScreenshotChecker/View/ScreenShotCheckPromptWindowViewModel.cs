@@ -6,9 +6,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ImageChat.View {
-    /// <summary>
-    /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
-    /// </summary>
+
     public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 

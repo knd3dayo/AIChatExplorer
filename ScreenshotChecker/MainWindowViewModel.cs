@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -64,8 +65,8 @@ namespace ImageChat {
             }
         }
 
-        // 画像ファイル名一覧
-        public ObservableCollection<string> ImageFileNames { get; set; } = [];
+        // 画像ファイル
+        public ObservableCollection<ScreenShotImage> ImageFiles { get; set; } = [];
 
         // 最後に選択された画像ファイルがあるフォルダ
         private string lastSelectedImageFolder = ".";
@@ -84,7 +85,7 @@ namespace ImageChat {
         // チャットを送信するコマンド
         public SimpleDelegateCommand SendChatCommand => new(async (parameter) => {
             // 画像イメージファイル名がない場合はエラー
-            if (ImageFileNames.Count == 0) {
+            if (ImageFiles.Count == 0) {
                 Tools.Error("画像ファイルが選択されていません。");
                 return;
             }
@@ -102,10 +103,11 @@ namespace ImageChat {
                 await Task.Run(() => {
                     string prompt = inputText;
 
+                    // ScreenShotImageのリストからファイル名のリストを取得
+                    List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
 
-                    // 画像を一枚ずつ処理
                     Tools.Info($"プロンプト：{prompt}を送信します");
-                    result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(prompt, ImageFileNames);
+                    result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(prompt, imageFileNames);
                     // result.ResponseをScreenShotCheckItems.FromJsonでScreenShotCheckItemsに変換
                     if (result != null && string.IsNullOrEmpty(result.Response) == false) {
                         Tools.Info("処理結果を受信しました。" + result.Response);
@@ -159,8 +161,12 @@ namespace ImageChat {
                     if (folderPath != null) {
                         lastSelectedImageFolder = folderPath;
                     }
+                    // ScreenShotImageを生成してImageFilesに追加
+                    ScreenShotImage image = new() {
+                        ImagePath = filePath
+                    };
                     // 画像ファイル名一覧に画像ファイル名を追加
-                    ImageFileNames.Add(filePath);
+                    ImageFiles.Add(image);
                 }
 
             }
@@ -169,7 +175,7 @@ namespace ImageChat {
         // クリアコマンド
         public SimpleDelegateCommand ClearChatCommand => new((parameter) => {
             InputText = "";
-            ImageFileNames.Clear();
+            ImageFiles.Clear();
 
         });
 
@@ -193,6 +199,30 @@ namespace ImageChat {
 
         );
 
-        private static readonly string[] separator = ["\r\n", "\r", "\n"];
+        // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド
+        public SimpleDelegateCommand OpenSelectedImageFileCommand => new((parameter) => {
+            if (parameter is not ScreenShotImage image) {
+                return;
+            }
+            if (File.Exists(image.ImagePath)) {
+                ProcessStartInfo psi = new() {
+                    FileName = image.ImagePath,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            } else {
+                Tools.Error("ファイルが存在しません。");
+            }
+        });
+
+        // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
+        public SimpleDelegateCommand RemoveSelectedImageFileCommand => new((parameter) => {
+            if (parameter is not ScreenShotImage image) {
+                return;
+            }
+            ImageFiles.Remove(image);
+        });
+
+
     }
 }
