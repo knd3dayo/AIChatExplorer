@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace WpfCommonApp.Control.StatusMessage {
@@ -13,7 +14,7 @@ namespace WpfCommonApp.Control.StatusMessage {
 
         public void Initialize() {
             // メッセージを初期化
-            Message = string.Join("\n", Tools.StatusText.Messages);
+            Message = string.Join("\n", StatusText.Messages);
         }
 
         public SimpleDelegateCommand CloseCommand => new ((parameter) => {

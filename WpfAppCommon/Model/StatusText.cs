@@ -35,7 +35,7 @@ namespace WpfAppCommon.Model {
 
         public string ReadyText { get; set; } = DefaultText;
 
-        public List<string> Messages { get; } = new List<string>();
+        public static List<string> Messages { get; } = new List<string>();
 
         public string Text {
             get {

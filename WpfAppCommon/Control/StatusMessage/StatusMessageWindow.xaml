@@ -49,14 +49,18 @@
         <ScrollViewer
             Grid.Row="1"
             Margin="10,10,10,10"
+            VerticalAlignment="Top"
             CanContentScroll="False"
             VerticalScrollBarVisibility="Auto">
             <TextBox
-                Margin="0,0,0,0"
+                Margin="10,10,10,10"
                 IsReadOnly="True"
                 Text="{Binding Message}" />
         </ScrollViewer>
-        <DockPanel Grid.Row="2">
+        <DockPanel
+            Grid.Row="2"
+            Margin="10,10,10,10"
+            VerticalAlignment="Bottom">
             <Button
                 Width="100"
                 Margin="10,10,10,10"

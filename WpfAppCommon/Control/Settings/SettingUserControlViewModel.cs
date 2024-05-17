@@ -258,6 +258,20 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // ファイル更新時に自動的にコミットするかどうか
+        public bool AutoCommit {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.AutoCommit;
+            }
+            set {
+                WpfAppCommon.Properties.Settings.Default.AutoCommit = value;
+                OnPropertyChanged(nameof(AutoCommit));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // SyncFolderName
         public string SyncFolderName {
             get {

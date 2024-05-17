@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using LibGit2Sharp;
 using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.PythonIF;
@@ -25,7 +26,7 @@ namespace WpfAppCommon.Model {
         }
         // プロパティ
 
-        public ObjectId? Id { get; set; }
+        public LiteDB.ObjectId? Id { get; set; }
 
         public string CollectionName { get; set; }
 
@@ -41,10 +42,10 @@ namespace WpfAppCommon.Model {
         public string Content { get; set; } = "";
 
         //　画像イメージのObjectId
-        public ObjectId? ImageObjectId { get; set; }
+        public LiteDB.ObjectId? ImageObjectId { get; set; }
 
         // ファイルのObjectId
-        public ObjectId? FileObjectId { get; set; }
+        public LiteDB.ObjectId? FileObjectId { get; set; }
 
 
         // 画像イメージ
@@ -273,9 +274,28 @@ namespace WpfAppCommon.Model {
                 }
 
                 // folderPath + Id + .txtをファイル名として保存
-                string filePath = Path.Combine(folderPath, Id + ".txt");
+                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
                 // 保存
-                File.WriteAllText(filePath, this.Content);
+                File.WriteAllText(syncFilePath, this.Content);
+
+                // 自動コミットが有効の場合はGitにコミット
+                if (ClipboardAppConfig.AutoCommit) {
+                    try {
+
+                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                            Commands.Stage(repo, syncFilePath);
+                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                            Signature committer = author;
+                            repo.Commit("Auto commit", author, committer);
+                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                        }
+                    } catch( RepositoryNotFoundException e) {
+                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                    } catch (EmptyCommitException e) {
+                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}" );
+                    }
+                }
+
             }
         }
         // 自分自身をDBから削除する
@@ -294,11 +314,30 @@ namespace WpfAppCommon.Model {
                 folderPath = Path.Combine(folderPath, FolderPath);
 
                 // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-                string filePath = Path.Combine(folderPath, Id + ".txt");
+                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
                 // ファイルが存在する場合は削除
-                if (File.Exists(filePath)) {
-                    File.Delete(filePath);
+                if (File.Exists(syncFilePath)) {
+                    File.Delete(syncFilePath);
                 }
+                // 自動コミットが有効の場合はGitにコミット
+                if (ClipboardAppConfig.AutoCommit) {
+                    try {
+
+                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                            Commands.Stage(repo, syncFilePath);
+                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                            Signature committer = author;
+                            repo.Commit("Auto commit", author, committer);
+                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                        }
+
+                    } catch (RepositoryNotFoundException e) {
+                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                    } catch (EmptyCommitException e) {
+                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                    }
+                }
+
             }
         }
 

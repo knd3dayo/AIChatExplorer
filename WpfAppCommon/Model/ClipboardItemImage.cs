@@ -6,12 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
+using LibGit2Sharp;
 using LiteDB;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     public class ClipboardItemImage {
 
-        public ObjectId Id { get; set; } = ObjectId.Empty;
+        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         public ClipboardItem? ClipboardItem { get; set; }
 
@@ -93,6 +95,22 @@ namespace WpfAppCommon.Model {
                 if (System.IO.File.Exists(syncFilePath)) {
                     System.IO.File.Delete(syncFilePath);
                 }
+                // 自動コミットが有効の場合はGitにコミット
+                if (ClipboardAppConfig.AutoCommit) {
+                    try {
+                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                            Commands.Stage(repo, syncFilePath);
+                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                            Signature committer = author;
+                            repo.Commit("Auto commit", author, committer);
+                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                        }
+                    } catch (RepositoryNotFoundException e) {
+                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                    } catch (EmptyCommitException e) {
+                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                    }
+                }
             }
         }
         // 保存
@@ -115,10 +133,27 @@ namespace WpfAppCommon.Model {
                     throw new Exception("image is null");
                 }
                 image.Save(syncFilePath, System.Drawing.Imaging.ImageFormat.Png);
+
+                // 自動コミットが有効の場合はGitにコミット
+                if (ClipboardAppConfig.AutoCommit) {
+                    try {
+                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                            Commands.Stage(repo, syncFilePath);
+                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                            Signature committer = author;
+                            repo.Commit("Auto commit", author, committer);
+                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                        }
+                    } catch (RepositoryNotFoundException e) {
+                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                    } catch (EmptyCommitException e) {
+                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                    }
+                }
             }
         }
         // 取得
-        public static ClipboardItemImage? GetItems(ObjectId objectId) {
+        public static ClipboardItemImage? GetItems(LiteDB.ObjectId objectId) {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(objectId);
         }
     }

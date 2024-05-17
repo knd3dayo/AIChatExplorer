@@ -50,6 +50,9 @@ namespace WpfAppCommon.Model {
         // SyncFolderName
         public static string SyncFolderName { get; set; } = WpfAppCommon.Properties.Settings.Default.SyncFolderName;
 
+        // AutoCommit
+        public static bool AutoCommit { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoCommit;
+
         // AutoMergeItemsBySourceApplicationTitle
         public static bool AutoMergeItemsBySourceApplicationTitle { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
 

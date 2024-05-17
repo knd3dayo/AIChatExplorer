@@ -286,5 +286,17 @@ namespace WpfAppCommon.Properties {
                 this["SyncFolderName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoCommit {
+            get {
+                return ((bool)(this["AutoCommit"]));
+            }
+            set {
+                this["AutoCommit"] = value;
+            }
+        }
     }
 }
