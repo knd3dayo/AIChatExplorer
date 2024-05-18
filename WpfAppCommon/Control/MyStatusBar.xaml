@@ -36,9 +36,16 @@
                     IsReadOnly="True"
                     Text="{Binding Path=StatusText.Text, Mode=OneWay}" />
             </StatusBarItem>
-            <StatusBar.InputBindings>
-                <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" MouseAction="LeftClick" />
-            </StatusBar.InputBindings>
+            <StatusBarItem Margin="10,0,10,0" HorizontalAlignment="Right">
+                <TextBlock
+                    Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                    Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                    Text="ログ">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" Gesture="LeftClick" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StatusBarItem>
         </StatusBar>
     </Grid>
 </UserControl>

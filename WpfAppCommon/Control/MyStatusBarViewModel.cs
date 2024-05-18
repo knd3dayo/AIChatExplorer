@@ -25,7 +25,7 @@ namespace WpfAppCommon.Control {
         public static SimpleDelegateCommand OpenStatusMessageWindowCommand => new((parameter) => {
             StatusMessageWindow userControl = new StatusMessageWindow();
             Window window = new() {
-                Title = "Status Message",
+                Title = "ログ",
                 Content = userControl
             };
             StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)userControl.DataContext;
