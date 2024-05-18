@@ -67,7 +67,9 @@ namespace ClipboardApp {
             ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
             windowViewModel.SelectedFolder = clipboardItemFolderViewModel;
             // Load
-            windowViewModel.SelectedFolder.Load();
+            if (windowViewModel.SelectedFolder != null) {
+                windowViewModel.SelectedFolder.Load();
+            }
 
         }
 
