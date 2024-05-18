@@ -230,15 +230,17 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     ItemsSource="{Binding ClipboardItemFolders}">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="Margin" Value="3,3,3,3" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
                             <!--  Tree item  -->
                             <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                             <DockPanel HorizontalAlignment="Stretch">
-                                <TextBlock
-                                    Margin="0,0,10,0"
-                                    DockPanel.Dock="Left"
-                                    Text="{Binding DisplayName}" />
+                                <TextBlock DockPanel.Dock="Left" Text="{Binding DisplayName}" />
                                 <DockPanel.InputBindings>
                                     <!--  Open folder on left click  -->
                                     <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
