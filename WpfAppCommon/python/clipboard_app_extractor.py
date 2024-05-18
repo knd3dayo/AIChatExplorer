@@ -1,6 +1,7 @@
 import os
 import tempfile
 from magika import Magika
+import datetime
 
 def identify_type(filename):
     m = Magika()
@@ -51,7 +52,19 @@ def process_xlsx(filename):
     wb = openpyxl.load_workbook(filename)
     for sheet in wb:
         for row in sheet.iter_rows(values_only=True):
-            output.write("\t".join(row))
+            # 1行分のデータを格納するリスト
+            cells = []
+            for cell in row:
+                # cell.valueがNoneの場合はcontinue
+                if cell is None:
+                    continue
+                # cell.valueがdatetime.datetimeの場合はisoformat()で文字列に変換
+                if isinstance(cell, datetime.datetime):
+                    cells.append(cell.isoformat())
+                else:
+                    cells.append(cell.value)
+                
+            output.write("\t".join(cells))
             output.write("\n")
     
     return output.getvalue()

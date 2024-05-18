@@ -12,6 +12,7 @@ langchain-openai
 magika
 openai
 openpyxl
+markdown
 pdfminer.six
 spacy
 ja-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl
