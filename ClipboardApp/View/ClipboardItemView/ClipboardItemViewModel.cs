@@ -185,6 +185,8 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             set {
                 ClipboardItem.IsPinned = value;
+                // 保存
+                ClipboardItem.Save();
                 OnPropertyChanged(nameof(IsPinned));
             }
         }

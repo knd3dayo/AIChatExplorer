@@ -68,6 +68,11 @@
                     MouseAction="LeftDoubleClick" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
+                <!--  ContentType  -->
+                <DataGridCheckBoxColumn
+                    Width="100"
+                    Binding="{Binding IsPinned}"
+                    Header="ピン留め" />
                 <DataGridTextColumn
                     Width="150"
                     MaxWidth="300"
@@ -136,6 +141,7 @@
                     MaxHeight="100"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
                     FontSize="8pt"
                     Text="{Binding Path=SelectedItem.Content}"
                     TextTrimming="CharacterEllipsis"
