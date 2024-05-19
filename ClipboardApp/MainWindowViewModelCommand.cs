@@ -82,12 +82,22 @@ namespace ClipboardApp {
                 ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
                 ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
                 windowViewModel.SelectedItem = clipboardItemViewModel;
+                // SelectedItemsをMainWindowViewModelにセット
+                windowViewModel.SelectedItems.Clear();
+                foreach (ClipboardItemViewModel item in listBox.SelectedItems) {
+                    windowViewModel.SelectedItems.Add(item);
+                }
             }
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
                 ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)dataGrid.SelectedItem;
                 windowViewModel.SelectedItem = clipboardItemViewModel;
+                // SelectedItemsをMainWindowViewModelにセット
+                windowViewModel.SelectedItems.Clear();
+                foreach (ClipboardItemViewModel item in dataGrid.SelectedItems) {
+                    windowViewModel.SelectedItems.Add(item);
+                }
             }
         }
 
