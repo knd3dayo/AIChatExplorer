@@ -1,0 +1,118 @@
+<UserControl
+    x:Class="ClipboardApp.Control.MainWindowListView1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.Control"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    mc:Ignorable="d">
+    <Grid>
+        <ListBox
+            Name="listBox1"
+            Margin="0,0,0,0"
+            HorizontalAlignment="Stretch"
+            ItemsSource="{Binding ItemsSource, ElementName=Root}"
+            SelectionMode="Extended"
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            VirtualizingStackPanel.IsVirtualizing="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand, ElementName=Root}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
+                    <materialDesign:Card
+                        Margin="5,5,5,5"
+                        HorizontalAlignment="Stretch"
+                        materialDesign:ElevationAssist.Elevation="Dp8"
+                        ToolTip="{Binding Path=ToolTipString}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Name="DescriptionText"
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Stretch"
+                                FontSize="10pt"
+                                Text="{Binding Path=DescriptionText}"
+                                TextTrimming="None"
+                                Visibility="{Binding DescriptionVisibility}" />
+                            <TextBlock
+                                Name="clipboardText"
+                                Grid.Row="1"
+                                MinHeight="50"
+                                MaxHeight="100"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Stretch"
+                                FontSize="8pt"
+                                Text="{Binding Path=Content}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="Wrap" />
+                            <Image
+                                Name="image1"
+                                Grid.Row="2"
+                                MaxHeight="100"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                Source="{Binding Image}"
+                                Stretch="Uniform" />
+                            <Separator
+                                Grid.Row="3"
+                                Margin="10,0,10,0"
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                BorderThickness="1"
+                                Style="{StaticResource MaterialDesignLightSeparator}" />
+                            <TextBlock
+                                Name="headerText"
+                                Grid.Row="4"
+                                Margin="10,0,10,10"
+                                HorizontalAlignment="Stretch"
+                                FontSize="6pt"
+                                Text="{Binding Path=HeaderText}"
+                                TextTrimming="None" />
+                        </Grid>
+                        <materialDesign:Card.ContextMenu>
+                            <ContextMenu FontSize="12" ItemsSource="{Binding ContextMenuItems}">
+                                <ContextMenu.ItemContainerStyle>
+                                    <Style TargetType="MenuItem">
+                                        <Setter Property="MenuItem.Header" Value="{Binding Title}" />
+                                        <Setter Property="MenuItem.Command" Value="{Binding Command}" />
+                                        <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
+                                        <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
+                                        <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
+                                    </Style>
+                                </ContextMenu.ItemContainerStyle>
+
+                            </ContextMenu>
+                        </materialDesign:Card.ContextMenu>
+                        <materialDesign:Card.InputBindings>
+                            <!--  Open selected item window by double-clicking  -->
+                            <MouseBinding
+                                Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
+                                CommandParameter="{Binding}"
+                                MouseAction="LeftDoubleClick" />
+                        </materialDesign:Card.InputBindings>
+                    </materialDesign:Card>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+
+    </Grid>
+</UserControl>

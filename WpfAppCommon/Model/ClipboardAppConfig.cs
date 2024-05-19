@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     public class ClipboardAppConfig {
@@ -72,8 +73,17 @@ namespace WpfAppCommon.Model {
         // TesseractExePath
         public static string TesseractExePath { get; set; } = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
 
+        // PreviewMode
+        public static bool PreviewMode { get; set; } = WpfAppCommon.Properties.Settings.Default.PreviewMode;
 
+        // CompactViewMode
+        public static bool CompactViewMode { get; set; } = WpfAppCommon.Properties.Settings.Default.CompactViewMode;
 
+        public static void Save() {
+            WpfAppCommon.Properties.Settings.Default.Save();
+            // Reload
+            // WpfAppCommon.Properties.Settings.Default.Reload();
+        }
         public static  Dictionary<string, string> CreateOpenAIProperties() {
             Dictionary<string, string> dict = new() {
                 { "OpenAIKey", WpfAppCommon.Properties.Settings.Default.OpenAIKey },

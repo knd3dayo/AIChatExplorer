@@ -298,5 +298,29 @@ namespace WpfAppCommon.Properties {
                 this["AutoCommit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CompactViewMode {
+            get {
+                return ((bool)(this["CompactViewMode"]));
+            }
+            set {
+                this["CompactViewMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool PreviewMode {
+            get {
+                return ((bool)(this["PreviewMode"]));
+            }
+            set {
+                this["PreviewMode"] = value;
+            }
+        }
     }
 }

@@ -20,6 +20,9 @@ namespace WpfAppCommon.Model {
         // 選択
         public string Select { get; } = "選択";
 
+        // 表示
+        public string View { get; } = "表示";
+
         // クリップボード監視を開始しました
         public string StartClipboardWatch { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました
@@ -35,6 +38,13 @@ namespace WpfAppCommon.Model {
         public string EditPromptTemplate { get; } = "プロンプトテンプレート編集";
         // RAGソース編集
         public string EditGitRagSource { get; } = "RAGソース(git)編集";
+
+        // -- 表示メニュー
+        // プレビューモード
+        public string PreviewMode { get; } = "プレビューを有効にする";
+        // コンパクト表示モード
+        public string CompactMode { get; } = "コンパクト表示にする";
+
         // ツール
         public string Tool { get; } = "ツール";
         // OpenAIチャット

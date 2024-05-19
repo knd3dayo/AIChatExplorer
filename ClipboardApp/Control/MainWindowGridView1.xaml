@@ -1,0 +1,188 @@
+<UserControl
+    x:Class="ClipboardApp.Control.MainWindowGridView1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.Control"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ContextMenu
+            x:Key="GridRowContextMenu"
+            FontSize="12"
+            ItemsSource="{Binding ContextMenuItems}">
+            <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem">
+                    <Setter Property="MenuItem.Header" Value="{Binding Title}" />
+                    <Setter Property="MenuItem.Command" Value="{Binding Command}" />
+                    <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
+                    <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
+                    <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
+                </Style>
+            </ContextMenu.ItemContainerStyle>
+        </ContextMenu>
+        <Style x:Key="SingleLineTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="Height" Value="15" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <!--  上はDataGrid、中間にはGridSplitter、下はプレビュー画面  -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <DataGrid
+            Grid.Row="0"
+            HorizontalAlignment="Stretch"
+            AutoGenerateColumns="False"
+            BorderThickness="1"
+            CanUserAddRows="True"
+            CanUserDeleteRows="True"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="True"
+            CanUserResizeRows="False"
+            CanUserSortColumns="True"
+            ItemsSource="{Binding ItemsSource, ElementName=Root}"
+            RowHeaderWidth="0"
+            SelectionMode="Extended"
+            SelectionUnit="FullRow"
+            VerticalScrollBarVisibility="Auto"
+            VirtualizingPanel.VirtualizationMode="Recycling"
+            VirtualizingStackPanel.IsVirtualizing="True">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand, ElementName=Root}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <DataGrid.InputBindings>
+                <!--  Open selected item window by double-clicking  -->
+                <MouseBinding
+                    Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
+                    CommandParameter="{Binding}"
+                    MouseAction="LeftDoubleClick" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="150"
+                    MaxWidth="300"
+                    Binding="{Binding UpdatedAtString}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="更新日"
+                    IsReadOnly="True" />
+                <!--  ContentType  -->
+                <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding ContentTypeString}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="種別"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="250"
+                    Binding="{Binding DescriptionText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="タイトル"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding ContentSummary}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="コンテンツ"
+                    IsReadOnly="True" />
+            </DataGrid.Columns>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ContextMenu" Value="{StaticResource GridRowContextMenu}" />
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+        <GridSplitter
+            Grid.Row="1"
+            Height="5"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center" />
+        <materialDesign:Card
+            Grid.Row="2"
+            Margin="3,3,3,3"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            materialDesign:ElevationAssist.Elevation="Dp8"
+            Visibility="{Binding PreviewModeVisibility, ElementName=Root}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Name="DescriptionText"
+                    Grid.Row="0"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Stretch"
+                    FontSize="10pt"
+                    Text="{Binding Path=SelectedItem.DescriptionText}"
+                    TextTrimming="None" />
+                <TextBlock
+                    Name="clipboardText"
+                    Grid.Row="1"
+                    MinHeight="50"
+                    MaxHeight="100"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Stretch"
+                    FontSize="8pt"
+                    Text="{Binding Path=SelectedItem.Content}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+                <Image
+                    Name="image1"
+                    Grid.Row="2"
+                    MaxHeight="100"
+                    Margin="10,10,10,10"
+                    HorizontalAlignment="Left"
+                    Source="{Binding SelectedItem.Image}"
+                    Stretch="Uniform" />
+                <Separator
+                    Grid.Row="3"
+                    Margin="10,0,10,0"
+                    Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                    BorderThickness="1"
+                    Style="{StaticResource MaterialDesignLightSeparator}" />
+                <TextBlock
+                    Name="headerText"
+                    Grid.Row="4"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Stretch"
+                    FontSize="6pt"
+                    Text="{Binding Path=SelectedItem.HeaderText}"
+                    TextTrimming="None" />
+            </Grid>
+            <materialDesign:Card.ContextMenu>
+                <ContextMenu FontSize="12" ItemsSource="{Binding SelectedItem.ContextMenuItems}">
+                    <ContextMenu.ItemContainerStyle>
+                        <Style TargetType="MenuItem">
+                            <Setter Property="MenuItem.Header" Value="{Binding Title}" />
+                            <Setter Property="MenuItem.Command" Value="{Binding Command}" />
+                            <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
+                            <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
+                            <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
+                        </Style>
+                    </ContextMenu.ItemContainerStyle>
+                </ContextMenu>
+            </materialDesign:Card.ContextMenu>
+            <materialDesign:Card.InputBindings>
+                <!--  Open selected item window by double-clicking  -->
+                <MouseBinding
+                    Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
+                    CommandParameter="{Binding}"
+                    MouseAction="LeftDoubleClick" />
+            </materialDesign:Card.InputBindings>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>

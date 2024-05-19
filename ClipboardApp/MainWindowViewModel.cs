@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using ClipboardApp.Control;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.Views.ClipboardItemView;
@@ -106,7 +108,6 @@ namespace ClipboardApp {
             }
             set {
                 _selectedFolder = value;
-
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }
@@ -121,13 +122,6 @@ namespace ClipboardApp {
         /// </summary>
         // Ctrl + C or X  が押された時のClipboardItemFolder
         public ClipboardFolderViewModel? CopiedItemFolder { get; set; } = null;
-
-        //-----
-        // ClipboardItemContextMenuItems
-        //-----
-        public ClipboardItemFolderContextMenuItems? ClipboardItemContextMenuItems { get; set; } = null;
-
-        public ObservableCollection<ClipboardAppMenuItem> ClipboardItemFolderContextMenuItems { get; set; } = [];
 
         // 表示・非表示の設定
         /// <summary>
@@ -146,6 +140,55 @@ namespace ClipboardApp {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
+            }
+        }
+
+        // コンパクトモードでプレビューを表示するかどうか
+        public static Visibility PreviewModeVisibility {
+            get {
+                return ClipboardAppConfig.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // コンパクトモード表示するかどうか
+        public bool CompactMode {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.CompactViewMode;
+            }
+            set {
+                // Save
+                WpfAppCommon.Properties.Settings.Default.CompactViewMode = value;
+                WpfAppCommon.Properties.Settings.Default.Save();
+                OnPropertyChanged(nameof(CompactMode));
+                // アプリケーション再起動後に反映されるようにメッセージを表示
+                MessageBox.Show("アプリケーションを再起動すると、表示モードが変更されます。", "情報", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        //　プレビューモード表示するかどうか
+        public bool PreviewMode {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.PreviewMode;
+            }
+            set {
+                WpfAppCommon.Properties.Settings.Default.PreviewMode = value;
+                // Save
+                WpfAppCommon.Properties.Settings.Default.Save();
+
+                OnPropertyChanged(nameof(PreviewMode));
+                OnPropertyChanged(nameof(PreviewModeVisibility));
+                // アプリケーション再起動後に反映されるようにメッセージを表示
+                MessageBox.Show("アプリケーションを再起動すると、表示モードが変更されます。", "情報", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        public static Visibility CompactModeVisibility {
+            get {
+                return ClipboardAppConfig.CompactViewMode ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // ExpandModeVisibility
+        public static Visibility ExpandModeVisibility {
+            get {
+                return ClipboardAppConfig.CompactViewMode ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 

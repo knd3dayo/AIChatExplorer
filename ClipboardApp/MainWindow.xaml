@@ -5,6 +5,7 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:lc="clr-namespace:ClipboardApp.Control"
     xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -184,6 +185,24 @@
                                 Header="{Binding StringResources.EditVectorDB}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
+                        <!--  View  -->
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding StringResources.View}">
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.CompactMode}"
+                                IsCheckable="True"
+                                IsChecked="{Binding CompactMode}" />
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.PreviewMode}"
+                                IsCheckable="True"
+                                IsChecked="{Binding PreviewMode}" />
+                        </MenuItem>
                         <!--  Tools  -->
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
@@ -288,111 +307,26 @@
                     HorizontalAlignment="Stretch" />
                 <!--  Clipboard ListBox  -->
                 <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
-                <ListBox
-                    Name="listBox1"
+                <lc:MainWindowListView1
+                    x:Name="MainWindowListView1"
                     Grid.Row="0"
                     Grid.Column="2"
-                    Margin="0,0,0,0"
                     HorizontalAlignment="Stretch"
+                    ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
-                    SelectionMode="Extended"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    VirtualizingStackPanel.IsVirtualizing="True">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
+                    Visibility="{Binding ExpandModeVisibility}" />
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
-                            <materialDesign:Card
-                                Margin="5,5,5,5"
-                                HorizontalAlignment="Stretch"
-                                materialDesign:ElevationAssist.Elevation="Dp8"
-                                ToolTip="{Binding Path=ToolTipString}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <TextBlock
-                                        Name="DescriptionText"
-                                        Grid.Row="0"
-                                        Margin="10,10,10,10"
-                                        HorizontalAlignment="Stretch"
-                                        FontSize="10pt"
-                                        Text="{Binding Path=DescriptionText}"
-                                        TextTrimming="None"
-                                        Visibility="{Binding DescriptionVisibility}" />
-                                    <TextBlock
-                                        Name="clipboardText"
-                                        Grid.Row="1"
-                                        MinHeight="50"
-                                        MaxHeight="100"
-                                        Margin="10,10,10,10"
-                                        HorizontalAlignment="Stretch"
-                                        FontSize="8pt"
-                                        Text="{Binding Path=Content}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
-                                    <Image
-                                        Name="image1"
-                                        Grid.Row="2"
-                                        MaxHeight="100"
-                                        Margin="10,10,10,10"
-                                        HorizontalAlignment="Left"
-                                        Source="{Binding Image}"
-                                        Stretch="Uniform" />
-                                    <Separator
-                                        Grid.Row="3"
-                                        Margin="10,0,10,0"
-                                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                        BorderThickness="1"
-                                        Style="{StaticResource MaterialDesignLightSeparator}" />
-                                    <TextBlock
-                                        Name="headerText"
-                                        Grid.Row="4"
-                                        Margin="10,0,10,10"
-                                        HorizontalAlignment="Stretch"
-                                        FontSize="6pt"
-                                        Text="{Binding Path=HeaderText}"
-                                        TextTrimming="None" />
-                                </Grid>
-                                <materialDesign:Card.ContextMenu>
-                                    <ContextMenu FontSize="12" ItemsSource="{Binding ContextMenuItems}">
-                                        <ContextMenu.ItemContainerStyle>
-                                            <Style TargetType="MenuItem">
-                                                <Setter Property="MenuItem.Header" Value="{Binding Title}" />
-                                                <Setter Property="MenuItem.Command" Value="{Binding Command}" />
-                                                <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
-                                                <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
-                                                <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
-                                            </Style>
-                                        </ContextMenu.ItemContainerStyle>
-
-                                    </ContextMenu>
-                                </materialDesign:Card.ContextMenu>
-                                <materialDesign:Card.InputBindings>
-                                    <!--  Open selected item window by double-clicking  -->
-                                    <MouseBinding
-                                        Command="{Binding DataContext.OpenSelectedItemCommand, ElementName=window1}"
-                                        CommandParameter="{Binding}"
-                                        MouseAction="LeftDoubleClick" />
-                                </materialDesign:Card.InputBindings>
-                            </materialDesign:Card>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListBox.ItemContainerStyle>
-                </ListBox>
+                <lc:MainWindowGridView1
+                    x:Name="MainWindowGridView1"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    HorizontalAlignment="Stretch"
+                    ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
+                    ItemsSource="{Binding SelectedFolder.Items}"
+                    OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
+                    PreviewModeVisibility="{Binding PreviewModeVisibility}"
+                    Visibility="{Binding CompactModeVisibility}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar

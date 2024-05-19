@@ -77,13 +77,18 @@ namespace ClipboardApp {
         // ListBoxで、SelectionChangedが発生したときの処理
         public static void ClipboardItemSelectionChangedCommandExecute(MainWindowViewModel windowViewModel, object parameter) {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
-            ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
-            ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
-            windowViewModel.SelectedItems.Clear();
-            foreach (ClipboardItemViewModel item in listBox.SelectedItems) {
-                windowViewModel.SelectedItems.Add(item);
+            // ListBoxの場合
+            if (routedEventArgs.OriginalSource is ListBox) {
+                ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
+                ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
+                windowViewModel.SelectedItem = clipboardItemViewModel;
             }
-            windowViewModel.SelectedItem = clipboardItemViewModel;
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)dataGrid.SelectedItem;
+                windowViewModel.SelectedItem = clipboardItemViewModel;
+            }
         }
 
 

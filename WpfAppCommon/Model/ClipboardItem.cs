@@ -4,7 +4,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibGit2Sharp;
-using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -18,7 +17,7 @@ namespace WpfAppCommon.Model {
     }
     public class ClipboardItem {
         // コンストラクタ
-        public ClipboardItem(string collectionName, string folderPath ) {
+        public ClipboardItem(string collectionName, string folderPath) {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             CollectionName = collectionName;
@@ -195,6 +194,37 @@ namespace WpfAppCommon.Model {
             return string.Join(",", Tags);
         }
 
+        public string UpdatedAtString {
+            get {
+                return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            }
+        }
+        public string ContentSummary {
+            get {
+                if (Content == null) {
+                    return "";
+                }
+                if (Content.Length > 50) {
+                    return Content[..50] + "...";
+                } else {
+                    return Content;
+                }
+            }
+        }
+        public string ContentTypeString {
+            get {
+                if (ContentType == ClipboardContentTypes.Text) {
+                    return "Text";
+                } else if (ContentType == ClipboardContentTypes.Files) {
+                    return "File";
+                } else if (ContentType == ClipboardContentTypes.Image) {
+                    return "Image";
+                } else {
+                    return "Unknown";
+                }
+
+            }
+        }
 
         public string? HeaderText {
             get {
@@ -289,10 +319,10 @@ namespace WpfAppCommon.Model {
                             repo.Commit("Auto commit", author, committer);
                             Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
                         }
-                    } catch( RepositoryNotFoundException e) {
+                    } catch (RepositoryNotFoundException e) {
                         Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
                     } catch (EmptyCommitException e) {
-                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}" );
+                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
                     }
                 }
 
@@ -345,11 +375,11 @@ namespace WpfAppCommon.Model {
             string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             // TextとImageの場合
             if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
-                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
+                item.Description = $"{item.SourceApplicationTitle}";
             }
             // Fileの場合
             else if (item.ContentType == ClipboardContentTypes.Files) {
-                item.Description = $"{updatedAtString} {item.SourceApplicationName} {item.SourceApplicationTitle}";
+                item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
                     item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
@@ -365,7 +395,7 @@ namespace WpfAppCommon.Model {
             if (this.ContentType != ClipboardContentTypes.Files) {
                 throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
             }
-            
+
             string? path = ClipboardItemFile?.FilePath;
 
             if (string.IsNullOrEmpty(path) == false) {
@@ -412,7 +442,7 @@ namespace WpfAppCommon.Model {
             try {
                 string text = PythonExecutor.PythonFunctions.ExtractText(path);
                 clipboardItem.Content = text;
-            } catch(UnsupportedFileTypeException) {
+            } catch (UnsupportedFileTypeException) {
                 Tools.Error("サポートされていないファイル形式です");
                 return clipboardItem;
             }

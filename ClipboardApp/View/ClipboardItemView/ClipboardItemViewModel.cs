@@ -154,6 +154,22 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return ClipboardItem.HeaderText;
             }
         }
+        public string UpdatedAtString {
+            get {
+                return ClipboardItem.UpdatedAtString;
+            }
+        }
+        public string ContentSummary {
+            get {
+                return ClipboardItem.ContentSummary;
+            }
+        }
+        public string ContentTypeString {
+            get {
+                return ClipboardItem.ContentTypeString;
+            }
+        }
+
         // Save
         public void Save(bool updateModifiedTime = true) {
             ClipboardItem.Save(updateModifiedTime);
