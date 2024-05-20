@@ -8,16 +8,25 @@ namespace WpfAppCommon.Utils {
         public bool URLSelected { get; set; } = false;
         public bool AngleBracketSelected { get; set; } = false;
 
+        // 最後に選択したテキスト
+        public string LastSelectedText { get; set; } = "";
+
         public void SelectText(TextBox editor) {
-            // 1行選択の場合は全選択
-            if (SingleLineSelected) {
+            // 最後に選択したテキストと異なる場合は初期状態にする。
+            if (editor.SelectedText != LastSelectedText) {
+                SingleLineSelected = false;
+                URLSelected = false;
+                AngleBracketSelected = false;
+            }
+            // 1行選択状態または複数行選択状態の場合は全選択
+            if (SingleLineSelected || editor.SelectedText.Contains('\n')) {
                 editor.SelectAll();
                 SingleLineSelected = false;
                 URLSelected = false;
+                // 最後に選択したテキストを更新
+                LastSelectedText = editor.SelectedText;
                 return;
-            }
-            // 複数行選択中でない場合
-            if (!editor.SelectedText.Contains('\n')) {
+            } else {
                 int pos = editor.SelectionStart;
                 // posがTextの長さを超える場合はTextの最後を指定
                 if (pos >= editor.Text.Length) {
@@ -32,6 +41,8 @@ namespace WpfAppCommon.Utils {
 
                 // lineEnd - lineStartが0以下の場合は何もしない
                 if (lineEnd - lineStart <= 0) {
+                    // 最後に選択したテキストを更新
+                    LastSelectedText = editor.SelectedText;
                     return;
                 }
                 // 選択対象文字列
@@ -43,6 +54,8 @@ namespace WpfAppCommon.Utils {
                     lineEnd = lineStart + ints[1] - ints[0];
                     editor.Select(lineStart, lineEnd - lineStart);
                     URLSelected = true;
+                    // 最後に選択したテキストを更新
+                    LastSelectedText = editor.SelectedText;
                     return;
                 }
                 // AngleBracketの場合はAngleBracket選択にする
@@ -52,6 +65,8 @@ namespace WpfAppCommon.Utils {
                     lineEnd = lineStart + angleBracketInts[1] - angleBracketInts[0];
                     editor.Select(lineStart, lineEnd - lineStart);
                     AngleBracketSelected = true;
+                    // 最後に選択したテキストを更新
+                    LastSelectedText = editor.SelectedText;
                     return;
                 }
                 // EditorTextSelectionを更新
@@ -59,6 +74,8 @@ namespace WpfAppCommon.Utils {
                 SingleLineSelected = true;
                 URLSelected = false;
                 AngleBracketSelected = false;
+                // 最後に選択したテキストを更新
+                LastSelectedText = editor.SelectedText;
 
             }
         }
