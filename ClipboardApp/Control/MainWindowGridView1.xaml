@@ -121,8 +121,8 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -131,29 +131,35 @@
                     Grid.Row="0"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
                     FontSize="10pt"
                     Text="{Binding Path=SelectedItem.DescriptionText}"
                     TextTrimming="None" />
-                <TextBlock
-                    Name="clipboardText"
-                    Grid.Row="1"
-                    MinHeight="50"
-                    MaxHeight="100"
-                    Margin="10,10,10,10"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    FontSize="8pt"
-                    Text="{Binding Path=SelectedItem.Content}"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="Wrap" />
                 <Image
                     Name="image1"
-                    Grid.Row="2"
+                    Grid.Row="1"
+                    MinHeight="0"
                     MaxHeight="100"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
                     Source="{Binding SelectedItem.Image}"
                     Stretch="Uniform" />
+                <ScrollViewer
+                    Grid.Row="2"
+                    Margin="3,3,3,3"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Top"
+                    VerticalScrollBarVisibility="Auto">
+                    <TextBlock
+                        Name="clipboardText"
+                        Margin="3,3,3,3"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        FontSize="8pt"
+                        Text="{Binding Path=SelectedItem.Content}"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+                </ScrollViewer>
                 <Separator
                     Grid.Row="3"
                     Margin="10,0,10,0"

@@ -372,7 +372,6 @@ namespace WpfAppCommon.Model {
         }
 
         public static void CreateAutoDescription(ClipboardItem item) {
-            string updatedAtString = item.UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             // TextとImageの場合
             if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";

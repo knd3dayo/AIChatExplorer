@@ -446,15 +446,13 @@
                         Grid.Row="2"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="自動でタイトル生成する"
-                        Visibility="{Binding UseSpacyVisibility}" />
+                        Text="自動でタイトル生成する" />
                     <CheckBox
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Content="クリップボードの内容から自動的にタイトルを生成します"
-                        IsChecked="{Binding AutoDescription}"
-                        Visibility="{Binding UseSpacyVisibility}" />
+                        IsChecked="{Binding AutoDescription}" />
 
                     <TextBlock
                         Grid.Row="3"
