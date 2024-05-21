@@ -468,7 +468,7 @@
                         Margin="10,10,10,0"
                         Content="しない"
                         GroupName="AutoDescription"
-                        IsChecked="{Binding AutoDescriptionNone}" />
+                        IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
                     <RadioButton
                         Grid.Row="2"
                         Grid.Column="1"
