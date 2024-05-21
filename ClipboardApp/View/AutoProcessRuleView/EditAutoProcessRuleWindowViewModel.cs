@@ -8,6 +8,7 @@ using static QAChat.View.PromptTemplateWindow.ListPromptTemplateWindowViewModel;
 using ClipboardApp.View.PythonScriptView;
 using System.Windows;
 using System.Windows.Controls;
+using QAChat.Model;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
@@ -248,11 +249,13 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 }
                 // PromptAutoProcessItemの場合
                 if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
-                    if (promptAutoProcessItem.PromptItem == null) {
+                    if (promptAutoProcessItem.PromptItemId == LiteDB.ObjectId.Empty) {
                         return;
                     }
                     IsPromptTemplateChecked = true;
-                    SelectedPromptItem = new PromptItemViewModel(promptAutoProcessItem.PromptItem);
+                    // PromptItemを取得
+                    PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
+                    SelectedPromptItem = new PromptItemViewModel(promptItem);
                     // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
                     OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
 

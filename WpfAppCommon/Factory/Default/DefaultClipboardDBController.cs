@@ -423,10 +423,12 @@ namespace WpfAppCommon.Factory.Default {
             col.Upsert(promptItem);
         }
         // プロンプトテンプレートを取得する
-        public static PromptItem? GetPromptTemplate(string name) {
+        public PromptItem GetPromptTemplate(ObjectId objectId) {
             var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            return col.FindOne(x => x.Name == name);
+            return col.FindById(objectId);
         }
+
+
         // 引数として渡されたプロンプトテンプレートを削除する
         public void DeletePromptTemplate(PromptItem promptItem) {
             var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);

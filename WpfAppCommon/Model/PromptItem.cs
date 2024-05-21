@@ -1,5 +1,6 @@
-﻿
+
 using LiteDB;
+using WpfAppCommon;
 
 namespace QAChat.Model {
     public class PromptItem {
@@ -12,5 +13,11 @@ namespace QAChat.Model {
 
         // プロンプト
         public string Prompt { get; set; } = "";
+
+        // PromptItemを取得
+        public static PromptItem GetPromptItemById(ObjectId id) {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetPromptTemplate(id);
+
+        }
     }
 }

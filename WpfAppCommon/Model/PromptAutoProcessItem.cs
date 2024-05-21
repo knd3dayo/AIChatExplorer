@@ -6,14 +6,12 @@ using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     public  class PromptAutoProcessItem : SystemAutoProcessItem{
-        public PromptItem? PromptItem { get; set; }
-
+        public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
         public PromptAutoProcessItem() {
         }
         public PromptAutoProcessItem(PromptItem promptItem){
 
-            PromptItem = promptItem;
             Name = promptItem.Name;
             DisplayName = promptItem.Name;
             Description = promptItem.Description;
@@ -22,9 +20,12 @@ namespace WpfAppCommon.Model {
         }
         public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
             
-            if (PromptItem == null) {
+            if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }
+            // PromptItemを取得
+            PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
+
             // promptTextを作成。 PromptItemのPrompt + クリップボードのContent
             string promptText = PromptItem.Prompt + "\n----\n" + clipboardItem.Content;
 

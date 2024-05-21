@@ -70,6 +70,9 @@ namespace WpfAppCommon.Factory {
 
         public ICollection<PromptItem> GetAllPromptTemplates();
 
+        public PromptItem GetPromptTemplate(ObjectId id);
+
+
         public void DeletePromptTemplate(PromptItem promptItem);
 
         //----  RAGSourceItem

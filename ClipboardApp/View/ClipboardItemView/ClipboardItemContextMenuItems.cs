@@ -25,7 +25,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
             Add(new ClipboardAppMenuItem("テキストファイルとして開く", _mainWindowViewModel.OpenSelectedItemAsFileCommand, "Ctrl+Shit+O"));
             Add(new ClipboardAppMenuItem("ピン留め", _mainWindowViewModel.ChangePinCommand));
 
-            Add(new ClipboardAppMenuItem("コピー", _mainWindowViewModel.CopyToClipboardCommand, "Ctrl+C"));
+            Add(new ClipboardAppMenuItem("コピー", _mainWindowViewModel.CopyItemCommand, "Ctrl+C"));
             Add(new ClipboardAppMenuItem("削除", _mainWindowViewModel.DeleteSelectedItemCommand, "Delete"));
 
             // サブメニュー設定
