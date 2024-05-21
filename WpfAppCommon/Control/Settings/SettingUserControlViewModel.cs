@@ -298,7 +298,12 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-
+        // AutoDescriptionNone
+        public bool AutoDescriptionNone {
+            get {
+                return AutoDescription == false && AutoDescriptionWithOpenAI == false;
+            }
+        }
         // AutoDescription
         public bool AutoDescription {
             get {
@@ -312,6 +317,21 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AutoDescriptionWithOpenAI
+        public bool AutoDescriptionWithOpenAI {
+            get {
+                return WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+            }
+            set {
+                WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
+                OnPropertyChanged(nameof(AutoDescriptionWithOpenAI));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+
         // UserMaskedDataInOpenAI
         public bool UserMaskedDataInOpenAI {
             get {

@@ -322,5 +322,17 @@ namespace WpfAppCommon.Properties {
                 this["PreviewMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoDescriptionWithOpenAI {
+            get {
+                return ((bool)(this["AutoDescriptionWithOpenAI"]));
+            }
+            set {
+                this["AutoDescriptionWithOpenAI"] = value;
+            }
+        }
     }
 }

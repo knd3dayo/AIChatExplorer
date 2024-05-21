@@ -214,6 +214,14 @@ namespace WpfAppCommon.Factory.Default {
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
                 }
+            }else if(ClipboardAppConfig.AutoDescriptionWithOpenAI) {
+
+                try {
+                    Tools.Info(StringResources.AutoSetTitle);
+                    ClipboardItem.CreateAutoDescriptionWithOpenAI(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
+                }
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AUTO_TAG is set, automatically set the tags

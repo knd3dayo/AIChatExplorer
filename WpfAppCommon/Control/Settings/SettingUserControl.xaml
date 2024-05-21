@@ -292,13 +292,15 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <!--  Use Spacy  -->
+                    <!--  Extract Entity/Data Masking  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="Spacyを使用"
+                        Text="エンティティ抽出/データマスキング"
                         Visibility="{Binding UsePythonVisibility}" />
                     <CheckBox
                         Grid.Row="0"
@@ -321,6 +323,32 @@
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど"
                         Text="{Binding SpacyModel}"
+                        Visibility="{Binding UseSpacyVisibility}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="10,10,10,0"
+                        Text="OpenAIに渡す文字列をマスキングする"
+                        Visibility="{Binding UseSpacyVisibility}" />
+                    <CheckBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
+                        IsChecked="{Binding UserMaskedDataInOpenAI}"
+                        Visibility="{Binding UseSpacyVisibility}" />
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Margin="10,10,10,0"
+                        Text="自動でタグ生成する"
+                        Visibility="{Binding UseSpacyVisibility}" />
+                    <CheckBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Content="クリップボードの内容から自動的にタグを生成します"
+                        IsChecked="{Binding AutoTag}"
                         Visibility="{Binding UseSpacyVisibility}" />
                 </Grid>
                 <!--  その他の設定  -->
@@ -381,7 +409,7 @@
                         Grid.Row="3"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="PyOCRで画像からテキスト抽出する"
+                        Text="画像処理"
                         Visibility="{Binding UsePythonVisibility}" />
                     <CheckBox
                         Grid.Row="3"
@@ -421,51 +449,40 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="ソースアプリ名が同じアイテムを自動的にマージ" />
+                        Text="自動でマージ" />
                     <CheckBox
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Content="クリップボードへのコピー元アプリが同じ場合、同一フォルダ内のアイテムを自動的にマージします"
                         IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="自動でタグ生成する"
-                        Visibility="{Binding UseSpacyVisibility}" />
-                    <CheckBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="クリップボードの内容から自動的にタグを生成します"
-                        IsChecked="{Binding AutoTag}"
-                        Visibility="{Binding UseSpacyVisibility}" />
 
                     <TextBlock
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="自動でタイトル生成する" />
-                    <CheckBox
+                        Text="自動タイトル生成" />
+                    <RadioButton
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Content="しない"
+                        GroupName="AutoDescription"
+                        IsChecked="{Binding AutoDescriptionNone}" />
+                    <RadioButton
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Content="クリップボードの内容から自動的にタイトルを生成します"
+                        Content="自動的にタイトルを生成する"
+                        GroupName="AutoDescription"
                         IsChecked="{Binding AutoDescription}" />
-
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIに渡す文字列をマスキングする"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <CheckBox
+                    <RadioButton
                         Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
-                        IsChecked="{Binding UserMaskedDataInOpenAI}"
+                        Content="OpenAIを使用して自動的にタイトルを生成する"
+                        GroupName="AutoDescription"
+                        IsChecked="{Binding AutoDescriptionWithOpenAI}"
                         Visibility="{Binding UseOpenAIVisibility}" />
                 </Grid>
             </Grid>

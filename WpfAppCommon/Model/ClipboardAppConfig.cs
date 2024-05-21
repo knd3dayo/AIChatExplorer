@@ -63,6 +63,9 @@ namespace WpfAppCommon.Model {
         // AutoDescription
         public static bool AutoDescription { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoDescription;
 
+        // AutoDescriptionWithOpenAI
+        public static bool AutoDescriptionWithOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+
         // UserMaskedDataInOpenAI
         public static bool UserMaskedDataInOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI;
 

@@ -387,6 +387,29 @@ namespace WpfAppCommon.Model {
                 }
             }
         }
+        // OpenAIを使用してタイトルを生成する
+        public static void CreateAutoDescriptionWithOpenAI(ClipboardItem item) {
+            // TextとImageの場合
+            if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
+                item.Description = $"{item.SourceApplicationTitle}";
+            }
+            // Fileの場合
+            else if (item.ContentType == ClipboardContentTypes.Files) {
+                item.Description = $"{item.SourceApplicationTitle}";
+                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
+                if (item.Content.Length > 20) {
+                    item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
+                } else {
+                    item.Description += " ファイル：" + item.Content;
+                }
+            }
+            // ChatCommandExecuteを実行
+            string prompt = "次の文章はWindowsのクリップボードから取得した文章です。この文章にタイトルをつけてください。タイトルがつけられない場合は何も出力しないでください\n";
+            prompt += "処理対象の文章\n-----------\n" + item.Content;
+            ChatResult result = PythonExecutor.PythonFunctions.OpenAIChat(prompt, []);
+            item.Description += result.Response;
+        }
+
 
         // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
         public void SplitFilePathCommandExecute() {
