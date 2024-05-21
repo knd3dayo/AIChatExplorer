@@ -340,11 +340,11 @@ namespace ClipboardApp {
             CutItemCommandExecute(this);
         });
         // Ctrl + C が押された時の処理
-        public SimpleDelegateCommand CopyToClipboardCommand => new((parameter) => {
+        public SimpleDelegateCommand CopyItemCommand => new((parameter) => {
             CopyToClipboardCommandExecute(this);
         });
         // Ctrl + V が押された時の処理
-        public SimpleDelegateCommand PasteFromClipboardCommand => new((parameter) => {
+        public SimpleDelegateCommand PasteItemCommand => new((parameter) => {
             PasteFromClipboardCommandExecute(this);
         });
 

@@ -48,7 +48,7 @@
         <!--  Paste items into selected folder  -->
         <KeyBinding
             Key="V"
-            Command="{Binding PasteFromClipboardCommand}"
+            Command="{Binding PasteItemCommand}"
             Modifiers="Control" />
         <!--  Merge items into selected item  -->
         <KeyBinding
@@ -63,7 +63,7 @@
         <!--  Copy selected item to clipboard  -->
         <KeyBinding
             Key="C"
-            Command="{Binding CopyToClipboardCommand}"
+            Command="{Binding CopyItemCommand}"
             Modifiers="Control" />
         <!--  Copy selected item to clipboard with Cut flag set to True  -->
         <KeyBinding
@@ -323,6 +323,7 @@
                     Grid.Column="2"
                     HorizontalAlignment="Stretch"
                     ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
+                    CopyItemCommand="{Binding CopyItemCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
                     PreviewModeVisibility="{Binding PreviewModeVisibility}"

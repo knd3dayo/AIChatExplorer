@@ -50,7 +50,14 @@ namespace ClipboardApp.Control {
         }
         public static readonly DependencyProperty OpenSelectedItemCommandProperty =
             DependencyProperty.Register(nameof(OpenSelectedItemCommand), typeof(ICommand), typeof(MainWindowGridView1));
+
+        // CopyItemCommand
+        public ICommand CopyItemCommand {
+            get { return (ICommand)GetValue(CopyItemCommandProperty); }
+            set { SetValue(CopyItemCommandProperty, value); }
+        }
+        public static readonly DependencyProperty CopyItemCommandProperty =
+            DependencyProperty.Register(nameof(CopyItemCommand), typeof(ICommand), typeof(MainWindowGridView1));
+
     }
-
-
 }

@@ -66,6 +66,11 @@
                     Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
                     CommandParameter="{Binding}"
                     MouseAction="LeftDoubleClick" />
+                <KeyBinding
+                    Key="C"
+                    Command="{Binding CopyItemCommand, ElementName=Root}"
+                    CommandParameter="{Binding SelectedItem}"
+                    Modifiers="Ctrl" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <!--  ContentType  -->
