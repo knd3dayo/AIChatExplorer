@@ -101,7 +101,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.MaskDataCommandExecute());
         }
         public void SetDataObject() {
-            ClipboardAppFactory.Instance.GetClipboardController().SetDataObject(this.ClipboardItem);
+            MainWindowViewModel.ClipboardController.SetDataObject(this.ClipboardItem);
 
         }
         // GUI関連

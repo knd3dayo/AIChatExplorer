@@ -48,6 +48,9 @@ namespace ClipboardApp {
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
         }
 
+        // ClipboardController
+        public static ClipboardController ClipboardController { get; } = new();
+
         // プログレスインジケータ表示更新用のアクション
         // 
         public static Action<bool> UpdateProgressCircleVisibility { get; set; } = (visible) => { };

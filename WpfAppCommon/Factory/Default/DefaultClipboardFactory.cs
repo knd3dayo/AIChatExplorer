@@ -1,13 +1,6 @@
-﻿namespace WpfAppCommon.Factory.Default {
+namespace WpfAppCommon.Factory.Default {
     public class DefaultClipboardFactory : IClipboardFactory {
-        private IClipboardController? _clipboardController;
-
-        public IClipboardController GetClipboardController() {
-            if (_clipboardController == null) {
-                _clipboardController = new DefaultClipboardController();
-            }
-            return _clipboardController;
-        }
+        
         private IClipboardDBController? _clipboardDBController;
 
         public IClipboardDBController GetClipboardDBController() {

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Windows;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
@@ -5,11 +6,11 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfAppCommon.Factory.Default {
+namespace ClipboardApp {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
-    class DefaultClipboardController : IClipboardController {
+    public class ClipboardController {
         //--------------------------------------------------------------------------------
 
         // String definition
@@ -78,6 +79,11 @@ namespace WpfAppCommon.Factory.Default {
                 return;
             }
             if (_clipboard == null) {
+                return;
+            }
+            // このアプリケーションのクリップボード操作は無視
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            if (e.SourceApplication.Name == assembly.Name + ".exe") {
                 return;
             }
             // Is the content copied of text type?
