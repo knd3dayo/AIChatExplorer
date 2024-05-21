@@ -370,7 +370,7 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        public static void CreateAutoDescription(ClipboardItem item) {
+        public static void CreateAutoTitle(ClipboardItem item) {
             // TextとImageの場合
             if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";
@@ -387,7 +387,7 @@ namespace WpfAppCommon.Model {
             }
         }
         // OpenAIを使用してタイトルを生成する
-        public static void CreateAutoDescriptionWithOpenAI(ClipboardItem item) {
+        public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
             // TextとImageの場合
             if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";

@@ -139,10 +139,10 @@ namespace ClipboardApp.View.ClipboardItemView {
             get {
                 string result = "";
                 if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
-                    result += "【" + ClipboardItem.Description + "】";
+                    result += ClipboardItem.Description;
                 }
                 if (ClipboardItem.Tags.Count > 0) {
-                    result += "タグ：" + string.Join(",", ClipboardItem.Tags);
+                    result += " タグ：" + string.Join(",", ClipboardItem.Tags);
                 }
                 return result;
             }

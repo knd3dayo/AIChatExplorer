@@ -313,8 +313,10 @@
                     Grid.Column="2"
                     HorizontalAlignment="Stretch"
                     ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
+                    ExecuteSelectedTextCommand="{Binding ExecuteSelectedTextCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
+                    SelectTextCommand="{Binding SelectTextCommand}"
                     Visibility="{Binding ExpandModeVisibility}" />
 
                 <lc:MainWindowGridView1
@@ -324,9 +326,11 @@
                     HorizontalAlignment="Stretch"
                     ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
                     CopyItemCommand="{Binding CopyItemCommand}"
+                    ExecuteSelectedTextCommand="{Binding ExecuteSelectedTextCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
                     PreviewModeVisibility="{Binding PreviewModeVisibility}"
+                    SelectTextCommand="{Binding SelectTextCommand}"
                     Visibility="{Binding CompactModeVisibility}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />

@@ -216,7 +216,7 @@ namespace ClipboardApp {
             if (ClipboardAppConfig.AutoDescription) {
                 try {
                     Tools.Info(StringResources.AutoSetTitle);
-                    ClipboardItem.CreateAutoDescription(item);
+                    ClipboardItem.CreateAutoTitle(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
                 }
@@ -224,7 +224,7 @@ namespace ClipboardApp {
 
                 try {
                     Tools.Info(StringResources.AutoSetTitle);
-                    ClipboardItem.CreateAutoDescriptionWithOpenAI(item);
+                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
                 }

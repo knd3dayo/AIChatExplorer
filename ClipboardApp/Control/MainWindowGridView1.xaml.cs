@@ -59,5 +59,21 @@ namespace ClipboardApp.Control {
         public static readonly DependencyProperty CopyItemCommandProperty =
             DependencyProperty.Register(nameof(CopyItemCommand), typeof(ICommand), typeof(MainWindowGridView1));
 
+        // SelectTextCommand
+        public ICommand SelectTextCommand {
+            get { return (ICommand)GetValue(SelectTextCommandProperty); }
+            set { SetValue(SelectTextCommandProperty, value); }
+        }
+        public static readonly DependencyProperty SelectTextCommandProperty =
+            DependencyProperty.Register(nameof(SelectTextCommand), typeof(ICommand), typeof(MainWindowGridView1));
+
+        // ExecuteSelectedTextCommand
+        public ICommand ExecuteSelectedTextCommand {
+            get { return (ICommand)GetValue(ExecuteSelectedTextCommandProperty); }
+            set { SetValue(ExecuteSelectedTextCommandProperty, value); }
+        }
+        public static readonly DependencyProperty ExecuteSelectedTextCommandProperty =
+            DependencyProperty.Register(nameof(ExecuteSelectedTextCommand), typeof(ICommand), typeof(MainWindowGridView1));
+
     }
 }

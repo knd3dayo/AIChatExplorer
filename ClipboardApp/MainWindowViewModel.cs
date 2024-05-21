@@ -227,6 +227,33 @@ namespace ClipboardApp {
             OnPropertyChanged(propertyName);
         }
 
+
+        public TextSelector TextSelector { get; } = new();
+
+        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
+        public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
+
+            if (parameter is not TextBox textBox) {
+                return;
+            }
+
+            // テキスト選択
+            TextSelector.SelectText(textBox);
+            return;
+        });
+        // 選択中のテキストをプロセスとして実行
+        public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
+
+            if (parameter is not TextBox textbox) {
+                return;
+            }
+
+            // 選択中のテキストをプロセスとして実行
+            TextSelector.ExecuteSelectedText(textbox);
+
+        });
+
+
         //--------------------------------------------------------------------------------
         // コマンド
         //--------------------------------------------------------------------------------
