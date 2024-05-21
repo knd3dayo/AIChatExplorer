@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:qc="clr-namespace:WpfAppCommon.Control.QAChat;assembly=WpfAppCommon"
     Title="{Binding Title}"
-    Width="800"
+    Width="900"
     Height="600"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
@@ -123,7 +123,7 @@
                 <TabItem
                     Width="Auto"
                     Height="Auto"
-                    Margin="0"
+                    Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
                     Header="テキスト">
@@ -163,7 +163,7 @@
                 <TabItem
                     Width="Auto"
                     Height="Auto"
-                    Margin="0"
+                    Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
                     Header="ファイル"
@@ -288,7 +288,7 @@
                 <TabItem
                     Width="Auto"
                     Height="Auto"
-                    Margin="0"
+                    Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
                     Header="イメージ"
@@ -311,7 +311,7 @@
                 <TabItem
                     Width="Auto"
                     Height="Auto"
-                    Margin="0"
+                    Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
                     Header="OpenAIチャット">
