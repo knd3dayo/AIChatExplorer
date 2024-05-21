@@ -40,25 +40,27 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock
+                            <TextBox
                                 Name="DescriptionText"
                                 Grid.Row="0"
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Stretch"
                                 FontSize="10pt"
-                                Text="{Binding Path=DescriptionText}"
-                                TextTrimming="None"
+                                IsReadOnly="True"
+                                Text="{Binding Path=DescriptionText, Mode=OneWay}"
                                 Visibility="{Binding DescriptionVisibility}" />
-                            <TextBlock
+                            <TextBox
                                 Name="clipboardText"
                                 Grid.Row="1"
                                 MinHeight="50"
                                 MaxHeight="100"
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Stretch"
+                                materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                                BorderThickness="0"
                                 FontSize="8pt"
-                                Text="{Binding Path=Content}"
-                                TextTrimming="CharacterEllipsis"
+                                IsReadOnly="True"
+                                Text="{Binding Path=Content, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                             <Image
                                 Name="image1"

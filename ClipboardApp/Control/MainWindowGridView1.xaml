@@ -131,15 +131,15 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock
+                <TextBox
                     Name="DescriptionText"
                     Grid.Row="0"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
                     FontSize="10pt"
-                    Text="{Binding Path=SelectedItem.DescriptionText}"
-                    TextTrimming="None" />
+                    IsReadOnly="True"
+                    Text="{Binding Path=SelectedItem.DescriptionText, Mode=OneWay}" />
                 <Image
                     Name="image1"
                     Grid.Row="1"
@@ -155,14 +155,16 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
                     VerticalScrollBarVisibility="Auto">
-                    <TextBlock
+                    <TextBox
                         Name="clipboardText"
                         Margin="3,3,3,3"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Top"
+                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
+                        BorderThickness="0"
                         FontSize="8pt"
-                        Text="{Binding Path=SelectedItem.Content}"
-                        TextTrimming="CharacterEllipsis"
+                        IsReadOnly="True"
+                        Text="{Binding Path=SelectedItem.Content, Mode=OneWay}"
                         TextWrapping="Wrap" />
                 </ScrollViewer>
                 <Separator
