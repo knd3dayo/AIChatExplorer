@@ -315,6 +315,8 @@ namespace WpfAppCommon.PythonIF {
                 // VectorDBItemのリストをJSON文字列に変換
                 string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
 
+                Tools.Info("LangChain実行");
+                Tools.Info($"プロンプト:{prompt}");
                 // open_ai_chat関数を呼び出す
                 PyDict pyDict = function_object(props, vectorDBItemsJson, prompt, chatItemsJSon);
                 // outputを取得
@@ -323,6 +325,7 @@ namespace WpfAppCommon.PythonIF {
                 string? verbose = pyDict.GetItem("verbose")?.ToString();
                 if (verbose != null) {
                     chatResult.Verbose = verbose;
+                    Tools.Info($"verbose:{verbose}");
                 }
 
                 // referenced_contentsを取得
@@ -367,6 +370,7 @@ namespace WpfAppCommon.PythonIF {
                 }
                 // ChatResultに設定
                 chatResult.Response = resultString;
+                Tools.Info($"レスポンス:{resultString}");
             });
             return chatResult;
 
@@ -450,11 +454,14 @@ namespace WpfAppCommon.PythonIF {
                 string function_name = "openai_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 string json_string = ChatItem.ToJson(chatHistoryList);
-
+                Tools.Info("OpenAI実行");
+                Tools.Info($"プロンプト:{prompt}");
                 // open_ai_chat関数を呼び出す
                 string resultString = function_object(props, json_string);
                 // ChatResultに設定
                 chatResult.Response = resultString;
+                Tools.Info($"レスポンス:{resultString}");
+
             });
             return chatResult;
 
@@ -518,7 +525,7 @@ namespace WpfAppCommon.PythonIF {
                 // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
                 string filePath = Path.Combine(workingDirPath, fileStatus.Path);
                 if (!File.Exists(filePath)) {
-                    throw new ThisApplicationException(StringResources.FileNotFound + ":" + filePath);
+                    Tools.Info($"{StringResources.FileNotFound} : {filePath}");
                 }
                 // propsにVectorDBURLを追加
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
