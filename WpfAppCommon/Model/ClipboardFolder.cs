@@ -1,16 +1,16 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
-using WpfAppCommon.Factory;
-using WpfAppCommon.Utils;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
+using WpfAppCommon.Factory;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     public class ClipboardFolder : ObservableObject {
 
         // アプリ共通の検索条件
-        public static SearchRule GlobalSearchCondition { get; set; } = new ();
+        public static SearchRule GlobalSearchCondition { get; set; } = new();
 
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
@@ -83,7 +83,7 @@ namespace WpfAppCommon.Model {
             ClipboardDatabaseController.DeleteFolder(child);
         }
         public ClipboardFolder CreateChild(string collectionName, string displayName) {
-            ClipboardFolder child = new (this, collectionName, displayName);
+            ClipboardFolder child = new(this, collectionName, displayName);
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolderRelation(this, child);
 
@@ -272,6 +272,10 @@ namespace WpfAppCommon.Model {
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
         public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
+            // SourceApplicationNameが空の場合は何もしない
+            if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
+                return;
+            }
             // NewItemのSourceApplicationTitleが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
                 return;
@@ -280,9 +284,10 @@ namespace WpfAppCommon.Model {
                 return;
             }
             List<ClipboardItem> sameTitleItems = [];
-            // マージ先のアイテムのうち、SourceApplicationTitleが一致するアイテムを取得
+            // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
             foreach (var item in Items) {
-                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle) {
+                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
+                    && newItem.SourceApplicationName == item.SourceApplicationName ) {
                     // TypeがTextのアイテムのみマージ
                     if (item.ContentType == ClipboardContentTypes.Text) {
                         sameTitleItems.Add(item);

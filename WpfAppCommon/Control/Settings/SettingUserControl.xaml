@@ -454,7 +454,7 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Content="クリップボードへのコピー元アプリが同じ場合、同一フォルダ内のアイテムを自動的にマージします"
+                        Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
                         IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
 
                     <TextBlock
