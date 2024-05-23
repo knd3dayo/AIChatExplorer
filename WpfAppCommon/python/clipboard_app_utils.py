@@ -1,10 +1,9 @@
 import traceback
 import os, json
 from PIL import Image
-import pyocr
-import io
+from io import StringIO
 import sys
-import tempfile
+
 
 sys.path.append("python")
 # sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
@@ -26,6 +25,9 @@ import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_spacy, clipboar
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 
+# log出力用
+def log(msg):
+    print(msg)
 
 def extract_text(filename):
     import clipboard_app_extractor
@@ -46,8 +48,20 @@ def openai_embedding(props: dict, input_text: str):
 
 
 def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+    
     import langchain_util
-    return langchain_util.langchain_chat(props, vector_db_items_json, prompt, chat_history_json)
+    result = langchain_util.langchain_chat(props, vector_db_items_json, prompt, chat_history_json)
+    # dict["log"]にログを追加
+    result["log"] = buffer.getvalue()
+    # strout,stderrorを元に戻す
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+    
+    return result
 
 def list_openai_models():
     return clipboard_app_openai.list_openai_models()

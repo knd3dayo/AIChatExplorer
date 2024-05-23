@@ -129,7 +129,7 @@
                 Margin="0,0,0,0"
                 VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
                     <RowDefinition Height="5" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -139,7 +139,7 @@
                     Margin="0,0,0,0"
                     VerticalScrollBarVisibility="Auto">
                     <TextBox
-                        MinHeight="50"
+                        MinHeight="20"
                         Margin="10,0,10,0"
                         materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
                         AcceptsReturn="True"

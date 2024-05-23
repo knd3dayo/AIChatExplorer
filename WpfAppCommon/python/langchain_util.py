@@ -1,5 +1,5 @@
 
-from io import BytesIO
+from io import BytesIO, StringIO
 from math import fabs
 import os, json, sys
 from langchain.prompts import PromptTemplate
@@ -315,4 +315,8 @@ if __name__ == '__main__':
         print(page_source)
         print(page_content)
         print('---------------------')
+    
+    verbose = result1.get("verbose", "")
+    print(verbose)
+
 

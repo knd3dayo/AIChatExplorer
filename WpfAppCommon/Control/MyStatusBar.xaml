@@ -28,6 +28,7 @@
     <Grid>
         <StatusBar
             Name="statusBar1"
+            MaxHeight="30"
             Background="{DynamicResource MaterialDesign.Brush.Primary}"
             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}">
             <StatusBarItem>

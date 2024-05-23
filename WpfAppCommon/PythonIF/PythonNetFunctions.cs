@@ -327,7 +327,11 @@ namespace WpfAppCommon.PythonIF {
                     chatResult.Verbose = verbose;
                     Tools.Info($"verbose:{verbose}");
                 }
-
+                // logを取得
+                string? log = pyDict.GetItem("log")?.ToString();
+                if (log != null) {
+                    Tools.Info($"log:{log}");
+                }
                 // referenced_contentsを取得
                 PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
                 if (referencedContents != null) {
