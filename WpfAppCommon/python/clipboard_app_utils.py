@@ -9,9 +9,9 @@ sys.path.append("python")
 # sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
 # see: https://github.com/huggingface/transformers/issues/24047
 if sys.stdout is None:
-    sys.stdout = open(os.devnull, "w")
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
 if sys.stderr is None:
-    sys.stderr = open(os.devnull, "w")
+    sys.stderr = open(os.devnull, "w", encoding="utf-8")
 
 # FaissのIndex更新後にretrieveを行うと
 # OMP: Error #15: Initializing libomp140.x86_64.dll, but found libiomp5md.dll already initialized.
@@ -25,9 +25,6 @@ import clipboard_app_sqlite, clipboard_app_openai, clipboard_app_spacy, clipboar
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 
-# log出力用
-def log(msg):
-    print(msg)
 
 def extract_text(filename):
     import clipboard_app_extractor
@@ -60,6 +57,7 @@ def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_hi
     # strout,stderrorを元に戻す
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
+    buffer.close()
     
     return result
 
@@ -71,8 +69,15 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list)
 
 # vector db関連
 def update_index(props, mode, workdir, relative_path, url):
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+
     import file_processor
-    return file_processor.update_index(props, mode, workdir, relative_path,  url)
+    result = file_processor.update_index(props, mode, workdir, relative_path,  url)
+
+    return result
 
 # pyocr関連
 def extract_text_from_image(byte_data,tessercat_exe_path):

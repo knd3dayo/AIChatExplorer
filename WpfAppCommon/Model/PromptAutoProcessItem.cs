@@ -16,6 +16,7 @@ namespace WpfAppCommon.Model {
             DisplayName = promptItem.Name;
             Description = promptItem.Description;
             Type = TypeEnum.PromptTemplate;
+            PromptItemId = promptItem.Id;
 
         }
         public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {

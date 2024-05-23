@@ -5,7 +5,7 @@ using WpfAppCommon;
 namespace QAChat.Model {
     public class PromptItem {
 
-        public ObjectId? Id { get; set; }
+        public ObjectId Id { get; set; } = ObjectId.Empty;
         // 名前
         public string Name { get; set; } = "";
         // 説明
