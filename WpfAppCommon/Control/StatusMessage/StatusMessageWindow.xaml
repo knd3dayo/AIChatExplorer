@@ -51,6 +51,7 @@
             Margin="10,10,10,10"
             VerticalAlignment="Top"
             CanContentScroll="False"
+            HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Auto">
             <TextBox
                 Margin="10,10,10,10"
