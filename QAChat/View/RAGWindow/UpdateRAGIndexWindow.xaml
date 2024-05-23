@@ -177,8 +177,8 @@
                 Text="インデックス化処理の状況詳細" />
             <ScrollViewer
                 Grid.Row="3"
-                Height="150"
                 Margin="10,0,10,0"
+                VerticalAlignment="Top"
                 VerticalScrollBarVisibility="Auto">
                 <TextBox
                     IsReadOnly="True"
