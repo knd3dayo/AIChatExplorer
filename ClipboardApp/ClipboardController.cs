@@ -81,18 +81,25 @@ namespace ClipboardApp {
             if (_clipboard == null) {
                 return;
             }
-            // このアプリケーションのクリップボード操作は無視
-            var assembly = Assembly.GetExecutingAssembly().GetName();
-            if (e.SourceApplication.Name == assembly.Name + ".exe") {
-                return;
-            }
             // Is the content copied of text type?
             if (e.ContentType == SharpClipboard.ContentTypes.Text) {
+                // このアプリケーションのクリップボード操作は無視
+                var assembly = Assembly.GetExecutingAssembly().GetName();
+                if (e.SourceApplication.Name == assembly.Name + ".exe") {
+                    return;
+                }
+
                 // Get the cut/copied text.
                 ProcessClipboardItem(ClipboardContentTypes.Text, _clipboard.ClipboardText, null, e);
             }
             // Is the content copied of file type?
             else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
+                // このアプリケーションのクリップボード操作は無視
+                var assembly = Assembly.GetExecutingAssembly().GetName();
+                if (e.SourceApplication.Name == assembly.Name + ".exe") {
+                    return;
+                }
+
                 // Get the cut/copied file/files.
                 for (int i = 0; i < _clipboard.ClipboardFiles.Count; i++) {
                     ProcessClipboardItem(ClipboardContentTypes.Files, _clipboard.ClipboardFiles[i], null, e);

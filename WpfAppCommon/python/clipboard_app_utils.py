@@ -57,7 +57,6 @@ def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_hi
     # strout,stderrorを元に戻す
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
-    buffer.close()
     
     return result
 
@@ -80,8 +79,22 @@ def update_index(props, mode, workdir, relative_path, url):
     return result
 
 # pyocr関連
-def extract_text_from_image(byte_data,tessercat_exe_path):
-    return clipboard_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
+def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+    
+    result: str =  clipboard_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
+    # strout,stderrorを元に戻す
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+    
+    result_dict = {"text": result, "log": buffer.getvalue()}
+    return result_dict
+    
+    
+    
 
 
 # run_script関数

@@ -259,12 +259,29 @@ namespace WpfAppCommon.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text_from_image";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                // extract_text_from_image関数を呼び出す
                 ImageConverter imageConverter = new();
                 object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]))
                 ?? throw new ThisApplicationException(StringResources.ImageByteFailed);
                 byte[] bytes = (byte[])bytesObject;
-                result = function_object(bytes, tesseractExePath);
+                // extract_text_from_image関数を呼び出す。戻り値は{ "text": "抽出したテキスト" , "log": "ログ" }の形式
+                Dictionary<string, string> dict = new();
+                PyDict? pyDict = function_object(bytes, tesseractExePath);
+                if (pyDict == null) {
+                    throw new ThisApplicationException("pyDict is null");
+                }
+                // textを取得
+                PyObject? textObject = pyDict.GetItem("text");
+                if (textObject == null) {
+                    throw new ThisApplicationException("textObject is null");
+                }
+                result = textObject.ToString() ?? "";
+                // logを取得
+                PyObject? logObject = pyDict.GetItem("log");
+                if (logObject != null) {
+                    string log = logObject.ToString() ?? "";
+                    Tools.Info($"log:{log}");
+                }
+
             });
             return result;
         }
