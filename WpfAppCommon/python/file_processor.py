@@ -1,4 +1,4 @@
-import sys, json
+import sys, json, os
 sys.path.append('python')
 from file_loader import FileLoader
 from langchain.docstore.document import Document
@@ -8,12 +8,15 @@ from env_to_props import get_props
 
 
 def update_index(props, mode, workdir, relative_path, url):
-    # sys.stdoutとsys.stderrをutf-8に設定
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
     vector_db_type_string = props.get("VectorDBType")
     vector_db_url = props.get("VectorDBURL")
     if mode == "update":
+        # ファイルの存在チェック
+        file_path = os.path.join(workdir, relative_path)
+        if not os.path.exists(file_path):
+            print("ファイルが存在しません。", file=sys.stderr)
+            return 0
+        
         # ドキュメントを取得
         loader = FileLoader(workdir, relative_path, url)
         documents = loader.get_document_list()
