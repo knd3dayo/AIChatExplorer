@@ -2,9 +2,9 @@ import sys, json, os
 sys.path.append('python')
 from file_loader import FileLoader
 from langchain.docstore.document import Document
-from langchain_openai_client import LangChainOpenAIClient
+from langchain_client import LangChainOpenAIClient
 import langchain_util
-from env_to_props import get_props
+from openai_props import get_props
 
 
 def update_index(props, mode, workdir, relative_path, url):

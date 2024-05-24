@@ -7,7 +7,7 @@ from langchain_community.callbacks import get_openai_callback
 import chromadb
 
 sys.path.append("python")
-from langchain_openai_client import LangChainOpenAIClient
+from langchain_client import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
 
 class LangChainVectorDBChroma(LangChainVectorDB):
@@ -24,14 +24,14 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             os.makedirs(_vector_db_url)
         client = chromadb.PersistentClient(path=_vector_db_url)
         self.db = Chroma(
-            embedding_function = self.langchain_openai_client.embeddings, 
+            embedding_function = self.langchain_openai_client.get_embedding_client(), 
             client=client
             )
 
     def save(self, _vector_db_url, documents:list=None):
         if not _vector_db_url:
             return
-        self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.embeddings)
+        self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
         
     def delete(self, sources:list=None):
@@ -44,15 +44,15 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         return 0    
  
 if __name__ == "__main__":
-    from langchain_openai_client import LangChainOpenAIClient
+    from langchain_client import LangChainOpenAIClient
     from langchain.docstore.document import Document
     from langchain_community.callbacks import get_openai_callback
     from langchain_community.vectorstores import FAISS
     from langchain_core.vectorstores import VectorStore
     import os
-    # env_to_props
-    import env_to_props
-    props = env_to_props.get_props()
+    # clipboard_app_props
+    import openai_props
+    props = openai_props.get_props()
 
     langchain_openai_client = LangChainOpenAIClient(props)
     vector_db_url = "vector_db"

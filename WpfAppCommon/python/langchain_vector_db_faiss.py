@@ -6,7 +6,7 @@ from langchain.docstore.document import Document
 from langchain_community.callbacks import get_openai_callback
 
 sys.path.append("python")
-from langchain_openai_client import LangChainOpenAIClient
+from langchain_client import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
 
 class LangChainVectorDBFaiss(LangChainVectorDB):

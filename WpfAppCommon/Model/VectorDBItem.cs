@@ -31,20 +31,20 @@ namespace WpfAppCommon.Model {
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
-        [JsonPropertyName("name")]
+        [JsonPropertyName("Name")]
         public string Name { get; set; } = "";
         // 説明
-        [JsonPropertyName("description")]
+        [JsonPropertyName("VectorDBDescription")]
         public string Description { get; set; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
-        [JsonPropertyName("vector_db_url")]
+        [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";
 
         [JsonIgnore]
         public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Faiss;
 
         // VectorDBTypeString
-        [JsonPropertyName("vector_db_type_string")]
+        [JsonPropertyName("VectorDBTypeString")]
         public string VectorDBTypeString {
             get {
                 return Type.ToString();

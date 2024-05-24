@@ -7,7 +7,7 @@ def identify_type(filename):
     m = Magika()
     # ファイルのbyte列を取得
     with open(filename, "rb") as f:
-        byte_data = f.read(4000)
+        byte_data = f.read()
     res = m.identify_bytes(byte_data)
     return res
 
@@ -138,12 +138,3 @@ def process_text(res, filename):
         
     return result
 
-# main
-if __name__ == "__main__":
-    import sys
-
-    # ファイル名を指定してテキストを抽出する
-    filename = sys.argv[1]
-    print(extract_text(filename))
-    
-            
