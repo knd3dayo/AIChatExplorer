@@ -410,8 +410,9 @@ namespace WpfAppCommon.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_embedding";
                 dynamic function_object = GetPythonFunction(ps, function_name);
+                string propsJson = JsonSerializer.Serialize(ClipboardAppConfig.CreateOpenAIProperties());
                 // open_ai_chat関数を呼び出す
-                function_object(text, WpfAppCommon.Model.ClipboardAppConfig.CreateOpenAIProperties());
+                function_object(text, propsJson);
                 // System.Windows.MessageBox.Show(result);
             });
         }
@@ -482,11 +483,17 @@ namespace WpfAppCommon.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                string json_string = ChatItem.ToJson(chatHistoryList);
+                
+                string chat_history_json = ChatItem.ToJson(chatHistoryList);
+                string propsJson = JsonSerializer.Serialize(props);
+
                 Tools.Info("OpenAI実行");
                 Tools.Info($"プロンプト:{prompt}");
+                Tools.Info($"チャット履歴:{chat_history_json}");
+                Tools.Info($"プロパティ情報 {propsJson}");
+
                 // open_ai_chat関数を呼び出す
-                string resultString = function_object(props, json_string);
+                string resultString = function_object(propsJson, chat_history_json);
                 // ChatResultに設定
                 chatResult.Response = resultString;
                 Tools.Info($"レスポンス:{resultString}");
@@ -513,8 +520,10 @@ namespace WpfAppCommon.PythonIF {
                 string function_name = "openai_chat_with_vision";
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
+                // propsをJSON文字列に変換
+                string propsJson = JsonSerializer.Serialize(props);
                 // open_ai_chat関数を呼び出す
-                string resultString = function_object(props, prompt, imageFileNames);
+                string resultString = function_object(propsJson, prompt, imageFileNames);
                 // ChatResultに設定
                 chatResult.Response = resultString;
             });

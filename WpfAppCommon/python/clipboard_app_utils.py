@@ -41,29 +41,33 @@ def extract_entity(text, props = {}):
 ########################
 # openai関連
 ########################
-def openai_chat(props: dict, input_json: str, json_mode:bool = False):
+def openai_chat(props_json: str, input_json: str, json_mode:bool = False):
     # OpenAIPorpsを生成
+    props = json.loads(props_json)
     openai_props = OpenAIProps(props)
     # OpenAIClientを生成
     openai_client = OpenAIClient(openai_props)
 
     return openai_client.openai_chat(input_json, json_mode)
 
-def openai_embedding(props: dict, input_text: str):
+def openai_embedding(props_json: str, input_text: str):
     # OpenAIPorpsを生成
+    props = json.loads(props_json)
     openai_props = OpenAIProps(props)
     # OpenAIClientを生成
     openai_client = OpenAIClient(openai_props)
 
     return openai_client.openai_embedding(input_text)
 
-def list_openai_models(props: dict):
+def list_openai_models(props_json: str):
+    props = json.loads(props_json)
     openai_props = OpenAIProps(props)
     client = OpenAIClient(openai_props)
     return client.list_openai_models()
 
-def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list):
+def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:list):
     # OpenAIPorpsを生成
+    props = json.loads(props_json)
     openai_props = OpenAIProps(props)
     # OpenAIClientを生成
     client = OpenAIClient(openai_props)
