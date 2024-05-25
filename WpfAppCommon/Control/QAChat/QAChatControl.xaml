@@ -210,7 +210,7 @@
             </StackPanel>
         </Grid>
         <ProgressBar
-            Grid.Row="1"
+            Grid.Row="0"
             IsIndeterminate="{Binding IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />
