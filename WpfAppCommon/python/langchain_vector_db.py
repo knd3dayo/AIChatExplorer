@@ -20,7 +20,7 @@ class LangChainVectorDB:
         pass
 
     def save(self, _vector_db_url, documents:list=None):
-        print("ok")
+        pass
 
     def delete(self, _vector_db_url, sources:list=None):
         pass

@@ -29,6 +29,8 @@
     <None Remove="python\openai_client.py" />
     <None Remove="python\openai_props.py" />
     <None Remove="python\template.py" />
+    <None Remove="python\test_langchain_vector_db_chroma.py" />
+    <None Remove="python\test_openai_client.py" />
     <None Remove="python\tools.json" />
     <None Remove="TestData\extract_test.png" />
     <None Remove="TestData\extract_test.txt" />
@@ -68,6 +70,9 @@
     <EmbeddedResource Include="python\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python\test_langchain_vector_db_chroma.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -75,6 +80,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\test_openai_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\openai_client.py">

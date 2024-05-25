@@ -47,8 +47,6 @@ if __name__ == "__main__":
     from langchain_client import LangChainOpenAIClient
     from langchain.docstore.document import Document
     from langchain_community.callbacks import get_openai_callback
-    from langchain_community.vectorstores import FAISS
-    from langchain_core.vectorstores import VectorStore
     import os
     # clipboard_app_props
     import openai_props
