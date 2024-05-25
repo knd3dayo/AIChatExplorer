@@ -32,34 +32,17 @@
     </UserControl.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel
-            Grid.Row="0"
-            Margin="10,10,0,0"
-            HorizontalAlignment="Left"
-            Orientation="Vertical">
-            <ComboBox materialDesign:HintAssist.Hint="モード" SelectedIndex="{Binding Mode}">
-                <ComboBoxItem Content="通常" />
-                <ComboBoxItem Content="RAG" />
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-        </StackPanel>
-
-        <Grid Grid.Row="1" Margin="0,0,0,0">
+        <Grid Grid.Row="0" Margin="0,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="5" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <ListBox
                 Grid.Row="0"
@@ -129,7 +112,7 @@
                 Margin="0,0,0,0"
                 VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="20" />
+                    <RowDefinition Height="20" MinHeight="20" />
                     <RowDefinition Height="5" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
@@ -186,26 +169,46 @@
             </Grid>
         </Grid>
 
-        <StackPanel
-            Grid.Row="2"
-            Margin="0,0,0,0"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal">
-            <Button
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ComboBox
+                Grid.Column="0"
                 Margin="10,10,10,10"
-                Command="{Binding SendChatCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="送信" />
-            <Button
-                Margin="10,10,10,10"
-                Command="{Binding ClearChatCommand}"
-                Content="クリア" />
-            <Button
-                Margin="10,10,10,10"
-                Command="{Binding CloseCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="閉じる" />
-        </StackPanel>
+                materialDesign:HintAssist.Hint="モード"
+                SelectedIndex="{Binding Mode}">
+                <ComboBoxItem Content="通常" />
+                <ComboBoxItem Content="RAG" />
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ComboBox>
+
+            <StackPanel
+                Grid.Column="1"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding SendChatCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="送信" />
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding ClearChatCommand}"
+                    Content="クリア" />
+                <Button
+                    Margin="10,10,10,10"
+                    Command="{Binding CloseCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="閉じる" />
+            </StackPanel>
+        </Grid>
         <ProgressBar
             Grid.Row="1"
             IsIndeterminate="{Binding IsIndeterminate}"
