@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
-import os
+import os, json
+import base64
+from mimetypes import guess_type
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
@@ -110,4 +112,59 @@ def get_vector_db_settings() -> VectorDBProps:
     }
     vectorDBProps = VectorDBProps(props)
     return vectorDBProps
+
+# Function to encode a local image into data URL 
+def local_image_to_data_url(image_path) -> str:
+    # Guess the MIME type of the image based on the file extension
+    mime_type, _ = guess_type(image_path)
+    if mime_type is None:
+        mime_type = 'application/octet-stream'  # Default MIME type if none is found
+
+    # Read and encode the image file
+    with open(image_path, "rb") as image_file:
+        base64_encoded_data = base64.b64encode(image_file.read()).decode('utf-8')
+
+    # Construct the data URL
+    return f"data:{mime_type};base64,{base64_encoded_data}"
+
+
     
+# openai_chat用のパラメーターを作成する
+def create_openai_chat_parameter_dict(model: str, messages_json: str, templature : float = None, json_mode : bool = False) -> dict:
+    params = {}
+    params["model"] = model
+    params["messages"] = json.loads(messages_json)
+    if templature:
+        params["temperature"] = templature
+    if json_mode:
+        params["response_format"] = {"type": "json_object"}
+    return params
+
+# openai_chat_with_vision用のパラメーターを作成する
+def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image_file_name_list: list, templature : float = None, json_mode : bool = False, max_tokens = None) -> dict:
+    # messagesの作成
+    messages = []
+    content = [{"type": "text", "text": prompt}]
+
+    for image_file_name in image_file_name_list:
+        image_data_url = local_image_to_data_url(image_file_name)
+        content.append({"type": "image_url", "image_url": {"url": image_data_url}})
+
+    role_user_dict = {"role": "user", "content": content}
+    messages.append(role_user_dict)
+
+    # 入力パラメーターの設定
+    params = {}
+    params["messages"] = messages
+    params["model"] = model
+    if templature:
+        params["temperature"] = templature
+    if json_mode:
+        params["response_format"] = {"type": "json_object"}
+    if max_tokens:
+        params["max_tokens"] = max_tokens
+    
+    return params
+
+
+
