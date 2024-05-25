@@ -73,13 +73,14 @@ def openai_chat_with_vision(props: dict, prompt: str, image_file_name_list:list)
 ########################
 # langchain関連
 ########################
-def langchain_chat( props: dict, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
+def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
     # strout,stderrorをStringIOでキャプチャする
     buffer = StringIO()
     sys.stdout = buffer
     sys.stderr = buffer
 
     # OpenAIPorpsを生成
+    props = json.loads(props_json)
     openai_props = OpenAIProps(props)
 
     # vector_db_items_jsonをVectorDBPropsに変換

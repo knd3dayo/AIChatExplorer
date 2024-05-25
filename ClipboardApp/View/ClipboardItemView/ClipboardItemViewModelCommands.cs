@@ -381,7 +381,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 if (mode == OpenAIExecutionModeEnum.RAG) {
                     // LangChainChatを実行
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions.LangChainChat(itemViewModel.Content, chatItems, VectorDBItem.GetEnabledItems());
+                        result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), itemViewModel.Content, chatItems);
                     });
                 }
                 // modeがNormalの場合はOpenAIChatを実行

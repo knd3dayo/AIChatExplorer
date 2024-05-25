@@ -517,7 +517,7 @@ namespace WpfAppCommon.Model {
             // Vector DBのアイテムを取得
             IEnumerable<VectorDBItem> vectorDBItems = VectorDBItem.GetEnabledItems();
 
-            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(prompt, [], vectorDBItems);
+            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(vectorDBItems, prompt, []);
 
             return result.Response;
 

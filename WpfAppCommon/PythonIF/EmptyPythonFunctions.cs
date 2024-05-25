@@ -23,10 +23,10 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems) {
+        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems) {
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
         public void OpenAIEmbedding(string text) {

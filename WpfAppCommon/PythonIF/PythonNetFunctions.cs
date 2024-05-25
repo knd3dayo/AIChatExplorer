@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.IO;
+using System.Text.Json;
 using Python.Runtime;
 using QAChat.Model;
 using WpfAppCommon.Model;
@@ -312,11 +313,11 @@ namespace WpfAppCommon.PythonIF {
             return result;
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems) {
-            return LangChainChat(prompt, chatHistory, ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItems);
+        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
+            return LangChainChat(ClipboardAppConfig.CreateOpenAIProperties(),vectorDBItems, prompt, chatHistory);
         }
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems) {
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
@@ -331,11 +332,18 @@ namespace WpfAppCommon.PythonIF {
                 }
                 // VectorDBItemのリストをJSON文字列に変換
                 string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
+                // propsをJSON文字列に変換
+                string propsJson = JsonSerializer.Serialize(props);
+
 
                 Tools.Info("LangChain実行");
+                Tools.Info($"ベクトルDB情報 {vectorDBItemsJson}");
+                Tools.Info($"プロパティ情報 {propsJson}");
                 Tools.Info($"プロンプト:{prompt}");
+                Tools.Info($"チャット履歴:{chatItemsJSon}");
+
                 // open_ai_chat関数を呼び出す
-                PyDict pyDict = function_object(props, vectorDBItemsJson, prompt, chatItemsJSon);
+                PyDict pyDict = function_object(propsJson, vectorDBItemsJson, prompt, chatItemsJSon);
                 // outputを取得
                 string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
                 // verboseを取得
@@ -568,7 +576,7 @@ namespace WpfAppCommon.PythonIF {
                     if (e.Message.Contains("Unsupported file type")) {
                         throw new UnsupportedFileTypeException(e.Message);
                     }
-                    throw   ;
+                    throw;
                 }
             });
             return tokenCount;

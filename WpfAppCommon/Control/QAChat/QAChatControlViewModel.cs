@@ -142,7 +142,7 @@ namespace WpfAppCommon.Control.QAChat {
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions?.LangChainChat(prompt, ChatItems, VectorDBItem.GetEnabledItems());
+                        result = PythonExecutor.PythonFunctions?.LangChainChat(VectorDBItem.GetEnabledItems(), prompt, ChatItems);
                     });
                 } else {
                     // モードがNormalの場合はOpenAIChatでチャットを送信

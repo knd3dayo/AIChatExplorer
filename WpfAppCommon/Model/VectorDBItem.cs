@@ -99,7 +99,7 @@ namespace WpfAppCommon.Model {
         public void TestLangChain() {
             try {
 
-                ChatResult result = PythonExecutor.PythonFunctions.LangChainChat("Hello", [], [this]);
+                ChatResult result = PythonExecutor.PythonFunctions.LangChainChat([this], "Hello", []);
                 if (string.IsNullOrEmpty(result.Response)) {
                     Tools.Error("[NG]:LangChainの実行に失敗しました。");
                 } else {

@@ -35,7 +35,7 @@ namespace WpfAppCommon.Model {
             // modeがRAGの場合はLangChainChatを実行
             if (Mode == OpenAIExecutionModeEnum.RAG) {
                 Tools.Info("LangChainChatを実行");
-                result = PythonExecutor.PythonFunctions.LangChainChat(promptText, chatItems, VectorDBItem.GetEnabledItems());
+                result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), promptText, chatItems);
             }
             // modeがNormalの場合はOpenAIChatを実行
             else if (Mode == OpenAIExecutionModeEnum.Normal) {

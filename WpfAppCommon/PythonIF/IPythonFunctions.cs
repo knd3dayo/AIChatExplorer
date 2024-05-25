@@ -35,9 +35,11 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList);
 
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, IEnumerable<VectorDBItem> vectorDBItems);
+        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
 
-        public ChatResult LangChainChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems);
+
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
+
         public void OpenAIEmbedding(string text);
 
         public string RunScript(string script, string input);
