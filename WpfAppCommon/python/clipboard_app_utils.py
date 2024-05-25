@@ -41,14 +41,33 @@ def extract_entity(text, props = {}):
 ########################
 # openai関連
 ########################
-def openai_chat(props_json: str, input_json: str, json_mode:bool = False):
+def openai_chat(props_json: str, input_json: str, json_mode:bool = False) -> str:
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+
     # OpenAIPorpsを生成
     props = json.loads(props_json)
     openai_props = OpenAIProps(props)
     # OpenAIClientを生成
     openai_client = OpenAIClient(openai_props)
+    
+    content = openai_client.openai_chat(input_json, json_mode)
 
-    return openai_client.openai_chat(input_json, json_mode)
+    # 結果格納用のdictを生成
+    result = {}
+    result["content"] = content
+    # dict["log"]にログを追加
+    result["log"] = buffer.getvalue()
+    # strout,stderrorを元に戻す
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False)
+    return result_json
+
 
 def openai_embedding(props_json: str, input_text: str):
     # OpenAIPorpsを生成
@@ -56,7 +75,7 @@ def openai_embedding(props_json: str, input_text: str):
     openai_props = OpenAIProps(props)
     # OpenAIClientを生成
     openai_client = OpenAIClient(openai_props)
-
+    
     return openai_client.openai_embedding(input_text)
 
 def list_openai_models(props_json: str):

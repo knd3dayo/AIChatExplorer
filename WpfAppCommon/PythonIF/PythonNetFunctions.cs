@@ -492,11 +492,28 @@ namespace WpfAppCommon.PythonIF {
                 Tools.Info($"チャット履歴:{chat_history_json}");
                 Tools.Info($"プロパティ情報 {propsJson}");
 
-                // open_ai_chat関数を呼び出す
+                // open_ai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
                 string resultString = function_object(propsJson, chat_history_json);
+
+                // JSON文字列からDictionaryに変換する。
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString);
+                if (resultDict == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                }
+                // contentを取得
+                string? content = resultDict["content"]?.ToString();
+                if (content == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                }
                 // ChatResultに設定
-                chatResult.Response = resultString;
-                Tools.Info($"レスポンス:{resultString}");
+                chatResult.Response = content;
+                Tools.Info($"レスポンス:{content}");
+
+                // logを取得
+                string? log = resultDict["log"]?.ToString();
+                if (log != null) {
+                    Tools.Info($"log:{log}");
+                }
 
             });
             return chatResult;

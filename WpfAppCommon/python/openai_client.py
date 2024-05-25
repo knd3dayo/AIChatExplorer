@@ -46,7 +46,7 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
 
-    def run_openai_chat(self, input_dict: dict):
+    def run_openai_chat(self, input_dict: dict) -> str:
         # OpenAIのchatを実行する
         client = self.get_completion_client()
         model = self.props.OpenAICompletionModel
@@ -56,7 +56,7 @@ class OpenAIClient:
             )
         return response.choices[0].message.content
     
-    def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None):
+    def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None) -> str:
         # 入力パラメーターの設定
         model = self.props.OpenAICompletionModel
         params = create_openai_chat_parameter_dict(model, input_json, temperature, json_mode)
