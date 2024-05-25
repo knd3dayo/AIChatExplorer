@@ -335,71 +335,43 @@ namespace WpfAppCommon.PythonIF {
                 // propsをJSON文字列に変換
                 string propsJson = JsonSerializer.Serialize(props);
 
-
                 Tools.Info("LangChain実行");
                 Tools.Info($"ベクトルDB情報 {vectorDBItemsJson}");
                 Tools.Info($"プロパティ情報 {propsJson}");
                 Tools.Info($"プロンプト:{prompt}");
                 Tools.Info($"チャット履歴:{chatItemsJSon}");
 
-                // open_ai_chat関数を呼び出す
-                PyDict pyDict = function_object(propsJson, vectorDBItemsJson, prompt, chatItemsJSon);
+                // open_ai_chat関数を呼び出す.
+                // 戻り値は{ "output": "レスポンス" , "log": "ログ", "verbose": "処理詳細" , "page_content_list": "参考ドキュメント内容のリスト", "page_source_list": "参考ドキュメントパスのリスト"}
+                // の形式のJSON文字列
+
+                string resultString = function_object(propsJson, vectorDBItemsJson, prompt, chatItemsJSon);
+
+                // resultStringをログに出力
+                Tools.Info($"レスポンス:{resultString}");
+
+                // JSON文字列からDictionaryに変換する。
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString);
+                if (resultDict == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                }
                 // outputを取得
-                string? resultString = pyDict["output"].ToString() ?? throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
-                // verboseを取得
-                string? verbose = pyDict.GetItem("verbose")?.ToString();
-                if (verbose != null) {
-                    chatResult.Verbose = verbose;
-                    Tools.Info($"verbose:{verbose}");
-                }
-                // logを取得
-                string? log = pyDict.GetItem("log")?.ToString();
-                if (log != null) {
-                    Tools.Info($"log:{log}");
-                }
-                // referenced_contentsを取得
-                PyList? referencedContents = pyDict.GetItem("page_content_list") as PyList;
-                if (referencedContents != null) {
-                    List<Dictionary<string, string>> referencedContentsList = [];
-                    foreach (PyDict item in referencedContents.Cast<PyDict>()) {
-                        Dictionary<string, string> dict = [];
-                        foreach (var key in item.Keys()) {
-                            PyObject? entity = item.GetItem(key);
-                            if (entity == null) {
-                                continue;
-                            }
-                            string? keyString = key.ToString();
-                            if (keyString == null) {
-                                continue;
-                            }
-                            string? entityString = entity.ToString();
-                            if (entityString == null) {
-                                continue;
-                            }
-                            dict[keyString] = entityString;
-                        }
-                        referencedContentsList.Add(dict);
-                    }
-                    chatResult.ReferencedContents = referencedContentsList;
-                }
-                // referenced_file_pathを取得
-                PyList? referencedFilePath = pyDict.GetItem("page_source_list") as PyList;
-                if (referencedFilePath != null) {
-                    List<string> referencedFilePathList = [];
-                    foreach (PyObject item in referencedFilePath) {
-                        string? itemString = item.ToString();
-                        if (itemString == null) {
-                            continue;
-                        }
-                        referencedFilePathList.Add(itemString);
-                    }
-                    chatResult.ReferencedFilePath = referencedFilePathList;
-
-
+                string? output = resultDict["output"]?.ToString();
+                if (output == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
                 }
                 // ChatResultに設定
-                chatResult.Response = resultString;
-                Tools.Info($"レスポンス:{resultString}");
+                chatResult.Response = output;
+
+                // page_content_listを取得
+                List<Dictionary<string,string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? new();
+                chatResult.ReferencedContents = page_content_list;
+
+                // page_source_listを取得
+                List<string> page_source_list = resultDict["page_source_list"] as List<string> ?? new();
+
+                chatResult.ReferencedFilePath = page_source_list;
+
             });
             return chatResult;
 
@@ -494,6 +466,8 @@ namespace WpfAppCommon.PythonIF {
 
                 // open_ai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
                 string resultString = function_object(propsJson, chat_history_json);
+                // resultStringをログに出力
+                Tools.Info($"レスポンス:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString);
@@ -507,13 +481,6 @@ namespace WpfAppCommon.PythonIF {
                 }
                 // ChatResultに設定
                 chatResult.Response = content;
-                Tools.Info($"レスポンス:{content}");
-
-                // logを取得
-                string? log = resultDict["log"]?.ToString();
-                if (log != null) {
-                    Tools.Info($"log:{log}");
-                }
 
             });
             return chatResult;
@@ -539,10 +506,26 @@ namespace WpfAppCommon.PythonIF {
 
                 // propsをJSON文字列に変換
                 string propsJson = JsonSerializer.Serialize(props);
-                // open_ai_chat関数を呼び出す
+
+                // open_ai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
                 string resultString = function_object(propsJson, prompt, imageFileNames);
+
+                // resultStringをログに出力
+                Tools.Info($"レスポンス:{resultString}");
+
+                // JSON文字列からDictionaryに変換する。
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString);
+                if (resultDict == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                }
+                // contentを取得
+                string? content = resultDict["content"]?.ToString();
+                if (content == null) {
+                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                }
                 // ChatResultに設定
-                chatResult.Response = resultString;
+                chatResult.Response = content;
+
             });
             return chatResult;
         }

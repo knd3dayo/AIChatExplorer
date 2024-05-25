@@ -27,6 +27,19 @@ import clipboard_app_sqlite, openai_client, clipboard_app_spacy, clipboard_app_p
 if "HTTPS_PROXY" not in os.environ:
     os.environ["NO_PROXY"] = "*"
 
+# stdout,stderrを文字列として取得するためラッパー関数を定義
+def capture_stdout_stderr(func):
+    def wrapper(*args, **kwargs):
+        # strout,stderrorをStringIOでキャプチャする
+        buffer = StringIO()
+        sys.stdout = buffer
+        sys.stderr = buffer
+        result = func(*args, **kwargs)
+        # strout,stderrorを元に戻す
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        return result, buffer.getvalue()
+    return wrapper
 
 def extract_text(filename):
     import clipboard_app_extractor
@@ -42,32 +55,55 @@ def extract_entity(text, props = {}):
 # openai関連
 ########################
 def openai_chat(props_json: str, input_json: str, json_mode:bool = False) -> str:
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
+    # OpenAIチャットを実行する関数を定義
+    def func() -> str:
+        # OpenAIPorpsを生成
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
+        # OpenAIClientを生成
+        openai_client = OpenAIClient(openai_props)
+        content = openai_client.openai_chat(input_json, json_mode)
+        return content
 
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    # OpenAIClientを生成
-    openai_client = OpenAIClient(openai_props)
-    
-    content = openai_client.openai_chat(input_json, json_mode)
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    content, log = wrapper()
 
     # 結果格納用のdictを生成
     result = {}
     result["content"] = content
     # dict["log"]にログを追加
-    result["log"] = buffer.getvalue()
-    # strout,stderrorを元に戻す
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
+    result["log"] = log
     
     # resultをJSONに変換して返す
-    result_json = json.dumps(result, ensure_ascii=False)
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
+def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:list):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> str:
+        # OpenAIPorpsを生成
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
+        # OpenAIClientを生成
+        openai_client = OpenAIClient(openai_props)
+        content = openai_client.openai_chat_with_vision(prompt, image_file_name_list)
+        return content
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    content, log = wrapper()
+
+    # 結果格納用のdictを生成
+    result = {}
+    result["content"] = content
+    # dict["log"]にログを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
 
 def openai_embedding(props_json: str, input_text: str):
     # OpenAIPorpsを生成
@@ -84,40 +120,34 @@ def list_openai_models(props_json: str):
     client = OpenAIClient(openai_props)
     return client.list_openai_models()
 
-def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:list):
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    # OpenAIClientを生成
-    client = OpenAIClient(openai_props)
-
-    return client.openai_chat_with_vision(prompt, image_file_name_list)
-
 ########################
 # langchain関連
 ########################
 def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
+    # OpenAIチャットを実行する関数を定義
+    def func() -> dict:
+        # OpenAIPorpsを生成
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
 
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
+        # vector_db_items_jsonをVectorDBPropsに変換
+        vector_db_items_list = json.loads(vector_db_items_json)
+        vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
 
-    # vector_db_items_jsonをVectorDBPropsに変換
-    vector_db_items_list = json.loads(vector_db_items_json)
-    vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
-
-    result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
-    # dict["log"]にログを追加
-    result["log"] = buffer.getvalue()
-    # strout,stderrorを元に戻す
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
+        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
+        return result
     
-    return result
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
 
 # vector db関連
 def update_index(props, mode, workdir, relative_path, url):
