@@ -8,25 +8,34 @@ class OpenAIProps:
         self.OpenAIKey:str = props_dict.get("OpenAIKey")
         self.OpenAICompletionModel:str = props_dict.get("OpenAICompletionModel")
         self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel")
+        self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel")
         
         azure_openai_string = props_dict.get("AzureOpenAI", None)
         self.AzureOpenAI = azure_openai_string.upper() == "TRUE"
 
         self.AzureOpenAIEmbeddingVersion = props_dict.get("AzureOpenAIEmbeddingVersion", None)
         self.AzureOpenAICompletionVersion = props_dict.get("AzureOpenAICompletionVersion", None)
+        self.AzureOpenAIWhisperVersion = props_dict.get("AzureOpenAIWhisperVersion", None)
+
         self.AzureOpenAIEndpoint = props_dict.get("AzureOpenAIEndpoint", None)
         self.OpenAICompletionBaseURL = props_dict.get("OpenAICompletionBaseURL", None)
         self.OpenAIEmbeddingBaseURL = props_dict.get("OpenAIEmbeddingBaseURL", None)
+        self.OpenAIWhisperBaseURL = props_dict.get("OpenAIWhisperBaseURL", None)
+        
         # AzureOpenAIEmbeddingVersionがNoneの場合は2024-02-01を設定する
         if self.AzureOpenAIEmbeddingVersion == None:
             self.AzureOpenAIEmbeddingVersion = "2024-02-01"
         # AzureOpenAICompletionVersionがNoneの場合は2024-02-01を設定する
         if self.AzureOpenAICompletionVersion == None:
             self.AzureOpenAICompletionVersion = "2024-02-01"
-        # AzureOpenAIEndpointがNoneの場合、OpenAICompletionBaseURLまたはOpenAIEmbeddingBaseURLがNoneの場合はValueErrorを発生させる
+        # AzureOpenAIWhisperVersionがNoneの場合は2024-02-01を設定する
+        if self.AzureOpenAIWhisperVersion == None:
+            self.AzureOpenAIWhisperVersion = "2024-02-01"
+
+        # AzureOpenAIEndpointがNoneの場合、OpenAICompletionBaseURLまたはOpenAIEmbeddingBaseURLまたはOpenAIWhisperBaseURLがNoneの場合はエラーを発生させる
         if self.AzureOpenAI:
             if self.AzureOpenAIEndpoint == None:
-                if self.OpenAICompletionBaseURL == None and self.OpenAIEmbeddingBaseURL == None:
+                if self.OpenAICompletionBaseURL == None or self.OpenAIEmbeddingBaseURL == None or self.OpenAIWhisperBaseURL == None:
                     raise ValueError("AzureOpenAIEndpoint is None")
 
     # OpenAIのCompletion用のパラメーター用のdictを作成する
@@ -66,7 +75,26 @@ class OpenAIProps:
         else:
             embedding_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
         return embedding_dict
+    
+    # OpenAIのWhisper用のパラメーター用のdictを作成する
+    def create_openai_whisper_dict(self) -> dict:
+        whisper_dict = {}
+        whisper_dict["api_key"] = self.OpenAIKey
+        if self.OpenAIWhisperBaseURL:
+            whisper_dict["base_url"] = self.OpenAIWhisperBaseURL
+        return whisper_dict
 
+    # AzureOpenAIのWhisper用のパラメーター用のdictを作成する
+    def create_azure_openai_whisper_dict(self) -> dict:
+        whisper_dict = {}
+        whisper_dict["api_key"] = self
+        whisper_dict["api_version"] = self.AzureOpenAIWhisperVersion
+        if self.OpenAIWhisperBaseURL:
+            whisper_dict["base_url"] = self.OpenAIWhisperBaseURL
+        else:
+            whisper_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
+        
+        return whisper_dict
 
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
@@ -89,7 +117,7 @@ class VectorDBProps:
         vector_db_dict["vector_db_type_string"] = self.VectorDBTypeString
         return vector_db_dict
 
-def get_props() -> OpenAIProps:
+def env_to_props() -> OpenAIProps:
     load_dotenv()
     props: dict = {
         "OpenAIKey": os.getenv("OPENAI_API_KEY"),

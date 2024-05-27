@@ -34,7 +34,19 @@ class OpenAIClient:
                 **params
             )
         return result
-        
+
+    def get_whisper_client(self):
+        if (self.props.AzureOpenAI):
+            params = self.props.create_azure_openai_whisper_dict()
+            result = AzureOpenAI(
+                **params
+            )
+        else:
+            params =self.props.create_openai_whisper_dict()
+            result = OpenAI(
+                **params
+            )
+        return result
 
     def list_openai_models(self) -> list[str]:
         
@@ -75,7 +87,6 @@ class OpenAIClient:
 
         return self.run_openai_chat(params)
     
-
     def openai_embedding(self, input_text: str):
         
         # OpenAIのchatを実行する
@@ -89,3 +100,15 @@ class OpenAIClient:
             input=[input_text]
         )
         return response.data[0].embedding
+    
+    def openai_transcription(self, audit_file_path: str):
+        # OpenAIのtranscriptionを実行する
+        client = self.get_whisper_client()
+        
+        with open(audit_file_path, "rb") as f:
+            response = client.audio.transcriptions.create(
+                model=self.props.OpenAITranscriptionModel,
+                file=f,
+                response_format="verbose_json"
+            )
+        return json.loads(response.model_dump_json())

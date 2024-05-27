@@ -5,7 +5,6 @@ from transcribe import transcribe_util, audio_util
 
 from pydub import AudioSegment
 import tempfile
-import magic
 import os
 
 from dotenv import load_dotenv

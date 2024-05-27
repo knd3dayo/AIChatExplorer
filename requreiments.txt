@@ -14,5 +14,9 @@ openai
 openpyxl
 markdown
 pdfminer.six
+pydub
+scikit-learn
+moviepy
+speechbrain
 spacy
 ja-core-news-sm @ https://github.com/explosion/spacy-models/releases/download/ja_core_news_sm-3.7.0/ja_core_news_sm-3.7.0-py3-none-any.whl

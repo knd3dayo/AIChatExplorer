@@ -367,3 +367,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/WpfAppCommon/python/pretrained_models/EncoderClassifier-8f6f7fdaa9628acf73e21ad1f99d5f83
