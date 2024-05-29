@@ -35,6 +35,10 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
+        // 選択中のフォルダの全てのClipboardItem
+        public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
+
+
         public ClipboardItem? ClipboardItem { get; set; }
 
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
@@ -61,6 +65,7 @@ namespace WpfAppCommon.Control.QAChat {
                 OnPropertyChanged(nameof(Mode));
             }
         }
+
 
         public static ChatItem? SelectedItem { get; set; }
 
@@ -90,6 +95,7 @@ namespace WpfAppCommon.Control.QAChat {
             set {
                 inputText = value;
                 OnPropertyChanged(nameof(InputText));
+                OnPropertyChanged(nameof(PreviewText));
             }
 
         }
@@ -104,12 +110,40 @@ namespace WpfAppCommon.Control.QAChat {
             set {
                 promptText = value;
                 OnPropertyChanged(nameof(PromptText));
+                OnPropertyChanged(nameof(PreviewText));
+            }
+        }
+
+        // ContextText
+        private string contextText = "";
+        public string ContextText {
+            get {
+                return contextText;
+            }
+            set {
+                contextText = value;
+                OnPropertyChanged(nameof(ContextText));
+            }
+        }
+
+
+        // PreviewText プロンプトテンプレート + コンテキスト情報 +入力テキスト
+        public string PreviewText {
+            get {
+                string prompt = "";
+                if (string.IsNullOrEmpty(PromptText) == false) {
+
+                    prompt = PromptText + "\n---------\n";
+
+                }
+                    prompt += InputText;
+                return prompt;
             }
         }
 
         public StringBuilder Log = new();
 
-
+        
         // チャットを送信するコマンド
         public SimpleDelegateCommand SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -121,6 +155,11 @@ namespace WpfAppCommon.Control.QAChat {
 
                     prompt = PromptText  + "\n---------\n";
 
+                }
+                // コンテキスト情報がある場合は追加
+                if (string.IsNullOrEmpty(ContextText) == false) {
+                    prompt += "以下はコンテキスト情報です。本文の背景情報です\n---------\n";
+                    prompt += ContextText + "以下は本文です。\n---------\n";
                 }
                 prompt += InputText;
 
@@ -195,6 +234,24 @@ namespace WpfAppCommon.Control.QAChat {
             ChatItems.Clear();
             InputText = "";
 
+        });
+        // 追加コンテキスト情報が変更されたときの処理
+        public SimpleDelegateCommand AdditionalContextSelectionChangedCommand => new((parameter) => {
+            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            // 0の場合はコンテキスト情報をクリア
+            if (index == 0) {
+                ContextText = "";
+            } else if (index == 1) {
+                // 1の場合は選択中のフォルダの全てのClipboardItemからContextTextを生成
+                StringBuilder contextTextBuilder = new();
+                foreach (var clipboardItem in ClipboardItems) {
+                    contextTextBuilder.AppendLine(clipboardItem.Content);
+                }
+                ContextText = contextTextBuilder.ToString();
+            }
         });
 
         // プロンプトテンプレート画面を開くコマンド

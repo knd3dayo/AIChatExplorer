@@ -20,7 +20,7 @@ class OpenAIClient:
             result = OpenAI(
                 **params
             )
-            return result
+        return result
 
     def get_embedding_client(self):
         if (self.props.AzureOpenAI):

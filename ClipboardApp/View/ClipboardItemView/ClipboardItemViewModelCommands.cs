@@ -347,6 +347,11 @@ namespace ClipboardApp.View.ClipboardItemView {
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
             mainWindowViewModel.Initialize(itemViewModel?.ClipboardItem);
+            // 選択中のフォルダの全てのClipboardItemを設定
+            List<ClipboardItem> items = itemViewModel?.FolderViewModel.Items.Select(x => x.ClipboardItem).ToList() ?? [];
+            // 選択中のフォルダの全てのClipboardItemを設定
+            mainWindowViewModel.ClipboardItems = new ObservableCollection<ClipboardItem>(items);
+
             openAIChatWindow.Show();
         }
         // プロンプトテンプレート一覧を開いて選択したプロンプトテンプレートを実行するコマンド

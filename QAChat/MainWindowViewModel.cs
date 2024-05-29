@@ -20,6 +20,18 @@ namespace QAChat {
 
         }
 
+        // 選択中のフォルダの全てのClipboardItem
+        public ObservableCollection<ClipboardItem> ClipboardItems {
+            get {
+                return QAChatControlViewModel.ClipboardItems;
+            }
+            set {
+                QAChatControlViewModel.ClipboardItems = value;
+                OnPropertyChanged(nameof(ClipboardItems));
+            }
+        }
+
+
         // QAChatControlのViewModel
         public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
 

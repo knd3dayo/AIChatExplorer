@@ -84,6 +84,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 Items.Add(new ClipboardItemViewModel(this, item));
             }
         }
+
         // Load
         public void Load() {
 

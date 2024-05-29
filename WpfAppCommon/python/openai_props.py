@@ -32,12 +32,6 @@ class OpenAIProps:
         if self.AzureOpenAIWhisperVersion == None:
             self.AzureOpenAIWhisperVersion = "2024-02-01"
 
-        # AzureOpenAIEndpointがNoneの場合、OpenAICompletionBaseURLまたはOpenAIEmbeddingBaseURLまたはOpenAIWhisperBaseURLがNoneの場合はエラーを発生させる
-        if self.AzureOpenAI:
-            if self.AzureOpenAIEndpoint == None:
-                if self.OpenAICompletionBaseURL == None or self.OpenAIEmbeddingBaseURL == None or self.OpenAIWhisperBaseURL == None:
-                    raise ValueError("AzureOpenAIEndpoint is None")
-
     # OpenAIのCompletion用のパラメーター用のdictを作成する
     def create_openai_completion_dict(self) -> dict:
         completion_dict = {}

@@ -69,7 +69,22 @@
             </materialDesign:ColorZone>
         </StackPanel>
 
-        <Grid Grid.Row="1">
+        <DockPanel
+            Grid.Row="1"
+            HorizontalAlignment="Stretch"
+            Visibility="{Binding SearchFolderVisibility}">
+            <TextBlock Margin="10,10,10,00" Text="対象フォルダ" />
+            <!--  適用対象を選択するツリービューを表示するボタン  -->
+            <Button
+                Margin="10,10,10,0"
+                Command="{Binding OpenSelectTargetFolderWindowCommand}"
+                Content="選択" />
+            <TextBox
+                Margin="10,10,10,0"
+                IsEnabled="False"
+                Text="{Binding TargetFolderPath}" />
+        </DockPanel>
+        <Grid Grid.Row="2" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -83,7 +98,7 @@
                 Margin="10,10,10,0"
                 Text="{Binding SearchTypeText}" />
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -98,10 +113,11 @@
                 IsEnabled="False"
                 Text="{Binding SearchConditionRule.Name}" />
         </Grid>
+        <!--  Visibility="{Binding SearchFolderVisibility}"  -->
         <DockPanel
-            Grid.Row="3"
+            Grid.Row="4"
             HorizontalAlignment="Stretch"
-            Visibility="{Binding SearchFolderVisibility}">
+            Visibility="Collapsed">
             <TextBlock Margin="10,10,10,0" Text="検索フォルダ" />
             <!--  適用対象を選択するツリービューを表示するボタン  -->
             <Button
@@ -113,7 +129,7 @@
                 IsEnabled="False"
                 Text="{Binding SearchFolderPath}" />
         </DockPanel>
-        <Grid Grid.Row="4">
+        <Grid Grid.Row="5">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -269,21 +285,6 @@
                 VerticalAlignment="Center"
                 SelectedDate="{Binding SearchConditionRule.SearchCondition.EndTime}" />
         </Grid>
-        <DockPanel
-            Grid.Row="5"
-            HorizontalAlignment="Stretch"
-            Visibility="{Binding SearchFolderVisibility}">
-            <TextBlock Margin="10,10,10,00" Text="対象フォルダ" />
-            <!--  適用対象を選択するツリービューを表示するボタン  -->
-            <Button
-                Margin="10,10,10,0"
-                Command="{Binding OpenSelectTargetFolderWindowCommand}"
-                Content="選択" />
-            <TextBox
-                Margin="10,10,10,0"
-                IsEnabled="False"
-                Text="{Binding TargetFolderPath}" />
-        </DockPanel>
         <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
             <!--  適用対象配下も対象にするかどうか  -->
             <CheckBox
