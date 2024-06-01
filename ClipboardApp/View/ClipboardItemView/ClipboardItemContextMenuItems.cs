@@ -28,7 +28,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
             Add(new ClipboardAppMenuItem("削除", MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand, "Delete"));
 
             // サブメニュー設定
-            ClipboardAppMenuItem utilityMenuItems = new("ツール", SimpleDelegateCommand.EmptyCommand);
+            ClipboardAppMenuItem utilityMenuItems = new("ツール", SimpleDelegateCommand<object>.EmptyCommand);
             // タイプがFileの場合
             if (_itemViewModel.ContentType == ClipboardContentTypes.Files) {
                 utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("フォルダを開く", MainWindowViewModel.ActiveInstance.OpenFolderCommand));
@@ -39,7 +39,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
             // タイプがImageの場合
             if (_itemViewModel.ContentType == ClipboardContentTypes.Image) {
                 utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("画像からテキストを抽出",
-                    new SimpleDelegateCommand((parameter) => {
+                    new SimpleDelegateCommand<object>((parameter) => {
                         ClipboardItemViewModel.MenuItemExtractTextFromImageCommandExecute(MainWindowViewModel.ActiveInstance.SelectedItem);
                     })));
             }
@@ -51,15 +51,15 @@ namespace ClipboardApp.Views.ClipboardItemView {
             Add(utilityMenuItems);
 
             // AI関連のメニュー
-            ClipboardAppMenuItem aiUtilityMenuItems = new("OpenAI", SimpleDelegateCommand.EmptyCommand);
+            ClipboardAppMenuItem aiUtilityMenuItems = new("OpenAI", SimpleDelegateCommand<object>.EmptyCommand);
 
             aiUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("OpenAIチャット",
-                new SimpleDelegateCommand((parameter) => {
+                new SimpleDelegateCommand<object>((parameter) => {
                     ClipboardItemViewModel.OpenOpenAIChatWindowExecute(MainWindowViewModel.ActiveInstance.SelectedItem);
                 })));
 
             aiUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("プロンプトテンプレートを実行",
-                    new SimpleDelegateCommand((parameter) => {
+                    new SimpleDelegateCommand<object>((parameter) => {
                         ClipboardItemViewModel.OpenAIChatCommandExecute(MainWindowViewModel.ActiveInstance.SelectedItem);
                     })));
 
@@ -70,7 +70,7 @@ namespace ClipboardApp.Views.ClipboardItemView {
 
             // ユーザー定義のPythonスクリプトをメニュー
             ClipboardAppMenuItem userDefinedPythonScriptsMenu
-                = new("Pythonスクリプトを実行", new SimpleDelegateCommand((parameter) => {
+                = new("Pythonスクリプトを実行", new SimpleDelegateCommand<object>((parameter) => {
                     if (MainWindowViewModel.ActiveInstance.SelectedItem == null) {
                         Tools.Error("スクリプトを選択してください");
                         return;

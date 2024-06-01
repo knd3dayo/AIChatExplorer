@@ -670,7 +670,7 @@ namespace WpfAppCommon.Control.Settings {
             }
         }
         // CheckCommand
-        public SimpleDelegateCommand CheckCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> CheckCommand => new(async (parameter) => {
             // 実行するか否かメッセージダイアログを表示する、
             string message = "[OK]をクリックすると設定チェックを行います。\n";
             if (UseOpenAI) {
@@ -693,14 +693,7 @@ namespace WpfAppCommon.Control.Settings {
                 Tools.StatusText.Init();
                 // 結果をTestResultWindowで表示
                 // UserControlの設定ウィンドウを開く
-                TestResultUserControl testResultWindow = new();
-                TestResultUserControlViewModel testResultWindowViewModel = (TestResultUserControlViewModel)testResultWindow.DataContext;
-                testResultWindowViewModel.LogText = resultString;
-                Window window = new() {
-                    Title = StringResources.Instance.SettingCheckResultWindowTitle,
-                    Content = testResultWindow
-                };
-                window.ShowDialog();
+                TestResultUserControl.OpenTestResultWindow(resultString);
 
             } finally {
                 IsIndeterminate = false;
@@ -708,26 +701,22 @@ namespace WpfAppCommon.Control.Settings {
             }
         });
         // SaveCommand
-        public SimpleDelegateCommand SaveCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 
             if (isPropertyChanged) {
                 WpfAppCommon.Properties.Settings.Default.Save();
                 MessageBox.Show("設定を保存しました。アプリケーションを再起動してください");
             }
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
         // CancelCommand
-        public SimpleDelegateCommand CancelCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
             Tools.Info("設定をキャンセルしました");
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
     }
 }

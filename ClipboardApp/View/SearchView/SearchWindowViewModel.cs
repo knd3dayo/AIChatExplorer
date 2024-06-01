@@ -99,18 +99,16 @@ namespace ClipboardApp.View.SearchView {
         // コマンド
         //--------------------------------------------------------------------------------
 
-        public SimpleDelegateCommand ClearCommand => new (ClearCommandExecute);
-        private void ClearCommandExecute(object parameter) {
+        public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             SearchConditionRule?.SearchCondition?.Clear();
-        }
-
-        public SimpleDelegateCommand CancelCommand => new((parameter) => {
-            if (parameter is Window window) {
-                window.Close();
-            }
         });
 
-        public SimpleDelegateCommand ApplyCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
+
+            window.Close();
+        });
+
+        public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -122,14 +120,12 @@ namespace ClipboardApp.View.SearchView {
             _afterUpdate?.Invoke();
 
             // Close the window
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
-        public SimpleDelegateCommand OpenSelectSearchFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
             if (SearchConditionRule == null) {
                 Tools.Error("検索条件がNullです");
                 return;
@@ -151,7 +147,7 @@ namespace ClipboardApp.View.SearchView {
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             if (MainWindowViewModel.ActiveInstance == null) {
                 Tools.Error("MainWindowViewModelがNullです");
                 return;

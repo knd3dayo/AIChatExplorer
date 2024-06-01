@@ -266,22 +266,14 @@ namespace ClipboardApp {
         public TextSelector TextSelector { get; } = new();
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
-
-            if (parameter is not TextBox textBox) {
-                return;
-            }
+        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
 
             // テキスト選択
             TextSelector.SelectText(textBox);
             return;
         });
         // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
-
-            if (parameter is not TextBox textbox) {
-                return;
-            }
+        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
 
             // 選択中のテキストをプロセスとして実行
             TextSelector.ExecuteSelectedText(textbox);
@@ -296,144 +288,144 @@ namespace ClipboardApp {
         // Ctrl + Q が押された時の処理
         // メニューの「終了」をクリックしたときの処理
 
-        public static SimpleDelegateCommand ExitCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
             ExitCommandExecute();
         });
 
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand ToggleClipboardMonitor => new((parameter) => {
+        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
             ToggleClipboardMonitorCommand(this);
         });
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
-        public SimpleDelegateCommand FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
+        public SimpleDelegateCommand<object> FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
+        public SimpleDelegateCommand<object> ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
 
 
         // クリップボードアイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
-        public SimpleDelegateCommand CreateItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
             CreateItemCommandExecute(this.SelectedFolder);
         });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand OpenOpenAIWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
             OpenOpenAIWindowCommandExecute();
         });
         // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand OpenScreenshotCheckerWindow => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
             OpenScreenshotCheckerWindowExecute();
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand OpenRAGManagementWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
             OpenRAGManagementWindowCommandExecute();
         });
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand OpenVectorDBManagementWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
             OpenVectorDBManagementWindowCommandExecute();
         });
 
         // Ctrl + F が押された時の処理
-        public SimpleDelegateCommand SearchCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
             SearchCommandExecute(SelectedFolder);
         });
 
 
         // Ctrl + R が押された時の処理
-        public SimpleDelegateCommand ReloadCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
             ReloadCommandExecute(this);
         });
 
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
-        public SimpleDelegateCommand DeleteDisplayedItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             DeleteDisplayedItemCommandExecute(this);
         });
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public SimpleDelegateCommand DeleteSelectedItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteSelectedItemCommand => new((parameter) => {
             DeleteSelectedItemCommandExecute(this);
         });
 
 
         // メニューの「設定」をクリックしたときの処理
-        public static SimpleDelegateCommand SettingCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
             SettingCommandExecute();
         });
 
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenSelectedItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
             ClipboardItemViewModel.OpenItemCommandExecute(this.SelectedFolder, this.SelectedItem);
 
         });
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenSelectedItemAsFileCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectedItemAsFileCommand => new((parameter) => {
             ClipboardItemViewModel.OpenSelectedItemAsFileCommandExecute(this.SelectedItem);
         });
 
         // 選択したアイテムのフォルダを開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenFolderCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             ClipboardItemViewModel.OpenFolderCommandExecute(this.SelectedItem);
         });
         // 選択したアイテムを開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenFileCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenFileCommand => new((parameter) => {
             ClipboardItemViewModel.OpenFileCommandExecute(this.SelectedItem);
         });
         // 選択したアイテムを一時フォルダで開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand OpenFileInTempFolderCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenFileInTempFolderCommand => new((parameter) => {
             ClipboardItemViewModel.OpenFileInTempFolderCommandExecute(this.SelectedItem);
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
-        public SimpleDelegateCommand CutItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
             CutItemCommandExecute(this);
         });
         // Ctrl + C が押された時の処理
-        public SimpleDelegateCommand CopyItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
             CopyToClipboardCommandExecute(this);
         });
         // Ctrl + V が押された時の処理
-        public SimpleDelegateCommand PasteItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> PasteItemCommand => new((parameter) => {
             PasteFromClipboardCommandExecute(this);
         });
 
         // Ctrl + M が押された時の処理
-        public SimpleDelegateCommand MergeItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
             MergeItemCommandExecute(this);
         });
         // Ctrl + Shift + M が押された時の処理
-        public SimpleDelegateCommand MergeItemWithHeaderCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
             MergeItemWithHeaderCommandExecute(this);
         });
 
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenListPythonScriptWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenListPythonScriptWindowCommand => new((parameter) => {
             OpenListPythonScriptWindowCommandExecute(parameter);
         });
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenListPromptTemplateWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
             OpenListPromptTemplateWindowCommandExecute(this);
         });
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenListAutoProcessRuleWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
             OpenListAutoProcessRuleWindowCommandExecute();
         });
         // メニューの「タグ編集」をクリックしたときの処理
-        public SimpleDelegateCommand OpenTagWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
             OpenTagWindowCommandExecute();
         });
 
         // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
-        public SimpleDelegateCommand SplitFilePathCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SplitFilePathCommand => new((parameter) => {
             SplitFilePathCommandExecute(this);
         });
 

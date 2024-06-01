@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -41,13 +41,11 @@ namespace QAChat.View.VectorDBWindow {
         }
 
         // VectorDB Sourceの追加
-        public SimpleDelegateCommand AddVectorDBCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             // SelectVectorDBItemを設定
             SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
             // ベクトルDBの編集Windowを開く
-            var editVectorDBWindow = new EditVectorDBWindow();
-            EditVectorDBWindowViewModel viewModel = (EditVectorDBWindowViewModel)editVectorDBWindow.DataContext;
-            viewModel.Initialize(SelectedVectorDBItem, (afterUpdate) => {
+            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新
                 VectorDBItems.Clear();
                 foreach (var item in VectorDBItem.GetItems()) {
@@ -55,19 +53,16 @@ namespace QAChat.View.VectorDBWindow {
                 }
                 OnPropertyChanged(nameof(VectorDBItems));
             });
-            editVectorDBWindow.ShowDialog();
 
         });
         // Vector DB編集
-        public SimpleDelegateCommand EditVectorDBCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
                 Tools.Error("編集するベクトルDBを選択してください");
                 return;
             }
             // ベクトルDBの編集Windowを開く
-            var editVectorDBWindow = new EditVectorDBWindow();
-            EditVectorDBWindowViewModel viewModel = (EditVectorDBWindowViewModel)editVectorDBWindow.DataContext;
-            viewModel.Initialize(SelectedVectorDBItem, (afterUpdate) => {
+            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
 
                 // リストを更新
                 VectorDBItems.Clear();
@@ -76,11 +71,10 @@ namespace QAChat.View.VectorDBWindow {
                 }
                 OnPropertyChanged(nameof(VectorDBItems));
             });
-            editVectorDBWindow.ShowDialog();
 
         });
         // DeleteVectorDBCommand
-        public SimpleDelegateCommand DeleteVectorDBCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
                 Tools.Error("削除するベクトルDBを選択してください");
                 return;
@@ -99,11 +93,9 @@ namespace QAChat.View.VectorDBWindow {
             }
         });
         // CancelCommand
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
 

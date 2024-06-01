@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +19,13 @@ namespace QAChat.View.RAGWindow {
     public partial class UpdateRAGIndexWindow : Window {
         public UpdateRAGIndexWindow() {
             InitializeComponent();
+        }
+
+        public static void OpenUpdateRAGIndexWindow(RAGSourceItemViewModel ItemViewModel, Action<RAGSourceItemViewModel> callback) {
+            UpdateRAGIndexWindow updateRAGIndexWindow = new();
+            UpdateRAGIndexWindowViewModel updateRAGIndexWindowViewModel = (UpdateRAGIndexWindowViewModel)updateRAGIndexWindow.DataContext;
+            updateRAGIndexWindowViewModel.Initialize(ItemViewModel, callback);
+            updateRAGIndexWindow.ShowDialog();
         }
     }
 }

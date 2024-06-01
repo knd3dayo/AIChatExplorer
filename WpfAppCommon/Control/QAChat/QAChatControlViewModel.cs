@@ -163,12 +163,9 @@ namespace WpfAppCommon.Control.QAChat {
             PreviewText = prompt;
             OnPropertyChanged(nameof(PreviewText));
         }
-
-        public StringBuilder Log = new();
-
         
         // チャットを送信するコマンド
-        public SimpleDelegateCommand SendChatCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 // OpenAIにチャットを送信してレスポンスを受け取る
@@ -219,11 +216,6 @@ namespace WpfAppCommon.Control.QAChat {
                     ClipboardItem.ChatItems.AddRange(ChatItems);
                 }
 
-                // verboseがある場合はログに追加
-                if (!string.IsNullOrEmpty(result.Verbose)) {
-                    Log.AppendLine(result.Verbose);
-                }
-
             } catch (Exception e) {
                 Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
             } finally {
@@ -233,13 +225,13 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // クリアコマンド
-        public SimpleDelegateCommand ClearChatCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             ChatItems.Clear();
             InputText = "";
         });
 
         // モードが変更されたときの処理
-        public SimpleDelegateCommand ModeSelectionChangedCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ModeSelectionChangedCommand => new((parameter) => {
             RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // クリア処理
@@ -248,8 +240,8 @@ namespace WpfAppCommon.Control.QAChat {
 
         });
         // 追加コンテキスト情報が変更されたときの処理
-        public SimpleDelegateCommand AdditionalContextSelectionChangedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public SimpleDelegateCommand<RoutedEventArgs> AdditionalContextSelectionChangedCommand => new((routedEventArgs) => {
+
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
@@ -267,40 +259,31 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand PromptTemplateCommand => new((parameter) => { 
+        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => { 
+
             PromptTemplateCommandExecute(parameter);
         });
 
         // Closeコマンド
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
-            if (parameter is Window window) {
-                window.Close();
-            }
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+
+            window.Close();
         });
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
-
-            if (parameter is not TextBox textBox) {
-                return;
-            }
+        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
 
             // テキスト選択
             TextSelector.SelectText(textBox);
             return;
         });
-        // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
 
-            if (parameter is not TextBox textbox) {
-                return;
-            }
+        // 選択中のテキストをプロセスとして実行
+        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
 
             // 選択中のテキストをプロセスとして実行
             TextSelector.ExecuteSelectedText(textbox);
-
         });
-
 
     }
 }

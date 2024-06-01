@@ -40,7 +40,7 @@ namespace QAChat.View.RAGWindow {
             AfterUpdate = afterUpdate;
         }
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -49,39 +49,30 @@ namespace QAChat.View.RAGWindow {
             ItemViewModel.Save();
             AfterUpdate(ItemViewModel);
 
-            if (parameter is not Window window) {
-                return;
-            }
             // ウィンドウを閉じる
             window.Close();
         });
 
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new((parameter) => {
-            if (parameter is not Window window) {
-                return;
-            }
+        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
         });
         // UpdateIndexButtonCommand UpdateRAGIndexWindowを開く。
-        public SimpleDelegateCommand UpdateIndexButtonCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> UpdateIndexButtonCommand => new((parameter) => {
             if (ItemViewModel == null) {
                 return;
             }
             if (ItemViewModel.Item == null) {
                 return;
             }
-            UpdateRAGIndexWindow updateRAGIndexWindow = new();
-            UpdateRAGIndexWindowViewModel viewModel = (UpdateRAGIndexWindowViewModel)updateRAGIndexWindow.DataContext;
-            viewModel.Initialize(ItemViewModel, (afterUpdate) => {
+            UpdateRAGIndexWindow.OpenUpdateRAGIndexWindow(ItemViewModel, (afterUpdate) => {
                 // 更新
             });
-            updateRAGIndexWindow.ShowDialog();
         });
 
         // WorkingDirectoryのチェック
-        public SimpleDelegateCommand CheckWorkingDirCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) => {
             try {
                 if (ItemViewModel == null) {
                     Tools.Error("ItemViewModelがnullです");

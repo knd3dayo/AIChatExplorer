@@ -72,18 +72,15 @@ namespace ImageChat {
         private string lastSelectedImageFolder = ".";
 
         // ScreenShotCheckPromptWindowを開くコマンド
-        public SimpleDelegateCommand ScreenShotCheckPromptCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
-            ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
-            ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
-            viewModel.Initialize((parameter) => {
+            ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow((parameter) => {
                 InputText = parameter;
             });
-            screenShotCheckPromptWindow.ShowDialog();
         });
 
         // チャットを送信するコマンド
-        public SimpleDelegateCommand SendChatCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
                 Tools.Error("画像ファイルが選択されていません。");
@@ -139,7 +136,7 @@ namespace ImageChat {
         });
 
         // 画像選択コマンド SelectImageFileCommand
-        public SimpleDelegateCommand SelectImageFileCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SelectImageFileCommand => new((parameter) => {
 
             //ファイルダイアログを表示
             // 画像ファイルを選択して画像ファイル名一覧に追加
@@ -173,21 +170,19 @@ namespace ImageChat {
         });
 
         // クリアコマンド
-        public SimpleDelegateCommand ClearChatCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
             ImageFiles.Clear();
 
         });
 
         // Closeコマンド
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
-            if (parameter is Window window) {
-                window.Close();
-            }
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+            window.Close();
         });
 
         // 設定画面を開くコマンド
-        public SimpleDelegateCommand SettingCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
             // SettingUserControlを生成してWindowを表示する。
             SettingsUserControl settingsControl = new();
             Window window = new() {
@@ -200,10 +195,7 @@ namespace ImageChat {
         );
 
         // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド
-        public SimpleDelegateCommand OpenSelectedImageFileCommand => new((parameter) => {
-            if (parameter is not ScreenShotImage image) {
-                return;
-            }
+        public SimpleDelegateCommand<ScreenShotImage> OpenSelectedImageFileCommand => new((image) => {
             if (File.Exists(image.ImagePath)) {
                 ProcessStartInfo psi = new() {
                     FileName = image.ImagePath,
@@ -216,10 +208,7 @@ namespace ImageChat {
         });
 
         // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
-        public SimpleDelegateCommand RemoveSelectedImageFileCommand => new((parameter) => {
-            if (parameter is not ScreenShotImage image) {
-                return;
-            }
+        public SimpleDelegateCommand<ScreenShotImage> RemoveSelectedImageFileCommand => new((image) => {
             ImageFiles.Remove(image);
         });
 

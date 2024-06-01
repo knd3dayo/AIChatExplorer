@@ -19,8 +19,8 @@ namespace WpfAppCommon.Model {
         public virtual void OnActivatedAction() { }
         // ロード時の処理
         private Window? window;
-        public SimpleDelegateCommand LoadedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
+
             if (routedEventArgs.Source is  Window) {
                 Window window = (Window)routedEventArgs.Source;
                 this.window = window;
@@ -42,7 +42,7 @@ namespace WpfAppCommon.Model {
         });
 
         // Activated時の処理
-        public SimpleDelegateCommand ActivatedCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ActivatedCommand => new((parameter) => {
             if (window != null && Tools.ActiveWindow != window) {
                 Tools.ActiveWindow = window;
                 OnActivatedAction();

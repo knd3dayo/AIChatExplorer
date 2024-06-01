@@ -22,7 +22,7 @@ namespace WpfAppCommon.Control {
         public static Action? OpenStatusMessageWindow { get; set; }
 
         // ステータスバーをクリックしたときの処理
-        public static SimpleDelegateCommand OpenStatusMessageWindowCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> OpenStatusMessageWindowCommand => new((parameter) => {
             StatusMessageWindow userControl = new StatusMessageWindow();
             Window window = new() {
                 Title = "ログ",
@@ -35,8 +35,7 @@ namespace WpfAppCommon.Control {
 
         // ロード時の処理
         private Window? window;
-        public SimpleDelegateCommand LoadedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
             UserControl userControl = (UserControl)routedEventArgs.Source;
             Window window = Window.GetWindow(userControl);
             this.window = window;

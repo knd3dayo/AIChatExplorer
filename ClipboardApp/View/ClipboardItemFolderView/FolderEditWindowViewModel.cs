@@ -91,7 +91,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
 
         }
-        public SimpleDelegateCommand CreateCommand => new ((parameter) => {
+        public SimpleDelegateCommand<Window> CreateCommand => new ((window) => {
             if (FolderViewModel == null) {
                 Tools.Error("フォルダが指定されていません");
                 return;
@@ -137,17 +137,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             // フォルダ作成後に実行するコマンドが設定されている場合
             _afterUpdate?.Invoke();
             // ウィンドウを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
 
-        public SimpleDelegateCommand CancelCommand => new ((parameter) => {
+        public SimpleDelegateCommand<Window> CancelCommand => new ((window) => {
             // ウィンドウを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
 
         });
 

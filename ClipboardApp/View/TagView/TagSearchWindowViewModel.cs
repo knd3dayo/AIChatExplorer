@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -37,27 +38,19 @@ namespace ClipboardApp.View.TagView {
         }
 
         // クリアボタンの処理
-        public SimpleDelegateCommand ClearCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             TagName = "";
             ExcludeTag = false;
         });
         // 閉じるボタンの処理
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             // ウィンドウを閉じる
-            if (parameter is not System.Windows.Window window) {
-                return;
-            }
             window.Close();
         });
 
         // 検索ボタンの処理
-        public SimpleDelegateCommand SearchCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> SearchCommand => new((window) => {
             _afterUpdate(TagName, ExcludeTag);
-
-            if (parameter is not System.Windows.Window window) {
-                return;
-            }
-
             window.Close();
         });
 

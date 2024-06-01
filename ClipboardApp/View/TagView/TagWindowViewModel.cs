@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using ClipboardApp.View.ClipboardItemView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
@@ -49,9 +50,7 @@ namespace ClipboardApp.View.TagView {
         }
 
         // タグを追加したときの処理
-        public SimpleDelegateCommand AddTagCommand => new(AddTagCommandExecute);
-
-        private void AddTagCommandExecute(object parameter) {
+        public SimpleDelegateCommand<string> AddTagCommand => new((parameter) => {
             if (parameter is not string) {
                 Tools.Error("パラメーターがありません");
                 return;
@@ -76,7 +75,8 @@ namespace ClipboardApp.View.TagView {
             // LiteDBから再読み込み
             ReloadTagList();
 
-        }
+        });
+
         // LiteDBから再読み込み
         public void ReloadTagList() {
             TagList.Clear();
@@ -111,7 +111,7 @@ namespace ClipboardApp.View.TagView {
         }
 
         // 選択したタグを削除する。
-        public SimpleDelegateCommand DeleteSelectedTagCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteSelectedTagCommand => new((parameter) => {
             // IsCheckedがTrueのものを削除
             foreach (var item in TagList) {
                 if (item.IsChecked) {
@@ -128,70 +128,44 @@ namespace ClipboardApp.View.TagView {
         });
 
         // すべて選択
-        public SimpleDelegateCommand SelectAllCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SelectAllCommand => new((parameter) => {
             foreach (var item in TagList) {
                 item.IsChecked = true;
             }
             OnPropertyChanged(nameof(TagList));
         });
         // すべて選択解除
-        public SimpleDelegateCommand UnselectAllCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> UnselectAllCommand => new((parameter) => {
             foreach (var item in TagList) {
                 item.IsChecked = false;
             }
             OnPropertyChanged(nameof(TagList));
         });
         // 共通タグへ追加
-        public SimpleDelegateCommand AddCommonTagCommand => new((parameter) => {
-            // 共通タグを追加
-            foreach (var item in TagList) {
-                if (item.IsChecked) {
-                    // LiteDBにタグを追加  
-                    TagItem tagItem = new() { Tag = item.Tag };
-                    ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
-                }
-            }
+        public SimpleDelegateCommand<object> AddCommonTagCommand => new((parameter) => {
+            TagItemViewModel.AddCommonTags(TagList);
         });
 
         // OKボタンを押したときの処理
-        public SimpleDelegateCommand OkCommand => new((parameter) => {
-            if (itemViewModel != null) {
-                // TagListのチェックを反映
-                foreach (var item in TagList) {
-                    if (item.IsChecked) {
-                        itemViewModel.Tags.Add(item.Tag);
-                    } else {
-                        itemViewModel.Tags.Remove(item.Tag);
-                    }
-                }
-                // DBに反映
-                itemViewModel.Save();
-
-            }
+        public SimpleDelegateCommand<Window> OkCommand => new((window) => {
+            itemViewModel?.UpdateTagList(TagList);
             // 更新後の処理を実行
             _afterUpdate?.Invoke();
 
             // ウィンドウを閉じる
-            if (parameter is not System.Windows.Window window) {
-                return;
-            }
             window.Close();
 
         });
+
         // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand CancelCommand => new(CancelCommandExecute);
-        private void CancelCommandExecute(object obj) {
-            if (obj is not System.Windows.Window window) {
-                return;
-            }
-            // ウィンドウを閉じる
+        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
+
             window.Close();
-        }
+        });
+
         // 検索ウィンドウを開く
-        public SimpleDelegateCommand OpenSearchWindowCommand => new((parameter) => {
-            var searchWindow = new TagSearchWindow();
-            var searchWindowViewModel = (TagSearchWindowViewModel)searchWindow.DataContext;
-            searchWindowViewModel.Initialize((tag, exclude) => {
+        public SimpleDelegateCommand<object> OpenSearchWindowCommand => new((parameter) => {
+            TagSearchWindow.OpenTagSearchWindow((tag, exclude) => {
                 // タグを検索
                 TagList.Clear();
                 foreach (var item in TagItem.FilterTag(tag, exclude)) {
@@ -203,7 +177,6 @@ namespace ClipboardApp.View.TagView {
                 }
 
             });
-            searchWindow.Show();
         });
     }
 }

@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Control.Settings {
     /// <summary>
@@ -19,6 +20,16 @@ namespace WpfAppCommon.Control.Settings {
     public partial class TestResultUserControl : UserControl {
         public TestResultUserControl() {
             InitializeComponent();
+        }
+        public static void OpenTestResultWindow(string resultString) {
+            TestResultUserControl testResultWindow = new();
+            TestResultUserControlViewModel testResultWindowViewModel = (TestResultUserControlViewModel)testResultWindow.DataContext;
+            testResultWindowViewModel.LogText = resultString;
+            Window window = new() {
+                Title = StringResources.Instance.SettingCheckResultWindowTitle,
+                Content = testResultWindow
+            };
+            window.ShowDialog();
         }
     }
 }

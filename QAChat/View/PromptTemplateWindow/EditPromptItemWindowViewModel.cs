@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
@@ -75,9 +75,7 @@ namespace QAChat.View.PromptTemplateWindow {
             AfterUpdate = afterUpdate;
         }
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new SimpleDelegateCommand(OKButtonCommandExecute);
-
-        private void OKButtonCommandExecute(object parameter) {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -96,24 +94,17 @@ namespace QAChat.View.PromptTemplateWindow {
             }
             // ClipboardItemを更新
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertPromptTemplate(promptItem);
-            
+
             AfterUpdate(ItemViewModel);
 
-            if (parameter is not Window window) {
-                return;
-            }
             // ウィンドウを閉じる
             window.Close();
-        }
+        });
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new(CancelButtonCommandExecute);
-        private void CancelButtonCommandExecute(object parameter) {
-            if (parameter is not Window window) {
-                return;
-            }
+        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
-        }
+        });
 
     }
 }

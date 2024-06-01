@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -40,13 +40,12 @@ namespace QAChat.View.RAGWindow {
         }
 
         // RAG Sourceの追加
-        public SimpleDelegateCommand AddRagSourceCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> AddRagSourceCommand => new((parameter) => {
             // SelectRAGSourceItemを設定
             SelectedRagSourceItem = new RAGSourceItemViewModel(new RAGSourceItem());
+
             // RAG Sourceの編集Windowを開く
-            var editRagSourceWindow = new EditRAGSourceWindow();
-            EditRAGSourceWindowViewModel viewModel = (EditRAGSourceWindowViewModel)editRagSourceWindow.DataContext;
-            viewModel.Initialize(SelectedRagSourceItem, (afterUpdate) => {
+            EditRAGSourceWindow.OpenEditRAGSourceWindow(SelectedRagSourceItem, (afterUpdate) => {
                 // リストを更新
                 RagSourceItems.Clear();
                 foreach (var item in RAGSourceItem.GetItems()) {
@@ -54,19 +53,16 @@ namespace QAChat.View.RAGWindow {
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
             });
-            editRagSourceWindow.ShowDialog();
 
         });
         // RAG Sourceの編集
-        public SimpleDelegateCommand EditRagSourceCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> EditRagSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
                 Tools.Error("編集するRAG Sourceを選択してください");
                 return;
             }
             // RAG Sourceの編集Windowを開く
-            var editRagSourceWindow = new EditRAGSourceWindow();
-            EditRAGSourceWindowViewModel viewModel = (EditRAGSourceWindowViewModel)editRagSourceWindow.DataContext;
-            viewModel.Initialize(SelectedRagSourceItem, (afterUpdate) => {
+            EditRAGSourceWindow.OpenEditRAGSourceWindow(SelectedRagSourceItem, (afterUpdate) => {
 
                 // リストを更新
                 RagSourceItems.Clear();
@@ -75,11 +71,10 @@ namespace QAChat.View.RAGWindow {
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
             });
-            editRagSourceWindow.ShowDialog();
 
         });
         // DeleteRAGSourceCommand
-        public SimpleDelegateCommand DeleteRAGSourceCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteRAGSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
                 Tools.Error("削除するRAG Sourceを選択してください");
                 return;
@@ -98,11 +93,9 @@ namespace QAChat.View.RAGWindow {
             }
         });
         // CancelCommand
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
 

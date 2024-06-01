@@ -25,7 +25,7 @@ namespace ImageChat.View {
         }
 
         // OKCommand
-        public SimpleDelegateCommand OKCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OKCommand => new((window) => {
             // ScreenShotCheckItemsを文字列に変換
             string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
             foreach (ScreenShotCheckItem item in ScreenShotCheckItems) {
@@ -33,29 +33,25 @@ namespace ImageChat.View {
             }
             // Actionを実行
             Action(result);
-
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
+
         });
         
         // CancelCommand
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
         // クリアコマンド
-        public SimpleDelegateCommand ClearCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             // InputText = "";
             ScreenShotCheckItems.Clear();
 
         });
 
         // DataGridにデータを貼り付けるコマンド
-        public SimpleDelegateCommand PasteDataGridCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> PasteDataGridCommand => new((parameter) => {
             // クリップボードからデータを取得
             IDataObject clipboardData = Clipboard.GetDataObject();
             if (clipboardData == null) {

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -16,8 +16,7 @@ namespace ClipboardApp.View.PythonScriptView {
         }
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new SimpleDelegateCommand(OKButtonCommandExecute);
-        private void OKButtonCommandExecute(object parameter) {
+        public SimpleDelegateCommand<EditPythonScriptWindow> OKButtonCommand => new((editScriptWindow) => {
             // ScriptItemのチェック
             if (ScriptItem == null) {
                 return;
@@ -32,16 +31,13 @@ namespace ClipboardApp.View.PythonScriptView {
             ScriptItem.SaveScriptItem(ScriptItem);
 
             // ウィンドウを閉じる
-            if (parameter is EditPythonScriptWindow editScriptWindow) {
-                editScriptWindow.Close();
-            }
-        }
+            editScriptWindow.Close();
+        });
+
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new((parameter) => {
+        public SimpleDelegateCommand<EditPythonScriptWindow> CancelButtonCommand => new((editScriptWindow) => {
             // ウィンドウを閉じる
-            if (parameter is EditPythonScriptWindow editScriptWindow) {
-                editScriptWindow.Close();
-            }
+            editScriptWindow.Close();
         });
 
     }

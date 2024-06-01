@@ -40,7 +40,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
         // ピン留めの切り替え処理 複数アイテム処理可能
-        public static SimpleDelegateCommand ChangePinCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> ChangePinCommand => new((parameter) => {
             ChangePinCommandExecute();
         });
 
@@ -252,7 +252,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public static SimpleDelegateCommand ExtractTextCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
             ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
             if (clipboardItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません。");
@@ -269,7 +269,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         });
 
         // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public static SimpleDelegateCommand MaskDataCommand => new((parameter) => {
+        public static SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
             ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
             if (clipboardItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません。");
@@ -426,6 +426,19 @@ namespace ClipboardApp.View.ClipboardItemView {
                 // プログレスインジケーターを非表示
                 MainWindowViewModel.UpdateProgressCircleVisibility(false);
             }
+        }
+
+        public void UpdateTagList(ObservableCollection<TagItemViewModel> tagList) {
+            // TagListのチェックを反映
+            foreach (var item in tagList) {
+                if (item.IsChecked) {
+                    Tags.Add(item.Tag);
+                } else {
+                    Tags.Remove(item.Tag);
+                }
+            }
+            // DBに反映
+            Save();
         }
     }
 

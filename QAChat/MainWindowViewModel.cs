@@ -79,7 +79,7 @@ namespace QAChat {
         }
 
         // 設定画面を開くコマンド
-        public SimpleDelegateCommand SettingCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
             // SettingUserControlを生成してWindowを表示する。
             SettingsUserControl settingsControl = new();
             Window window = new() {
@@ -92,13 +92,10 @@ namespace QAChat {
         );
 
         private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow promptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
 
             });
-            promptTemplateWindow.ShowDialog();
         }
 
     }

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -17,11 +18,8 @@ namespace WpfCommonApp.Control.StatusMessage {
             Message = string.Join("\n", StatusText.Messages);
         }
 
-        public SimpleDelegateCommand CloseCommand => new ((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new ((window) => {
             // ウィンドウを閉じる
-            if (parameter is not System.Windows.Window window) {
-                return;
-            }
             window.Close();
 
         });

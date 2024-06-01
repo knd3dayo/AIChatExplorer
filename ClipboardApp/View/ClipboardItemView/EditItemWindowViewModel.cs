@@ -118,7 +118,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
 
         // タグ追加ボタンのコマンド
-        public SimpleDelegateCommand AddTagButtonCommand => new((obj) => {
+        public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
             if (ItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません");
@@ -132,31 +132,22 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         });
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand SelectTextCommand => new((parameter) => {
-
-            if (parameter is not TextBox textBox) {
-                return;
-            }
+        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
 
             // テキスト選択
             TextSelector.SelectText(textBox);
             return;
         });
         // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand ExecuteSelectedTextCommand => new((parameter) => {
-
-            if (parameter is not TextBox textbox) {
-                return;
-            }
+        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
 
             // 選択中のテキストをプロセスとして実行
             TextSelector.ExecuteSelectedText(textbox);
 
         });
 
-
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
 
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
@@ -166,22 +157,15 @@ namespace ClipboardApp.View.ClipboardItemView {
             ItemViewModel.Save();
             // 更新後の処理を実行
             _afterUpdate.Invoke();
-            if (parameter is not Window window) {
-                return;
-            }
             // ウィンドウを閉じる
             window.Close();
         });
 
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new(CancelButtonCommandExecute);
-        private void CancelButtonCommandExecute(object parameter) {
-            if (parameter is not Window window) {
-                return;
-            }
+        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
-        }
+        });
 
         // プロンプトテンプレートを開くコマンド
         private void PromptTemplateCommandExecute(object parameter) {

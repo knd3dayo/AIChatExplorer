@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +19,13 @@ namespace QAChat.View.RAGWindow {
     public partial class SelectCommitWindow : Window {
         public SelectCommitWindow() {
             InitializeComponent();
+        }
+
+        public static void OpenSelectCommitWindow(RAGSourceItemViewModel itemViewModel, Action<string> callback) {
+            SelectCommitWindow selectCommitWindow = new();
+            SelectCommitWindowViewModel selectCommitWindowViewModel = (SelectCommitWindowViewModel)selectCommitWindow.DataContext;
+            selectCommitWindowViewModel.Initialize(itemViewModel, callback);
+            selectCommitWindow.ShowDialog();
         }
     }
 }

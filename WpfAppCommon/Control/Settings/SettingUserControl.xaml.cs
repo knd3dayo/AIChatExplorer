@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Control.Settings {
     /// <summary>
@@ -19,6 +20,15 @@ namespace WpfAppCommon.Control.Settings {
     public partial class SettingsUserControl : UserControl {
         public SettingsUserControl() {
             InitializeComponent();
+        }
+
+        public static void OpenSettingsWindow() {
+            SettingsUserControl settingsControl = new();
+            Window window = new() {
+                Title = StringResources.Instance.SettingWindowTitle,
+                Content = settingsControl
+            };
+            window.ShowDialog();
         }
     }
 }

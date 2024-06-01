@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +21,12 @@ namespace QAChat.View.PromptTemplateWindow {
         public EditPromptItemWindow()
         {
             InitializeComponent();
+        }
+        public static void OpenEditPromptItemWindow(PromptItemViewModel promptItemViewModel, Action<PromptItemViewModel> callback) {
+            EditPromptItemWindow editPromptItemWindow = new();
+            EditPromptItemWindowViewModel editPromptItemWindowViewModel = (EditPromptItemWindowViewModel)editPromptItemWindow.DataContext;
+            editPromptItemWindowViewModel.Initialize(promptItemViewModel, callback);
+            editPromptItemWindow.ShowDialog();
         }
     }
 }

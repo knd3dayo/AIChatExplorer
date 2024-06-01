@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
@@ -99,35 +99,28 @@ namespace QAChat.View.PromptTemplateWindow {
             }
         }
 
-        public SimpleDelegateCommand EditPromptItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> EditPromptItemCommand => new((parameter) => {
             if (SelectedPromptItem == null) {
                 System.Windows.MessageBox.Show("プロンプトテンプレートが選択されていません。");
                 return;
             }
-            EditPromptItemWindow window = new EditPromptItemWindow();
-            EditPromptItemWindowViewModel editPromptItemWindowViewModel = (EditPromptItemWindowViewModel)window.DataContext;
-            editPromptItemWindowViewModel.Initialize(SelectedPromptItem, (PromptItemViewModel) => {
+            EditPromptItemWindow.OpenEditPromptItemWindow(SelectedPromptItem, (PromptItemViewModel) => {
                 // PromptItemsを更新
                 Reload();
             });
-            window.ShowDialog();
         });
 
         // プロンプトテンプレート処理を追加する処理
-        public SimpleDelegateCommand AddPromptItemCommand => new SimpleDelegateCommand(AddPromptItemCommandExecute);
-
-        public void AddPromptItemCommandExecute(object parameter) {
+        public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
             PromptItemViewModel itemViewModel = new PromptItemViewModel(new PromptItem());
-            EditPromptItemWindow window = new EditPromptItemWindow();
-            EditPromptItemWindowViewModel editPromptItemWindowViewModel = (EditPromptItemWindowViewModel)window.DataContext;
-            editPromptItemWindowViewModel.Initialize(itemViewModel, (PromptItemViewModel) => { 
+            EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
                 // PromptItemsを更新
                 Reload();
             });
-            window.ShowDialog();
-        }
+        });
+
         // プロンプトテンプレートを選択する処理
-        public SimpleDelegateCommand SelectPromptItemCommand => new((object parameter) => {
+        public SimpleDelegateCommand<Window> SelectPromptItemCommand => new((window) => {
             // 選択されていない場合はメッセージを表示
             if (SelectedPromptItem == null) {
                 MessageBox.Show("プロンプトテンプレートが選択されていません。");
@@ -138,13 +131,11 @@ namespace QAChat.View.PromptTemplateWindow {
             AfterSelect(SelectedPromptItem, mode);
 
             // Windowを閉じる
-            if (parameter is System.Windows.Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
         // プロンプトテンプレートを削除する処理
-        public SimpleDelegateCommand DeletePromptItemCommand => new(DeletePromptItemCommandExecute);
+        public SimpleDelegateCommand<object> DeletePromptItemCommand => new(DeletePromptItemCommandExecute);
         public void DeletePromptItemCommandExecute(object parameter) {
             PromptItemViewModel? itemViewModel = SelectedPromptItem;
             if (itemViewModel == null) {
@@ -162,15 +153,13 @@ namespace QAChat.View.PromptTemplateWindow {
             PromptItems.Remove(itemViewModel);
             // LiteDBを更新
             ClipboardAppFactory.Instance.GetClipboardDBController().DeletePromptTemplate(item);
-            OnPropertyChanged("PromptItems");
+            OnPropertyChanged(nameof(PromptItems));
         }
 
         // CloseCommand
-        public SimpleDelegateCommand CloseCommand => new ((parameter) => {
-            
-            if (parameter is System.Windows.Window window) {
-                window.Close();
-            }
+        public SimpleDelegateCommand<Window> CloseCommand => new ((window) => {
+
+            window.Close();
         });
 
     }

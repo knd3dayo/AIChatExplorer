@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace QAChat.View.RAGWindow {
         }
 
         // OKボタン
-        public SimpleDelegateCommand OkCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OkCommand => new((window) => {
             // 選択中のコミットハッシュが空の場合はエラー
             if (SelectedCommitInfo == null) {
                 Tools.Error("コミットを選択してください");
@@ -54,18 +54,14 @@ namespace QAChat.View.RAGWindow {
             afterUpdate(SelectedCommitInfo.Hash);
 
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
             Tools.Info("設定をキャンセルしました");
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
 
 

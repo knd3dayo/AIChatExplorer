@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WpfAppCommon;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.TagView {
@@ -43,6 +45,17 @@ namespace ClipboardApp.View.TagView {
             _tagItem = tagItem;
             Tag = tagItem.Tag;
             IsChecked = false;
+        }
+
+        public static void AddCommonTags(ObservableCollection<TagItemViewModel> tagList) {
+            // 共通タグを追加
+            foreach (var item in tagList) {
+                if (item.IsChecked) {
+                    // LiteDBにタグを追加  
+                    TagItem tagItem = new() { Tag = item.Tag };
+                    ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
+                }
+            }
         }
     }
 }

@@ -9,15 +9,15 @@ namespace ClipboardApp.Views.ClipboardItemView {
         public ObservableCollection<ClipboardAppMenuItem> SubMenuItems { get; set; } = [];
 
         // Command
-        public SimpleDelegateCommand Command { get; set; }
+        public SimpleDelegateCommand<object> Command { get; set; }
 
         // InputGestureText
         public string? InputGestureText { get; set; }
-        public ClipboardAppMenuItem(string title, SimpleDelegateCommand command) {
+        public ClipboardAppMenuItem(string title, SimpleDelegateCommand<object> command) {
             Title = title;
             Command = command;
         }
-        public ClipboardAppMenuItem(string title, SimpleDelegateCommand command, string inputGestureText) {
+        public ClipboardAppMenuItem(string title, SimpleDelegateCommand<object> command, string inputGestureText) {
             Title = title;
             Command = command;
             InputGestureText = inputGestureText;

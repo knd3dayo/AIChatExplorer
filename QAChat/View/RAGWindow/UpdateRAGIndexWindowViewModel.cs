@@ -141,8 +141,7 @@ namespace QAChat.View.RAGWindow {
 
         }
         // SelectRangeStartCommand
-        public SimpleDelegateCommand SelectRangeStartCommand => new(SelectRangeStartCommandExecute);
-        private void SelectRangeStartCommandExecute(object parameter) {
+        public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) => {
             if (itemViewModel == null) {
                 Tools.Error("RAGSourceItemViewModelが設定されていません");
                 return;
@@ -150,13 +149,11 @@ namespace QAChat.View.RAGWindow {
             // ラジオボタンの選択をIsRangeに変更
             IsRange = true;
 
-            var selectWindow = new SelectCommitWindow();
-            SelectCommitWindowViewModel viewModel = (SelectCommitWindowViewModel)selectWindow.DataContext;
-            viewModel.Initialize(itemViewModel, (hash) => {
+            SelectCommitWindow.OpenSelectCommitWindow(itemViewModel, (hash) => {
                 RangeStart = hash;
             });
-            selectWindow.ShowDialog();
-        }
+
+        });
 
         private void ClearIndexingStatus() {
             IndexingStatusText = "";
@@ -236,7 +233,7 @@ namespace QAChat.View.RAGWindow {
         }
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand OkButtonCommand => new(async (parameter) => {
+        public SimpleDelegateCommand<object> OkButtonCommand => new(async (parameter) => {
             if (itemViewModel == null) {
                 Tools.Error("RAGSourceItemViewModelが設定されていません");
                 return;
@@ -331,7 +328,7 @@ namespace QAChat.View.RAGWindow {
         });
 
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new(CancelButtonCommandExecute);
+        public SimpleDelegateCommand<object> CancelButtonCommand => new(CancelButtonCommandExecute);
         private void CancelButtonCommandExecute(object parameter) {
             // Modeが0の場合はウィンドウを閉じる
             if (Mode == 0) {

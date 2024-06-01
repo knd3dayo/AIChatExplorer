@@ -66,10 +66,10 @@ namespace ClipboardApp.View.PythonScriptView {
 
 
         // Scriptを新規作成するときの処理
-        public static SimpleDelegateCommand CreateScriptItemCommand => new(PythonCommands.CreateScriptCommandExecute);
+        public static SimpleDelegateCommand<object> CreateScriptItemCommand => new(PythonCommands.CreateScriptCommandExecute);
 
         // Scriptを編集するときの処理
-        public SimpleDelegateCommand EditScriptItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> EditScriptItemCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
                 Tools.Error("スクリプトを選択してください");
                 return;
@@ -77,7 +77,7 @@ namespace ClipboardApp.View.PythonScriptView {
             PythonCommands.EditScriptItemCommandExecute(SelectedScriptItem);
         });
         // Scriptを削除したときの処理
-        public SimpleDelegateCommand DeleteScriptCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteScriptCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
                 Tools.Error("スクリプトを選択してください");
                 return;
@@ -88,7 +88,7 @@ namespace ClipboardApp.View.PythonScriptView {
         });
 
         // 選択ボタンを押したときの処理
-        public SimpleDelegateCommand SelectScriptItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SelectScriptItemCommand => new((parameter) => {
             if (_selectedScriptItem == null) {
                 Tools.Error("スクリプトを選択してください");
                 return;
@@ -102,11 +102,9 @@ namespace ClipboardApp.View.PythonScriptView {
             }
         });
         // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand CloseCommand => new((parameter) => {
+        public SimpleDelegateCommand<ListPythonScriptWindow> CloseCommand => new((selectScriptWindow) => {
             // ウィンドウを閉じる
-            if (parameter is ListPythonScriptWindow selectScriptWindow) {
-                selectScriptWindow.Close();
-            }
+            selectScriptWindow.Close();
 
         });
 

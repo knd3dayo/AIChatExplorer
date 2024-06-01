@@ -1,5 +1,6 @@
-﻿
+
 using System.Windows;
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.PythonScriptView
 {
@@ -11,6 +12,13 @@ namespace ClipboardApp.View.PythonScriptView
         public ListPythonScriptWindow()
         {
             InitializeComponent();
+        }
+
+        public static void OpenListPythonScriptWindow(ListPythonScriptWindowViewModel.ActionModeEnum mode, Action<ScriptItem> callback) {
+            ListPythonScriptWindow listPythonScriptWindow = new();
+            ListPythonScriptWindowViewModel listPythonScriptWindowViewModel = (ListPythonScriptWindowViewModel)listPythonScriptWindow.DataContext;
+            listPythonScriptWindowViewModel.Initialize(mode, callback);
+            listPythonScriptWindow.ShowDialog();
         }
     }
 }

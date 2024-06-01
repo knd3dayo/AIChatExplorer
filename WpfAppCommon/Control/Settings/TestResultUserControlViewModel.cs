@@ -24,13 +24,11 @@ namespace WpfAppCommon.Control.Settings {
         }
 
         // CancelCommand
-        public SimpleDelegateCommand CancelCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
             Tools.Info("設定をキャンセルしました");
             // Windowを閉じる
-            if (parameter is Window window) {
-                window.Close();
-            }
+            window.Close();
         });
     }
 }

@@ -46,7 +46,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             RootFolders.Add(rootFolderViewModel);
             Instance = this;
         }
-        public static SimpleDelegateCommand SelectFolderCommand => new((parameter) => {
+        public static SimpleDelegateCommand<FolderSelectWindow> SelectFolderCommand => new((folderSelectWindow) => {
             if (Instance == null) {
                 Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
@@ -57,17 +57,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
             Instance.FolderSelectedAction?.Invoke(Instance.SelectedFolder);
             // Windowを閉じる
-            if (parameter is FolderSelectWindow folderSelectWindow) {
-                folderSelectWindow.Close();
-            }
+            folderSelectWindow.Close();
 
         });
 
-        public SimpleDelegateCommand CancelCommand => new((parameter) => {
+        public SimpleDelegateCommand<FolderSelectWindow> CancelCommand => new((folderSelectWindow) => {
             // Windowを閉じる
-            if (parameter is FolderSelectWindow folderSelectWindow) {
-                folderSelectWindow.Close();
-            }
+            folderSelectWindow.Close();
 
         });
 

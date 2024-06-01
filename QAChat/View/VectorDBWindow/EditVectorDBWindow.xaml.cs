@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace QAChat.View.VectorDBWindow {
     /// <summary>
@@ -7,6 +7,13 @@ namespace QAChat.View.VectorDBWindow {
     public partial class EditVectorDBWindow : Window {
         public EditVectorDBWindow() {
             InitializeComponent();
+        }
+
+        public static void OpenEditVectorDBWindow(VectorDBItemViewModel itemViewModel, Action<VectorDBItemViewModel> callback) {
+            EditVectorDBWindow editVectorDBWindow = new();
+            EditVectorDBWindowViewModel editVectorDBWindowViewModel = (EditVectorDBWindowViewModel)editVectorDBWindow.DataContext;
+            editVectorDBWindowViewModel.Initialize(itemViewModel, callback);
+            editVectorDBWindow.ShowDialog();
         }
     }
 }

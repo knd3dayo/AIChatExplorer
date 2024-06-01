@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ClipboardApp.View.SearchView;
 
 namespace ClipboardApp.View.TagView {
     /// <summary>
@@ -19,6 +20,13 @@ namespace ClipboardApp.View.TagView {
     public partial class TagSearchWindow : Window {
         public TagSearchWindow() {
             InitializeComponent();
+        }
+
+        public static void OpenTagSearchWindow(Action<string, bool> afterUpdate) {
+            TagSearchWindow tagSearchWindow = new TagSearchWindow();
+            TagSearchWindowViewModel searchWindowViewModel = (TagSearchWindowViewModel)tagSearchWindow.DataContext;
+            searchWindowViewModel.Initialize(afterUpdate);
+            tagSearchWindow.Show();
         }
     }
 }

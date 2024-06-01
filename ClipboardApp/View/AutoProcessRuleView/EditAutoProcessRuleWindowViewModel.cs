@@ -181,7 +181,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public MainWindowViewModel? MainWindowViewModel { get; set; }
         // 
         // 初期化
-        private void Initialize(
+        public void Initialize(
             Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             if (mainWindowViewModel == null) {
                 Tools.Error("MainWindowViewModelがNullです。");
@@ -287,7 +287,7 @@ namespace ClipboardApp.View.AutoProcessRuleView
         }
 
         // OKボタンが押されたときの処理
-        public SimpleDelegateCommand OKButtonClickedCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
                 Tools.Error("フォルダが選択されていません。");
@@ -406,17 +406,13 @@ namespace ClipboardApp.View.AutoProcessRuleView
             _AfterUpdate?.Invoke(TargetAutoProcessRule);
 
             // ウィンドウを閉じる
-            if (parameter is System.Windows.Window window) {
-                window.Close();
-            }
+            window.Close();
 
         });
         // キャンセルボタンが押されたときの処理
-        public SimpleDelegateCommand CancelButtonClickedCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> CancelButtonClickedCommand => new((window) => {
             // ウィンドウを閉じる
-            if (parameter is System.Windows.Window window) {
-                window.Close();
-            }
+            window.Close();
 
         });
         // OnSelectedFolderChanged
@@ -437,43 +433,32 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         }
         // OpenSelectDestinationFolderWindowCommand
-        public SimpleDelegateCommand OpenSelectDestinationFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
-                DestinationFolder = folderViewModel;
-            }
-            FolderSelectWindow FolderSelectWindow = new ();
-            FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-
             ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 Tools.Error("RootFolderViewModelがNullです。");
                 return;
             }
-            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
-            FolderSelectWindow.ShowDialog();
+            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
+                DestinationFolder = folderViewModel;
+            });
         });
 
         // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、TargetFolderに設定
-            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
-                TargetFolder = folderViewModel;
-            }
-            FolderSelectWindow FolderSelectWindow = new();
-            FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-
             ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 Tools.Error("RootFolderViewModelがNullです。");
                 return;
             }
-            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
-            FolderSelectWindow.ShowDialog();
+            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
+                TargetFolder = folderViewModel;
+            });
         });
 
-        public SimpleDelegateCommand AutoProcessItemSelectionChangedCommand => new(AutoProcessItemSelectionChangedCommandExecute);
-        public void AutoProcessItemSelectionChangedCommandExecute(object parameter) {
+        public SimpleDelegateCommand<object> AutoProcessItemSelectionChangedCommand => new((parameter) => {
             // ラジオボタンをIsBasicProcessChecked = trueにする
             IsBasicProcessChecked = true;
             OnPropertyChanged(nameof(IsBasicProcessChecked));
@@ -486,42 +471,33 @@ namespace ClipboardApp.View.AutoProcessRuleView
             } else {
                 FolderSelectionPanelEnabled = false;
             }
-        }
+        });
 
         // OpenSelectPromptTemplateWindowCommand
-        public SimpleDelegateCommand OpenSelectPromptTemplateWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenSelectPromptTemplateWindowCommand => new((parameter) => {
             // ラジオボタンをIsPromptTemplateChecked = trueにする
             IsPromptTemplateChecked = true;
             OnPropertyChanged(nameof(IsPromptTemplateChecked));
-            ListPromptTemplateWindow PromptTemplateSelectWindow = new();
-            ListPromptTemplateWindowViewModel PromptTemplateSelectWindowViewModel = (ListPromptTemplateWindowViewModel)PromptTemplateSelectWindow.DataContext;
-            PromptTemplateSelectWindowViewModel.Initialize(
+
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(
                 // PromptTemplateが選択されたら、PromptTemplateに設定
                 ActionModeEum.Select, ((promptItemViewModel, mode) => {
                     SelectedPromptItem = promptItemViewModel;
                 }));
-            PromptTemplateSelectWindow.ShowDialog();
         });
 
         //OpenSelectScriptWindowCommand
-        public SimpleDelegateCommand OpenSelectScriptWindowCommand => new((parameter) => {
+        public SimpleDelegateCommand <object> OpenSelectScriptWindowCommand => new((parameter) => {
             // ラジオボタンをIsPythonScriptChecked = trueにする
             IsPythonScriptChecked = true;
             OnPropertyChanged(nameof(IsPythonScriptChecked));
-            ListPythonScriptWindow ScriptSelectWindow = new();
-            ListPythonScriptWindowViewModel ScriptSelectWindowViewModel = (ListPythonScriptWindowViewModel)ScriptSelectWindow.DataContext;
-            ScriptSelectWindowViewModel.Initialize( ListPythonScriptWindowViewModel.ActionModeEnum.Select, (scriptItem) => {
+            ListPythonScriptWindow.OpenListPythonScriptWindow( ListPythonScriptWindowViewModel.ActionModeEnum.Select, (scriptItem) => {
                 SelectedScriptItem = scriptItem;
             });
-            ScriptSelectWindow.ShowDialog();
         });
 
         // OpenAIExecutionModeSelectionChangeCommand
-        public SimpleDelegateCommand OpenAIExecutionModeSelectionChangeCommand => new((parameter) => {
-            // parameterがRoutedEventArgsでない場合はエラー
-            if (parameter is not RoutedEventArgs routedEventArgs) {
-                return;
-            }
+        public SimpleDelegateCommand<RoutedEventArgs> OpenAIExecutionModeSelectionChangeCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択中のアイテムを取得
             var selectedItem = comboBox.SelectedItem;

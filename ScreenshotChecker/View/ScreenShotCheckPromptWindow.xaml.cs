@@ -20,5 +20,13 @@ namespace ImageChat.View {
         public ScreenShotCheckPromptWindow() {
             InitializeComponent();
         }
+
+        public static void OpenScreenShotCheckPromptWindow(Action<string> action) {
+            ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
+            ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
+            viewModel.Initialize(action);
+
+            screenShotCheckPromptWindow.ShowDialog();
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace QAChat.View.VectorDBWindow {
 
         }
         // OKボタンのコマンド
-        public SimpleDelegateCommand OKButtonCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -81,33 +81,20 @@ namespace QAChat.View.VectorDBWindow {
 
             AfterUpdate(ItemViewModel);
 
-            if (parameter is not Window window) {
-                return;
-            }
             // ウィンドウを閉じる
             window.Close();
         });
 
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand CancelButtonCommand => new((parameter) => {
-            if (parameter is not Window window) {
-                return;
-            }
+        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
         });
 
         // VectorDBTypeSelectionChangedCommand
-        public SimpleDelegateCommand VectorDBTypeSelectionChangedCommand => new((parameter) => {
-            if (parameter is not VectorDBTypeEnum) {
-                return;
-            }
-            if (ItemViewModel == null) {
-                return;
-            }
+        public SimpleDelegateCommand<VectorDBTypeEnum> VectorDBTypeSelectionChangedCommand => new((selectedVectorDBType) => {
 
-            if (parameter is not VectorDBTypeEnum selectedVectorDBType) {
-                Tools.Error("ベクトルDBタイプが指定されていません");
+            if (ItemViewModel == null) {
                 return;
             }
             // 現在はFaiss,Chroma(インメモリ)のみ
