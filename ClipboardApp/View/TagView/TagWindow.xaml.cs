@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using ClipboardApp.View.ClipboardItemView;
 
 namespace ClipboardApp.View.TagView
 {
@@ -10,6 +11,12 @@ namespace ClipboardApp.View.TagView
         public TagWindow()
         {
             InitializeComponent();
+        }
+        public static void OpenTagWindow(ClipboardItemViewModel? viewModel, Action action) {
+            TagWindow tagWindow = new();
+            TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
+            tagWindowViewModel.Initialize(viewModel, action);
+            tagWindow.ShowDialog();
         }
     }
 }

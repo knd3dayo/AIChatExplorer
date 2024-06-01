@@ -16,6 +16,7 @@ namespace WpfAppCommon.Model {
 
         public virtual void OnLoadAction() { }
 
+        public virtual void OnActivatedAction() { }
         // ロード時の処理
         private Window? window;
         public SimpleDelegateCommand LoadedCommand => new((parameter) => {
@@ -44,6 +45,7 @@ namespace WpfAppCommon.Model {
         public SimpleDelegateCommand ActivatedCommand => new((parameter) => {
             if (window != null && Tools.ActiveWindow != window) {
                 Tools.ActiveWindow = window;
+                OnActivatedAction();
             }
         });
 

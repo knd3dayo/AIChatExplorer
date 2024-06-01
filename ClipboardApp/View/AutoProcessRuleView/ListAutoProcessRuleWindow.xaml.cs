@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +22,12 @@ namespace ClipboardApp.View.AutoProcessRuleView
         public ListAutoProcessRuleWindow()
         {
             InitializeComponent();
+        }
+        public static void OpenListAutoProcessRuleWindow(MainWindowViewModel viewModel) {
+            ListAutoProcessRuleWindow listAutoProcessRuleWindow = new();
+            ListAutoProcessRuleWindowViewModel listAutoProcessRuleWindowViewModel = (ListAutoProcessRuleWindowViewModel)listAutoProcessRuleWindow.DataContext;
+            listAutoProcessRuleWindowViewModel.Initialize(viewModel);
+            listAutoProcessRuleWindow.ShowDialog();
         }
     }
 }

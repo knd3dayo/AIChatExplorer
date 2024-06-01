@@ -18,34 +18,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             Tools.Info("リロードしました");
         }
 
-        // 検索ウィンドウを表示する処理
-        public static void SearchCommandExecute(ClipboardFolderViewModel? folderViewModel) {
-            
-            SearchWindow searchWindow = new ();
-            SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
-            // 選択されたフォルダが検索フォルダの場合
-            if (folderViewModel != null && folderViewModel.IsSearchFolder) {
-                string absoluteCollectionName = folderViewModel.CollectionName;
-                SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(absoluteCollectionName);
-                if (searchConditionRule == null) {
-                    searchConditionRule = new() {
-                        Type = SearchRule.SearchType.SearchFolder
-                    };
-                    folderViewModel.SetSearchFolder(searchConditionRule);
-
-                }
-                searchWindowViewModel.Initialize( searchConditionRule, folderViewModel, () => {
-                    folderViewModel.Load();
-                });
-            } else {
-                searchWindowViewModel.Initialize(ClipboardFolder.GlobalSearchCondition, () => {
-                    folderViewModel?.Load();
-                });
-            }
-
-            searchWindow.ShowDialog();
-
-        }
 
         // --------------------------------------------------------------
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み

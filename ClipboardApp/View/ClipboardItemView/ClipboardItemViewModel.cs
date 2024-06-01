@@ -8,11 +8,9 @@ using WpfAppCommon;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.ClipboardItemView {
-    public partial class ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) : ObservableObject {
+    public partial class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject {
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; } = clipboardItem;
-        // FolderViewModel
-        public ClipboardFolderViewModel FolderViewModel { get; } = folderViewModel;
 
         // Content
         public string Content {
@@ -98,7 +96,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
         public ClipboardItemViewModel MaskDataCommandExecute() {
-            return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.MaskDataCommandExecute());
+            return new ClipboardItemViewModel(ClipboardItem.MaskDataCommandExecute());
         }
         public void SetDataObject() {
             MainWindowViewModel.ClipboardController.SetDataObject(this.ClipboardItem);
@@ -223,7 +221,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // Copy
         public ClipboardItemViewModel Copy() {
-            return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.Copy());
+            return new ClipboardItemViewModel(ClipboardItem.Copy());
         }
         // OpenItem
         public void OpenItem(bool openAsNew = false) {

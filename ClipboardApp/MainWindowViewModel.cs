@@ -23,15 +23,32 @@ namespace ClipboardApp {
         /// コンストラクタ
         /// </summary>
         /// 
+        public static MainWindowViewModel? ActiveInstance { get; set; }
 
+        public override void OnActivatedAction() {
+
+            ActiveInstance = this;
+
+        }
         public MainWindowViewModel() {
+            Init();
+
+            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
+            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
+            OnPropertyChanged(nameof(ClipboardItemFolders));
+
+        // ProgressIndicatorの表示更新用のアクションをセット
+        UpdateProgressCircleVisibility = (visible) => {
+                IsIndeterminate = visible;
+            };
+            // RootFolderのViewModel
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+
+            ActiveInstance = this;
+        }
+        public void Init() {
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
-            // ステータスバークリック時に実行するコマンド
-            MyStatusBarViewModel.OpenStatusMessageWindow = OpenStatusMessageWindowCommand;
-
-            // フォルダ階層を再描写する
-            ReloadFolder();
 
             // Python処理機能の初期化
             PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
@@ -40,14 +57,7 @@ namespace ClipboardApp {
             IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
             backupController.BackupNow();
 
-            // ProgressIndicatorの表示更新用のアクションをセット
-            UpdateProgressCircleVisibility = (visible) => {
-                IsIndeterminate = visible;
-            };
-            // RootFolderのViewModel
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
         }
-
         // ClipboardController
         public static ClipboardController ClipboardController { get; } = new();
 
@@ -78,18 +88,39 @@ namespace ClipboardApp {
 
         // ClipboardFolder
 
-        public static ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
+        public ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
 
         // RootFolderのClipboardViewModel
         public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; } 
 
         // Cutフラグ
-        public bool CutFlag { get; set; } = false;
+        private bool _CutFlag = false;
+        public bool CutFlag { 
+            get {
+                return _CutFlag;
+            }
+            set {
+                _CutFlag = value;
+                OnPropertyChanged(nameof(CutFlag));
+            }
+        }
+
         // 選択中のアイテム(複数選択)
-        public ObservableCollection<ClipboardItemViewModel> SelectedItems { get; set; } = [];
+        private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
+        public ObservableCollection<ClipboardItemViewModel> SelectedItems {
+            get {
+                return _selectedItems;
+
+            }
+            set {
+                _selectedItems = value;
+
+                OnPropertyChanged(nameof(SelectedItems));
+            }
+        }
 
         // 選択中のアイテム
-        private ClipboardItemViewModel? _selectedItem = null;
+        private ClipboardItemViewModel? _selectedItem;
         public ClipboardItemViewModel? SelectedItem {
             get {
                 return _selectedItem;
@@ -104,10 +135,11 @@ namespace ClipboardApp {
 
 
         // 選択中のフォルダ
-        private ClipboardFolderViewModel? _selectedFolder = null;
+        private ClipboardFolderViewModel? _selectedFolder;
         public ClipboardFolderViewModel? SelectedFolder {
             get {
-                return _selectedFolder;
+                
+                 return _selectedFolder;
             }
             set {
                 _selectedFolder = value;
@@ -118,13 +150,33 @@ namespace ClipboardApp {
         /// コピーされたアイテム
         /// </summary>
         // Ctrl + C or X が押された時のClipboardItem
-        public List<ClipboardItemViewModel> CopiedItems { get; set; } = [];
+        private ObservableCollection<ClipboardItemViewModel> _copiedItems = [];
+        public ObservableCollection<ClipboardItemViewModel> CopiedItems {
+            get {
+                return _copiedItems;
+            }
+            set {
+                _copiedItems = value;
+                // MainWindowModelのCopiedItemsにもセット
+                OnPropertyChanged(nameof(CopiedItems));
+            }
+        }
 
         /// <summary>
         /// コピーされたアイテムのフォルダ
         /// </summary>
         // Ctrl + C or X  が押された時のClipboardItemFolder
-        public ClipboardFolderViewModel? CopiedItemFolder { get; set; } = null;
+        private ClipboardFolderViewModel? _copiedItemFolder;
+        public ClipboardFolderViewModel? CopiedItemFolder {
+            get {
+                return _copiedItemFolder;
+            }
+            set {
+                _copiedItemFolder = value;
+                OnPropertyChanged(nameof(CopiedItemFolder));
+            }
+        }
+
 
         // 表示・非表示の設定
         /// <summary>
@@ -195,23 +247,6 @@ namespace ClipboardApp {
             }
         }
 
-        // フォルダ階層を再描写する
-        public void ReloadFolder() {
-            ClipboardItemFolders.Clear();
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
-            OnPropertyChanged(nameof(ClipboardItemFolders));
-        }
-        // ClipboardItemを再描写する
-        public void ReloadClipboardItems() {
-            if (SelectedFolder == null) {
-                return;
-            }
-            SelectedFolder.Load();
-            // ListBoxの先頭にスクロール
-            ScrollToTop();
-        }
-
         /// <summary>
         /// ListBoxの先頭にスクロール
         /// </summary>
@@ -273,22 +308,18 @@ namespace ClipboardApp {
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
-        public SimpleDelegateCommand FolderSelectionChangedCommand => new((parameter) => {
-            FolderSelectionChangedCommandExecute(this, parameter);
-        });
+        public SimpleDelegateCommand FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand ClipboardItemSelectionChangedCommand => new((parameter) => {
-            ClipboardItemSelectionChangedCommandExecute(this, parameter);
-        });
+        public SimpleDelegateCommand ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
 
 
         // クリップボードアイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand CreateItemCommand => new((parameter) => {
-            ClipboardItemViewModel.CreateItemCommandExecute(this.SelectedFolder);
+            CreateItemCommandExecute(this.SelectedFolder);
         });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
@@ -311,7 +342,7 @@ namespace ClipboardApp {
 
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand SearchCommand => new((parameter) => {
-            SearchCommandExecute(this);
+            SearchCommandExecute(SelectedFolder);
         });
 
 
@@ -336,10 +367,6 @@ namespace ClipboardApp {
             SettingCommandExecute();
         });
 
-        // ピン留めの切り替え処理 複数アイテム処理可能
-        public SimpleDelegateCommand ChangePinCommand => new((parameter) => {
-            ChangePinCommandExecute(this);
-        });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand OpenSelectedItemCommand => new((parameter) => {

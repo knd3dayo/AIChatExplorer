@@ -17,5 +17,12 @@ namespace ImageChat {
         public MainWindow() {
             InitializeComponent();
         }
+        public static void OpenMainWindow(bool isStartFromInternalApp) {
+            ImageChat.MainWindow imageEvidenceCheckerWindow = new();
+            ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
+            // 内部プロジェクトからの起動をFalse
+            imageEvidenceCheckerWindowViewModel.IsStartFromInternalApp = isStartFromInternalApp;
+            imageEvidenceCheckerWindow.ShowDialog();
+        }
     }
 }

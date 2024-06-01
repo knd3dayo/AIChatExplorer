@@ -8,7 +8,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
     public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
 
         // ClipboardFolder
-        private ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
+        public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
         // MainWindowViewModel
         public MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
@@ -81,7 +81,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // DBから読み込み
             ClipboardItemFolder.Load();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
+                Items.Add(new ClipboardItemViewModel(item));
             }
         }
 

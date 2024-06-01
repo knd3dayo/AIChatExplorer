@@ -80,7 +80,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 ClipboardItem clipboardItem = new(folderViewModel.CollectionName, folderViewModel.FolderPath);
 
 
-                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
+                ItemViewModel = new ClipboardItemViewModel(clipboardItem);
                 title = "新規アイテム";
             } else {
                 title = "アイテム編集";
@@ -101,14 +101,11 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow tagWindow = new();
-            TagWindowViewModel tagWindowViewModel = (TagWindowViewModel)tagWindow.DataContext;
-            tagWindowViewModel.Initialize(ItemViewModel, () => {
+            TagWindow.OpenTagWindow(ItemViewModel, () => {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
 
-            tagWindow.ShowDialog();
 
         });
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
@@ -165,13 +162,10 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // プロンプトテンプレートを開くコマンド
         private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow promptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.Initialize(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
 
             });
-            promptTemplateWindow.ShowDialog();
         }
 
     }
