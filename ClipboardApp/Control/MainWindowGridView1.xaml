@@ -43,7 +43,7 @@
             AutoGenerateColumns="False"
             BorderThickness="1"
             CanUserAddRows="True"
-            CanUserDeleteRows="True"
+            CanUserDeleteRows="False"
             CanUserReorderColumns="False"
             CanUserResizeColumns="True"
             CanUserResizeRows="False"
@@ -71,6 +71,10 @@
                     Command="{Binding CopyItemCommand, ElementName=Root}"
                     CommandParameter="{Binding SelectedItem}"
                     Modifiers="Ctrl" />
+                <KeyBinding
+                    Key="Delete"
+                    Command="{Binding DeleteItemCommand, ElementName=Root}"
+                    CommandParameter="{Binding SelectedItem}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <!--  ContentType  -->

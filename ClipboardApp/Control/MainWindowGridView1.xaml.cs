@@ -75,5 +75,12 @@ namespace ClipboardApp.Control {
         public static readonly DependencyProperty ExecuteSelectedTextCommandProperty =
             DependencyProperty.Register(nameof(ExecuteSelectedTextCommand), typeof(ICommand), typeof(MainWindowGridView1));
 
+        // DeleteItemCommand
+        public ICommand DeleteItemCommand {
+            get { return (ICommand)GetValue(DeleteItemCommandProperty); }
+            set { SetValue(DeleteItemCommandProperty, value); }
+        }
+        public static readonly DependencyProperty DeleteItemCommandProperty =
+            DependencyProperty.Register(nameof(DeleteItemCommand), typeof(ICommand), typeof(MainWindowGridView1));
     }
 }

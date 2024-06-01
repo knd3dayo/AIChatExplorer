@@ -326,6 +326,7 @@
                     HorizontalAlignment="Stretch"
                     ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
                     CopyItemCommand="{Binding CopyItemCommand}"
+                    DeleteItemCommand="{Binding DeleteSelectedItemCommand}"
                     ExecuteSelectedTextCommand="{Binding ExecuteSelectedTextCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
