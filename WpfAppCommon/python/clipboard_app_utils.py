@@ -161,6 +161,16 @@ def update_index(props, mode, workdir, relative_path, url):
 
     return result
 
+def update_index_with_clipboard_item(props, mode, text, object_id_string):
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+
+    import clipboard_item_processor
+    result = clipboard_item_processor.update_index(props, mode, text, object_id_string)
+
+
 # pyocr関連
 def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
     # strout,stderrorをStringIOでキャプチャする

@@ -9,6 +9,7 @@ using ClipboardApp.View.PythonScriptView;
 using System.Windows;
 using System.Windows.Controls;
 using QAChat.Model;
+using QAChat.View.VectorDBWindow;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
@@ -143,6 +144,16 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 OnPropertyChanged(nameof(SelectedScriptItem));
             }
         }
+        // VectorDBItem
+        private VectorDBItem? _selectedVectorDBItem;
+        public VectorDBItem? SelectedVectorDBItem {
+            get => _selectedVectorDBItem;
+            set {
+                _selectedVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
+            }
+        }
+
         // 基本処理のラジオボタンが選択中かどうか
 
         public bool IsBasicProcessChecked { get; set; } = true;
@@ -158,6 +169,9 @@ namespace ClipboardApp.View.AutoProcessRuleView
             }
         }
         public bool IsPythonScriptChecked { get; set; } = false;
+
+        // ベクトルDBに格納する場合のラジオボタンが選択中かどうか
+        public bool IsStoreVectorDBChecked { get; set; } = false;
 
         // OpenAIExecutionMode
         public OpenAIExecutionModeEnum OpenAIExecutionModeEnum { get; set; } = OpenAIExecutionModeEnum.Normal;
@@ -396,6 +410,14 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 }
                 TargetAutoProcessRule.RuleAction = new ScriptAutoProcessItem(SelectedScriptItem);
             }
+            // IsStoreVectorDBCheckedがTrueの場合はSelectedVectorDBItemを追加
+            if (IsStoreVectorDBChecked) {
+                if (SelectedVectorDBItem == null) {
+                    Tools.Error("VectorDBを選択してください。");
+                    return;
+                }
+                TargetAutoProcessRule.RuleAction = new VectorDBAutoProcessItem(SelectedVectorDBItem);
+            }
 
             // LiteDBに保存
             TargetAutoProcessRule.Save();
@@ -496,6 +518,17 @@ namespace ClipboardApp.View.AutoProcessRuleView
             });
         });
 
+        // OpenSelectVectorDBWindowCommand
+        public SimpleDelegateCommand<object> OpenSelectVectorDBWindowCommand => new((parameter) => {
+
+            // ベクトルDB一覧画面を表示する
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (vectorDBItem) => {
+                // ベクトルDBを選択したら、SelectedVectorDBItemに設定
+                SelectedVectorDBItem = vectorDBItem;
+            });
+
+
+        });
         // OpenAIExecutionModeSelectionChangeCommand
         public SimpleDelegateCommand<RoutedEventArgs> OpenAIExecutionModeSelectionChangeCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;

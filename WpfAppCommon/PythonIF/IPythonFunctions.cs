@@ -24,6 +24,11 @@ namespace WpfAppCommon.PythonIF {
     }
     public interface IPythonFunctions {
 
+        public enum VectorDBUpdateMode {
+            update,
+            delete
+        }
+
         public string ExtractText(string path);
         public string GetMaskedString(string spacyModel, string text);
         public string GetUnmaskedString(string spacyModel, string maskedText);
@@ -56,7 +61,9 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props);
 
 
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
+
+        public void UpdateVectorDBIndex(VectorDBUpdateMode mode, ClipboardItem clipboardItem, VectorDBItem vectorDBItem);
 
         //テスト用
         public string HelloWorld();

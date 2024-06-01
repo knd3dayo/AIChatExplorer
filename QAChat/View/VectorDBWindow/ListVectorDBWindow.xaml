@@ -121,6 +121,13 @@
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
+                    Command="{Binding SelectCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="選択"
+                    Visibility="{Binding SelectModeVisibility}" />
+                <Button
+                    Width="100"
+                    Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="閉じる"

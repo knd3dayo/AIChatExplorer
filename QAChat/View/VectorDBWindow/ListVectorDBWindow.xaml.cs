@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfAppCommon.Model;
 
 namespace QAChat.View.VectorDBWindow {
     /// <summary>
@@ -20,10 +21,10 @@ namespace QAChat.View.VectorDBWindow {
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow() {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, Action<VectorDBItem> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
             ListVectorDBWindowViewModel listVectorDBWindowViewModel = (ListVectorDBWindowViewModel)listVectorDBWindow.DataContext;
-            listVectorDBWindowViewModel.Initialize();
+            listVectorDBWindowViewModel.Initialize(mode, callBackup);
             listVectorDBWindow.ShowDialog();
         }
     }

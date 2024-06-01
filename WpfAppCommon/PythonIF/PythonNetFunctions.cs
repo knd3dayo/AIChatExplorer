@@ -5,6 +5,7 @@ using Python.Runtime;
 using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using FileStatus = WpfAppCommon.Model.FileStatus;
 
 namespace WpfAppCommon.PythonIF {
     public enum SpacyEntityNames {
@@ -314,7 +315,7 @@ namespace WpfAppCommon.PythonIF {
         }
 
         public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
-            return LangChainChat(ClipboardAppConfig.CreateOpenAIProperties(),vectorDBItems, prompt, chatHistory);
+            return LangChainChat(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItems, prompt, chatHistory);
         }
 
         public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
@@ -364,7 +365,7 @@ namespace WpfAppCommon.PythonIF {
                 chatResult.Response = output;
 
                 // page_content_listを取得
-                List<Dictionary<string,string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? new();
+                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? new();
                 chatResult.ReferencedContents = page_content_list;
 
                 // page_source_listを取得
@@ -455,7 +456,7 @@ namespace WpfAppCommon.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                
+
                 string chat_history_json = ChatItem.ToJson(chatHistoryList);
                 string propsJson = JsonSerializer.Serialize(props);
 
@@ -545,7 +546,38 @@ namespace WpfAppCommon.PythonIF {
             return result;
         }
 
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode mode, ClipboardItem item, VectorDBItem vectorDBItem) {
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+                // propsにVectorDBURLを追加
+                var props = ClipboardAppConfig.CreateOpenAIProperties();
+                props["VectorDBType"] = vectorDBItem.VectorDBTypeString;
+                props["VectorDBURL"] = vectorDBItem.VectorDBURL;
+
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "update_index_with_clipboard_item";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // update_vector_db_index関数を呼び出す
+                try {
+                    function_object(
+                    props,
+                        mode.ToString(),
+                        item.Content,
+                        item.Id.ToString()
+                        );
+                } catch (PythonException e) {
+                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                    if (e.Message.Contains("Unsupported file type")) {
+                        throw new UnsupportedFileTypeException(e.Message);
+                    }
+                    throw;
+                }
+
+
+            });
+        }
+        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
             int tokenCount = 0;
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
@@ -588,7 +620,6 @@ namespace WpfAppCommon.PythonIF {
                     throw;
                 }
             });
-            return tokenCount;
         }
 
 

@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
     Title="{Binding StringResources.EditAutoProcessRuleWindowTitle}"
-    Width="600"
+    Width="700"
     SizeToContent="Height"
     mc:Ignorable="d">
     <Window.Resources>
@@ -83,7 +83,7 @@
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="ルール名" />
                 <TextBox
                     Grid.Column="1"
@@ -92,22 +92,22 @@
                     Text="{Binding RuleName}" />
                 <CheckBox
                     Grid.Column="2"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="有効"
                     IsChecked="{Binding IsAutoProcessRuleEnabled}" />
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
                 <Label
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="適用対象フォルダ" />
                 <!--  適用対象を選択するツリービューを表示するボタン  -->
                 <Button
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Command="{Binding OpenSelectTargetFolderWindowCommand}"
                     Content="{Binding StringResources.Select}" />
                 <TextBox
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     IsEnabled="False"
                     Text="{Binding TargetFolder.CollectionName}" />
             </DockPanel>
@@ -115,7 +115,7 @@
             <DockPanel Grid.Row="2" HorizontalAlignment="Left">
                 <CheckBox
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="すべてのアイテムに適用"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding IsAllItemsRuleChecked}" />
@@ -123,40 +123,40 @@
             <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
                 <CheckBox
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="説明に次の文字が含まれる場合"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding IsDescriptionRuleChecked}" />
-                <TextBox Margin="10,10,10,10" Text="{Binding Description}" />
+                <TextBox Margin="10,3,10,3" Text="{Binding Description}" />
             </DockPanel>
             <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
                 <CheckBox
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="クリップボードに次の文字列が含まれる場合"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding IsContentRuleChecked}" />
-                <TextBox Margin="10,10,10,10" Text="{Binding Content}" />
+                <TextBox Margin="10,3,10,3" Text="{Binding Content}" />
             </DockPanel>
             <!--  ソースアプリの名前  -->
             <DockPanel Grid.Row="5" HorizontalAlignment="Stretch">
                 <CheckBox
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="ソースアプリの名前に次の文字列が含まれる場合"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding IsSourceApplicationRuleChecked}" />
-                <TextBox Margin="10,10,10,10" Text="{Binding SourceApplicationName}" />
+                <TextBox Margin="10,3,10,3" Text="{Binding SourceApplicationName}" />
             </DockPanel>
             <!--  ソースアプリのタイトル  -->
             <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
                 <CheckBox
                     Width="250"
-                    Margin="10,10,10,10"
+                    Margin="10,3,10,3"
                     Content="ソースアプリのタイトルに次の文字列が含まれる場合"
                     DockPanel.Dock="Left"
                     IsChecked="{Binding IsSourceApplicationTitleRuleChecked}" />
-                <TextBox Margin="10,10,10,10" Text="{Binding SourceApplicationTitle}" />
+                <TextBox Margin="10,3,10,3" Text="{Binding SourceApplicationTitle}" />
             </DockPanel>
             <!--  AutoProcessItemを選択するComboBox  -->
             <Grid Grid.Row="7">
@@ -166,16 +166,17 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <DockPanel Grid.Row="0" Margin="0,0,0,0">
                     <RadioButton
                         Width="250"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Content="次の処理を実行する"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsBasicProcessChecked}" />
                     <ComboBox
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         DisplayMemberPath="DisplayName"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding AutoProcessItems}"
@@ -195,49 +196,49 @@
                     IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
                     <Label
                         Width="250"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Content="コピー/移動/マージ先" />
                     <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Command="{Binding OpenSelectDestinationFolderWindowCommand}"
                         Content="{Binding StringResources.Select}" />
                     <TextBox
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         IsEnabled="False"
                         Text="{Binding DestinationFolder.CollectionName}" />
                 </DockPanel>
                 <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
                     <RadioButton
                         Width="250"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Content="Pythonスクリプトを実行する"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPythonScriptChecked}" />
                     <!--  Pythonスクリプト一覧画面を表示するボタン  -->
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Command="{Binding OpenSelectScriptWindowCommand}"
                         Content="{Binding StringResources.Select}" />
                     <TextBox
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         IsEnabled="False"
                         Text="{Binding SelectedScriptItem.Name}" />
                 </DockPanel>
                 <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
                     <RadioButton
                         Width="250"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Content="OpenAIのプロンプトを実行する"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPromptTemplateChecked}" />
                     <!--  プロンプトテンプレート一覧画面を表示するボタン  -->
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Command="{Binding OpenSelectPromptTemplateWindowCommand}"
                         Content="{Binding StringResources.Select}" />
                     <TextBox
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         IsEnabled="False"
                         Text="{Binding SelectedPromptItem.Name}" />
                 </DockPanel>
@@ -247,12 +248,10 @@
                     IsEnabled="{Binding IsPromptTemplateChecked}">
                     <Label
                         Width="250"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         Content="OpenAIの実行モード" />
                     <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
-                    <ComboBox Margin="10,10,10,10"
-                              SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}"
-                              >
+                    <ComboBox Margin="10,3,10,3" SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}">
                         <ComboBoxItem Name="Normal">通常</ComboBoxItem>
                         <ComboBoxItem Name="RAG">RAG</ComboBoxItem>
                         <i:Interaction.Triggers>
@@ -261,6 +260,23 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
+                </DockPanel>
+                <DockPanel Grid.Row="5" HorizontalAlignment="Stretch">
+                    <RadioButton
+                        Width="250"
+                        Margin="10,3,10,3"
+                        Content="ベクトルDBに格納する"
+                        GroupName="ActionTypes"
+                        IsChecked="{Binding IsStoreVectorDBChecked}" />
+                    <!--  ベクトルDB一覧画面を表示するボタン  -->
+                    <Button
+                        Margin="10,3,10,3"
+                        Command="{Binding OpenSelectVectorDBWindowCommand}"
+                        Content="{Binding StringResources.Select}" />
+                    <TextBox
+                        Margin="10,3,10,3"
+                        IsEnabled="False"
+                        Text="{Binding SelectedPromptItem.Name}" />
                 </DockPanel>
             </Grid>
             <Grid Grid.Row="8" VerticalAlignment="Bottom">

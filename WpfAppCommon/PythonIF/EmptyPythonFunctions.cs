@@ -51,10 +51,12 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public int UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-
+        public void UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode mode, ClipboardItem item, VectorDBItem vectorDBItem) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
         public string HelloWorld() {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }

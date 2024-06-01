@@ -17,6 +17,7 @@
     <None Remove="python\clipboard_app_spacy.py" />
     <None Remove="python\clipboard_app_sqlite.py" />
     <None Remove="python\clipboard_app_utils.py" />
+    <None Remove="python\clipboard_item_processor.py" />
     <None Remove="python\file_loader.py" />
     <None Remove="python\file_processor.py" />
     <None Remove="python\flask_app.py" />
@@ -56,6 +57,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\file_loader.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\clipboard_item_processor.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\file_processor.py">

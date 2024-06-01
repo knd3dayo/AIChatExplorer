@@ -138,7 +138,7 @@ namespace ClipboardApp {
         // OpenVectorDBManagementWindowCommandExecute メニューの「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenVectorDBManagementWindowCommandExecute() {
             // VectorDBManagementWindowを開く
-            ListVectorDBWindow.OpenListVectorDBWindow();
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, (vectorDBItem) => { });
         }
 
         // Ctrl + F が押された時の処理

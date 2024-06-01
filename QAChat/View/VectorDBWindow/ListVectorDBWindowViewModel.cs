@@ -16,6 +16,10 @@ namespace QAChat.View.VectorDBWindow {
     /// </summary>
     public class ListVectorDBWindowViewModel : MyWindowViewModel {
 
+        public enum ActionModeEnum {
+            Edit,
+            Select,
+        }
         // VectorDBItemのリスト
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
@@ -31,7 +35,14 @@ namespace QAChat.View.VectorDBWindow {
             }
         }
 
-        public void Initialize() {
+        private ActionModeEnum mode;
+        Action<VectorDBItem>? callBackup;
+
+        public void Initialize(ActionModeEnum mode, Action<VectorDBItem> callBackup) {
+
+            this.mode = mode;
+            this.callBackup = callBackup;
+
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
             foreach (var item in VectorDBItem.GetItems()) {
