@@ -26,7 +26,7 @@ namespace WpfAppCommon.Model {
         }
         // プロパティ
 
-        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
+        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         public string CollectionName { get; set; }
 
