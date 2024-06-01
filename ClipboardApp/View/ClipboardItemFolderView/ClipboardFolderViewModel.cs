@@ -229,7 +229,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         });
         // フォルダ編集コマンド
         public SimpleDelegateCommand EditFolderCommand => new((parameter) => {
-            ClipboardFolderViewModel.EditFolderCommandExecute(parameter, () => {
+            ClipboardFolderViewModel.EditFolderCommandExecute((ClipboardFolderViewModel)parameter, () => {
                 Load();
                 Tools.Info("フォルダを編集しました");
             });

@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {
@@ -10,6 +10,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         public FolderEditWindow()
         {
             InitializeComponent();
+        }
+        public static void OpenFolderEditWindow(ClipboardFolderViewModel folderViewModel, FolderEditWindowViewModel.Mode mode, Action afterUpdate) {
+            FolderEditWindow folderEditWindow = new();
+            FolderEditWindowViewModel folderEditWindowViewModel = (FolderEditWindowViewModel)folderEditWindow.DataContext;
+            folderEditWindowViewModel.Initialize(folderViewModel, mode, afterUpdate);
+            folderEditWindow.ShowDialog();
         }
     }
 }

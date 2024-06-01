@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
@@ -338,11 +339,33 @@ namespace ClipboardApp.View.ClipboardItemView {
         // OpenAI Chatを開くコマンド
         public static void OpenOpenAIChatWindowExecute(ClipboardItemViewModel? itemViewModel) {
 
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
             QAChat.MainWindow openAIChatWindow = new();
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
             mainWindowViewModel.Initialize(itemViewModel?.ClipboardItem);
+            mainWindowViewModel.ShowSearchWindowAction = () =>{
+                SearchWindow.OpenSearchWindow(rule, null, () => {
+                    // QAChatのContextを更新
+                    List<ClipboardItem> clipboardItems = rule.SearchItems();
+                    string contextText = ClipboardItem.GetContentsString(clipboardItems);
+                    mainWindowViewModel.ContextText = contextText;
+
+                });
+            };
+            mainWindowViewModel.SetContentTextFromClipboardItemsAction = () => {
+                List<ClipboardItem> items = [];
+                var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
+                if (clipboardItemViews != null) {
+                    foreach (var item in clipboardItemViews) {
+                        items.Add(item.ClipboardItem);
+                    }
+                }
+                string contextText = ClipboardItem.GetContentsString(items);
+                mainWindowViewModel.ContextText = contextText;
+            };
             
             openAIChatWindow.Show();
         }

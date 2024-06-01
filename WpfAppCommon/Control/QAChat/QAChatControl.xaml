@@ -195,8 +195,7 @@
                     <TextBox
                         Margin="10,10,10,10"
                         VerticalAlignment="Top"
-                        IsReadOnly="True"
-                        Text="{Binding PreviewText, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                        Text="{Binding PreviewText}"
                         TextWrapping="Wrap" />
                 </ScrollViewer>
             </TabItem>
@@ -223,11 +222,11 @@
             <!--  追加コンテキスト情報  -->
             <ComboBox
                 Grid.Column="1"
-                Margin="10,10,10,10"
-                materialDesign:HintAssist.Hint="追加コンテキスト情報"
-                SelectedIndex="{Binding AdditionalContext}">
+                Margin="0,0,0,0"
+                materialDesign:HintAssist.Hint="追加コンテキスト情報">
                 <ComboBoxItem Content="追加コンテキスト:なし" IsSelected="True" />
-                <ComboBoxItem Content="追加コンテキスト:選択中のフォルダのアイテム(フィルターあり)" />
+                <ComboBoxItem Content="追加コンテキスト:選択中のフォルダのアイテム" />
+                <ComboBoxItem Content="追加コンテキスト:検索" />
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand}" PassEventArgsToCommand="True" />

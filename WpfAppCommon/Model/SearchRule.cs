@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,5 +45,19 @@ namespace WpfAppCommon.Model {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertSearchRule(this);
         }   
 
+        public List<ClipboardItem> SearchItems() {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder!.CollectionName, SearchCondition).ToList();
+        }
+
+        public SearchRule Copy() {
+            SearchRule rule = new();
+            rule.SearchCondition = SearchCondition.Copy();
+            rule.SearchFolder = SearchFolder;
+            rule.TargetFolder = TargetFolder;
+            rule.Name = Name;
+            rule.Type = Type;
+            return rule;
+
+        }
     }
 }

@@ -35,6 +35,12 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
+        // SearchWindowを表示するAction
+        public Action ShowSearchWindowAction { get; set; } = () => { };
+
+        // ClipboardItemを選択するアクション
+        public Action SetContentTextFromClipboardItemsAction { get; set; } = () => { };
+
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
 
@@ -95,7 +101,7 @@ namespace WpfAppCommon.Control.QAChat {
             set {
                 inputText = value;
                 OnPropertyChanged(nameof(InputText));
-                OnPropertyChanged(nameof(PreviewText));
+                UpdatePreviewText();
             }
 
         }
@@ -110,7 +116,8 @@ namespace WpfAppCommon.Control.QAChat {
             set {
                 promptText = value;
                 OnPropertyChanged(nameof(PromptText));
-                OnPropertyChanged(nameof(PreviewText));
+
+                UpdatePreviewText();
             }
         }
 
@@ -122,23 +129,39 @@ namespace WpfAppCommon.Control.QAChat {
             }
             set {
                 contextText = value;
+                UpdatePreviewText();
                 OnPropertyChanged(nameof(ContextText));
             }
         }
 
 
         // PreviewText プロンプトテンプレート + コンテキスト情報 +入力テキスト
+        private string _PreviewText = "";
         public string PreviewText {
             get {
-                string prompt = "";
-                if (string.IsNullOrEmpty(PromptText) == false) {
-
-                    prompt = PromptText + "\n---------\n";
-
-                }
-                    prompt += InputText;
-                return prompt;
+                return _PreviewText;
             }
+            set {
+                _PreviewText = value;
+                OnPropertyChanged(nameof(PreviewText));
+            }
+        }
+
+        private void UpdatePreviewText() {
+            string prompt = "";
+            if (string.IsNullOrEmpty(PromptText) == false) {
+                prompt = PromptText + "\n---------以下は本文です------\n";
+            }
+            prompt += InputText;
+
+            if (string.IsNullOrEmpty(ContextText) == false) {
+                prompt += "\n---------以下は本文の背景情報です--------\n";
+                prompt += ContextText;
+            }
+
+
+            PreviewText = prompt;
+            OnPropertyChanged(nameof(PreviewText));
         }
 
         public StringBuilder Log = new();
@@ -150,18 +173,7 @@ namespace WpfAppCommon.Control.QAChat {
             try {
                 // OpenAIにチャットを送信してレスポンスを受け取る
                 // PromptTemplateがある場合はPromptTemplateを先頭に追加
-                string prompt = "";
-                if (string.IsNullOrEmpty(PromptText) == false) {
-
-                    prompt = PromptText  + "\n---------\n";
-
-                }
-                // コンテキスト情報がある場合は追加
-                if (string.IsNullOrEmpty(ContextText) == false) {
-                    prompt += "以下はコンテキスト情報です。本文の背景情報です\n---------\n";
-                    prompt += ContextText + "以下は本文です。\n---------\n";
-                }
-                prompt += InputText;
+                string prompt = PreviewText;
 
                 // 初回実行時の処理
                 if (ChatItems.Count == 0) {
@@ -245,13 +257,13 @@ namespace WpfAppCommon.Control.QAChat {
             if (index == 0) {
                 ContextText = "";
             } else if (index == 1) {
-                // 1の場合は選択中のフォルダの全てのClipboardItemからContextTextを生成
-                StringBuilder contextTextBuilder = new();
-                foreach (var clipboardItem in ClipboardItems) {
-                    contextTextBuilder.AppendLine(clipboardItem.Content);
-                }
-                ContextText = contextTextBuilder.ToString();
+                // ClipboardItemを選択
+                SetContentTextFromClipboardItemsAction();
+            } else if (index == 2) {
+                // SearchWindowを表示
+                ShowSearchWindowAction();
             }
+            OnPropertyChanged(nameof(PreviewText));
         });
 
         // プロンプトテンプレート画面を開くコマンド

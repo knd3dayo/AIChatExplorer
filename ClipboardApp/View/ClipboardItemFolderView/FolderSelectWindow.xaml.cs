@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +22,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         public FolderSelectWindow()
         {
             InitializeComponent();
+        }
+
+        public static void OpenFolderSelectWindow(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> folderSelectedAction) {
+            FolderSelectWindow folderSelectWindow = new FolderSelectWindow();
+            FolderSelectWindowViewModel folderSelectWindowViewModel = new FolderSelectWindowViewModel();
+            folderSelectWindowViewModel.Initialize(rootFolderViewModel, folderSelectedAction);
+            folderSelectWindow.DataContext = folderSelectWindowViewModel;
+            folderSelectWindow.ShowDialog();
         }
     }
 }

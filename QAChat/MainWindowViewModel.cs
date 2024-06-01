@@ -19,6 +19,37 @@ namespace QAChat {
             QAChatControlViewModel.Initialize(clipboardItem, PromptTemplateCommandExecute);
 
         }
+        public Action ShowSearchWindowAction {
+            get {
+                return QAChatControlViewModel.ShowSearchWindowAction;
+            }
+            set {
+                QAChatControlViewModel.ShowSearchWindowAction = value;
+                OnPropertyChanged(nameof(ShowSearchWindowAction));
+            }
+        }
+        // ClipboardItemを選択するアクション
+        public Action SetContentTextFromClipboardItemsAction {
+            get {
+                return QAChatControlViewModel.SetContentTextFromClipboardItemsAction;
+            }
+            set {
+                QAChatControlViewModel.SetContentTextFromClipboardItemsAction = value;
+                OnPropertyChanged(nameof(SetContentTextFromClipboardItemsAction));
+            }
+        }
+
+        public string ContextText {
+            get {
+                return QAChatControlViewModel.ContextText;
+            }
+            set {
+                QAChatControlViewModel.ContextText = value;
+                OnPropertyChanged(nameof(ContextText));
+            }
+        }
+
+
 
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems {

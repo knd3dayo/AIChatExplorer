@@ -31,11 +31,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// <param name="parameter"></param>
         public static void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
-            FolderEditWindow FolderEditWindow = new ();
-            FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, afterUpdate);
-
-            FolderEditWindow.ShowDialog();
+            FolderEditWindow.OpenFolderEditWindow(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, afterUpdate);
 
         }
 
@@ -45,16 +41,9 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public static void EditFolderCommandExecute(object parameter, Action afterUpdate) {
-            if (parameter is not ClipboardFolderViewModel folderViewModel) {
-                Tools.Error("フォルダが選択されていません");
-                return;
-            }
-            FolderEditWindow FolderEditWindow = new ();
-            FolderEditWindowViewModel FolderEditWindowViewModel = (FolderEditWindowViewModel)FolderEditWindow.DataContext;
-            FolderEditWindowViewModel.Initialize(folderViewModel, FolderEditWindowViewModel.Mode.Edit, afterUpdate);
+        public static void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
-            FolderEditWindow.ShowDialog();
+            FolderEditWindow.OpenFolderEditWindow(folderViewModel, FolderEditWindowViewModel.Mode.Edit, afterUpdate);
 
         }
 

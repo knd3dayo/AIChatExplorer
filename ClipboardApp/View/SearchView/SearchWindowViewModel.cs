@@ -134,31 +134,25 @@ namespace ClipboardApp.View.SearchView {
                 Tools.Error("検索条件がNullです");
                 return;
             }
-            if (MainWindowViewModel == null) {
+            if (MainWindowViewModel.ActiveInstance == null) {
                 Tools.Error("MainWindowViewModelがNullです");
                 return;
             }
 
-            // フォルダが選択されたら、SearchFolderに設定
-            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
+
+            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel.ActiveInstance, ClipboardFolder.SearchRootFolder);
+            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolderViewModel = folderViewModel;
                 folderViewModel.SetSearchFolder(SearchConditionRule);
                 SearchFolderPath = folderViewModel.CollectionName;
                 OnPropertyChanged(nameof(SearchFolderPath));
-
-            }
-
-            FolderSelectWindow FolderSelectWindow = new ();
-            FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel, ClipboardFolder.SearchRootFolder);
-            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
-            FolderSelectWindow.ShowDialog();
+            });
 
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            if (MainWindowViewModel == null) {
+            if (MainWindowViewModel.ActiveInstance == null) {
                 Tools.Error("MainWindowViewModelがNullです");
                 return;
             }
@@ -166,22 +160,13 @@ namespace ClipboardApp.View.SearchView {
                 Tools.Error("検索条件がNullです");
                 return;
             }
-            if (SearchConditionRule.Type != SearchRule.SearchType.SearchFolder) {
-                Tools.Error("検索フォルダ以外では選択できません");
-                return;
-            }
-            // フォルダが選択されたら、TargetFolderに設定
-            void FolderSelectedAction(ClipboardFolderViewModel folderViewModel) {
+
+            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
+            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 folderViewModel.SetSearchTargetFolder(SearchConditionRule);
                 TargetFolderPath = folderViewModel.CollectionName;
                 OnPropertyChanged(nameof(TargetFolderPath));
-            }
-
-            FolderSelectWindow FolderSelectWindow = new ();
-            FolderSelectWindowViewModel FolderSelectWindowViewModel = (FolderSelectWindowViewModel)FolderSelectWindow.DataContext;
-            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel, ClipboardFolder.RootFolder);
-            FolderSelectWindowViewModel.Initialize(rootFolderViewModel, FolderSelectedAction);
-            FolderSelectWindow.ShowDialog();
+            });
 
         });
 

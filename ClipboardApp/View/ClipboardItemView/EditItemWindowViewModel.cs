@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Control.QAChat;
@@ -88,6 +89,28 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             // QAChatControlの初期化
             QAChatControlViewModel.Initialize(ItemViewModel.ClipboardItem, PromptTemplateCommandExecute);
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
+            QAChatControlViewModel.ShowSearchWindowAction = () => {
+                SearchWindow.OpenSearchWindow(rule, null, () => {
+                    // QAChatのContextを更新
+                    List<ClipboardItem> clipboardItems = rule.SearchItems();
+                    string contextText = ClipboardItem.GetContentsString(clipboardItems);
+                    QAChatControlViewModel.ContextText = contextText;
+
+                });
+            };
+            QAChatControlViewModel.SetContentTextFromClipboardItemsAction = () => {
+                List<ClipboardItem> items = [];
+                var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
+                if (clipboardItemViews != null) {
+                    foreach (var item in clipboardItemViews) {
+                        items.Add(item.ClipboardItem);
+                    }
+                }
+                string contextText = ClipboardItem.GetContentsString(items);
+                QAChatControlViewModel.ContextText = contextText;
+            };
 
             _afterUpdate = afterUpdate;
 

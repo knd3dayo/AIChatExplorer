@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
 namespace WpfAppCommon.Model
@@ -161,6 +161,11 @@ namespace WpfAppCommon.Model
             }
         }
 
+        public SearchCondition Copy() {
+            SearchCondition searchCondition = new();
+            searchCondition.CopyFrom(this);
+            return searchCondition;
+        }
         public void CopyFrom(SearchCondition searchCondition)
         {
             Description = searchCondition.Description;

@@ -1,5 +1,6 @@
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -282,6 +283,14 @@ namespace WpfAppCommon.Model {
             }
             return item;
 
+        }
+        // ClipboardItemのListからContentsを取得して文字列として返す
+        public static string GetContentsString(List<ClipboardItem> items) {
+            StringBuilder sb = new();
+            foreach (var item in items) {
+                sb.AppendLine(item.Content);
+            }
+            return sb.ToString();
         }
 
         // 自分自身をDBに保存する
