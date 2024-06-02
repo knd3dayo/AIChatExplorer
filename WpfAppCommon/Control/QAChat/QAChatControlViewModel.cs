@@ -265,9 +265,9 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // Closeコマンド
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+        public SimpleDelegateCommand<Window?> CloseCommand => new((window) => {
 
-            window.Close();
+            window?.Close();
         });
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
