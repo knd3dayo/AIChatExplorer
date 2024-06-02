@@ -4,6 +4,7 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
+using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -153,8 +154,16 @@ namespace ClipboardApp.View.ClipboardItemView {
             if (ItemViewModel == null) {
                 return;
             }
+            // フォルダに自動処理が設定されている場合は実行
+            ClipboardFolder folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.CollectionName);
+            ClipboardItem? item = folder.ApplyAutoProcess(ItemViewModel.ClipboardItem);
             // ClipboardItemを更新
-            ItemViewModel.Save();
+            if (item != null) {
+                item.Save();
+            } else {
+                // 自動処理に失敗した場合はTools.Info("自動処理に失敗しました");
+                Tools.Info("自動処理に失敗しました");
+            }
             // 更新後の処理を実行
             _afterUpdate.Invoke();
             // ウィンドウを閉じる

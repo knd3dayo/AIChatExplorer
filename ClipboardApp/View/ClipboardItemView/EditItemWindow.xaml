@@ -88,17 +88,16 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock
+                <Label
                     Grid.Row="0"
                     Grid.Column="0"
                     Width="100"
                     Margin="10,10,10,10"
-                    HorizontalAlignment="Left"
-                    Text="タイトル" />
+                    Content="タイトル" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="10,0,10,10"
+                    Margin="10,10,10,10"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
@@ -118,7 +117,7 @@
             </Grid>
             <TabControl
                 Grid.Row="1"
-                Margin="10,10,10,10"
+                Margin="10,3,10,3"
                 HorizontalContentAlignment="Left">
                 <TabItem
                     Width="Auto"
@@ -129,7 +128,7 @@
                     Header="テキスト">
                     <TextBox
                         Name="Editor"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         AcceptsReturn="True"
                         HorizontalScrollBarVisibility="Auto"
                         IsEnabled="True"
@@ -184,12 +183,12 @@
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="0"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             Text="ファイルパス" />
                         <TextBox
                             Grid.Row="0"
                             Grid.Column="1"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             IsReadOnly="True"
                             Text="{Binding ItemViewModel.FilePath, Mode=OneWay}">
                             <TextBox.InputBindings>
@@ -210,13 +209,13 @@
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="0"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             Text="フォルダ" />
 
                         <TextBox
                             Grid.Row="1"
                             Grid.Column="1"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             IsReadOnly="True"
                             Text="{Binding ItemViewModel.FolderName, Mode=OneWay}">
                             <TextBox.InputBindings>
@@ -236,12 +235,12 @@
                         <TextBlock
                             Grid.Row="2"
                             Grid.Column="0"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             Text="ファイル名" />
                         <TextBox
                             Grid.Row="2"
                             Grid.Column="1"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             IsReadOnly="True"
                             Text="{Binding ItemViewModel.FileName, Mode=OneWay}">
                             <TextBox.InputBindings>
@@ -261,12 +260,12 @@
                         <TextBlock
                             Grid.Row="3"
                             Grid.Column="0"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             Text="フォルダ名とファイル名" />
                         <TextBox
                             Grid.Row="3"
                             Grid.Column="1"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             IsReadOnly="True"
                             Text="{Binding ItemViewModel.FolderAndFileName, Mode=OneWay}">
                             <TextBox.InputBindings>
@@ -296,12 +295,12 @@
                     <ScrollViewer
                         Grid.Row="2"
                         MaxHeight="500"
-                        Margin="10,10,10,10"
+                        Margin="10,3,10,3"
                         VerticalAlignment="Top">
 
                         <Image
                             MaxHeight="500"
-                            Margin="10,10,10,10"
+                            Margin="10,3,10,3"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top"
                             Source="{Binding ItemViewModel.Image}"
