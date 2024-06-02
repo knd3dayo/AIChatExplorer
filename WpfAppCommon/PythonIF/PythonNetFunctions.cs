@@ -560,12 +560,14 @@ namespace WpfAppCommon.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
                 try {
-                    function_object(
+                    string resultString = function_object(
                     props,
                         mode.ToString(),
                         item.Content,
                         item.Id.ToString()
                         );
+                    Tools.Info(resultString);
+
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {
@@ -607,11 +609,14 @@ namespace WpfAppCommon.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
                 try {
-                    tokenCount = function_object(
+                    string resultString = function_object(
                         props,
                         mode,
                         new PyString(workingDirPath),
                         new PyString(fileStatus.Path), repositoryURL);
+                    
+                    Tools.Info(resultString);
+
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {

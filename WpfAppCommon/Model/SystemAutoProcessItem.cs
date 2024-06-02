@@ -101,9 +101,14 @@ namespace WpfAppCommon.Model {
                         return args.ClipboardItem;
                     }
                     Tools.Info($"フォルダにコピーします{args.DestinationFolder.CollectionName}");
-                    // DestinationFolderにコピー
+                    // DestinationFolderをDBから取得
+                    ClipboardFolder folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(args.DestinationFolder.CollectionName);
+
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    args.DestinationFolder.AddItem(newItem);
+
+                    // Folderに追加
+                    folder.AddItem(newItem);
+
                     // コピーの場合は元のアイテムを返す
                     return args.ClipboardItem;
                 };
@@ -114,9 +119,12 @@ namespace WpfAppCommon.Model {
                         Tools.Warn("フォルダが選択されていません");
                         return args.ClipboardItem;
                     }
-                    // DestinationFolderに追加
+                    // DestinationFolderをDBから取得
+                    ClipboardFolder folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(args.DestinationFolder.CollectionName);
+
+                    // Folderに追加
                     ClipboardItem newItem = args.ClipboardItem.Copy();
-                    ClipboardItem result = args.DestinationFolder.AddItem(newItem);
+                    ClipboardItem result = folder.AddItem(newItem);
                     // 元のフォルダから削除
                     Tools.Info($"{args.ClipboardItem.CollectionName}から削除します");
 
@@ -153,6 +161,9 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString()) {
                 return (args) => {
                     ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    // DestinationFolderをDBから取得
+                    folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(args.DestinationFolder.CollectionName);
+
                     folder.MergeItemsBySourceApplicationTitleCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;
                 };
