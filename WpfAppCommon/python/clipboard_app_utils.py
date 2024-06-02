@@ -155,9 +155,11 @@ def update_index(props, mode, workdir, relative_path, url):
     buffer = StringIO()
     sys.stdout = buffer
     sys.stderr = buffer
-
+    openai_props = OpenAIProps(props)
+    vector_db_props = VectorDBProps(props)
+    
     import file_processor
-    result = file_processor.update_index(props, mode, workdir, relative_path,  url)
+    result = file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
 
     return result
 
@@ -166,9 +168,11 @@ def update_index_with_clipboard_item(props, mode, text, object_id_string):
     buffer = StringIO()
     sys.stdout = buffer
     sys.stderr = buffer
-
+    openai_props = OpenAIProps(props)
+    vector_db_props = VectorDBProps(props)
+    
     import clipboard_item_processor
-    result = clipboard_item_processor.update_index(props, mode, text, object_id_string)
+    result = clipboard_item_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
 
 
 # pyocr関連

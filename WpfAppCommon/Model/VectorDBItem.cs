@@ -31,7 +31,7 @@ namespace WpfAppCommon.Model {
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
-        [JsonPropertyName("Name")]
+        [JsonPropertyName("VectorDBName")]
         public string Name { get; set; } = "";
         // 説明
         [JsonPropertyName("VectorDBDescription")]

@@ -276,7 +276,7 @@
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
-                        Text="{Binding SelectedPromptItem.Name}" />
+                        Text="{Binding SelectedVectorDBItem.Name}" />
                 </DockPanel>
             </Grid>
             <Grid Grid.Row="8" VerticalAlignment="Bottom">

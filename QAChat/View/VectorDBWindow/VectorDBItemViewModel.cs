@@ -13,7 +13,7 @@ namespace QAChat.View.VectorDBWindow {
         public VectorDBItemViewModel(VectorDBItem item) {
             this.item = item;
         }
-        private VectorDBItem Item {
+        public VectorDBItem Item {
             get {
                 return item;
             }

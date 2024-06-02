@@ -49,6 +49,17 @@ namespace QAChat.View.VectorDBWindow {
                 VectorDBItems.Add(new VectorDBItemViewModel(item));
             }
             OnPropertyChanged(nameof(VectorDBItems));
+            OnPropertyChanged(nameof(SelectModeVisibility));
+        }
+
+        // 選択ボタンの表示可否
+        public Visibility SelectModeVisibility {
+            get {
+                if (mode == ActionModeEnum.Select) {
+                    return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
         }
 
         // VectorDB Sourceの追加
@@ -102,6 +113,17 @@ namespace QAChat.View.VectorDBWindow {
                     VectorDBItems.Add(new VectorDBItemViewModel(item));
                 }
             }
+        });
+
+        // SelectCommand
+        public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
+            if (SelectedVectorDBItem == null) {
+                Tools.Error("選択するベクトルDBを選択してください");
+                return;
+            }
+            callBackup?.Invoke(SelectedVectorDBItem.Item);
+            // Windowを閉じる
+            window.Close();
         });
         // CancelCommand
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {

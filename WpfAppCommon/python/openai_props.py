@@ -96,7 +96,7 @@ class VectorDBProps:
         self.VectorDBURL = props_dict.get("VectorDBURL")
         self.VectorDBTypeString = props_dict.get("VectorDBTypeString")
 
-        self.Name = props_dict.get("Name", None)
+        self.Name = props_dict.get("VectorDBName", None)
         self.CollectionName = props_dict.get("CollectionName", None)
         self.VectorDBDescription = props_dict.get("VectorDBDescription", None)
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する

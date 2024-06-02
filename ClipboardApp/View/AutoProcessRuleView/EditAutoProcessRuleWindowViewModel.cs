@@ -520,11 +520,15 @@ namespace ClipboardApp.View.AutoProcessRuleView
 
         // OpenSelectVectorDBWindowCommand
         public SimpleDelegateCommand<object> OpenSelectVectorDBWindowCommand => new((parameter) => {
+            // ラジオボタンをIsStoreVectorDBChecked = trueにする
+            IsStoreVectorDBChecked = true;
+            OnPropertyChanged(nameof(IsStoreVectorDBChecked));
 
             // ベクトルDB一覧画面を表示する
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (vectorDBItem) => {
                 // ベクトルDBを選択したら、SelectedVectorDBItemに設定
                 SelectedVectorDBItem = vectorDBItem;
+
             });
 
 

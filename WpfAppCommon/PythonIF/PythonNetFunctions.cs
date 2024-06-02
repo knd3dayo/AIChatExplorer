@@ -552,7 +552,7 @@ namespace WpfAppCommon.PythonIF {
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // propsにVectorDBURLを追加
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
-                props["VectorDBType"] = vectorDBItem.VectorDBTypeString;
+                props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
 
                 // Pythonスクリプトの関数を呼び出す
@@ -599,7 +599,7 @@ namespace WpfAppCommon.PythonIF {
                 }
                 // propsにVectorDBURLを追加
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
-                props["VectorDBType"] = vectorDBItem.VectorDBTypeString;
+                props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
 
                 // Pythonスクリプトの関数を呼び出す

@@ -4,12 +4,12 @@ from file_loader import FileLoader
 from langchain.docstore.document import Document
 from langchain_client import LangChainOpenAIClient
 import langchain_util
-from openai_props import get_props
+from openai_props import OpenAIProps, VectorDBProps
 
+def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
 
-def update_index(props, mode, text, object_id_string):
-    vector_db_type_string = props.get("VectorDBType")
-    vector_db_url = props.get("VectorDBURL")
+    vector_db_type_string = vector_db_props.VectorDBTypeString
+    vector_db_url = vector_db_props.VectorDBURL
     client = LangChainOpenAIClient(props)
     vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url)
 
