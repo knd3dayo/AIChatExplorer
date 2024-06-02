@@ -238,7 +238,7 @@ namespace WpfAppCommon.Model {
 
         // --- PythonExecutor.cs ---
         // カスタムPythonスクリプトの、templateファイル
-        public string TemplateScript { get; } = "python/template.py";
+        public string TemplateScript { get; } = "python/script_template.py";
 
         // クリップボードアプリ用のPythonスクリプト
         public string WpfAppCommonUtilsScript { get; } = "python/ai_app.py";

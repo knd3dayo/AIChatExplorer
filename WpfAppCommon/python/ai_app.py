@@ -21,7 +21,7 @@ if sys.stderr is None:
 # see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
-import clipboard_app_sqlite, openai_client, clipboard_app_spacy, clipboard_app_pyocr
+import openai_client, ai_app_spacy, ai_app_pyocr
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -42,14 +42,15 @@ def capture_stdout_stderr(func):
     return wrapper
 
 def extract_text(filename):
-    import clipboard_app_extractor
-    return clipboard_app_extractor.extract_text(filename)
+    import file_extractor
+    return file_extractor.extract_text(filename)
 
 # spacy関連
 def mask_data(textList: list, props = {}):
-    return clipboard_app_spacy.mask_data(textList, props)
+    return ai_app_spacy.mask_data(textList, props)
+
 def extract_entity(text, props = {}):
-    return clipboard_app_spacy.extract_entity(text, props)
+    return ai_app_spacy.extract_entity(text, props)
 
 ########################
 # openai関連
@@ -162,8 +163,8 @@ def update_index(props, mode, workdir, relative_path, url):
         
         openai_props = OpenAIProps(props)
         vector_db_props = VectorDBProps(props)
-        import file_processor
-        result = file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
+        import langchain_file_processor
+        result = langchain_file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -184,8 +185,8 @@ def update_index_with_clipboard_item(props, mode, text, object_id_string):
         openai_props = OpenAIProps(props)
         vector_db_props = VectorDBProps(props)
     
-        import clipboard_item_processor
-        result = clipboard_item_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
+        import langchain_object_processor
+        result = langchain_object_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -208,7 +209,7 @@ def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
     sys.stdout = buffer
     sys.stderr = buffer
     
-    result: str =  clipboard_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
+    result: str =  ai_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
     # strout,stderrorを元に戻す
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__

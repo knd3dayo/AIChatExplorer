@@ -8,23 +8,23 @@ BASEDIR=$(readlink -f $(dirname $0))
 function update() {
         echo "update"
         PYTHONPATH=${BASEDIR}
-        python3 file_processor.py update $1
+        python3 langchain_file_processor.py update $1
 }
 function delete() {
         echo "delete"
         PYTHONPATH=${BASEDIR}
-        python3 file_processor.py delete $1
+        python3 langchain_file_processor.py delete $1
 }
 
 # if branch is not specified, use the current branch
 if [ -z $BRANCH ]; then
         BRANCH=$(git symbolic-ref --short HEAD)
 fi
-# ì‹ÆƒfƒBƒŒƒNƒgƒŠ‚ÉˆÚ“®
+# ä½œæ¥­ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã«ç§»å‹•
 cd $GIT_PATH
 
 git checkout $BRANCH
-# Œ»İ‚Ìì‹ÆƒfƒBƒŒƒNƒgƒŠ‚ÌƒŠƒrƒWƒ‡ƒ“
+# ç¾åœ¨ã®ä½œæ¥­ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªã®ãƒªãƒ“ã‚¸ãƒ§ãƒ³
 local_rev=$(git rev-parse HEAD)
 
 git pull origin $BRANCH

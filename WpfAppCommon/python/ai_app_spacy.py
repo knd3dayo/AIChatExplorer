@@ -1,9 +1,85 @@
 import sys
 from unittest import result
 sys.path.append("python")
-import clipboard_app_sqlite
 
 nlp = None
+
+import sqlite3
+dbname = 'clipboard_pyhton.db'
+
+
+def create_masked_data_table():
+
+    conn = sqlite3.connect(dbname)
+
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS MASKED_TEXT (id INTEGER PRIMARY KEY AUTOINCREMENT, BEFORE TEXT, AFTER, TEXT)")
+    # ENT_LABELとLAST_NUMの値を保存するテーブルの作成
+    cursor.execute("CREATE TABLE IF NOT EXISTS TEXT_INT (id INTEGER PRIMARY KEY AUTOINCREMENT, ENT_LABEL TEXT, LAST_NUM INTEGER)")
+    conn.commit()
+
+    # データベースへのコネクションを閉じる。(必須)
+    conn.close()
+
+def select_masked_data_table(rowText: str):
+
+    conn = sqlite3.connect(dbname)
+
+    cursor = conn.cursor()
+    # BEFOREがrowTextのデータを取得する
+    cursor.execute("SELECT AFTER FROM MASKED_TEXT WHERE BEFORE = ?", (rowText,))
+    
+    rows = cursor.fetchall()
+    conn.close()
+    if len(rows) == 0:
+        return None
+    else:
+        return rows[0][0]
+
+def insert_masked_data_table(beforeText: str, afterText: str):
+
+    conn = sqlite3.connect(dbname)
+
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO MASKED_TEXT (BEFORE, AFTER) VALUES (?, ?)", (beforeText, afterText))
+    
+    conn.commit()
+    conn.close()
+
+# テーブルTEXT_INTから指定されたENT＿LABELのINTを取得する
+def select_text_int_table(ent_label: str):
+
+    conn = sqlite3.connect(dbname)
+
+    cursor = conn.cursor()
+    # ENT_LABELがent_labelのデータを取得する
+    cursor.execute("SELECT LAST_NUM FROM TEXT_INT WHERE ENT_LABEL = ?", (ent_label,))
+    rows = cursor.fetchall()
+    conn.close()
+    if len(rows) == 0:
+        return 0
+    else:
+        # ENT_LABELを返す
+        return rows[0][0]
+    
+# テーブルTEXT_INTに指定されたENT＿LABELのlast_numを＋１する
+def update_text_int_table(ent_label: str):
+
+    conn = sqlite3.connect(dbname)
+
+    cursor = conn.cursor()
+    # ENT_LABELがent_labelのデータを取得する
+    last_num = select_text_int_table(ent_label)
+    if last_num == 0:
+        cursor.execute("INSERT INTO TEXT_INT (ENT_LABEL, LAST_NUM) VALUES (?, 1)", (ent_label,))
+    else:
+        cursor.execute("UPDATE TEXT_INT SET LAST_NUM = ? WHERE ENT_LABEL = ?", (last_num + 1, ent_label))
+    
+    conn.commit()
+    conn.close()
+
+
+
 
 def mask_data(textList: list, props = {}):
     global nlp
@@ -25,7 +101,7 @@ def mask_data(textList: list, props = {}):
     result_dict["TEXT"] = {"BEFORE": textList, "AFTER": []}
 
     # tableが存在しない場合、作成する
-    clipboard_app_sqlite.create_masked_data_table()
+    create_masked_data_table()
     
     # textの中からPERSON, ORGを抽出し、それぞれを[MASKED {label} {連番}]に置き換える
     for beforeText in textList:
@@ -35,17 +111,17 @@ def mask_data(textList: list, props = {}):
         for ent in doc.ents:
             if ent.label_ in ['ORG', 'PERSON', 'PRODUCT', 'WORK_OF_ART', 'EVENT']:
                 # masked_data_tableにBEFOREがent.textのデータがあるか確認する
-                masked_data_string = clipboard_app_sqlite.select_masked_data_table(ent.text)
+                masked_data_string = select_masked_data_table(ent.text)
                 if masked_data_string is None:
                     # text_intテーブルのPERSONのlast_numを取得する
-                    num = clipboard_app_sqlite.select_text_int_table(ent.label_)
+                    num = select_text_int_table(ent.label_)
                     masked_text = f"[MASKED {ent.label_} {num + 1}]"
                     afterText = afterText.replace(ent.text, masked_text)
 
                     # masked_data_tableにBEFOREがent.textのデータを追加する
-                    clipboard_app_sqlite.insert_masked_data_table(ent.text, masked_text)
+                    insert_masked_data_table(ent.text, masked_text)
                     # text_intテーブルのPERSONのlast_numを+1する
-                    clipboard_app_sqlite.update_text_int_table(ent.label_)
+                    update_text_int_table(ent.label_)
                     # 結果を格納
                     result_dict.get(ent.label_,{})[ent.text] = masked_text
                 else:
@@ -84,3 +160,4 @@ def extract_entity(text, props = {}):
             result_set.add(ent.text)
 
     return result_set
+

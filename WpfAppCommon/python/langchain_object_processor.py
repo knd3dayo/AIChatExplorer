@@ -1,10 +1,11 @@
 import sys, json, os
 sys.path.append('python')
-from file_loader import FileLoader
 from langchain.docstore.document import Document
 from langchain_client import LangChainOpenAIClient
 import langchain_util
+
 from openai_props import OpenAIProps, VectorDBProps
+from langchain_file_loader import FileLoader
 
 def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
 

@@ -35,14 +35,14 @@ function update() {
 
     description=$(svn propget description $1 2>/dev/null)
 
-    python3 ${BASEDIR}/svn_file_processor.py update $1 "${description}"
+    python3 ${BASEDIR}/langchain_file_processor.py update $1 "${description}"
     if [ -n "$propset" ]; then
         propset_summary $1
     fi
 }
 function delete() {
     echo "delete"
-    python3 ${BASEDIR}/svn_file_processor.py delete $1
+    python3 ${BASEDIR}/langchain_file_processor.py delete $1
 }
 function propset_summary() {
     echo "propset_summary"
@@ -51,7 +51,7 @@ function propset_summary() {
         echo "description already exists"
         return
     fi
-    text=$(python3 ${BASEDIR}/svn_file_processor.py summary $1)
+    text=$(python3 ${BASEDIR}/langchain_file_processor.py summary $1)
     echo "svn propset description $text $1"
     svn propset description "${text}" $1
 

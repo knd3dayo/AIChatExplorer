@@ -2,7 +2,7 @@ from tkinter import SE
 from langchain.docstore.document import Document
 import os
 import tempfile
-import clipboard_app_extractor
+import file_extractor
 
 
 class FileLoader:
@@ -32,7 +32,7 @@ class FileLoader:
         if os.path.getsize(absolute_file_path) == 0:
             return text_list
         # テキスト抽出
-        text = clipboard_app_extractor.extract_text(absolute_file_path)
+        text = file_extractor.extract_text(absolute_file_path)
         
         # テキストをchunk_sizeで分割
         for i in range(0, len(text), chunk_size):
