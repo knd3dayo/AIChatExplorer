@@ -10,13 +10,13 @@
 
   <ItemGroup>
     <None Remove="Nlog.config" />
+    <None Remove="python\ai_app.py" />
     <None Remove="python\clipboard_app_extractor.py" />
     <None Remove="python\clipboard_app_openai.py" />
     <None Remove="python\clipboard_app_props.py" />
     <None Remove="python\clipboard_app_pyocr.py" />
     <None Remove="python\clipboard_app_spacy.py" />
     <None Remove="python\clipboard_app_sqlite.py" />
-    <None Remove="python\clipboard_app_utils.py" />
     <None Remove="python\clipboard_item_processor.py" />
     <None Remove="python\file_loader.py" />
     <None Remove="python\file_processor.py" />
@@ -50,7 +50,7 @@
     <EmbeddedResource Include="python\clipboard_app_sqlite.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\clipboard_app_utils.py">
+    <EmbeddedResource Include="python\ai_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\clipboard_app_extractor.py">

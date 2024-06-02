@@ -241,7 +241,7 @@ namespace WpfAppCommon.Model {
         public string TemplateScript { get; } = "python/template.py";
 
         // クリップボードアプリ用のPythonスクリプト
-        public string WpfAppCommonUtilsScript { get; } = "python/clipboard_app_utils.py";
+        public string WpfAppCommonUtilsScript { get; } = "python/ai_app.py";
 
         // テンプレートファイルが見つかりません
         public string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";

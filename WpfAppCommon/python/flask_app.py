@@ -4,12 +4,12 @@ import importlib
 import json
 import spacy
 
-import clipboard_app_utils
+import ai_app
 
 app = Flask(__name__)
 
 
-openai_util = clipboard_app_utils.OpenAIUtil(
+openai_util = ai_app.OpenAIUtil(
     openai_api_key=os.getenv("OPENAI_API_KEY"),
     azure_openai=os.getenv("AZURE_OPENAI"), 
     azure_openai_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
@@ -48,7 +48,7 @@ def clipboard():
         if content is None:
             response = jsonify({"error": "content is required"})
             return response
-        masked_content = clipboard_app_utils.mask_data(nlp, content)
+        masked_content = ai_app.mask_data(nlp, content)
         item["content"] = masked_content
         # マスクしたテキストを返す
         return jsonify({"item": item});

@@ -151,28 +151,54 @@ def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, cha
 
 # vector db関連
 def update_index(props, mode, workdir, relative_path, url):
+
     # strout,stderrorをStringIOでキャプチャする
     buffer = StringIO()
     sys.stdout = buffer
     sys.stderr = buffer
-    openai_props = OpenAIProps(props)
-    vector_db_props = VectorDBProps(props)
-    
-    import file_processor
-    result = file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
 
-    return result
+    # update_indexを実行する関数を定義
+    def func () -> dict:
+        
+        openai_props = OpenAIProps(props)
+        vector_db_props = VectorDBProps(props)
+        import file_processor
+        result = file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
 
 def update_index_with_clipboard_item(props, mode, text, object_id_string):
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
-    openai_props = OpenAIProps(props)
-    vector_db_props = VectorDBProps(props)
+    # update_indexを実行する関数を定義
+    def func () -> dict:
+        openai_props = OpenAIProps(props)
+        vector_db_props = VectorDBProps(props)
     
-    import clipboard_item_processor
-    result = clipboard_item_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
+        import clipboard_item_processor
+        result = clipboard_item_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
 
 
 # pyocr関連
