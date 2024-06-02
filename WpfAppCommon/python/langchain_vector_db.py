@@ -32,13 +32,11 @@ class LangChainVectorDB:
         return answers
 
     def add_documents(self, documents: list):
-        total_tokens = 0
         with get_openai_callback() as cb:
             self.save(self.vector_db_url, documents)
-            total_tokens = cb.total_tokens
-        
-        return total_tokens
 
+            return len(documents)
+        
     def delete_doucments_by_sources(self, sources :list ):
         self.delete(sources)
             

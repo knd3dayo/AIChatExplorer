@@ -8,7 +8,13 @@ from openai_props import env_to_props
 from openai_props import OpenAIProps, VectorDBProps
 
 
-def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workdir, relative_path, url):
+def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workdir, relative_path, url) -> dict:
+
+    # 結果格納用のdict
+    result = {}
+    # 初期化
+    result["delete_count"] = 0
+    result["update_count"] = 0
 
     vector_db_type_string = vector_db_props.VectorDBTypeString
     vector_db_url = vector_db_props.VectorDBURL
@@ -18,7 +24,7 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workd
         file_path = os.path.join(workdir, relative_path)
         if not os.path.exists(file_path):
             print("ファイルが存在しません。", file=sys.stderr)
-            return 0
+            return result
         
         # ドキュメントを取得
         loader = FileLoader(workdir, relative_path, url)
@@ -28,30 +34,33 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workd
         vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url)
         if len(documents) == 0:
             print("No documents to update.")
-            return 0
+            return result
+        
+        result["update_count"] = len(documents)
         
         #  sourceを指定してドキュメントを削除
         delete_token_count = vector_db.delete([relative_path])
         # DBを更新
         add_token_count = vector_db.add_documents(documents)
  
-        return delete_token_count + add_token_count
+        return result
     
     elif mode == "delete":
         client = LangChainOpenAIClient(props)
         vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url)
         
         if not vector_db:
-            return 0
-
+            return  result
+        
         #  sourceを指定してドキュメントを削除
-        vector_db.delete([relative_path])
+        delete_count = vector_db.delete([relative_path])
+        result["delete_count"] = delete_count
 
-        return 0
+        return result
     
     else:
         print("第1引数はupdate、deleteを指定してください。", file=sys.stderr)
-        return 0
+        return result
     
 if __name__ == "__main__":
     props = env_to_props()

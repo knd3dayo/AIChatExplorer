@@ -41,7 +41,8 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             ids = docs.get("ids", [])
             if len(ids) > 0:
                 self.db._collection.delete(ids=ids)
-        return 0    
+
+        return len(ids)    
  
 if __name__ == "__main__":
     from langchain_client import LangChainOpenAIClient

@@ -70,5 +70,5 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
         if len(doc_ids) > 0:
             self.db.delete(doc_ids)
             self.save(self.vector_db_url)
-        return 0
+        return len(doc_ids)
     
