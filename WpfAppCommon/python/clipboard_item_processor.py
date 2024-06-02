@@ -8,6 +8,12 @@ from openai_props import OpenAIProps, VectorDBProps
 
 def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
 
+    # 結果格納用のdict
+    result = {}
+    # 初期化
+    result["delete_count"] = 0
+    result["update_count"] = 0
+
     vector_db_type_string = vector_db_props.VectorDBTypeString
     vector_db_url = vector_db_props.VectorDBURL
     client = LangChainOpenAIClient(props)
@@ -18,15 +24,19 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
     documents = get_document_list(text, object_id_string)
 
     # DBからsourceを指定して既存ドキュメントを削除
-    delete_token_count = vector_db.delete([object_id_string])
+    delete_count = vector_db.delete([object_id_string])
+    result["delete_count"] = delete_count
+
     # DBにdockumentsを更新
-    add_token_count = vector_db.add_documents(documents)
+    vector_db.add_documents(documents)
+    result["update_count"] = len(documents)
+    
+    return result
 
 
 def get_document_list(text, object_id_string):
     text_list = split_text(text)
     return [ Document(page_content=text, metadata={"source_url": "", "source": object_id_string}) for text in text_list]    
-
 
 def split_text(text, chunk_size=500):
     text_list = []
