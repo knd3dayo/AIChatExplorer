@@ -13,9 +13,13 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
     client = LangChainOpenAIClient(props)
     vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url)
 
+
     # ドキュメントを取得
     documents = get_document_list(text, object_id_string)
-    # DBを更新
+
+    # DBからsourceを指定して既存ドキュメントを削除
+    delete_token_count = vector_db.delete([object_id_string])
+    # DBにdockumentsを更新
     add_token_count = vector_db.add_documents(documents)
 
 
