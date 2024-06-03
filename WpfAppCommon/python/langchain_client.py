@@ -24,12 +24,11 @@ class LangChainOpenAIClient:
             llm = ChatOpenAI(
                 **params
             )
-            return llm
+        return llm
         
     def get_embedding_client(self):
         if (self.props.AzureOpenAI):
             params = self.props.create_azure_openai_embedding_dict()
-            params["temperature"] = 0.5
             embeddings = AzureOpenAIEmbeddings(
                 **params
             )
