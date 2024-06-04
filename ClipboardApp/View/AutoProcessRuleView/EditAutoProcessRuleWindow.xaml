@@ -67,11 +67,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -83,22 +78,23 @@
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Margin="10,3,10,3"
+                    Margin="10,10,10,3"
+                    VerticalAlignment="Center"
                     Content="ルール名" />
                 <TextBox
                     Grid.Column="1"
-                    Margin="10,10,10,30"
+                    Margin="10,10,10,3"
                     HorizontalAlignment="Stretch"
                     Text="{Binding RuleName}" />
                 <CheckBox
                     Grid.Column="2"
-                    Margin="10,3,10,3"
+                    Margin="10,10,10,3"
                     Content="有効"
                     IsChecked="{Binding IsAutoProcessRuleEnabled}" />
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
                 <Label
-                    Width="250"
+                    Width="260"
                     Margin="10,3,10,3"
                     Content="適用対象フォルダ" />
                 <!--  適用対象を選択するツリービューを表示するボタン  -->
@@ -112,54 +108,7 @@
                     Text="{Binding TargetFolder.CollectionName}" />
             </DockPanel>
 
-            <DockPanel Grid.Row="2" HorizontalAlignment="Left">
-                <CheckBox
-                    Width="250"
-                    Margin="10,3,10,3"
-                    Content="すべてのアイテムに適用"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsAllItemsRuleChecked}" />
-            </DockPanel>
-            <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
-                <CheckBox
-                    Width="250"
-                    Margin="10,3,10,3"
-                    Content="説明に次の文字が含まれる場合"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsDescriptionRuleChecked}" />
-                <TextBox Margin="10,3,10,3" Text="{Binding Description}" />
-            </DockPanel>
-            <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
-                <CheckBox
-                    Width="250"
-                    Margin="10,3,10,3"
-                    Content="クリップボードに次の文字列が含まれる場合"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsContentRuleChecked}" />
-                <TextBox Margin="10,3,10,3" Text="{Binding Content}" />
-            </DockPanel>
-            <!--  ソースアプリの名前  -->
-            <DockPanel Grid.Row="5" HorizontalAlignment="Stretch">
-                <CheckBox
-                    Width="250"
-                    Margin="10,3,10,3"
-                    Content="ソースアプリの名前に次の文字列が含まれる場合"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsSourceApplicationRuleChecked}" />
-                <TextBox Margin="10,3,10,3" Text="{Binding SourceApplicationName}" />
-            </DockPanel>
-            <!--  ソースアプリのタイトル  -->
-            <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
-                <CheckBox
-                    Width="250"
-                    Margin="10,3,10,3"
-                    Content="ソースアプリのタイトルに次の文字列が含まれる場合"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsSourceApplicationTitleRuleChecked}" />
-                <TextBox Margin="10,3,10,3" Text="{Binding SourceApplicationTitle}" />
-            </DockPanel>
-            <!--  AutoProcessItemを選択するComboBox  -->
-            <Grid Grid.Row="7">
+            <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -167,16 +116,133 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0" Margin="0,0,0,0">
+                <DockPanel Grid.Row="0" HorizontalAlignment="Left">
+                    <CheckBox
+                        Width="260"
+                        Margin="20,3,10,3"
+                        Content="すべてのアイテムに適用"
+                        DockPanel.Dock="Left"
+                        IsChecked="{Binding IsAllItemsRuleChecked}" />
+                </DockPanel>
+                <Grid Grid.Row="1" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Margin="10,0,10,0"
+                        Content="文字列" />
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="タイトルに次の文字が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsDescriptionRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="本文に次の文字列が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsContentRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
+                    </DockPanel>
+                    <!--  ソースアプリの名前  -->
+                    <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="ソースアプリの名前に次の文字列が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsSourceApplicationRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
+                    </DockPanel>
+                </Grid>
+                <!--  アイテムの種類  -->
+                <Grid Grid.Row="2" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" HorizontalAlignment="Left">
+                        <Label
+                            Width="260"
+                            Margin="10,0,10,0"
+                            Content="アイテムの種類"
+                            DockPanel.Dock="Left" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="アイテムのタイプがテキストの場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsTextItemApplied}" />
+                        <TextBox
+                            Width="100"
+                            Margin="20,0,10,3"
+                            Text="{Binding MinTextLineCount}" />
+                        <Label
+                            Width="260"
+                            Margin="0,0,10,3"
+                            Content="行以上のテキスト"
+                            DockPanel.Dock="Left" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="アイテムのタイプがファイルの場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsFileItemApplied}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="3" HorizontalAlignment="Left">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,3"
+                            Content="アイテムのタイプがイメージの場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsImageItemApplied}" />
+                    </DockPanel>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="3" Margin="0,20,0,0">
+                <!--  AutoProcessItemを選択するComboBox  -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Margin="10,0,10,0"
+                    Content="実行する処理" />
+                <DockPanel Grid.Row="1" Margin="0,0,0,0">
                     <RadioButton
-                        Width="250"
-                        Margin="10,3,10,3"
+                        Width="260"
+                        Margin="10,0,10,0"
                         Content="次の処理を実行する"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsBasicProcessChecked}" />
                     <ComboBox
-                        Margin="10,3,10,3"
+                        Margin="10,0,10,0"
                         DisplayMemberPath="DisplayName"
                         IsSynchronizedWithCurrentItem="True"
                         ItemsSource="{Binding AutoProcessItems}"
@@ -191,11 +257,11 @@
                     </ComboBox>
                 </DockPanel>
                 <DockPanel
-                    Grid.Row="1"
+                    Grid.Row="2"
                     HorizontalAlignment="Stretch"
                     IsEnabled="{Binding FolderSelectionPanelEnabled, UpdateSourceTrigger=PropertyChanged}">
                     <Label
-                        Width="250"
+                        Width="260"
                         Margin="10,3,10,3"
                         Content="コピー/移動/マージ先" />
                     <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
@@ -208,9 +274,9 @@
                         IsEnabled="False"
                         Text="{Binding DestinationFolder.CollectionName}" />
                 </DockPanel>
-                <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+                <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
                     <RadioButton
-                        Width="250"
+                        Width="260"
                         Margin="10,3,10,3"
                         Content="Pythonスクリプトを実行する"
                         GroupName="ActionTypes"
@@ -225,9 +291,9 @@
                         IsEnabled="False"
                         Text="{Binding SelectedScriptItem.Name}" />
                 </DockPanel>
-                <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
                     <RadioButton
-                        Width="250"
+                        Width="260"
                         Margin="10,3,10,3"
                         Content="OpenAIのプロンプトを実行する"
                         GroupName="ActionTypes"
@@ -243,11 +309,11 @@
                         Text="{Binding SelectedPromptItem.Name}" />
                 </DockPanel>
                 <DockPanel
-                    Grid.Row="4"
+                    Grid.Row="5"
                     HorizontalAlignment="Stretch"
                     IsEnabled="{Binding IsPromptTemplateChecked}">
                     <Label
-                        Width="250"
+                        Width="260"
                         Margin="10,3,10,3"
                         Content="OpenAIの実行モード" />
                     <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
@@ -261,9 +327,9 @@
                         </i:Interaction.Triggers>
                     </ComboBox>
                 </DockPanel>
-                <DockPanel Grid.Row="5" HorizontalAlignment="Stretch">
+                <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
                     <RadioButton
-                        Width="250"
+                        Width="260"
                         Margin="10,3,10,3"
                         Content="ベクトルDBに格納する"
                         GroupName="ActionTypes"
@@ -279,7 +345,7 @@
                         Text="{Binding SelectedVectorDBItem.Name}" />
                 </DockPanel>
             </Grid>
-            <Grid Grid.Row="8" VerticalAlignment="Bottom">
+            <Grid Grid.Row="4" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>

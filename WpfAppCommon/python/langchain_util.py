@@ -138,7 +138,8 @@ class RetrievalQAUtil:
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
         langChainVectorDB = get_vector_db(self.client, vector_db_type_string, vector_db_url, collection_name)
         retriever = langChainVectorDB.db.as_retriever(
-            search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
+            # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
+            search_kwargs={"k": 10}
         )
             
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
