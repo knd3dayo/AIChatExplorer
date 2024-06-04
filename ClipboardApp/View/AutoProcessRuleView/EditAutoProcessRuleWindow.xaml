@@ -119,56 +119,30 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DockPanel Grid.Row="0" HorizontalAlignment="Left">
-                    <CheckBox
+                <Grid Grid.Row="0" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <RadioButton
+                        Grid.Row="0"
                         Width="260"
                         Margin="20,3,10,3"
                         Content="すべてのアイテムに適用"
                         DockPanel.Dock="Left"
+                        GroupName="AllorConditions"
                         IsChecked="{Binding IsAllItemsRuleChecked}" />
-                </DockPanel>
-                <Grid Grid.Row="1" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Label
-                        Grid.Row="0"
-                        Margin="10,0,10,0"
-                        Content="文字列" />
-                    <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
-                        <CheckBox
-                            Width="260"
-                            Margin="20,0,10,0"
-                            Content="タイトルに次の文字が含まれる場合"
-                            DockPanel.Dock="Left"
-                            IsChecked="{Binding IsDescriptionRuleChecked}" />
-                        <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
-                    </DockPanel>
-                    <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
-                        <CheckBox
-                            Width="260"
-                            Margin="20,0,10,0"
-                            Content="本文に次の文字列が含まれる場合"
-                            DockPanel.Dock="Left"
-                            IsChecked="{Binding IsContentRuleChecked}" />
-                        <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
-                    </DockPanel>
-                    <!--  ソースアプリの名前  -->
-                    <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
-                        <CheckBox
-                            Width="260"
-                            Margin="20,0,10,0"
-                            Content="ソースアプリの名前に次の文字列が含まれる場合"
-                            DockPanel.Dock="Left"
-                            IsChecked="{Binding IsSourceApplicationRuleChecked}" />
-                        <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
-                    </DockPanel>
+                    <RadioButton
+                        Grid.Row="1"
+                        Width="260"
+                        Margin="20,3,10,3"
+                        Content="次の条件に合致するアイテムに適用"
+                        DockPanel.Dock="Left"
+                        GroupName="AllorConditions"
+                        IsChecked="{Binding IsNotAllItemsRuleChecked}" />
                 </Grid>
                 <!--  アイテムの種類  -->
-                <Grid Grid.Row="2" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                <Grid Grid.Row="1" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -216,6 +190,46 @@
                             Content="アイテムのタイプがイメージの場合"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsImageItemApplied}" />
+                    </DockPanel>
+                </Grid>
+                <Grid Grid.Row="2" IsEnabled="{Binding IsNotAllItemsRuleChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label
+                        Grid.Row="0"
+                        Margin="10,0,10,0"
+                        Content="文字列" />
+                    <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="タイトルに次の文字が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsDescriptionRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
+                    </DockPanel>
+                    <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="本文に次の文字列が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsContentRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
+                    </DockPanel>
+                    <!--  ソースアプリの名前  -->
+                    <DockPanel Grid.Row="3" HorizontalAlignment="Stretch">
+                        <CheckBox
+                            Width="260"
+                            Margin="20,0,10,0"
+                            Content="ソースアプリの名前に次の文字列が含まれる場合"
+                            DockPanel.Dock="Left"
+                            IsChecked="{Binding IsSourceApplicationRuleChecked}" />
+                        <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
                     </DockPanel>
                 </Grid>
             </Grid>

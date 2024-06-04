@@ -83,7 +83,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public Mode CurrentMode { get; set; }
 
         // すべてのアイテムに対してルールを有効にするかどうか
-        private bool _IsAllItemsRuleChecked = false;
+        private bool _IsAllItemsRuleChecked = true;
         public bool IsAllItemsRuleChecked {
             get {
                 return _IsAllItemsRuleChecked;
@@ -91,17 +91,17 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             set {
                 _IsAllItemsRuleChecked = value;
                 OnPropertyChanged(nameof(IsAllItemsRuleChecked));
-                OnPropertyChanged(nameof(IsNotAllItemsRuleChecked));
             }
         }
 
         // すべてのアイテムに対してルールを有効にするかどうかの反対の値   
+        private bool _IsNotAllItemsRuleChecked = false;
         public bool IsNotAllItemsRuleChecked {
             get {
-                return !IsAllItemsRuleChecked;
+                return _IsNotAllItemsRuleChecked;
             }
             set {
-                IsAllItemsRuleChecked = !value;
+                _IsNotAllItemsRuleChecked = value;
                 OnPropertyChanged(nameof(IsNotAllItemsRuleChecked));
             }
         }
