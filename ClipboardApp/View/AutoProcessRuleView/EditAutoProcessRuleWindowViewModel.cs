@@ -410,7 +410,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetFolder.SetAutoProcessRuleTargetFolder(TargetAutoProcessRule);
+            TargetAutoProcessRule.TargetFolder = TargetFolder.ClipboardItemFolder;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -474,7 +474,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                         Tools.Error("同じフォルダにはコピーまたは移動できません。");
                         return;
                     }
-                    DestinationFolder.SetAutoProcessRuleDestinationFolder(TargetAutoProcessRule);
+                    TargetAutoProcessRule.DestinationFolder = DestinationFolder.ClipboardItemFolder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {

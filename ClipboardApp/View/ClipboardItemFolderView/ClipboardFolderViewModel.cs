@@ -176,14 +176,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public void SetSearchTargetFolder(SearchRule searchRule) {
             searchRule.TargetFolder = ClipboardItemFolder;
         }
-        // AutoProcessRuleのTargetFolderを設定
-        public void SetAutoProcessRuleTargetFolder(AutoProcessRule autoProcessRule) {
-            autoProcessRule.TargetFolder = ClipboardItemFolder;
-        }
-        // AutoProcessRuleのDestinationFolderを設定
-        public void SetAutoProcessRuleDestinationFolder(AutoProcessRule autoProcessRule) {
-            autoProcessRule.DestinationFolder = ClipboardItemFolder;
-        }
+
         // AutoProcessRuleを取得
         public ObservableCollection<AutoProcessRule> GetAutoProcessRules() {
             return AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
