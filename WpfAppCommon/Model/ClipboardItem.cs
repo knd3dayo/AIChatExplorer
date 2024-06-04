@@ -472,6 +472,7 @@ namespace WpfAppCommon.Model {
             try {
                 string text = PythonExecutor.PythonFunctions.ExtractText(path);
                 clipboardItem.Content = text;
+                
             } catch (UnsupportedFileTypeException) {
                 Tools.Error("サポートされていないファイル形式です");
                 return clipboardItem;

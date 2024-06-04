@@ -135,6 +135,9 @@ namespace WpfAppCommon.Model {
 
         public ClipboardFolder? TargetFolder { get; set; }
 
+        // 移動またはコピー先のフォルダ
+        public ClipboardFolder? DestinationFolder { get; set; }
+
         public AutoProcessRule() {
         }
 
@@ -161,8 +164,6 @@ namespace WpfAppCommon.Model {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetAllAutoProcessRules();
         }
 
-        // 移動またはコピー先のフォルダ
-        public ClipboardFolder? DestinationFolder { get; set; }
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
         public bool IsMatch(ClipboardItem clipboardItem) {

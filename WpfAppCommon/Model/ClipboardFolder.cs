@@ -223,7 +223,7 @@ namespace WpfAppCommon.Model {
                 }
             }
             return result;
-        }
+        }   
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string directoryPath) {

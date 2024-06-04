@@ -12,9 +12,9 @@ namespace WpfAppCommon.Factory.Default {
     /// </summary>
     public class DefaultClipboardProcessController : IClipboardProcessController {
         // Processとファイル名の対応を保持するハッシュテーブル
-        private static Hashtable processOpenedFileHashTable = [];
+        private static readonly Hashtable processOpenedFileHashTable = [];
         // ProcessとItemの対応を保持するハッシュテーブル
-        private static Hashtable processOpenedItemHashTable = [];
+        private static readonly Hashtable processOpenedItemHashTable = [];
 
         public void OpenItem(ClipboardItem item, bool openAsNew = false) {
             if (item == null) {
@@ -23,25 +23,27 @@ namespace WpfAppCommon.Factory.Default {
             // System.Windows.MessageBox.Show(item.Content);
 
             if (item.ContentType == ClipboardContentTypes.Files) {
-                string contentFileName = item.Content;
+                ClipboardItemFile clipboardItemFile = item.ClipboardItemFile ?? throw new ThisApplicationException("ファイル情報がありません");
+                string contentFilePath = clipboardItemFile.FilePath;
+
                 // 新規として開く場合はテンポラリディレクトリにファイルをコピーする
                 if (openAsNew) {
                     // item.Contentがディレクトリの場合はメッセージを表示して終了
-                    if (Directory.Exists(item.Content)) {
+                    if (Directory.Exists(contentFilePath)) {
                         throw new ThisApplicationException("ディレクトリは新規として開けません");
                     }
                     // item.Contentのファイル名を取得
-                    contentFileName = Path.Combine(Path.GetTempPath(), Path.GetFileName(item.Content));
+                    contentFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(clipboardItemFile.FileName));
 
                     // テンポラリディレクトリにコピー
-                    File.Copy(item.Content, contentFileName, true);
+                    File.Copy(clipboardItemFile.FilePath, contentFilePath, true);
 
                 }
 
                 // ファイルを開くプロセスを実行
                 ProcessStartInfo proc = new ProcessStartInfo() {
                     UseShellExecute = true,
-                    FileName = contentFileName
+                    FileName = contentFilePath
                 };
                 Process.Start(proc);
             } else if (item.ContentType == ClipboardContentTypes.Text) {

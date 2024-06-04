@@ -20,7 +20,7 @@ namespace WpfAppCommon.Model {
         public ClipboardItem? ClipboardItem { get; set; }
 
         // ファイルパス
-        public string? FilePath { get; set; }
+        public string FilePath { get; set; } = "";
         // フォルダ名
         public string FolderName {
             get {

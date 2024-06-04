@@ -62,7 +62,12 @@ namespace ClipboardApp {
             }
             // If ContentType is Files, copy files to clipboard
             else if (item.ContentType == ClipboardContentTypes.Files) {
-                System.Windows.Clipboard.SetFileDropList(new System.Collections.Specialized.StringCollection { item.Content });
+                // FilePathの取得
+                string filePath = item.ClipboardItemFile?.FilePath ?? "";
+                if (filePath == "") {
+                    return;
+                }
+                System.Windows.Clipboard.SetFileDropList(new System.Collections.Specialized.StringCollection { filePath });
             }
             IsClipboardMonitorEnabled = true;
         }
