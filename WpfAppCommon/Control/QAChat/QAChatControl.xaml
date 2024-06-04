@@ -88,8 +88,7 @@
                                             HorizontalAlignment="Left"
                                             FontSize="8pt"
                                             IsReadOnly="True"
-                                            Text="{Binding ContentWithSources, Mode=OneWay}"
-                                            TextWrapping="Wrap">
+                                            Text="{Binding ContentWithSources, Mode=OneWay}">
                                             <TextBox.InputBindings>
                                                 <KeyBinding
                                                     Key="A"
@@ -138,8 +137,7 @@
                                 Margin="10,0,10,0"
                                 materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
                                 AcceptsReturn="True"
-                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap">
+                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
                                     <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
                                 </TextBox.InputBindings>
@@ -159,8 +157,7 @@
                                 Margin="10,0,10,0"
                                 materialDesign:HintAssist.Hint="ここに質問を入力"
                                 AcceptsReturn="True"
-                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap">
+                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
                                     <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
                                     <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />

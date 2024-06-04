@@ -168,8 +168,7 @@
                         BorderThickness="0"
                         FontSize="8pt"
                         IsReadOnly="True"
-                        Text="{Binding Path=SelectedItem.Content, Mode=OneWay}"
-                        TextWrapping="Wrap">
+                        Text="{Binding Path=SelectedItem.Content, Mode=OneWay}">
                         <TextBox.InputBindings>
                             <KeyBinding
                                 Key="A"
