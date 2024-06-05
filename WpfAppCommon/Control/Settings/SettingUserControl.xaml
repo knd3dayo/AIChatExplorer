@@ -67,89 +67,75 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
                 <!--  基本設定  -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="260" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <!--  MonitorTargetAppNames  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="クリップボード監視対象のソースアプリ名" />
+                        Text="基本設定" />
 
-                    <TextBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
-                        Text="{Binding MonitorTargetAppNames}" />
-
-                    <!--  Backup Generation  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="クリップボードDBのバックアップ世代数" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="clipbord.db,clipboard-log.dbのバックアップ世代数"
-                        Text="{Binding BackupGeneration}" />
-                </Grid>
-                <!--  Python設定  -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
                     <!--  PythonExecution  -->
                     <TextBlock
                         Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="Pythonの使用" />
-                    <CheckBox
-                        Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="Pythonの使用"
+                        Visibility="Collapsed" />
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         Content="Pythonを使用します。多くの機能はPythonを使用しますので、Pythonのインストールと有効化をお勧めします。"
-                        IsChecked="{Binding PythonExecMode}" />
-                    <!--  PythonPath  -->
+                        IsChecked="{Binding PythonExecMode}"
+                        Visibility="Collapsed" />
                     <!--  PythonDLLPath  -->
                     <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
+                        Grid.Row="0"
+                        Grid.Column="1"
                         Margin="10,10,10,0"
                         Text="PythonDLLのパス"
                         Visibility="{Binding UsePythonVisibility}" />
                     <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
+                        Grid.Row="0"
+                        Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="Pythonインストール先のpython3**.dllを指定。例"
                         Text="{Binding PythonDllPath}"
                         Visibility="{Binding UsePythonVisibility}" />
-                    <!--  OpenAI設定  -->
+
+                    <!--  Backup Generation  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="クリップボードDBのバックアップ世代数"
+                        Visibility="Collapsed" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="clipbord.db,clipboard-log.dbのバックアップ世代数"
+                        Text="{Binding BackupGeneration}"
+                        Visibility="Collapsed" />
                 </Grid>
-                <Grid Grid.Row="2">
+                <!--  OpenAI設定  -->
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="260" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -167,323 +153,167 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="OpenAIを使用する"
-                        TextWrapping="Wrap"
-                        Visibility="{Binding UsePythonVisibility}" />
-                    <CheckBox
+                        Text="OpenAI設定" />
+                    <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="OpenAIを使用する"
+                        TextWrapping="Wrap"
+                        Visibility="Collapsed" />
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="2"
                         Margin="10,10,10,0"
                         Content="OpenAIまたはAzure OpenAIを使用します。API Keyが必要です。"
                         IsChecked="{Binding UseOpenAI}"
-                        Visibility="{Binding UsePythonVisibility}" />
+                        Visibility="Collapsed" />
                     <!--  OpenAI  API Key  -->
                     <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIのAPI Key"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="1"
+                        Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="OpenAIのAPI Key" />
+                    <TextBox
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのAPIキーを設定。"
-                        Text="{Binding OpenAIKey}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding OpenAIKey}" />
 
                     <!--  Azure OpenAI  -->
                     <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="Azure OpenAIを使用する"
-                        TextWrapping="Wrap"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <CheckBox
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="Azure OpenAIを使用する"
+                        TextWrapping="Wrap" />
+                    <CheckBox
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         Content="OpenAIの代わりにAzure OpenAIを使用します"
-                        IsChecked="{Binding AzureOpenAI}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        IsChecked="{Binding AzureOpenAI}" />
 
                     <!--  Azure OpenAI Endpoint  -->
                     <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="Azure OpenAIのエンドポイント"
-                        Visibility="{Binding AzureOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="3"
+                        Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="Azure OpenAIのエンドポイント" />
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する。"
-                        Text="{Binding AzureOpenAIEndpoint}"
-                        Visibility="{Binding AzureOpenAIVisibility}" />
+                        Text="{Binding AzureOpenAIEndpoint}" />
 
                     <!--  OpenAI Completion Model  -->
                     <TextBlock
-                        Grid.Row="4"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIのチャットで使用するモデル"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="4"
+                        Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="OpenAIのチャットで使用するモデル" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど"
-                        Text="{Binding OpenAICompletionModel}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding OpenAICompletionModel}" />
 
                     <!--  OpenAI Embedding Model  -->
                     <TextBlock
-                        Grid.Row="5"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIのEmbeddingで使用するモデル"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="5"
+                        Grid.Row="4"
                         Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="OpenAIのEmbeddingで使用するモデル" />
+                    <TextBox
+                        Grid.Row="4"
+                        Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど"
-                        Text="{Binding OpenAIEmbeddingModel}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding OpenAIEmbeddingModel}" />
                     <!--  OpenAI Complition Base URL  -->
                     <TextBlock
-                        Grid.Row="6"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIのチャットモデルのBaseURL"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="6"
+                        Grid.Row="5"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="OpenAIのチャットモデルのBaseURL" />
+                    <TextBox
+                        Grid.Row="5"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
-                        Text="{Binding OpenAICompletionBaseURL}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding OpenAICompletionBaseURL}" />
 
                     <!--  OpenAI Embedding Base URL  -->
                     <TextBlock
-                        Grid.Row="7"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIのEmbeddingモデルのBaseURL"
-                        Visibility="{Binding UseOpenAIVisibility}" />
-                    <TextBox
-                        Grid.Row="7"
+                        Grid.Row="6"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="OpenAIのEmbeddingモデルのBaseURL" />
+                    <TextBox
+                        Grid.Row="6"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
-                        Text="{Binding OpenAIEmbeddingBaseURL}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding OpenAIEmbeddingBaseURL}" />
                 </Grid>
 
                 <!--  Spacy設定  -->
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="260" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <!--  Extract Entity/Data Masking  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="エンティティ抽出/データマスキング"
-                        Visibility="{Binding UsePythonVisibility}" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います"
-                        IsChecked="{Binding UseSpacy}"
-                        Visibility="{Binding UsePythonVisibility}" />
-
+                        Text="Python Spacy設定" />
                     <!--  SpacyModel  -->
                     <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
+                        Grid.Row="0"
+                        Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Spacyのモデル名"
-                        Visibility="{Binding UseSpacyVisibility}" />
+                        Text="Spacyのモデル名" />
                     <TextBox
                         Grid.Row="1"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど"
-                        Text="{Binding SpacyModel}"
-                        Visibility="{Binding UseSpacyVisibility}" />
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="OpenAIに渡す文字列をマスキングする"
-                        Visibility="{Binding UseSpacyVisibility}" />
-                    <CheckBox
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
-                        IsChecked="{Binding UserMaskedDataInOpenAI}"
-                        Visibility="{Binding UseSpacyVisibility}" />
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="自動でタグ生成する"
-                        Visibility="{Binding UseSpacyVisibility}" />
-                    <CheckBox
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="クリップボードの内容から自動的にタグを生成します"
-                        IsChecked="{Binding AutoTag}"
-                        Visibility="{Binding UseSpacyVisibility}" />
+                        Text="{Binding SpacyModel}" />
                 </Grid>
-                <!--  その他の設定  -->
-                <Grid Grid.Row="4">
+                <!--  Python OCR設定  -->
+                <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="260" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <!--  クリップボードアイテムをOS上のフォルダと同期させる。  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="クリップボードアイテムをOS上のフォルダと同期させる" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="クリップボードアイテムをOS上のフォルダと同期させます。"
-                        IsChecked="{Binding SyncClipboardItemAndOSFolder}" />
-                    <!--  同期先のフォルダ名  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="同期先のフォルダ名"
-                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="クリップボードアイテムを同期するOS上のフォルダ名を指定。"
-                        Text="{Binding SyncFolderName}"
-                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                    <!--  同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットする。  -->
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="ファイル更新時に自動的にコミット"
-                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                    <CheckBox
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。"
-                        IsChecked="{Binding AutoCommit}"
-                        Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                    <!--  UseOCR  -->
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="画像処理"
-                        Visibility="{Binding UsePythonVisibility}" />
-                    <CheckBox
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="クリップボードの画像をPyOCRを使用してテキスト抽出します"
-                        IsChecked="{Binding UseOCR}"
-                        Visibility="{Binding UsePythonVisibility}" />
+                        Text="Python OCR設定" />
                     <!--  TesseractExePath  -->
                     <TextBlock
-                        Grid.Row="4"
-                        Grid.Column="0"
+                        Grid.Row="0"
+                        Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Tesseractのパス"
-                        Visibility="{Binding UseOCRVisibility}" />
+                        Text="Tesseractのパス" />
                     <TextBox
-                        Grid.Row="4"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding TesseractExePath}"
-                        Visibility="{Binding UseOCRVisibility}" />
-                </Grid>
-
-                <!--  自動処理  -->
-                <Grid Grid.Row="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="320" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
                         Grid.Row="0"
-                        Grid.Column="0"
+                        Grid.Column="2"
                         Margin="10,10,10,0"
-                        Text="自動でマージ" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
-                        IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
-
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="自動タイトル生成" />
-                    <RadioButton
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="しない"
-                        GroupName="AutoDescription"
-                        IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
-                    <RadioButton
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="自動的にタイトルを生成する"
-                        GroupName="AutoDescription"
-                        IsChecked="{Binding AutoDescription}" />
-                    <RadioButton
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Content="OpenAIを使用して自動的にタイトルを生成する"
-                        GroupName="AutoDescription"
-                        IsChecked="{Binding AutoDescriptionWithOpenAI}"
-                        Visibility="{Binding UseOpenAIVisibility}" />
+                        Text="{Binding TesseractExePath}" />
                 </Grid>
             </Grid>
         </ScrollViewer>
@@ -505,13 +335,13 @@
                 Margin="10,0,10,0"
                 HorizontalAlignment="Right">
                 <Button
-                    Width="100"
+                    Width="150"
                     Margin="10,0,10,0"
                     Command="{Binding SaveCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="OK" />
                 <Button
-                    Width="100"
+                    Width="150"
                     Margin="10,0,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"

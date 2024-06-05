@@ -4,11 +4,15 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
 using System.Windows;
+using WpfAppCommon.Control.Settings;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
     public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
 
+
+        // システム共通ルール設定用
+        public SettingUserControlViewModel SettingUserControlViewModel { get; } = new SettingUserControlViewModel();
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];
@@ -27,6 +31,30 @@ namespace ClipboardApp.View.AutoProcessRuleView
             AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
+        }
+
+        // TabIndex
+        private int _tabIndex = 0;
+        public int TabIndex {
+            get => _tabIndex;
+            set {
+                _tabIndex = value;
+                OnPropertyChanged(nameof(TabIndex));
+                OnPropertyChanged(nameof(AutoProcessRuleButtonVisibility));
+                OnPropertyChanged(nameof(SaveSystemCommonSettingButtonVisibility));
+            }
+        }
+        // AutoProcessRule用のButtonのVisibility
+        public Visibility AutoProcessRuleButtonVisibility {
+            get {
+                return TabIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // システム共通保存ボタンのVisibility
+        public Visibility SaveSystemCommonSettingButtonVisibility {
+            get {
+                return TabIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
 
@@ -73,6 +101,14 @@ namespace ClipboardApp.View.AutoProcessRuleView
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
+        // SaveSystemCommonSettingCommand
+        public SimpleDelegateCommand<object> SaveSystemCommonSettingCommand => new((parameter) => {
+            if (SettingUserControlViewModel.Save()) {
+                Tools.Info("システム共通設定を保存しました。");
+            } else {
+                Tools.Warn("システム共通設定の変更はありません。");
+            }
+        });
         // CloseCommand
         public SimpleDelegateCommand<Window> CloseCommand => new ((window) => {
             window.Close();

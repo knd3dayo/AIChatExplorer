@@ -210,6 +210,7 @@ namespace ClipboardApp {
             // UserControlの設定ウィンドウを開く
             SettingsUserControl settingsControl = new();
             Window window = new() {
+                SizeToContent = SizeToContent.Height,
                 Title = StringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };

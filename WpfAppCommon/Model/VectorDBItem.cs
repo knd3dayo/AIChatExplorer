@@ -28,6 +28,29 @@ namespace WpfAppCommon.Model {
     /// </summary>
     public class VectorDBItem {
 
+        // システムk共通のベクトルDBの名前
+        public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
+        // システム共通のベクトルDB
+        public static VectorDBItem SystemCommonVectorDB {
+            get {
+                // DBからベクトルDBを取得
+                var item = GetItems().FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
+                if (item == null) {
+                    item = new VectorDBItem() {
+                        Id = LiteDB.ObjectId.Empty,
+                        Name = SystemCommonVectorDBName,
+                        Description = "システム共通のベクトルDBです。",
+                        Type = VectorDBTypeEnum.Chroma,
+                        VectorDBURL = "clipboard_vector_db",
+                        IsEnabled = true
+                    };
+                    item.Save();
+                }
+                return item;
+
+            }
+        }
+
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
@@ -95,6 +118,17 @@ namespace WpfAppCommon.Model {
             };
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
+
+        public void UpdateIndex(ClipboardItem clipboardItem) {
+            // TODO コレクション名を設定する。
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem, this);
+        }
+
+        public void DeleteIndex(ClipboardItem clipboardItem) {
+            // TODO コレクション名を設定する。
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.delete, clipboardItem, this);
+        }
+
         // TestLangChain
         public void TestLangChain() {
             try {

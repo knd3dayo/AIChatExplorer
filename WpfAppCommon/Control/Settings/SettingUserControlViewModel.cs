@@ -1,4 +1,5 @@
 
+using System.Configuration;
 using System.Text;
 using System.Windows;
 using WpfAppCommon.Model;
@@ -15,10 +16,10 @@ namespace WpfAppCommon.Control.Settings {
         // MonitorTargetAppNames
         public string MonitorTargetAppNames {
             get {
-                return WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames;
+                return ClipboardAppConfig.MonitorTargetAppNames;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames = value;
+                ClipboardAppConfig.MonitorTargetAppNames = value;
                 OnPropertyChanged(nameof(MonitorTargetAppNames));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -27,10 +28,10 @@ namespace WpfAppCommon.Control.Settings {
         // PythonDLLのパス
         public string PythonDllPath {
             get {
-                return WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+                return ClipboardAppConfig.PythonDllPath;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
+                ClipboardAppConfig.PythonDllPath = value;
                 OnPropertyChanged(nameof(PythonDllPath));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -38,7 +39,7 @@ namespace WpfAppCommon.Control.Settings {
         }
         public bool PythonExecMode {
             get {
-                int mode = WpfAppCommon.Properties.Settings.Default.PythonExecution;
+                int mode = ClipboardAppConfig.PythonExecute;
                 if (mode == 0) {
                     return false;
                 } else {
@@ -47,7 +48,7 @@ namespace WpfAppCommon.Control.Settings {
             }
             set {
                 int mode = value ? 1 : 0;
-                WpfAppCommon.Properties.Settings.Default.PythonExecution = mode;
+                ClipboardAppConfig.PythonExecute = mode;
                 OnPropertyChanged(nameof(PythonExecMode));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UsePythonVisibility));
@@ -63,10 +64,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAIを使用するかどうか
         public bool UseOpenAI {
             get {
-                return WpfAppCommon.Properties.Settings.Default.UseOpenAI;
+                return ClipboardAppConfig.UseOpenAI;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.UseOpenAI = value;
+                ClipboardAppConfig.UseOpenAI = value;
                 OnPropertyChanged(nameof(UseOpenAI));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UseOpenAIVisibility));
@@ -80,10 +81,10 @@ namespace WpfAppCommon.Control.Settings {
         // Azure OpenAIを使用するかどうか
         public bool AzureOpenAI {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AzureOpenAI;
+                return ClipboardAppConfig.AzureOpenAI;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AzureOpenAI = value;
+                ClipboardAppConfig.AzureOpenAI = value;
                 OnPropertyChanged(nameof(AzureOpenAI));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(AzureOpenAIVisibility));
@@ -95,10 +96,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAIのAPIキー
         public string OpenAIKey {
             get {
-                return WpfAppCommon.Properties.Settings.Default.OpenAIKey;
+                return ClipboardAppConfig.OpenAIKey;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.OpenAIKey = value;
+                ClipboardAppConfig.OpenAIKey = value;
                 OnPropertyChanged(nameof(OpenAIKey));
 
                 // プロパティが変更されたことを設定
@@ -108,10 +109,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAICompletionModel
         public string OpenAICompletionModel {
             get {
-                return WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel;
+                return ClipboardAppConfig.OpenAICompletionModel;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel = value;
+                ClipboardAppConfig.OpenAICompletionModel = value;
                 OnPropertyChanged(nameof(OpenAICompletionModel));
 
                 // プロパティが変更されたことを設定
@@ -121,10 +122,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAIEmbeddingModel
         public string OpenAIEmbeddingModel {
             get {
-                return WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel;
+                return ClipboardAppConfig.OpenAIEmbeddingModel;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel = value;
+                ClipboardAppConfig.OpenAIEmbeddingModel = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingModel));
 
                 // プロパティが変更されたことを設定
@@ -135,10 +136,10 @@ namespace WpfAppCommon.Control.Settings {
         // Azure OpenAIのエンドポイント
         public string AzureOpenAIEndpoint {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
+                return ClipboardAppConfig.AzureOpenAIEndpoint;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint = value;
+                ClipboardAppConfig.AzureOpenAIEndpoint = value;
                 OnPropertyChanged(nameof(AzureOpenAIEndpoint));
 
                 // プロパティが変更されたことを設定
@@ -148,10 +149,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAICompletionBaseURL
         public string OpenAICompletionBaseURL {
             get {
-                return WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
+                return ClipboardAppConfig.OpenAICompletionBaseURL;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL = value;
+                ClipboardAppConfig.OpenAICompletionBaseURL = value;
                 OnPropertyChanged(nameof(OpenAICompletionBaseURL));
 
                 // プロパティが変更されたことを設定
@@ -161,10 +162,10 @@ namespace WpfAppCommon.Control.Settings {
         // OpenAIEmbeddingBaseURL
         public string OpenAIEmbeddingBaseURL {
             get {
-                return WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+                return ClipboardAppConfig.OpenAIEmbeddingBaseURL;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
+                ClipboardAppConfig.OpenAIEmbeddingBaseURL = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingBaseURL));
 
                 // プロパティが変更されたことを設定
@@ -174,10 +175,10 @@ namespace WpfAppCommon.Control.Settings {
         // UseOCR
         public bool UseOCR {
             get {
-                return WpfAppCommon.Properties.Settings.Default.UseOCR;
+                return ClipboardAppConfig.UseOCR;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.UseOCR = value;
+                ClipboardAppConfig.UseOCR = value;
                 OnPropertyChanged(nameof(UseOCR));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UseOCRVisibility));
@@ -189,10 +190,10 @@ namespace WpfAppCommon.Control.Settings {
         // TesseractExePath
         public string TesseractExePath {
             get {
-                return WpfAppCommon.Properties.Settings.Default.TesseractExePath;
+                return ClipboardAppConfig.TesseractExePath;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
+                ClipboardAppConfig.TesseractExePath = value;
                 OnPropertyChanged(nameof(TesseractExePath));
 
                 // プロパティが変更されたことを設定
@@ -203,10 +204,10 @@ namespace WpfAppCommon.Control.Settings {
         // UseSpacy
         public bool UseSpacy {
             get {
-                return WpfAppCommon.Properties.Settings.Default.UseSpacy;
+                return ClipboardAppConfig.UseSpacy;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.UseSpacy = value;
+                ClipboardAppConfig.UseSpacy = value;
                 OnPropertyChanged(nameof(UseSpacy));
                 // 関連項目の表示/非表示を更新
                 OnPropertyChanged(nameof(UseSpacyVisibility));
@@ -218,10 +219,10 @@ namespace WpfAppCommon.Control.Settings {
         // SpacyModel
         public string SpacyModel {
             get {
-                return WpfAppCommon.Properties.Settings.Default.SpacyModel;
+                return ClipboardAppConfig.SpacyModel;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
+                ClipboardAppConfig.SpacyModel = value;
                 OnPropertyChanged(nameof(SpacyModel));
 
                 // プロパティが変更されたことを設定
@@ -232,10 +233,10 @@ namespace WpfAppCommon.Control.Settings {
         // AutoMergeItemsBySourceApplicationTitle
         public bool AutoMergeItemsBySourceApplicationTitle {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
+                return ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
+                ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle = value;
                 OnPropertyChanged(nameof(AutoMergeItemsBySourceApplicationTitle));
 
                 // プロパティが変更されたことを設定
@@ -248,10 +249,10 @@ namespace WpfAppCommon.Control.Settings {
         // クリップボードアイテムとOS上のフォルダを同期するかどうか
         public bool SyncClipboardItemAndOSFolder {
             get {
-                return WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+                return ClipboardAppConfig.SyncClipboardItemAndOSFolder;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
+                ClipboardAppConfig.SyncClipboardItemAndOSFolder = value;
                 OnPropertyChanged(nameof(SyncClipboardItemAndOSFolder));
                 OnPropertyChanged(nameof(SyncClipboardItemAndOSFolderVisibility));
                 // プロパティが変更されたことを設定
@@ -261,10 +262,10 @@ namespace WpfAppCommon.Control.Settings {
         // ファイル更新時に自動的にコミットするかどうか
         public bool AutoCommit {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AutoCommit;
+                return ClipboardAppConfig.AutoCommit;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AutoCommit = value;
+                ClipboardAppConfig.AutoCommit = value;
                 OnPropertyChanged(nameof(AutoCommit));
 
                 // プロパティが変更されたことを設定
@@ -275,10 +276,10 @@ namespace WpfAppCommon.Control.Settings {
         // SyncFolderName
         public string SyncFolderName {
             get {
-                return WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+                return ClipboardAppConfig.SyncFolderName;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.SyncFolderName = value;
+                ClipboardAppConfig.SyncFolderName = value;
                 OnPropertyChanged(nameof(SyncFolderName));
 
                 // プロパティが変更されたことを設定
@@ -288,10 +289,10 @@ namespace WpfAppCommon.Control.Settings {
         // AutoTag
         public bool AutoTag {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AutoTag;
+                return ClipboardAppConfig.AutoTag;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AutoTag = value;
+                ClipboardAppConfig.AutoTag = value;
                 OnPropertyChanged(nameof(AutoTag));
 
                 // プロパティが変更されたことを設定
@@ -307,10 +308,10 @@ namespace WpfAppCommon.Control.Settings {
         // AutoDescription
         public bool AutoDescription {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AutoDescription;
+                return ClipboardAppConfig.AutoDescription;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
+                ClipboardAppConfig.AutoDescription = value;
                 OnPropertyChanged(nameof(AutoDescription));
 
                 // プロパティが変更されたことを設定
@@ -320,10 +321,10 @@ namespace WpfAppCommon.Control.Settings {
         // AutoDescriptionWithOpenAI
         public bool AutoDescriptionWithOpenAI {
             get {
-                return WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+                return ClipboardAppConfig.AutoDescriptionWithOpenAI;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
+                ClipboardAppConfig.AutoDescriptionWithOpenAI = value;
                 OnPropertyChanged(nameof(AutoDescriptionWithOpenAI));
 
                 // プロパティが変更されたことを設定
@@ -335,24 +336,38 @@ namespace WpfAppCommon.Control.Settings {
         // UserMaskedDataInOpenAI
         public bool UserMaskedDataInOpenAI {
             get {
-                return WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI;
+                return ClipboardAppConfig.UserMaskedDataInOpenAI;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI = value;
+                ClipboardAppConfig.UserMaskedDataInOpenAI = value;
                 OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
             }
         }
+        // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
+        public bool AutoEmbedding {
+            get {
+                return ClipboardAppConfig.AutoEmbedding;
+            }
+            set {
+                ClipboardAppConfig.AutoEmbedding = value;
+                OnPropertyChanged(nameof(AutoEmbedding));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
 
         // BackupGeneration
         public int BackupGeneration {
             get {
-                return WpfAppCommon.Properties.Settings.Default.BackupGeneration;
+                return ClipboardAppConfig.BackupGeneration;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.BackupGeneration = value;
+                ClipboardAppConfig.BackupGeneration = value;
                 OnPropertyChanged(nameof(BackupGeneration));
 
                 // プロパティが変更されたことを設定
@@ -700,20 +715,32 @@ namespace WpfAppCommon.Control.Settings {
                 Tools.StatusText.Init();
             }
         });
+
+        public bool Save() {
+            if (isPropertyChanged) {
+                ClipboardAppConfig.Save();
+
+                isPropertyChanged = false;
+                return true;
+            }
+            return false;
+
+        }
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 
-            if (isPropertyChanged) {
-                WpfAppCommon.Properties.Settings.Default.Save();
-                MessageBox.Show("設定を保存しました。アプリケーションを再起動してください");
+            if (Save()) {
+                MessageBox.Show("設定を保存しました。");
             }
             // Windowを閉じる
             window.Close();
         });
 
+       
+
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-            WpfAppCommon.Properties.Settings.Default.Reload();
+            ClipboardAppConfig.Reload();
             Tools.Info("設定をキャンセルしました");
             // Windowを閉じる
             window.Close();

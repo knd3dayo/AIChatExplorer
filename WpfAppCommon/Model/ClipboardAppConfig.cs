@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,80 +13,409 @@ namespace WpfAppCommon.Model {
         // WpfCommon.Properties.Settingsの値をプロパティとして宣言する。
 
         // MonitorTargetAppNames
-        public static string MonitorTargetAppNames { get; set; } = WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames;
+        private static string? _monitorTargetAppNames;
+        public static string MonitorTargetAppNames {
+            get {
+                if (_monitorTargetAppNames == null) {
+                    _monitorTargetAppNames = WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames;
+                }
+                return _monitorTargetAppNames;
+            }
+            set {
+                _monitorTargetAppNames = value;
+                WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames = value;
+            }
+        }
 
         // PythonExecution
-        public static int PythonExecute { get; set; } = WpfAppCommon.Properties.Settings.Default.PythonExecution;
+        private static int _pythonExecute = -1;
+        public static int PythonExecute {
+            get {
+                if (_pythonExecute == -1) {
+                    _pythonExecute = WpfAppCommon.Properties.Settings.Default.PythonExecution;
+                }
+                return _pythonExecute;
+            }
+            set {
+                _pythonExecute = value;
+                WpfAppCommon.Properties.Settings.Default.PythonExecution = value;
+            }
+        }
         // PythonDllPath
-        public static string PythonDllPath { get; set; } = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+        private static string? _pythonDllPath;
+        public static string PythonDllPath {
+            get {
+                if (_pythonDllPath == null) {
+                    _pythonDllPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+                }
+                return _pythonDllPath;
+            }
+            set {
+                _pythonDllPath = value;
+                WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
+            }
+        }
 
         // UseOpenAI
-        public static bool UseOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.UseOpenAI;
+        private static Boolean? _pythonExePath;
+        public static bool UseOpenAI {
+            get {
+                if (_pythonExePath == null) {
+                    _pythonExePath = WpfAppCommon.Properties.Settings.Default.UseOpenAI;
+                }
+                return _pythonExePath.Value;
+            }
+            set {
+                _pythonExePath = value;
+                WpfAppCommon.Properties.Settings.Default.UseOpenAI = value;
+            }
+        }
 
         // AzureOpenAI
-        public static bool AzureOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.AzureOpenAI;
+        private static Boolean? _azureOpenAI;
+        public static bool AzureOpenAI {
+            get {
+                if (_azureOpenAI == null) {
+                    _azureOpenAI = WpfAppCommon.Properties.Settings.Default.AzureOpenAI;
+                }
+                return _azureOpenAI.Value;
+            }
+            set {
+                _azureOpenAI = value;
+                WpfAppCommon.Properties.Settings.Default.AzureOpenAI = value;
+            }
+        }
         // AzureOpenAIEndpoint
-        public static string AzureOpenAIEndpoint { get; set; } = WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
+        private static string? _azureOpenAIEndpoint;
+        public static string AzureOpenAIEndpoint {
+            get {
+                if (_azureOpenAIEndpoint == null) {
+                    _azureOpenAIEndpoint = WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
+                }
+                return _azureOpenAIEndpoint;
+            }
+            set {
+                _azureOpenAIEndpoint = value;
+                WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint = value;
+            }
+        }
 
         // OpenAIKey
-        public static string OpenAIKey { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAIKey;
+        private static string? _openAIKey;
+        public static string OpenAIKey {
+            get {
+                if (_openAIKey == null) {
+                    _openAIKey = WpfAppCommon.Properties.Settings.Default.OpenAIKey;
+                }
+                return _openAIKey;
+            }
+            set {
+                _openAIKey = value;
+                WpfAppCommon.Properties.Settings.Default.OpenAIKey = value;
+            }
+        }
         // OpenAICompletionModel
-        public static string OpenAICompletionModel { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel;
+        private static string? _openAICompletionModel;
+        public static string OpenAICompletionModel {
+            get {
+                if (_openAICompletionModel == null) {
+                    _openAICompletionModel = WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel;
+                }
+                return _openAICompletionModel;
+            }
+            set {
+                _openAICompletionModel = value;
+                WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel = value;
+            }
+        }
         // OpenAIEmbeddingModel
-        public static string OpenAIEmbeddingModel { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel;
+        private static string? _openAIEmbeddingModel;
+        public static string OpenAIEmbeddingModel {
+            get {
+                if (_openAIEmbeddingModel == null) {
+                    _openAIEmbeddingModel = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel;
+                }
+                return _openAIEmbeddingModel;
+            }
+            set {
+                _openAIEmbeddingModel = value;
+                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel = value;
+            }
+        }
         // OpenAICompletionBaseURL
-        public static string OpenAICompletionBaseURL { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
+        private static string? _openAICompletionBaseURL;
+        public static string OpenAICompletionBaseURL {
+            get {
+                if (_openAICompletionBaseURL == null) {
+                    _openAICompletionBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
+                }
+                return _openAICompletionBaseURL;
+            }
+            set {
+                _openAICompletionBaseURL = value;
+                WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL = value;
+            }
+        }
         // OpenAIEmbeddingBaseURL
-        public static string OpenAIEmbeddingBaseURL { get; set; } = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+        private static string? _openAIEmbeddingBaseURL;
+        public static string OpenAIEmbeddingBaseURL {
+            get {
+                if (_openAIEmbeddingBaseURL == null) {
+                    _openAIEmbeddingBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+                }
+                return _openAIEmbeddingBaseURL;
+            }
+            set {
+                _openAIEmbeddingBaseURL = value;
+                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
+            }
+        }
 
         // UseOCR
-        public static bool UseOCR { get; set; } = WpfAppCommon.Properties.Settings.Default.UseOCR;
+        private static Boolean? _useOCR;
+        public static bool UseOCR {
+            get {
+                if (_useOCR == null) {
+                    _useOCR = WpfAppCommon.Properties.Settings.Default.UseOCR;
+                }
+                return _useOCR.Value;
+            }
+            set {
+                _useOCR = value;
+                WpfAppCommon.Properties.Settings.Default.UseOCR = value;
+            }
+        }
 
         // UseSpacy
-        public static bool UseSpacy { get; set; } = WpfAppCommon.Properties.Settings.Default.UseSpacy;
+        private static Boolean? _useSpacy;
+        public static bool UseSpacy {
+            get {
+                if (_useSpacy == null) {
+                    _useSpacy = WpfAppCommon.Properties.Settings.Default.UseSpacy;
+                }
+                return _useSpacy.Value;
+            }
+            set {
+                _useSpacy = value;
+                WpfAppCommon.Properties.Settings.Default.UseSpacy = value;
+            }
+        }
         // SpacyModel
-        public static string SpacyModel { get; set; } = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+        private static string? _spacyModel;
+        public static string SpacyModel {
+            get {
+                if (_spacyModel == null) {
+                    _spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+                }
+                return _spacyModel;
+            }
+            set {
+                _spacyModel = value;
+                WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
+            }
+        }
 
         // SyncClipboardItemAndOSFolder
-        public static bool SyncClipboardItemAndOSFolder { get; set; } = WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+        private static Boolean? _syncClipboardItemAndOSFolder;
+        public static bool SyncClipboardItemAndOSFolder {
+            get {
+                if (_syncClipboardItemAndOSFolder == null) {
+                    _syncClipboardItemAndOSFolder = WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+                }
+                return _syncClipboardItemAndOSFolder.Value;
+            }
+            set {
+                _syncClipboardItemAndOSFolder = value;
+                WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
+            }
+        }
         // SyncFolderName
-        public static string SyncFolderName { get; set; } = WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+        private static string? _syncFolderName;
+        public static string SyncFolderName {
+            get {
+                if (_syncFolderName == null) {
+                    _syncFolderName = WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+                }
+                return _syncFolderName;
+            }
+            set {
+                _syncFolderName = value;
+                WpfAppCommon.Properties.Settings.Default.SyncFolderName = value;
+            }
+        }
+
 
         // AutoCommit
-        public static bool AutoCommit { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoCommit;
+        private static Boolean? _autoCommit;
+        public static bool AutoCommit {
+            get {
+                if (_autoCommit == null) {
+                    _autoCommit = WpfAppCommon.Properties.Settings.Default.AutoCommit;
+                }
+                return _autoCommit.Value;
+            }
+            set {
+                _autoCommit = value;
+                WpfAppCommon.Properties.Settings.Default.AutoCommit = value;
+            }
+        }
 
         // AutoMergeItemsBySourceApplicationTitle
-        public static bool AutoMergeItemsBySourceApplicationTitle { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
+        private static Boolean? _autoMergeItemsBySourceApplicationTitle;
+        public static bool AutoMergeItemsBySourceApplicationTitle {
+            get {
+                if (_autoMergeItemsBySourceApplicationTitle == null) {
+                    _autoMergeItemsBySourceApplicationTitle = WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
+                }
+                return _autoMergeItemsBySourceApplicationTitle.Value;
+            }
+            set {
+                _autoMergeItemsBySourceApplicationTitle = value;
+                WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
+            }
+        }
 
         // AutoTag
-        public static bool AutoTag { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoTag;
+        private static Boolean? _autoTag;
+        public static bool AutoTag {
+            get {
+                if (_autoTag == null) {
+                    _autoTag = WpfAppCommon.Properties.Settings.Default.AutoTag;
+                }
+                return _autoTag.Value;
+            }
+            set {
+                _autoTag = value;
+                WpfAppCommon.Properties.Settings.Default.AutoTag = value;
+            }
+        }
 
         // AutoDescription
-        public static bool AutoDescription { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoDescription;
+        private static Boolean? _autoDescription;
+        public static bool AutoDescription {
+            get {
+                if (_autoDescription == null) {
+                    _autoDescription = WpfAppCommon.Properties.Settings.Default.AutoDescription;
+                }
+                return _autoDescription.Value;
+            }
+            set {
+                _autoDescription = value;
+                WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
+            }
+        }
 
         // AutoDescriptionWithOpenAI
-        public static bool AutoDescriptionWithOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+        private static Boolean? _autoDescriptionWithOpenAI;
+        public static bool AutoDescriptionWithOpenAI {
+            get {
+                if (_autoDescriptionWithOpenAI == null) {
+                    _autoDescriptionWithOpenAI = WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+                }
+                return _autoDescriptionWithOpenAI.Value;
+            }
+            set {
+                _autoDescriptionWithOpenAI = value;
+                WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
+            }
+        }
 
         // UserMaskedDataInOpenAI
-        public static bool UserMaskedDataInOpenAI { get; set; } = WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI;
+        private static Boolean? _userMaskedDataInOpenAI;
+        public static bool UserMaskedDataInOpenAI {
+            get {
+                if (_userMaskedDataInOpenAI == null) {
+                    _userMaskedDataInOpenAI = WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI;
+                }
+                return _userMaskedDataInOpenAI.Value;
+            }
+            set {
+                _userMaskedDataInOpenAI = value;
+                WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI = value;
+            }
+        }
 
+        // AutoEmbedding
+        private static Boolean? _autoEmbedding;
+        public static bool AutoEmbedding {
+            get {
+                if (_autoEmbedding == null) {
+                    _autoEmbedding = WpfAppCommon.Properties.Settings.Default.AutoEmbedding;
+                }
+                return _autoEmbedding.Value;
+            }
+            set {
+                _autoEmbedding = value;
+                WpfAppCommon.Properties.Settings.Default.AutoEmbedding = value;
+            }
+        }
 
         // BackupGeneration
-        public static int BackupGeneration { get; set; } = WpfAppCommon.Properties.Settings.Default.BackupGeneration;
+        private static int _backupGeneration = -1;
+        public static int BackupGeneration {
+            get {
+                if (_backupGeneration == -1) {
+                    _backupGeneration = WpfAppCommon.Properties.Settings.Default.BackupGeneration;
+                }
+                return _backupGeneration;
+            }
+            set {
+                _backupGeneration = value;
+                WpfAppCommon.Properties.Settings.Default.BackupGeneration = value;
+            }
+        }
 
         // TesseractExePath
-        public static string TesseractExePath { get; set; } = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
+        private static string? _tesseractExePath;
+        public static string TesseractExePath {
+            get {
+                if (_tesseractExePath == null) {
+                    _tesseractExePath = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
+                }
+                return _tesseractExePath;
+            }
+            set {
+                _tesseractExePath = value;
+                WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
+            }
+        }
 
         // PreviewMode
-        public static bool PreviewMode { get; set; } = WpfAppCommon.Properties.Settings.Default.PreviewMode;
+        private static Boolean? _previewMode;
+        public static bool PreviewMode {
+            get {
+                if (_previewMode == null) {
+                    _previewMode = WpfAppCommon.Properties.Settings.Default.PreviewMode;
+                }
+                return _previewMode.Value;
+            }
+            set {
+                _previewMode = value;
+                WpfAppCommon.Properties.Settings.Default.PreviewMode = value;
+            }
+        }
 
         // CompactViewMode
-        public static bool CompactViewMode { get; set; } = WpfAppCommon.Properties.Settings.Default.CompactViewMode;
+        private static Boolean? _compactViewMode;
+        public static bool CompactViewMode {
+            get {
+                if (_compactViewMode == null) {
+                    _compactViewMode = WpfAppCommon.Properties.Settings.Default.CompactViewMode;
+                }
+                return _compactViewMode.Value;
+            }
+            set {
+                _compactViewMode = value;
+                WpfAppCommon.Properties.Settings.Default.CompactViewMode = value;
+            }
+        }
 
         public static void Save() {
             WpfAppCommon.Properties.Settings.Default.Save();
-            // Reload
-            // WpfAppCommon.Properties.Settings.Default.Reload();
+
+        }
+        public static void Reload() {
+            Properties.Settings.Default.Reload();
         }
         public static  Dictionary<string, string> CreateOpenAIProperties() {
             Dictionary<string, string> dict = new() {

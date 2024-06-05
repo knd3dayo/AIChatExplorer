@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
     Title="{Binding StringResources.ListAutoProcessRuleWindowTitle}"
-    Width="600"
+    Width="800"
     SizeToContent="Height"
     mc:Ignorable="d">
     <Window.Resources>
@@ -36,7 +36,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="450" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -62,39 +62,256 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <DockPanel Grid.Row="0" Margin="0,0,0,10">
-            <!--  ルール一覧のListBox  -->
+        <TabControl
+            Grid.Row="1"
+            Margin="10,0,10,0"
+            HorizontalContentAlignment="Left"
+            SelectedIndex="{Binding TabIndex}">
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="システム共通">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <!--  自動処理  -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="230" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <!--  MonitorTargetAppNames  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="クリップボード監視対象のソースアプリ名" />
 
-            <ListView
-                Grid.Row="1"
-                MinHeight="300"
-                ItemsSource="{Binding AutoProcessRules}"
-                SelectedItem="{Binding SelectedAutoProcessRule}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn
-                            Width="160"
-                            DisplayMemberBinding="{Binding TargetFolder.DisplayName}"
-                            Header="適用対象フォルダ" />
-                        <GridViewColumn
-                            Width="200"
-                            DisplayMemberBinding="{Binding TargetFolder.CollectionName}"
-                            Header="適用対象フォルダ(パス)" />
-                        <GridViewColumn
-                            Width="350"
-                            DisplayMemberBinding="{Binding RuleName}"
-                            Header="ルール名" />
-                    </GridView>
-                </ListView.View>
-                <!--  コンテキストメニュー  -->
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
-                        <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
-                    </ContextMenu>
-                </ListView.ContextMenu>
-            </ListView>
-        </DockPanel>
+                        <TextBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
+                            Text="{Binding SettingUserControlViewModel.MonitorTargetAppNames}" />
+                        <TextBlock
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動タイトル生成" />
+                        <RadioButton
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="しない"
+                            GroupName="AutoDescription"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionNone, Mode=OneWay}" />
+                        <RadioButton
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="自動的にタイトルを生成する"
+                            GroupName="AutoDescription"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoDescription}" />
+                        <RadioButton
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="OpenAIを使用して自動的にタイトルを生成する"
+                            GroupName="AutoDescription"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}"
+                            Visibility="{Binding SettingUserControlViewModel.UseOpenAIVisibility}" />
+                        <TextBlock
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動でタグ生成する"
+                            Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                        <CheckBox
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードの内容から自動的にタグを生成します"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoTag}"
+                            Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                        <TextBlock
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動でマージ" />
+                        <CheckBox
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoMergeItemsBySourceApplicationTitle}" />
+                        <TextBlock
+                            Grid.Row="6"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動でEmbedding" />
+                        <CheckBox
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードアイテム保存時に自動でEmbeddingを行います"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
+
+                    </Grid>
+                    <!--  その他の設定  -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="230" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <!--  クリップボードアイテムをOS上のフォルダと同期させる。  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="クリップボードアイテムをOS上のフォルダと同期させる" />
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードアイテムをOS上のフォルダと同期させます。"
+                            IsChecked="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolder}" />
+                        <!--  同期先のフォルダ名  -->
+                        <DockPanel
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            HorizontalAlignment="Left">
+                            <Label
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                Content="同期先のフォルダ名"
+                                Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
+                            <TextBox
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                materialDesign:HintAssist.Hint="クリップボードアイテムを同期するOS上のフォルダ名を指定。"
+                                Text="{Binding SettingUserControlViewModel.SyncFolderName}"
+                                Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
+                        </DockPanel>
+                        <!--  同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットする。  -->
+                        <CheckBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoCommit}"
+                            Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
+                        <!--  UseOCR  -->
+                        <TextBlock
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="画像処理"
+                            Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                        <CheckBox
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードの画像をPyOCRを使用してテキスト抽出します"
+                            IsChecked="{Binding SettingUserControlViewModel.UseOCR}"
+                            Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                    </Grid>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="230" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <!--  Extract Entity/Data Masking  -->
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="エンティティ抽出/データマスキング"
+                            Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                        <CheckBox
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います"
+                            IsChecked="{Binding SettingUserControlViewModel.UseSpacy}"
+                            Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+
+                        <CheckBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
+                            IsChecked="{Binding SettingUserControlViewModel.UserMaskedDataInOpenAI}"
+                            Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
+                Header="フォルダ単位">
+                <!--  ルール一覧のListBox  -->
+                <ListView
+                    MinHeight="300"
+                    ItemsSource="{Binding AutoProcessRules}"
+                    SelectedItem="{Binding SelectedAutoProcessRule}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn
+                                Width="160"
+                                DisplayMemberBinding="{Binding TargetFolder.DisplayName}"
+                                Header="適用対象フォルダ" />
+                            <GridViewColumn
+                                Width="200"
+                                DisplayMemberBinding="{Binding TargetFolder.CollectionName}"
+                                Header="適用対象フォルダ(パス)" />
+                            <GridViewColumn
+                                Width="350"
+                                DisplayMemberBinding="{Binding RuleName}"
+                                Header="ルール名" />
+                        </GridView>
+                    </ListView.View>
+                    <!--  コンテキストメニュー  -->
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
+                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </TabItem>
+        </TabControl>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
@@ -103,7 +320,8 @@
             <DockPanel
                 Grid.Column="0"
                 Margin="10,0,0,10"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                Visibility="{Binding AutoProcessRuleButtonVisibility}">
                 <Button
                     Width="150"
                     Margin="10,0,0,0"
@@ -114,6 +332,17 @@
                     Margin="10,0,0,0"
                     Command="{Binding EditAutoProcessRuleCommand}"
                     Content="自動処理ルール編集" />
+            </DockPanel>
+            <DockPanel
+                Grid.Column="0"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Left"
+                Visibility="{Binding SaveSystemCommonSettingButtonVisibility}">
+                <Button
+                    Width="150"
+                    Margin="10,0,0,0"
+                    Command="{Binding SaveSystemCommonSettingCommand}"
+                    Content="システム共通設定を保存" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"

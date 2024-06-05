@@ -27,8 +27,8 @@ namespace WpfAppCommon.Model {
             if (vectorDBItem == null) {
                 return clipboardItem;
             }
-
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem, vectorDBItem);
+            // ベクトルDBを更新
+            vectorDBItem.UpdateIndex(clipboardItem);
 
             return clipboardItem;
         }

@@ -295,6 +295,7 @@ namespace WpfAppCommon.Model {
 
         // 自分自身をDBに保存する
         public void Save(bool updateModifiedTime = true) {
+
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this);
             // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
             if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
@@ -333,11 +334,21 @@ namespace WpfAppCommon.Model {
                         Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
                     }
                 }
+                // AutoEmbedding == Trueの場合はEmbeddingを保存
+                if (ClipboardAppConfig.AutoEmbedding) {
+                    // Embeddingを保存
+                    VectorDBItem.SystemCommonVectorDB.UpdateIndex(this);
+                }
 
             }
         }
         // 自分自身をDBから削除する
         public void Delete() {
+            // AutoEmbedding == Trueの場合はEmbeddingを削除
+            if (ClipboardAppConfig.AutoEmbedding) {
+                // Embeddingを削除
+                VectorDBItem.SystemCommonVectorDB.DeleteIndex(this);
+            }
             // ファイルが存在する場合は削除
             ClipboardItemImage?.Delete();
             // イメージが存在する場合は削除
