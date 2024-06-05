@@ -83,6 +83,7 @@ namespace QAChat {
             // SettingUserControlを生成してWindowを表示する。
             SettingsUserControl settingsControl = new();
             Window window = new() {
+                SizeToContent = SizeToContent.Height,
                 Title = StringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };
