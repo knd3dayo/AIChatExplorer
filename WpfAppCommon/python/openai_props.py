@@ -95,7 +95,8 @@ class VectorDBProps:
     def __init__(self, props_dict: dict):
         self.VectorDBURL = props_dict.get("VectorDBURL")
         self.VectorDBTypeString = props_dict.get("VectorDBTypeString")
-
+        self.VectorDBCollectionName = props_dict.get("VectorDBCollectionName", None)
+        
         self.Name = props_dict.get("VectorDBName", None)
         self.CollectionName = props_dict.get("CollectionName", None)
         self.VectorDBDescription = props_dict.get("VectorDBDescription", None)
@@ -109,6 +110,7 @@ class VectorDBProps:
         vector_db_dict["vector_db_url"] = self.VectorDBURL
         vector_db_dict["description"] = self.VectorDBDescription
         vector_db_dict["vector_db_type_string"] = self.VectorDBTypeString
+        vector_db_dict["collection_name"] = self.CollectionName
         return vector_db_dict
 
 def env_to_props() -> OpenAIProps:

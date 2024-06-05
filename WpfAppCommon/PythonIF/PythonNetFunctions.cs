@@ -554,6 +554,7 @@ namespace WpfAppCommon.PythonIF {
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
                 props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
+                props["VectorDBCollectionName"] = item.CollectionName;
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "update_index_with_clipboard_item";
