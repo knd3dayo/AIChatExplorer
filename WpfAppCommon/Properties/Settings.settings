@@ -12,13 +12,13 @@
       <Value Profile="(Default)">text-embedding-3-small</Value>
     </Setting>
     <Setting Name="OpenAICompletionModel" Type="System.String" Scope="User">
-      <Value Profile="(Default)">gpt-4-1106-preview</Value>
+      <Value Profile="(Default)">gpt-4o</Value>
     </Setting>
     <Setting Name="SpacyModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">ja_core_news_sm</Value>
     </Setting>
     <Setting Name="PythonExecution" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="PythonDllPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Python311\python311.dll</Value>
@@ -51,7 +51,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="UseOpenAI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -78,6 +78,9 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="AutoEmbedding" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

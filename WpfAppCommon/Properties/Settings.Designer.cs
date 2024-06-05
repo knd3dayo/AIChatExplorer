@@ -61,7 +61,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("gpt-4-1106-preview")]
+        [global::System.Configuration.DefaultSettingValueAttribute("gpt-4o")]
         public string OpenAICompletionModel {
             get {
                 return ((string)(this["OpenAICompletionModel"]));
@@ -85,7 +85,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int PythonExecution {
             get {
                 return ((int)(this["PythonExecution"]));
@@ -217,7 +217,7 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool UseOpenAI {
             get {
                 return ((bool)(this["UseOpenAI"]));
@@ -332,6 +332,18 @@ namespace WpfAppCommon.Properties {
             }
             set {
                 this["AutoDescriptionWithOpenAI"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoEmbedding {
+            get {
+                return ((bool)(this["AutoEmbedding"]));
+            }
+            set {
+                this["AutoEmbedding"] = value;
             }
         }
     }
