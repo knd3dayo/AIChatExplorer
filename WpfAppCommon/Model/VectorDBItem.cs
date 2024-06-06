@@ -120,6 +120,7 @@ namespace WpfAppCommon.Model {
         }
 
         public void UpdateIndex(ClipboardItem clipboardItem) {
+
             // TODO コレクション名を設定する。
             PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem, this);
         }

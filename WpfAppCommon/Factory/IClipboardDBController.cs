@@ -7,7 +7,7 @@ namespace WpfAppCommon.Factory {
 
 
         //-- ClipboardItem
-        public void UpsertItem(ClipboardItem item, bool updateModifiedTime = true);
+        public void UpsertItem(ClipboardItem item, bool contentIsModified = true);
         public void DeleteItem(ClipboardItem item);
         public IEnumerable<ClipboardItem> SearchItems(string collectionName, SearchCondition searchCondition);
         public IEnumerable<ClipboardItem> GetItems(string collectionName);

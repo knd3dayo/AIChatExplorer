@@ -294,100 +294,123 @@ namespace WpfAppCommon.Model {
         }
 
         // 自分自身をDBに保存する
-        public void Save(bool updateModifiedTime = true) {
+        public void Save(bool contentIsModified = true) {
 
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this);
-            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                // 保存先フォルダを取得
-                string syncFolder = ClipboardAppConfig.SyncFolderName;
-                // フォルダが存在しない場合は作成
-                if (Directory.Exists(syncFolder) == false) {
-                    Directory.CreateDirectory(syncFolder);
-                }
-                // syncFolder/フォルダ名を作成
-                string folderPath = Path.Combine(syncFolder, FolderPath);
-                // フォルダが存在しない場合は作成
-                if (Directory.Exists(folderPath) == false) {
-                    Directory.CreateDirectory(folderPath);
-                }
+            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
 
-                // folderPath + Id + .txtをファイル名として保存
-                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
-                // 保存
-                File.WriteAllText(syncFilePath, this.Content);
+            if (contentIsModified == false) {
+                return;
+            }
 
-                // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
-                    try {
-
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+            Task.Run(() => {
+                Tools.Info("OS上のファイルに保存します");
+                // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
+                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                    // 保存先フォルダを取得
+                    string syncFolder = ClipboardAppConfig.SyncFolderName;
+                    // フォルダが存在しない場合は作成
+                    if (Directory.Exists(syncFolder) == false) {
+                        Directory.CreateDirectory(syncFolder);
                     }
+                    // syncFolder/フォルダ名を作成
+                    string folderPath = Path.Combine(syncFolder, FolderPath);
+                    // フォルダが存在しない場合は作成
+                    if (Directory.Exists(folderPath) == false) {
+                        Directory.CreateDirectory(folderPath);
+                    }
+
+                    // folderPath + Id + .txtをファイル名として保存
+                    string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+                    // 保存
+                    File.WriteAllText(syncFilePath, this.Content);
+
+                    // 自動コミットが有効の場合はGitにコミット
+                    if (ClipboardAppConfig.AutoCommit) {
+                        try {
+
+                            using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                                Commands.Stage(repo, syncFilePath);
+                                Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                                Signature committer = author;
+                                repo.Commit("Auto commit", author, committer);
+                                Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                            }
+                        } catch (RepositoryNotFoundException e) {
+                            Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                        } catch (EmptyCommitException e) {
+                            Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                        }
+                    }
+
                 }
-                // AutoEmbedding == Trueの場合はEmbeddingを保存
+                Tools.Info("OS上のファイルに保存しました");
+            });
+
+            // AutoEmbedding == Trueの場合はEmbeddingを保存
+            Task.Run(() => {
+                Tools.Info("Embeddingを保存します");
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // Embeddingを保存
                     VectorDBItem.SystemCommonVectorDB.UpdateIndex(this);
                 }
-
-            }
+                Tools.Info("Embeddingを保存しました");
+            });
         }
         // 自分自身をDBから削除する
         public void Delete() {
             // AutoEmbedding == Trueの場合はEmbeddingを削除
-            if (ClipboardAppConfig.AutoEmbedding) {
-                // Embeddingを削除
-                VectorDBItem.SystemCommonVectorDB.DeleteIndex(this);
-            }
+            Task.Run(() => {
+                Tools.Info("Embeddingを削除します");
+                if (ClipboardAppConfig.AutoEmbedding) {
+                    // Embeddingを削除
+                    VectorDBItem.SystemCommonVectorDB.DeleteIndex(this);
+                }
+                Tools.Info("Embeddingを削除しました");
+            });
+            Task.Run(() => {
+                Tools.Info("OS上のファイルを削除します");
+                // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
+                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                    // 保存先フォルダを取得
+                    string folderPath = ClipboardAppConfig.SyncFolderName;
+                    // syncFolder/フォルダ名を取得
+                    folderPath = Path.Combine(folderPath, FolderPath);
+
+                    // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
+                    string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+                    // ファイルが存在する場合は削除
+                    if (File.Exists(syncFilePath)) {
+                        File.Delete(syncFilePath);
+                    }
+                    // 自動コミットが有効の場合はGitにコミット
+                    if (ClipboardAppConfig.AutoCommit) {
+                        try {
+
+                            using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                                Commands.Stage(repo, syncFilePath);
+                                Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                                Signature committer = author;
+                                repo.Commit("Auto commit", author, committer);
+                                Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                            }
+
+                        } catch (RepositoryNotFoundException e) {
+                            Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                        } catch (EmptyCommitException e) {
+                            Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                        }
+                    }
+
+                }
+                Tools.Info("OS上のファイルを削除しました");
+
+            });
             // ファイルが存在する場合は削除
             ClipboardItemImage?.Delete();
             // イメージが存在する場合は削除
             ClipboardItemFile?.Delete();
 
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
-            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                // 保存先フォルダを取得
-                string folderPath = ClipboardAppConfig.SyncFolderName;
-                // syncFolder/フォルダ名を取得
-                folderPath = Path.Combine(folderPath, FolderPath);
-
-                // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
-                // ファイルが存在する場合は削除
-                if (File.Exists(syncFilePath)) {
-                    File.Delete(syncFilePath);
-                }
-                // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
-                    try {
-
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-
-                    } catch (RepositoryNotFoundException e) {
-                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                    }
-                }
-
-            }
         }
 
         public static void CreateAutoTitle(ClipboardItem item) {
@@ -483,7 +506,7 @@ namespace WpfAppCommon.Model {
             try {
                 string text = PythonExecutor.PythonFunctions.ExtractText(path);
                 clipboardItem.Content = text;
-                
+
             } catch (UnsupportedFileTypeException) {
                 Tools.Error("サポートされていないファイル形式です");
                 return clipboardItem;
