@@ -548,6 +548,15 @@ namespace WpfAppCommon.PythonIF {
 
         public void UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode mode, ClipboardItem item, VectorDBItem vectorDBItem) {
 
+            // modeがUpdateでItem.Contentが空の場合は何もしない
+            if (mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(item.Content)) {
+                return;
+            }
+            // modeがDeleteで、Item.Id == ObjectId.Emptyの場合は何もしない
+            if (mode == IPythonFunctions.VectorDBUpdateMode.delete && item.Id == LiteDB.ObjectId.Empty) {
+                return;
+            }
+
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // propsにVectorDBURLを追加
@@ -581,7 +590,6 @@ namespace WpfAppCommon.PythonIF {
             });
         }
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
-            int tokenCount = 0;
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
 
