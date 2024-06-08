@@ -39,9 +39,10 @@ namespace WpfAppCommon.Model {
                     item = new VectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
                         Name = SystemCommonVectorDBName,
-                        Description = "システム共通のベクトルDBです。",
+                        Description = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。",
                         Type = VectorDBTypeEnum.Chroma,
                         VectorDBURL = "clipboard_vector_db",
+                        DocStoreURL = "sqlite:///clipboard_doc_store",
                         IsEnabled = true
                     };
                     item.Save();
@@ -62,6 +63,9 @@ namespace WpfAppCommon.Model {
 
         [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";
+
+        [JsonPropertyName("DocStoreURL")]
+        public string DocStoreURL { get; set; } = "";
 
         [JsonIgnore]
         public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Faiss;
