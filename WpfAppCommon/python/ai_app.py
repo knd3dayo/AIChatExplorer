@@ -38,7 +38,13 @@ def capture_stdout_stderr(func):
         # strout,stderrorを元に戻す
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        return result, buffer.getvalue()
+        
+        # bufferをリストに変換して返す
+        log = []
+        for line in buffer.getvalue().splitlines():
+            log.append(line)
+
+        return result, log
     return wrapper
 
 def extract_text(filename):
@@ -134,7 +140,7 @@ def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, cha
         # vector_db_items_jsonをVectorDBPropsに変換
         vector_db_items_list = json.loads(vector_db_items_json)
         vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
-
+        print(vector_db_props)
         result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
         return result
     
