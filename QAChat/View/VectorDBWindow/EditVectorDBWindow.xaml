@@ -73,6 +73,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="180" />
@@ -102,6 +103,7 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="10,10,10,10"
+                    materialDesign:HintAssist.Hint="例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description}" />
                 <TextBlock
@@ -110,36 +112,51 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="ベクトルDBの場所" />
+                    Text="DocStore用のSQLLite3の場所" />
                 <TextBox
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,0,10,10"
+                    materialDesign:HintAssist.Hint="例：sqlite:///C:\Users\Username\sqlite3.db"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.DocStoreURL}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="ベクトルDBの場所" />
+                <TextBox
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    materialDesign:HintAssist.Hint="例：C:\Users\Username\vector.db"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.VectorDBURL}" />
                 <TextBlock
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
                     Text="ベクトルDBのタイプ" />
                 <ComboBox
-                    Grid.Row="3"
+                    Grid.Row="4"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
                     ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
                     SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
                 <TextBlock
-                    Grid.Row="4"
+                    Grid.Row="5"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
                     Text="有効" />
                 <CheckBox
-                    Grid.Row="4"
+                    Grid.Row="5"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsChecked="{Binding ItemViewModel.IsEnabled}"
@@ -150,14 +167,6 @@
             Grid.Row="2"
             Margin="0,0,0,0"
             VerticalAlignment="Bottom">
-            <DockPanel Margin="10,0,0,10" HorizontalAlignment="Left">
-                <Button
-                    Width="150"
-                    Margin="10,10,10,0"
-                    Command="{Binding UpdateIndexButtonCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="接続テスト" />
-            </DockPanel>
             <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
                 <Button
                     Width="100"

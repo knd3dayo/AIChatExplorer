@@ -51,6 +51,15 @@ namespace QAChat.View.VectorDBWindow {
                 OnPropertyChanged(nameof(VectorDBURL));
             }
         }
+        // DocStoreURL
+        public string DocStoreURL {
+            get => Item.DocStoreURL;
+            set {
+                Item.DocStoreURL = value;
+                OnPropertyChanged(nameof(DocStoreURL));
+            }
+        }
+
         // IsEnabled
         public bool IsEnabled {
             get => Item.IsEnabled;
