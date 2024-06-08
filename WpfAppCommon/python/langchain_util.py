@@ -30,55 +30,42 @@ class RetrievalQAUtil:
 
     def __init__(self, client: LangChainOpenAIClient, vector_db_items:list[VectorDBProps]):
         self.client = client
+        self.vector_db_items = vector_db_items
 
         # ツールのリストを作成
-        self.load_tools = self.__create_tool_list(vector_db_items)
+        self.load_tools = self.__create_tool_list()
         self.tools = self.load_tools
 
-    def __create_tool_list(self, vector_db_items:list[VectorDBProps]=None):
+    def __create_tool_list(self):
 
         tools = []
 
-        for item in vector_db_items:
-            item: VectorDBProps
+        for item in self.vector_db_items:
             description = item.VectorDBDescription
             vector_db_url = item.VectorDBURL
             vector_db_type_string = item.VectorDBTypeString
 
-            tools.append(self.__create_tool(vector_db_type_string, vector_db_url, description))
+            tools.append(self.__create_tool(item))
   
         return tools
 
-    def __create_tool(self, vector_db_type_string, vector_db_url, description):
+    def __create_tool(self, vector_db_item:VectorDBProps):
         '''
         # 関数の説明
         # ツールを追加する。
         #
         # 引数
-        # name: str
-        #   ツール名
-        # vector_db_type_string: str
-        #   ベクトルDBのタイプ
-        # vector_db_url: str
-        #   ベクトルDBのURL
-        # collection_name: str
-        #   コレクション名
-        # prompt_str: str
-        #   プロンプト
-        # description: str
-        #   ツールの説明
+        # vector_db_item: VectorDBProps
         # 戻り値
         # tool: Tool
         #   ツール
         '''
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
-        qa = self.__create_retrieval_qa(vector_db_type_string, vector_db_url)
-        print(qa)
-        print(description)
+        qa = self.__create_retrieval_qa(vector_db_item)
         tool = Tool(
-                name=vector_db_type_string,
+                name=vector_db_item.Name,
                 func=qa,
-                description = description
+                description = vector_db_item.VectorDBDescription
             )
         return tool
 
@@ -108,13 +95,14 @@ class RetrievalQAUtil:
         return prompt_template_str
 
     
-    def __create_retrieval_qa(self, vector_db_type_string: str , vector_db_url: str, collection_name: str = None, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
+    def __create_retrieval_qa(self, vector_db_item:VectorDBProps, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
         '''
         # 関数の説明
         # prompt_template_strからPromptTemplateを作成する。
         # PromptTemplateからchain_type_kwargsを作成する。
         # vectorstore, llm, chain_type_kwargsからRetrievalQAを作成する。
         # 引数:
+        # vectorstore: VectorStore
         # prompt_template_str: str
         #   プロンプトのテンプレート
         # 戻り値:
@@ -147,7 +135,7 @@ class RetrievalQAUtil:
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
-        langChainVectorDB = get_vector_db(self.client, vector_db_type_string, vector_db_url, collection_name)
+        langChainVectorDB = get_vector_db(self.client, vector_db_item.VectorDBTypeString, vector_db_item.VectorDBURL, vector_db_item.CollectionName)
         retriever = langChainVectorDB.db.as_retriever(
             # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
             search_kwargs={"k": 10}
