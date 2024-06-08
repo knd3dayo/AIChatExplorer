@@ -273,6 +273,17 @@ namespace ClipboardApp {
                     Tools.Error($"{StringResources.OCRFailed}\n{ex.Message}");
                 }
             }
+            // If AutoFileExtract is set, extract files
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Text && item.ClipboardItemFile != null) {
+                Tools.Info(StringResources.ExecuteAutoFileExtract);
+                try {
+                    string text = PythonExecutor.PythonFunctions.ExtractText(item.ClipboardItemFile.FilePath);
+                    item.Content = text;
+
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.AutoFileExtractFailed}\n{ex.Message}");
+                }
+            }
         }
 
     }

@@ -95,6 +95,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  MonitorTargetAppNames  -->
                         <TextBlock
@@ -171,6 +172,17 @@
                             Margin="10,10,10,0"
                             Content="クリップボードアイテム保存時に自動でEmbeddingを行います"
                             IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
+                        <TextBlock
+                            Grid.Row="7"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動でテキスト抽出" />
+                        <CheckBox
+                            Grid.Row="7"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoFileExtract}" />
 
                     </Grid>
                     <!--  その他の設定  -->
