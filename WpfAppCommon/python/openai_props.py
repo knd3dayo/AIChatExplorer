@@ -93,17 +93,21 @@ class OpenAIProps:
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
     def __init__(self, props_dict: dict):
+        # VectorStoreの設定
         self.VectorDBURL = props_dict.get("VectorDBURL")
         self.VectorDBTypeString = props_dict.get("VectorDBTypeString")
-        self.VectorDBCollectionName = props_dict.get("VectorDBCollectionName", None)
-        
         self.Name = props_dict.get("VectorDBName", None)
-        self.CollectionName = props_dict.get("CollectionName", None)
         self.VectorDBDescription = props_dict.get("VectorDBDescription", None)
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する
         if self.VectorDBDescription == None:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
     
+        # DocStoreの設定
+        self.DocStoreURL = props_dict.get("DocStoreURL", None)
+
+        # Collectionの設定
+        self.CollectionName = props_dict.get("CollectionName", None)
+
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}
         vector_db_dict["name"] = self.Name
@@ -130,6 +134,7 @@ def env_to_props() -> OpenAIProps:
 def get_vector_db_settings() -> VectorDBProps:
     load_dotenv()
     props: dict = {
+        "VectorDBName": os.getenv("VECTOR_DB_NAME"),
         "VectorDBURL": os.getenv("VECTOR_DB_URL"),
         "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
         "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
