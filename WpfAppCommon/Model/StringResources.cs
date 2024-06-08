@@ -232,6 +232,11 @@ namespace WpfAppCommon.Model {
         // OCR処理が失敗しました
         public string OCRFailed { get; } = "OCR処理が失敗しました";
 
+        // 自動ファイル抽出処理を実行します
+        public string ExecuteAutoFileExtract { get; } = "自動ファイル抽出処理を実行します";
+        // 自動ファイル抽出処理が失敗しました
+        public string AutoFileExtractFailed { get; } = "自動ファイル抽出処理が失敗しました";
+
         // --- EmptyPythonFunctions.cs ---
         // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
         public string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
