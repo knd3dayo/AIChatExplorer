@@ -359,7 +359,19 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
+        public bool AutoFileExtract {
+            get {
+                return ClipboardAppConfig.AutoFileExtract;
+            }
+            set {
+                ClipboardAppConfig.AutoFileExtract = value;
+                OnPropertyChanged(nameof(AutoFileExtract));
 
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         // BackupGeneration
         public int BackupGeneration {
