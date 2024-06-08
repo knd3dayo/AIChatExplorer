@@ -346,5 +346,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoEmbedding"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoFileExtract {
+            get {
+                return ((bool)(this["AutoFileExtract"]));
+            }
+            set {
+                this["AutoFileExtract"] = value;
+            }
+        }
     }
 }

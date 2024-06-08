@@ -350,6 +350,20 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // AutoFileExtract
+        private static Boolean? _autoFileExtract;
+        public static bool AutoFileExtract {
+            get {
+                if (_autoFileExtract == null) {
+                    _autoFileExtract = WpfAppCommon.Properties.Settings.Default.AutoFileExtract;
+                }
+                return _autoFileExtract.Value;
+            }
+            set {
+                _autoFileExtract = value;
+                WpfAppCommon.Properties.Settings.Default.AutoFileExtract = value;
+            }
+        }
         // BackupGeneration
         private static int _backupGeneration = -1;
         public static int BackupGeneration {
