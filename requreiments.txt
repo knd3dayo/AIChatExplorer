@@ -9,6 +9,10 @@ chromadb
 faiss-cpu
 langchain
 langchain-openai
+llama-index
+llama-index-vector-stores-chroma
+llama-index-llms-azure-openai
+llama-index-embeddings-azure-openai
 magika
 openai
 openpyxl

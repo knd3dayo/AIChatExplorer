@@ -7,8 +7,12 @@ tiktoken==0.6.0
 beautifulsoup4==4.12.3
 chromadb
 faiss-cpu==1.8.0
-langchain==0.1.16
+langchain==0.2.3
 langchain-openai==0.1.6
+llama-index==0.10.43
+llama-index-vector-stores-chroma==0.1.8
+llama-index-llms-azure-openai==0.1.8
+llama-index-embeddings-azure-openai==0.1.9
 magika==0.5.1
 openai==1.27.0
 openpyxl==3.1.2
