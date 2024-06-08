@@ -17,7 +17,7 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
 
     vector_db_type_string = vector_db_props.VectorDBTypeString
     vector_db_url = vector_db_props.VectorDBURL
-    vector_db_collection = vector_db_props.VectorDBCollectionName
+    vector_db_collection = vector_db_props.CollectionName
     
     client = LangChainOpenAIClient(props)
     vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection)
