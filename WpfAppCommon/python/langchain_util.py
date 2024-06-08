@@ -125,14 +125,25 @@ class RetrievalQAUtil:
         '''
         if not prompt_template_str:
             # デフォルトのプロンプトのテンプレート文字列を作成
+            # for stuff
             prompt_template_str = self.__create_default_prompt_template()
 
+        # for refine
+        # prompt_template_str = "Answer the following question based on the retrieved document: {question}\n\n{context_str}"
         prompt = PromptTemplate(
                 template=prompt_template_str, 
-                input_variables=["summaries", "question"],
+                # for stuff 
+                input_variables=["question", "summaries"],
                 output_variables=["answer", "source_documents"]
+                # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
+                # input_variables=["question", "context_str"],
+                # output_variables=["source_documents"]   
         )
+        
+        # for stuff
         chain_type_kwargs = {"prompt": prompt}
+        # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
+        # chain_type_kwargs = {"prompt": prompt,  "existing_answer": ""}
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
@@ -147,10 +158,12 @@ class RetrievalQAUtil:
         # 料理に関する質問が来た場合、料理に関する質問に答えるツールを呼び出す。
         qa = RetrievalQAWithSourcesChain.from_chain_type(
             llm=self.client.get_completion_client(),
+            # stuff , map_reduce , refine , map_relankなどを指定
+            # chain_type='refine',
             chain_type='stuff',
             retriever=retriever,
             return_source_documents=True,
-            chain_type_kwargs=chain_type_kwargs
+            chain_type_kwargs=chain_type_kwargs,
         )
 
         return qa
@@ -257,19 +270,14 @@ class RetrievalQAUtil:
         return langchain_chat_history
 
 
-# グローバル変数
-RetrievalQAUtilInstance: RetrievalQAUtil = None
-ChatAgentExecutorInstance = None
+def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], prompt: str, chat_history_json: str = None):
 
-def langchain_chat( props: dict, vector_db_items: list[VectorDBProps], prompt: str, chat_history_json: str = None):
-    global RetrievalQAUtilInstance, ChatAgentExecutorInstance
-    if RetrievalQAUtilInstance is None:
-        # langchainのログを出力する
-        langchain.verbose = True
+    # langchainのログを出力する
+    langchain.verbose = True
         
-        client = LangChainOpenAIClient(props)
-        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
-        ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
+    client = LangChainOpenAIClient(props)
+    RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
+    ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
 
     # openaiのchat_historyのjson文字列をlangchainのchat_historyに変換
     if chat_history_json is not None:
@@ -295,12 +303,12 @@ def langchain_chat( props: dict, vector_db_items: list[VectorDBProps], prompt: s
 
 if __name__ == '__main__':
 
-    from openai_props import OpenAIProps, VectorDBProps, get_props, get_vector_db_settings
-    props:OpenAIProps  = get_props()
-    vector_db_items_json: VectorDBProps = get_vector_db_settings()
+    from openai_props import OpenAIProps, VectorDBProps, env_to_props, get_vector_db_settings
+    props:OpenAIProps  = env_to_props()
+    vector_db_item: VectorDBProps = get_vector_db_settings()
 
     question1 = input("質問をどうぞ:")
-    result1 = langchain_chat(props, vector_db_items_json, question1)
+    result1 = langchain_chat(props, [vector_db_item], question1)
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])

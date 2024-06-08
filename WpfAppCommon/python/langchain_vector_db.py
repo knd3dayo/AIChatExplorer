@@ -14,15 +14,15 @@ class LangChainVectorDB:
         self.vector_db_url = vector_db_url
         self.collection = collection
 
-        self.load(vector_db_url)
+        self.load()
 
-    def load(self, _vector_db_url=None):
+    def load(self):
         pass
 
-    def save(self, _vector_db_url, documents:list=None):
+    def save(self, documents:list=[]):
         pass
 
-    def delete(self, _vector_db_url, sources:list=None):
+    def delete(self, sources:list=[]):
         pass
 
     def vector_search(self, query, k=10 , score_threshold=0.0):
@@ -33,7 +33,7 @@ class LangChainVectorDB:
 
     def add_documents(self, documents: list):
         with get_openai_callback() as cb:
-            self.save(self.vector_db_url, documents)
+            self.save(documents)
 
             return len(documents)
         

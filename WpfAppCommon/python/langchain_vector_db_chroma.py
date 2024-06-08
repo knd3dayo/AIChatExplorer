@@ -17,19 +17,19 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         super().__init__(langchain_openai_client, vector_db_url, collection)
 
 
-    def load(self, _vector_db_url:str=None):
+    def load(self):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
-        if not _vector_db_url or not os.path.exists(_vector_db_url):
+        if not self.vector_db_url or not os.path.exists(self.vector_db_url):
             # ディレクトリを作成
-            os.makedirs(_vector_db_url)
-        client = chromadb.PersistentClient(path=_vector_db_url)
+            os.makedirs(self.vector_db_url)
+        client = chromadb.PersistentClient(path=self.vector_db_url)
         self.db = Chroma(
             embedding_function = self.langchain_openai_client.get_embedding_client(), 
             client=client
             )
 
-    def save(self, _vector_db_url, documents:list=None):
-        if not _vector_db_url:
+    def save(self, documents:list=None):
+        if not self.vector_db_url:
             return
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     import os
     # clipboard_app_props
     import openai_props
-    props = openai_props.get_props()
+    props = openai_props.env_to_props()
 
     langchain_openai_client = LangChainOpenAIClient(props)
     vector_db_url = "vector_db"
