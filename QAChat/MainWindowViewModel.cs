@@ -12,11 +12,30 @@ using WpfAppCommon.Utils;
 
 namespace QAChat {
     public partial class MainWindowViewModel : MyWindowViewModel {
-
+        // OnActivatedAction
+        public override void OnActivatedAction() {
+            if (ClipboardFolder == null) {
+                return;
+            }
+            // StatusText.Readyにフォルダ名を設定
+            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolder?.DisplayName}]";
+            // StatusText.Textにフォルダ名を設定
+            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolder?.DisplayName}]";
+        }
+        private ClipboardFolder? _ClipboardFolder;
+        public ClipboardFolder? ClipboardFolder {
+            get {
+                return _ClipboardFolder;
+            }
+            set {
+                _ClipboardFolder = value;
+                OnPropertyChanged(nameof(ClipboardFolder));
+            }
+        }
         //初期化
-        public void Initialize(ClipboardItem? clipboardItem) {
-
-            QAChatControlViewModel.Initialize(clipboardItem, PromptTemplateCommandExecute);
+        public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem) {
+            ClipboardFolder = clipboardFolder;
+            QAChatControlViewModel.Initialize(clipboardFolder, clipboardItem, PromptTemplateCommandExecute);
 
         }
         public Action ShowSearchWindowAction {

@@ -43,7 +43,7 @@ namespace WpfAppCommon.Model {
 
         // Activated時の処理
         public SimpleDelegateCommand<object> ActivatedCommand => new((parameter) => {
-            if (window != null && Tools.ActiveWindow != window) {
+            if (window != null) {
                 Tools.ActiveWindow = window;
                 OnActivatedAction();
             }

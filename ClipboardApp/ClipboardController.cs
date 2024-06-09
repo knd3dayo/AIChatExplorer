@@ -274,7 +274,7 @@ namespace ClipboardApp {
                 }
             }
             // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Text && item.ClipboardItemFile != null) {
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFile != null) {
                 Tools.Info(StringResources.ExecuteAutoFileExtract);
                 try {
                     string text = PythonExecutor.PythonFunctions.ExtractText(item.ClipboardItemFile.FilePath);

@@ -28,7 +28,7 @@ namespace WpfAppCommon.Model {
     /// </summary>
     public class VectorDBItem {
 
-        // システムk共通のベクトルDBの名前
+        // システム共通のベクトルDBの名前
         public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
         // システム共通のベクトルDB
         public static VectorDBItem SystemCommonVectorDB {
@@ -51,6 +51,7 @@ namespace WpfAppCommon.Model {
 
             }
         }
+
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
@@ -77,6 +78,9 @@ namespace WpfAppCommon.Model {
                 return Type.ToString();
             }
         }
+        // CollectionName
+        [JsonPropertyName("CollectionName")]
+        public string? CollectionName { get; set; } = null;
 
         // 有効かどうか
         [JsonIgnore]
@@ -108,6 +112,19 @@ namespace WpfAppCommon.Model {
         // IsEnabled=Trueのアイテムを取得
         public static IEnumerable<VectorDBItem> GetEnabledItems() {
             return GetItems().Where(item => item.IsEnabled);
+        }
+
+        // IsEnabled=Trueのアイテムを取得して、SystemCommonVectorDBのCollectionNameを指定した文字列に置換する
+        public static IEnumerable<VectorDBItem> GetEnabledItemsWithSystemCommonVectorDBCollectionName(string? name) {
+            if (name == null) {
+                return GetEnabledItems();
+            }
+            return GetItems().Where(item => item.IsEnabled).Select(item => {
+                if (item.Name == SystemCommonVectorDBName) {
+                    item.CollectionName = name;
+                }
+                return item;
+            });
         }
         // GetItemById
         public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {

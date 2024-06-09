@@ -337,7 +337,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         }
         // OpenAI Chatを開くコマンド
-        public static void OpenOpenAIChatWindowExecute(ClipboardItemViewModel? itemViewModel) {
+        public static void OpenOpenAIChatWindowExecute(ClipboardFolderViewModel? folderViewModel, ClipboardItemViewModel? itemViewModel) {
 
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
@@ -345,7 +345,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
-            mainWindowViewModel.Initialize(itemViewModel?.ClipboardItem);
+            mainWindowViewModel.Initialize(folderViewModel?.ClipboardItemFolder, itemViewModel?.ClipboardItem);
             mainWindowViewModel.ShowSearchWindowAction = () =>{
                 SearchWindow.OpenSearchWindow(rule, null, () => {
                     // QAChatのContextを更新
@@ -368,6 +368,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             };
             
             openAIChatWindow.Show();
+
         }
         // プロンプトテンプレート一覧を開いて選択したプロンプトテンプレートを実行するコマンド
         public static void OpenAIChatCommandExecute(ClipboardItemViewModel? itemViewModel) {
@@ -403,7 +404,8 @@ namespace ClipboardApp.View.ClipboardItemView {
                 if (mode == OpenAIExecutionModeEnum.RAG) {
                     // LangChainChatを実行
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), itemViewModel.Content, chatItems);
+                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(itemViewModel.ClipboardItem.CollectionName);
+                        result = PythonExecutor.PythonFunctions.LangChainChat(enabledItems, itemViewModel.Content, chatItems);
                     });
                 }
                 // modeがNormalの場合はOpenAIChatを実行

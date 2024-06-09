@@ -62,13 +62,12 @@ namespace ClipboardApp {
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
-        public void FolderSelectionChangedCommandExecute(object parameter) {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public void FolderSelectionChangedCommandExecute(RoutedEventArgs routedEventArgs) {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
             ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
             SelectedFolder = clipboardItemFolderViewModel;
-            // Load
             if (SelectedFolder != null) {
+                // Load
                 SelectedFolder.Load();
             }
 
@@ -76,8 +75,7 @@ namespace ClipboardApp {
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public void ClipboardItemSelectionChangedCommandExecute(object parameter) {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public void ClipboardItemSelectionChangedCommandExecute(RoutedEventArgs routedEventArgs) {
             // ListBoxの場合
             if (routedEventArgs.OriginalSource is ListBox) {
                 ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
@@ -122,8 +120,8 @@ namespace ClipboardApp {
 
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
-        public static void OpenOpenAIWindowCommandExecute() {
-            ClipboardItemViewModel.OpenOpenAIChatWindowExecute(null);
+        public  void OpenOpenAIWindowCommandExecute() {
+            ClipboardItemViewModel.OpenOpenAIChatWindowExecute(SelectedFolder, null);
         }
         // 画像エビデンスチェッカーを開くコマンド
         public static void OpenScreenshotCheckerWindowExecute() {

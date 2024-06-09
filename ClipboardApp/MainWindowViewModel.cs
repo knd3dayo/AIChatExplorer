@@ -133,7 +133,6 @@ namespace ClipboardApp {
         }
         public static ClipboardItemViewModel? SelectedItemStatic { get; set; } = null;
 
-
         // 選択中のフォルダ
         private ClipboardFolderViewModel? _selectedFolder;
         public ClipboardFolderViewModel? SelectedFolder {
@@ -300,11 +299,11 @@ namespace ClipboardApp {
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
-        public SimpleDelegateCommand<object> FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<object> ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
+        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
 
 
         // クリップボードアイテムを作成する。

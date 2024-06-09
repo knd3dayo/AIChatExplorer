@@ -31,6 +31,27 @@ namespace ClipboardApp.View.ClipboardItemView {
                 OnPropertyChanged(nameof(FileTabVisibility));
             }
         }
+        private ClipboardFolderViewModel? clipboardFolderInstance;
+        public ClipboardFolderViewModel? ClipboardFolderInstance {
+            get {
+                return clipboardFolderInstance;
+            }
+            set {
+                clipboardFolderInstance = value;
+                OnPropertyChanged(nameof(ClipboardFolderInstance));
+            }
+        }
+
+        public override void OnActivatedAction() {
+            if (ClipboardFolderInstance == null) {
+                return;
+            }
+            // StatusText.Readyにフォルダ名を設定
+            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolderInstance.DisplayName}]";
+            // StatusText.Textにフォルダ名を設定
+            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolderInstance.DisplayName}]";
+        }
+
 
         private string title = "";
         public string Title {
@@ -89,7 +110,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 ItemViewModel = itemViewModel;
             }
             // QAChatControlの初期化
-            QAChatControlViewModel.Initialize(ItemViewModel.ClipboardItem, PromptTemplateCommandExecute);
+            QAChatControlViewModel.Initialize(folderViewModel.ClipboardItemFolder, ItemViewModel.ClipboardItem, PromptTemplateCommandExecute);
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChatControlViewModel.ShowSearchWindowAction = () => {

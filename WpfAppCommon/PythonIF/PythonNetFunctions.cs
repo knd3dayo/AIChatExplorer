@@ -39,6 +39,9 @@ namespace WpfAppCommon.PythonIF {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
 
+        // デフォルトのコレクション名
+        private readonly string DefaultCollectionName = "default_collection";
+
         private static StringResources StringResources { get; } = StringResources.Instance;
 
         public PyModule GetPyModule(string scriptPath) {

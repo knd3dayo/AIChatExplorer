@@ -19,10 +19,10 @@ from openai_props import OpenAIProps, VectorDBProps
 def get_vector_db(client:LangChainOpenAIClient, vector_db_type_string: str, vector_db_url:str , collection:str = None):
     if vector_db_type_string == "Faiss":
         from langchain_vector_db_faiss import LangChainVectorDBFaiss
-        return LangChainVectorDBFaiss(client, vector_db_url)
+        return LangChainVectorDBFaiss(client, vector_db_url, collection)
     elif vector_db_type_string == "Chroma":
         from langchain_vector_db_chroma import LangChainVectorDBChroma
-        return LangChainVectorDBChroma(client, vector_db_url)
+        return LangChainVectorDBChroma(client, vector_db_url, collection)
     else:
         raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
 
@@ -135,6 +135,8 @@ class RetrievalQAUtil:
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
+        print("CollectionName:", vector_db_item.CollectionName)
+        
         langChainVectorDB = get_vector_db(self.client, vector_db_item.VectorDBTypeString, vector_db_item.VectorDBURL, vector_db_item.CollectionName)
         retriever = langChainVectorDB.db.as_retriever(
             # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}

@@ -55,7 +55,9 @@ namespace ClipboardApp.Views.ClipboardItemView {
 
             aiUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("OpenAIチャット",
                 new SimpleDelegateCommand<object>((parameter) => {
-                    ClipboardItemViewModel.OpenOpenAIChatWindowExecute(MainWindowViewModel.ActiveInstance.SelectedItem);
+                    ClipboardItemViewModel.OpenOpenAIChatWindowExecute(
+                        MainWindowViewModel.ActiveInstance.SelectedFolder,
+                        MainWindowViewModel.ActiveInstance.SelectedItem);
                 })));
 
             aiUtilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("プロンプトテンプレートを実行",

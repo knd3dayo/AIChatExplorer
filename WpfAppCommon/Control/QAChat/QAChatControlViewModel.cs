@@ -17,9 +17,17 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Control.QAChat {
     public class QAChatControlViewModel : ObservableObject{
         //初期化
-        public void Initialize(ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
+        public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
             // クリップボードアイテムを設定
             ClipboardItem = clipboardItem;
+            // クリップボードフォルダを設定
+            ClipboardFolder = clipboardFolder;
+
+            // CollectionNameを設定
+            // クリップボードアイテムがNull出ない場合は、クリップボードアイテムのCollectionNameを設定
+            // クリップボードフォルダがNull出ない場合は、クリップボードフォルダのCollectionNameを設定
+            CollectionName = clipboardItem?.CollectionName ?? clipboardFolder?.CollectionName;
+
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
@@ -35,6 +43,17 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
+        // CollectionName
+        private string? _CollectionName = null;
+        public string? CollectionName {
+            get {
+                return _CollectionName;
+            }
+            set {
+                _CollectionName = value;
+                OnPropertyChanged(nameof(CollectionName));
+            }
+        }
         // SearchWindowを表示するAction
         public Action ShowSearchWindowAction { get; set; } = () => { };
 
@@ -46,6 +65,8 @@ namespace WpfAppCommon.Control.QAChat {
 
 
         public ClipboardItem? ClipboardItem { get; set; }
+
+        public ClipboardFolder? ClipboardFolder { get; set; }
 
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
@@ -190,7 +211,9 @@ namespace WpfAppCommon.Control.QAChat {
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions?.LangChainChat(VectorDBItem.GetEnabledItems(), prompt, ChatItems);
+                        // VectorDBItemの有効なアイテムを取得してLangChainChatを実行
+                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(CollectionName);
+                        result = PythonExecutor.PythonFunctions?.LangChainChat(enabledItems, prompt, ChatItems);
                     });
                 } else {
                     // モードがNormalの場合はOpenAIChatでチャットを送信
@@ -236,7 +259,7 @@ namespace WpfAppCommon.Control.QAChat {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // クリア処理
             ChatItems.Clear();
-            InputText = "";
+            // InputText = "";
 
         });
         // 追加コンテキスト情報が変更されたときの処理

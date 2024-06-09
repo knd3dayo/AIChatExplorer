@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ClipboardApp.View.ClipboardItemFolderView;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView
 {
@@ -28,7 +30,9 @@ namespace ClipboardApp.View.ClipboardItemView
             EditItemWindow editItemWindow = new();
             EditItemWindowViewModel editItemWindowViewModel = (EditItemWindowViewModel)editItemWindow.DataContext;
             editItemWindowViewModel.Initialize(folderViewModel, itemViewModel, action);
-            editItemWindow.ShowDialog();
+            editItemWindow.Show();
+
         }
+
     }
 }

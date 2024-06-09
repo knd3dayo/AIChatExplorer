@@ -22,10 +22,16 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         if not self.vector_db_url or not os.path.exists(self.vector_db_url):
             # ディレクトリを作成
             os.makedirs(self.vector_db_url)
-        client = chromadb.PersistentClient(path=self.vector_db_url)
+        # params
+        params = {}
+        params["client"] = chromadb.PersistentClient(path=self.vector_db_url)
+        params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
+        # collectionが指定されている場合
+        if self.collection:
+            params["collection_name"] = self.collection
+        
         self.db = Chroma(
-            embedding_function = self.langchain_openai_client.get_embedding_client(), 
-            client=client
+            **params
             )
 
     def save(self, documents:list=None):
