@@ -35,8 +35,11 @@ namespace WpfAppCommon.Model {
             // modeがRAGの場合はLangChainChatを実行
             if (Mode == OpenAIExecutionModeEnum.RAG) {
                 Tools.Info("LangChainChatを実行");
+                // ClipboardFolderを取得
+                ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
+
                 // VectorDBItemの有効なアイテムを取得
-                IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardItem.CollectionName);
+                IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.CollectionName, clipboardFolder?.Description);
                 result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), promptText, chatItems);
             }
             // modeがNormalの場合はOpenAIChatを実行

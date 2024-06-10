@@ -1,51 +1,22 @@
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ClipboardApp.View.AutoProcessRuleView;
 using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
-using WpfAppCommon.Factory.Default;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {
     public partial class FolderEditWindowViewModel : MyWindowViewModel {
-        // 編集モードか新規子フォルダ作成モードか
-        public enum Mode {
-            Edit,
-            CreateChild
-        }
-        // Windowの名前
-        public string WindowName {
-            get {
-                return CurrentMode == Mode.Edit ? "フォルダ編集" : "新規フォルダ作成";
-            }
-        }
 
 
-        public Mode CurrentMode { get; set; }
-        private string _collectionName = "";
-        public string CollectionName {
+        private ClipboardFolderViewModel? _FolderViewModel = null;
+        public ClipboardFolderViewModel? FolderViewModel {
             get {
-                return _collectionName;
+                return _FolderViewModel;
             }
             set {
-                _collectionName = value;
-                // プロパティが変更されたことを通知
-                OnPropertyChanged(nameof(CollectionName));
+                _FolderViewModel = value;
+                OnPropertyChanged(nameof(FolderViewModel));
             }
         }
-        private string _displayName = "";
-        public string DisplayName {
-            get {
-                return _displayName;
-            }
-            set {
-                _displayName = value;
-                // プロパティが変更されたことを通知
-                OnPropertyChanged(nameof(DisplayName));
-            }
-        }
-        public ClipboardFolderViewModel? FolderViewModel { get; set; }
-
 
         // 検索条件を常時適用するかどうか
         private bool _alwaysApplySearchCondition = false;
@@ -59,36 +30,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             }
         }
 
-        // CollectionNameが編集可能かどうか
-        public bool IsCollectionNameEditable {
-            get {
-                return CurrentMode == Mode.CreateChild;
-            }
-        }
         // フォルダ作成後に実行するコマンド
         private Action? _afterUpdate;
 
         // 起動時の処理
-        public void Initialize(ClipboardFolderViewModel folderViewModel, Mode mode, Action afterUpdate) {
-            CurrentMode = mode;
-            OnPropertyChanged(nameof(IsCollectionNameEditable));
+        public void Initialize(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             _afterUpdate = afterUpdate;
-
             FolderViewModel = folderViewModel;
-            // 編集モードの場合
-            if (CurrentMode == Mode.Edit) {
-                // CollectionNameを設定
-                // CollectionNameを_で分割して最後の要素をCollectionNameに設定
-                CollectionName = folderViewModel.CollectionName.Split('_').Last();
-
-                DisplayName = folderViewModel.DisplayName;
-            }
-            // 新規子フォルダ作成モードの場合
-            else if (CurrentMode == Mode.CreateChild) {
-                // CollectionNameを設定
-                CollectionName = "";
-                DisplayName = "";
-            }
 
         }
         public SimpleDelegateCommand<Window> CreateCommand => new ((window) => {
@@ -97,43 +45,22 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return;
             }
             // CollectionNameが空の場合はエラー
-            if (CollectionName == "") {
+            if (FolderViewModel.CollectionName == "") {
                 Tools.Error("フォルダ名を入力してください");
                 return;
             }
             // DisplayNameが空の場合はエラー
-            if (DisplayName == "") {
+            if (FolderViewModel.DisplayName == "") {
                 Tools.Error("表示名を入力してください");
                 return;
             }
             // CollectionNameが[a-Z$_]以外の場合はエラー
-            if (!MyRegex().IsMatch(CollectionName)) {
+            if (!MyRegex().IsMatch(FolderViewModel.CollectionName)) {
                 Tools.Error("フォルダ名は英文字で入力してください");
                 return;
             }
 
-            // 編集モードの場合
-            if (CurrentMode == Mode.Edit) {
-                // DisplayNameを設定
-                FolderViewModel.DisplayName = DisplayName;
-                // フォルダを保存
-                FolderViewModel.Save();
-
-            }
-            // 新規子フォルダ作成モードの場合
-            else if (CurrentMode == Mode.CreateChild) {
-                // フォルダを作成
-                ClipboardFolderViewModel child =  FolderViewModel.CreateChild(CollectionName, DisplayName);
-                // 親フォルダがSEARCH_ROOT_FOLDERまたはIsSearchFolderの場合
-                if (FolderViewModel.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME
-                    || FolderViewModel.IsSearchFolder) {
-                    // 子フォルダも検索フォルダにする
-                    child.IsSearchFolder = true;
-                }
-                // フォルダを保存
-                child.Save();
-
-            }
+            FolderViewModel.Save();
             // フォルダ作成後に実行するコマンドが設定されている場合
             _afterUpdate?.Invoke();
             // ウィンドウを閉じる

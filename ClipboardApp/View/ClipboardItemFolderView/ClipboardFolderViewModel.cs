@@ -12,6 +12,17 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // MainWindowViewModel
         public MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
+        // Description
+        public string Description {
+            get {
+                return ClipboardItemFolder.Description;
+            }
+            set {
+                ClipboardItemFolder.Description = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
+
         // 検索フォルダかどうか
         public bool IsSearchFolder {
             get {
@@ -112,11 +123,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsDeleteVisible {
             get {
                 // RootFolderは削除不可
-                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == ClipboardFolder.CLIPBOARD_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 // SearchRootFolderは削除不可
-                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 return true;
@@ -126,7 +137,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsEditVisible {
             get {
                 // SearchRootFolderは編集不可
-                if (ClipboardItemFolder.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
                     return false;
                 }
                 return true;

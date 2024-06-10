@@ -212,7 +212,7 @@ namespace WpfAppCommon.Control.QAChat {
                 if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
                     await Task.Run(() => {
                         // VectorDBItemの有効なアイテムを取得してLangChainChatを実行
-                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(CollectionName);
+                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(CollectionName, ClipboardFolder?.Description);
                         result = PythonExecutor.PythonFunctions?.LangChainChat(enabledItems, prompt, ChatItems);
                     });
                 } else {

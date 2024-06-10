@@ -30,8 +30,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// </summary>
         /// <param name="parameter"></param>
         public static void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, FolderEditWindowViewModel.Mode.CreateChild, afterUpdate);
+            // 子フォルダを作成する
+            ClipboardFolderViewModel childFolderViewModel = folderViewModel.CreateChild("", "");
+            // folderViewModelが検索フォルダの場合は、子フォルダも検索フォルダにする
+            if (folderViewModel.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME
+                || folderViewModel.IsSearchFolder) {
+                childFolderViewModel.IsSearchFolder = true;
+            }
+            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
         }
 
@@ -43,7 +49,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         /// <param name="parameter"></param>
         public static void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, FolderEditWindowViewModel.Mode.Edit, afterUpdate);
+            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
 
         }
 
@@ -110,8 +116,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return;
             }
 
-            if (folderViewModel.CollectionName == DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDER_NAME
-                || folderViewModel.CollectionName == DefaultClipboardDBController.SEARCH_ROOT_FOLDER_NAME) {
+            if (folderViewModel.CollectionName == ClipboardFolder.CLIPBOARD_ROOT_FOLDER_NAME
+                || folderViewModel.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
                 Tools.Error("ルートフォルダは削除できません");
                 return;
             }

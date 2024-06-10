@@ -1,8 +1,6 @@
-using System.Collections.ObjectModel;
 using LiteDB;
 using QAChat.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
@@ -16,8 +14,6 @@ namespace WpfAppCommon.Factory.Default {
         public static readonly string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
         public static readonly string CHAT_SESSION_COLLECTION_NAME = "chat_session";
 
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
-        public static readonly string SEARCH_ROOT_FOLDER_NAME = "search_folder";
         public static readonly string CLIPBOARD_IMAGE_COLLECTION_NAME = "clipboard_image";
         public static readonly string CLIPBOARD_FILE_COLLECTION_NAME = "clipboard_file";
 
@@ -82,24 +78,6 @@ namespace WpfAppCommon.Factory.Default {
             var item = collection.FindOne(x => x.CollectionName == collectionName);
 
             return item;
-        }
-        // RootFolderを取得する
-        public ClipboardFolder GetRootFolder() {
-            ClipboardFolder rootFolder = GetFolder(CLIPBOARD_ROOT_FOLDER_NAME);
-            if (rootFolder == null) {
-                rootFolder = new(CLIPBOARD_ROOT_FOLDER_NAME, "クリップボード");
-                UpsertFolder(rootFolder);
-            }
-            return rootFolder;
-        }
-
-        public ClipboardFolder GetSearchRootFolder() {
-            ClipboardFolder searchRootFolder = GetFolder(SEARCH_ROOT_FOLDER_NAME);
-            if (searchRootFolder == null) {
-                searchRootFolder = new(SEARCH_ROOT_FOLDER_NAME, "検索フォルダ");
-                UpsertFolder(searchRootFolder);
-            }
-            return searchRootFolder;
         }
 
         // 指定したTargetFolderを持つAutoProcessRuleを取得する
@@ -167,13 +145,15 @@ namespace WpfAppCommon.Factory.Default {
         // --------------------------------------------------------------
 
         // 親フォルダのCollectionNameを指定して子フォルダのリストを取得する
-        public IEnumerable<string> GetFolderRelations(string parentCollectionName) {
-            List<string> result = [];
+        public IEnumerable<ClipboardFolder> GetChildrenFolders(string parentCollectionName) {
+            List<ClipboardFolder> result = [];
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFolderRelation>(CLIPBOARD_FOLDER_RELATION_NAME);
 
             var items = collection.FindAll().Where(x => x.ParentCollectionName == parentCollectionName);
             foreach (var i in items) {
-                result.Add(i.ChildCollectionName);
+                // 子フォルダを取得
+                var folder = GetFolder(i.ChildCollectionName);
+                result.Add(folder);
             }
             return result;
         }
@@ -283,17 +263,13 @@ namespace WpfAppCommon.Factory.Default {
 
         private void LoadFolderTree(ClipboardFolder targetFolder) {
             // LiteDBから自分が親となっているフォルダを取得
-            var childrenNames = GetFolderRelations(targetFolder.CollectionName);
+            var childrenFolders = GetChildrenFolders(targetFolder.CollectionName);
             // Childrenをクリア
             targetFolder.Children.Clear();
             // childrenNamesからClipboardItemFolderを取得する
-            foreach (var childName in childrenNames) {
-                var child = GetFolder(childName);
-                if (child != null) {
-                    targetFolder.Children.Add(child);
-                    // childを親としたフォルダツリーを再帰的に読み込む
-                    LoadFolderTree(child);
-                }
+            foreach (var child in childrenFolders) {
+                targetFolder.Children.Add(child);
+                LoadFolderTree(child);
             }
         }
 
@@ -511,15 +487,15 @@ namespace WpfAppCommon.Factory.Default {
             return item;
         }
 
-        public void UpsertItemFile(ClipboardItemFile item) { 
+        public void UpsertItemFile(ClipboardItemFile item) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
             collection.Upsert(item);
         }
-        public void DeleteItemFile(ClipboardItemFile item) { 
+        public void DeleteItemFile(ClipboardItemFile item) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
             collection.Delete(item.Id);
         }
-        public ClipboardItemFile? GetItemFile(ObjectId id) { 
+        public ClipboardItemFile? GetItemFile(ObjectId id) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
             var item = collection.FindById(id);
             return item;

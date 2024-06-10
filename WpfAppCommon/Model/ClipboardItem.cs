@@ -256,6 +256,11 @@ namespace WpfAppCommon.Model {
                 }
             }
         }
+
+        // Collectionに対応するClipboardFolderを取得
+        public ClipboardFolder? GetFolder() {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionName);
+        }
         //--------------------------------------------------------------------------------
         // staticメソッド
         //--------------------------------------------------------------------------------

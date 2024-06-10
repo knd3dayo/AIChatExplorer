@@ -404,7 +404,12 @@ namespace ClipboardApp.View.ClipboardItemView {
                 if (mode == OpenAIExecutionModeEnum.RAG) {
                     // LangChainChatを実行
                     await Task.Run(() => {
-                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(itemViewModel.ClipboardItem.CollectionName);
+                        ClipboardFolder? folder = itemViewModel.ClipboardItem.GetFolder();
+                        if (folder == null) {
+                            Tools.Error("フォルダが取得できませんでした");
+                            return;
+                        }
+                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.CollectionName, folder.Description);
                         result = PythonExecutor.PythonFunctions.LangChainChat(enabledItems, itemViewModel.Content, chatItems);
                     });
                 }

@@ -115,14 +115,19 @@ namespace WpfAppCommon.Model {
         }
 
         // IsEnabled=Trueのアイテムを取得して、SystemCommonVectorDBのCollectionNameを指定した文字列に置換する
-        public static IEnumerable<VectorDBItem> GetEnabledItemsWithSystemCommonVectorDBCollectionName(string? name) {
+        public static IEnumerable<VectorDBItem> GetEnabledItemsWithSystemCommonVectorDBCollectionName(string? name, string? description) {
             if (name == null) {
                 return GetEnabledItems();
             }
             return GetItems().Where(item => item.IsEnabled).Select(item => {
                 if (item.Name == SystemCommonVectorDBName) {
                     item.CollectionName = name;
+                    if (description != null) {
+                        item.Description += description;
+                    }
+
                 }
+
                 return item;
             });
         }

@@ -11,10 +11,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         {
             InitializeComponent();
         }
-        public static void OpenFolderEditWindow(ClipboardFolderViewModel folderViewModel, FolderEditWindowViewModel.Mode mode, Action afterUpdate) {
+        public static void OpenFolderEditWindow(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             FolderEditWindow folderEditWindow = new();
             FolderEditWindowViewModel folderEditWindowViewModel = (FolderEditWindowViewModel)folderEditWindow.DataContext;
-            folderEditWindowViewModel.Initialize(folderViewModel, mode, afterUpdate);
+            folderEditWindowViewModel.Initialize(folderViewModel, afterUpdate);
             folderEditWindow.ShowDialog();
         }
     }

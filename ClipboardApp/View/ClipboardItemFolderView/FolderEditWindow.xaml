@@ -9,7 +9,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.View.ClipboardItemFolderView"
-    Title="{Binding WindowName}"
+    Title="クリップボードフォルダ編集"
     Width="500"
     Height="300"
     mc:Ignorable="d">
@@ -66,6 +66,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -81,8 +82,7 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="10,10,10,10"
-                IsEnabled="{Binding IsCollectionNameEditable}"
-                Text="{Binding CollectionName}" />
+                Text="{Binding FolderViewModel.CollectionName}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="0"
@@ -93,7 +93,18 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,10,10,10"
-                Text="{Binding DisplayName}" />
+                Text="{Binding FolderViewModel.DisplayName}" />
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Width="120"
+                Margin="10,10,10,10"
+                Text="説明" />
+            <TextBox
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="10,10,10,10"
+                Text="{Binding FolderViewModel.Description}" />
         </Grid>
         <Grid Grid.Row="2" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Right">

@@ -9,20 +9,59 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Model {
     public class ClipboardFolder : ObservableObject {
 
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "clipboard";
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = "search_folder";
+
+
+        //--------------------------------------------------------------------------------
+        // コンストラクタ
+        public ClipboardFolder() {
+        }
+
+        public ClipboardFolder(ClipboardFolder parent, string collectionName, string displayName) {
+            if (parent == null) {
+                // LiteDB用のパス
+                CollectionName = collectionName;
+                // ファイルシステム用のパス
+                FolderPath = collectionName;
+
+            } else {
+                CollectionName = ConcatenateCollectionPath(parent.CollectionName, collectionName);
+                FolderPath = ConcatenateFileSystemPath(parent.FolderPath, collectionName);
+            }
+            DisplayName = displayName;
+            // クリップボードアイテムのロード
+            Load();
+
+        }
+
         // アプリ共通の検索条件
         public static SearchRule GlobalSearchCondition { get; set; } = new();
 
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
             get {
-                IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-                return ClipboardDatabaseController.GetRootFolder();
+                ClipboardFolder rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CLIPBOARD_ROOT_FOLDER_NAME);
+                if (rootFolder == null) {
+                    rootFolder = new();
+                    rootFolder.DisplayName = "クリップボード";
+                    rootFolder.CollectionName = CLIPBOARD_ROOT_FOLDER_NAME;
+                    ClipboardAppFactory.Instance.GetClipboardDBController().UpsertFolder(rootFolder);
+                }
+                return rootFolder;
             }
         }
         public static ClipboardFolder SearchRootFolder {
             get {
-                IClipboardDBController clipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-                return clipboardDatabaseController.GetSearchRootFolder();
+                ClipboardFolder searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(SEARCH_ROOT_FOLDER_NAME);
+                if (searchRootFolder == null) {
+                    searchRootFolder = new();
+                    searchRootFolder.DisplayName = "検索フォルダ";
+                    searchRootFolder.CollectionName = SEARCH_ROOT_FOLDER_NAME;
+                    searchRootFolder.IsSearchFolder = true;
+                    ClipboardAppFactory.Instance.GetClipboardDBController().UpsertFolder(searchRootFolder);
+                }
+                return searchRootFolder;
             }
         }
 
@@ -35,6 +74,9 @@ namespace WpfAppCommon.Model {
         public string CollectionName { get; set; } = "";
         // フォルダの絶対パス ファイルシステム用
         public string FolderPath { get; set; } = "";
+
+        // Description
+        public string Description { get; set; } = "";
 
         // AutoProcessRuleのIdのリスト
         public List<ObjectId> AutoProcessRuleIds { get; set; } = [];
@@ -68,12 +110,9 @@ namespace WpfAppCommon.Model {
                 }
                 // LiteDBから自分が親となっているフォルダを取得
                 IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-                var childrenNames = ClipboardDatabaseController.GetFolderRelations(CollectionName);
-                foreach (var childName in childrenNames) {
-                    var child = ClipboardDatabaseController.GetFolder(childName);
-                    if (child != null) {
-                        children.Add(child);
-                    }
+                var childrenFolders = ClipboardDatabaseController.GetChildrenFolders(CollectionName);
+                foreach (var childFolder in childrenFolders) {
+                    children.Add(childFolder);
                 }
                 return children;
             }
@@ -113,32 +152,6 @@ namespace WpfAppCommon.Model {
             if (string.IsNullOrEmpty(childPath))
                 return parentPath;
             return Path.Combine(parentPath, childPath);
-        }
-
-
-        //--------------------------------------------------------------------------------
-        // コンストラクタ
-        public ClipboardFolder() {
-        }
-
-        public ClipboardFolder(ClipboardFolder? parent, string collectionName, string displayName) {
-            if (parent == null) {
-                // LiteDB用のパス
-                CollectionName = collectionName;
-                // ファイルシステム用のパス
-                FolderPath = collectionName;
-
-            } else {
-                CollectionName = ConcatenateCollectionPath(parent.CollectionName, collectionName);
-                FolderPath = ConcatenateFileSystemPath(parent.FolderPath, collectionName);
-            }
-            DisplayName = displayName;
-            // クリップボードアイテムのロード
-            Load();
-
-        }
-        public ClipboardFolder(string collectionName, string displayName) : this(null, collectionName, displayName) {
-
         }
         //--------------------------------------------------------------------------------
         // 自分自身を保存

@@ -24,14 +24,12 @@ namespace WpfAppCommon.Factory {
 
         //-- ClipboardFolder
         public ClipboardFolder GetFolder(string collectionName);
-        public ClipboardFolder GetRootFolder();
-        public ClipboardFolder GetSearchRootFolder();
         public void UpsertFolderRelation(ClipboardFolder parent, ClipboardFolder child);
 
         public void DeleteFolder(ClipboardFolder folder);
         public void UpsertFolder(ClipboardFolder folder);
 
-        public IEnumerable<string> GetFolderRelations(string parentCollectionName);
+        public IEnumerable<ClipboardFolder> GetChildrenFolders(string parentCollectionName);
 
 
         // public void DeleteItems(List<ClipboardItem> items);
