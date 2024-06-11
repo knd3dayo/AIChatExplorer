@@ -50,11 +50,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 Tools.Error("フォルダ名を入力してください");
                 return;
             }
-            // CollectionNameが[a-Z$_]以外の場合はエラー
-            if (!MyRegex().IsMatch(FolderViewModel.FolderName)) {
-                Tools.Error("フォルダ名は英文字で入力してください");
-                return;
-            }
 
             FolderViewModel.Save();
             // フォルダ作成後に実行するコマンドが設定されている場合
