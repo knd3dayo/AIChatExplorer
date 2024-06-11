@@ -146,8 +146,7 @@ namespace ClipboardApp {
             SearchRule? searchConditionRule;
             // 選択されたフォルダが検索フォルダの場合
             if (folderViewModel != null && folderViewModel.IsSearchFolder) {
-                string absoluteCollectionName = folderViewModel.CollectionName;
-                searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(absoluteCollectionName);
+                searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folderViewModel.ClipboardItemFolder);
                 if (searchConditionRule == null) {
                     searchConditionRule = new() {
                         Type = SearchRule.SearchType.SearchFolder

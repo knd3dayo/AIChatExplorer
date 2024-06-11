@@ -1,13 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using ClipboardApp.Control;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.Views.ClipboardItemView;
 using WpfAppCommon;
-using WpfAppCommon.Control;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
@@ -37,8 +33,8 @@ namespace ClipboardApp {
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
 
-        // ProgressIndicatorの表示更新用のアクションをセット
-        UpdateProgressCircleVisibility = (visible) => {
+            // ProgressIndicatorの表示更新用のアクションをセット
+            UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
             // RootFolderのViewModel
@@ -91,11 +87,11 @@ namespace ClipboardApp {
         public ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
 
         // RootFolderのClipboardViewModel
-        public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; } 
+        public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; }
 
         // Cutフラグ
         private bool _CutFlag = false;
-        public bool CutFlag { 
+        public bool CutFlag {
             get {
                 return _CutFlag;
             }
@@ -137,8 +133,8 @@ namespace ClipboardApp {
         private ClipboardFolderViewModel? _selectedFolder;
         public ClipboardFolderViewModel? SelectedFolder {
             get {
-                
-                 return _selectedFolder;
+
+                return _selectedFolder;
             }
             set {
                 _selectedFolder = value;

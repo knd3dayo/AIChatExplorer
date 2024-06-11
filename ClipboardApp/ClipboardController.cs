@@ -181,13 +181,11 @@ namespace ClipboardApp {
 
         /// Create ClipboardItem
         private static ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            ClipboardItem item = new(ClipboardFolder.RootFolder.CollectionName, ClipboardFolder.RootFolder.FolderPath) {
+            ClipboardItem item = new(ClipboardFolder.RootFolder.Id) {
                 ContentType = contentTypes
             };
             SetApplicationInfo(item, e);
             item.Content = content;
-            item.CollectionName = ClipboardFolder.RootFolder.CollectionName;
-            item.FolderPath = ClipboardFolder.RootFolder.FolderPath;
 
             // If ContentType is Image, set image data
             if (contentTypes == ClipboardContentTypes.Image && image != null) {

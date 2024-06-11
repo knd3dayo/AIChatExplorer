@@ -9,8 +9,8 @@ namespace WpfAppCommon.Factory {
         //-- ClipboardItem
         public void UpsertItem(ClipboardItem item, bool contentIsModified = true);
         public void DeleteItem(ClipboardItem item);
-        public IEnumerable<ClipboardItem> SearchItems(string collectionName, SearchCondition searchCondition);
-        public IEnumerable<ClipboardItem> GetItems(string collectionName);
+        public IEnumerable<ClipboardItem> SearchItems(ClipboardFolder folder, SearchCondition searchCondition);
+        public IEnumerable<ClipboardItem> GetItems(ClipboardFolder folder);
 
         //-- ClipboardItemImage
         public void UpsertItemImage(ClipboardItemImage item);
@@ -23,19 +23,22 @@ namespace WpfAppCommon.Factory {
         public ClipboardItemFile? GetItemFile(ObjectId id);
 
         //-- ClipboardFolder
-        public ClipboardFolder GetFolder(string collectionName);
-        public void UpsertFolderRelation(ClipboardFolder parent, ClipboardFolder child);
+        
+        public ClipboardFolder? GetFolder(ObjectId? objectId);
+
+        public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId);
+
+        public ClipboardFolder? GetRootFolder(string collectionName);
+
 
         public void DeleteFolder(ClipboardFolder folder);
         public void UpsertFolder(ClipboardFolder folder);
-
-        public IEnumerable<ClipboardFolder> GetChildrenFolders(string parentCollectionName);
 
 
         // public void DeleteItems(List<ClipboardItem> items);
 
         // -- SearchRule
-        public SearchRule? GetSearchRuleByFolderName(string collectionName);
+        public SearchRule? GetSearchRuleByFolder(ClipboardFolder folder);
         public SearchRule? GetSearchRule(string name);
 
         public void UpsertSearchRule(SearchRule conditionRule);

@@ -84,8 +84,8 @@ namespace ClipboardApp.View.SearchView {
 
             _afterUpdate = afterUpdate;
             SearchFolderViewModel = searchFolderViewModel;
-            SearchFolderPath = searchFolderViewModel?.CollectionName;
-            TargetFolderPath = searchConditionRule.TargetFolder?.CollectionName;
+            SearchFolderPath = searchFolderViewModel?.FolderPath;
+            TargetFolderPath = searchConditionRule.TargetFolder?.FolderPath;
 
             OnPropertyChanged(nameof(SearchTypeText));
             OnPropertyChanged(nameof(SearchFolderVisibility));
@@ -140,7 +140,7 @@ namespace ClipboardApp.View.SearchView {
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolderViewModel = folderViewModel;
                 folderViewModel.SetSearchFolder(SearchConditionRule);
-                SearchFolderPath = folderViewModel.CollectionName;
+                SearchFolderPath = folderViewModel.FolderPath;
                 OnPropertyChanged(nameof(SearchFolderPath));
             });
 
@@ -160,7 +160,7 @@ namespace ClipboardApp.View.SearchView {
             ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 folderViewModel.SetSearchTargetFolder(SearchConditionRule);
-                TargetFolderPath = folderViewModel.CollectionName;
+                TargetFolderPath = folderViewModel.FolderPath;
                 OnPropertyChanged(nameof(TargetFolderPath));
             });
 

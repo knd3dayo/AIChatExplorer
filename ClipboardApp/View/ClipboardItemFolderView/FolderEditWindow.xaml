@@ -66,7 +66,6 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -82,26 +81,15 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="10,10,10,10"
-                Text="{Binding FolderViewModel.CollectionName}" />
+                Text="{Binding FolderViewModel.FolderName}" />
             <TextBlock
                 Grid.Row="1"
-                Grid.Column="0"
-                Width="120"
-                Margin="10,10,10,10"
-                Text="表示名" />
-            <TextBox
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="10,10,10,10"
-                Text="{Binding FolderViewModel.DisplayName}" />
-            <TextBlock
-                Grid.Row="2"
                 Grid.Column="0"
                 Width="120"
                 Margin="10,10,10,10"
                 Text="説明" />
             <TextBox
-                Grid.Row="2"
+                Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,10,10,10"
                 Text="{Binding FolderViewModel.Description}" />

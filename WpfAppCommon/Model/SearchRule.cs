@@ -46,7 +46,11 @@ namespace WpfAppCommon.Model {
         }   
 
         public List<ClipboardItem> SearchItems() {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder!.CollectionName, SearchCondition).ToList();
+            List<ClipboardItem> result = [];
+            if (TargetFolder == null) {
+                return result;
+            }
+            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder , SearchCondition).ToList();
         }
 
         public SearchRule Copy() {

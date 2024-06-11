@@ -64,7 +64,7 @@
         <TreeView Grid.Row="1" ItemsSource="{Binding RootFolders}">
             <TreeView.ItemTemplate>
                 <HierarchicalDataTemplate DataType="local:ClipboardItemFolder" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding DisplayName}">
+                    <TextBlock Text="{Binding FolderName}">
                         <TextBlock.InputBindings>
                             <MouseBinding
                                 Command="{Binding FolderSelectWindowSelectFolderCommand}"

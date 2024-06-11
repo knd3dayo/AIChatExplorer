@@ -409,7 +409,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                             Tools.Error("フォルダが取得できませんでした");
                             return;
                         }
-                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.CollectionName, folder.Description);
+                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.Id.ToString(), folder.Description);
                         result = PythonExecutor.PythonFunctions.LangChainChat(enabledItems, itemViewModel.Content, chatItems);
                     });
                 }

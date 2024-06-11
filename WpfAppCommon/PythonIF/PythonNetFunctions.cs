@@ -39,8 +39,6 @@ namespace WpfAppCommon.PythonIF {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
 
-        // デフォルトのコレクション名
-        private readonly string DefaultCollectionName = "default_collection";
 
         private static StringResources StringResources { get; } = StringResources.Instance;
 
@@ -503,7 +501,7 @@ namespace WpfAppCommon.PythonIF {
                 var props = ClipboardAppConfig.CreateOpenAIProperties();
                 props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
-                props["CollectionName"] = item.CollectionName;
+                props["CollectionName"] = item.FolderObjectId.ToString();
                 props["DocStoreURL"] = vectorDBItem.DocStoreURL;
 
                 // Pythonスクリプトの関数を呼び出す

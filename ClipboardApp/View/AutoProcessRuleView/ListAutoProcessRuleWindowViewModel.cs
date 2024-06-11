@@ -47,13 +47,13 @@ namespace ClipboardApp.View.AutoProcessRuleView
         // AutoProcessRule用のButtonのVisibility
         public Visibility AutoProcessRuleButtonVisibility {
             get {
-                return TabIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
+                return TabIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // システム共通保存ボタンのVisibility
         public Visibility SaveSystemCommonSettingButtonVisibility {
             get {
-                return TabIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+                return TabIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

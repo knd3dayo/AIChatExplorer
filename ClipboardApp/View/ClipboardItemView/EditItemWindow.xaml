@@ -133,6 +133,7 @@
                         HorizontalScrollBarVisibility="Auto"
                         IsEnabled="True"
                         Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap"
                         VerticalScrollBarVisibility="Auto">
                         <TextBox.InputBindings>
                             <KeyBinding

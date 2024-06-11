@@ -47,9 +47,9 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolderInstance.DisplayName}]";
+            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolderInstance.FolderName}]";
             // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolderInstance.DisplayName}]";
+            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolderInstance.FolderName}]";
         }
 
 
@@ -100,7 +100,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new(folderViewModel.CollectionName, folderViewModel.FolderPath);
+                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
 
 
                 ItemViewModel = new ClipboardItemViewModel(clipboardItem);
@@ -176,8 +176,8 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行
-            ClipboardFolder folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.CollectionName);
-            ClipboardItem? item = folder.ApplyAutoProcess(ItemViewModel.ClipboardItem);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.FolderObjectId);
+            ClipboardItem? item = folder?.ApplyAutoProcess(ItemViewModel.ClipboardItem);
             // ClipboardItemを更新
             if (item != null) {
                 item.Save();

@@ -39,7 +39,7 @@ namespace WpfAppCommon.Model {
                 ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
 
                 // VectorDBItemの有効なアイテムを取得
-                IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.CollectionName, clipboardFolder?.Description);
+                IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.Id.ToString(), clipboardFolder?.Description);
                 result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), promptText, chatItems);
             }
             // modeがNormalの場合はOpenAIChatを実行

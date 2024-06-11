@@ -470,7 +470,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
-                    if (TargetFolder.CollectionName == DestinationFolder.CollectionName) {
+                    if (TargetFolder.ClipboardItemFolder.Id == DestinationFolder.ClipboardItemFolder.Id) {
                         Tools.Error("同じフォルダにはコピーまたは移動できません。");
                         return;
                     }
@@ -534,7 +534,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 return;
             }
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.CollectionName == TargetFolder?.CollectionName) {
+            if (folder.ClipboardItemFolder.Id == TargetFolder?.ClipboardItemFolder.Id) {
                 Tools.Error("同じフォルダにはコピーまたは移動できません。");
                 return;
             }// コピーor移動先が検索フォルダの場合はエラー

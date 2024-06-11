@@ -18,19 +18,41 @@ namespace WpfAppCommon.Model {
     }
     public class ClipboardItem {
         // コンストラクタ
-        public ClipboardItem(string collectionName, string folderPath) {
+        public ClipboardItem(LiteDB.ObjectId folderObjectId) {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
-            CollectionName = collectionName;
-            FolderPath = folderPath;
+            FolderObjectId = folderObjectId;
         }
         // プロパティ
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
-        public string CollectionName { get; set; }
+        // ClipboardFolderのObjectId
+        public LiteDB.ObjectId FolderObjectId { get; set; } = LiteDB.ObjectId.Empty;
 
-        public string FolderPath { get; set; }
+        /**
+        public string CollectionName {
+            get {
+                // FolderObjectIdからClipboardFolderを取得
+                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
+                if (folder == null) {
+                    return "";
+                }
+                return folder.CollectionName;
+            }
+        }
+        **/
+
+        public string FolderPath {
+            get {
+                // FolderObjectIdからClipboardFolderを取得
+                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
+                if (folder == null) {
+                    return "";
+                }
+                return folder.FolderPath;
+            }
+        }
 
         // 生成日時
         public DateTime CreatedAt { get; set; }
@@ -121,7 +143,7 @@ namespace WpfAppCommon.Model {
         // -------------------------------------------------------------------
 
         public ClipboardItem Copy() {
-            ClipboardItem newItem = new(this.CollectionName, this.FolderPath);
+            ClipboardItem newItem = new(this.FolderObjectId);
             CopyTo(newItem);
             return newItem;
 
@@ -259,7 +281,7 @@ namespace WpfAppCommon.Model {
 
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder? GetFolder() {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionName);
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
         }
         //--------------------------------------------------------------------------------
         // staticメソッド

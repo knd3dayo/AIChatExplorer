@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemView;
+using LibGit2Sharp;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -40,38 +41,33 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // 子フォルダ
         public ObservableCollection<ClipboardFolderViewModel> Children { get; } = [];
 
-        public string DisplayName {
+        public string FolderName {
             get {
-                return ClipboardItemFolder.DisplayName;
+                return ClipboardItemFolder.FolderName;
             }
             set {
-                ClipboardItemFolder.DisplayName = value;
-                OnPropertyChanged(nameof(DisplayName));
+                ClipboardItemFolder.FolderName = value;
+                OnPropertyChanged(nameof(FolderName));
             }
         }
-        public ClipboardFolderViewModel CreateChild(string collectionName, string displayName) {
-            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(collectionName, displayName);
-            ClipboardItemFolder.Children.Add(childFolder);
+        public ClipboardFolderViewModel CreateChild(string folderName) {
+            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
+
             return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
         }
 
+        /**
         public string CollectionName {
             get {
                 return ClipboardItemFolder.CollectionName;
             }
-            set {
-                ClipboardItemFolder.CollectionName = value;
-                OnPropertyChanged(nameof(CollectionName));
-            }
 
         }
+        **/
+
         public string FolderPath {
             get {
                 return ClipboardItemFolder.FolderPath;
-            }
-            set {
-                ClipboardItemFolder.FolderPath = value;
-                OnPropertyChanged(nameof(FolderPath));
             }
         }
 
@@ -82,15 +78,16 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // LoadChildren
         public void LoadChildren() {
             Children.Clear();
-            foreach (ClipboardFolder folder in ClipboardItemFolder.Children) {
-                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, folder));
+            foreach (var child in ClipboardItemFolder.Children) {
+                if (child == null) {
+                    continue;
+                }
+                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, child));
             }
         }
         // LoadItems
         public void LoadItems() {
             Items.Clear();
-            // DBから読み込み
-            ClipboardItemFolder.Load();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
                 Items.Add(new ClipboardItemViewModel(item));
             }
@@ -98,16 +95,18 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         // Load
         public void Load() {
-
             MainWindowViewModel.IsIndeterminate = true;
             try {
-                LoadChildren();
-                LoadItems();
+                // DBから読み込み
+                ClipboardItemFolder.Load();
 
                 UpdateStatusText();
             } finally {
                 MainWindowViewModel.IsIndeterminate = false;
             }
+            LoadChildren();
+            LoadItems();
+
         }
         // AddItem
         public void AddItem(ClipboardItemViewModel item) {
@@ -123,11 +122,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsDeleteVisible {
             get {
                 // RootFolderは削除不可
-                if (ClipboardItemFolder.CollectionName == ClipboardFolder.CLIPBOARD_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id) {
                     return false;
                 }
                 // SearchRootFolderは削除不可
-                if (ClipboardItemFolder.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.Id == ClipboardFolder.SearchRootFolder.Id) {
                     return false;
                 }
                 return true;
@@ -137,7 +136,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsEditVisible {
             get {
                 // SearchRootFolderは編集不可
-                if (ClipboardItemFolder.CollectionName == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
+                if (ClipboardItemFolder.Id == ClipboardFolder.SearchRootFolder.Id) {
                     return false;
                 }
                 return true;
@@ -154,7 +153,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
         private void UpdateStatusText() {
-            string message = $"フォルダ[{DisplayName}]";
+            string message = $"フォルダ[{FolderName}]";
             // AutoProcessRuleが設定されている場合
             var rules = AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
             if (rules.Count > 0) {
@@ -168,7 +167,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // folderが検索フォルダの場合
             SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             if (ClipboardItemFolder.IsSearchFolder) {
-                searchConditionRule = SearchRuleController.GetSearchRuleByFolderName(ClipboardItemFolder.CollectionName);
+                searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             }
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合
@@ -197,10 +196,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardItemFolder.AddAutoProcessRule(rule);
         }
 
-        // AddChild
-        public void AddChild(ClipboardFolderViewModel child) {
-            ClipboardItemFolder.Children.Add(child.ClipboardItemFolder);
-        }
+
         // Save
         public void Save() {
             ClipboardItemFolder.Save();
@@ -224,6 +220,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public static SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
             
             CreateFolderCommandExecute(folderViewModel, () => {
+                // 親フォルダを保存
+                folderViewModel.Save();
                 folderViewModel.Load();
             });
         });

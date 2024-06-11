@@ -76,8 +76,9 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 Tools.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
+            folder.Load();
             Instance.SelectedFolder = folder;
-            Instance.SelectedFolderAbsoluteCollectionName = folder.CollectionName;
+            Instance.SelectedFolderAbsoluteCollectionName = folder.FolderPath;
 
         }
     }

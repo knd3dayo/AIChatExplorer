@@ -18,9 +18,9 @@ namespace QAChat {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolder?.DisplayName}]";
+            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolder?.FolderName}]";
             // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolder?.DisplayName}]";
+            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolder?.FolderName}]";
         }
         private ClipboardFolder? _ClipboardFolder;
         public ClipboardFolder? ClipboardFolder {

@@ -73,6 +73,39 @@
                 Margin="10,0,10,0"
                 Padding="0"
                 FontSize="10"
+                Header="フォルダ単位">
+                <!--  ルール一覧のListBox  -->
+                <ListView
+                    MinHeight="300"
+                    ItemsSource="{Binding AutoProcessRules}"
+                    SelectedItem="{Binding SelectedAutoProcessRule}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn
+                                Width="350"
+                                DisplayMemberBinding="{Binding RuleName}"
+                                Header="ルール名" />
+                            <GridViewColumn
+                                Width="200"
+                                DisplayMemberBinding="{Binding TargetFolder.FolderPath}"
+                                Header="適用対象フォルダ(パス)" />
+                        </GridView>
+                    </ListView.View>
+                    <!--  コンテキストメニュー  -->
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
+                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+            </TabItem>
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,0,10,0"
+                Padding="0"
+                FontSize="10"
                 Header="システム共通">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -284,44 +317,6 @@
                             Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
                     </Grid>
                 </Grid>
-            </TabItem>
-
-            <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,0,10,0"
-                Padding="0"
-                FontSize="10"
-                Header="フォルダ単位">
-                <!--  ルール一覧のListBox  -->
-                <ListView
-                    MinHeight="300"
-                    ItemsSource="{Binding AutoProcessRules}"
-                    SelectedItem="{Binding SelectedAutoProcessRule}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn
-                                Width="160"
-                                DisplayMemberBinding="{Binding TargetFolder.DisplayName}"
-                                Header="適用対象フォルダ" />
-                            <GridViewColumn
-                                Width="200"
-                                DisplayMemberBinding="{Binding TargetFolder.CollectionName}"
-                                Header="適用対象フォルダ(パス)" />
-                            <GridViewColumn
-                                Width="350"
-                                DisplayMemberBinding="{Binding RuleName}"
-                                Header="ルール名" />
-                        </GridView>
-                    </ListView.View>
-                    <!--  コンテキストメニュー  -->
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
-                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2">

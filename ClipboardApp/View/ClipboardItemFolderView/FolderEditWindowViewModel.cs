@@ -44,18 +44,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 Tools.Error("フォルダが指定されていません");
                 return;
             }
-            // CollectionNameが空の場合はエラー
-            if (FolderViewModel.CollectionName == "") {
+
+            // フォルダ名が空の場合はエラー
+            if (FolderViewModel.FolderName == "") {
                 Tools.Error("フォルダ名を入力してください");
                 return;
             }
-            // DisplayNameが空の場合はエラー
-            if (FolderViewModel.DisplayName == "") {
-                Tools.Error("表示名を入力してください");
-                return;
-            }
             // CollectionNameが[a-Z$_]以外の場合はエラー
-            if (!MyRegex().IsMatch(FolderViewModel.CollectionName)) {
+            if (!MyRegex().IsMatch(FolderViewModel.FolderName)) {
                 Tools.Error("フォルダ名は英文字で入力してください");
                 return;
             }

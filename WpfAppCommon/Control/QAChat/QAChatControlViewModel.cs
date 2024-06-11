@@ -23,11 +23,6 @@ namespace WpfAppCommon.Control.QAChat {
             // クリップボードフォルダを設定
             ClipboardFolder = clipboardFolder;
 
-            // CollectionNameを設定
-            // クリップボードアイテムがNull出ない場合は、クリップボードアイテムのCollectionNameを設定
-            // クリップボードフォルダがNull出ない場合は、クリップボードフォルダのCollectionNameを設定
-            CollectionName = clipboardItem?.CollectionName ?? clipboardFolder?.CollectionName;
-
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
