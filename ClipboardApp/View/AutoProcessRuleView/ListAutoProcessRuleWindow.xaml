@@ -81,6 +81,14 @@
                     SelectedItem="{Binding SelectedAutoProcessRule}">
                     <ListView.View>
                         <GridView>
+                            <GridViewColumn Width="100" Header="有効">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
                             <GridViewColumn
                                 Width="350"
                                 DisplayMemberBinding="{Binding RuleName}"
@@ -98,6 +106,11 @@
                             <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
                         </ContextMenu>
                     </ListView.ContextMenu>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding EditAutoProcessRuleCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </ListView>
             </TabItem>
             <TabItem
