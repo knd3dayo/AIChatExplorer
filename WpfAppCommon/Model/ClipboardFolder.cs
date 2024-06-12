@@ -190,7 +190,7 @@ namespace WpfAppCommon.Model {
             ClipboardItem? result = clipboardItem;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
-            foreach (var rule in AutoProcessRules) {
+                foreach (var rule in AutoProcessRules) {
                 Tools.Info("自動処理を適用します " + rule.GetDescriptionString());
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
