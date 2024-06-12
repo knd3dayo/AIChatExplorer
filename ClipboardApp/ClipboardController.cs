@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Windows;
+using ClipboardApp.View.ClipboardItemFolderView;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
@@ -12,9 +13,8 @@ namespace ClipboardApp {
     /// </summary>
     public class ClipboardController {
         //--------------------------------------------------------------------------------
-
-        // String definition
-        private static StringResources StringResources { get; } = StringResources.Instance;
+        // 最後に処理したクリップボードのEventArgs
+        public static ClipboardChangedEventArgs? LastClipboardChangedEventArgs { get; set; } = null;
 
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
@@ -78,87 +78,28 @@ namespace ClipboardApp {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ClipboardChanged(object? sender, ClipboardChangedEventArgs e) {
+            LastClipboardChangedEventArgs = e;
 
             if (IsClipboardMonitorEnabled == false) {
                 // System.Windows.MessageBox.Show("Clipboard monitor disabled");
                 return;
             }
-            if (_clipboard == null) {
-                return;
-            }
-            // Is the content copied of text type?
-            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                // このアプリケーションのクリップボード操作は無視
-                var assembly = Assembly.GetExecutingAssembly().GetName();
-                if (e.SourceApplication.Name == assembly.Name + ".exe") {
-                    return;
-                }
-
-                // Get the cut/copied text.
-                ProcessClipboardItem(ClipboardContentTypes.Text, _clipboard.ClipboardText, null, e);
-            }
-            // Is the content copied of file type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                // このアプリケーションのクリップボード操作は無視
-                var assembly = Assembly.GetExecutingAssembly().GetName();
-                if (e.SourceApplication.Name == assembly.Name + ".exe") {
-                    return;
-                }
-
-                // Get the cut/copied file/files.
-                for (int i = 0; i < _clipboard.ClipboardFiles.Count; i++) {
-                    ProcessClipboardItem(ClipboardContentTypes.Files, _clipboard.ClipboardFiles[i], null, e);
-                }
-
-            }
-            // Is the content copied of image type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                // Get the cut/copied image.
-                System.Drawing.Image img = _clipboard.ClipboardImage;
-                ProcessClipboardItem(ClipboardContentTypes.Image, "", img, e);
-
-            }
-            // If the cut/copied content is complex, use 'Other'.
-            else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                // Do nothing
-                // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
-            }
-
-        }
-        /// <summary>
-        /// Process clipboard item
-        /// </summary>
-        /// <param name="contentTypes"></param>
-        /// <param name="content"></param>
-        /// <param name="image"></param>
-        /// <param name="e"></param>
-        private void ProcessClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
             // Determine if it is a target application for monitoring
             if (!IsMonitorTargetApp(e)) {
                 return;
             }
 
-            ClipboardItem item = CreateClipboardItem(contentTypes, content, image, e);
+            // このアプリケーションのクリップボード操作は無視
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            if (e.SourceApplication.Name == assembly.Name + ".exe") {
+                return;
+            }
 
-            // Execute in a separate thread
-            Task.Run(() => {
-                string oldReadyText = Tools.StatusText.ReadyText;
-                Application.Current.Dispatcher.Invoke(() => {
-                    Tools.StatusText.ReadyText = StringResources.AutoProcessing;
-                });
-                try {
-                    // Apply automatic processing
-                    ApplyAutoAction(item, image);
-                    // Notify the completion of processing
-                    _afterClipboardChanged(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.AddItemFailed}\n{ex.Message}");
-                } finally {
-                    Application.Current.Dispatcher.Invoke(() => {
-                        Tools.StatusText.ReadyText = oldReadyText;
-                    });
-                }
-            });
+            if (_clipboard == null) {
+                return;
+            }
+            ClipboardFolderViewModel.ProcessClipboardItem(ClipboardFolder.RootFolder, e, _afterClipboardChanged);
+
         }
 
         /// <summary>
@@ -177,111 +118,6 @@ namespace ClipboardApp {
                 }
             }
             return true;
-        }
-
-        /// Create ClipboardItem
-        private static ClipboardItem CreateClipboardItem(ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            ClipboardItem item = new(ClipboardFolder.RootFolder.Id) {
-                ContentType = contentTypes
-            };
-            SetApplicationInfo(item, e);
-            item.Content = content;
-
-            // If ContentType is Image, set image data
-            if (contentTypes == ClipboardContentTypes.Image && image != null) {
-                ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
-                imageItem.SetImage(image);
-                item.ClipboardItemImage = imageItem;
-            }
-            // If ContentType is Files, set file data
-            else if (contentTypes == ClipboardContentTypes.Files) {
-                ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, content);
-                item.ClipboardItemFile = clipboardItemFile;
-            }
-            return item;
-
-        }
-
-        /// <summary>
-        /// Set application information from ClipboardChangedEventArgs
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="sender"></param>
-        private static void SetApplicationInfo(ClipboardItem item, ClipboardChangedEventArgs sender) {
-            item.SourceApplicationName = sender.SourceApplication.Name;
-            item.SourceApplicationTitle = sender.SourceApplication.Title;
-            item.SourceApplicationID = sender.SourceApplication.ID;
-            item.SourceApplicationPath = sender.SourceApplication.Path;
-        }
-
-        /// <summary>
-        /// Apply automatic processing
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="image"></param>
-        private static void ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
-            // ★TODO Implement processing based on automatic processing rules.
-
-            // If AUTO_DESCRIPTION is set, automatically set the Description
-            if (ClipboardAppConfig.AutoDescription) {
-                try {
-                    Tools.Info(StringResources.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitle(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
-                }
-            }else if(ClipboardAppConfig.AutoDescriptionWithOpenAI) {
-
-                try {
-                    Tools.Info(StringResources.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.AutoSetTitle}\n{ex.Message}");
-                }
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AUTO_TAG is set, automatically set the tags
-            if (ClipboardAppConfig.AutoTag) {
-                Tools.Info(StringResources.AutoSetTag);
-                try {
-                    ClipboardItem.CreateAutoTags(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.SetTagFailed}\n{ex.Message}");
-                }
-            }
-
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
-            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                Tools.Info(StringResources.AutoMerge);
-                try {
-                    ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.MergeFailed}\n{ex.Message}");
-                }
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If UseOCR is set, perform OCR
-            if (ClipboardAppConfig.UseOCR && image != null) {
-                Tools.Info(StringResources.OCR);
-                try {
-                    string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                    item.Content = text;
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.OCRFailed}\n{ex.Message}");
-                }
-            }
-            // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFile != null) {
-                Tools.Info(StringResources.ExecuteAutoFileExtract);
-                try {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(item.ClipboardItemFile.FilePath);
-                    item.Content = text;
-
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.AutoFileExtractFailed}\n{ex.Message}");
-                }
-            }
         }
 
     }

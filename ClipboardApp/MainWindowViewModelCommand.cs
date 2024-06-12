@@ -10,7 +10,6 @@ using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
-using WpfAppCommon;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -120,7 +119,7 @@ namespace ClipboardApp {
 
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
-        public  void OpenOpenAIWindowCommandExecute() {
+        public void OpenOpenAIWindowCommandExecute() {
             ClipboardItemViewModel.OpenOpenAIChatWindowExecute(SelectedFolder, null);
         }
         // 画像エビデンスチェッカーを開くコマンド
@@ -162,7 +161,7 @@ namespace ClipboardApp {
         }
 
 
-        public static  void ReloadCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void ReloadCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             if (SelectedFolder == null) {
                 return;
@@ -290,31 +289,43 @@ namespace ClipboardApp {
             ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
 
-            // コピー元のアイテムがない場合は処理をしない
-            if (CopiedItems.Count == 0) {
-                Tools.Info("コピー元のアイテムがない");
-                return;
-            }
-            // コピー元のフォルダがない場合は処理をしない
-            if (CopiedItemFolder == null) {
-                Tools.Error("コピー元のフォルダがない");
-                return;
-            }
             // 貼り付け先のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
                 Tools.Error("貼り付け先のフォルダがない");
                 return;
             }
-            ClipboardFolderViewModel.PasteClipboardItemCommandExecute(
-                windowViewModel.CutFlag,
-                CopiedItems,
-                CopiedItemFolder,
-                SelectedFolder
-                );
-            // Cutフラグをもとに戻す
-            windowViewModel.CutFlag = false;
-            // 貼り付け後にコピー選択中のアイテムをクリア
-            CopiedItems.Clear();
+
+            // コピー元のアイテムがアプリ内のものである場合
+            if (CopiedItems.Count > 0) {
+                // コピー元のフォルダがない場合は処理をしない
+                if (CopiedItemFolder == null) {
+                    Tools.Error("コピー元のフォルダがない");
+                    return;
+                }
+                ClipboardFolderViewModel.PasteClipboardItemCommandExecute(
+                    windowViewModel.CutFlag,
+                    CopiedItems,
+                    CopiedItemFolder,
+                    SelectedFolder
+                    );
+                // Cutフラグをもとに戻す
+                windowViewModel.CutFlag = false;
+                // 貼り付け後にコピー選択中のアイテムをクリア
+                CopiedItems.Clear();
+            } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
+                // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
+                ClipboardFolderViewModel.ProcessClipboardItem(SelectedFolder.ClipboardItemFolder, ClipboardController.LastClipboardChangedEventArgs,
+                    async (clipboardItem) => {
+                        // クリップボードアイテムが追加された時の処理
+                        await Task.Run(() => {
+                            SelectedFolder?.AddItem(new ClipboardItemViewModel(clipboardItem));
+                        });
+
+                        Application.Current.Dispatcher.Invoke(() => {
+                            windowViewModel.SelectedFolder?.Load();
+                        });
+                    });
+            }
 
         }
         // Ctrl + M が押された時の処理
