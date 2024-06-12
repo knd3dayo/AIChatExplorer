@@ -77,7 +77,7 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
         // モード 0:Normal 1:LangChainWithVectorDB
-        private int _Mode = (int)OpenAIExecutionModeEnum.Normal;
+        private int _Mode = (int)OpenAIExecutionModeEnum.RAG;
         public int Mode {
             get {
                 return _Mode;
