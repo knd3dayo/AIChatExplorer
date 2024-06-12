@@ -101,9 +101,16 @@ class VectorDBProps:
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する
         if self.VectorDBDescription == None:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
-    
-        # DocStoreの設定
-        self.DocStoreURL = props_dict.get("DocStoreURL", None)
+        
+        # DocStoreURLの初期化
+        self.DocStoreURL = None    
+        # IsUseMultiVectorRetrieverの大文字がTRUEの場合はTrueを設定する
+        self.IsUseMultiVectorRetriever = props_dict.get("IsUseMultiVectorRetriever", False)
+        if props_dict.get("IsUseMultiVectorRetriever", None) == "TRUE":
+            self.IsUseMultiVectorRetriever = True
+            # DocStoreの設定
+            self.DocStoreURL = props_dict.get("DocStoreURL", None)
+            
 
         # Collectionの設定
         self.CollectionName = props_dict.get("CollectionName", None)
@@ -115,6 +122,7 @@ class VectorDBProps:
         vector_db_dict["description"] = self.VectorDBDescription
         vector_db_dict["vector_db_type_string"] = self.VectorDBTypeString
         vector_db_dict["collection_name"] = self.CollectionName
+        vector_db_dict["doc_store_url"] = self.DocStoreURL
         return vector_db_dict
 
 def env_to_props() -> OpenAIProps:

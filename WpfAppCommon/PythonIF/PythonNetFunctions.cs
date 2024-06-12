@@ -503,6 +503,7 @@ namespace WpfAppCommon.PythonIF {
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
                 props["CollectionName"] = item.FolderObjectId.ToString();
                 props["DocStoreURL"] = vectorDBItem.DocStoreURL;
+                props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "update_index_with_clipboard_item";
@@ -552,6 +553,7 @@ namespace WpfAppCommon.PythonIF {
                 props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
                 props["VectorDBURL"] = vectorDBItem.VectorDBURL;
                 props["DocStoreURL"] = vectorDBItem.DocStoreURL;
+                props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "update_index";

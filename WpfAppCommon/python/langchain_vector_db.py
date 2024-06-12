@@ -9,20 +9,21 @@ from langchain_client import LangChainOpenAIClient
 class LangChainVectorDB:
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None):
+                 vector_db_url, collection : str = None, doc_store_url=None):
         self.langchain_openai_client = langchain_openai_client
         self.vector_db_url = vector_db_url
         self.collection = collection
+        self.doc_store_url = doc_store_url
 
         self.load()
 
     def load(self):
         pass
 
-    def save(self, documents:list=[]):
+    def _save(self, documents:list=[]):
         pass
 
-    def delete(self, sources:list=[]):
+    def _delete(self, sources:list=[]):
         pass
 
     def vector_search(self, query, k=10 , score_threshold=0.0):
@@ -33,12 +34,12 @@ class LangChainVectorDB:
 
     def add_documents(self, documents: list):
         with get_openai_callback() as cb:
-            self.save(documents)
+            self._save(documents)
 
             return len(documents)
         
-    def delete_doucments_by_sources(self, sources :list ):
-        self.delete(sources)
+    def delete_doucments(self, sources :list ):
+        self._delete(sources)
             
         return 0
     

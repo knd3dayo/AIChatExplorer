@@ -4,6 +4,7 @@ from langchain.docstore.document import Document
 from langchain_client import LangChainOpenAIClient
 import langchain_util
 
+from langchain_vector_db import LangChainVectorDB
 from openai_props import OpenAIProps, VectorDBProps
 from langchain_file_loader import FileLoader
 
@@ -18,12 +19,13 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
     vector_db_type_string = vector_db_props.VectorDBTypeString
     vector_db_url = vector_db_props.VectorDBURL
     vector_db_collection = vector_db_props.CollectionName
+    vector_db_doc_store_url = vector_db_props.DocStoreURL
     
     client = LangChainOpenAIClient(props)
-    vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection)
+    vector_db: LangChainVectorDB= langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection, doc_store_url=vector_db_doc_store_url)
 
     # DBからsourceを指定して既存ドキュメントを削除
-    delete_count = vector_db.delete([object_id_string])
+    delete_count = vector_db.delete_doucments([object_id_string])
     result["delete_count"] = delete_count
 
     # mode == "delete"の場合、削除のみ行う

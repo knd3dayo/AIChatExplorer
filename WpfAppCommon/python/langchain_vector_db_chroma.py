@@ -1,5 +1,5 @@
 
-import os, json, sys
+import os, json, sys, uuid
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
@@ -13,8 +13,8 @@ from langchain_vector_db import LangChainVectorDB
 class LangChainVectorDBChroma(LangChainVectorDB):
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None):
-        super().__init__(langchain_openai_client, vector_db_url, collection)
+                 vector_db_url, collection : str = None, doc_store_url: str = None):
+        super().__init__(langchain_openai_client, vector_db_url, collection, doc_store_url)
 
 
     def load(self):
@@ -34,13 +34,14 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             **params
             )
 
-    def save(self, documents:list=None):
+    def _save(self, documents:list=None):
         if not self.vector_db_url:
             return
+        
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
         
-    def delete(self, sources:list=None):
+    def _delete(self, sources:list=None):
         # 既存のDBから指定されたsourceを持つドキュメントを削除
         for source in sources:
             docs = self.db.get(where={"source": source})

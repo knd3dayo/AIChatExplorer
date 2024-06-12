@@ -16,15 +16,16 @@ from langchain_client import LangChainOpenAIClient
 from openai_props import OpenAIProps, VectorDBProps
 
 # DB取得用の関数
-def get_vector_db(client:LangChainOpenAIClient, vector_db_type_string: str, vector_db_url:str , collection:str = None):
+def get_vector_db(client:LangChainOpenAIClient, vector_db_type_string: str, vector_db_url:str , collection:str = None, doc_store_url:str = None):
     if vector_db_type_string == "Faiss":
         from langchain_vector_db_faiss import LangChainVectorDBFaiss
-        return LangChainVectorDBFaiss(client, vector_db_url, collection)
+        return LangChainVectorDBFaiss(client, vector_db_url, collection, doc_store_url)
     elif vector_db_type_string == "Chroma":
         from langchain_vector_db_chroma import LangChainVectorDBChroma
-        return LangChainVectorDBChroma(client, vector_db_url, collection)
+        return LangChainVectorDBChroma(client, vector_db_url, collection, doc_store_url)
     else:
         raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
+
 
 class RetrievalQAUtil:
 

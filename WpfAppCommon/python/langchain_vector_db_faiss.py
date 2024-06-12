@@ -12,12 +12,8 @@ from langchain_vector_db import LangChainVectorDB
 class LangChainVectorDBFaiss(LangChainVectorDB):
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None):
-        self.langchain_openai_client = langchain_openai_client
-        self.vector_db_url = vector_db_url
-        self.collection = collection
-
-        self.load(vector_db_url)
+                 vector_db_url, collection : str = None, doc_store_url:str = None):
+        super().__init__(langchain_openai_client, vector_db_url, collection)
 
     def load(self, docs:list=[]):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
@@ -41,7 +37,7 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
                 allow_dangerous_deserialization=True
                 )  
 
-    def save(self, documents:list=[]):
+    def _save(self, documents:list=[]):
         if not self.vector_db_url:
             return
         # 新しいDBを作成
@@ -51,7 +47,7 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
             
         self.db.save_local(self.vector_db_url)
 
-    def delete(self, sources:list=None):
+    def _delete(self, sources:list=None):
         if not self.vector_db_url:
             return
         doc_ids = []
@@ -69,6 +65,6 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
 
         if len(doc_ids) > 0:
             self.db.delete(doc_ids)
-            self.save(self.vector_db_url)
+            self._save(self.vector_db_url)
         return len(doc_ids)
     

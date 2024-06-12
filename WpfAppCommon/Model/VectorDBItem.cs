@@ -43,6 +43,7 @@ namespace WpfAppCommon.Model {
                         Type = VectorDBTypeEnum.Chroma,
                         VectorDBURL = "clipboard_vector_db",
                         DocStoreURL = "sqlite:///clipboard_doc_store",
+                        IsUseMultiVectorRetriever = true,
                         IsEnabled = true
                     };
                     item.Save();
@@ -64,6 +65,9 @@ namespace WpfAppCommon.Model {
 
         [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";
+
+        [JsonPropertyName("IsUseMultiVectorRetriever")]
+        public bool IsUseMultiVectorRetriever { get; set; } = false;
 
         [JsonPropertyName("DocStoreURL")]
         public string DocStoreURL { get; set; } = "";
@@ -107,7 +111,8 @@ namespace WpfAppCommon.Model {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // GetItemsメソッドを呼び出して取得
-            return dbController.GetVectorDBItems();
+            IEnumerable<VectorDBItem> items = dbController.GetVectorDBItems();
+            return items;
         }
         // IsEnabled=Trueのアイテムを取得
         public static IEnumerable<VectorDBItem> GetEnabledItems() {
