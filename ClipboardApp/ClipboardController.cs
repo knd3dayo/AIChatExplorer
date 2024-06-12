@@ -16,9 +16,16 @@ namespace ClipboardApp {
         // 最後に処理したクリップボードのEventArgs
         public static ClipboardChangedEventArgs? LastClipboardChangedEventArgs { get; set; } = null;
 
+        // コンストラクタ
+        public ClipboardController() {
+            // コンストラクタ
+            _clipboard = new SharpClipboard();
+            _clipboard.ClipboardChanged += ClipboardChanged;
+
+        }
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
-        private SharpClipboard? _clipboard = null;
+        private SharpClipboard _clipboard;
         private Action<ClipboardItem> _afterClipboardChanged = (parameter) => { };
 
         /// <summary>
@@ -27,11 +34,6 @@ namespace ClipboardApp {
         /// <param name="afterClipboardChanged"></param>
         public void Start(Action<ClipboardItem> afterClipboardChanged) {
             _afterClipboardChanged = afterClipboardChanged;
-            if (_clipboard == null) {
-                // Register ClipboardChanged event
-                _clipboard = new SharpClipboard();
-                _clipboard.ClipboardChanged += ClipboardChanged;
-            }
             // Enable clipboard monitoring
             IsClipboardMonitorEnabled = true;
         }
@@ -40,9 +42,6 @@ namespace ClipboardApp {
         /// Stop clipboard monitoring
         /// </summary>
         public void Stop() {
-            if (_clipboard != null) {
-                _clipboard.Dispose();
-            }
             IsClipboardMonitorEnabled = false;
         }
         /// <summary>
