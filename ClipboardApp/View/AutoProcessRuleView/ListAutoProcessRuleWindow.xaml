@@ -102,6 +102,14 @@
                     <!--  コンテキストメニュー  -->
                     <ListView.ContextMenu>
                         <ContextMenu>
+                            <MenuItem
+                                Command="{Binding ChangePriorityCommand}"
+                                CommandParameter="up"
+                                Header="上へ" />
+                            <MenuItem
+                                Command="{Binding ChangePriorityCommand}"
+                                CommandParameter="down"
+                                Header="下へ" />
                             <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
                             <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
                         </ContextMenu>

@@ -129,6 +129,9 @@ namespace WpfAppCommon.Model {
         // このルールを有効にするかどうか
         public bool IsEnabled { get; set; } = true;
 
+        // 優先順位
+        public int Priority { get; set; } = -1;
+
         public List<AutoProcessRuleCondition> Conditions { get; set; } = [];
 
         public SystemAutoProcessItem? RuleAction { get; set; }
@@ -151,6 +154,10 @@ namespace WpfAppCommon.Model {
 
         // 保存
         public void Save() {
+            // 優先順位が-1の場合は、最大の優先順位を取得して設定
+            if (Priority == -1) {
+                Priority = GetAllAutoProcessRules().Count() + 1;
+            }
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertAutoProcessRule(this);
         }
         // 削除
@@ -319,7 +326,48 @@ namespace WpfAppCommon.Model {
             return pathList.Distinct().Count() != pathList.Count;
 
         }
+        // 指定したAutoProcessRuleの優先順位を上げる
+        public static void UpPriority(AutoProcessRule autoProcessRule) {
+            List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
+            // 引数のAutoProcessRuleのIndexを取得
+            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
+            // indexが0以下の場合は何もしない
+            if (index <= 0) {
+                return;
+            }
+            // 優先順位を入れ替える
+            AutoProcessRule temp = autoProcessRules[index];
+            autoProcessRules[index] = autoProcessRules[index - 1];
+            autoProcessRules[index - 1] = temp;
+            // 優先順位を再設定
+            for (int i = 0; i < autoProcessRules.Count; i++) {
+                autoProcessRules[i].Priority = i + 1;
+                // 保存
+                autoProcessRules[i].Save();
+            }
 
+        }
+        // 指定したAutoProcessRuleの優先順位を下げる
+        public static void DownPriority(AutoProcessRule autoProcessRule) {
+            List<AutoProcessRule> autoProcessRules = GetAllAutoProcessRules().ToList();
+            // 引数のAutoProcessRuleのIndexを取得
+            int index = autoProcessRules.FindIndex(r => r.Id == autoProcessRule.Id);
+            // indexがリストの最大Index以上の場合は何もしない
+            if (index >= autoProcessRules.Count - 1) {
+                return;
+            }
+            // 優先順位を入れ替える
+            AutoProcessRule temp = autoProcessRules[index];
+            autoProcessRules[index] = autoProcessRules[index + 1];
+            autoProcessRules[index + 1] = temp;
+            // 優先順位を再設定
+            for (int i = 0; i < autoProcessRules.Count; i++) {
+                autoProcessRules[i].Priority = i + 1;
+                // 保存
+                autoProcessRules[i].Save();
+            }
+
+        }
 
     }
 }

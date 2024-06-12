@@ -195,7 +195,7 @@ namespace WpfAppCommon.Factory.Default {
         // すべてのAutoProcessRuleを取得する
         public IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
             var collection = GetClipboardDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
-            return collection.FindAll();
+            return collection.FindAll().OrderBy(x => x.Priority);
         }
 
         // AutoProcessRuleを追加または更新する

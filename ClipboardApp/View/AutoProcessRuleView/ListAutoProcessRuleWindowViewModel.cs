@@ -56,7 +56,21 @@ namespace ClipboardApp.View.AutoProcessRuleView
                 return TabIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-
+        // 優先順位を上げる処理
+        public SimpleDelegateCommand<string> ChangePriorityCommand => new((parameter) => {
+            if (SelectedAutoProcessRule == null) {
+                System.Windows.MessageBox.Show("自動処理ルールが選択されていません。");
+                return;
+            }
+            if (parameter == "down") {
+                AutoProcessRule.DownPriority(SelectedAutoProcessRule);
+            } else {
+                AutoProcessRule.UpPriority(SelectedAutoProcessRule);
+            }
+            // AutoProcessRulesを更新
+            AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
+            OnPropertyChanged(nameof(AutoProcessRules));
+        });
 
         public SimpleDelegateCommand<object> EditAutoProcessRuleCommand => new((parameter) => {
             // AutoProcessRuleが更新された後の処理
