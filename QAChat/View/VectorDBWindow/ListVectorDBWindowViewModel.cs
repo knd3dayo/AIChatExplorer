@@ -48,6 +48,11 @@ namespace QAChat.View.VectorDBWindow {
             foreach (var item in VectorDBItem.GetItems()) {
                 VectorDBItems.Add(new VectorDBItemViewModel(item));
             }
+            // itemsが空の場合はSystemCommonVectorDBを追加
+            if (VectorDBItems.Count == 0) {
+                VectorDBItems.Add(new VectorDBItemViewModel(VectorDBItem.SystemCommonVectorDB));
+            }
+
             OnPropertyChanged(nameof(VectorDBItems));
             OnPropertyChanged(nameof(SelectModeVisibility));
         }

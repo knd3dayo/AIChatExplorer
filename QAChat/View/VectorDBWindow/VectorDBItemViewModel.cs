@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 
@@ -93,7 +94,25 @@ namespace QAChat.View.VectorDBWindow {
             }
         }
 
+        // IsUseMultiVectorRetriever
+        public bool IsUseMultiVectorRetriever {
+            get => Item.IsUseMultiVectorRetriever;
+            set {
+                Item.IsUseMultiVectorRetriever = value;
+                OnPropertyChanged(nameof(IsUseMultiVectorRetriever));
+                OnPropertyChanged(nameof(DocStoreURLVisibility));
+            }
+        }
+        // DocStoreURLを表示するか否かのVisibility
+        public Visibility DocStoreURLVisibility {
+            get {
 
+                if (IsUseMultiVectorRetriever) {
+                    return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
+        }
 
         // Save
         public void Save() {

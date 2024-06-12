@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:QAChat.View.VectorDBWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding WindowTitle}"
+    Title="ベクトルDB編集"
     Width="800"
     SizeToContent="Height"
     Style="{StaticResource MaterialDesignWindow}"
@@ -74,52 +74,48 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="180" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock
+                <CheckBox
                     Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="10,0,10,10"
+                    Content="有効"
+                    IsChecked="{Binding ItemViewModel.IsEnabled}"
+                    IsEnabled="True"
+                    Style="{StaticResource MaterialDesignLightCheckBox}" />
+                <TextBlock
+                    Grid.Row="1"
                     Grid.Column="0"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
                     Text="名前" />
                 <TextBox
-                    Grid.Row="0"
+                    Grid.Row="1"
                     Grid.Column="1"
                     Margin="10,10,10,10"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Name}" />
                 <TextBlock
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Grid.Column="0"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
                     Text="説明" />
                 <TextBox
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,10,10,10"
                     materialDesign:HintAssist.Hint="例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description}" />
-                <TextBlock
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="DocStore用のSQLLite3の場所" />
-                <TextBox
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="例：sqlite:///C:\Users\Username\sqlite3.db"
-                    IsEnabled="True"
-                    Text="{Binding ItemViewModel.DocStoreURL}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
@@ -148,19 +144,31 @@
                     IsEnabled="True"
                     ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
                     SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
-                <TextBlock
+                <CheckBox
                     Grid.Row="5"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="MultiVectorRetriverを使用"
+                    IsChecked="{Binding ItemViewModel.IsUseMultiVectorRetriever}"
+                    Style="{StaticResource MaterialDesignLightCheckBox}" />
+                <TextBlock
+                    Grid.Row="6"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="有効" />
-                <CheckBox
-                    Grid.Row="5"
+                    Text="DocStore用のSQLLite3の場所"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <TextBox
+                    Grid.Row="6"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    IsChecked="{Binding ItemViewModel.IsEnabled}"
-                    IsEnabled="True" />
+                    materialDesign:HintAssist.Hint="例：sqlite:///C:\Users\Username\sqlite3.db"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.DocStoreURL}"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
             </Grid>
         </ScrollViewer>
         <Grid

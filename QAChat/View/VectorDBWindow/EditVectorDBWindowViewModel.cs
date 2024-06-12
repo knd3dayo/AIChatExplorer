@@ -16,49 +16,34 @@ namespace QAChat.View.VectorDBWindow {
                 OnPropertyChanged(nameof(ItemViewModel));
             }
         }
-        // Name
-        public string Name {
-            get => ItemViewModel?.Name ?? "";
-            set {
-                if (ItemViewModel == null) {
-                    return;
-                }
-                ItemViewModel.Name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
 
-        // Description
-        public string Description {
-            get => ItemViewModel?.Description ?? "";
+        // MultiVectorRetrieverを使用するか否か
+        public bool IsUseMultiVectorRetriever {
+            get {
+                if (ItemViewModel == null) {
+                    return false;
+                }
+                return ItemViewModel.IsUseMultiVectorRetriever;
+            }
             set {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.Description = value;
-                OnPropertyChanged(nameof(Description));
+                ItemViewModel.IsUseMultiVectorRetriever = value;
+                OnPropertyChanged(nameof(IsUseMultiVectorRetriever));
+                OnPropertyChanged(nameof(DocStoreURLVisibility));
             }
         }
-        // IsEnabled
-        public bool IsEnabled {
-            get => ItemViewModel?.IsEnabled ?? false;
-            set {
+        // DocStoreURLを表示するか否かのVisibility
+        public Visibility DocStoreURLVisibility {
+            get {
                 if (ItemViewModel == null) {
-                    return;
+                    return Visibility.Collapsed;
                 }
-                ItemViewModel.IsEnabled = value;
-                OnPropertyChanged(nameof(IsEnabled));
-            }
-        }
-
-        public string VectorDBURL {
-            get => ItemViewModel?.VectorDBURL ?? "";
-            set {
-                if (ItemViewModel == null) {
-                    return;
+                if (ItemViewModel.IsUseMultiVectorRetriever) {
+                    return Visibility.Visible;
                 }
-                ItemViewModel.VectorDBURL = value;
-                OnPropertyChanged(nameof(VectorDBURL));
+                return Visibility.Collapsed;
             }
         }
 
