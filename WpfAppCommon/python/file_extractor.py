@@ -61,11 +61,8 @@ def process_xlsx(filename):
                 # cell.valueがdatetime.datetimeの場合はisoformat()で文字列に変換
                 if isinstance(cell, datetime.datetime):
                     cells.append(cell.isoformat())
-                # cellがstrの場合はそのまま追加
-                elif isinstance(cell, str):
-                    cells.append(cell)
                 else:
-                    cells.append(cell.value)
+                    cells.append(str(cell))
                 
             output.write("\t".join(cells))
             output.write("\n")
