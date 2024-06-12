@@ -305,7 +305,7 @@ namespace ClipboardApp {
                 Tools.Error("貼り付け先のフォルダがない");
                 return;
             }
-            ClipboardItemViewModel.PasteClipboardItemCommandExecute(
+            ClipboardFolderViewModel.PasteClipboardItemCommandExecute(
                 windowViewModel.CutFlag,
                 CopiedItems,
                 CopiedItemFolder,
@@ -332,7 +332,7 @@ namespace ClipboardApp {
                 Tools.Error("選択中のフォルダがない");
                 return;
             }
-            ClipboardItemViewModel.MergeItemCommandExecute(
+            ClipboardFolderViewModel.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
                 false
@@ -353,7 +353,7 @@ namespace ClipboardApp {
                 Tools.Error("選択中のフォルダがない");
                 return;
             }
-            ClipboardItemViewModel.MergeItemCommandExecute(
+            ClipboardFolderViewModel.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
                 true
