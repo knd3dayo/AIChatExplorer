@@ -92,20 +92,21 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     Width="100"
-                    Margin="10,10,10,10"
+                    Margin="10,10,10,0"
+                    HorizontalContentAlignment="Center"
                     Content="タイトル" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
-                    Margin="10,10,10,10"
+                    Margin="10,10,10,0"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description, UpdateSourceTrigger=PropertyChanged}" />
                 <Button
                     Grid.Row="1"
                     Grid.Column="0"
-                    Width="100"
+                    Width="50"
                     Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Center"
                     Command="{Binding AddTagButtonCommand}"
                     Content="タグ" />
                 <TextBox
