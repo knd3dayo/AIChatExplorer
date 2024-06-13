@@ -130,6 +130,27 @@ class RetrievalQAUtil:
         
         # for stuff
         chain_type_kwargs = {"prompt": prompt}
+
+        # Retrieverを作成
+        retriever = self.create_retriever()
+            
+        # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
+        # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
+        # 料理に関する質問が来た場合、料理に関する質問に答えるツールを呼び出す。
+        qa = RetrievalQAWithSourcesChain.from_chain_type(
+            llm=self.client.get_completion_client(),
+            # stuff , map_reduce , refine , map_relankなどを指定
+            # chain_type='refine',
+            chain_type='stuff',
+            retriever=retriever,
+            return_source_documents=True,
+            chain_type_kwargs=chain_type_kwargs,
+        )
+
+        return qa
+    
+    def create_retriever(self):
+        vector_db_props = self.vector_db_props
         # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
         # chain_type_kwargs = {"prompt": prompt,  "existing_answer": ""}
 
@@ -153,24 +174,9 @@ class RetrievalQAUtil:
                 # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
                 search_kwargs={"k": 10}
             )
-            
-        
-            
-        # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
-        # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
-        # 料理に関する質問が来た場合、料理に関する質問に答えるツールを呼び出す。
-        qa = RetrievalQAWithSourcesChain.from_chain_type(
-            llm=self.client.get_completion_client(),
-            # stuff , map_reduce , refine , map_relankなどを指定
-            # chain_type='refine',
-            chain_type='stuff',
-            retriever=retriever,
-            return_source_documents=True,
-            chain_type_kwargs=chain_type_kwargs,
-        )
+         
+        return retriever
 
-        return qa
-    
     def create_agent_executor(self):
         '''
         # 関数の説明
@@ -239,7 +245,7 @@ class RetrievalQAUtil:
                 page_source_list.append({"source": source, "source_url": source_url})
         
             # verbose情報を取得
-            verbose = self.serialize_intermediate_step(step)
+            verbose = self.__serialize_intermediate_step(step)
             verbose_list.append(verbose)
         
         # verbose情報をjson文字列に変換
@@ -248,7 +254,7 @@ class RetrievalQAUtil:
         return page_content_list, page_source_list, verbose_json
     
     # intermediate_stepsをシリアライズする
-    def serialize_intermediate_step(self, step):
+    def __serialize_intermediate_step(self, step):
         return {
             "tool": step[0].tool,
             "tool_input": step[0].tool_input,
@@ -257,7 +263,7 @@ class RetrievalQAUtil:
             "tool_call_id": step[0].tool_call_id,
             "output": str(step[1]),
         }
-    def convert_to_langchain_chat_history(self, chat_history_json: str):
+    def __convert_to_langchain_chat_history(self, chat_history_json: str):
         # openaiのchat_historyをlangchainのchat_historyに変換
         langchain_chat_history = []
         chat_history = json.loads(chat_history_json)
@@ -284,7 +290,7 @@ def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], pr
 
     # openaiのchat_historyのjson文字列をlangchainのchat_historyに変換
     if chat_history_json is not None:
-        chat_history = RetrievalQAUtilInstance.convert_to_langchain_chat_history(chat_history_json)
+        chat_history = RetrievalQAUtilInstance.__convert_to_langchain_chat_history(chat_history_json)
     else:
         chat_history = []
 

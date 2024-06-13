@@ -146,6 +146,8 @@ def get_vector_db_settings() -> VectorDBProps:
         "VectorDBURL": os.getenv("VECTOR_DB_URL"),
         "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
         "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
+        "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER").upper() == "TRUE",
+        "DocStoreURL": os.getenv("DOC_STORE_URL"),
     }
     vectorDBProps = VectorDBProps(props)
     return vectorDBProps

@@ -308,5 +308,5 @@ namespace WpfAppCommon.Control.QAChat {
         public SimpleDelegateCommand<ChatItem> EditChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
-    }
+    }   
 }

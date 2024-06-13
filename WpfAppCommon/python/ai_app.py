@@ -159,11 +159,6 @@ def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, cha
 # vector db関連
 def update_index(props, mode, workdir, relative_path, url):
 
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
-
     # update_indexを実行する関数を定義
     def func () -> dict:
         
