@@ -29,6 +29,41 @@ def get_vector_db(client: LangChainOpenAIClient, vector_db_props: VectorDBProps)
     else:
         raise Exception("Unsupported vector_db_type_string: " + db_type)
 
+class RetrieverUtil:
+    
+    def __init__(self,  client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+        self.client = client
+        self.vector_db_props = vector_db_props
+
+    def create_retriever(self):
+        vector_db_props = self.vector_db_props
+        # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
+        # chain_type_kwargs = {"prompt": prompt,  "existing_answer": ""}
+
+        # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
+        # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
+        print("CollectionName:", vector_db_props.CollectionName)
+
+        # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
+        if vector_db_props.IsUseMultiVectorRetriever:
+            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            retriever = MultiVectorRetriever(
+                vectorstore=langChainVectorDB.db,
+                docstore=langChainVectorDB.doc_store,
+                id_key="doc_id",
+                search_kwargs={"k": 10}
+            )
+
+        else:
+            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            retriever = langChainVectorDB.db.as_retriever(
+                # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
+                search_kwargs={"k": 10}
+            )
+         
+        return retriever
+
+
 
 class RetrievalQAUtil:
 
@@ -132,7 +167,7 @@ class RetrievalQAUtil:
         chain_type_kwargs = {"prompt": prompt}
 
         # Retrieverを作成
-        retriever = self.create_retriever()
+        retriever = RetrieverUtil(self.client, vector_db_props).create_retriever()
             
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
@@ -149,33 +184,6 @@ class RetrievalQAUtil:
 
         return qa
     
-    def create_retriever(self):
-        vector_db_props = self.vector_db_props
-        # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
-        # chain_type_kwargs = {"prompt": prompt,  "existing_answer": ""}
-
-        # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
-        # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
-        print("CollectionName:", vector_db_props.CollectionName)
-
-        # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
-        if vector_db_props.IsUseMultiVectorRetriever:
-            langChainVectorDB = get_vector_db(self.client, vector_db_props)
-            retriever = MultiVectorRetriever(
-                vectorstore=langChainVectorDB.db,
-                docstore=langChainVectorDB.doc_store,
-                id_key="doc_id",
-                search_kwargs={"k": 10}
-            )
-
-        else:
-            langChainVectorDB = get_vector_db(self.client, vector_db_props)
-            retriever = langChainVectorDB.db.as_retriever(
-                # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
-                search_kwargs={"k": 10}
-            )
-         
-        return retriever
 
     def create_agent_executor(self):
         '''
@@ -263,7 +271,7 @@ class RetrievalQAUtil:
             "tool_call_id": step[0].tool_call_id,
             "output": str(step[1]),
         }
-    def __convert_to_langchain_chat_history(self, chat_history_json: str):
+    def convert_to_langchain_chat_history(self, chat_history_json: str):
         # openaiのchat_historyをlangchainのchat_historyに変換
         langchain_chat_history = []
         chat_history = json.loads(chat_history_json)
@@ -290,7 +298,7 @@ def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], pr
 
     # openaiのchat_historyのjson文字列をlangchainのchat_historyに変換
     if chat_history_json is not None:
-        chat_history = RetrievalQAUtilInstance.__convert_to_langchain_chat_history(chat_history_json)
+        chat_history = RetrievalQAUtilInstance.convert_to_langchain_chat_history(chat_history_json)
     else:
         chat_history = []
 
