@@ -504,6 +504,12 @@ namespace WpfAppCommon.PythonIF {
                 props["CollectionName"] = item.FolderObjectId.ToString();
                 props["DocStoreURL"] = vectorDBItem.DocStoreURL;
                 props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
+                
+                Tools.Info("UpdateVectorDBIndex実行");
+                Tools.Info($"VectorDBTypeString:{vectorDBItem.VectorDBTypeString}");
+                Tools.Info($"VectorDBURL:{vectorDBItem.VectorDBURL}");
+                Tools.Info($"DocStoreURL:{vectorDBItem.DocStoreURL}");
+                Tools.Info($"IsUseMultiVectorRetriever:{vectorDBItem.IsUseMultiVectorRetriever}");
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "update_index_with_clipboard_item";
@@ -523,6 +529,8 @@ namespace WpfAppCommon.PythonIF {
                     if (e.Message.Contains("Unsupported file type")) {
                         throw new UnsupportedFileTypeException(e.Message);
                     }
+                    Tools.Info(e.Message);
+                    Tools.Info(e.StackTrace);
                     throw;
                 }
 

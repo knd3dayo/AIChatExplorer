@@ -6,6 +6,7 @@ from langchain_community.callbacks import get_openai_callback
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
+from langchain_doc_store import SQLDocStore
 
 class LangChainVectorDB:
 
@@ -15,6 +16,11 @@ class LangChainVectorDB:
         self.vector_db_url = vector_db_url
         self.collection = collection
         self.doc_store_url = doc_store_url
+        if doc_store_url:
+            print("doc_store_url:", doc_store_url)
+            self.doc_store = SQLDocStore(doc_store_url)
+        else:
+            print("doc_store_url is None")
 
         self.load()
 
@@ -26,7 +32,11 @@ class LangChainVectorDB:
 
     def _delete(self, sources:list=[]):
         pass
-
+    
+    def _delete_docstore_data(self, doc_ids:list=[]):
+        if self.doc_store_url:
+            self.doc_store.mdelete(doc_ids)
+            
     def vector_search(self, query, k=10 , score_threshold=0.0):
         answers = self.db.similarity_search_with_relevance_scores(
             query, k=k, score_threshold=score_threshold)
@@ -40,9 +50,10 @@ class LangChainVectorDB:
             doc_ids = []
             for doc in documents:
                 doc_id = str(uuid.uuid4())
-                doc_ids.append(doc.doc_id)
+                doc_ids.append(doc_id)
                 doc.metadata[id_key] = doc_id
-            # docstoreを取得
+            # doc_storeに保存
+            self.doc_store.mset(list(zip(doc_ids, documents)))    
                 
         self._save(documents)
 

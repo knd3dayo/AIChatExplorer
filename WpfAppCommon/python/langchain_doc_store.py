@@ -6,6 +6,7 @@ from langchain_core.stores import BaseStore
 from typing import Sequence, Optional, Tuple, Iterator, Union, TypeVar
 from sqlalchemy import create_engine
 from sqlalchemy import select
+from sqlalchemy import text
 
 sys.path.append("python")
 K = TypeVar("K")
@@ -18,7 +19,8 @@ class SQLDocStore(BaseStore):
         self.engine  = create_engine(url)
         connection = self.engine.connect()
         # documentsテーブルがなければ作成
-        connection.execute("CREATE TABLE IF NOT EXISTS documents (id TEXT PRIMARY KEY, data TEXT)")
+        sql = text("CREATE TABLE IF NOT EXISTS documents (id TEXT PRIMARY KEY, data TEXT)")
+        connection.execute(sql)
         connection.commit()
         connection.close()
         
@@ -27,7 +29,8 @@ class SQLDocStore(BaseStore):
         # documentsテーブルから指定されたkeyのレコードを削除
         connection = self.engine.connect()
         for key in keys:
-            connection.execute("DELETE FROM documents WHERE id = ?", (key,))
+            sql = text("DELETE FROM documents WHERE id = :key")
+            connection.execute(sql, parameters=dict(key = key) )
         connection.commit()
         connection.close()
             
@@ -37,11 +40,14 @@ class SQLDocStore(BaseStore):
         connection = self.engine.connect()
         result = []
         for key in keys:
-            row = connection.execute("SELECT data FROM documents WHERE id = ?", (key,)).fetchone()
-            if row is None:
-                result.append(None)
-            else:
-                result.append(row[0])
+            sql = text("SELECT data FROM documents WHERE id = :key")
+            row = connection.execute(sql, parameters=dict(key = key)).fetchall()
+            for r in row:
+                # 結果をjson文字列からdictに変換
+                dict_item = json.loads(r[0])
+                # dict_itemからDocumentを作成
+                result.append(Document(page_content=dict_item["page_content"], metadata=dict_item["metadata"]))
+                
         connection.close()
         return result
     
@@ -50,7 +56,12 @@ class SQLDocStore(BaseStore):
         # documentsテーブルにkey-valueのペアを保存. keyが既に存在する場合は上書き
         connection = self.engine.connect()
         for key, value in key_value_pairs:
-            connection.execute("INSERT OR REPLACE INTO documents (id, data) VALUES (?, ?)", (key, value))
+            # valueのpage_contentとmetadataをjson文字列に変換
+            dict_item = {"page_content": value.page_content, "metadata": value.metadata}
+            json_value = json.dumps(dict_item, ensure_ascii=False)
+            sql = text("INSERT OR REPLACE INTO documents (id, data) VALUES (:v1, :v2)")
+            connection.execute(sql, parameters=dict(v1 = key, v2 = json_value))
+
         connection.commit()
         connection.close()
     

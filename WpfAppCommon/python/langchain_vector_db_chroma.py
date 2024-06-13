@@ -45,6 +45,14 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         # 既存のDBから指定されたsourceを持つドキュメントを削除
         for source in sources:
             docs = self.db.get(where={"source": source})
+
+            print("docs:", docs)
+            
+            # docsのmetadataのdoc_idを取得
+            metadatas = docs.get("metadatas", [])
+            ids = [metadata.get("doc_id", None) for metadata in metadatas]
+            self._delete_docstore_data(doc_ids=ids)
+
             ids = docs.get("ids", [])
             if len(ids) > 0:
                 self.db._collection.delete(ids=ids)
