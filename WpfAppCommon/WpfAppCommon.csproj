@@ -18,6 +18,7 @@
     <None Remove="python\file_extractor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_client.py" />
+    <None Remove="python\langchain_doc_store.py" />
     <None Remove="python\langchain_file_loader.py" />
     <None Remove="python\langchain_file_processor.py" />
     <None Remove="python\langchain_object_processor.py" />
@@ -52,6 +53,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\file_extractor.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\llamaindex_vector_db_chroma.py">
