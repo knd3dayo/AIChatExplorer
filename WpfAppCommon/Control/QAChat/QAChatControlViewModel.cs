@@ -13,6 +13,7 @@ using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
+using WpfAppCommon.Views.QAChat;
 
 namespace WpfAppCommon.Control.QAChat {
     public class QAChatControlViewModel : ObservableObject{
@@ -303,5 +304,9 @@ namespace WpfAppCommon.Control.QAChat {
             TextSelector.ExecuteSelectedText(textbox);
         });
 
+        // チャットアイテムを編集するコマンド
+        public SimpleDelegateCommand<ChatItem> EditChatItemCommand => new((chatItem) => {
+            EditChatItemWindow.OpenEditChatItemWindow(chatItem);
+        });
     }
 }

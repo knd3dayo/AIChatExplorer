@@ -102,6 +102,11 @@
                                                     Command="{Binding DataContext.ExecuteSelectedTextCommand, ElementName=Root}"
                                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                                     Modifiers="Ctrl" />
+                                                <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
+                                                <MouseBinding
+                                                    Command="{Binding DataContext.EditChatItemCommand, ElementName=Root}"
+                                                    CommandParameter="{Binding}"
+                                                    MouseAction="LeftDoubleClick" />
                                             </TextBox.InputBindings>
                                         </TextBox>
                                     </Grid>

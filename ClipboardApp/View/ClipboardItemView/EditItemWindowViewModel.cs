@@ -153,6 +153,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
 
         });
+
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
 
