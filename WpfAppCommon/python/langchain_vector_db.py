@@ -7,20 +7,18 @@ from langchain_community.callbacks import get_openai_callback
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from langchain_doc_store import SQLDocStore
+from openai_props import VectorDBProps
 
 class LangChainVectorDB:
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None, doc_store_url=None):
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
         self.langchain_openai_client = langchain_openai_client
-        self.vector_db_url = vector_db_url
-        self.collection = collection
-        self.doc_store_url = doc_store_url
-        if doc_store_url:
-            print("doc_store_url:", doc_store_url)
-            self.doc_store = SQLDocStore(doc_store_url)
+        self.vector_db_props = vector_db_props
+        if vector_db_props.IsUseMultiVectorRetriever:
+            print("DocStoreURL:", vector_db_props.DocStoreURL)
+            self.doc_store = SQLDocStore(vector_db_props.DocStoreURL)
         else:
-            print("doc_store_url is None")
+            print("DocStoreURL is None")
 
         self.load()
 
@@ -34,7 +32,7 @@ class LangChainVectorDB:
         pass
     
     def _delete_docstore_data(self, doc_ids:list=[]):
-        if self.doc_store_url:
+        if self.vector_db_props.DocStoreURL:
             self.doc_store.mdelete(doc_ids)
             
     def vector_search(self, query, k=10 , score_threshold=0.0):
@@ -44,8 +42,8 @@ class LangChainVectorDB:
         return answers
 
     def add_documents(self, documents: list):
-        # doc_store_urlが指定されている場合はdoc_idsを取得して、documentsに追加
-        if self.doc_store_url:
+        # DocStoreURLが指定されている場合はdoc_idsを取得して、documentsに追加
+        if self.vector_db_props.DocStoreURL:
             id_key = "doc_id"
             doc_ids = []
             for doc in documents:

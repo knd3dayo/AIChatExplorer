@@ -28,7 +28,8 @@ namespace ClipboardApp.Views.ClipboardItemView {
             Add(new ClipboardAppMenuItem("削除", MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand, "Delete"));
 
             // サブメニュー設定
-            ClipboardAppMenuItem utilityMenuItems = new("ツール", SimpleDelegateCommand<object>.EmptyCommand);
+
+                ClipboardAppMenuItem utilityMenuItems = new("ツール", SimpleDelegateCommand<object>.EmptyCommand);
             // タイプがFileの場合
             if (_itemViewModel.ContentType == ClipboardContentTypes.Files) {
                 utilityMenuItems.SubMenuItems.Add(new ClipboardAppMenuItem("フォルダを開く", MainWindowViewModel.ActiveInstance.OpenFolderCommand));

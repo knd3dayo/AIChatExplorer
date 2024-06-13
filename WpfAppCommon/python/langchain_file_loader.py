@@ -1,7 +1,6 @@
 from tkinter import SE
 from langchain.docstore.document import Document
 import os
-import tempfile
 import file_extractor
 
 

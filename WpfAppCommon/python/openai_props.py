@@ -102,8 +102,8 @@ class VectorDBProps:
         if self.VectorDBDescription == None:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
         
-        # IsUseMultiVectorRetrieverの大文字がTRUEの場合はTrueを設定する
-        if props_dict.get("IsUseMultiVectorRetriever", "").upper() == "TRUE":
+        # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
+        if props_dict.get("IsUseMultiVectorRetriever", False):
             self.IsUseMultiVectorRetriever = True
             # DocStoreの設定
             self.DocStoreURL = props_dict.get("DocStoreURL", None)

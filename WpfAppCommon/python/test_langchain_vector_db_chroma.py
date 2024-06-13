@@ -10,10 +10,10 @@ if __name__ == "__main__":
     # clipboard_app_props
     import openai_props
     props = openai_props.get_props()
-
+    vector_db_props = openai_props.VectorDBProps(props)
     langchain_openai_client = LangChainOpenAIClient(props)
     vector_db_url = "vector_db"
-    langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_url)
+    langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
 
     documents = [
         Document(

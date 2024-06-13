@@ -6,7 +6,6 @@ import langchain_util
 
 from langchain_vector_db import LangChainVectorDB
 from openai_props import OpenAIProps, VectorDBProps
-from langchain_file_loader import FileLoader
 
 def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
 
@@ -16,14 +15,8 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
     result["delete_count"] = 0
     result["update_count"] = 0
 
-    vector_db_type_string = vector_db_props.VectorDBTypeString
-    vector_db_url = vector_db_props.VectorDBURL
-    vector_db_collection = vector_db_props.CollectionName
-    vector_db_doc_store_url = vector_db_props.DocStoreURL
-    print(f"vector_db_doc_store_url:{vector_db_doc_store_url}")
-
     client = LangChainOpenAIClient(props)
-    vector_db: LangChainVectorDB= langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection, doc_store_url=vector_db_doc_store_url)
+    vector_db: LangChainVectorDB= langchain_util.get_vector_db(client, vector_db_props)
 
     # DBからsourceを指定して既存ドキュメントを削除
     delete_count = vector_db.delete_doucments([object_id_string])

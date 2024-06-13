@@ -9,6 +9,8 @@ from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesCha
 from langchain.tools import Tool
 from langchain.docstore.document import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain.retrievers.multi_vector import MultiVectorRetriever
+
 import langchain
 
 sys.path.append("python")
@@ -16,15 +18,16 @@ from langchain_client import LangChainOpenAIClient
 from openai_props import OpenAIProps, VectorDBProps
 
 # DB取得用の関数
-def get_vector_db(client:LangChainOpenAIClient, vector_db_type_string: str, vector_db_url:str , collection:str = None, doc_store_url:str = None):
-    if vector_db_type_string == "Faiss":
+def get_vector_db(client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+    db_type = vector_db_props.VectorDBTypeString
+    if db_type == "Faiss":
         from langchain_vector_db_faiss import LangChainVectorDBFaiss
-        return LangChainVectorDBFaiss(client, vector_db_url, collection, doc_store_url)
-    elif vector_db_type_string == "Chroma":
+        return LangChainVectorDBFaiss(client, vector_db_props)
+    elif db_type == "Chroma":
         from langchain_vector_db_chroma import LangChainVectorDBChroma
-        return LangChainVectorDBChroma(client, vector_db_url, collection, doc_store_url)
+        return LangChainVectorDBChroma(client, vector_db_props)
     else:
-        raise Exception("Unsupported vector_db_type_string: " + vector_db_type_string)
+        raise Exception("Unsupported vector_db_type_string: " + db_type)
 
 
 class RetrievalQAUtil:
@@ -42,10 +45,6 @@ class RetrievalQAUtil:
         tools = []
 
         for item in self.vector_db_items:
-            description = item.VectorDBDescription
-            vector_db_url = item.VectorDBURL
-            vector_db_type_string = item.VectorDBTypeString
-
             tools.append(self.__create_tool(item))
   
         return tools
@@ -96,7 +95,7 @@ class RetrievalQAUtil:
         return prompt_template_str
 
     
-    def __create_retrieval_qa(self, vector_db_item:VectorDBProps, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
+    def __create_retrieval_qa(self, vector_db_props:VectorDBProps, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
         '''
         # 関数の説明
         # prompt_template_strからPromptTemplateを作成する。
@@ -136,13 +135,26 @@ class RetrievalQAUtil:
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
-        print("CollectionName:", vector_db_item.CollectionName)
+        print("CollectionName:", vector_db_props.CollectionName)
+
+        # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
+        if vector_db_props.IsUseMultiVectorRetriever:
+            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            retriever = MultiVectorRetriever(
+                vectorstore=langChainVectorDB.db,
+                docstore=langChainVectorDB.doc_store,
+                id_key="doc_id",
+                search_kwargs={"k": 10}
+            )
+
+        else:
+            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            retriever = langChainVectorDB.db.as_retriever(
+                # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
+                search_kwargs={"k": 10}
+            )
+            
         
-        langChainVectorDB = get_vector_db(self.client, vector_db_item.VectorDBTypeString, vector_db_item.VectorDBURL, vector_db_item.CollectionName)
-        retriever = langChainVectorDB.db.as_retriever(
-            # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
-            search_kwargs={"k": 10}
-        )
             
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。

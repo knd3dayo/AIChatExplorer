@@ -8,19 +8,19 @@ from langchain_community.callbacks import get_openai_callback
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
+from openai_props import VectorDBProps
 
 class LangChainVectorDBFaiss(LangChainVectorDB):
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None, doc_store_url:str = None):
-        super().__init__(langchain_openai_client, vector_db_url, collection)
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+        super().__init__(langchain_openai_client, vector_db_props)
 
     def load(self, docs:list=[]):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
-        if not self.vector_db_url or not os.path.exists(self.vector_db_url):
+        if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
-            os.makedirs(self.vector_db_url)
-        if len(os.listdir(self.vector_db_url)) == 0:    
+            os.makedirs(self.vector_db_props.VectorDBURL)
+        if len(os.listdir(self.vector_db_props.VectorDBURL)) == 0:    
             # faissのインデックスを読み込む
             if not docs:
                 docs = [
@@ -33,22 +33,22 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
             
         else:
             self.db :VectorStore = FAISS.load_local(
-                self.vector_db_url, self.langchain_openai_client.embeddings,
+                self.vector_db_props.VectorDBURL, self.langchain_openai_client.embeddings,
                 allow_dangerous_deserialization=True
                 )  
 
     def _save(self, documents:list=[]):
-        if not self.vector_db_url:
+        if not self.vector_db_props.VectorDBURL:
             return
         # 新しいDBを作成
         new_db = self.load(docs=documents)
         # 既存のDBにマージ
         self.db.merge_from(new_db)
             
-        self.db.save_local(self.vector_db_url)
+        self.db.save_local(self.vector_db_props.VectorDBURL)
 
     def _delete(self, sources:list=None):
-        if not self.vector_db_url:
+        if not self.vector_db_props.VectorDBURL:
             return
         doc_ids = []
         # 既存のDBから指定されたsourceを持つドキュメントを削除
@@ -65,6 +65,6 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
 
         if len(doc_ids) > 0:
             self.db.delete(doc_ids)
-            self._save(self.vector_db_url)
+            self._save(self.vector_db_props.VectorDBURL)
         return len(doc_ids)
     

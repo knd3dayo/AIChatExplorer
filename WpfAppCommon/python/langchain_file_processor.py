@@ -16,11 +16,6 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workd
     # 初期化
     result["delete_count"] = 0
     result["update_count"] = 0
-
-    vector_db_type_string = vector_db_props.VectorDBTypeString
-    vector_db_url = vector_db_props.VectorDBURL
-    vector_db_collection = vector_db_props.CollectionName
-    vector_db_doc_store_url = vector_db_props.DocStoreURL
     
     if mode == "update":
         # ファイルの存在チェック
@@ -34,7 +29,7 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workd
         documents = loader.get_document_list()
 
         client = LangChainOpenAIClient(props)
-        vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection, doc_store_url=vector_db_doc_store_url)
+        vector_db = langchain_util.get_vector_db(client, vector_db_props)
         if len(documents) == 0:
             print("No documents to update.")
             return result
@@ -50,7 +45,7 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, workd
     
     elif mode == "delete":
         client = LangChainOpenAIClient(props)
-        vector_db = langchain_util.get_vector_db(client, vector_db_type_string, vector_db_url, collection=vector_db_collection, doc_store_url=vector_db_doc_store_url)
+        vector_db = langchain_util.get_vector_db(client, vector_db_props)
         
         if not vector_db:
             return  result

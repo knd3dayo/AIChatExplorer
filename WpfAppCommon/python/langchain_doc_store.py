@@ -1,11 +1,9 @@
 
 import os, json, sys
-import uuid
 from langchain.docstore.document import Document
 from langchain_core.stores import BaseStore
 from typing import Sequence, Optional, Tuple, Iterator, Union, TypeVar
 from sqlalchemy import create_engine
-from sqlalchemy import select
 from sqlalchemy import text
 
 sys.path.append("python")

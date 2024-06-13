@@ -9,33 +9,33 @@ import chromadb
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
+from openai_props import VectorDBProps
 
 class LangChainVectorDBChroma(LangChainVectorDB):
 
-    def __init__(self, langchain_openai_client: LangChainOpenAIClient,
-                 vector_db_url, collection : str = None, doc_store_url: str = None):
-        super().__init__(langchain_openai_client, vector_db_url, collection, doc_store_url)
+    def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
+        super().__init__(langchain_openai_client, vector_db_props)
 
 
     def load(self):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
-        if not self.vector_db_url or not os.path.exists(self.vector_db_url):
+        if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
-            os.makedirs(self.vector_db_url)
+            os.makedirs(self.vector_db_props.VectorDBURL)
         # params
         params = {}
-        params["client"] = chromadb.PersistentClient(path=self.vector_db_url)
+        params["client"] = chromadb.PersistentClient(path=self.vector_db_props.VectorDBURL)
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         # collectionが指定されている場合
-        if self.collection:
-            params["collection_name"] = self.collection
+        if self.vector_db_props.CollectionName:
+            params["collection_name"] = self.vector_db_props.CollectionName
         
         self.db = Chroma(
             **params
             )
 
     def _save(self, documents:list=None):
-        if not self.vector_db_url:
+        if not self.vector_db_props.VectorDBURL:
             return
         
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
@@ -67,10 +67,11 @@ if __name__ == "__main__":
     # clipboard_app_props
     import openai_props
     props = openai_props.env_to_props()
+    vector_db_props = openai_props.VectorDBProps(props)
 
     langchain_openai_client = LangChainOpenAIClient(props)
     vector_db_url = "vector_db"
-    langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_url)
+    langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
 
     documents = [
         Document(
