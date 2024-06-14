@@ -167,12 +167,13 @@
                             VerticalAlignment="Center"
                             materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
                             Text="{Binding SettingUserControlViewModel.MonitorTargetAppNames}" />
-                        <TextBlock
+                        <CheckBox
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="10,0,10,0"
                             VerticalAlignment="Center"
-                            Text="指定した行数未満のテキストアイテムを無視" />
+                            Content="指定した行数未満のテキストアイテムを無視"
+                            IsChecked="{Binding IgnoreLineCountChecked}" />
 
                         <DockPanel
                             Grid.Row="1"
@@ -182,7 +183,7 @@
                                 Width="50"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
-                                Text="{Binding SettingUserControlViewModel.IgnoreLineCount}" />
+                                Text="{Binding IgnoreLineCountText}" />
                             <TextBlock
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"

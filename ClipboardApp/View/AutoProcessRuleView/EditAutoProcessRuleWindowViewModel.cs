@@ -83,7 +83,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public Mode CurrentMode { get; set; }
 
         // すべてのアイテムに対してルールを有効にするかどうか
-        private bool _IsAllItemsRuleChecked = true;
+        private bool _IsAllItemsRuleChecked = false;
         public bool IsAllItemsRuleChecked {
             get {
                 return _IsAllItemsRuleChecked;
@@ -109,25 +109,67 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public bool IsTextItemApplied { get; set; } = true;
 
         // テキストアイテムで、ルール適用対象となる最小テキスト行数
-        private int _MinTextLineCount = 1;
-        public int MinTextLineCount {
+        private int _MinTextLineCount = -1;
+        public string MinTextLineCount {
             get {
-                return _MinTextLineCount;
+                // -1の場合は空を返す
+                if (_MinTextLineCount == -1) {
+                    return "";
+                }
+                return _MinTextLineCount.ToString();
             }
             set {
+                // valueが空の場合は-1を設定
+                if (string.IsNullOrEmpty(value)) {
+                    _MinTextLineCount = -1;
+                    OnPropertyChanged(nameof(MinTextLineCount));
+                    return;
+                }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
                     Tools.Error("数値を入力してください。");
                     return;
                 }
-                // intValueが1未満の場合はエラー
-                if (intValue < 1) {
-                    Tools.Error("1以上の数値を入力してください。");
+                _MinTextLineCount = intValue;
+                OnPropertyChanged(nameof(MinTextLineCount));
+            }
+        }
+        public int MinTextLineCountInt {
+            get {
+                return _MinTextLineCount;
+            }
+        }
+
+        // テキストアイテムで、ルール適用対象となる最大テキスト行数 - 1
+        private int _MaxTextLineCount = -1;
+        public string MaxTextLineCount {
+            get {
+                // -1の場合は空を返す
+                if (_MaxTextLineCount == -1) {
+                    return "";
+                }
+                return _MaxTextLineCount.ToString();
+            }
+            set {
+                // valueが空の場合は-1を設定
+                if (string.IsNullOrEmpty(value)) {
+                    _MaxTextLineCount = -1;
+                    OnPropertyChanged(nameof(MaxTextLineCount));
+                    return;
+                }
+                // valueが数値でない場合はエラー
+                if (!int.TryParse(value.ToString(), out int intValue)) {
+                    Tools.Error("数値を入力してください。");
                     return;
                 }
 
-                _MinTextLineCount = intValue;
-                OnPropertyChanged(nameof(MinTextLineCount));
+                _MaxTextLineCount = intValue;
+                OnPropertyChanged(nameof(MaxTextLineCount));
+            }
+        }
+        public int MaxTextLineCountInt {
+            get {
+                return _MaxTextLineCount;
             }
         }
 
@@ -281,34 +323,45 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                             break;
 
                         case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
+                            IsNotAllItemsRuleChecked = true;
+
                             IsDescriptionRuleChecked = true;
                             OnPropertyChanged(nameof(IsDescriptionRuleChecked));
                             Description = condition.Keyword;
                             OnPropertyChanged(nameof(Description));
                             break;
                         case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
+                            IsNotAllItemsRuleChecked = true;
+
                             IsContentRuleChecked = true;
                             OnPropertyChanged(nameof(IsContentRuleChecked));
                             Content = condition.Keyword;
                             OnPropertyChanged(nameof(Content));
                             break;
                         case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
+                            IsNotAllItemsRuleChecked = true;
+
                             IsSourceApplicationRuleChecked = true;
                             OnPropertyChanged(nameof(IsSourceApplicationRuleChecked));
                             SourceApplicationName = condition.Keyword;
                             OnPropertyChanged(nameof(SourceApplicationName));
                             break;
                         case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
+                            IsNotAllItemsRuleChecked = true;
+
                             IsSourceApplicationTitleRuleChecked = true;
                             OnPropertyChanged(nameof(IsSourceApplicationTitleRuleChecked));
                             SourceApplicationTitle = condition.Keyword;
                             OnPropertyChanged(nameof(SourceApplicationTitle));
                             break;
                         case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
+                            IsNotAllItemsRuleChecked = true;
+
                             if (condition.ContentTypes.Contains(ClipboardContentTypes.Text  )) {
                                 IsTextItemApplied = true;
                                 OnPropertyChanged(nameof(IsTextItemApplied));
-                                MinTextLineCount = condition.MinLineCount;
+                                MinTextLineCount = condition.MinLineCount.ToString();
+                                MaxTextLineCount = condition.MaxLineCount.ToString();
                             }
                             if (condition.ContentTypes.Contains(ClipboardContentTypes.Image)) {
                                 IsImageItemApplied = true;
@@ -456,7 +509,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                     contentTypes.Add(ClipboardContentTypes.Files);
                 }
                 // ContentTypeIsを条件に追加
-                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition( contentTypes, MinTextLineCount));
+                TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition( contentTypes, MinTextLineCountInt, MaxTextLineCountInt));
 
             }
             // アクションを追加

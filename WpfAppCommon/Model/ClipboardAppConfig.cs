@@ -424,6 +424,21 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // IgnoreLineCount
+        private static int _ignoreLineCount = -1;
+        public static int IgnoreLineCount {
+            get {
+                if (_ignoreLineCount == -1) {
+                    _ignoreLineCount = WpfAppCommon.Properties.Settings.Default.IgnoreLineCount;
+                }
+                return _ignoreLineCount;
+            }
+            set {
+                _ignoreLineCount = value;
+                WpfAppCommon.Properties.Settings.Default.IgnoreLineCount = value;
+            }
+        }
+
         public static void Save() {
             WpfAppCommon.Properties.Settings.Default.Save();
 

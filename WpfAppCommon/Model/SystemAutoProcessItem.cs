@@ -5,6 +5,7 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Model {
     public partial class SystemAutoProcessItem {
         public enum TypeEnum {
+            Ignore,
             CopyToFolder,
             MoveToFolder,
             ExtractText,
@@ -60,15 +61,14 @@ namespace WpfAppCommon.Model {
             get {
                 List<SystemAutoProcessItem> items =
                 [
+                    // 無視するコマンドを追加
+                    new SystemAutoProcessItem("Ignore", "無視", "何もしません"),
                     // itemにフォルダにコピーするコマンドを追加
-                    new SystemAutoProcessItem("CopyToFolder", "フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします")
-,
+                    new SystemAutoProcessItem("CopyToFolder", "フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします"),
                     // itemにフォルダに移動するコマンドを追加
-                    new SystemAutoProcessItem("MoveToFolder", "フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します")
-,
+                    new SystemAutoProcessItem("MoveToFolder", "フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します"),
                     // itemにテキスト抽出コマンドを追加
-                    new SystemAutoProcessItem("ExtractText", "テキスト抽出", "クリップボードのテキストを抽出します")
-,
+                    new SystemAutoProcessItem("ExtractText", "テキスト抽出", "クリップボードのテキストを抽出します"),
                 ];
                 // itemにデータマスキングコマンドを追加
                 // UseSpacyがTrueの場合のみ追加
@@ -94,6 +94,11 @@ namespace WpfAppCommon.Model {
         }
 
         public static Func<AutoProcessItemArgs, ClipboardItem?> GetAction(string name) {
+            if (name == TypeEnum.Ignore.ToString()) {
+                return (args) => {
+                    return null;
+                };
+            }
             if (name == TypeEnum.CopyToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {

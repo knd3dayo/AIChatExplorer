@@ -166,13 +166,22 @@
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsTextItemApplied}" />
                         <TextBox
-                            Width="100"
+                            Width="50"
                             Margin="20,0,10,3"
                             Text="{Binding MinTextLineCount}" />
                         <Label
-                            Width="260"
+                            Width="20"
                             Margin="0,0,10,3"
-                            Content="行以上のテキスト"
+                            Content="行以上"
+                            DockPanel.Dock="Left" />
+                        <TextBox
+                            Width="50"
+                            Margin="20,0,10,3"
+                            Text="{Binding MaxTextLineCount}" />
+                        <Label
+                            Width="150"
+                            Margin="0,0,10,3"
+                            Content="行未満のテキスト"
                             DockPanel.Dock="Left" />
                     </DockPanel>
                     <DockPanel Grid.Row="2" HorizontalAlignment="Left">

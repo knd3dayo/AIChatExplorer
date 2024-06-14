@@ -19,9 +19,10 @@ namespace WpfAppCommon.Model {
             Type = type;
             Keyword = keyword;
         }
-        public AutoProcessRuleCondition(List<ClipboardContentTypes> contentTypes, int minLineCount) {
+        public AutoProcessRuleCondition(List<ClipboardContentTypes> contentTypes, int minLineCount, int maxLineCount) {
             ContentTypes = contentTypes;
             MinLineCount = minLineCount;
+            MaxLineCount = maxLineCount;
             Type = ConditionTypeEnum.ContentTypeIs;
         }
 
@@ -38,7 +39,9 @@ namespace WpfAppCommon.Model {
         }
 
         public ConditionTypeEnum ConditionType { get; set; } = ConditionTypeEnum.AllItems;
-        public int MinLineCount { get; set; } = 0;
+        public int MinLineCount { get; set; } = -1;
+
+        public int MaxLineCount { get; set; } = -1;
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
         public  bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword) {
@@ -88,11 +91,27 @@ namespace WpfAppCommon.Model {
 
         // ClipboardItemのContentの行数が指定した行数以上かどうか
         public  bool IsContentLineCountMoreThan(ClipboardItem clipboardItem) {
+            // MinLineCountが-1の場合はTrueを返す
+            if (MinLineCount == -1) {
+                return true;
+            }
             // ContentがNullの場合はFalseを返す
             if (clipboardItem.Content == null) {
                 return false;
             }
             return clipboardItem.Content.Split('\n').Length > MinLineCount;
+        }
+        // ClipboardItemのContentの行数が指定した行数未満かどうか
+        public bool IsContentLineCountLessThan(ClipboardItem clipboardItem) {
+            // MaxLineCountが-1の場合はTrueを返す
+            if (MaxLineCount == -1) {
+                return true;
+            }
+            // ContentがNullの場合はFalseを返す
+            if (clipboardItem.Content == null) {
+                return false;
+            }
+            return clipboardItem.Content.Split('\n').Length < MaxLineCount;
         }
 
         // ConditionTypeに対応する関数を実行してBoolを返す
@@ -115,7 +134,7 @@ namespace WpfAppCommon.Model {
                 return false;
             }
             if (clipboardItem.ContentType == ClipboardContentTypes.Text) {
-                return IsContentLineCountMoreThan(clipboardItem);
+                return IsContentLineCountMoreThan(clipboardItem) && IsContentLineCountLessThan(clipboardItem);
             }
             return true;
         }
