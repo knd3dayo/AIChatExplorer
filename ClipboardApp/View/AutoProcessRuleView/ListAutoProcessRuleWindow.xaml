@@ -150,41 +150,65 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  MonitorTargetAppNames  -->
                         <TextBlock
                             Grid.Row="0"
                             Grid.Column="0"
                             Margin="10,10,10,0"
+                            VerticalAlignment="Center"
                             Text="クリップボード監視対象のソースアプリ名" />
 
                         <TextBox
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="10,10,10,0"
+                            VerticalAlignment="Center"
                             materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
                             Text="{Binding SettingUserControlViewModel.MonitorTargetAppNames}" />
                         <TextBlock
                             Grid.Row="1"
                             Grid.Column="0"
+                            Margin="10,0,10,0"
+                            VerticalAlignment="Center"
+                            Text="指定した行数未満のテキストアイテムを無視" />
+
+                        <DockPanel
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalAlignment="Left">
+                            <TextBox
+                                Width="50"
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding SettingUserControlViewModel.IgnoreLineCount}" />
+                            <TextBlock
+                                Margin="10,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="行未満" />
+                        </DockPanel>
+                        <TextBlock
+                            Grid.Row="2"
+                            Grid.Column="0"
                             Margin="10,10,10,0"
                             Text="自動タイトル生成" />
                         <RadioButton
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="しない"
                             GroupName="AutoDescription"
                             IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionNone, Mode=OneWay}" />
                         <RadioButton
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="自動的にタイトルを生成する"
                             GroupName="AutoDescription"
                             IsChecked="{Binding SettingUserControlViewModel.AutoDescription}" />
                         <RadioButton
-                            Grid.Row="3"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="OpenAIを使用して自動的にタイトルを生成する"
@@ -192,47 +216,47 @@
                             IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}"
                             Visibility="{Binding SettingUserControlViewModel.UseOpenAIVisibility}" />
                         <TextBlock
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="0"
                             Margin="10,10,10,0"
                             Text="自動でタグ生成する"
                             Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
                         <CheckBox
-                            Grid.Row="4"
+                            Grid.Row="5"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="クリップボードの内容から自動的にタグを生成します"
                             IsChecked="{Binding SettingUserControlViewModel.AutoTag}"
                             Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
                         <TextBlock
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="0"
                             Margin="10,10,10,0"
                             Text="自動でマージ" />
                         <CheckBox
-                            Grid.Row="5"
+                            Grid.Row="6"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
                             IsChecked="{Binding SettingUserControlViewModel.AutoMergeItemsBySourceApplicationTitle}" />
                         <TextBlock
-                            Grid.Row="6"
+                            Grid.Row="7"
                             Grid.Column="0"
                             Margin="10,10,10,0"
                             Text="自動でEmbedding" />
                         <CheckBox
-                            Grid.Row="6"
+                            Grid.Row="7"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="クリップボードアイテム保存時に自動でEmbeddingを行います"
                             IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
                         <TextBlock
-                            Grid.Row="7"
+                            Grid.Row="8"
                             Grid.Column="0"
                             Margin="10,10,10,0"
                             Text="自動でテキスト抽出" />
                         <CheckBox
-                            Grid.Row="7"
+                            Grid.Row="8"
                             Grid.Column="1"
                             Margin="10,10,10,0"
                             Content="クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います"

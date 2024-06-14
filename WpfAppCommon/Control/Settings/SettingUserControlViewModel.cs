@@ -246,6 +246,19 @@ namespace WpfAppCommon.Control.Settings {
         // -------------------------------------
         // その他の設定
         // -------------------------------------
+        // 指定した行数未満の場合は無視する。
+        public int IgnoreLineCount {
+            get {
+                return ClipboardAppConfig.IgnoreLineCount;
+            }
+            set {
+                ClipboardAppConfig.IgnoreLineCount = value;
+                OnPropertyChanged(nameof(IgnoreLineCount));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
         // クリップボードアイテムとOS上のフォルダを同期するかどうか
         public bool SyncClipboardItemAndOSFolder {
             get {

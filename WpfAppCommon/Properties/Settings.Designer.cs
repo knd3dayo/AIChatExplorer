@@ -358,5 +358,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoFileExtract"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int IgnoreLineCount {
+            get {
+                return ((int)(this["IgnoreLineCount"]));
+            }
+            set {
+                this["IgnoreLineCount"] = value;
+            }
+        }
     }
 }

@@ -213,9 +213,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 });
                 try {
                     // Apply automatic processing
-                    ApplyAutoAction(item, image);
+                    ClipboardItem? updatedItem = ApplyAutoAction(item, image);
+                    if (updatedItem == null) {
+                        // If the item is ignored, return
+                        return;
+                    }
                     // Notify the completion of processing
-                    _afterClipboardChanged(item);
+                    _afterClipboardChanged(updatedItem);
+
                 } catch (ThisApplicationException ex) {
                     Tools.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
                 } finally {
@@ -268,9 +273,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        private static void ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
+        private static ClipboardItem? ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
             // ★TODO Implement processing based on automatic processing rules.
-
+            // 指定した行数未満のテキストアイテムは無視
+            int lineCount = item.Content.Split('\n').Length;
+            if (item.ContentType == ClipboardContentTypes.Text && lineCount < ClipboardAppConfig.IgnoreLineCount) {
+                return null;
+            }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
                 try {
@@ -331,6 +340,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                     Tools.Error($"{StringResources.Instance.AutoFileExtractFailed}\n{ex.Message}");
                 }
             }
+            return item;
         }
 
         #endregion
