@@ -286,6 +286,51 @@ class RetrievalQAUtil:
                 langchain_chat_history.append(AIMessage(content))
         return langchain_chat_history
 
+def run_langchain_chat( props_json: str, vector_db_props_json: str, request_json: str):
+    
+    # request_jsonをdictに変換
+    request = json.loads(request_json)
+    # messagesを取得
+    messages = request.get("messages", [])
+    # messagesのlengthが0の場合はエラーを返す
+    if len(messages) == 0:
+        raise Exception("messages is empty")
+    
+    # messagesの最後のメッセージを取得
+    last_message = messages[-1]
+    # contentを取得
+    content = last_message.get("content", {})
+
+    # contentのうちtype: textのもののtextを取得
+    prompt_array = [ c["text"] for c in content if c["type"] == "text"]
+    # prpmpt_arrayのlengthが0の場合はエラーを返す
+    if len(prompt_array) == 0:
+        raise Exception("prompt is empty")
+    
+    # promptを取得
+    prompt = prompt_array[0]
+
+    # promptが空の場合はエラーを返す
+    if prompt == "":
+        raise Exception("prompt is empty")
+    
+    # messagesから最後のメッセージを削除
+    messages.pop()
+    # messagesをjson文字列に変換
+    chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
+
+    # OpenAIPorpsを生成
+    props = json.loads(props_json)
+    openai_props = OpenAIProps(props)
+
+    # vector_db_items_jsonをVectorDBPropsに変換
+    vector_db_items_list = json.loads(vector_db_props_json)
+    vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
+    print(vector_db_props)
+
+    # langchan_chatを実行
+    result = langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
+    return result
 
 def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], prompt: str, chat_history_json: str = None):
 

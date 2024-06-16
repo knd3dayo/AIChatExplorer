@@ -150,7 +150,7 @@ namespace ClipboardApp {
                     searchConditionRule = new() {
                         Type = SearchRule.SearchType.SearchFolder
                     };
-                    folderViewModel.SetSearchFolder(searchConditionRule);
+                    searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
 
                 }
             } else {
@@ -274,7 +274,7 @@ namespace ClipboardApp {
             windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
 
             try {
-                SelectedItem.SetDataObject();
+                ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
                 Tools.Info("コピーしました");
 
             } catch (Exception e) {
@@ -314,7 +314,7 @@ namespace ClipboardApp {
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
-                ClipboardFolderViewModel.ProcessClipboardItem(SelectedFolder.ClipboardItemFolder, ClipboardController.LastClipboardChangedEventArgs,
+                ClipboardFolder.ProcessClipboardItem(SelectedFolder.ClipboardItemFolder, ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
@@ -406,30 +406,6 @@ namespace ClipboardApp {
             window.ShowDialog();
 
         }
-
-        // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
-        public static void SplitFilePathCommandExecute(MainWindowViewModel windowViewModel) {
-            ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
-            // 選択中のアイテムを取得
-            if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
-                return;
-            }
-            // 処理が終わるまでProgressIndicatorを表示
-            windowViewModel.IsIndeterminate = true;
-            try {
-                // ファイルパスを分割
-                SelectedItem.SplitFilePathCommandExecute();
-                // 保存
-                SelectedItem.Save();
-
-            } catch (ThisApplicationException ex) {
-                Tools.Error(ex.Message);
-            } finally {
-                windowViewModel.IsIndeterminate = false;
-            }
-        }
-
 
     }
 }

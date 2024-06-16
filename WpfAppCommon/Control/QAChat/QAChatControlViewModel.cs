@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
-using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -23,6 +16,8 @@ namespace WpfAppCommon.Control.QAChat {
             ClipboardItem = clipboardItem;
             // クリップボードフォルダを設定
             ClipboardFolder = clipboardFolder;
+            // VectorDBItemsを設定
+            VectorDBItems = [.. VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
 
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
@@ -56,6 +51,12 @@ namespace WpfAppCommon.Control.QAChat {
         // ClipboardItemを選択するアクション
         public Action SetContentTextFromClipboardItemsAction { get; set; } = () => { };
 
+        // ClipboardItemを開くアクション
+        public Action<ClipboardItem> OpenClipboardItemAction { get; set; } = (item) => { };
+
+        // VectorDBItemを開くアクション
+        public Action<VectorDBItem> OpenVectorDBItemAction { get; set; } = (item) => { };
+
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
 
@@ -64,6 +65,7 @@ namespace WpfAppCommon.Control.QAChat {
 
         public ClipboardFolder? ClipboardFolder { get; set; }
 
+        public ChatController ChatController { get; set; } = new();
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
         // Progress Indicatorの表示状態
@@ -77,110 +79,120 @@ namespace WpfAppCommon.Control.QAChat {
                 OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
-        // モード 0:Normal 1:LangChainWithVectorDB
-        private int _Mode = (int)OpenAIExecutionModeEnum.RAG;
+
         public int Mode {
             get {
-                return _Mode;
+                return (int)ChatController.ChatMode;
             }
             set {
-                _Mode = value;
+                ChatController.ChatMode = (OpenAIExecutionModeEnum)value;
                 OnPropertyChanged(nameof(Mode));
             }
         }
 
+        private ObservableCollection<VectorDBItem> vectorDBItems = [];
+        public ObservableCollection<VectorDBItem> VectorDBItems {
+            get {
+                return vectorDBItems;
+            }
+            set {
+                vectorDBItems = value;
+                OnPropertyChanged(nameof(VectorDBItems));
+            }
+        }
 
         public static ChatItem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatItem> ChatItems { get; set; } = [];
-
-        public string? LastSendText {
+        public ObservableCollection<ChatItem> ChatItems {
             get {
-                // ChatItemsのうち、ユーザー発言の最後のものを取得
-                var lastUserChatItem = ChatItems.LastOrDefault(x => x.Role == ChatItem.UserRole);
-                return lastUserChatItem?.Content;
+                return [.. ChatController.ChatItems];
             }
-        }
-        public string? LastResponseText {
-            get {
-                // ChatItemsのうち、アシスタント発言の最後のものを取得
-                var lastAssistantChatItem = ChatItems.LastOrDefault(x => x.Role == ChatItem.AssistantRole);
-                return lastAssistantChatItem?.Content;
+            set {
+                ChatController.ChatItems = [.. value];
+                OnPropertyChanged(nameof(ChatItems));
             }
         }
 
-
-        private string inputText = "";
         public string InputText {
             get {
-                return inputText;
+                return ChatController.ContentText;
             }
             set {
-                inputText = value;
+                ChatController.ContentText = value;
                 OnPropertyChanged(nameof(InputText));
-                UpdatePreviewText();
             }
 
         }
-        private readonly TextSelector TextSelector = new();
-
         // プロンプトの文字列
-        private string promptText = "";
         public string PromptText {
             get {
-                return promptText;
+                return ChatController.PromptTemplateText;
             }
             set {
-                promptText = value;
+                ChatController.PromptTemplateText = value;
                 OnPropertyChanged(nameof(PromptText));
-
-                UpdatePreviewText();
             }
         }
 
-        // ContextText
-        private string contextText = "";
-        public string ContextText {
+        // ContextItems
+        public ObservableCollection<ClipboardItem> ContextItems {
             get {
-                return contextText;
+                return [.. ChatController.ContextItems];
             }
             set {
-                contextText = value;
-                UpdatePreviewText();
-                OnPropertyChanged(nameof(ContextText));
+                ChatController.ContextItems = [.. value];
+                OnPropertyChanged(nameof(ContextItems));
+            }
+        }
+        // SelectedContextItem
+        private ClipboardItem? _SelectedContextItem = null;
+        public ClipboardItem? SelectedContextItem {
+            get {
+                return _SelectedContextItem;
+            }
+            set {
+                _SelectedContextItem = value;
+                OnPropertyChanged(nameof(SelectedContextItem));
+            }
+        }
+        // SelectedVectorDBItem
+        private VectorDBItem? _SelectedVectorDBItem = null;
+        public VectorDBItem? SelectedVectorDBItem {
+            get {
+                return _SelectedVectorDBItem;
+            }
+            set {
+                _SelectedVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
             }
         }
 
 
-        // PreviewText プロンプトテンプレート + コンテキスト情報 +入力テキスト
-        private string _PreviewText = "";
         public string PreviewText {
             get {
-                return _PreviewText;
+                return ChatController.CreateOpenAIRequestJSON();
+            }
+        }
+
+        private readonly TextSelector TextSelector = new();
+
+        private bool _IsDrawerOpen = false;
+        public bool IsDrawerOpen {
+            get {
+                return _IsDrawerOpen;
             }
             set {
-                _PreviewText = value;
-                OnPropertyChanged(nameof(PreviewText));
+                _IsDrawerOpen = value;
+                OnPropertyChanged(nameof(IsDrawerOpen));
             }
         }
 
-        private void UpdatePreviewText() {
-            string prompt = "";
-            if (string.IsNullOrEmpty(PromptText) == false) {
-                prompt = PromptText + "\n---------以下は本文です------\n";
+        public Visibility VectorDBItemVisibility {
+            get {
+                return ChatController.ChatMode == OpenAIExecutionModeEnum.RAG ? Visibility.Visible : Visibility.Collapsed;
             }
-            prompt += InputText;
-
-            if (string.IsNullOrEmpty(ContextText) == false) {
-                prompt += "\n---------以下は本文の背景情報です--------\n";
-                prompt += ContextText;
-            }
-
-
-            PreviewText = prompt;
-            OnPropertyChanged(nameof(PreviewText));
         }
-        
+
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -189,14 +201,6 @@ namespace WpfAppCommon.Control.QAChat {
                 // PromptTemplateがある場合はPromptTemplateを先頭に追加
                 string prompt = PreviewText;
 
-                // 初回実行時の処理
-                if (ChatItems.Count == 0) {
-                    // ClipboardItemのContentTypeがImageの場合は、Base64を取得してPromptに追加
-                    if (ClipboardItem?.ContentType == ClipboardContentTypes.Image && ClipboardItem.ClipboardItemImage != null) {
-                        prompt += ChatItem.GenerateImageVContent(prompt, ClipboardItem.ClipboardItemImage.ImageBase64);
-                    }
-                }
-
                 ChatResult? result = null;
                 // プログレスバーを表示
                 IsIndeterminate = true;
@@ -204,19 +208,12 @@ namespace WpfAppCommon.Control.QAChat {
                 // Python処理機能の初期化
                 PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
 
-                // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
-                if (Mode == (int)OpenAIExecutionModeEnum.RAG) {
-                    await Task.Run(() => {
-                        // VectorDBItemの有効なアイテムを取得してLangChainChatを実行
-                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description);
-                        result = PythonExecutor.PythonFunctions?.LangChainChat(enabledItems, prompt, ChatItems);
-                    });
-                } else {
-                    // モードがNormalの場合はOpenAIChatでチャットを送信
-                    await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions?.OpenAIChat(prompt, ChatItems);
-                    });
-                }
+                await Task.Run(() => {
+                    // LangChainChat用。VectorDBItemの有効なアイテムを設定。
+                    ChatController.VectorDBItems = VectorDBItems;
+                    // OpenAIChat or LangChainChatを実行
+                    result = ChatController.ExecuteChat();
+                });
 
                 if (result == null) {
                     Tools.Error("チャットの送信に失敗しました。");
@@ -224,15 +221,11 @@ namespace WpfAppCommon.Control.QAChat {
                 }
                 // inputTextをクリア
                 InputText = "";
-                // リクエストをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+                OnPropertyChanged(nameof(ChatItems));
 
                 // ClipboardItemがある場合は、結果をClipboardItemに設定
                 if (ClipboardItem != null) {
-                    ClipboardItem.ChatItems.Clear();
-                    ClipboardItem.ChatItems.AddRange(ChatItems);
+                    ChatController.SetChatItems(ClipboardItem);
                 }
 
             } catch (Exception e) {
@@ -250,14 +243,30 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // モードが変更されたときの処理
-        public SimpleDelegateCommand<object> ModeSelectionChangedCommand => new((parameter) => {
-            RoutedEventArgs routedEventArgs = (RoutedEventArgs)parameter;
+        public SimpleDelegateCommand<RoutedEventArgs> ModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // クリア処理
-            ChatItems.Clear();
-            // InputText = "";
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
+            // ModeがRAGの場合は、VectorDBItemを取得
+            if (ChatController.ChatMode == OpenAIExecutionModeEnum.RAG) {
+                VectorDBItems = [.. VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
+            }
+            // VectorDBItemVisibilityを更新
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
 
         });
+        // Tabが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // タブが変更されたときの処理
+                if (tabControl.SelectedIndex == 1) {
+                    // PreviewTextを更新
+                    OnPropertyChanged(nameof(PreviewText));
+                }
+            }
+        });
+
         // 追加コンテキスト情報が変更されたときの処理
         public SimpleDelegateCommand<RoutedEventArgs> AdditionalContextSelectionChangedCommand => new((routedEventArgs) => {
 
@@ -266,7 +275,8 @@ namespace WpfAppCommon.Control.QAChat {
             int index = comboBox.SelectedIndex;
             // 0の場合はコンテキスト情報をクリア
             if (index == 0) {
-                ContextText = "";
+                ChatController.ContextItems.Clear();
+
             } else if (index == 1) {
                 // ClipboardItemを選択
                 SetContentTextFromClipboardItemsAction();
@@ -274,6 +284,7 @@ namespace WpfAppCommon.Control.QAChat {
                 // SearchWindowを表示
                 ShowSearchWindowAction();
             }
+            OnPropertyChanged(nameof(ContextItems));
             OnPropertyChanged(nameof(PreviewText));
         });
 
@@ -305,8 +316,41 @@ namespace WpfAppCommon.Control.QAChat {
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatItem> EditChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatItem>  OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
-    }   
+
+        // 選択したクリップボードアイテムを開くコマンド
+
+        public SimpleDelegateCommand<object> OpenClipboardItemCommand => new((parameter) => {
+            if (SelectedContextItem != null) {
+                OpenClipboardItemAction(SelectedContextItem);
+            }
+        });
+
+        // 選択したクリップボードアイテムをリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveClipboardItemCommand => new((parameter) => {
+            if (SelectedContextItem != null) {
+                ChatController.ContextItems.Remove(SelectedContextItem);
+            }
+            OnPropertyChanged(nameof(ContextItems));
+        });
+
+        // 選択したVectorDBItemの編集画面を開くコマンド
+        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorDBItem != null) {
+                OpenVectorDBItemAction(SelectedVectorDBItem);
+            }
+        });
+
+        // 選択したVectorDBItemをリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorDBItem != null) {
+                VectorDBItems.Remove(SelectedVectorDBItem);
+            }
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
+
+    }
+
 }

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -8,9 +9,19 @@ using WpfAppCommon;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.ClipboardItemView {
-    public partial class ClipboardItemViewModel(ClipboardItem clipboardItem) : ObservableObject {
+    public partial class ClipboardItemViewModel : ObservableObject {
+
+        // コンストラクタ
+        public ClipboardItemViewModel(ClipboardItem clipboardItem) {
+            this.ClipboardItem = clipboardItem;
+            OnPropertyChanged(nameof(Content));
+            OnPropertyChanged(nameof(Images));
+            OnPropertyChanged(nameof(Files));
+            OnPropertyChanged(nameof(ThumbnailImages));
+
+        }
         // ClipboardItem
-        public ClipboardItem ClipboardItem { get; } = clipboardItem;
+        public ClipboardItem ClipboardItem { get; }
 
         // Content
         public string Content {
@@ -23,43 +34,37 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
         // Image
-        public ImageSource? Image {
+        public ObservableCollection<ImageSource> Images {
             get {
-                return ClipboardItem.ClipboardItemImage?.GetBitmapImage();
+                ObservableCollection<ImageSource> imageSources = [];
+                foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
+                    BitmapImage? bitmapImage = clipboardItemImage.GetBitmapImage();
+                    if (bitmapImage != null) {
+                        imageSources.Add(bitmapImage);
+                    }
+                }
+                return imageSources;
             }
 
         }
-        // ファイルパス
-        public string? FilePath {
+        // Files
+        public ObservableCollection<ClipboardItemFile> Files {
             get {
-                return ClipboardItem.ClipboardItemFile?.FilePath;
+                return [.. ClipboardItem.ClipboardItemFiles];
             }
         }
-        // フォルダ名
-        public string? FolderName {
-            get {
-                return ClipboardItem.ClipboardItemFile?.FolderName;
-            }
-        }
-        // ファイル名
-        public string? FileName {
-            get {
-                return ClipboardItem.ClipboardItemFile?.FileName;
-            }
-        }
-        // フォルダ名 + \n + ファイル名
-        public string? FolderAndFileName {
-            get {
-                return FolderName + "\n" + FileName;
-            }
-        }
-
 
         // ThumbnailImage
-        public ImageSource? ThumbnailImage {
+        public ObservableCollection<ImageSource> ThumbnailImages {
             get {
-                BitmapImage? thumbnailBitmapImage = ClipboardItem.ClipboardItemImage?.GetThumbnailBitmapImage();
-                return thumbnailBitmapImage;
+                ObservableCollection<ImageSource> imageSources = new();
+                foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
+                    BitmapImage? bitmapImage = clipboardItemImage.GetThumbnailBitmapImage();
+                    if (bitmapImage != null) {
+                        imageSources.Add(bitmapImage);
+                    }
+                }
+                return imageSources;
             }
         }
 
@@ -95,13 +100,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
 
-        public ClipboardItemViewModel MaskDataCommandExecute() {
-            return new ClipboardItemViewModel(ClipboardItem.MaskDataCommandExecute());
-        }
-        public void SetDataObject() {
-            MainWindowViewModel.ClipboardController.SetDataObject(this.ClipboardItem);
-
-        }
         // GUI関連
         // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
         public Visibility DescriptionVisibility {
@@ -205,14 +203,8 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
 
-
-        // SplitFilePathCommandExecute
-        public void SplitFilePathCommandExecute() {
-            ClipboardItem.SplitFilePathCommandExecute();
-        }
-
         // Extract Image
-        public static void ExtractTextFromImage(ClipboardItemViewModel clipboardItemViewModel) {
+        private static void ExtractTextFromImage(ClipboardItemViewModel clipboardItemViewModel) {
             ClipboardItem.ExtractTextFromImageCommandExecute(clipboardItemViewModel.ClipboardItem);
 
             // 保存
@@ -227,6 +219,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         public void OpenItem(bool openAsNew = false) {
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenItem(ClipboardItem, true);
         }
+
 
 
         // コンテキストメニュー

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using ClipboardApp.View.ClipboardItemView;
@@ -10,6 +11,117 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
     public partial class ClipboardFolderViewModel {
+
+
+
+        //--------------------------------------------------------------------------------
+        //--コマンド
+        //--------------------------------------------------------------------------------
+
+        // 新規フォルダ作成コマンド
+        public static SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+
+            CreateFolderCommandExecute(folderViewModel, () => {
+                // 親フォルダを保存
+                folderViewModel.Save();
+                folderViewModel.Load();
+            });
+        });
+        // フォルダ編集コマンド
+        public SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((parameter) => {
+
+            EditFolderCommandExecute(parameter, () => {
+                Load();
+                Tools.Info("フォルダを編集しました");
+            });
+        });
+
+
+        // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
+        public static SimpleDelegateCommand<object> FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
+
+        // フォルダ内のアイテムをJSON形式でエクスポートする処理
+        public SimpleDelegateCommand<object> ExportItemsFromFolderCommand => new(
+            (parameter) => {
+                ExportItemsFromFolderCommandExecute(this);
+            });
+
+        // フォルダ内のアイテムをJSON形式でインポートする処理
+        public SimpleDelegateCommand<object> ImportItemsToFolderCommand => new((parameter) => {
+            ImportItemsToFolderCommandExecute(this);
+        });
+
+
+        /// <summary>
+        /// Ctrl + V が押された時の処理
+        /// コピー中のアイテムを選択中のフォルダにコピー/移動する
+        /// 貼り付け後にフォルダ内のアイテムを再読み込む
+        /// 
+        /// </summary>
+        /// <param name="Instance"></param>
+        /// <param name="item"></param>
+        /// <param name="fromFolder"></param>
+        /// <param name="toFolder"></param>
+        /// <returns></returns>
+
+        public static void PasteClipboardItemCommandExecute(bool CutFlag,
+            IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
+            foreach (var item in items) {
+                ClipboardItemViewModel newItem = item.Copy();
+                toFolder.AddItem(newItem);
+                // Cutフラグが立っている場合はコピー元のアイテムを削除する
+                if (CutFlag) {
+
+                    fromFolder.DeleteItem(item);
+                }
+            }
+            // フォルダ内のアイテムを再読み込み
+            toFolder.Load();
+            Tools.Info("貼り付けました");
+        }
+
+
+        public static void MergeItemCommandExecute(
+            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
+
+            if (selectedItems.Count < 2) {
+                Tools.Error("マージするアイテムを2つ選択してください");
+                return;
+            }
+            // マージ先のアイテム。SelectedItems[0]がマージ先
+            if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
+                Tools.Error("マージ先のアイテムが選択されていません");
+                return;
+            }
+            List<ClipboardItemViewModel> fromItemsViewModel = [];
+            try {
+                // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
+                for (int i = 1; i < selectedItems.Count; i++) {
+                    if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
+                        Tools.Error("マージ元のアイテムが選択されていません");
+                        return;
+                    }
+                    fromItemsViewModel.Add(fromItemModelView);
+                }
+                toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader, Tools.DefaultAction);
+
+                // ClipboardItemをLiteDBに保存
+                toItemViewModel.Save();
+                // コピー元のアイテムを削除
+                foreach (var fromItem in fromItemsViewModel) {
+                    fromItem.Delete();
+                }
+
+                // フォルダ内のアイテムを再読み込み
+                folderViewModel.Load();
+                Tools.Info("マージしました");
+
+            } catch (Exception e) {
+                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+                Tools.Error(message);
+            }
+
+        }
 
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
@@ -70,7 +182,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 return;
             } else {
                 string folderPath = dialog.FileName;
-                clipboardItemFolder.ExportItemsToJson(folderPath);
+                clipboardItemFolder.ClipboardItemFolder.ExportItemsToJson(folderPath);
                 // フォルダ内のアイテムを読み込む
                 Tools.Info("フォルダをエクスポートしました");
             }
@@ -90,7 +202,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 return;
             } else {
                 string filaPath = dialog.FileName;
-                clipboardItemFolder.ImportItemsFromJson(filaPath, (actionMessage) => {
+                clipboardItemFolder.ClipboardItemFolder.ImportItemsFromJson(filaPath, (actionMessage) => {
                     if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
                         Tools.Error(actionMessage.Message);
                     } else {
@@ -108,7 +220,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// フォルダを削除した後に、RootFolderをリロードする処理を行う。
         /// </summary>
         /// <param name="parameter"></param>        
-        public static void DeleteFolderCommandExecute(object parameter) {
+        public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
 
             if (parameter is not ClipboardFolderViewModel folderViewModel) {
                 Tools.Error("フォルダが選択されていません");
@@ -130,7 +242,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             folderViewModel.Load();
 
             Tools.Info("フォルダを削除しました");
-        }
+        });
+
         /// <summary>
         /// フォルダ内の表示中のアイテムを削除する処理
         /// 削除後にフォルダ内のアイテムを再読み込む
@@ -154,196 +267,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
 
-        #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public static void ProcessClipboardItem(ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
-
-            // Is the content copied of text type?
-            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                string? text = e.Content.ToString();
-                if (text == null) {
-                    return;
-                }
-                // Get the cut/copied text.
-                ClipboardFolderViewModel.ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Text, text, null, e, _afterClipboardChanged);
-            }
-            // Is the content copied of file type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                string[] files = (string[])e.Content;
-
-                // Get the cut/copied file/files.
-                for (int i = 0; i < files.Length; i++) {
-                    ClipboardFolderViewModel.ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Files, files[i], null, e, _afterClipboardChanged);
-                }
-
-            }
-            // Is the content copied of image type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                // Get the cut/copied image.
-                System.Drawing.Image img = (System.Drawing.Image)e.Content;
-                ClipboardFolderViewModel.ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Image, "", img, e, _afterClipboardChanged);
-
-            }
-            // If the cut/copied content is complex, use 'Other'.
-            else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                // Do nothing
-                // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
-            }
-
-
-        }
-
-        /// <summary>
-        /// Process clipboard item
-        /// </summary>
-        /// <param name="contentTypes"></param>
-        /// <param name="content"></param>
-        /// <param name="image"></param>
-        /// <param name="e"></param>
-        public static void ProcessClipboardItem(
-            ClipboardFolder clipboardFolder,
-            ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
-
-            ClipboardItem item = CreateClipboardItem(clipboardFolder, contentTypes, content, image, e);
-
-            // Execute in a separate thread
-            Task.Run(() => {
-                string oldReadyText = Tools.StatusText.ReadyText;
-                Application.Current.Dispatcher.Invoke(() => {
-                    Tools.StatusText.ReadyText = StringResources.Instance.AutoProcessing;
-                });
-                try {
-                    // Apply automatic processing
-                    ClipboardItem? updatedItem = ApplyAutoAction(item, image);
-                    if (updatedItem == null) {
-                        // If the item is ignored, return
-                        return;
-                    }
-                    // Notify the completion of processing
-                    _afterClipboardChanged(updatedItem);
-
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
-                } finally {
-                    Application.Current.Dispatcher.Invoke(() => {
-                        Tools.StatusText.ReadyText = oldReadyText;
-                    });
-                }
-            });
-        }
-
-
-        /// Create ClipboardItem
-        private static ClipboardItem CreateClipboardItem(
-            ClipboardFolder clipboardFolder, ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
-            ClipboardItem item = new(clipboardFolder.Id) {
-                ContentType = contentTypes
-            };
-            SetApplicationInfo(item, e);
-            item.Content = content;
-
-            // If ContentType is Image, set image data
-            if (contentTypes == ClipboardContentTypes.Image && image != null) {
-                ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
-                imageItem.SetImage(image);
-                item.ClipboardItemImage = imageItem;
-            }
-            // If ContentType is Files, set file data
-            else if (contentTypes == ClipboardContentTypes.Files) {
-                ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, content);
-                item.ClipboardItemFile = clipboardItemFile;
-            }
-            return item;
-
-        }
-
-        /// <summary>
-        /// Set application information from ClipboardChangedEventArgs
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="sender"></param>
-        private static void SetApplicationInfo(ClipboardItem item, ClipboardChangedEventArgs sender) {
-            item.SourceApplicationName = sender.SourceApplication.Name;
-            item.SourceApplicationTitle = sender.SourceApplication.Title;
-            item.SourceApplicationID = sender.SourceApplication.ID;
-            item.SourceApplicationPath = sender.SourceApplication.Path;
-        }
-
-        /// <summary>
-        /// Apply automatic processing
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="image"></param>
-        private static ClipboardItem? ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
-            // ★TODO Implement processing based on automatic processing rules.
-            // 指定した行数未満のテキストアイテムは無視
-            int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == ClipboardContentTypes.Text && lineCount < ClipboardAppConfig.IgnoreLineCount) {
-                return null;
-            }
-            // If AUTO_DESCRIPTION is set, automatically set the Description
-            if (ClipboardAppConfig.AutoDescription) {
-                try {
-                    Tools.Info(StringResources.Instance.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitle(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
-                }
-            } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
-
-                try {
-                    Tools.Info(StringResources.Instance.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
-                }
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AUTO_TAG is set, automatically set the tags
-            if (ClipboardAppConfig.AutoTag) {
-                Tools.Info(StringResources.Instance.AutoSetTag);
-                try {
-                    ClipboardItem.CreateAutoTags(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.SetTagFailed}\n{ex.Message}");
-                }
-            }
-
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
-            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                Tools.Info(StringResources.Instance.AutoMerge);
-                try {
-                    ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.MergeFailed}\n{ex.Message}");
-                }
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If UseOCR is set, perform OCR
-            if (ClipboardAppConfig.UseOCR && image != null) {
-                Tools.Info(StringResources.Instance.OCR);
-                try {
-                    string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                    item.Content = text;
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.OCRFailed}\n{ex.Message}");
-                }
-            }
-            // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFile != null) {
-                Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
-                try {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(item.ClipboardItemFile.FilePath);
-                    item.Content = text;
-
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoFileExtractFailed}\n{ex.Message}");
-                }
-            }
-            return item;
-        }
-
-        #endregion
     }
 
 }

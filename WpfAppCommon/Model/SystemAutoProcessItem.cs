@@ -10,7 +10,6 @@ namespace WpfAppCommon.Model {
             MoveToFolder,
             ExtractText,
             MaskData,
-            SplitPathToFolderAndFileName,
             MergeAllItems,
             MergeItemsWithSameSourceApplicationTitle,
             RunPythonScript,
@@ -77,10 +76,6 @@ namespace WpfAppCommon.Model {
                         new SystemAutoProcessItem("MaskData", "データマスキング", "クリップボードのテキストをマスキングします")
                         );
                 }
-                // ファイルパスをフォルダ名とファイル名に分割するコマンドを追加
-                items.Add(
-                    new SystemAutoProcessItem("SplitPathToFolderAndFileName", "コピーしたファイルをフォルダパスとファイル名に分割", "コピーしたファイルをフォルダパスとファイル名に分割")
-                    );
                 // フォルダ内のアイテムを自動的にマージするコマンドを追加
                 items.Add(
                     new SystemAutoProcessItem("MergeAllItems", "フォルダ内のアイテムをマージ", "フォルダ内のアイテムをマージします")
@@ -142,12 +137,6 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.MaskData.ToString()) {
                 return (args) => {
                     return args.ClipboardItem.MaskDataCommandExecute();
-                };
-            }
-            if (name == TypeEnum.SplitPathToFolderAndFileName.ToString()) {
-                return (args) => {
-                    args.ClipboardItem.SplitFilePathCommandExecute();
-                    return args.ClipboardItem;
                 };
             }
             if (name == TypeEnum.MergeAllItems.ToString()) {

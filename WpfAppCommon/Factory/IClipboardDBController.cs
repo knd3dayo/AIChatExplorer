@@ -17,7 +17,7 @@ namespace WpfAppCommon.Factory {
         public void DeleteItemImage(ClipboardItemImage item);
         public ClipboardItemImage? GetItemImage(ObjectId id);
 
-        //-- ClipboardItemFile
+        //-- ClipboardItemFiles
         public void UpsertItemFile(ClipboardItemFile item);
         public void DeleteItemFile(ClipboardItemFile item);
         public ClipboardItemFile? GetItemFile(ObjectId id);

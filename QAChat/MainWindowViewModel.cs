@@ -32,11 +32,30 @@ namespace QAChat {
                 OnPropertyChanged(nameof(ClipboardFolder));
             }
         }
+        public Action<ClipboardItem> OpenClipboardItemAction { 
+            get {
+                return QAChatControlViewModel.OpenClipboardItemAction;
+            }
+            set {
+                QAChatControlViewModel.OpenClipboardItemAction = value;
+                OnPropertyChanged(nameof(OpenClipboardItemAction));
+            }
+        }
+        // OpenVectorDBItemAction
+        public Action<VectorDBItem> OpenVectorDBItemAction {
+            get {
+                return QAChatControlViewModel.OpenVectorDBItemAction;
+            }
+            set {
+                QAChatControlViewModel.OpenVectorDBItemAction = value;
+                OnPropertyChanged(nameof(OpenVectorDBItemAction));
+            }
+        }
+
         //初期化
         public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem) {
             ClipboardFolder = clipboardFolder;
             QAChatControlViewModel.Initialize(clipboardFolder, clipboardItem, PromptTemplateCommandExecute);
-
         }
         public Action ShowSearchWindowAction {
             get {
@@ -47,7 +66,8 @@ namespace QAChat {
                 OnPropertyChanged(nameof(ShowSearchWindowAction));
             }
         }
-        // ClipboardItemを選択するアクション
+        // フォルダ内のClipboardItemを選択するアクション
+        // ★ Actionにしなくてもいいかも
         public Action SetContentTextFromClipboardItemsAction {
             get {
                 return QAChatControlViewModel.SetContentTextFromClipboardItemsAction;
@@ -57,17 +77,6 @@ namespace QAChat {
                 OnPropertyChanged(nameof(SetContentTextFromClipboardItemsAction));
             }
         }
-
-        public string ContextText {
-            get {
-                return QAChatControlViewModel.ContextText;
-            }
-            set {
-                QAChatControlViewModel.ContextText = value;
-                OnPropertyChanged(nameof(ContextText));
-            }
-        }
-
 
 
         // 選択中のフォルダの全てのClipboardItem

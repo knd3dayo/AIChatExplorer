@@ -1,13 +1,9 @@
 using System.Reflection;
-using System.Windows;
-using ClipboardApp.View.ClipboardItemFolderView;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp {
+namespace WpfAppCommon.Model {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -62,11 +58,15 @@ namespace ClipboardApp {
             // If ContentType is Files, copy files to clipboard
             else if (item.ContentType == ClipboardContentTypes.Files) {
                 // FilePathの取得
-                string filePath = item.ClipboardItemFile?.FilePath ?? "";
-                if (filePath == "") {
+                System.Collections.Specialized.StringCollection strings = new();
+                foreach (var itemFile in item.ClipboardItemFiles) {
+                    strings.Add(itemFile.FilePath);
+                }
+                // Stringsが空の場合は何もしない
+                if (strings.Count == 0) {
                     return;
                 }
-                System.Windows.Clipboard.SetFileDropList(new System.Collections.Specialized.StringCollection { filePath });
+                System.Windows.Clipboard.SetFileDropList(strings);
             }
             IsClipboardMonitorEnabled = true;
         }
@@ -97,7 +97,7 @@ namespace ClipboardApp {
             if (_clipboard == null) {
                 return;
             }
-            ClipboardFolderViewModel.ProcessClipboardItem(ClipboardFolder.RootFolder, e, _afterClipboardChanged);
+            ClipboardFolder.ProcessClipboardItem(ClipboardFolder.RootFolder, e, _afterClipboardChanged);
 
         }
 

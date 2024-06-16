@@ -112,6 +112,35 @@ def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:l
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
+def run_openai_chat(props_json: str, request_json: str):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> str:
+        # OpenAIPorpsを生成
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
+        # OpenAIClientを生成
+        openai_client = OpenAIClient(openai_props)
+        # request_jsonをdictに変換
+        request = json.loads(request_json)
+        content = openai_client.run_openai_chat(request)
+        return content
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    content, log = wrapper()
+
+    # 結果格納用のdictを生成
+    result = {}
+    result["content"] = content
+    # dict["log"]にログを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
+
 def openai_embedding(props_json: str, input_text: str):
     # OpenAIPorpsを生成
     props = json.loads(props_json)
@@ -142,6 +171,25 @@ def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, cha
         vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
         print(vector_db_props)
         result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
+def run_langchain_chat( props_json: str, vector_db_props_json: str, request_json: str):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> dict:
+
+        result = langchain_util.run_langchain_chat(props_json, vector_db_props_json, request_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

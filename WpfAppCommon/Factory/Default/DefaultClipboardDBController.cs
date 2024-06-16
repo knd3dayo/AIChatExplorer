@@ -44,7 +44,7 @@ namespace WpfAppCommon.Factory.Default {
                     mapper.Entity<ClipboardFolder>()
                         .Ignore(x => x.Children);
                     mapper.Entity<ClipboardItem>()
-                        .Ignore(x => x.ClipboardItemImage);
+                        .Ignore(x => x.ClipboardItemImages);
 
                 } catch (Exception e) {
                     throw new Exception("データベースのオープンに失敗しました。" + e.Message);
@@ -247,8 +247,8 @@ namespace WpfAppCommon.Factory.Default {
                 item.UpdatedAt = DateTime.Now;
             }
             // 画像イメージがある場合は、追加または更新
-            if (item.ClipboardItemImage != null) {
-                UpsertItemImage(item.ClipboardItemImage);
+            foreach (var image in item.ClipboardItemImages) {
+                UpsertItemImage(image);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             collection.Upsert(item);
@@ -259,8 +259,8 @@ namespace WpfAppCommon.Factory.Default {
                 return;
             }
             // 画像イメージがある場合は、削除
-            if (item.ClipboardItemImage != null) {
-                DeleteItemImage(item.ClipboardItemImage);
+            foreach (var image in item.ClipboardItemImages) {
+                DeleteItemImage(image);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             // System.Windows.MessageBox.Show(item.CollectionName);

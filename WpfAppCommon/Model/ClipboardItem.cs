@@ -23,25 +23,12 @@ namespace WpfAppCommon.Model {
             UpdatedAt = DateTime.Now;
             FolderObjectId = folderObjectId;
         }
-        // プロパティ
 
+        // プロパティ
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         // ClipboardFolderのObjectId
         public LiteDB.ObjectId FolderObjectId { get; set; } = LiteDB.ObjectId.Empty;
-
-        /**
-        public string CollectionName {
-            get {
-                // FolderObjectIdからClipboardFolderを取得
-                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
-                if (folder == null) {
-                    return "";
-                }
-                return folder.CollectionName;
-            }
-        }
-        **/
 
         public string FolderPath {
             get {
@@ -64,58 +51,75 @@ namespace WpfAppCommon.Model {
         public string Content { get; set; } = "";
 
         //　画像イメージのObjectId
-        public LiteDB.ObjectId? ImageObjectId { get; set; }
+        public List<LiteDB.ObjectId> ImageObjectIds { get; set; } = [];
 
         // ファイルのObjectId
-        public LiteDB.ObjectId? FileObjectId { get; set; }
+        public List<LiteDB.ObjectId> FileObjectIds { get; set; } = [];
 
 
         // 画像イメージ
-        public ClipboardItemImage? ClipboardItemImage {
+        // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
+        private List<ClipboardItemImage> _clipboardItemImages = [];
+        public List<ClipboardItemImage> ClipboardItemImages {
             get {
-                if (ImageObjectId == null) {
-                    return null;
+                if (_clipboardItemImages.Count() == 0) {
+                    LoadImages();
                 }
-                return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(ImageObjectId);
+                return _clipboardItemImages;
             }
-            set {
-                if (value == null) {
-                    //Imageを削除
-                    if (ClipboardItemImage != null) {
-                        ClipboardItemImage.Delete();
-                    }
-                    ImageObjectId = null;
-                    return;
+        }
+        private void LoadImages() {
+            foreach (var imageObjectId in ImageObjectIds) {
+                ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                if (image != null) {
+                    _clipboardItemImages.Add(image);
                 }
-                //Imageを保存
-                value.Save();
-                ImageObjectId = value.Id;
+            }
+        }
+        private void SaveImages() {
+            //Imageを保存
+            ImageObjectIds = [];
+            foreach (var image in _clipboardItemImages) {
+                image.Save();
+                // ClipboardItemImageをSaveした後にIdが設定される。そのあとでImageObjectIdsに追加
+                ImageObjectIds.Add(image.Id);
             }
         }
 
         // ファイル
-        public ClipboardItemFile? ClipboardItemFile {
+        // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
+        private List<ClipboardItemFile> _clipboardItemFiles = [];
+        public List<ClipboardItemFile> ClipboardItemFiles {
             get {
-                if (FileObjectId == null) {
-                    return null;
+                if (_clipboardItemFiles.Count() == 0) {
+                    LoadFiles();
                 }
-                return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(FileObjectId);
+                return _clipboardItemFiles;
             }
-            set {
-                if (value == null) {
-                    //Fileを削除
-                    ClipboardItemFile?.Delete();
-                    FileObjectId = null;
-                    return;
+        }
+        private void LoadFiles() {
+            foreach (var fileObjectId in FileObjectIds) {
+                ClipboardItemFile? file = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
+                if (file != null) {
+                    _clipboardItemFiles.Add(file);
                 }
-                //Fileを保存
-                value.Save();
-                FileObjectId = value.Id;
+            }
+        }
+
+        private void SaveFiles() {
+            //Fileを保存
+            FileObjectIds = [];
+            foreach (var file in _clipboardItemFiles) {
+                file.Save();
+                // ClipboardItemFileをSaveした後にIdが設定される。そのあとでFileObjectIdsに追加
+                FileObjectIds.Add(file.Id);
             }
         }
 
         // OpenAIチャットのChatItemコレクション
+        // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatItem> ChatItems { get; set; } = [];
+
 
         // クリップボードの内容の種類
         public ClipboardContentTypes ContentType { get; set; }
@@ -160,15 +164,17 @@ namespace WpfAppCommon.Model {
             newItem.Description = Description;
 
             //-- 画像がある場合はコピー
-            if (ImageObjectId != null) {
-                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, ClipboardItemImage?.GetImage() ?? throw new ThisApplicationException("画像が取得できません"));
-                newImage.ImageBase64 = ClipboardItemImage?.ImageBase64 ?? string.Empty;
-                newItem.ClipboardItemImage = newImage;
+            foreach (var imageObjectId in ImageObjectIds) {
+                ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.GetImage() ?? throw new ThisApplicationException("画像が取得できません"));
+                newImage.ImageBase64 = image.ImageBase64;
+                newItem.ImageObjectIds.Add(newImage.Id);
             }
             //-- ファイルがある場合はコピー
-            if (FileObjectId != null) {
-                ClipboardItemFile newFile = ClipboardItemFile.Create(newItem, ClipboardItemFile?.FilePath ?? string.Empty);
-                newItem.ClipboardItemFile = newFile;
+            foreach (var FileObjectId in FileObjectIds) {
+                ClipboardItemFile? file = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(FileObjectId);
+                ClipboardItemFile newFile = ClipboardItemFile.Create(newItem, file?.FilePath ?? string.Empty);
+                newItem.FileObjectIds.Add(newFile.Id);
             }
             //-- ChatItemsをコピー
             newItem.ChatItems = new List<ChatItem>(ChatItems);
@@ -320,14 +326,25 @@ namespace WpfAppCommon.Model {
             return sb.ToString();
         }
 
+        // 別コレクションのオブジェクトをLoadする
+        public void Load() {
+            LoadImages();
+            LoadFiles();
+        }
+
         // 自分自身をDBに保存する
         public void Save(bool contentIsModified = true) {
+
+            // 保存
+            SaveFiles();
+            SaveImages();
 
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
 
             if (contentIsModified == false) {
                 return;
             }
+
 
             Task.Run(() => {
                 Tools.Info("OS上のファイルに保存します");
@@ -432,10 +449,16 @@ namespace WpfAppCommon.Model {
                 Tools.Info("OS上のファイルを削除しました");
 
             });
-            // ファイルが存在する場合は削除
-            ClipboardItemImage?.Delete();
             // イメージが存在する場合は削除
-            ClipboardItemFile?.Delete();
+            foreach (var imageObjectId in ImageObjectIds) {
+                ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                image?.Delete();
+            }
+            // ファイルが存在する場合は削除
+            foreach (var fileObjectId in FileObjectIds) {
+                ClipboardItemFile? file = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
+                file?.Delete();
+            }
 
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
@@ -479,28 +502,6 @@ namespace WpfAppCommon.Model {
             item.Description += result.Response;
         }
 
-
-        // 自動処理でファイルパスをフォルダとファイル名に分割するコマンド
-        public void SplitFilePathCommandExecute() {
-
-            if (this.ContentType != ClipboardContentTypes.Files) {
-                throw new ThisApplicationException("ファイル以外のコンテンツはファイルパスを分割できません");
-            }
-
-            string? path = ClipboardItemFile?.FilePath;
-
-            if (string.IsNullOrEmpty(path) == false) {
-                // ファイルパスをフォルダ名とファイル名に分割
-                string? folderPath = Path.GetDirectoryName(path) ?? throw new ThisApplicationException("フォルダパスが取得できません");
-                string? fileName = Path.GetFileName(path);
-                this.Content = folderPath + "\n" + fileName;
-                // ContentTypeをTextに変更
-                this.ContentType = ClipboardContentTypes.Text;
-                // StatusTextにメッセージを表示
-                Tools.Info("ファイルパスをフォルダ名とファイル名に分割しました");
-            }
-        }
-
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
             // PythonでItem.ContentからEntityを抽出
@@ -516,30 +517,30 @@ namespace WpfAppCommon.Model {
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {
 
-            if (clipboardItem.ContentType != ClipboardContentTypes.Files) {
-                throw new ThisApplicationException("ファイル以外のコンテンツはテキストを抽出できません");
-            }
-            ClipboardItemFile? clipboardItemFile = clipboardItem.ClipboardItemFile;
-            if (clipboardItemFile == null) {
-                throw new ThisApplicationException("ファイルが取得できません");
-            }
-            if (clipboardItemFile.FilePath == null) {
-                throw new ThisApplicationException("ファイルパスが取得できません");
-            }
-            string path = clipboardItemFile.FilePath;
-            if (string.IsNullOrEmpty(path)) {
-                throw new ThisApplicationException("ファイルパスが取得できません");
-            }
-            try {
-                string text = PythonExecutor.PythonFunctions.ExtractText(path);
-                clipboardItem.Content = text;
+            foreach (var fileObjectId in clipboardItem.FileObjectIds) {
+                ClipboardItemFile? clipboardItemFile = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
 
-            } catch (UnsupportedFileTypeException) {
-                Tools.Error("サポートされていないファイル形式です");
-                return clipboardItem;
-            }
-            Tools.Info($"{path}のテキストを抽出しました");
+                if (clipboardItemFile == null) {
+                    throw new ThisApplicationException("ファイルが取得できません");
+                }
+                if (clipboardItemFile.FilePath == null) {
+                    throw new ThisApplicationException("ファイルパスが取得できません");
+                }
+                string path = clipboardItemFile.FilePath;
+                if (string.IsNullOrEmpty(path)) {
+                    throw new ThisApplicationException("ファイルパスが取得できません");
+                }
+                try {
+                    string text = PythonExecutor.PythonFunctions.ExtractText(path);
+                    clipboardItem.Content += text + "\n";
 
+                } catch (UnsupportedFileTypeException) {
+                    Tools.Error("サポートされていないファイル形式です");
+                    return clipboardItem;
+                }
+                Tools.Info($"{path}のテキストを抽出しました");
+
+            }
             return clipboardItem;
 
         }
@@ -572,41 +573,41 @@ namespace WpfAppCommon.Model {
             return result;
         }
 
-        private static ChatItem CreateMaskedDataSystemMessage() {
-            ChatItem chatItem
-                = new(ChatItem.SystemRole,
-                "このチャットではマスキングデータ(MASKED_...)を使用している場合があります。" +
-                "マスキングデータの文字列はそのままにしてください");
-            return chatItem;
-        }
-
-        public static string FormatTextCommandExecute(string text) {
-            string prompt = "次の文章はWindowsのクリップボードから取得した文章です。これを整形してください。重複した内容がある場合は削除してください。\n";
-
-            // ChatCommandExecuteを実行
-            prompt += "処理対象の文章\n-----------\n" + text;
-            // Vector DBのアイテムを取得
-            IEnumerable<VectorDBItem> vectorDBItems = VectorDBItem.GetEnabledItems();
-
-            ChatResult result = PythonExecutor.PythonFunctions.LangChainChat(vectorDBItems, prompt, []);
-
-            return result.Response;
-
-        }
         // 画像からイメージを抽出するコマンド
         public static ClipboardItem ExtractTextFromImageCommandExecute(ClipboardItem clipboardItem) {
             if (clipboardItem.ContentType != ClipboardContentTypes.Image) {
                 throw new ThisApplicationException("画像以外のコンテンツはテキストを抽出できません");
             }
-            Image? image = clipboardItem.ClipboardItemImage?.GetImage();
-            if (image == null) {
-                throw new ThisApplicationException("画像が取得できません");
+            foreach (var imageObjectId in clipboardItem.ImageObjectIds) {
+                ClipboardItemImage? imageItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                if (imageItem == null) {
+                    throw new ThisApplicationException("画像が取得できません");
+                }
+                Image? image = imageItem.GetImage();
+                if (image == null) {
+                    throw new ThisApplicationException("画像が取得できません");
+                }
+                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+                clipboardItem.Content += text + "\n";
             }
-            string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-            clipboardItem.Content = text;
 
             return clipboardItem;
         }
-    }
 
+        public ChatResult? OpenAIChat(OpenAIExecutionModeEnum mode, string promptTemplateText) {
+
+
+            List<ChatItem> chatItems = [];
+            ChatController chatController = new();
+            chatController.ChatMode = mode;
+            chatController.PromptTemplateText = promptTemplateText;
+            chatController.ContentText = Content;
+
+            ClipboardFolder? folder = GetFolder() ?? throw new Exception("フォルダが取得できませんでした");
+            chatController.VectorDBItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.Id.ToString(), folder.Description);
+            ChatResult? result = chatController.ExecuteChat();
+            return result;
+        }
+
+    }
 }

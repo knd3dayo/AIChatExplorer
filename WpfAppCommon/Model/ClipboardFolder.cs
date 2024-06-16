@@ -1,13 +1,16 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows;
 using LiteDB;
+using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
+using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
+using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace WpfAppCommon.Model {
-    public class ClipboardFolder  {
+    public class ClipboardFolder {
 
         public class RootFolderInfo {
 
@@ -190,7 +193,7 @@ namespace WpfAppCommon.Model {
             ClipboardItem? result = clipboardItem;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
-                foreach (var rule in AutoProcessRules) {
+            foreach (var rule in AutoProcessRules) {
                 Tools.Info("自動処理を適用します " + rule.GetDescriptionString());
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
@@ -200,7 +203,7 @@ namespace WpfAppCommon.Model {
                 }
             }
             return result;
-        }   
+        }
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string directoryPath) {
@@ -264,7 +267,7 @@ namespace WpfAppCommon.Model {
             // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
             foreach (var item in Items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
-                    && newItem.SourceApplicationName == item.SourceApplicationName ) {
+                    && newItem.SourceApplicationName == item.SourceApplicationName) {
                     // TypeがTextのアイテムのみマージ
                     if (item.ContentType == ClipboardContentTypes.Text) {
                         sameTitleItems.Add(item);
@@ -364,5 +367,200 @@ namespace WpfAppCommon.Model {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(id);
 
         }
+
+
+        #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
+        public static void ProcessClipboardItem(ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
+
+            // Is the content copied of text type?
+            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
+                string? text = e.Content.ToString();
+                if (text == null) {
+                    return;
+                }
+                // Get the cut/copied text.
+                ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Text, text, null, e, _afterClipboardChanged);
+            }
+            // Is the content copied of file type?
+            else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
+                string[] files = (string[])e.Content;
+
+                // Get the cut/copied file/files.
+                for (int i = 0; i < files.Length; i++) {
+                    ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Files, files[i], null, e, _afterClipboardChanged);
+                }
+
+            }
+            // Is the content copied of image type?
+            else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
+                // Get the cut/copied image.
+                System.Drawing.Image img = (System.Drawing.Image)e.Content;
+                ProcessClipboardItem(clipboardFolder, ClipboardContentTypes.Image, "", img, e, _afterClipboardChanged);
+
+            }
+            // If the cut/copied content is complex, use 'Other'.
+            else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
+                // Do nothing
+                // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
+            }
+
+
+        }
+
+        /// <summary>
+        /// Process clipboard item
+        /// </summary>
+        /// <param name="contentTypes"></param>
+        /// <param name="content"></param>
+        /// <param name="image"></param>
+        /// <param name="e"></param>
+        public static void ProcessClipboardItem(
+            ClipboardFolder clipboardFolder,
+            ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
+
+            ClipboardItem item = CreateClipboardItem(clipboardFolder, contentTypes, content, image, e);
+
+            // Execute in a separate thread
+            Task.Run(() => {
+                string oldReadyText = Tools.StatusText.ReadyText;
+                Application.Current.Dispatcher.Invoke(() => {
+                    Tools.StatusText.ReadyText = StringResources.Instance.AutoProcessing;
+                });
+                try {
+                    // Apply automatic processing
+                    ClipboardItem? updatedItem = ApplyAutoAction(item, image);
+                    if (updatedItem == null) {
+                        // If the item is ignored, return
+                        return;
+                    }
+                    // Notify the completion of processing
+                    _afterClipboardChanged(updatedItem);
+
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
+                } finally {
+                    Application.Current.Dispatcher.Invoke(() => {
+                        Tools.StatusText.ReadyText = oldReadyText;
+                    });
+                }
+            });
+        }
+
+
+        /// Create ClipboardItem
+        private static ClipboardItem CreateClipboardItem(
+            ClipboardFolder clipboardFolder, ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
+            ClipboardItem item = new(clipboardFolder.Id) {
+                ContentType = contentTypes
+            };
+            SetApplicationInfo(item, e);
+            item.Content = content;
+
+            // If ContentType is Image, set image data
+            if (contentTypes == ClipboardContentTypes.Image && image != null) {
+                ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
+                imageItem.SetImage(image);
+                item.ClipboardItemImages.Add(imageItem);
+            }
+            // If ContentType is Files, set file data
+            else if (contentTypes == ClipboardContentTypes.Files) {
+                ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, content);
+                item.ClipboardItemFiles.Add(clipboardItemFile);
+            }
+            return item;
+
+        }
+
+        /// <summary>
+        /// Set application information from ClipboardChangedEventArgs
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="sender"></param>
+        private static void SetApplicationInfo(ClipboardItem item, ClipboardChangedEventArgs sender) {
+            item.SourceApplicationName = sender.SourceApplication.Name;
+            item.SourceApplicationTitle = sender.SourceApplication.Title;
+            item.SourceApplicationID = sender.SourceApplication.ID;
+            item.SourceApplicationPath = sender.SourceApplication.Path;
+        }
+
+        /// <summary>
+        /// Apply automatic processing
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="image"></param>
+        private static ClipboardItem? ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
+            // ★TODO Implement processing based on automatic processing rules.
+            // 指定した行数未満のテキストアイテムは無視
+            int lineCount = item.Content.Split('\n').Length;
+            if (item.ContentType == ClipboardContentTypes.Text && lineCount < ClipboardAppConfig.IgnoreLineCount) {
+                return null;
+            }
+            // If AUTO_DESCRIPTION is set, automatically set the Description
+            if (ClipboardAppConfig.AutoDescription) {
+                try {
+                    Tools.Info(StringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitle(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
+                }
+            } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
+
+                try {
+                    Tools.Info(StringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
+                }
+            }
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AUTO_TAG is set, automatically set the tags
+            if (ClipboardAppConfig.AutoTag) {
+                Tools.Info(StringResources.Instance.AutoSetTag);
+                try {
+                    ClipboardItem.CreateAutoTags(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.SetTagFailed}\n{ex.Message}");
+                }
+            }
+
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
+            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
+                Tools.Info(StringResources.Instance.AutoMerge);
+                try {
+                    ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.MergeFailed}\n{ex.Message}");
+                }
+            }
+            // ★TODO Implement processing based on automatic processing rules.
+            // If UseOCR is set, perform OCR
+            if (ClipboardAppConfig.UseOCR && image != null) {
+                Tools.Info(StringResources.Instance.OCR);
+                try {
+                    string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+                    item.Content = text;
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.OCRFailed}\n{ex.Message}");
+                }
+            }
+            // If AutoFileExtract is set, extract files
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
+                Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
+                try {
+                    foreach (var fileItem in item.ClipboardItemFiles) {
+                        string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
+                        item.Content += text + "\n";
+                    }
+
+                } catch (ThisApplicationException ex) {
+                    Tools.Error($"{StringResources.Instance.AutoFileExtractFailed}\n{ex.Message}");
+                }
+            }
+            return item;
+        }
+
+        #endregion
     }
 }
+

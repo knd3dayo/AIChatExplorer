@@ -7,8 +7,10 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
+using MS.WindowsAPICodePack.Internal;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
+using QAChat.View.VectorDBWindow;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
@@ -122,16 +124,18 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             // Process.Startでフォルダを開く
-            string? folderPath = itemViewModel.FolderName;
-            if (folderPath != null) {
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(folderPath) {
-                    UseShellExecute = true
-                };
-                p.Start();
+            foreach(var item in itemViewModel.ClipboardItem.ClipboardItemFiles) {
+                string? folderPath = item.FolderName;
+                if (folderPath != null) {
+                    var p = new Process();
+                    p.StartInfo = new ProcessStartInfo(folderPath) {
+                        UseShellExecute = true
+                    };
+                    p.Start();
+                }
             }
-
         }
+
         // ContentTypeがFileの場合にファイルを開く処理
         public static void OpenFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
             if (itemViewModel == null) {
@@ -145,13 +149,15 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             // Process.Startでファイルを開く
-            string? filePath = itemViewModel.FilePath;
-            if (filePath != null) {
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(filePath) {
-                    UseShellExecute = true
-                };
-                p.Start();
+            foreach (var item in itemViewModel.ClipboardItem.ClipboardItemFiles) {
+                string? filePath = item.FilePath;
+                if (filePath != null) {
+                    var p = new Process();
+                    p.StartInfo = new ProcessStartInfo(filePath) {
+                        UseShellExecute = true
+                    };
+                    p.Start();
+                }
             }
         }
         // 一時フォルダでファイルを開く処理
@@ -165,24 +171,31 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("ファイル以外のコンテンツはファイルを開けません");
                 return;
             }
-            string? filePath = itemViewModel.FilePath;
-            if (filePath != null) {
-                // テンポラリディレクトリにファイルをコピーして開く
-                string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(filePath));
-                // ファイルの先頭に[temp]を付ける
-                tempFilePath = Path.Combine(Path.GetTempPath(), "[temp]" + Path.GetFileName(tempFilePath));
-                File.Copy(filePath, tempFilePath, true);
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(tempFilePath) {
-                    UseShellExecute = true
-                };
-                p.Start();
+            foreach(var item in itemViewModel.ClipboardItem.ClipboardItemFiles) {
+                string? filePath = item.FilePath;
+                if (filePath != null) {
+                    // テンポラリディレクトリにファイルをコピーして開く
+                    string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(filePath));
+                    // ファイルの先頭に[temp]を付ける
+                    tempFilePath = Path.Combine(Path.GetTempPath(), "[temp]" + Path.GetFileName(tempFilePath));
+                    File.Copy(filePath, tempFilePath, true);
+                    var p = new Process();
+                    p.StartInfo = new ProcessStartInfo(tempFilePath) {
+                        UseShellExecute = true
+                    };
+                    p.Start();
+                }
             }
         }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public static SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
+            MainWindowViewModel? windowViewModel = MainWindowViewModel.ActiveInstance;
+            if (windowViewModel == null) {
+                Tools.Error("MainWindowViewModelが取得できませんでした");
+                return;
+            }
+            var clipboardItemViewModel = windowViewModel.SelectedItem;
             if (clipboardItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません。");
                 return;
@@ -199,7 +212,7 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public static SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
-            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.SelectedItemStatic;
+            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.ActiveInstance?.SelectedItem;
             if (clipboardItemViewModel == null) {
                 Tools.Error("クリップボードアイテムが選択されていません。");
                 return;
@@ -210,7 +223,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("テキスト以外のコンテンツはマスキングできません");
                 return;
             }
-            clipboardItemViewModel.MaskDataCommandExecute();
+            clipboardItemViewModel.ClipboardItem.MaskDataCommandExecute();
             // 保存
             clipboardItemViewModel.Save();
 
@@ -235,7 +248,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             try {
-                ClipboardItemViewModel.ExtractTextFromImage(clipboardItemViewModel);
+                ExtractTextFromImage(clipboardItemViewModel);
             } catch (Exception ex) {
                 Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
             }
@@ -279,8 +292,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 SearchWindow.OpenSearchWindow(rule, null, () => {
                     // QAChatのContextを更新
                     List<ClipboardItem> clipboardItems = rule.SearchItems();
-                    string contextText = ClipboardItem.GetContentsString(clipboardItems);
-                    mainWindowViewModel.ContextText = contextText;
+                    mainWindowViewModel.QAChatControlViewModel.ContextItems = [.. clipboardItems];
 
                 });
             };
@@ -292,10 +304,19 @@ namespace ClipboardApp.View.ClipboardItemView {
                         items.Add(item.ClipboardItem);
                     }
                 }
-                string contextText = ClipboardItem.GetContentsString(items);
-                mainWindowViewModel.ContextText = contextText;
+                mainWindowViewModel.QAChatControlViewModel.ContextItems = [.. items];
             };
-            
+            // クリップボード編集画面を開くアクション
+            mainWindowViewModel.OpenClipboardItemAction = (clipboardItem) => {
+                ClipboardItemViewModel clipboardItemViewModel = new(clipboardItem);
+                OpenItemCommandExecute(folderViewModel, clipboardItemViewModel);
+            };
+            // ベクトルDBアイテムを開くアクション
+            mainWindowViewModel.OpenVectorDBItemAction = (vectorDBItem) => {
+                VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
+                EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+            };
+
             openAIChatWindow.Show();
 
         }
@@ -306,53 +327,33 @@ namespace ClipboardApp.View.ClipboardItemView {
                 Tools.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            ListPromptTemplateWindow promptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel promptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)promptTemplateWindow.DataContext;
-            promptTemplateWindowViewModel.Initialize(
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(
                 ListPromptTemplateWindowViewModel.ActionModeEum.Exec,
                 (PromptItemViewModel promptItemViewModel, OpenAIExecutionModeEnum mode) => {
-                    // itemViewModelのClipboardItemのContentの先頭にプロンプトテンプレートのPromptに設定
-                    itemViewModel.Content = promptItemViewModel.PromptItem.Prompt + "\n----------\n" + itemViewModel.Content;
-
-                // OpenAIChatを実行
-                OpenAIChatCommandExecute(mode, itemViewModel);
+                    // OpenAIChatを実行
+                    OpenAIChatCommandExecute(mode, itemViewModel, promptItemViewModel);
             });
-            promptTemplateWindow.ShowDialog();
         }
 
 
         // OpenAI Chatを実行してその結果をClipboardItemに設定するコマンド
-        public static async void OpenAIChatCommandExecute(OpenAIExecutionModeEnum mode, ClipboardItemViewModel itemViewModel) {
+        public static async void OpenAIChatCommandExecute(OpenAIExecutionModeEnum mode, ClipboardItemViewModel itemViewModel, PromptItemViewModel promptItemViewModel) {
+
             try {
+
                 // プログレスインジケーターを表示
                 MainWindowViewModel.UpdateProgressCircleVisibility(true);
+                ChatResult? result = new();
+                ChatController chatController = new();
+                chatController.ChatMode = mode;
 
-                List<ChatItem> chatItems = [];
-                ChatResult result = new();
-                // modeがRAGの場合はLangChainChatを実行
-                if (mode == OpenAIExecutionModeEnum.RAG) {
-                    // LangChainChatを実行
-                    await Task.Run(() => {
-                        ClipboardFolder? folder = itemViewModel.ClipboardItem.GetFolder();
-                        if (folder == null) {
-                            Tools.Error("フォルダが取得できませんでした");
-                            return;
-                        }
-                        IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.Id.ToString(), folder.Description);
-                        result = PythonExecutor.PythonFunctions.LangChainChat(enabledItems, itemViewModel.Content, chatItems);
-                    });
-                }
-                // modeがNormalの場合はOpenAIChatを実行
-                else if (mode == OpenAIExecutionModeEnum.Normal) {
-                    // OpenAIChatを実行
-                    await Task.Run(() => {
-                        result = PythonExecutor.PythonFunctions.OpenAIChat(itemViewModel.Content, chatItems);
-                    });
-
-                } else {
+                await Task.Run(() => {
+                    result = itemViewModel.ClipboardItem.OpenAIChat(mode, promptItemViewModel.PromptItem.Prompt);
+                });
+                if (result == null) {
+                    Tools.Error("OpenAI Chatの実行に失敗しました");
                     return;
                 }
-                // レスポンスをClipboardItemに設定
                 itemViewModel.Content = result.Response;
                 itemViewModel.Save();
 

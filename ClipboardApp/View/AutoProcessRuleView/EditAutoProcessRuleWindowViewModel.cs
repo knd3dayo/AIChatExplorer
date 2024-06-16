@@ -566,7 +566,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // LiteDBに保存
             TargetAutoProcessRule.Save();
             // ClipboardItemFolderにAutoProcessRuleIdを追加
-            TargetFolder.AddAutoProcessRule(TargetAutoProcessRule);
+            TargetFolder.ClipboardItemFolder.AddAutoProcessRule(TargetAutoProcessRule);
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

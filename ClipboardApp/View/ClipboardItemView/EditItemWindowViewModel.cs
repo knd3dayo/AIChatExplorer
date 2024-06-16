@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
@@ -31,25 +33,25 @@ namespace ClipboardApp.View.ClipboardItemView {
                 OnPropertyChanged(nameof(FileTabVisibility));
             }
         }
-        private ClipboardFolderViewModel? clipboardFolderInstance;
-        public ClipboardFolderViewModel? ClipboardFolderInstance {
+        private ClipboardFolderViewModel? _folderViewModel;
+        public ClipboardFolderViewModel? FolderViewModel {
             get {
-                return clipboardFolderInstance;
+                return _folderViewModel;
             }
             set {
-                clipboardFolderInstance = value;
-                OnPropertyChanged(nameof(ClipboardFolderInstance));
+                _folderViewModel = value;
+                OnPropertyChanged(nameof(FolderViewModel));
             }
         }
 
         public override void OnActivatedAction() {
-            if (ClipboardFolderInstance == null) {
+            if (FolderViewModel == null) {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolderInstance.FolderName}]";
+            Tools.StatusText.ReadyText = $"フォルダ名:[{FolderViewModel.FolderName}]";
             // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolderInstance.FolderName}]";
+            Tools.StatusText.Text = $"フォルダ名:[{FolderViewModel.FolderName}]";
         }
 
 
@@ -59,6 +61,9 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return title;
             }
             set {
+                if (value == null) {
+                    return;
+                }
                 title = value;
                 OnPropertyChanged(nameof(Title));
 
@@ -97,48 +102,63 @@ namespace ClipboardApp.View.ClipboardItemView {
         // QAChatControlのViewModel
         public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
 
+        // IsDrawerOpen
+        private bool isDrawerOpen = false;
+        public bool IsDrawerOpen {
+            get {
+                return isDrawerOpen;
+            }
+            set {
+                isDrawerOpen = value;
+                OnPropertyChanged(nameof(IsDrawerOpen));
+            }
+        }
+        // SelectedFile
+        private ClipboardItemFile? selectedFile;
+        public ClipboardItemFile? SelectedFile {
+            get {
+                return selectedFile;
+            }
+            set {
+                selectedFile = value;
+                OnPropertyChanged(nameof(SelectedFile));
+            }
+        }
+        // SelectedImage
+        private ImageSource? selectedImage;
+        public ImageSource? SelectedImage {
+            get {
+                return selectedImage;
+            }
+            set {
+                selectedImage = value;
+                OnPropertyChanged(nameof(SelectedImage));
+            }
+        }
+        public int SelectedImageIndex { get; set; } = 0;
 
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+
+            FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
                 ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
-
-
                 ItemViewModel = new ClipboardItemViewModel(clipboardItem);
-                title = "新規アイテム";
+                Title = "新規アイテム";
             } else {
-                title = "アイテム編集";
+                Title = itemViewModel.ClipboardItem.Description;
                 ItemViewModel = itemViewModel;
             }
-            // QAChatControlの初期化
-            QAChatControlViewModel.Initialize(folderViewModel.ClipboardItemFolder, ItemViewModel.ClipboardItem, PromptTemplateCommandExecute);
-            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
-
-            QAChatControlViewModel.ShowSearchWindowAction = () => {
-                SearchWindow.OpenSearchWindow(rule, null, () => {
-                    // QAChatのContextを更新
-                    List<ClipboardItem> clipboardItems = rule.SearchItems();
-                    string contextText = ClipboardItem.GetContentsString(clipboardItems);
-                    QAChatControlViewModel.ContextText = contextText;
-
-                });
-            };
-            QAChatControlViewModel.SetContentTextFromClipboardItemsAction = () => {
-                List<ClipboardItem> items = [];
-                var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
-                if (clipboardItemViews != null) {
-                    foreach (var item in clipboardItemViews) {
-                        items.Add(item.ClipboardItem);
-                    }
-                }
-                string contextText = ClipboardItem.GetContentsString(items);
-                QAChatControlViewModel.ContextText = contextText;
-            };
-
+            // ClipboardItemFileがある場合はSelectedFileに設定
+            if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
+                SelectedFile = ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
+            }
+            // ClipboardItemImageがある場合はSelectedImageに設定
+            if (ItemViewModel.Images.Count > 0) {
+                SelectedImage = ItemViewModel.Images[0];
+            }
             _afterUpdate = afterUpdate;
 
         }
-
-
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
@@ -150,8 +170,6 @@ namespace ClipboardApp.View.ClipboardItemView {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
-
-
         });
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
@@ -167,6 +185,12 @@ namespace ClipboardApp.View.ClipboardItemView {
             // 選択中のテキストをプロセスとして実行
             TextSelector.ExecuteSelectedText(textbox);
 
+        });
+
+        // QAChatButtonCommand
+        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
+            // QAChatControlのDrawerを開く
+            ClipboardItemViewModel.OpenOpenAIChatWindowExecute(FolderViewModel, ItemViewModel);
         });
 
         // OKボタンのコマンド
@@ -197,14 +221,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             // ウィンドウを閉じる
             window.Close();
         });
-
-        // プロンプトテンプレートを開くコマンド
-        private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
-
-            });
-        }
 
     }
 }

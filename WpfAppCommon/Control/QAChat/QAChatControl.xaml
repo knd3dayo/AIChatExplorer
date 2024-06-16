@@ -31,237 +31,340 @@
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </UserControl.InputBindings>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <TabControl
-            Grid.Row="0"
-            Margin="10,10,10,10"
-            HorizontalContentAlignment="Left">
-            <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,0,10,0"
-                Padding="0"
-                FontSize="10"
-                Header="編集">
-                <Grid>
+    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
+        <materialDesign:DrawerHost.LeftDrawerContent>
+            <Grid Width="200" Margin="10,10,10,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="モード" />
+                    <ComboBox
+                        Grid.Column="1"
+                        Margin="10,0,10,0"
+                        SelectedIndex="{Binding Mode}">
+                        <ComboBoxItem Content="OpenAI" />
+                        <ComboBoxItem Content="LangChain" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </Grid>
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="5" />
-                        <RowDefinition Height="100" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <ListBox
+                    <TextBlock
                         Grid.Row="0"
-                        MinHeight="200"
-                        ItemsSource="{Binding ChatItems}"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        SelectedItem="{Binding SelectedItem}">
-
+                        Margin="10,10,10,0"
+                        FontWeight="Bold"
+                        Text="ベクトルDB"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding VectorDBItemVisibility}" />
+                    <ListBox
+                        Grid.Row="1"
+                        Margin="10,10,10,10"
+                        ItemsSource="{Binding VectorDBItems}"
+                        SelectedItem="{Binding SelectedVectorDBItem}"
+                        Visibility="{Binding VectorDBItemVisibility}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <materialDesign:Card
-                                    Margin="10,10,10,10"
-                                    HorizontalAlignment="Stretch"
-                                    materialDesign:ElevationAssist.Elevation="Dp6">
-                                    <Grid Margin="0,0,0,0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <TextBox
-                                            Grid.Row="0"
-                                            Margin="10,5,10,5"
-                                            HorizontalAlignment="Left"
-                                            FontSize="8pt"
-                                            IsReadOnly="True"
-                                            Text="{Binding Role}" />
-                                        <TextBox
-                                            Grid.Row="1"
-                                            MinHeight="30"
-                                            Margin="10,5,10,5"
-                                            HorizontalAlignment="Left"
-                                            FontSize="8pt"
-                                            IsReadOnly="True"
-                                            Text="{Binding ContentWithSources, Mode=OneWay}"
-                                            TextWrapping="Wrap">
-                                            <TextBox.InputBindings>
-                                                <KeyBinding
-                                                    Key="A"
-                                                    Command="{Binding DataContext.SelectTextCommand, ElementName=Root}"
-                                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                                    Modifiers="Ctrl" />
-                                                <!--  選択したテキストをプロセスとして実行  -->
-                                                <KeyBinding
-                                                    Key="O"
-                                                    Command="{Binding DataContext.ExecuteSelectedTextCommand, ElementName=Root}"
-                                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                                    Modifiers="Ctrl" />
-                                                <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
-                                                <MouseBinding
-                                                    Command="{Binding DataContext.EditChatItemCommand, ElementName=Root}"
-                                                    CommandParameter="{Binding}"
-                                                    MouseAction="LeftDoubleClick" />
-                                            </TextBox.InputBindings>
-                                        </TextBox>
-                                    </Grid>
-                                </materialDesign:Card>
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListBox.ItemContainerStyle>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding OpenVectorDBItemCommand}" Header="開く" />
+                                <MenuItem Command="{Binding RemoveVectorDBItemCommand}" Header="リストから除外" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
                     </ListBox>
-                    <GridSplitter
-                        Grid.Row="1"
-                        Height="5"
-                        Margin="0,0,0,0"
-                        HorizontalAlignment="Stretch" />
-                    <Grid
+                </Grid>
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="追加コンテキスト情報" />
+                    <!--  追加コンテキスト情報  -->
+                    <ComboBox Grid.Row="1" Margin="0,0,0,0">
+                        <ComboBoxItem Content="なし" IsSelected="True" />
+                        <ComboBoxItem Content="選択中のフォルダのアイテム" />
+                        <ComboBoxItem Content="検索したアイテム" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <ListBox
                         Grid.Row="2"
-                        Margin="0,0,0,0"
-                        VerticalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="20" MinHeight="20" />
-                            <RowDefinition Height="5" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                        Margin="10,10,10,10"
+                        ItemsSource="{Binding ContextItems}"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        SelectedItem="{Binding SelectedContextItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock FontSize="8" Text="{Binding HeaderText}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding OpenClipboardItemCommand}" Header="開く" />
+                                <MenuItem Command="{Binding RemoveClipboardItemCommand}" Header="リストから除外" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </Grid>
 
-                        <ScrollViewer
+            </Grid>
+        </materialDesign:DrawerHost.LeftDrawerContent>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TabControl
+                Grid.Row="0"
+                Margin="10,10,10,10"
+                HorizontalContentAlignment="Left">
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="チャット">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="100" />
+                        </Grid.RowDefinitions>
+                        <ListBox
                             Grid.Row="0"
-                            Margin="0,0,0,0"
-                            VerticalScrollBarVisibility="Auto">
-                            <TextBox
-                                MinHeight="20"
-                                Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
-                                AcceptsReturn="True"
-                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.InputBindings>
-                                    <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
-                                </TextBox.InputBindings>
-                            </TextBox>
-                        </ScrollViewer>
+                            MinHeight="200"
+                            ItemsSource="{Binding ChatItems}"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            SelectedItem="{Binding SelectedItem}">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Card
+                                        Margin="10,10,10,10"
+                                        HorizontalAlignment="Stretch"
+                                        materialDesign:ElevationAssist.Elevation="Dp6">
+                                        <Grid Margin="0,0,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <TextBox
+                                                Grid.Row="0"
+                                                Margin="10,5,10,5"
+                                                HorizontalAlignment="Left"
+                                                FontSize="8pt"
+                                                IsReadOnly="True"
+                                                Text="{Binding Role}" />
+                                            <TextBox
+                                                Grid.Row="1"
+                                                MinHeight="30"
+                                                Margin="10,5,10,5"
+                                                HorizontalAlignment="Left"
+                                                FontSize="8pt"
+                                                IsReadOnly="True"
+                                                Text="{Binding ContentWithSources, Mode=OneWay}"
+                                                TextWrapping="Wrap">
+                                                <TextBox.InputBindings>
+                                                    <KeyBinding
+                                                        Key="A"
+                                                        Command="{Binding DataContext.SelectTextCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                                        Modifiers="Ctrl" />
+                                                    <!--  選択したテキストをプロセスとして実行  -->
+                                                    <KeyBinding
+                                                        Key="O"
+                                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                                        Modifiers="Ctrl" />
+                                                    <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
+                                                    <MouseBinding
+                                                        Command="{Binding DataContext.OpenChatItemCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"
+                                                        MouseAction="LeftDoubleClick" />
+                                                </TextBox.InputBindings>
+                                            </TextBox>
+                                        </Grid>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
                         <GridSplitter
                             Grid.Row="1"
                             Height="5"
                             Margin="0,0,0,0"
                             HorizontalAlignment="Stretch" />
-                        <ScrollViewer
+                        <Grid
                             Grid.Row="2"
                             Margin="0,0,0,0"
-                            VerticalScrollBarVisibility="Auto">
-                            <TextBox
-                                MinHeight="50"
-                                Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="ここに質問を入力"
-                                AcceptsReturn="True"
-                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
-                                    <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
-                                    <KeyBinding
-                                        Key="A"
-                                        Command="{Binding SelectTextCommand}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                    <!--  選択したテキストをプロセスとして実行  -->
-                                    <KeyBinding
-                                        Key="O"
-                                        Command="{Binding ExecuteSelectedTextCommand}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                </TextBox.InputBindings>
-                            </TextBox>
-                        </ScrollViewer>
-                    </Grid>
-                </Grid>
-            </TabItem>
-            <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,0,10,0"
-                Padding="0"
-                FontSize="10"
-                Header="プレビュー">
-                <ScrollViewer
-                    Height="300"
-                    VerticalAlignment="Top"
-                    VerticalScrollBarVisibility="Auto">
-                    <TextBox
-                        Margin="10,10,10,10"
-                        VerticalAlignment="Top"
-                        Text="{Binding PreviewText}"
-                        TextWrapping="Wrap" />
-                </ScrollViewer>
-            </TabItem>
-        </TabControl>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <ComboBox
-                Grid.Column="0"
-                Margin="10,10,10,10"
-                materialDesign:HintAssist.Hint="モード"
-                SelectedIndex="{Binding Mode}">
-                <ComboBoxItem Content="通常" />
-                <ComboBoxItem Content="RAG" />
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-            <!--  追加コンテキスト情報  -->
-            <ComboBox
-                Grid.Column="1"
-                Margin="0,0,0,0"
-                materialDesign:HintAssist.Hint="追加コンテキスト情報">
-                <ComboBoxItem Content="追加コンテキスト:なし" IsSelected="True" />
-                <ComboBoxItem Content="追加コンテキスト:選択中のフォルダのアイテム" />
-                <ComboBoxItem Content="追加コンテキスト:検索" />
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </ComboBox>
-            <StackPanel
-                Grid.Column="2"
-                Margin="0,0,0,0"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <Button
-                    Margin="10,10,10,10"
-                    Command="{Binding SendChatCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="送信" />
-                <Button
-                    Margin="10,10,10,10"
-                    Command="{Binding ClearChatCommand}"
-                    Content="クリア" />
-                <Button
-                    Margin="10,10,10,10"
-                    Command="{Binding CloseCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる" />
-            </StackPanel>
-        </Grid>
-        <ProgressBar
-            Grid.Row="0"
-            IsIndeterminate="{Binding IsIndeterminate}"
-            Style="{StaticResource MaterialDesignCircularProgressBar}"
-            Value="0" />
+                            VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20" MinHeight="20" />
+                                <RowDefinition Height="5" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
 
-    </Grid>
+                            <ScrollViewer
+                                Grid.Row="0"
+                                Margin="0,0,0,0"
+                                VerticalScrollBarVisibility="Auto">
+                                <TextBox
+                                    MinHeight="20"
+                                    Margin="10,0,10,0"
+                                    materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
+                                    AcceptsReturn="True"
+                                    Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.InputBindings>
+                                        <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </ScrollViewer>
+                            <GridSplitter
+                                Grid.Row="1"
+                                Height="5"
+                                Margin="0,0,0,0"
+                                HorizontalAlignment="Stretch" />
+                            <ScrollViewer
+                                Grid.Row="2"
+                                Margin="0,0,0,0"
+                                VerticalScrollBarVisibility="Auto">
+                                <TextBox
+                                    MinHeight="50"
+                                    Margin="10,0,10,0"
+                                    materialDesign:HintAssist.Hint="ここに質問を入力"
+                                    AcceptsReturn="True"
+                                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
+                                        <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+                                        <KeyBinding
+                                            Key="A"
+                                            Command="{Binding SelectTextCommand}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                            Modifiers="Ctrl" />
+                                        <!--  選択したテキストをプロセスとして実行  -->
+                                        <KeyBinding
+                                            Key="O"
+                                            Command="{Binding ExecuteSelectedTextCommand}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                            Modifiers="Ctrl" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="プレビュー">
+                    <ScrollViewer
+                        Height="300"
+                        VerticalAlignment="Top"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBox
+                            Margin="10,10,10,10"
+                            VerticalAlignment="Top"
+                            Text="{Binding PreviewText, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </TabItem>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TabControl>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ToggleButton
+                    x:Name="MenuToggleButton"
+                    Grid.Column="0"
+                    AutomationProperties.Name="HamburgerToggleButton"
+                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+
+                <StackPanel
+                    Grid.Column="3"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding SendChatCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="送信" />
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding ClearChatCommand}"
+                        Content="クリア" />
+                    <Button
+                        Margin="10,10,10,10"
+                        Command="{Binding CloseCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="閉じる" />
+                </StackPanel>
+            </Grid>
+            <ProgressBar
+                Grid.Row="0"
+                IsIndeterminate="{Binding IsIndeterminate}"
+                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                Value="0" />
+
+        </Grid>
+    </materialDesign:DrawerHost>
 </UserControl>

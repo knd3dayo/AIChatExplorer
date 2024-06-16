@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ImageChat.View;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using QAChat.Model;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;

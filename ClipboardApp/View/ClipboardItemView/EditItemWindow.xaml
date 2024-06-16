@@ -101,20 +101,24 @@
                     Margin="10,10,10,0"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description, UpdateSourceTrigger=PropertyChanged}" />
-                <Button
+                <Label
                     Grid.Row="1"
                     Grid.Column="0"
                     Width="50"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Center"
-                    Command="{Binding AddTagButtonCommand}"
                     Content="タグ" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    IsEnabled="False"
-                    Text="{Binding TagsString}" />
+                    materialDesign:HintAssist.Hint="ここをクリックするとタグ編集画面が開きます"
+                    IsReadOnly="True"
+                    Text="{Binding TagsString}">
+                    <TextBox.InputBindings>
+                        <MouseBinding Command="{Binding AddTagButtonCommand}" MouseAction="LeftDoubleClick" />
+                    </TextBox.InputBindings>
+                </TextBox>
             </Grid>
             <TabControl
                 Grid.Row="1"
@@ -168,122 +172,148 @@
                     FontSize="10"
                     Header="ファイル"
                     Visibility="{Binding FileTabVisibility}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <TextBlock
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Margin="10,3,10,3"
-                            Text="ファイルパス" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Margin="10,3,10,3"
-                            IsReadOnly="True"
-                            Text="{Binding ItemViewModel.FilePath, Mode=OneWay}">
-                            <TextBox.InputBindings>
-                                <KeyBinding
-                                    Key="A"
-                                    Command="{Binding SelectTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                                <!--  選択したテキストをプロセスとして実行  -->
-                                <KeyBinding
-                                    Key="O"
-                                    Command="{Binding ExecuteSelectedTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                            </TextBox.InputBindings>
-                        </TextBox>
+                    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
+                        <materialDesign:DrawerHost.LeftDrawerContent>
+                            <Grid Width="200">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListBox
+                                    Margin="10,3,10,3"
+                                    ItemsSource="{Binding ItemViewModel.Files}"
+                                    SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectionMode="Single">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Width="180"
+                                                Margin="10,3,10,3"
+                                                Text="{Binding FileName, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </materialDesign:DrawerHost.LeftDrawerContent>
 
-                        <TextBlock
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="10,3,10,3"
-                            Text="フォルダ" />
+                        <Grid Margin="10,0,10,0" HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="600" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                Text="ファイルパス" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedFile.FilePath, Mode=OneWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding
+                                        Key="A"
+                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                    <!--  選択したテキストをプロセスとして実行  -->
+                                    <KeyBinding
+                                        Key="O"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                </TextBox.InputBindings>
+                            </TextBox>
 
-                        <TextBox
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="10,3,10,3"
-                            IsReadOnly="True"
-                            Text="{Binding ItemViewModel.FolderName, Mode=OneWay}">
-                            <TextBox.InputBindings>
-                                <KeyBinding
-                                    Key="A"
-                                    Command="{Binding SelectTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                                <!--  選択したテキストをプロセスとして実行  -->
-                                <KeyBinding
-                                    Key="O"
-                                    Command="{Binding ExecuteSelectedTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                            </TextBox.InputBindings>
-                        </TextBox>
-                        <TextBlock
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Margin="10,3,10,3"
-                            Text="ファイル名" />
-                        <TextBox
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            Margin="10,3,10,3"
-                            IsReadOnly="True"
-                            Text="{Binding ItemViewModel.FileName, Mode=OneWay}">
-                            <TextBox.InputBindings>
-                                <KeyBinding
-                                    Key="A"
-                                    Command="{Binding SelectTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                                <!--  選択したテキストをプロセスとして実行  -->
-                                <KeyBinding
-                                    Key="O"
-                                    Command="{Binding ExecuteSelectedTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                            </TextBox.InputBindings>
-                        </TextBox>
-                        <TextBlock
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Margin="10,3,10,3"
-                            Text="フォルダ名とファイル名" />
-                        <TextBox
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="10,3,10,3"
-                            IsReadOnly="True"
-                            Text="{Binding ItemViewModel.FolderAndFileName, Mode=OneWay}">
-                            <TextBox.InputBindings>
-                                <KeyBinding
-                                    Key="A"
-                                    Command="{Binding SelectTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                                <!--  選択したテキストをプロセスとして実行  -->
-                                <KeyBinding
-                                    Key="O"
-                                    Command="{Binding ExecuteSelectedTextCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                    Modifiers="Ctrl" />
-                            </TextBox.InputBindings>
-                        </TextBox>
-                    </Grid>
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                Text="フォルダ" />
+
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedFile.FolderName, Mode=OneWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding
+                                        Key="A"
+                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                    <!--  選択したテキストをプロセスとして実行  -->
+                                    <KeyBinding
+                                        Key="O"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                Text="ファイル名" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedFile.FileName, Mode=OneWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding
+                                        Key="A"
+                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                    <!--  選択したテキストをプロセスとして実行  -->
+                                    <KeyBinding
+                                        Key="O"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                Text="フォルダ名とファイル名" />
+                            <TextBox
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding
+                                        Key="A"
+                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                    <!--  選択したテキストをプロセスとして実行  -->
+                                    <KeyBinding
+                                        Key="O"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </Grid>
+                    </materialDesign:DrawerHost>
                 </TabItem>
                 <TabItem
                     Width="Auto"
@@ -293,50 +323,97 @@
                     FontSize="10"
                     Header="イメージ"
                     Visibility="{Binding ImageTabVisibility}">
-                    <ScrollViewer
-                        Grid.Row="2"
-                        MaxHeight="500"
-                        Margin="10,3,10,3"
-                        VerticalAlignment="Top">
+                    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
+                        <materialDesign:DrawerHost.LeftDrawerContent>
+                            <Grid Width="200">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListBox
+                                    Margin="10,3,10,3"
+                                    AlternationCount="100"
+                                    ItemsSource="{Binding ItemViewModel.Images}"
+                                    SelectedIndex="{Binding SelectedImageIndex}"
+                                    SelectedItem="{Binding SelectedImage, UpdateSourceTrigger=PropertyChanged}"
+                                    SelectionMode="Single">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="画像" />
+                                                <ContentControl>
+                                                    <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
+                                                </ContentControl>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </materialDesign:DrawerHost.LeftDrawerContent>
 
-                        <Image
+                        <ScrollViewer
+                            Grid.Row="2"
                             MaxHeight="500"
                             Margin="10,3,10,3"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            Source="{Binding ItemViewModel.Image}"
-                            Stretch="Uniform" />
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="OpenAIチャット">
-                    <qc:QAChatControl
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        DataContext="{Binding QAChatControlViewModel}" />
+                            VerticalAlignment="Top">
+                            <Image
+                                MaxHeight="500"
+                                Margin="10,3,10,3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Source="{Binding SelectedImage}"
+                                Stretch="Uniform" />
+                        </ScrollViewer>
+                    </materialDesign:DrawerHost>
                 </TabItem>
             </TabControl>
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
-                <Button
-                    Width="100"
-                    Margin="10,10,10,0"
-                    Command="{Binding OKButtonCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
-                <Button
-                    Width="100"
-                    Margin="10,10,10,0"
-                    Command="{Binding CancelButtonCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
-                    DockPanel.Dock="Right" />
+            <DockPanel HorizontalAlignment="Left">
+                <ToggleButton
+                    x:Name="MenuToggleButton"
+                    Height="30"
+                    Margin="10,10,10,10"
+                    AutomationProperties.Name="HamburgerToggleButton"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+            </DockPanel>
+
+            <DockPanel HorizontalAlignment="Right">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button
+                        Grid.Column="0"
+                        Width="120"
+                        Height="30"
+                        Margin="10,10,10,10"
+                        Command="{Binding QAChatButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="QpenAIチャット"
+                        DockPanel.Dock="Right" />
+                    <Button
+                        Grid.Column="1"
+                        Width="100"
+                        Height="30"
+                        Margin="10,10,10,10"
+                        Command="{Binding OKButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="OK"
+                        DockPanel.Dock="Right" />
+                    <Button
+                        Grid.Column="2"
+                        Width="100"
+                        Height="30"
+                        Margin="10,10,10,10"
+                        Command="{Binding CancelButtonCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="キャンセル"
+                        DockPanel.Dock="Right" />
+                </Grid>
             </DockPanel>
         </Grid>
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />

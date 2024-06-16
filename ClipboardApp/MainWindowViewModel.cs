@@ -29,6 +29,8 @@ namespace ClipboardApp {
         public MainWindowViewModel() {
             Init();
 
+        }
+        public void Init() {
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
@@ -41,8 +43,7 @@ namespace ClipboardApp {
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
 
             ActiveInstance = this;
-        }
-        public void Init() {
+
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
 
@@ -417,11 +418,6 @@ namespace ClipboardApp {
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
             OpenTagWindowCommandExecute();
-        });
-
-        // コンテキストメニューの「ファイルのパスを分割」の実行用コマンド
-        public SimpleDelegateCommand<object> SplitFilePathCommand => new((parameter) => {
-            SplitFilePathCommandExecute(this);
         });
 
     }

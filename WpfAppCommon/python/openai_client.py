@@ -61,8 +61,6 @@ class OpenAIClient:
     def run_openai_chat(self, input_dict: dict) -> str:
         # OpenAIのchatを実行する
         client = self.get_completion_client()
-        model = self.props.OpenAICompletionModel
-            
         response = client.chat.completions.create(
             **input_dict
             )

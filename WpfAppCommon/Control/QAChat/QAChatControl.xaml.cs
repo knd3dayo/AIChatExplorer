@@ -21,6 +21,5 @@ namespace WpfAppCommon.Control.QAChat {
         public QAChatControl() {
             InitializeComponent();
         }
-
     }
 }

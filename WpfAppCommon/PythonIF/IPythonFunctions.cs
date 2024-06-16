@@ -40,17 +40,14 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList);
 
 
-        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
-
-
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
-
         public void OpenAIEmbedding(string text);
 
         public string RunScript(string script, string input);
 
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する
         public HashSet<string> ExtractEntity(string SpacyModel, string text);
+
+        public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson);
 
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory);
 
@@ -60,6 +57,11 @@ namespace WpfAppCommon.PythonIF {
 
         public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props);
 
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string request_json);
+
+        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
+
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
 
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
 

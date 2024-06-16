@@ -24,39 +24,23 @@ namespace WpfAppCommon.Model {
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }
+            ChatController chatController = new();
+
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
+            chatController.PromptTemplateText = PromptItem.Prompt;
+            chatController.ChatMode = Mode;
+            ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
+            chatController.VectorDBItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.Id.ToString(), clipboardFolder?.Description);
 
-            // promptTextを作成。 PromptItemのPrompt + クリップボードのContent
-            string promptText = PromptItem.Prompt + "\n----\n" + clipboardItem.Content;
-
-            List<ChatItem> chatItems = [];
-            ChatResult result = new();
-            // modeがRAGの場合はLangChainChatを実行
-            if (Mode == OpenAIExecutionModeEnum.RAG) {
-                Tools.Info("LangChainChatを実行");
-                // ClipboardFolderを取得
-                ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
-
-                // VectorDBItemの有効なアイテムを取得
-                IEnumerable<VectorDBItem> enabledItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.Id.ToString(), clipboardFolder?.Description);
-                result = PythonExecutor.PythonFunctions.LangChainChat(VectorDBItem.GetEnabledItems(), promptText, chatItems);
-            }
-            // modeがNormalの場合はOpenAIChatを実行
-            else if (Mode == OpenAIExecutionModeEnum.Normal) {
-                // OpenAIChatを実行
-                Tools.Info("OpenAIChatを実行");
-                result = PythonExecutor.PythonFunctions.OpenAIChat(promptText, chatItems);
-            } else {
+            ChatResult? result = chatController.ExecuteChat();
+            if (result == null) {
                 return clipboardItem;
             }
-            // リクエストをChatItemsに追加
-            clipboardItem.ChatItems.Add(new ChatItem(ChatItem.UserRole, promptText));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            clipboardItem.ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
-            // レスポンスをClipboardItemに設定
+            // ClipboardItemのContentにレスポンスを設定
             clipboardItem.Content = result.Response;
+            // レスポンスをClipboardItemに設定
+            clipboardItem.ChatItems = chatController.ChatItems;
             return clipboardItem;
         }
     }

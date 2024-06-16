@@ -22,6 +22,9 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
+        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string request_json) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
 
         public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
@@ -45,6 +48,11 @@ namespace WpfAppCommon.PythonIF {
         public HashSet<string> ExtractEntity(string SpacyModel, string text) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
+
+        public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
+
         public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }

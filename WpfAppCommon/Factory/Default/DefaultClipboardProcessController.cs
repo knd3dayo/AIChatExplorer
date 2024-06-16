@@ -23,29 +23,30 @@ namespace WpfAppCommon.Factory.Default {
             // System.Windows.MessageBox.Show(item.Content);
 
             if (item.ContentType == ClipboardContentTypes.Files) {
-                ClipboardItemFile clipboardItemFile = item.ClipboardItemFile ?? throw new ThisApplicationException("ファイル情報がありません");
-                string contentFilePath = clipboardItemFile.FilePath;
+                foreach (var clipboardItemFile in item.ClipboardItemFiles) {
+                    string contentFilePath = clipboardItemFile.FilePath;
 
-                // 新規として開く場合はテンポラリディレクトリにファイルをコピーする
-                if (openAsNew) {
-                    // item.Contentがディレクトリの場合はメッセージを表示して終了
-                    if (Directory.Exists(contentFilePath)) {
-                        throw new ThisApplicationException("ディレクトリは新規として開けません");
+                    // 新規として開く場合はテンポラリディレクトリにファイルをコピーする
+                    if (openAsNew) {
+                        // item.Contentがディレクトリの場合はメッセージを表示して終了
+                        if (Directory.Exists(contentFilePath)) {
+                            throw new ThisApplicationException("ディレクトリは新規として開けません");
+                        }
+                        // item.Contentのファイル名を取得
+                        contentFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(clipboardItemFile.FileName));
+
+                        // テンポラリディレクトリにコピー
+                        File.Copy(clipboardItemFile.FilePath, contentFilePath, true);
+
                     }
-                    // item.Contentのファイル名を取得
-                    contentFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(clipboardItemFile.FileName));
 
-                    // テンポラリディレクトリにコピー
-                    File.Copy(clipboardItemFile.FilePath, contentFilePath, true);
-
+                    // ファイルを開くプロセスを実行
+                    ProcessStartInfo proc = new ProcessStartInfo() {
+                        UseShellExecute = true,
+                        FileName = contentFilePath
+                    };
+                    Process.Start(proc);
                 }
-
-                // ファイルを開くプロセスを実行
-                ProcessStartInfo proc = new ProcessStartInfo() {
-                    UseShellExecute = true,
-                    FileName = contentFilePath
-                };
-                Process.Start(proc);
             } else if (item.ContentType == ClipboardContentTypes.Text) {
                 // テンポラリディレクトリにランダムな名前のファイルを作成
                 string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");

@@ -1,7 +1,13 @@
+using System.IO;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LibGit2Sharp;
+using WpfAppCommon.Model;
+using WpfAppCommon.PythonIF;
+using WpfAppCommon.Utils;
 
 namespace QAChat.Model {
     public class ChatItem {
@@ -58,15 +64,10 @@ namespace QAChat.Model {
             JsonSerializerOptions options = jsonSerializerOptions;
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
-        // Image用のContentを生成する
-        public static string GenerateImageVContent(string prompt, string imageBase64) {
-            string result = $$"""
-                [
-                  {"type": "text", "text": "{{prompt}}"}
-                  {"type": "image_url", "image_url": "data:application/octet-stream;base64,{{imageBase64}}}"
-                ]
-                """;
-            return result;
-        }
+        
+        // ImageのBase64文字列のリスト
+        public List<string> ImageBase64Strings { get; set; } = [];
+
+
     }
 }

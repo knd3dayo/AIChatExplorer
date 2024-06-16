@@ -10,14 +10,15 @@ namespace WpfAppCommon.Model {
         }
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
             ClipboardItemFile itemFile = new ClipboardItemFile();
-            itemFile.ClipboardItem = clipboardItem;
+            itemFile.ClipboardFolderPath = clipboardItem.FolderPath;
             itemFile.FilePath = filePath;
             return itemFile;
         }
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
-        // ClipboardItem
-        public ClipboardItem? ClipboardItem { get; set; }
+
+        // クリップボードアイテムのフォルダパス
+        public string ClipboardFolderPath { get; set; } = "";
 
         // ファイルパス
         public string FilePath { get; set; } = "";
@@ -33,6 +34,12 @@ namespace WpfAppCommon.Model {
                 return System.IO.Path.GetFileName(FilePath) ?? "";
             }
         }
+        // フォルダ名 + \n + ファイル名
+        public string FolderAndFileName {
+            get {
+                return FolderName + "\n" + FileName;
+            }
+        }
 
         // 削除
         public void Delete() {
@@ -41,10 +48,8 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                 // SyncFolderName/フォルダ名/ファイル名を削除する
                 string syncFolderName = ClipboardAppConfig.SyncFolderName;
-                if (ClipboardItem == null) {
-                    throw new Exception("FilePath is null");
-                }
-                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
+
+                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardFolderPath);
                 string syncFilePath = System.IO.Path.Combine(syncFolder, FileName);
                 if (System.IO.File.Exists(syncFilePath)) {
                     System.IO.File.Delete(syncFilePath);
@@ -79,10 +84,7 @@ namespace WpfAppCommon.Model {
                 }
                 // SyncFolderName/フォルダ名/ファイル名にファイルを保存する
                 string syncFolderName = ClipboardAppConfig.SyncFolderName;
-                if (ClipboardItem == null) {
-                    throw new Exception("FilePath is null");
-                }
-                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
+                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardFolderPath);
                 string syncFilePath = System.IO.Path.Combine(syncFolder, FileName);
                 if (!System.IO.Directory.Exists(syncFolder)) {
                     System.IO.Directory.CreateDirectory(syncFolder);
@@ -109,7 +111,7 @@ namespace WpfAppCommon.Model {
             }
         }
         // 取得
-        public static ClipboardItemFile? GetItems(LiteDB.ObjectId objectId) {
+        public static ClipboardItemFile? GetItem(LiteDB.ObjectId objectId) {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(objectId);
         }
     }
