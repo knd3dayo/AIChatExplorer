@@ -131,38 +131,78 @@
                     Padding="0"
                     FontSize="10"
                     Header="テキスト">
-                    <TextBox
-                        Name="Editor"
-                        Margin="10,3,10,3"
-                        AcceptsReturn="True"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsEnabled="True"
-                        Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="Enter"
-                                Command="{Binding OKButtonCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-                            <KeyBinding
-                                Key="Escape"
-                                Command="{Binding CancelButtonCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-                            <KeyBinding
-                                Key="A"
-                                Command="{Binding SelectTextCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                            <!--  選択したテキストをプロセスとして実行  -->
-                            <KeyBinding
-                                Key="O"
-                                Command="{Binding ExecuteSelectedTextCommand}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-
-                        </TextBox.InputBindings>
-                    </TextBox>
+                    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
+                        <materialDesign:DrawerHost.LeftDrawerContent>
+                            <DockPanel>
+                                <StackPanel DockPanel.Dock="Top">
+                                    <ToggleButton
+                                        Name="メニュー"
+                                        Width="200"
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding IsMenuDrawerOpen}"
+                                        Style="{StaticResource MaterialDesignFlatButton}">
+                                        <DockPanel Width="200">
+                                            <materialDesign:PackIcon Kind="Menu" />
+                                            <TextBlock Text="メニュー" />
+                                        </DockPanel>
+                                    </ToggleButton>
+                                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsMenuDrawerOpen}" OpenMode="Standard">
+                                        <materialDesign:DrawerHost.BottomDrawerContent>
+                                            <DockPanel Margin="10,0,0,0">
+                                                <StackPanel DockPanel.Dock="Top">
+                                                    <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                        <DockPanel Width="200">
+                                                            <materialDesign:PackIcon Kind="File" />
+                                                            <TextBlock FontSize="12" Text="テキストファイルとして開く" />
+                                                        </DockPanel>
+                                                    </Button>
+                                                    <StackPanel>
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="データをマスキング" />
+                                                            </DockPanel>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </materialDesign:DrawerHost.BottomDrawerContent>
+                                    </materialDesign:DrawerHost>
+                                </StackPanel>
+                            </DockPanel>
+                        </materialDesign:DrawerHost.LeftDrawerContent>
+                        <TextBox
+                            Name="Editor"
+                            Margin="10,3,10,3"
+                            AcceptsReturn="True"
+                            HorizontalScrollBarVisibility="Auto"
+                            IsEnabled="True"
+                            Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="Wrap"
+                            VerticalScrollBarVisibility="Auto">
+                            <TextBox.InputBindings>
+                                <KeyBinding
+                                    Key="Enter"
+                                    Command="{Binding OKButtonCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+                                <KeyBinding
+                                    Key="Escape"
+                                    Command="{Binding CancelButtonCommand}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+                                <KeyBinding
+                                    Key="A"
+                                    Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                    Modifiers="Ctrl" />
+                                <!--  選択したテキストをプロセスとして実行  -->
+                                <KeyBinding
+                                    Key="O"
+                                    Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                    Modifiers="Ctrl" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </materialDesign:DrawerHost>
                 </TabItem>
                 <TabItem
                     Width="Auto"

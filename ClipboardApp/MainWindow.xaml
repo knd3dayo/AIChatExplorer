@@ -259,7 +259,12 @@
                             <!--  Tree item  -->
                             <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
                             <DockPanel HorizontalAlignment="Stretch">
-                                <TextBlock DockPanel.Dock="Left" Text="{Binding FolderName}" />
+                                <materialDesign:PackIcon Foreground="{DynamicResource MaterialDesign.Brush.Primary}" Kind="Folder" />
+                                <TextBlock
+                                    DockPanel.Dock="Left"
+                                    Foreground="#616161"
+                                    Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
+                                    Text="{Binding FolderName}" />
                                 <DockPanel.InputBindings>
                                     <!--  Open folder on left click  -->
                                     <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->

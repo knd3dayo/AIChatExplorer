@@ -9,9 +9,10 @@ namespace WpfAppCommon.Model {
         public ClipboardItemFile() {
         }
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
-            ClipboardItemFile itemFile = new ClipboardItemFile();
-            itemFile.ClipboardFolderPath = clipboardItem.FolderPath;
-            itemFile.FilePath = filePath;
+            ClipboardItemFile itemFile = new() {
+                ClipboardFolderPath = clipboardItem.FolderPath,
+                FilePath = filePath
+            };
             return itemFile;
         }
 

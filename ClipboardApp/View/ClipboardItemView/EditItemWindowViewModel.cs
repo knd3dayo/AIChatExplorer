@@ -113,6 +113,17 @@ namespace ClipboardApp.View.ClipboardItemView {
                 OnPropertyChanged(nameof(IsDrawerOpen));
             }
         }
+        // IsMenuDrawerOpen
+        private bool isMenuDrawerOpen = false;
+        public bool IsMenuDrawerOpen {
+            get {
+                return isMenuDrawerOpen;
+            }
+            set {
+                isMenuDrawerOpen = value;
+                OnPropertyChanged(nameof(IsMenuDrawerOpen));
+            }
+        }
         // SelectedFile
         private ClipboardItemFile? selectedFile;
         public ClipboardItemFile? SelectedFile {
