@@ -483,7 +483,7 @@ namespace WpfAppCommon.Model {
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
             // TextとImageの場合
             if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
-                item.Description = $"{item.SourceApplicationTitle}";
+                item.Description = $"{item.SourceApplicationTitle} ";
             }
             // Fileの場合
             else if (item.ContentType == ClipboardContentTypes.Files) {
@@ -496,10 +496,10 @@ namespace WpfAppCommon.Model {
                 }
             }
             // ChatCommandExecuteを実行
-            string prompt = "この文章に50文字程度のタイトルをつけてください。タイトルがつけられない場合は空文字列を返してください\n";
-            prompt += "処理対象の文章\n-----------\n" + item.Content;
+            string prompt = "この文章のタイトルを生成してください。タイトルがつけられない場合は空文字列を返してください\n";
             ChatController chatController = new();
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatController.PromptTemplateText = prompt;
             chatController.ContentText = item.Content;
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
