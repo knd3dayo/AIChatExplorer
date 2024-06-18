@@ -495,6 +495,34 @@ namespace WpfAppCommon.Model {
             if (item.ContentType == ClipboardContentTypes.Text && lineCount < ClipboardAppConfig.IgnoreLineCount) {
                 return null;
             }
+
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
+            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
+                Tools.Info(StringResources.Instance.AutoMerge);
+                ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
+            }
+            // If AutoFileExtract is set, extract files
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
+                Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
+                foreach (var fileItem in item.ClipboardItemFiles) {
+                    string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
+                    item.Content += "\n"　+ text;
+                }
+            }
+            // ★TODO Implement processing based on automatic processing rules.
+            // If UseOCR is set, perform OCR
+            if (ClipboardAppConfig.UseOCR && image != null) {
+                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+                item.Content = text;
+                Tools.Info(StringResources.Instance.OCR);
+            }
+            // ★TODO Implement processing based on automatic processing rules.
+            // If AUTO_TAG is set, automatically set the tags
+            if (ClipboardAppConfig.AutoTag) {
+                Tools.Info(StringResources.Instance.AutoSetTag);
+                ClipboardItem.CreateAutoTags(item);
+            }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
                 Tools.Info(StringResources.Instance.AutoSetTitle);
@@ -504,34 +532,6 @@ namespace WpfAppCommon.Model {
 
                 Tools.Info(StringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitleWithOpenAI(item);
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AUTO_TAG is set, automatically set the tags
-            if (ClipboardAppConfig.AutoTag) {
-                Tools.Info(StringResources.Instance.AutoSetTag);
-                ClipboardItem.CreateAutoTags(item);
-            }
-
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
-            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                Tools.Info(StringResources.Instance.AutoMerge);
-                ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
-            }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If UseOCR is set, perform OCR
-            if (ClipboardAppConfig.UseOCR && image != null) {
-                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                item.Content = text;
-                Tools.Info(StringResources.Instance.OCR);
-            }
-            // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
-                Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
-                foreach (var fileItem in item.ClipboardItemFiles) {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
-                    item.Content += text + "\n";
-                }
             }
             return item;
         }
