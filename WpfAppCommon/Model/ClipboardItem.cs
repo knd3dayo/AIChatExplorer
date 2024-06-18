@@ -496,7 +496,7 @@ namespace WpfAppCommon.Model {
                 }
             }
             // ChatCommandExecuteを実行
-            string prompt = "次の文章はWindowsのクリップボードから取得した文章です。この文章にタイトルをつけてください。タイトルがつけられない場合は空文字列を返してください\n";
+            string prompt = "この文章に50文字程度のタイトルをつけてください。タイトルがつけられない場合は空文字列を返してください\n";
             prompt += "処理対象の文章\n-----------\n" + item.Content;
             ChatController chatController = new();
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
