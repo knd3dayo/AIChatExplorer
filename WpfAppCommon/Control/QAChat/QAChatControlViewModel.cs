@@ -168,9 +168,15 @@ namespace WpfAppCommon.Control.QAChat {
         }
 
 
-        public string PreviewText {
+        public string PreviewJson {
             get {
                 return ChatController.CreateOpenAIRequestJSON();
+            }
+        }
+
+        public string PreviewText {
+            get {
+                return ChatController.CreatePromptText();
             }
         }
 
@@ -197,10 +203,6 @@ namespace WpfAppCommon.Control.QAChat {
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
-                // OpenAIにチャットを送信してレスポンスを受け取る
-                // PromptTemplateがある場合はPromptTemplateを先頭に追加
-                string prompt = PreviewText;
-
                 ChatResult? result = null;
                 // プログレスバーを表示
                 IsIndeterminate = true;
@@ -261,9 +263,15 @@ namespace WpfAppCommon.Control.QAChat {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
-                    // PreviewTextを更新
+                    // プレビュータブが選択された場合、プレビューテキストを更新
                     OnPropertyChanged(nameof(PreviewText));
+                } 
+                if (tabControl.SelectedIndex == 2) {
+                    // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
+                    OnPropertyChanged(nameof(PreviewJson));
                 }
+
+
             }
         });
 
@@ -285,7 +293,7 @@ namespace WpfAppCommon.Control.QAChat {
                 ShowSearchWindowAction();
             }
             OnPropertyChanged(nameof(ContextItems));
-            OnPropertyChanged(nameof(PreviewText));
+            OnPropertyChanged(nameof(PreviewJson));
         });
 
         // プロンプトテンプレート画面を開くコマンド

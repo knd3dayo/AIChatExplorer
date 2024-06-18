@@ -36,9 +36,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -72,8 +70,8 @@
         </StackPanel>
         <qc:QAChatControl
             Name="QAChatControl"
-            Grid.Row="2"
+            Grid.Row="1"
             DataContext="{Binding QAChatControlViewModel}" />
-        <control:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

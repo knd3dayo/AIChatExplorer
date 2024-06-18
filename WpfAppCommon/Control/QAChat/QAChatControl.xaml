@@ -157,7 +157,7 @@
             </Grid.RowDefinitions>
             <TabControl
                 Grid.Row="0"
-                Margin="10,10,10,10"
+                Margin="10,5,10,5"
                 HorizontalContentAlignment="Left">
                 <TabItem
                     Width="Auto"
@@ -168,13 +168,14 @@
                     Header="チャット">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="200" />
                             <RowDefinition Height="5" />
-                            <RowDefinition Height="100" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <ListBox
                             Grid.Row="0"
-                            MinHeight="200"
                             ItemsSource="{Binding ChatItems}"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
                             SelectedItem="{Binding SelectedItem}">
@@ -240,64 +241,54 @@
                             Height="5"
                             Margin="0,0,0,0"
                             HorizontalAlignment="Stretch" />
-                        <Grid
+
+                        <ScrollViewer
                             Grid.Row="2"
                             Margin="0,0,0,0"
-                            VerticalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20" MinHeight="20" />
-                                <RowDefinition Height="5" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <ScrollViewer
-                                Grid.Row="0"
-                                Margin="0,0,0,0"
-                                VerticalScrollBarVisibility="Auto">
-                                <TextBox
-                                    MinHeight="20"
-                                    Margin="10,0,10,0"
-                                    materialDesign:HintAssist.Hint="プロンプトテンプレート。クリックするとプロンプトテンプレート選択画面が開きます。"
-                                    AcceptsReturn="True"
-                                    Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
-                                    <TextBox.InputBindings>
-                                        <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
-                                    </TextBox.InputBindings>
-                                </TextBox>
-                            </ScrollViewer>
-                            <GridSplitter
-                                Grid.Row="1"
-                                Height="5"
-                                Margin="0,0,0,0"
-                                HorizontalAlignment="Stretch" />
-                            <ScrollViewer
-                                Grid.Row="2"
-                                Margin="0,0,0,0"
-                                VerticalScrollBarVisibility="Auto">
-                                <TextBox
-                                    MinHeight="50"
-                                    Margin="10,0,10,0"
-                                    materialDesign:HintAssist.Hint="ここに質問を入力"
-                                    AcceptsReturn="True"
-                                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
-                                    <TextBox.InputBindings>
-                                        <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
-                                        <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
-                                        <KeyBinding
-                                            Key="A"
-                                            Command="{Binding SelectTextCommand}"
-                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                            Modifiers="Ctrl" />
-                                        <!--  選択したテキストをプロセスとして実行  -->
-                                        <KeyBinding
-                                            Key="O"
-                                            Command="{Binding ExecuteSelectedTextCommand}"
-                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                            Modifiers="Ctrl" />
-                                    </TextBox.InputBindings>
-                                </TextBox>
-                            </ScrollViewer>
-                        </Grid>
+                            VerticalScrollBarVisibility="Auto">
+                            <TextBox
+                                MinHeight="20"
+                                Margin="10,0,10,0"
+                                materialDesign:HintAssist.Hint="プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。"
+                                AcceptsReturn="True"
+                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </ScrollViewer>
+                        <GridSplitter
+                            Grid.Row="3"
+                            Height="5"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch" />
+                        <ScrollViewer
+                            Grid.Row="4"
+                            Margin="0,0,0,0"
+                            VerticalScrollBarVisibility="Auto">
+                            <TextBox
+                                MinHeight="50"
+                                Margin="10,0,10,0"
+                                materialDesign:HintAssist.Hint="ここに質問を入力"
+                                AcceptsReturn="True"
+                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
+                                    <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+                                    <KeyBinding
+                                        Key="A"
+                                        Command="{Binding SelectTextCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                    <!--  選択したテキストをプロセスとして実行  -->
+                                    <KeyBinding
+                                        Key="O"
+                                        Command="{Binding ExecuteSelectedTextCommand}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                                        Modifiers="Ctrl" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </ScrollViewer>
                     </Grid>
                 </TabItem>
                 <TabItem
@@ -318,6 +309,24 @@
                             TextWrapping="Wrap" />
                     </ScrollViewer>
                 </TabItem>
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="プレビュー(JSON)">
+                    <ScrollViewer
+                        Height="300"
+                        VerticalAlignment="Top"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBox
+                            Margin="10,10,10,10"
+                            VerticalAlignment="Top"
+                            Text="{Binding PreviewJson, Mode=OneWay}"
+                            TextWrapping="Wrap" />
+                    </ScrollViewer>
+                </TabItem>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand}" PassEventArgsToCommand="True" />
@@ -334,26 +343,28 @@
                 <ToggleButton
                     x:Name="MenuToggleButton"
                     Grid.Column="0"
+                    Height="25"
+                    Margin="10,0,10,5"
+                    VerticalAlignment="Center"
                     AutomationProperties.Name="HamburgerToggleButton"
                     IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
 
                 <StackPanel
                     Grid.Column="3"
-                    Margin="0,0,0,0"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,0,10,5"
                         Command="{Binding SendChatCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="送信" />
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,0,10,5"
                         Command="{Binding ClearChatCommand}"
                         Content="クリア" />
                     <Button
-                        Margin="10,10,10,10"
+                        Margin="10,0,10,5"
                         Command="{Binding CloseCommand}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="閉じる" />
