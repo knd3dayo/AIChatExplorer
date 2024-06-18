@@ -265,7 +265,9 @@
                                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
                                     Kind="Folder" />
                                 <TextBlock
+                                    Margin="0,3,0,0"
                                     DockPanel.Dock="Left"
+                                    FontSize="12"
                                     Foreground="#616161"
                                     Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
                                     Text="{Binding FolderName}" />

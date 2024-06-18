@@ -10,7 +10,7 @@ using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Views.QAChat {
+namespace WpfAppCommon.View.QAChat {
     public class EditChatItemWindowViewModel: MyWindowViewModel {
 
         private readonly TextSelector TextSelector = new();

@@ -6,7 +6,7 @@ using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
-using WpfAppCommon.Views.QAChat;
+using WpfAppCommon.View.QAChat;
 
 namespace WpfAppCommon.Control.QAChat {
     public class QAChatControlViewModel : ObservableObject{

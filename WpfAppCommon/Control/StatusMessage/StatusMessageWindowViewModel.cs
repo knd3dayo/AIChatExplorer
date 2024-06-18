@@ -17,6 +17,13 @@ namespace WpfCommonApp.Control.StatusMessage {
             // メッセージを初期化
             Message = string.Join("\n", StatusText.Messages);
         }
+        // クリアボタンのコマンド
+        public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
+            // メッセージをクリア
+            StatusText.Messages.Clear();
+            // メッセージを初期化
+            Message = string.Join("\n", StatusText.Messages);
+        });
 
         public SimpleDelegateCommand<Window> CloseCommand => new ((window) => {
             // ウィンドウを閉じる

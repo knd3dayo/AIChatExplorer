@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using QAChat.Model;
 
-namespace WpfAppCommon.Views.QAChat {
+namespace WpfAppCommon.View.QAChat {
     /// <summary>
     /// EditChatItemWindow.xaml の相互作用ロジック
     /// </summary>

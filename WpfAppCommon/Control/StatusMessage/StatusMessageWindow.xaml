@@ -61,7 +61,15 @@
         <DockPanel
             Grid.Row="2"
             Margin="10,10,10,10"
+            HorizontalAlignment="Right"
             VerticalAlignment="Bottom">
+            <Button
+                Width="100"
+                Margin="10,10,10,10"
+                HorizontalAlignment="Right"
+                Command="{Binding ClearCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                Content="クリア" />
             <Button
                 Width="100"
                 Margin="10,10,10,10"
