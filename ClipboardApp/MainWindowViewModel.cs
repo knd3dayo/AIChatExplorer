@@ -363,21 +363,13 @@ namespace ClipboardApp {
         });
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> OpenSelectedItemAsFileCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenSelectedItemAsFileCommandExecute(this.SelectedItem);
+        public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
+            ClipboardItemViewModel.OpenContentAsFileCommandExecute(this.SelectedItem);
         });
 
-        // 選択したアイテムのフォルダを開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenFolderCommandExecute(this.SelectedItem);
-        });
         // 選択したアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenFileCommand => new((parameter) => {
             ClipboardItemViewModel.OpenFileCommandExecute(this.SelectedItem);
-        });
-        // 選択したアイテムを一時フォルダで開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> OpenFileInTempFolderCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenFileInTempFolderCommandExecute(this.SelectedItem);
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能

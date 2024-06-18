@@ -498,8 +498,13 @@ namespace WpfAppCommon.Model {
             // ChatCommandExecuteを実行
             string prompt = "次の文章はWindowsのクリップボードから取得した文章です。この文章にタイトルをつけてください。タイトルがつけられない場合は空文字列を返してください\n";
             prompt += "処理対象の文章\n-----------\n" + item.Content;
-            ChatResult result = PythonExecutor.PythonFunctions.OpenAIChat(prompt, []);
-            item.Description += result.Response;
+            ChatController chatController = new();
+            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatController.ContentText = item.Content;
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                item.Description += result.Response;
+            }
         }
 
         // 自動でタグを付与するコマンド

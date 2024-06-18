@@ -43,6 +43,12 @@
             Key="Escape"
             Command="{Binding CancelButtonCommand}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <!--  Ctrl + Sで保存  -->
+        <KeyBinding
+            Key="S"
+            Command="{Binding SaveCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+            Modifiers="Ctrl" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -153,17 +159,25 @@
                                                     <Button Style="{StaticResource MaterialDesignFlatButton}">
                                                         <DockPanel Width="200">
                                                             <materialDesign:PackIcon Kind="File" />
-                                                            <TextBlock FontSize="12" Text="テキストファイルとして開く" />
+                                                            <TextBlock FontSize="12" Text="ファイルとして開く" />
                                                         </DockPanel>
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Click">
+                                                                <i:InvokeCommandAction Command="{Binding ItemViewModel.OpenContentAsFileCommand}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
                                                     </Button>
-                                                    <StackPanel>
-                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
-                                                            <DockPanel Width="200">
-                                                                <materialDesign:PackIcon Kind="Edit" />
-                                                                <TextBlock FontSize="12" Text="データをマスキング" />
-                                                            </DockPanel>
-                                                        </Button>
-                                                    </StackPanel>
+                                                    <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                        <DockPanel Width="200">
+                                                            <materialDesign:PackIcon Kind="Edit" />
+                                                            <TextBlock FontSize="12" Text="データをマスキング" />
+                                                        </DockPanel>
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="Click">
+                                                                <i:InvokeCommandAction Command="{Binding ItemViewModel.MaskDataCommand}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                    </Button>
                                                 </StackPanel>
                                             </DockPanel>
                                         </materialDesign:DrawerHost.BottomDrawerContent>
@@ -217,8 +231,76 @@
                             <Grid Width="200">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <StackPanel DockPanel.Dock="Top">
+                                        <ToggleButton
+                                            Width="200"
+                                            HorizontalAlignment="Left"
+                                            IsChecked="{Binding IsMenuDrawerOpen}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                            <DockPanel Width="200">
+                                                <materialDesign:PackIcon Kind="Menu" />
+                                                <TextBlock Text="メニュー" />
+                                            </DockPanel>
+                                        </ToggleButton>
+                                        <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsMenuDrawerOpen}" OpenMode="Standard">
+                                            <materialDesign:DrawerHost.BottomDrawerContent>
+                                                <DockPanel Margin="10,0,0,0">
+                                                    <StackPanel DockPanel.Dock="Top">
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="File" />
+                                                                <TextBlock FontSize="12" Text="ファイルを開く" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.OpenFileCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="新規ファイルとして開く" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="フォルダを開く" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.OpenFolderCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="テキストを抽出" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.ExtractTextCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </materialDesign:DrawerHost.BottomDrawerContent>
+                                        </materialDesign:DrawerHost>
+                                    </StackPanel>
+                                </DockPanel>
                                 <ListBox
+                                    Grid.Row="1"
                                     Margin="10,3,10,3"
                                     ItemsSource="{Binding ItemViewModel.Files}"
                                     SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
@@ -368,8 +450,55 @@
                             <Grid Width="200">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <StackPanel DockPanel.Dock="Top">
+                                        <ToggleButton
+                                            Width="200"
+                                            HorizontalAlignment="Left"
+                                            IsChecked="{Binding IsMenuDrawerOpen}"
+                                            Style="{StaticResource MaterialDesignFlatButton}">
+                                            <DockPanel Width="200">
+                                                <materialDesign:PackIcon Kind="Menu" />
+                                                <TextBlock Text="メニュー" />
+                                            </DockPanel>
+                                        </ToggleButton>
+                                        <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsMenuDrawerOpen}" OpenMode="Standard">
+                                            <materialDesign:DrawerHost.BottomDrawerContent>
+                                                <DockPanel Margin="10,0,0,0">
+                                                    <StackPanel DockPanel.Dock="Top">
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="画像を開く" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.OpenImageCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                        <Button Style="{StaticResource MaterialDesignFlatButton}">
+                                                            <DockPanel Width="200">
+                                                                <materialDesign:PackIcon Kind="Edit" />
+                                                                <TextBlock FontSize="12" Text="テキストを抽出" />
+                                                            </DockPanel>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Click">
+                                                                    <i:InvokeCommandAction Command="{Binding ItemViewModel.MenuItemExtractTextFromImageCommand}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </materialDesign:DrawerHost.BottomDrawerContent>
+                                        </materialDesign:DrawerHost>
+                                    </StackPanel>
+                                </DockPanel>
+
                                 <ListBox
+                                    Grid.Row="1"
                                     Margin="10,3,10,3"
                                     AlternationCount="100"
                                     ItemsSource="{Binding ItemViewModel.Images}"

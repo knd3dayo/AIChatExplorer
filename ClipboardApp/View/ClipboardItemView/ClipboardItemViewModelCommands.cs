@@ -7,6 +7,7 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
+using ClipboardApp.Views.ClipboardItemView;
 using MS.WindowsAPICodePack.Internal;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
@@ -96,35 +97,16 @@ namespace ClipboardApp.View.ClipboardItemView {
 
 
 
-        // 選択中のアイテムを開く処理
-        public static void OpenSelectedItemAsFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
-            if (itemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
-            }
-            try {
-                // 選択中のアイテムを開く
-                itemViewModel.OpenItem();
-
-            } catch (ClipboardAppException e) {
-                Tools.Error(e.Message);
-            }
-
-        }
 
         // ContentTypeがFileの場合にフォルダを開く処理
-        public static void OpenFolderCommandExecute(ClipboardItemViewModel? itemViewModel) {
-            if (itemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
-            }
+        public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             // ContentTypeがFileの場合のみフォルダを開く
-            if (itemViewModel.ContentType != ClipboardContentTypes.Files) {
+            if (this.ContentType != ClipboardContentTypes.Files) {
                 Tools.Error("ファイル以外のコンテンツはフォルダを開けません");
                 return;
             }
             // Process.Startでフォルダを開く
-            foreach(var item in itemViewModel.ClipboardItem.ClipboardItemFiles) {
+            foreach (var item in this.ClipboardItem.ClipboardItemFiles) {
                 string? folderPath = item.FolderName;
                 if (folderPath != null) {
                     var p = new Process();
@@ -134,7 +116,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                     p.Start();
                 }
             }
-        }
+        });
 
         // ContentTypeがFileの場合にファイルを開く処理
         public static void OpenFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
@@ -160,100 +142,17 @@ namespace ClipboardApp.View.ClipboardItemView {
                 }
             }
         }
-        // 一時フォルダでファイルを開く処理
-        public static void OpenFileInTempFolderCommandExecute(ClipboardItemViewModel? itemViewModel) {
-            if (itemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
-            }
-            // ContentTypeがFileの場合のみファイルを開く
-            if (itemViewModel.ContentType != ClipboardContentTypes.Files) {
-                Tools.Error("ファイル以外のコンテンツはファイルを開けません");
-                return;
-            }
-            foreach(var item in itemViewModel.ClipboardItem.ClipboardItemFiles) {
-                string? filePath = item.FilePath;
-                if (filePath != null) {
-                    // テンポラリディレクトリにファイルをコピーして開く
-                    string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(filePath));
-                    // ファイルの先頭に[temp]を付ける
-                    tempFilePath = Path.Combine(Path.GetTempPath(), "[temp]" + Path.GetFileName(tempFilePath));
-                    File.Copy(filePath, tempFilePath, true);
-                    var p = new Process();
-                    p.StartInfo = new ProcessStartInfo(tempFilePath) {
-                        UseShellExecute = true
-                    };
-                    p.Start();
-                }
-            }
-        }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public static SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            MainWindowViewModel? windowViewModel = MainWindowViewModel.ActiveInstance;
-            if (windowViewModel == null) {
-                Tools.Error("MainWindowViewModelが取得できませんでした");
-                return;
-            }
-            var clipboardItemViewModel = windowViewModel.SelectedItem;
-            if (clipboardItemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
-            }            // File以外の場合はエラー
-            if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Files) {
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
+            if (this.ContentType != ClipboardContentTypes.Files) {
                 Tools.Error("ファイル以外のコンテンツはテキストを抽出できません");
                 return;
             }
-            ClipboardItem.ExtractTextCommandExecute(clipboardItemViewModel.ClipboardItem);
+            ClipboardItem.ExtractTextCommandExecute(this.ClipboardItem);
             // 保存
-            clipboardItemViewModel.Save();
-
+            this.Save();
         });
-
-        // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public static SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
-            ClipboardItemViewModel? clipboardItemViewModel = MainWindowViewModel.ActiveInstance?.SelectedItem;
-            if (clipboardItemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
-                return;
-            } 
-            // テキスト以外の場合はエラー
-            if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Text) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("テキスト以外のコンテンツはマスキングできません");
-                return;
-            }
-            clipboardItemViewModel.ClipboardItem.MaskDataCommandExecute();
-            // 保存
-            clipboardItemViewModel.Save();
-
-        });
-
-        // コンテキストメニューの「画像からテキストを抽出」をクリックしたときの処理
-        public static void MenuItemExtractTextFromImageCommandExecute(ClipboardItemViewModel? clipboardItemViewModel) {
-            if (clipboardItemViewModel == null) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("クリップボードアイテムが選択されていません");
-                return;
-            }
-            // 画像以外の場合はエラー
-            if (clipboardItemViewModel.ContentType != ClipboardContentTypes.Image) {
-                // 対話処理のため、エラー時はダイアログを表示
-                Tools.Error("画像以外のコンテンツはテキストを抽出できません");
-                return;
-            }
-            // OCRが使用不可の場合はエラー
-            if (!ClipboardAppConfig.UseOCR) {
-                Tools.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
-                return;
-            }
-            try {
-                ExtractTextFromImage(clipboardItemViewModel);
-            } catch (Exception ex) {
-                Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
-            }
-
-        }
 
         // メニューの「Pythonスクリプトを実行」をクリックしたときの処理
         public async static void MenuItemRunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItemViewModel itemViewModel) {
@@ -377,6 +276,62 @@ namespace ClipboardApp.View.ClipboardItemView {
             // DBに反映
             Save();
         }
+
+        // ファイルを開くコマンド
+        public SimpleDelegateCommand<object> OpenFileCommand => new((obj) => {
+            // 選択中のアイテムを開く
+            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, false);
+        });
+
+        // ファイルを新規ファイルとして開くコマンド
+        public SimpleDelegateCommand<object> OpenFileAsNewFileCommand => new((obj) => {
+            // 選択中のアイテムを開く
+            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, true);
+        });
+
+        // 画像を開くコマンド
+        public SimpleDelegateCommand<object> OpenImageCommand => new((obj) => {
+            // 選択中のアイテムを開く
+            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemImage(ClipboardItem);
+        });
+
+        // 画像からテキストを抽出するコマンド
+        public SimpleDelegateCommand<object> MenuItemExtractTextFromImageCommand => new((parameter) => {
+            // 画像以外の場合はエラー
+            if (ContentType != ClipboardContentTypes.Image) {
+                // 対話処理のため、エラー時はダイアログを表示
+                Tools.Error("画像以外のコンテンツはテキストを抽出できません");
+                return;
+            }
+            // OCRが使用不可の場合はエラー
+            if (!ClipboardAppConfig.UseOCR) {
+                Tools.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
+                return;
+            }
+            try {
+                ExtractTextFromImage(this);
+            } catch (Exception ex) {
+                Tools.Error($"OCR処理が失敗しました。\n{ex.Message}");
+            }
+        });
+
+
+
+        // コンテキストメニュー
+        public ClipboardItemFolderContextMenuItems ContextMenuItems {
+            get {
+                return new ClipboardItemFolderContextMenuItems(this);
+            }
+        }
+        // コンテキストメニューの「データをマスキング」の実行用コマンド
+        public SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
+
+            this.ClipboardItem.MaskDataCommandExecute();
+            // 保存
+            this.Save();
+
+        });
+
     }
 
 }

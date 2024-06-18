@@ -7,7 +7,11 @@ using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Factory {
     public interface IClipboardProcessController {
-        public void OpenItem(ClipboardItem item, bool openAsNew = false);
+        public void OpenClipboardItemContent(ClipboardItem item);
 
+        public void OpenClipboardItemFile(ClipboardItem item, bool openAsNew = false);
+
+        // 画像を開く
+        public void OpenClipboardItemImage(ClipboardItem item);
     }
 }

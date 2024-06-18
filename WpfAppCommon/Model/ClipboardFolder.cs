@@ -436,7 +436,7 @@ namespace WpfAppCommon.Model {
                     // Notify the completion of processing
                     _afterClipboardChanged(updatedItem);
 
-                } catch (ThisApplicationException ex) {
+                } catch (Exception ex) {
                     Tools.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
                 } finally {
                     Application.Current.Dispatcher.Invoke(() => {
@@ -497,64 +497,40 @@ namespace WpfAppCommon.Model {
             }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
-                try {
-                    Tools.Info(StringResources.Instance.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitle(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
-                }
+                Tools.Info(StringResources.Instance.AutoSetTitle);
+                ClipboardItem.CreateAutoTitle(item);
+
             } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
-                try {
-                    Tools.Info(StringResources.Instance.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoSetTitle}\n{ex.Message}");
-                }
+                Tools.Info(StringResources.Instance.AutoSetTitle);
+                ClipboardItem.CreateAutoTitleWithOpenAI(item);
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
                 Tools.Info(StringResources.Instance.AutoSetTag);
-                try {
-                    ClipboardItem.CreateAutoTags(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.SetTagFailed}\n{ex.Message}");
-                }
+                ClipboardItem.CreateAutoTags(item);
             }
 
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
             if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
                 Tools.Info(StringResources.Instance.AutoMerge);
-                try {
-                    ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.MergeFailed}\n{ex.Message}");
-                }
+                ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If UseOCR is set, perform OCR
             if (ClipboardAppConfig.UseOCR && image != null) {
+                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
+                item.Content = text;
                 Tools.Info(StringResources.Instance.OCR);
-                try {
-                    string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                    item.Content = text;
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.OCRFailed}\n{ex.Message}");
-                }
             }
             // If AutoFileExtract is set, extract files
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
                 Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
-                try {
-                    foreach (var fileItem in item.ClipboardItemFiles) {
-                        string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
-                        item.Content += text + "\n";
-                    }
-
-                } catch (ThisApplicationException ex) {
-                    Tools.Error($"{StringResources.Instance.AutoFileExtractFailed}\n{ex.Message}");
+                foreach (var fileItem in item.ClipboardItemFiles) {
+                    string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
+                    item.Content += text + "\n";
                 }
             }
             return item;

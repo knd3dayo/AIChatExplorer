@@ -204,9 +204,8 @@ namespace ClipboardApp.View.ClipboardItemView {
             ClipboardItemViewModel.OpenOpenAIChatWindowExecute(FolderViewModel, ItemViewModel);
         });
 
-        // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
-
+        // Saveコマンド
+        public SimpleDelegateCommand<object> SaveCommand => new((obj) => {
             // TitleとContentの更新を反映
             if (ItemViewModel == null) {
                 return;
@@ -223,6 +222,13 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             // 更新後の処理を実行
             _afterUpdate.Invoke();
+
+        });
+        // OKボタンのコマンド
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
+
+            // SaveCommandを実行
+            SaveCommand.Execute(null);
             // ウィンドウを閉じる
             window.Close();
         });

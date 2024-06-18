@@ -29,6 +29,10 @@ namespace QAChat.Model {
         [JsonIgnore]
         public string SourceDocumentURL { get; set; } = "";
 
+        // ImageのBase64文字列のリスト
+        [JsonIgnore]
+        public List<string> ImageBase64Strings { get; set; } = [];
+
         [JsonIgnore]
         // Content + Sourcesを返す
         public string ContentWithSources {
@@ -64,9 +68,6 @@ namespace QAChat.Model {
             JsonSerializerOptions options = jsonSerializerOptions;
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
-        
-        // ImageのBase64文字列のリスト
-        public List<string> ImageBase64Strings { get; set; } = [];
 
 
     }

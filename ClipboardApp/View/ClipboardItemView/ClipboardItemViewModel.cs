@@ -2,11 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.Views.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel : ObservableObject {
@@ -215,18 +217,26 @@ namespace ClipboardApp.View.ClipboardItemView {
         public ClipboardItemViewModel Copy() {
             return new ClipboardItemViewModel(ClipboardItem.Copy());
         }
-        // OpenItem
-        public void OpenItem(bool openAsNew = false) {
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenItem(ClipboardItem, true);
-        }
 
 
-
-        // コンテキストメニュー
-        public ClipboardItemFolderContextMenuItems ContextMenuItems {
-            get {
-                return new ClipboardItemFolderContextMenuItems(this);
+        // テキストをファイルとして開くコマンド
+        public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
+            // 選択中のファイルを開く
+            OpenContentAsFileCommandExecute(this);
+        });
+        // 選択中のアイテムを開く処理
+        public static void OpenContentAsFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
+            if (itemViewModel == null) {
+                Tools.Error("クリップボードアイテムが選択されていません。");
+                return;
             }
+            try {
+                // 選択中のアイテムを開く
+                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(itemViewModel.ClipboardItem);
+            } catch (ClipboardAppException e) {
+                Tools.Error(e.Message);
+            }
+
         }
 
 
