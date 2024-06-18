@@ -70,7 +70,7 @@
             <TabItem
                 Width="Auto"
                 Height="Auto"
-                Margin="10,0,10,0"
+                Margin="10,3,10,0"
                 Padding="0"
                 FontSize="10"
                 Header="フォルダ単位">
@@ -124,7 +124,7 @@
             <TabItem
                 Width="Auto"
                 Height="Auto"
-                Margin="10,0,10,0"
+                Margin="10,3,10,0"
                 Padding="0"
                 FontSize="10"
                 Header="システム共通">
