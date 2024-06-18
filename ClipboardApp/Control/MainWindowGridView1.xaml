@@ -97,16 +97,10 @@
                     Header="種別"
                     IsReadOnly="True" />
                 <DataGridTextColumn
-                    Width="250"
+                    Width="*"
                     Binding="{Binding DescriptionText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
                     Header="タイトル"
-                    IsReadOnly="True" />
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding ContentSummary}"
-                    ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="コンテンツ"
                     IsReadOnly="True" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
