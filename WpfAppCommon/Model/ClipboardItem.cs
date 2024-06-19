@@ -488,15 +488,10 @@ namespace WpfAppCommon.Model {
             // Fileの場合
             else if (item.ContentType == ClipboardContentTypes.Files) {
                 item.Description = $"{item.SourceApplicationTitle}";
-                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
-                if (item.Content.Length > 20) {
-                    item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
-                } else {
-                    item.Description += " ファイル：" + item.Content;
-                }
+                item.Description += " ファイル名：" + item.Content;
             }
             // ChatCommandExecuteを実行
-            string prompt = "この文章のタイトルを生成してください。タイトルがつけられない場合は空文字列を返してください\n";
+            string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルがつけられない場合は空文字列を返してください\n";
             ChatController chatController = new();
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = prompt;

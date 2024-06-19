@@ -521,7 +521,7 @@ namespace WpfAppCommon.Model {
             // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
                 Tools.Info(StringResources.Instance.AutoSetTag);
-                ClipboardItem.CreateAutoTags(item);
+                    ClipboardItem.CreateAutoTags(item);
             }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
