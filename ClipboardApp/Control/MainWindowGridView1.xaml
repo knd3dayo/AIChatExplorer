@@ -168,7 +168,7 @@
                         VerticalAlignment="Top"
                         materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                         BorderThickness="0"
-                        FontSize="8pt"
+                        FontSize="10pt"
                         IsReadOnly="True"
                         Text="{Binding Path=SelectedItem.Content, Mode=OneWay}">
                         <TextBox.InputBindings>

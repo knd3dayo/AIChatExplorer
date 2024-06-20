@@ -11,7 +11,7 @@
     xmlns:qc="clr-namespace:WpfAppCommon.Control.QAChat;assembly=WpfAppCommon"
     Title="{Binding StringResources.QAChatWindowTitle}"
     Width="800"
-    SizeToContent="Height"
+    Height="400"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>

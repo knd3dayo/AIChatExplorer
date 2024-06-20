@@ -58,7 +58,7 @@
                                 HorizontalAlignment="Stretch"
                                 materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
                                 BorderThickness="0"
-                                FontSize="8pt"
+                                FontSize="10pt"
                                 IsReadOnly="True"
                                 Text="{Binding Path=Content, Mode=OneWay}"
                                 TextWrapping="Wrap">

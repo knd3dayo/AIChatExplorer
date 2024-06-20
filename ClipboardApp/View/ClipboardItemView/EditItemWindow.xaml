@@ -189,6 +189,7 @@
                             Name="Editor"
                             Margin="10,3,10,3"
                             AcceptsReturn="True"
+                            FontSize="10pt"
                             HorizontalScrollBarVisibility="Auto"
                             IsEnabled="True"
                             Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"

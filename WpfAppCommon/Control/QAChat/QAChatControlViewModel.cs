@@ -182,7 +182,7 @@ namespace WpfAppCommon.Control.QAChat {
 
         private readonly TextSelector TextSelector = new();
 
-        private bool _IsDrawerOpen = false;
+        private bool _IsDrawerOpen = true;
         public bool IsDrawerOpen {
             get {
                 return _IsDrawerOpen;

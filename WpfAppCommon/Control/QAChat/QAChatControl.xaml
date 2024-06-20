@@ -23,11 +23,11 @@
     <UserControl.InputBindings>
         <KeyBinding
             Key="Enter"
-            Command="{Binding SendChatCommand}"
+            Command="{Binding SendChatCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </UserControl.InputBindings>
 
@@ -58,7 +58,7 @@
                         <ComboBoxItem Content="LangChain" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -89,13 +89,13 @@
                         </ListBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding OpenVectorDBItemCommand}" Header="開く" />
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand}" Header="リストから除外" />
+                                <MenuItem Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" Header="開く" />
+                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -119,7 +119,7 @@
                         <ComboBoxItem Content="検索したアイテム" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -136,13 +136,13 @@
                         </ListBox.ItemTemplate>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding OpenClipboardItemCommand}" Header="開く" />
-                                <MenuItem Command="{Binding RemoveClipboardItemCommand}" Header="リストから除外" />
+                                <MenuItem Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" Header="開く" />
+                                <MenuItem Command="{Binding RemoveClipboardItemCommand, Mode=OneTime}" Header="リストから除外" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -168,7 +168,7 @@
                     Header="チャット">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="200" />
+                            <RowDefinition Height="5*" />
                             <RowDefinition Height="5" />
                             <RowDefinition Height="20" />
                             <RowDefinition Height="5" />
@@ -188,8 +188,8 @@
                                         materialDesign:ElevationAssist.Elevation="Dp6">
                                         <Grid Margin="0,0,0,0">
                                             <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="100" />
                                             </Grid.RowDefinitions>
                                             <TextBox
                                                 Grid.Row="0"
@@ -203,10 +203,10 @@
                                                 MinHeight="30"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
-                                                FontSize="8pt"
+                                                VerticalContentAlignment="Top"
+                                                FontSize="10pt"
                                                 IsReadOnly="True"
-                                                Text="{Binding ContentWithSources, Mode=OneWay}"
-                                                TextWrapping="Wrap">
+                                                Text="{Binding ContentWithSources, Mode=OneWay}">
                                                 <TextBox.InputBindings>
                                                     <KeyBinding
                                                         Key="A"
@@ -253,7 +253,7 @@
                                 AcceptsReturn="True"
                                 Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
-                                    <MouseBinding Command="{Binding PromptTemplateCommand}" MouseAction="LeftDoubleClick" />
+                                    <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
                                 </TextBox.InputBindings>
                             </TextBox>
                         </ScrollViewer>
@@ -273,17 +273,17 @@
                                 AcceptsReturn="True"
                                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
-                                    <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
-                                    <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+                                    <KeyBinding Key="Enter" Command="{Binding SendChatCommand, Mode=OneTime}" />
+                                    <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
                                     <KeyBinding
                                         Key="A"
-                                        Command="{Binding SelectTextCommand}"
+                                        Command="{Binding SelectTextCommand, Mode=OneTime}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                     <!--  選択したテキストをプロセスとして実行  -->
                                     <KeyBinding
                                         Key="O"
-                                        Command="{Binding ExecuteSelectedTextCommand}"
+                                        Command="{Binding ExecuteSelectedTextCommand, Mode=OneTime}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                 </TextBox.InputBindings>
@@ -329,7 +329,7 @@
                 </TabItem>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
-                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </TabControl>
@@ -356,16 +356,16 @@
                     Orientation="Horizontal">
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding SendChatCommand}"
+                        Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="送信" />
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding ClearChatCommand}"
+                        Command="{Binding ClearChatCommand, Mode=OneTime}"
                         Content="クリア" />
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding CloseCommand}"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="閉じる" />
                 </StackPanel>
