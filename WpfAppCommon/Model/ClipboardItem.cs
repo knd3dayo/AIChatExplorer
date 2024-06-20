@@ -535,7 +535,7 @@ namespace WpfAppCommon.Model {
                     clipboardItem.Content += text + "\n";
 
                 } catch (UnsupportedFileTypeException) {
-                    Tools.Error("サポートされていないファイル形式です");
+                    Tools.Info("サポートされていないファイル形式です");
                     return clipboardItem;
                 }
                 Tools.Info($"{path}のテキストを抽出しました");
@@ -549,7 +549,8 @@ namespace WpfAppCommon.Model {
         public ClipboardItem MaskDataCommandExecute() {
 
             if (this.ContentType != ClipboardContentTypes.Text) {
-                throw new ThisApplicationException("テキスト以外のコンテンツはマスキングできません");
+                Tools.Info("テキスト以外のコンテンツはマスキングできません");
+                return this;
             }
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, this.Content);
