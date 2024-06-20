@@ -27,32 +27,32 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
     <Window.InputBindings>
         <KeyBinding
             Key="Enter"
-            Command="{Binding OKButtonCommand}"
+            Command="{Binding OKButtonCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CancelButtonCommand}"
+            Command="{Binding CancelButtonCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <!--  Ctrl + Sで保存  -->
         <KeyBinding
             Key="S"
-            Command="{Binding SaveCommand}"
+            Command="{Binding SaveCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
             Modifiers="Ctrl" />
     </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="18" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -122,7 +122,7 @@
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
                     <TextBox.InputBindings>
-                        <MouseBinding Command="{Binding AddTagButtonCommand}" MouseAction="LeftDoubleClick" />
+                        <MouseBinding Command="{Binding AddTagButtonCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
                     </TextBox.InputBindings>
                 </TextBox>
             </Grid>
@@ -197,21 +197,21 @@
                             <TextBox.InputBindings>
                                 <KeyBinding
                                     Key="Enter"
-                                    Command="{Binding OKButtonCommand}"
+                                    Command="{Binding OKButtonCommand, Mode=OneTime}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
                                 <KeyBinding
                                     Key="Escape"
-                                    Command="{Binding CancelButtonCommand}"
+                                    Command="{Binding CancelButtonCommand, Mode=OneTime}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
                                 <KeyBinding
                                     Key="A"
-                                    Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                    Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                     Modifiers="Ctrl" />
                                 <!--  選択したテキストをプロセスとして実行  -->
                                 <KeyBinding
                                     Key="O"
-                                    Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                    Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                     Modifiers="Ctrl" />
                             </TextBox.InputBindings>
@@ -346,13 +346,13 @@
                                 <TextBox.InputBindings>
                                     <KeyBinding
                                         Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                     <!--  選択したテキストをプロセスとして実行  -->
                                     <KeyBinding
                                         Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                 </TextBox.InputBindings>
@@ -373,13 +373,13 @@
                                 <TextBox.InputBindings>
                                     <KeyBinding
                                         Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                     <!--  選択したテキストをプロセスとして実行  -->
                                     <KeyBinding
                                         Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                 </TextBox.InputBindings>
@@ -398,13 +398,13 @@
                                 <TextBox.InputBindings>
                                     <KeyBinding
                                         Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                     <!--  選択したテキストをプロセスとして実行  -->
                                     <KeyBinding
                                         Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                 </TextBox.InputBindings>
@@ -423,13 +423,13 @@
                                 <TextBox.InputBindings>
                                     <KeyBinding
                                         Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                     <!--  選択したテキストをプロセスとして実行  -->
                                     <KeyBinding
                                         Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                                         Modifiers="Ctrl" />
                                 </TextBox.InputBindings>
@@ -560,7 +560,7 @@
                         Width="120"
                         Height="30"
                         Margin="10,10,10,10"
-                        Command="{Binding QAChatButtonCommand}"
+                        Command="{Binding QAChatButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="QpenAIチャット"
                         DockPanel.Dock="Right" />
@@ -569,7 +569,7 @@
                         Width="100"
                         Height="30"
                         Margin="10,10,10,10"
-                        Command="{Binding OKButtonCommand}"
+                        Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="OK"
                         DockPanel.Dock="Right" />
@@ -578,7 +578,7 @@
                         Width="100"
                         Height="30"
                         Margin="10,10,10,10"
-                        Command="{Binding CancelButtonCommand}"
+                        Command="{Binding CancelButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="キャンセル"
                         DockPanel.Dock="Right" />
