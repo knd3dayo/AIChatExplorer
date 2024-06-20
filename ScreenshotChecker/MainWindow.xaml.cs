@@ -22,7 +22,7 @@ namespace ImageChat {
             ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
             // 内部プロジェクトからの起動をFalse
             imageEvidenceCheckerWindowViewModel.IsStartFromInternalApp = isStartFromInternalApp;
-            imageEvidenceCheckerWindow.ShowDialog();
+            imageEvidenceCheckerWindow.Show();
         }
     }
 }
