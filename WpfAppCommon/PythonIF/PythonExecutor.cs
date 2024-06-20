@@ -29,6 +29,8 @@ namespace WpfAppCommon.PythonIF {
 
         public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
         public static void Init(string pythonPath) {
+
+
             // If PythonExecution in WpfAppCommonSettings is PythonNet, execute InitPythonNet
             if (PythonExecution == PythonExecutionType.PythonNet) {
                 PythonFunctions = new PythonNetFunctions(pythonPath);

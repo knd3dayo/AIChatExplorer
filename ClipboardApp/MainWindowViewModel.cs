@@ -44,6 +44,7 @@ namespace ClipboardApp {
 
             ActiveInstance = this;
 
+
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
 

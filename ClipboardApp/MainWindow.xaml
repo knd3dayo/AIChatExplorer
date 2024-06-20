@@ -22,82 +22,82 @@
         <!--  Exit application  -->
         <KeyBinding
             Key="Q"
-            Command="{Binding ExitCommand}"
+            Command="{Binding ExitCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Show search dialog  -->
         <KeyBinding
             Key="F"
-            Command="{Binding SearchCommand}"
+            Command="{Binding SearchCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Reload items from LiteDB  -->
         <KeyBinding
             Key="R"
-            Command="{Binding ReloadCommand}"
+            Command="{Binding ReloadCommand, Mode=OneTime}"
             Modifiers="Control" />
 
         <!--  Open selected item  -->
         <KeyBinding
             Key="O"
-            Command="{Binding OpenSelectedItemCommand}"
+            Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Open selected item as file  -->
         <KeyBinding
             Key="O"
-            Command="{Binding OpenContentAsFileCommand}"
+            Command="{Binding OpenContentAsFileCommand, Mode=OneTime}"
             Modifiers="Control+Shift" />
         <!--  Paste items into selected folder  -->
         <KeyBinding
             Key="V"
-            Command="{Binding PasteItemCommand}"
+            Command="{Binding PasteItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Merge items into selected item  -->
         <KeyBinding
             Key="M"
-            Command="{Binding MergeItemCommand}"
+            Command="{Binding MergeItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Merge items into selected item with header  -->
         <KeyBinding
             Key="M"
-            Command="{Binding MergeItemWithHeaderCommand}"
+            Command="{Binding MergeItemWithHeaderCommand, Mode=OneTime}"
             Modifiers="Control+Shift" />
         <!--  Copy selected item to clipboard  -->
         <KeyBinding
             Key="C"
-            Command="{Binding CopyItemCommand}"
+            Command="{Binding CopyItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Copy selected item to clipboard with Cut flag set to True  -->
         <KeyBinding
             Key="X"
-            Command="{Binding CutItemCommand}"
+            Command="{Binding CutItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Create new item  -->
         <KeyBinding
             Key="N"
-            Command="{Binding CreateItemCommand}"
+            Command="{Binding CreateItemCommand, Mode=OneTime}"
             Modifiers="Control" />
         <!--  Delete selected item  -->
-        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand}" />
+        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand, Mode=OneTime}" />
         <!--  Delete displayed item  -->
         <KeyBinding
             Key="Delete"
-            Command="{Binding DeleteDisplayedItemCommand}"
+            Command="{Binding DeleteDisplayedItemCommand, Mode=OneTime}"
             Modifiers="Control" />
     </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <materialDesign:DialogHost>
         <Grid x:Name="grid1">
             <!--  1. Menu bar, 2. (TreeView, ListBox), 3. StatusText - Grid.Row 1 and 3 are fixed size  -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <StackPanel
                 Grid.Row="0"
@@ -117,72 +117,72 @@
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.File}">
+                            Header="{Binding StringResources.File, Mode=OneTime}">
                             <!--  Toggle Clipbord Monitoring  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding ToggleClipboardMonitor}"
+                                Command="{Binding ToggleClipboardMonitor, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding ClipboardMonitorButtonText}"
                                 ToolTip="{Binding StringResources.ToggleClipboardWatchToolTop}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.Create}">
+                                Header="{Binding StringResources.Create, Mode=OneTime}">
                                 <!--  Create Item  -->
                                 <MenuItem
                                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                    Command="{Binding CreateItemCommand}"
+                                    Command="{Binding CreateItemCommand, Mode=OneTime}"
                                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                    Header="{Binding StringResources.CreateItem}"
-                                    ToolTip="{Binding StringResources.CreateItemToolTip}" />
+                                    Header="{Binding StringResources.CreateItem, Mode=OneTime}"
+                                    ToolTip="{Binding StringResources.CreateItemToolTip, Mode=OneTime}" />
                             </MenuItem>
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding ExitCommand}"
+                                Command="{Binding ExitCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.Exit}"
-                                ToolTip="{Binding StringResources.ExitToolTip}" />
+                                Header="{Binding StringResources.Exit, Mode=OneTime}"
+                                ToolTip="{Binding StringResources.ExitToolTip, Mode=OneTime}" />
                         </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.Edit}">
+                            Header="{Binding StringResources.Edit, Mode=OneTime}">
                             <!--  Edit Tag  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenTagWindowCommand}"
+                                Command="{Binding OpenTagWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditTag}"
-                                ToolTip="{Binding StringResources.EditTagToolTip}" />
+                                Header="{Binding StringResources.EditTag, Mode=OneTime}"
+                                ToolTip="{Binding StringResources.EditTagToolTip, Mode=OneTime}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenListAutoProcessRuleWindowCommand}"
+                                Command="{Binding OpenListAutoProcessRuleWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.EditAutoProcessRule}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenListPythonScriptWindowCommand}"
+                                Command="{Binding OpenListPythonScriptWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.EditPythonScript}"
                                 Visibility="{Binding UsePythonVisibility}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenListPromptTemplateWindowCommand}"
+                                Command="{Binding OpenListPromptTemplateWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditPromptTemplate}"
+                                Header="{Binding StringResources.EditPromptTemplate, Mode=OneTime}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenRAGManagementWindowCommand}"
+                                Command="{Binding OpenRAGManagementWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditGitRagSource}"
+                                Header="{Binding StringResources.EditGitRagSource, Mode=OneTime}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenVectorDBManagementWindowCommand}"
+                                Command="{Binding OpenVectorDBManagementWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditVectorDB}"
+                                Header="{Binding StringResources.EditVectorDB, Mode=OneTime}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
                         <!--  View  -->
@@ -193,13 +193,13 @@
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.CompactMode}"
+                                Header="{Binding StringResources.CompactMode, Mode=OneTime}"
                                 IsCheckable="True"
                                 IsChecked="{Binding CompactMode}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.PreviewMode}"
+                                Header="{Binding StringResources.PreviewMode, Mode=OneTime}"
                                 IsCheckable="True"
                                 IsChecked="{Binding PreviewMode}" />
                         </MenuItem>
@@ -210,28 +210,28 @@
                             Header="{Binding StringResources.Tool}">
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenOpenAIWindowCommand}"
+                                Command="{Binding OpenOpenAIWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.OpenAIChat}"
+                                Header="{Binding StringResources.OpenAIChat, Mode=OneTime}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding OpenScreenshotCheckerWindow}"
+                                Command="{Binding OpenScreenshotCheckerWindow, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.ImageChat}"
+                                Header="{Binding StringResources.ImageChat, Mode=OneTime}"
                                 Visibility="{Binding UseOpenAIVisibility}" />
                         </MenuItem>
 
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SearchCommand}"
+                            Command="{Binding SearchCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.Search}" />
+                            Header="{Binding StringResources.Search, Mode=OneTime}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SettingCommand}"
+                            Command="{Binding SettingCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.Setting}" />
+                            Header="{Binding StringResources.Setting, Mode=OneTime}" />
                     </Menu>
                 </materialDesign:ColorZone>
             </StackPanel>
@@ -241,7 +241,7 @@
                     <!--  1. TreeView, 2. GridSplitter, 3. ListBox  -->
                     <!--  Insert GridSplitter between TreeView and ListBox  -->
                     <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <!--  Folder TreeView  -->
@@ -279,28 +279,28 @@
                                     <!--  Folder context menu  -->
                                     <ContextMenu FontSize="12">
                                         <MenuItem
-                                            Command="{Binding CreateFolderCommand}"
+                                            Command="{Binding CreateFolderCommand, Mode=OneTime}"
                                             CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Create}"
+                                            Header="{Binding StringResources.Create, Mode=OneTime}"
                                             IsEnabled="{Binding IsCreateVisible}" />
                                         <MenuItem
-                                            Command="{Binding EditFolderCommand}"
+                                            Command="{Binding EditFolderCommand, Mode=OneTime}"
                                             CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Edit}"
+                                            Header="{Binding StringResources.Edit, Mode=OneTime}"
                                             IsEnabled="{Binding IsEditVisible}" />
                                         <MenuItem
-                                            Command="{Binding DeleteFolderCommand}"
+                                            Command="{Binding DeleteFolderCommand, Mode=OneTime}"
                                             CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Delete}"
+                                            Header="{Binding StringResources.Delete, Mode=OneTime}"
                                             IsEnabled="{Binding IsDeleteVisible}" />
                                         <MenuItem
-                                            Command="{Binding ExportItemsFromFolderCommand}"
+                                            Command="{Binding ExportItemsFromFolderCommand, Mode=OneTime}"
                                             CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Export}" />
+                                            Header="{Binding StringResources.Export, Mode=OneTime}" />
                                         <MenuItem
-                                            Command="{Binding ImportItemsToFolderCommand}"
+                                            Command="{Binding ImportItemsToFolderCommand, Mode=OneTime}"
                                             CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Import}" />
+                                            Header="{Binding StringResources.Import, Mode=OneTime}" />
                                     </ContextMenu>
                                 </DockPanel.ContextMenu>
                             </DockPanel>
@@ -308,7 +308,7 @@
                     </TreeView.ItemTemplate>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectedItemChanged">
-                            <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </TreeView>
