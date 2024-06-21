@@ -57,7 +57,7 @@ namespace QAChat {
             ClipboardFolder = clipboardFolder;
             QAChatControlViewModel.Initialize(clipboardFolder, clipboardItem, PromptTemplateCommandExecute);
         }
-        public Action ShowSearchWindowAction {
+        public Action<Action<List<ClipboardItem>>> ShowSearchWindowAction {
             get {
                 return QAChatControlViewModel.ShowSearchWindowAction;
             }
@@ -68,7 +68,7 @@ namespace QAChat {
         }
         // フォルダ内のClipboardItemを選択するアクション
         // ★ Actionにしなくてもいいかも
-        public Action SetContentTextFromClipboardItemsAction {
+        public Action<Action<List<ClipboardItem>>> SetContentTextFromClipboardItemsAction {
             get {
                 return QAChatControlViewModel.SetContentTextFromClipboardItemsAction;
             }

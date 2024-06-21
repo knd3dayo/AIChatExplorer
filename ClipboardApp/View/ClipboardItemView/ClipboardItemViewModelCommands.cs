@@ -187,15 +187,15 @@ namespace ClipboardApp.View.ClipboardItemView {
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
             mainWindowViewModel.Initialize(folderViewModel?.ClipboardItemFolder, itemViewModel?.ClipboardItem);
-            mainWindowViewModel.ShowSearchWindowAction = () =>{
+            mainWindowViewModel.ShowSearchWindowAction = (afterSelect) =>{
                 SearchWindow.OpenSearchWindow(rule, null, () => {
                     // QAChatのContextを更新
                     List<ClipboardItem> clipboardItems = rule.SearchItems();
-                    mainWindowViewModel.QAChatControlViewModel.ContextItems = [.. clipboardItems];
+                    afterSelect(clipboardItems);
 
                 });
             };
-            mainWindowViewModel.SetContentTextFromClipboardItemsAction = () => {
+            mainWindowViewModel.SetContentTextFromClipboardItemsAction = (afterSelect) => {
                 List<ClipboardItem> items = [];
                 var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
                 if (clipboardItemViews != null) {
@@ -203,7 +203,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                         items.Add(item.ClipboardItem);
                     }
                 }
-                mainWindowViewModel.QAChatControlViewModel.ContextItems = [.. items];
+                afterSelect(items);
             };
             // クリップボード編集画面を開くアクション
             mainWindowViewModel.OpenClipboardItemAction = (clipboardItem) => {

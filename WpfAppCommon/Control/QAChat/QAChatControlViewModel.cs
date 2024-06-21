@@ -46,10 +46,10 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
         // SearchWindowを表示するAction
-        public Action ShowSearchWindowAction { get; set; } = () => { };
+        public Action<Action<List<ClipboardItem>>> ShowSearchWindowAction { get; set; } = (afterSelect) => { };
 
         // ClipboardItemを選択するアクション
-        public Action SetContentTextFromClipboardItemsAction { get; set; } = () => { };
+        public Action<Action<List<ClipboardItem>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
 
         // ClipboardItemを開くアクション
         public Action<ClipboardItem> OpenClipboardItemAction { get; set; } = (item) => { };
@@ -134,16 +134,17 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
-        // ContextItems
-        public ObservableCollection<ClipboardItem> ContextItems {
+        // AdditionalTextItems
+        public ObservableCollection<ClipboardItem> AdditionalTextItems {
             get {
-                return [.. ChatController.ContextItems];
+                return [.. ChatController.AdditionalTextItems];
             }
             set {
-                ChatController.ContextItems = [.. value];
-                OnPropertyChanged(nameof(ContextItems));
+                ChatController.AdditionalTextItems = [.. value];
+                OnPropertyChanged(nameof(AdditionalTextItems));
             }
         }
+
         // SelectedContextItem
         private ClipboardItem? _SelectedContextItem = null;
         public ClipboardItem? SelectedContextItem {
@@ -155,6 +156,21 @@ namespace WpfAppCommon.Control.QAChat {
                 OnPropertyChanged(nameof(SelectedContextItem));
             }
         }
+
+        // AdditionalTextItems
+        public ObservableCollection<ClipboardItem> AdditionalImageItems {
+            get {
+                return [.. ChatController.AdditionalImageItems];
+            }
+            set {
+                ChatController.AdditionalImageItems = [.. value];
+                OnPropertyChanged(nameof(AdditionalImageItems));
+            }
+        }
+
+
+
+
         // SelectedVectorDBItem
         private VectorDBItem? _SelectedVectorDBItem = null;
         public VectorDBItem? SelectedVectorDBItem {
@@ -192,6 +208,40 @@ namespace WpfAppCommon.Control.QAChat {
                 OnPropertyChanged(nameof(IsDrawerOpen));
             }
         }
+        // 追加コンテキスト情報用のDrawer表示状態
+        private bool _IsAdditionalContextDrawerOpen = false;
+        public bool IsAdditionalContextDrawerOpen {
+            get {
+                return _IsAdditionalContextDrawerOpen;
+            }
+            set {
+                _IsAdditionalContextDrawerOpen = value;
+                OnPropertyChanged(nameof(IsAdditionalContextDrawerOpen));
+            }
+        }
+        // ベクトルDBのDrawer表示状態
+        private bool _IsVectorDBDrawerOpen = false;
+        public bool IsVectorDBDrawerOpen {
+            get {
+                return _IsVectorDBDrawerOpen;
+            }
+            set {
+                _IsVectorDBDrawerOpen = value;
+                OnPropertyChanged(nameof(IsVectorDBDrawerOpen));
+            }
+        }
+        // 追加画像情報用のDrawer表示状態
+        private bool _IsAdditionalImageDrawerOpen = false;
+        public bool IsAdditionalImageDrawerOpen {
+            get {
+                return _IsAdditionalImageDrawerOpen;
+            }
+            set {
+                _IsAdditionalImageDrawerOpen = value;
+                OnPropertyChanged(nameof(IsAdditionalImageDrawerOpen));
+            }
+        }
+
 
         public Visibility VectorDBItemVisibility {
             get {
@@ -275,24 +325,68 @@ namespace WpfAppCommon.Control.QAChat {
             }
         });
 
-        // 追加コンテキスト情報が変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> AdditionalContextSelectionChangedCommand => new((routedEventArgs) => {
+        // 追加テキストのコンテキストメニュー
+        // クリア処理
+        public SimpleDelegateCommand<object> AdditionalTextClearCommand => new((parameter) => {
+            ChatController.AdditionalTextItems.Clear();
+            OnPropertyChanged(nameof(AdditionalTextItems));
+            OnPropertyChanged(nameof(PreviewJson));
+        });
+        // 選択したフォルダのアイテムを追加
 
-            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
-            // 選択されたComboBoxItemのIndexを取得
-            int index = comboBox.SelectedIndex;
-            // 0の場合はコンテキスト情報をクリア
-            if (index == 0) {
-                ChatController.ContextItems.Clear();
+        public SimpleDelegateCommand<object> AdditionalTextAddFromFolderCommand => new((parameter) => {
+            // ClipboardItemを選択
+            SetContentTextFromClipboardItemsAction((List<ClipboardItem> selectedItems) => {
+                AdditionalTextItems = [.. selectedItems];
+            });
+            OnPropertyChanged(nameof(AdditionalTextItems));
+            OnPropertyChanged(nameof(PreviewJson));
+        });
+        // 検索結果のアイテムを追加
+        public SimpleDelegateCommand<object> AdditionalTextAddFromSearchCommand => new((parameter) => {
+            // SearchWindowを表示
+            ShowSearchWindowAction((List<ClipboardItem> selectedItems) => {
+                AdditionalTextItems = [.. selectedItems];
+            });
+            OnPropertyChanged(nameof(AdditionalTextItems));
+            OnPropertyChanged(nameof(PreviewJson));
+        });
 
-            } else if (index == 1) {
-                // ClipboardItemを選択
-                SetContentTextFromClipboardItemsAction();
-            } else if (index == 2) {
-                // SearchWindowを表示
-                ShowSearchWindowAction();
-            }
-            OnPropertyChanged(nameof(ContextItems));
+
+        // 追加テキストのコンテキストメニュー
+        // クリア処理
+        public SimpleDelegateCommand<object> AdditionalImageClearCommand => new((parameter) => {
+            ChatController.AdditionalImageItems.Clear();
+            OnPropertyChanged(nameof(AdditionalImageItems));
+            OnPropertyChanged(nameof(PreviewJson));
+        });
+        // 選択したフォルダのアイテムを追加
+
+        public SimpleDelegateCommand<object> AdditionalImageAddFromFolderCommand => new((parameter) => {
+            // ClipboardItemを選択
+            SetContentTextFromClipboardItemsAction((List<ClipboardItem> selectedItems) => {
+                // SelectedItemsのうち、ClipboardItemImagesがあるものを追加
+                foreach (var item in selectedItems) {
+                    if (item.ClipboardItemImages.Count != 0) {
+                        ChatController.AdditionalImageItems.Add(item);
+                    }
+                }
+            });
+            OnPropertyChanged(nameof(AdditionalImageItems));
+            OnPropertyChanged(nameof(PreviewJson));
+        });
+        // 検索結果のアイテムを追加
+        public SimpleDelegateCommand<object> AdditionalImageAddFromSearchCommand => new((parameter) => {
+            // SearchWindowを表示
+            ShowSearchWindowAction((List<ClipboardItem> selectedItems) => {
+                // SelectedItemsのうち、ClipboardItemImagesがあるものを追加
+                foreach (var item in selectedItems) {
+                    if (item.ClipboardItemImages.Count != 0) {
+                        ChatController.AdditionalImageItems.Add(item);
+                    }
+                }
+            });
+            OnPropertyChanged(nameof(AdditionalImageItems));
             OnPropertyChanged(nameof(PreviewJson));
         });
 
@@ -339,9 +433,9 @@ namespace WpfAppCommon.Control.QAChat {
         // 選択したクリップボードアイテムをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveClipboardItemCommand => new((parameter) => {
             if (SelectedContextItem != null) {
-                ChatController.ContextItems.Remove(SelectedContextItem);
+                ChatController.AdditionalTextItems.Remove(SelectedContextItem);
             }
-            OnPropertyChanged(nameof(ContextItems));
+            OnPropertyChanged(nameof(AdditionalTextItems));
         });
 
         // 選択したVectorDBItemの編集画面を開くコマンド

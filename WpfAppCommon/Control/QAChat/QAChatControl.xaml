@@ -38,6 +38,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -63,90 +64,164 @@
                         </i:Interaction.Triggers>
                     </ComboBox>
                 </Grid>
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="10,10,10,0"
-                        FontWeight="Bold"
-                        Text="ベクトルDB"
-                        TextWrapping="Wrap"
-                        Visibility="{Binding VectorDBItemVisibility}" />
-                    <ListBox
-                        Grid.Row="1"
-                        Margin="10,10,10,10"
-                        ItemsSource="{Binding VectorDBItems}"
-                        SelectedItem="{Binding SelectedVectorDBItem}"
-                        Visibility="{Binding VectorDBItemVisibility}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" Header="開く" />
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                    </ListBox>
-                </Grid>
-                <Grid Grid.Row="2">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Margin="10,0,10,0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="追加コンテキスト情報" />
-                    <!--  追加コンテキスト情報  -->
-                    <ComboBox Grid.Row="1" Margin="0,0,0,0">
-                        <ComboBoxItem Content="なし" IsSelected="True" />
-                        <ComboBoxItem Content="選択中のフォルダのアイテム" />
-                        <ComboBoxItem Content="検索したアイテム" />
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AdditionalContextSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <ListBox
-                        Grid.Row="2"
-                        Margin="10,10,10,10"
-                        ItemsSource="{Binding ContextItems}"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        SelectedItem="{Binding SelectedContextItem}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock FontSize="8" Text="{Binding HeaderText}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" Header="開く" />
-                                <MenuItem Command="{Binding RemoveClipboardItemCommand, Mode=OneTime}" Header="リストから除外" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                    </ListBox>
-                </Grid>
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding VectorDBItemVisibility}">
+                    <ToggleButton
+                        Name="ベクトルDB"
+                        Width="200"
+                        Padding="10,0,10,0"
+                        HorizontalAlignment="Left"
+                        IsChecked="{Binding IsVectorDBDrawerOpen}"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                        <DockPanel Width="200">
+                            <materialDesign:PackIcon Kind="Menu" />
+                            <TextBlock Text="ベクトルDB" />
+                        </DockPanel>
+                    </ToggleButton>
+                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsVectorDBDrawerOpen}" OpenMode="Standard">
+                        <materialDesign:DrawerHost.BottomDrawerContent>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListBox
+                                    Grid.Row="0"
+                                    Margin="10,10,10,10"
+                                    ItemsSource="{Binding VectorDBItems}"
+                                    SelectedItem="{Binding SelectedVectorDBItem}"
+                                    Visibility="{Binding VectorDBItemVisibility}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" Header="開く" />
+                                            <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+                        </materialDesign:DrawerHost.BottomDrawerContent>
+                    </materialDesign:DrawerHost>
+                </StackPanel>
+                <StackPanel Grid.Row="2">
+                    <ToggleButton
+                        Name="追加テキスト"
+                        Width="200"
+                        Padding="10,0,10,0"
+                        HorizontalAlignment="Left"
+                        IsChecked="{Binding IsAdditionalContextDrawerOpen}"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                        <DockPanel Width="200">
+                            <materialDesign:PackIcon Kind="Menu" />
+                            <TextBlock Text="追加テキスト" />
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding AdditionalTextClearCommand, Mode=OneTime}" Header="クリア" />
+                                    <MenuItem Command="{Binding AdditionalTextAddFromFolderCommand, Mode=OneTime}" Header="選択中のフォルダのアイテムを追加" />
+                                    <MenuItem Command="{Binding AdditionalTextAddFromSearchCommand, Mode=OneTime}" Header="検索したアイテムを追加" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+                        </DockPanel>
+                    </ToggleButton>
+                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsAdditionalContextDrawerOpen}" OpenMode="Standard">
+                        <materialDesign:DrawerHost.BottomDrawerContent>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListBox
+                                    Grid.Row="0"
+                                    Margin="10,10,10,10"
+                                    ItemsSource="{Binding AdditionalTextItems}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    SelectedItem="{Binding SelectedContextItem}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="8" Text="{Binding HeaderText}" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" Header="開く" />
+                                            <MenuItem Command="{Binding RemoveClipboardItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+                        </materialDesign:DrawerHost.BottomDrawerContent>
+                    </materialDesign:DrawerHost>
+                </StackPanel>
+                <StackPanel Grid.Row="3">
+                    <ToggleButton
+                        Name="追加画像"
+                        Width="200"
+                        Padding="10,0,10,0"
+                        HorizontalAlignment="Left"
+                        IsChecked="{Binding IsAdditionalImageDrawerOpen}"
+                        Style="{StaticResource MaterialDesignFlatButton}">
+                        <DockPanel Width="200">
+                            <materialDesign:PackIcon Kind="Menu" />
+                            <TextBlock Text="追加画像" />
+                            <DockPanel.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding AdditionalImageClearCommand, Mode=OneTime}" Header="クリア" />
+                                    <MenuItem Command="{Binding AdditionalImageAddFromFolderCommand, Mode=OneTime}" Header="選択中のフォルダのアイテムを追加" />
+                                    <MenuItem Command="{Binding AdditionalImageAddFromSearchCommand, Mode=OneTime}" Header="検索したアイテムを追加" />
+                                </ContextMenu>
+                            </DockPanel.ContextMenu>
+
+                        </DockPanel>
+                    </ToggleButton>
+                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsAdditionalImageDrawerOpen}" OpenMode="Standard">
+                        <!--  追加画像情報  -->
+                        <materialDesign:DrawerHost.BottomDrawerContent>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListBox
+                                    Grid.Row="0"
+                                    Margin="10,10,10,10"
+                                    ItemsSource="{Binding AdditionalImageItems}"
+                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                    SelectedItem="{Binding SelectedContextItem}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="8" Text="{Binding HeaderText}" />
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseDoubleClick">
+                                            <i:InvokeCommandAction Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <ListBox.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Command="{Binding OpenClipboardItemCommand, Mode=OneTime}" Header="開く" />
+                                            <MenuItem Command="{Binding RemoveClipboardItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                        </ContextMenu>
+                                    </ListBox.ContextMenu>
+                                </ListBox>
+                            </Grid>
+
+                        </materialDesign:DrawerHost.BottomDrawerContent>
+                    </materialDesign:DrawerHost>
+                </StackPanel>
 
             </Grid>
         </materialDesign:DrawerHost.LeftDrawerContent>

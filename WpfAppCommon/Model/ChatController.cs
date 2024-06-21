@@ -42,7 +42,9 @@ namespace WpfAppCommon.Model {
 
         public List<string> ImageBase64Strings = [];
 
-        public List<ClipboardItem> ContextItems = [];
+        public List<ClipboardItem> AdditionalTextItems = [];
+
+        public List<ClipboardItem> AdditionalImageItems = [];
 
         public IEnumerable<VectorDBItem> VectorDBItems = [];
 
@@ -58,10 +60,10 @@ namespace WpfAppCommon.Model {
             promptText += ContentText;
 
             // ContextItemsが空でない場合は、ContextItemsのContentを追加
-            if (ContextItems.Any()) {
+            if (AdditionalTextItems.Any()) {
                 promptText += "\n---------以下は関連情報です------\n";
                 // ContextItemsのContentを追加
-                foreach (var item in ContextItems) {
+                foreach (var item in AdditionalTextItems) {
                     promptText += item.Content + "\n";
                 }
             }
