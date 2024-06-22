@@ -290,7 +290,8 @@ namespace WpfAppCommon.Control.QAChat {
 
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
-            ChatItems.Clear();
+            ChatItems = [];
+
             InputText = "";
         });
 
