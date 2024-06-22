@@ -1,4 +1,8 @@
 using System.Drawing;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using QAChat.Model;
 using WpfAppCommon.Model;
 
@@ -28,6 +32,49 @@ namespace WpfAppCommon.PythonIF {
             update,
             delete
         }
+        public class GitFileInfo(VectorDBUpdateMode mode, string relativePath, string workDirectory, string repositoryURL) {
+            [JsonPropertyName("Mode")]
+            public VectorDBUpdateMode Mode { get; set; } = mode;
+
+            [JsonPropertyName("RelativePath")]
+            public string RelativePath { get; set; } = relativePath;
+            [JsonPropertyName("WorkDirectory")]
+            public string WorkDirectory { get; set; } = workDirectory;
+            [JsonPropertyName("RepositoryURL")]
+            public string RepositoryURL { get; set; } = repositoryURL;
+
+            // 絶対パス
+            public string AbsolutePath {
+                get {
+                    return System.IO.Path.Combine(WorkDirectory, RelativePath);
+                }
+            }
+
+            public string ToJson() {
+                var options = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                return JsonSerializer.Serialize(this, options);
+            }
+        }
+        public class ClipboardInfo(IPythonFunctions.VectorDBUpdateMode mode, string id, string content) {
+
+            [JsonPropertyName("Id")]
+            public string Id { get; set; } = id;
+            [JsonPropertyName("Content")]
+            public string Content { get; set; } = content;
+            [JsonPropertyName("Mode")]
+            public VectorDBUpdateMode Mode { get; set; } = mode;
+
+            public string ToJson() {
+                var options = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                return JsonSerializer.Serialize(this, options);
+            }
+        }
 
         public string ExtractText(string path);
         public string GetMaskedString(string spacyModel, string text);
@@ -54,9 +101,9 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
 
 
-        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(GitFileInfo gitFileInfo,  VectorDBItem vectorDBItem);
 
-        public void UpdateVectorDBIndex(VectorDBUpdateMode mode, ClipboardItem clipboardItem, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(ClipboardInfo contentInfo, VectorDBItem vectorDBItem);
 
         //テスト用
         public string HelloWorld();

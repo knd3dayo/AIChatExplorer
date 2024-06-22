@@ -128,13 +128,21 @@ def run_langchain_chat( props_json: str, prompt: str, request_json: str):
     return result_json
 
 # vector db関連
-def update_index(props_json, mode, workdir, relative_path, url):
+def update_index(props_json, request_json):
 
     # update_indexを実行する関数を定義
     def func () -> dict:
         props = json.loads(props_json)
         openai_props = OpenAIProps(props)
         vector_db_props = openai_props.VectorDBItems[0]
+        
+        # request_jsonをdictに変換
+        request = json.loads(request_json)
+        mode = request["Mode"]
+        workdir = request["WorkDirectory"]
+        relative_path = request["RelativePath"]
+        url = request["RepositoryURL"]
+
         import langchain_file_processor
         result = langchain_file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
         return result
@@ -151,13 +159,19 @@ def update_index(props_json, mode, workdir, relative_path, url):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-def update_index_with_clipboard_item(props_json, mode, text, object_id_string):
+def update_index_with_clipboard_item(props_json, request_json):
     # update_indexを実行する関数を定義
     def func () -> dict:
         props = json.loads(props_json)
         openai_props = OpenAIProps(props)
         vector_db_props = openai_props.VectorDBItems[0]
     
+        # request_jsonをdictに変換
+        request = json.loads(request_json)
+        mode = request["Mode"]
+        text = request["Content"]
+        object_id_string = request["Id"]
+        
         import langchain_object_processor
         result = langchain_object_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
         return result

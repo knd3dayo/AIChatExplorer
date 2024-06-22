@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Security.Cryptography.Pkcs;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -154,12 +155,18 @@ namespace WpfAppCommon.Model {
         public void UpdateIndex(ClipboardItem clipboardItem) {
 
             // TODO コレクション名を設定する。
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem, this);
+            string id = clipboardItem.Id == LiteDB.ObjectId.Empty ? "" : clipboardItem.Id.ToString();
+            IPythonFunctions.ClipboardInfo clipboard = new(IPythonFunctions.VectorDBUpdateMode.update, id,  clipboardItem.Content);
+
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(clipboard, this);
         }
 
         public void DeleteIndex(ClipboardItem clipboardItem) {
             // TODO コレクション名を設定する。
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode.delete, clipboardItem, this);
+            string id = clipboardItem.Id == LiteDB.ObjectId.Empty ? "" : clipboardItem.Id.ToString();
+            IPythonFunctions.ClipboardInfo clipboard = new(IPythonFunctions.VectorDBUpdateMode.delete, id, clipboardItem.Content);
+
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(clipboard, this);
         }
 
         // TestLangChain

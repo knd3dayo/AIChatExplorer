@@ -102,7 +102,7 @@ namespace WpfAppCommon.PythonIF {
         public dynamic GetPythonFunction(PyModule ps, string function_name) {
             // Pythonスクリプトの関数を呼び出す
             dynamic? function_object = (ps?.Get(function_name))
-                ?? throw new ThisApplicationException(StringResources.FunctionNotFound(function_name));
+                ?? throw new Exception(StringResources.FunctionNotFound(function_name));
             return function_object;
         }
 
@@ -162,7 +162,7 @@ namespace WpfAppCommon.PythonIF {
 
             // SPACY_MODEL_NAMEが空の場合は例外をスロー
             if (string.IsNullOrEmpty(SpacyModel)) {
-                throw new ThisApplicationException(StringResources.SpacyModelNameNotSet);
+                throw new Exception(StringResources.SpacyModelNameNotSet);
             }
             // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
             Dictionary<string, string> dict = new() {
@@ -180,9 +180,9 @@ namespace WpfAppCommon.PythonIF {
                 resultDict = function_object(beforeTextList, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ThisApplicationException(StringResources.MaskingResultNotFound);
+                    throw new Exception(StringResources.MaskingResultNotFound);
                 }
-                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException(StringResources.MaskingResultFailed);
+                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.MaskingResultFailed);
 
                 PyDict textDict = textDictObject.As<PyDict>();
                 PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
@@ -229,10 +229,10 @@ namespace WpfAppCommon.PythonIF {
                 resultDict = function_object(actionResult, dict);
                 // resultDictが空の場合は例外をスロー
                 if (resultDict == null || resultDict.Any() == false) {
-                    throw new ThisApplicationException(StringResources.UnmaskingResultNotFound);
+                    throw new Exception(StringResources.UnmaskingResultNotFound);
                 }
 
-                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new ThisApplicationException(StringResources.UnmaskingResultFailed);
+                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.UnmaskingResultFailed);
                 PyList textList = textListObject.As<PyList>();
                 foreach (PyObject item in textList) {
                     PyObject afterTextObject = item.GetItem("AFTER");
@@ -266,18 +266,18 @@ namespace WpfAppCommon.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 ImageConverter imageConverter = new();
                 object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]))
-                ?? throw new ThisApplicationException(StringResources.ImageByteFailed);
+                ?? throw new Exception(StringResources.ImageByteFailed);
                 byte[] bytes = (byte[])bytesObject;
                 // extract_text_from_image関数を呼び出す。戻り値は{ "text": "抽出したテキスト" , "log": "ログ" }の形式
                 Dictionary<string, string> dict = new();
                 PyDict? pyDict = function_object(bytes, tesseractExePath);
                 if (pyDict == null) {
-                    throw new ThisApplicationException("pyDict is null");
+                    throw new Exception("pyDict is null");
                 }
                 // textを取得
                 PyObject? textObject = pyDict.GetItem("text");
                 if (textObject == null) {
-                    throw new ThisApplicationException("textObject is null");
+                    throw new Exception("textObject is null");
                 }
                 result = textObject.ToString() ?? "";
                 // logを取得
@@ -343,7 +343,7 @@ namespace WpfAppCommon.PythonIF {
 
                 // SPACY_MODEL_NAMEが空の場合は例外をスロー
                 if (string.IsNullOrEmpty(SpacyModel)) {
-                    throw new ThisApplicationException(StringResources.SpacyModelNameNotSet);
+                    throw new Exception(StringResources.SpacyModelNameNotSet);
                 }
 
                 Dictionary<string, string> dict = new() {
@@ -399,12 +399,12 @@ namespace WpfAppCommon.PythonIF {
                 };
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
                 if (resultDict == null) {
-                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 // contentを取得
                 string? content = resultDict["content"]?.ToString();
                 if (content == null) {
-                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 // ChatResultに設定
                 chatResult.Response = content;
@@ -468,55 +468,48 @@ namespace WpfAppCommon.PythonIF {
             });
         }
 
-        public void UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode mode, ClipboardItem item, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(IPythonFunctions.ClipboardInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
-            if (mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(item.Content)) {
+            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
                 return;
             }
-            // modeがDeleteで、Item.Id == ObjectId.Emptyの場合は何もしない
-            if (mode == IPythonFunctions.VectorDBUpdateMode.delete && item.Id == LiteDB.ObjectId.Empty) {
+            // modeがDeleteで、Item.Idが空の場合は何もしない
+            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete && string.IsNullOrEmpty(contentInfo.Id)) {
                 return;
             }
             // propsにVectorDBURLを追加
             var props = ClipboardAppConfig.CreateOpenAIProperties();
             props.VectorDBItems = [vectorDBItem];
             string propJson = props.ToJson();
+            // ContentInfoをJSON文字列に変換
+            string contentInfoJson = contentInfo.ToJson();
 
             LogWrapper.Info("UpdateVectorDBIndex実行");
             LogWrapper.Info($"プロパティ情報 {propJson}");
 
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute("update_index_with_clipboard_item", (function_object) => {
-                return function_object(propJson, mode.ToString(), item.Content, item.Id.ToString());
+                return function_object(propJson, contentInfoJson);
             });
         }
-        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
 
-            // FileStatus.StatusがAdded、Modifiedのの場合は第1引数に"update"、Deletedの場合は"delete"を渡す
-            // それ以外はなにもしない。
-            string mode = "";
-            if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
-                mode = "update";
-            } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                mode = "delete";
-            } else {
-                return;
-            }
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
-            string filePath = Path.Combine(workingDirPath, fileStatus.Path);
-            if (!File.Exists(filePath)) {
-                LogWrapper.Info($"{StringResources.FileNotFound} : {filePath}");
+            if (!File.Exists(gitFileInfo.AbsolutePath)) {
+                LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
             }
             // propsにVectorDBURLを追加
             var props = ClipboardAppConfig.CreateOpenAIProperties();
             props.VectorDBItems = [vectorDBItem];
 
             string propJson = props.ToJson();
+            // GitFileInfoをJSON文字列に変換
+            string gitFileInfoJson = gitFileInfo.ToJson();
 
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute("update_index", (function_object) => {
-                return function_object(propJson, mode, workingDirPath, fileStatus.Path, repositoryURL);
+                return function_object(propJson, gitFileInfoJson);
             });
         }
 
@@ -539,12 +532,12 @@ namespace WpfAppCommon.PythonIF {
                 };
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
                 if (resultDict == null) {
-                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 // outputを取得
                 string? output = resultDict["output"]?.ToString();
                 if (output == null) {
-                    throw new ThisApplicationException(StringResources.OpenAIResponseEmpty);
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 // ChatResultに設定
                 chatResult.Response = output;

@@ -47,10 +47,10 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public void UpdateVectorDBIndex(IPythonFunctions.VectorDBUpdateMode mode, ClipboardItem item, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(IPythonFunctions.ClipboardInfo clipboard, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
         public string HelloWorld() {

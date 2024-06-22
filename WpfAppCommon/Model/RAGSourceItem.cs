@@ -3,6 +3,7 @@ using LiteDB;
 using WpfAppCommon.Factory;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
+using static WpfAppCommon.PythonIF.IPythonFunctions;
 
 namespace WpfAppCommon.Model {
 
@@ -260,7 +261,15 @@ namespace WpfAppCommon.Model {
             }
             int token = 0;
             try {
-                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(fileStatus, WorkingDirectory, SourceURL, VectorDBItem);
+                // GitFileInfoの作成
+                VectorDBUpdateMode mode = VectorDBUpdateMode.update;
+                if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
+                    mode = VectorDBUpdateMode.update;
+                } else if (fileStatus.Status == FileStatusEnum.Deleted) {
+                    mode = VectorDBUpdateMode.delete;
+                }
+                GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
+                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
