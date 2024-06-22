@@ -21,6 +21,7 @@ pdfminer.six==20231228
 pydub==0.25.1
 scikit-learn==1.5.0
 moviepy==1.0.3
+chardet==5.2.0
 SQLAlchemy==2.0.30
 speechbrain==1.0.0
 spacy==3.7.4
