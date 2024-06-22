@@ -24,7 +24,7 @@ namespace WpfAppCommon.Model {
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }
-            ChatController chatController = new();
+            ChatRequest chatController = new();
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
@@ -40,7 +40,7 @@ namespace WpfAppCommon.Model {
             // ClipboardItemのContentにレスポンスを設定
             clipboardItem.Content = result.Response;
             // レスポンスをClipboardItemに設定
-            clipboardItem.ChatItems = chatController.ChatItems;
+            clipboardItem.ChatItems = chatController.ChatHistory;
             return clipboardItem;
         }
     }

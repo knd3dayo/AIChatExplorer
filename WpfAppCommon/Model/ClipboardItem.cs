@@ -492,7 +492,7 @@ namespace WpfAppCommon.Model {
             }
             // ChatCommandExecuteを実行
             string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルがつけられない場合は空文字列を返してください\n";
-            ChatController chatController = new();
+            ChatRequest chatController = new();
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = prompt;
             chatController.ContentText = item.Content;
@@ -599,7 +599,7 @@ namespace WpfAppCommon.Model {
 
 
             List<ChatItem> chatItems = [];
-            ChatController chatController = new();
+            ChatRequest chatController = new();
             chatController.ChatMode = mode;
             chatController.PromptTemplateText = promptTemplateText;
             chatController.ContentText = Content;

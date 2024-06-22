@@ -243,7 +243,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 // プログレスインジケーターを表示
                 MainWindowViewModel.UpdateProgressCircleVisibility(true);
                 ChatResult? result = new();
-                ChatController chatController = new();
+                ChatRequest chatController = new();
                 chatController.ChatMode = mode;
 
                 await Task.Run(() => {

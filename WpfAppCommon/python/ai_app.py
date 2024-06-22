@@ -61,31 +61,6 @@ def extract_entity(text, props = {}):
 ########################
 # openai関連
 ########################
-def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:list):
-    # OpenAIチャットを実行する関数を定義
-    def func() -> str:
-        # OpenAIPorpsを生成
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        # OpenAIClientを生成
-        openai_client = OpenAIClient(openai_props)
-        content = openai_client.openai_chat_with_vision(prompt, image_file_name_list)
-        return content
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行
-    content, log = wrapper()
-
-    # 結果格納用のdictを生成
-    result = {}
-    result["content"] = content
-    # dict["log"]にログを追加
-    result["log"] = log
-    
-    # resultをJSONに変換して返す
-    result_json = json.dumps(result, ensure_ascii=False, indent=4)
-    return result_json
-
 def run_openai_chat(props_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> str:

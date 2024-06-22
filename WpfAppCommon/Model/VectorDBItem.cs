@@ -165,9 +165,9 @@ namespace WpfAppCommon.Model {
         // TestLangChain
         public void TestLangChain() {
             try {
-                ChatController chatController = new();
+                ChatRequest chatController = new();
                 List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "こんにちは")];
-                chatController.ChatItems = chatItems;
+                chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
                 ChatResult? result = chatController.ExecuteChat();
                 if (string.IsNullOrEmpty(result?.Response)) {

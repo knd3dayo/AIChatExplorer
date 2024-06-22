@@ -23,9 +23,9 @@ namespace WpfAppCommon.Control.QAChat {
             InputText = clipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
             if (ClipboardItem != null) {
-                ChatItems.Clear();
+                ChatHistory.Clear();
                 foreach (var chatItem in ClipboardItem.ChatItems) {
-                    ChatItems.Add(chatItem);
+                    ChatHistory.Add(chatItem);
                 }
             }
             // PromptTemplateCommandExecuteを設定
@@ -65,7 +65,7 @@ namespace WpfAppCommon.Control.QAChat {
 
         public ClipboardFolder? ClipboardFolder { get; set; }
 
-        public ChatController ChatController { get; set; } = new();
+        public ChatRequest ChatController { get; set; } = new();
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
         // Progress Indicatorの表示状態
@@ -103,14 +103,15 @@ namespace WpfAppCommon.Control.QAChat {
 
         public static ChatItem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatItem> ChatItems {
+        public ObservableCollection<ChatItem> ChatHistory {
             get {
-                return [.. ChatController.ChatItems];
+                return [.. ChatController.ChatHistory];
             }
             set {
-                ChatController.ChatItems = [.. value];
-                OnPropertyChanged(nameof(ChatItems));
+                ChatController.ChatHistory = [.. value];
+                OnPropertyChanged(nameof(ChatHistory));
             }
+
         }
 
         public string InputText {
@@ -273,7 +274,7 @@ namespace WpfAppCommon.Control.QAChat {
                 }
                 // inputTextをクリア
                 InputText = "";
-                OnPropertyChanged(nameof(ChatItems));
+                OnPropertyChanged(nameof(ChatHistory));
 
                 // ClipboardItemがある場合は、結果をClipboardItemに設定
                 if (ClipboardItem != null) {
@@ -290,7 +291,7 @@ namespace WpfAppCommon.Control.QAChat {
 
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
-            ChatItems = [];
+            ChatHistory = [];
 
             InputText = "";
         });

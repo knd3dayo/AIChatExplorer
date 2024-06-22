@@ -251,7 +251,7 @@
                         </Grid.RowDefinitions>
                         <ListBox
                             Grid.Row="0"
-                            ItemsSource="{Binding ChatItems}"
+                            ItemsSource="{Binding ChatHistory, Mode=OneWay}"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
                             SelectedItem="{Binding SelectedItem}">
 

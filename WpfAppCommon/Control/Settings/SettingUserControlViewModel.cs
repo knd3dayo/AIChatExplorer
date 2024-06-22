@@ -658,12 +658,12 @@ namespace WpfAppCommon.Control.Settings {
             PythonExecutor.Init(PythonDllPath);
             try {
                 // ChatControllerを作成
-                ChatController chatController = new();
+                ChatRequest chatController = new();
                 List<ChatItem> chatItems = [];
                 // ChatItemを追加
                 ChatItem chatItem = new(ChatItem.UserRole,"Hello");
                 chatItems.Add(chatItem);
-                chatController.ChatItems = chatItems;
+                chatController.ChatHistory = chatItems;
 
                 string resultString = PythonExecutor.PythonFunctions.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), chatController).Response;
                 if (string.IsNullOrEmpty(resultString)) {

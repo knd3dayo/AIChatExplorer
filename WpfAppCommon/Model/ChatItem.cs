@@ -29,9 +29,9 @@ namespace QAChat.Model {
         [JsonIgnore]
         public string SourceDocumentURL { get; set; } = "";
 
-        // ImageのBase64文字列のリスト
+        // ImageのURLのリスト
         [JsonIgnore]
-        public List<string> ImageBase64Strings { get; set; } = [];
+        public List<string> ImageURLs { get; set; } = [];
 
         [JsonIgnore]
         // Content + Sourcesを返す

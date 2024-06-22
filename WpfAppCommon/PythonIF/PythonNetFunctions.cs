@@ -416,7 +416,7 @@ namespace WpfAppCommon.PythonIF {
 
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat( OpenAIProperties props, ChatController chatController) {
+        public ChatResult OpenAIChat( OpenAIProperties props, ChatRequest chatController) {
 
             string chat_history_json =chatController.CreateOpenAIRequestJSON();
             string propsJson = props.ToJson();
@@ -428,19 +428,6 @@ namespace WpfAppCommon.PythonIF {
             //OpenAIChatExecuteを呼び出す
             return OpenAIChatExecute("run_openai_chat", (function_object) => {
                 return function_object(propsJson, chat_history_json);
-            });
-        }
-
-        // OpenAIChatWithVisionを実行する
-
-        public ChatResult OpenAIChatWithVision(OpenAIProperties props, string prompt, IEnumerable<string> imageFileNames) {
-            // propsをJSON文字列に変換
-            string propsJson = props.ToJson();
-            // ChatResultを作成
-            ChatResult chatResult = new();
-            // OpenAIChatExecuteを呼び出す
-            return OpenAIChatExecute("openai_chat_with_vision", (function_object) => {
-                return function_object(propsJson, prompt, imageFileNames);
             });
         }
 
@@ -575,7 +562,7 @@ namespace WpfAppCommon.PythonIF {
             return chatResult;
 
         }
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatController chatController) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatRequest chatController) {
 
             string prompt = chatController.CreatePromptText();
             string chatHistoryJson = chatController.CreateOpenAIRequestJSON();

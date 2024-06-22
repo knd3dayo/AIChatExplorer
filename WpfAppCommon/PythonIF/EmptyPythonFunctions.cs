@@ -24,11 +24,11 @@ namespace WpfAppCommon.PythonIF {
         }
 
 
-        public ChatResult OpenAIChat(OpenAIProperties props,  ChatController chatController) {
+        public ChatResult OpenAIChat(OpenAIProperties props,  ChatRequest chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties , ChatController chatController) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties , ChatRequest chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 

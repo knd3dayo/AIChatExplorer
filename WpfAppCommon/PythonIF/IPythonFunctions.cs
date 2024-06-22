@@ -48,12 +48,10 @@ namespace WpfAppCommon.PythonIF {
         public HashSet<string> ExtractEntity(string SpacyModel, string text);
 
         
-        public ChatResult OpenAIChat(OpenAIProperties props, ChatController chatController);
+        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
 
 
-        public ChatResult OpenAIChatWithVision(OpenAIProperties props, string prompt, IEnumerable<string> imageFileNames);
-
-        public ChatResult LangChainChat(OpenAIProperties props, ChatController chatController);
+        public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
 
 
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);

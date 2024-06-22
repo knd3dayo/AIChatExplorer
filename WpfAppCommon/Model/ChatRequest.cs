@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Threading.Tasks;
-using MS.WindowsAPICodePack.Internal;
 using QAChat.Model;
 using WpfAppCommon.PythonIF;
 
@@ -16,23 +9,24 @@ namespace WpfAppCommon.Model {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class ChatController {
+    public class ChatRequest {
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.RAG;
 
-        public List<ChatItem> ChatItems = [];
+        public List<ChatItem> ChatHistory { get; set; } = [];
+
 
         public ChatItem? LastSendItem {
             get {
                 // ChatItemsのうち、ユーザー発言の最後のものを取得
-                var lastUserChatItem = ChatItems.LastOrDefault(x => x.Role == ChatItem.UserRole);
+                var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatItem.UserRole);
                 return lastUserChatItem;
             }
         }
         public ChatItem? LastResponseItem {
             get {
                 // ChatItemsのうち、アシスタント発言の最後のものを取得
-                var lastAssistantChatItem = ChatItems.LastOrDefault(x => x.Role == ChatItem.AssistantRole);
+                var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatItem.AssistantRole);
                 return lastAssistantChatItem;
             }
         }
@@ -40,7 +34,7 @@ namespace WpfAppCommon.Model {
         public string PromptTemplateText { get; set; } = "";
         public string ContentText { get; set; } = "";
 
-        public List<string> ImageBase64Strings = [];
+        public List<string> ImageURLs = [];
 
         public List<ClipboardItem> AdditionalTextItems = [];
 
@@ -74,33 +68,53 @@ namespace WpfAppCommon.Model {
             // filePathから画像のBase64文字列を作成
             byte[] imageBytes = File.ReadAllBytes(filePath);
             string base64String = Convert.ToBase64String(imageBytes);
-            string result = CreateImageURLFromBase64String(base64String);
+            string result = CreateImageURLBase64String(base64String);
             return result;
         }
 
-        public static string CreateImageURLFromBase64String(string base64String) {
+        public static string CreateImageURLBase64String(string base64String) {
+            // 先頭の文字列からイメージのフォーマットを判別
+            // PNG  iVBOR
+            // gif  R0lGO
+            //jpeg  /9j/4
+            // となる
+            string formatText = "";
+            string base64Header = base64String.Substring(0, 5);
+            if (base64Header == "iVBOR") {
+                formatText = "png";
+            } else if (base64Header == "R0lGO") {
+                formatText = "gif";
+            } else if (base64Header == "/9j/4") {
+                formatText = "jpeg";
+            } else {
+                // エラー
+                throw new Exception("画像のフォーマットが不明です。");
+            }
+
             // Base64文字列から画像のURLを作成
-            string result = $"data:application/octet-stream;base64,{base64String}";
+            string result = $"data:image/{formatText};base64,{base64String}";
             return result;
         }
 
 
-        public List<Dictionary<string, string>> CreateOpenAIContentList(string content, List<string> imageBase64String) {
+        public List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
 
             //OpenAIのリクエストパラメーターのContent部分のデータを作成
-            List<Dictionary<string, string>> parameters = [];
+            List<Dictionary<string, object>> parameters = [];
             // Contentを作成
-            var dc = new Dictionary<string, string> {
+            var dc = new Dictionary<string, object> {
                 ["type"] = "text",
                 ["text"] = content
             };
             parameters.Add(dc);
 
-            foreach (var base64string in imageBase64String) {
+            foreach (var imageURL in imageURLs) {
                 // ImageURLプロパティを追加
-                dc = new Dictionary<string, string> {
+                dc = new Dictionary<string, object> {
                     ["type"] = "image_url",
-                    ["image_url"] = CreateImageURLFromBase64String(base64string)
+                    ["image_url"] = new Dictionary<string, object> {
+                        ["url"] = imageURL
+                    }
                 };
                 parameters.Add(dc);
             }
@@ -110,17 +124,17 @@ namespace WpfAppCommon.Model {
             //OpenAIのリクエストパラメーターのMessage部分のデータを作成
             // Messages部分はRoleとContentからなるDictionaryのリスト
             List<Dictionary<string, object>> messages = [];
-            foreach (var item in ChatItems) {
+            foreach (var item in ChatHistory) {
                 var itemDict = new Dictionary<string, object> {
                     ["role"] = item.Role,
-                    ["content"] = CreateOpenAIContentList(item.Content, item.ImageBase64Strings)
+                    ["content"] = CreateOpenAIContentList(item.Content, item.ImageURLs)
                 };
                 messages.Add(itemDict);
             }
             // このオブジェクトのプロパティを基にしたContentを作成
             var dc = new Dictionary<string, object> {
                 ["role"] = ChatItem.UserRole,
-                ["content"] = CreateOpenAIContentList(CreatePromptText(), ImageBase64Strings)
+                ["content"] = CreateOpenAIContentList(CreatePromptText(), ImageURLs)
             };
             messages.Add(dc);
 
@@ -172,9 +186,9 @@ namespace WpfAppCommon.Model {
                     return null;
                 }
                 // リクエストをChatItemsに追加
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
+                ChatHistory.Add(new ChatItem(ChatItem.UserRole, prompt));
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+                ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
                 return result;
 
@@ -185,9 +199,9 @@ namespace WpfAppCommon.Model {
                 if (result == null) {
                     return null;
                 }
-                ChatItems.Add(new ChatItem(ChatItem.UserRole, prompt));
+                ChatHistory.Add(new ChatItem(ChatItem.UserRole, prompt));
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatItems.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+                ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
                 return result;
             }
@@ -197,7 +211,7 @@ namespace WpfAppCommon.Model {
         public void SetChatItems(ClipboardItem clipboardItem) {
             // ClipboardItemのChatItemsを設定
             clipboardItem.ChatItems.Clear();
-            foreach (var item in ChatItems) {
+            foreach (var item in ChatHistory) {
                 clipboardItem.ChatItems.Add(item);
             }
         }

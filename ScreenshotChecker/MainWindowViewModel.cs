@@ -103,20 +103,23 @@ namespace ImageChat {
 
                     // ScreenShotImageのリストからファイル名のリストを取得
                     List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
-
+                    // Base64に変換
+                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatRequest.CreateImageURLFromFilePath(imageFileName)).ToList();
+                    // ChatRequestを生成
+                    ChatRequest chatRequest = new() {
+                        ChatMode = OpenAIExecutionModeEnum.Normal,
+                        ImageURLs = imageBase64Strings,
+                        ContentText = prompt
+                    };
+                    // ログ
                     LogWrapper.Info($"プロンプト：{prompt}を送信します");
-                    result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(ClipboardAppConfig.CreateOpenAIProperties(), prompt, imageFileNames);
-                    // result.ResponseをScreenShotCheckItems.FromJsonでScreenShotCheckItemsに変換
-                    if (result != null && string.IsNullOrEmpty(result.Response) == false) {
-                        LogWrapper.Info("処理結果を受信しました。" + result.Response);
-
-                    } else {
-                        LogWrapper.Error("処理結果の受信に失敗しました。");
-                        return;
-                    }
+                    // imageFileNamesをログに追加
+                    LogWrapper.Info($"画像ファイル名：{string.Join(",", imageFileNames)}");
+                    // ChatRequestを送信してChatResultを受信
+                    result = chatRequest.ExecuteChat();
  
                     // verboseがある場合はログに追加
-                    if (!string.IsNullOrEmpty(result.Verbose)) {
+                    if (!string.IsNullOrEmpty(result?.Verbose)) {
                         Log.AppendLine(result.Verbose);
                     }
                 });
