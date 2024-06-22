@@ -446,25 +446,25 @@ namespace WpfAppCommon.Model {
         public static void Reload() {
             Properties.Settings.Default.Reload();
         }
-        public static  Dictionary<string, string> CreateOpenAIProperties() {
-            Dictionary<string, string> dict = new() {
-                { "OpenAIKey", WpfAppCommon.Properties.Settings.Default.OpenAIKey },
-                { "OpenAICompletionModel", WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel },
-                { "OpenAIEmbeddingModel", WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel },
-                { "AzureOpenAI", WpfAppCommon.Properties.Settings.Default.AzureOpenAI.ToString() }
+        public static  OpenAIProperties CreateOpenAIProperties() {
+            OpenAIProperties openAIProperties = new() {
+                OpenAIKey = OpenAIKey,
+                OpenAICompletionModel = OpenAICompletionModel,
+                OpenAIEmbeddingModel = OpenAIEmbeddingModel,
+                AzureOpenAI = AzureOpenAI,
             };
 
             if (string.IsNullOrEmpty(WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint) == false) {
-                dict.Add("AzureOpenAIEndpoint", WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint);
+                openAIProperties.AzureOpenAIEndpoint = WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
             }
 
             if (WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                dict.Add("OpenAICompletionBaseURL", WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL);
+                openAIProperties.OpenAICompletionBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
             }
             if (WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
-                dict.Add("OpenAIEmbeddingBaseURL", WpfAppCommon.    Properties.Settings.Default.OpenAIEmbeddingBaseURL);
+                openAIProperties.OpenAIEmbeddingBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
             }
-            return dict;
+            return openAIProperties;
         }
 
     }

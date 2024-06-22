@@ -61,32 +61,6 @@ def extract_entity(text, props = {}):
 ########################
 # openai関連
 ########################
-def openai_chat(props_json: str, input_json: str, json_mode:bool = False) -> str:
-    # OpenAIチャットを実行する関数を定義
-    def func() -> str:
-        # OpenAIPorpsを生成
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        # OpenAIClientを生成
-        openai_client = OpenAIClient(openai_props)
-        content = openai_client.openai_chat(input_json, json_mode)
-        return content
-
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行
-    content, log = wrapper()
-
-    # 結果格納用のdictを生成
-    result = {}
-    result["content"] = content
-    # dict["log"]にログを追加
-    result["log"] = log
-    
-    # resultをJSONに変換して返す
-    result_json = json.dumps(result, ensure_ascii=False, indent=4)
-    return result_json
-
 def openai_chat_with_vision(props_json: str, prompt: str, image_file_name_list:list):
     # OpenAIチャットを実行する関数を定義
     def func() -> str:
@@ -159,37 +133,11 @@ def list_openai_models(props_json: str):
 ########################
 # langchain関連
 ########################
-def langchain_chat( props_json: str, vector_db_items_json: str, prompt: str, chat_history_json: str = None):
-    # OpenAIチャットを実行する関数を定義
-    def func() -> dict:
-        # OpenAIPorpsを生成
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-
-        # vector_db_items_jsonをVectorDBPropsに変換
-        vector_db_items_list = json.loads(vector_db_items_json)
-        vector_db_props = [VectorDBProps(vector_db_item) for vector_db_item in vector_db_items_list]    
-        print(vector_db_props)
-        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
-        return result
-    
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行
-    result, log = wrapper()
-    
-    # resultにlogを追加
-    result["log"] = log
-    
-    # resultをJSONに変換して返す
-    result_json = json.dumps(result, ensure_ascii=False, indent=4)
-    return result_json
-
-def run_langchain_chat( props_json: str, vector_db_props_json: str, request_json: str):
+def run_langchain_chat( props_json: str, prompt: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
 
-        result = langchain_util.run_langchain_chat(props_json, vector_db_props_json, request_json)
+        result = langchain_util.run_langchain_chat(props_json, prompt, request_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -205,13 +153,13 @@ def run_langchain_chat( props_json: str, vector_db_props_json: str, request_json
     return result_json
 
 # vector db関連
-def update_index(props, mode, workdir, relative_path, url):
+def update_index(props_json, mode, workdir, relative_path, url):
 
     # update_indexを実行する関数を定義
     def func () -> dict:
-        
+        props = json.loads(props_json)
         openai_props = OpenAIProps(props)
-        vector_db_props = VectorDBProps(props)
+        vector_db_props = openai_props.VectorDBItems[0]
         import langchain_file_processor
         result = langchain_file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
         return result
@@ -228,11 +176,12 @@ def update_index(props, mode, workdir, relative_path, url):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-def update_index_with_clipboard_item(props, mode, text, object_id_string):
+def update_index_with_clipboard_item(props_json, mode, text, object_id_string):
     # update_indexを実行する関数を定義
     def func () -> dict:
+        props = json.loads(props_json)
         openai_props = OpenAIProps(props)
-        vector_db_props = VectorDBProps(props)
+        vector_db_props = openai_props.VectorDBItems[0]
     
         import langchain_object_processor
         result = langchain_object_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)

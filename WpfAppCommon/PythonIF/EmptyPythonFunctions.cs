@@ -22,23 +22,21 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string request_json) {
+
+
+        public ChatResult OpenAIChat(OpenAIProperties props,  ChatController chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties , ChatController chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
+
         public void OpenAIEmbedding(string text) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames) {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props) {
+        
+        public ChatResult OpenAIChatWithVision(OpenAIProperties props, string prompt, IEnumerable<string> imageFileNames) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
@@ -49,16 +47,6 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson) {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
-
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
-            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
-        }
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }

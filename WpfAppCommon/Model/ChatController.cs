@@ -163,10 +163,11 @@ namespace WpfAppCommon.Model {
         // OpenAIChatを実行する。
         public ChatResult? ExecuteChat() {
             string prompt = CreatePromptText();
-            string requestJson = CreateOpenAIRequestJSON();
             // ChatModeがRAGの場合は、RAGChatを実行する。
             if (ChatMode == OpenAIExecutionModeEnum.RAG) {
-                ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(ClipboardAppConfig.CreateOpenAIProperties(), VectorDBItems, requestJson);
+                OpenAIProperties props = ClipboardAppConfig.CreateOpenAIProperties();
+                props.VectorDBItems.AddRange(VectorDBItems);
+                ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(props, this);
                 if (result == null) {
                     return null;
                 }
@@ -179,7 +180,7 @@ namespace WpfAppCommon.Model {
 
             }
             if (ChatMode == OpenAIExecutionModeEnum.Normal) {
-                ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), requestJson);
+                ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), this);
                 // リクエストをChatItemsに追加
                 if (result == null) {
                     return null;

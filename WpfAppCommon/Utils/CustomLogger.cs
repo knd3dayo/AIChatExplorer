@@ -8,7 +8,7 @@ using NLog;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
-    public class CustomLogger : NLog.Logger{
+    public class CustomLogger : Logger{
 
         public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
 

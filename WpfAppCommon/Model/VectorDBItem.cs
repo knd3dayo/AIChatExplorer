@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using QAChat.Model;
 using WpfAppCommon.Factory;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -164,9 +165,12 @@ namespace WpfAppCommon.Model {
         // TestLangChain
         public void TestLangChain() {
             try {
-
-                ChatResult result = PythonExecutor.PythonFunctions.LangChainChat([this], "Hello", []);
-                if (string.IsNullOrEmpty(result.Response)) {
+                ChatController chatController = new();
+                List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "こんにちは")];
+                chatController.ChatItems = chatItems;
+                chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
+                ChatResult? result = chatController.ExecuteChat();
+                if (string.IsNullOrEmpty(result?.Response)) {
                     LogWrapper.Error("[NG]:LangChainの実行に失敗しました。");
                 } else {
                     string Message = "[OK]:LangChainの実行が可能です。";

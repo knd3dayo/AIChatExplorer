@@ -10,8 +10,7 @@ class OpenAIProps:
         self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel")
         self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel")
         
-        azure_openai_string = props_dict.get("AzureOpenAI", None)
-        self.AzureOpenAI = azure_openai_string.upper() == "TRUE"
+        self.AzureOpenAI =props_dict.get("AzureOpenAI", False)
 
         self.AzureOpenAIEmbeddingVersion = props_dict.get("AzureOpenAIEmbeddingVersion", None)
         self.AzureOpenAICompletionVersion = props_dict.get("AzureOpenAICompletionVersion", None)
@@ -21,6 +20,8 @@ class OpenAIProps:
         self.OpenAICompletionBaseURL = props_dict.get("OpenAICompletionBaseURL", None)
         self.OpenAIEmbeddingBaseURL = props_dict.get("OpenAIEmbeddingBaseURL", None)
         self.OpenAIWhisperBaseURL = props_dict.get("OpenAIWhisperBaseURL", None)
+
+        self.VectorDBItems = [ VectorDBProps(item) for item in  props_dict.get("VectorDBItems", []) ]
         
         # AzureOpenAIEmbeddingVersionがNoneの場合は2024-02-01を設定する
         if self.AzureOpenAIEmbeddingVersion == None:

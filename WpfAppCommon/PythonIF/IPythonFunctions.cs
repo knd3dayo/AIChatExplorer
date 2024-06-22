@@ -47,21 +47,14 @@ namespace WpfAppCommon.PythonIF {
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する
         public HashSet<string> ExtractEntity(string SpacyModel, string text);
 
-        public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson);
+        
+        public ChatResult OpenAIChat(OpenAIProperties props, ChatController chatController);
 
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory);
 
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props);
+        public ChatResult OpenAIChatWithVision(OpenAIProperties props, string prompt, IEnumerable<string> imageFileNames);
 
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames);
+        public ChatResult LangChainChat(OpenAIProperties props, ChatController chatController);
 
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props);
-
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string request_json);
-
-        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
-
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory);
 
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem);
 

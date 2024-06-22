@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Text;
 using System.Windows;
+using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
@@ -656,7 +657,15 @@ namespace WpfAppCommon.Control.Settings {
             TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
-                string resultString = PythonExecutor.PythonFunctions.OpenAIChat("Hello", []).Response;
+                // ChatControllerを作成
+                ChatController chatController = new();
+                List<ChatItem> chatItems = [];
+                // ChatItemを追加
+                ChatItem chatItem = new(ChatItem.UserRole,"Hello");
+                chatItems.Add(chatItem);
+                chatController.ChatItems = chatItems;
+
+                string resultString = PythonExecutor.PythonFunctions.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), chatController).Response;
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = "[NG]:OpenAIの実行に失敗しました。";
                     testResult.Result = false;

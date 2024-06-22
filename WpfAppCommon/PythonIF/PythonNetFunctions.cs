@@ -414,56 +414,28 @@ namespace WpfAppCommon.PythonIF {
 
         }
 
-        public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson) {
-            string propsJson = JsonSerializer.Serialize(props);
-
-            LogWrapper.Info("OpenAI実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"リクエスト:{requestJson}");
-
-            // OpenAIChatExecuteを呼び出す
-            return OpenAIChatExecute("run_openai_chat", (function_object) => {
-                return function_object(propsJson, requestJson);
-            });
-
-        }
-
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory) {
-            return OpenAIChat(prompt, chatHistory, ClipboardAppConfig.CreateOpenAIProperties());
-        }
-
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat(string prompt, IEnumerable<ChatItem> chatHistory, Dictionary<string, string> props) {
+        public ChatResult OpenAIChat( OpenAIProperties props, ChatController chatController) {
 
-            // promptからChatItemを作成
-            ChatItem chatItem = new(ChatItem.UserRole, prompt);
-            // chatHistoryをコピーしてChatItemを追加
-            List<ChatItem> chatHistoryList = new(chatHistory) {
-                chatItem
-            };
-            string chat_history_json = ChatItem.ToJson(chatHistoryList);
-            string propsJson = JsonSerializer.Serialize(props);
+            string chat_history_json =chatController.CreateOpenAIRequestJSON();
+            string propsJson = props.ToJson();
 
             LogWrapper.Info("OpenAI実行");
-            LogWrapper.Info($"プロンプト:{prompt}");
-            LogWrapper.Info($"チャット履歴:{chat_history_json}");
             LogWrapper.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info($"チャット履歴:{chat_history_json}");
 
             //OpenAIChatExecuteを呼び出す
-            return OpenAIChatExecute("openai_chat", (function_object) => {
+            return OpenAIChatExecute("run_openai_chat", (function_object) => {
                 return function_object(propsJson, chat_history_json);
             });
         }
 
         // OpenAIChatWithVisionを実行する
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames) {
-            return OpenAIChatWithVision(prompt, imageFileNames, ClipboardAppConfig.CreateOpenAIProperties());
-        }
 
-        public ChatResult OpenAIChatWithVision(string prompt, IEnumerable<string> imageFileNames, Dictionary<string, string> props) {
+        public ChatResult OpenAIChatWithVision(OpenAIProperties props, string prompt, IEnumerable<string> imageFileNames) {
             // propsをJSON文字列に変換
-            string propsJson = JsonSerializer.Serialize(props);
+            string propsJson = props.ToJson();
             // ChatResultを作成
             ChatResult chatResult = new();
             // OpenAIChatExecuteを呼び出す
@@ -521,21 +493,15 @@ namespace WpfAppCommon.PythonIF {
             }
             // propsにVectorDBURLを追加
             var props = ClipboardAppConfig.CreateOpenAIProperties();
-            props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
-            props["VectorDBURL"] = vectorDBItem.VectorDBURL;
-            props["CollectionName"] = item.FolderObjectId.ToString();
-            props["DocStoreURL"] = vectorDBItem.DocStoreURL;
-            props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
+            props.VectorDBItems = [vectorDBItem];
+            string propJson = props.ToJson();
 
             LogWrapper.Info("UpdateVectorDBIndex実行");
-            LogWrapper.Info($"VectorDBTypeString:{vectorDBItem.VectorDBTypeString}");
-            LogWrapper.Info($"VectorDBURL:{vectorDBItem.VectorDBURL}");
-            LogWrapper.Info($"DocStoreURL:{vectorDBItem.DocStoreURL}");
-            LogWrapper.Info($"IsUseMultiVectorRetriever:{vectorDBItem.IsUseMultiVectorRetriever}");
+            LogWrapper.Info($"プロパティ情報 {propJson}");
 
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute("update_index_with_clipboard_item", (function_object) => {
-                return function_object(props, mode.ToString(), item.Content, item.Id.ToString());
+                return function_object(propJson, mode.ToString(), item.Content, item.Id.ToString());
             });
         }
         public void UpdateVectorDBIndex(FileStatus fileStatus, string workingDirPath, string repositoryURL, VectorDBItem vectorDBItem) {
@@ -557,14 +523,13 @@ namespace WpfAppCommon.PythonIF {
             }
             // propsにVectorDBURLを追加
             var props = ClipboardAppConfig.CreateOpenAIProperties();
-            props["VectorDBTypeString"] = vectorDBItem.VectorDBTypeString;
-            props["VectorDBURL"] = vectorDBItem.VectorDBURL;
-            props["DocStoreURL"] = vectorDBItem.DocStoreURL;
-            props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
+            props.VectorDBItems = [vectorDBItem];
+
+            string propJson = props.ToJson();
 
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute("update_index", (function_object) => {
-                return function_object(props, mode, workingDirPath, fileStatus.Path, repositoryURL);
+                return function_object(propJson, mode, workingDirPath, fileStatus.Path, repositoryURL);
             });
         }
 
@@ -610,64 +575,33 @@ namespace WpfAppCommon.PythonIF {
             return chatResult;
 
         }
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string request_json) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatController chatController) {
+
+            string prompt = chatController.CreatePromptText();
+            string chatHistoryJson = chatController.CreateOpenAIRequestJSON();
+
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
             // VectorDBItemsのサイズが0の場合は例外をスロー
-            if (!vectorDBItems.Any()) {
-                throw new ThisApplicationException(StringResources.VectorDBItemsEmpty);
+            if (!openAIProperties.VectorDBItems.Any()) {
+                throw new Exception(StringResources.VectorDBItemsEmpty);
             }
-            // VectorDBItemのリストをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
+
             // propsをJSON文字列に変換
-            var op = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            string propsJson = JsonSerializer.Serialize(props, op);
+            string propsJson = openAIProperties.ToJson();
 
             LogWrapper.Info("LangChain実行");
             LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"ベクトルDB情報 {vectorDBItemsJson}");
-            LogWrapper.Info($"リクエスト:{request_json}");
+            LogWrapper.Info($"プロンプト:{prompt}");
+            LogWrapper.Info($"チャット履歴:{chatHistoryJson}");
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, vectorDBItemsJson, request_json);
+                string resultString = function_object(propsJson, prompt , chatHistoryJson);
                 return resultString;
             });
 
-            return chatResult;
-        }
-
-        public ChatResult LangChainChat(IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
-            return LangChainChat(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItems, prompt, chatHistory);
-        }
-
-        public ChatResult LangChainChat(Dictionary<string, string> props, IEnumerable<VectorDBItem> vectorDBItems, string prompt, IEnumerable<ChatItem> chatHistory) {
-            // chatHistoryをJSON文字列に変換
-            string chatItemsJSon = ChatItem.ToJson(chatHistory);
-            // VectorDBItemsのサイズが0の場合は例外をスロー
-            if (!vectorDBItems.Any()) {
-                throw new ThisApplicationException(StringResources.VectorDBItemsEmpty);
-            }
-            // VectorDBItemのリストをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
-            // propsをJSON文字列に変換
-            string propsJson = JsonSerializer.Serialize(props);
-
-            LogWrapper.Info("LangChain実行");
-            LogWrapper.Info($"ベクトルDB情報 {vectorDBItemsJson}");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"プロンプト:{prompt}");
-            LogWrapper.Info($"チャット履歴:{chatItemsJSon}");
-
-            //LangChainChat関数を呼び出す
-            ChatResult chatResult = LangChainChatExecute("langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, vectorDBItemsJson, prompt, chatItemsJSon);
-                return resultString;
-            });
             return chatResult;
         }
 

@@ -105,7 +105,7 @@ namespace ImageChat {
                     List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
 
                     LogWrapper.Info($"プロンプト：{prompt}を送信します");
-                    result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(prompt, imageFileNames);
+                    result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(ClipboardAppConfig.CreateOpenAIProperties(), prompt, imageFileNames);
                     // result.ResponseをScreenShotCheckItems.FromJsonでScreenShotCheckItemsに変換
                     if (result != null && string.IsNullOrEmpty(result.Response) == false) {
                         LogWrapper.Info("処理結果を受信しました。" + result.Response);

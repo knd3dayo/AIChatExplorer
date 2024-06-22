@@ -8,7 +8,7 @@ using NLog;
 namespace WpfAppCommon.Utils {
     public class LogWrapper {
 
-        public static NLog.Logger Logger { get; } = LogManager.LogFactory.GetCurrentClassLogger<CustomLogger>();
+        public static CustomLogger Logger { get; } = LogManager.LogFactory.GetCurrentClassLogger<CustomLogger>();
 
         public static void Info(string message) {
             Logger.Info(message);
