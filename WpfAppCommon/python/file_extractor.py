@@ -2,21 +2,32 @@ import os
 import tempfile
 from magika import Magika
 import datetime
+import chardet
 
 def identify_type(filename):
     m = Magika()
     # ファイルのbyte列を取得
     with open(filename, "rb") as f:
         byte_data = f.read()
+
+    # ファイルの種類を判定
     res = m.identify_bytes(byte_data)
-    return res
+    # エンコーディング判定
+    encoding_dic = chardet.detect(byte_data)
+    encoding = encoding_dic["encoding"]
+    if encoding is None or encoding == "UTF-8":
+        encoding = "utf-8"
+    elif encoding == "SHIFT_JIS":
+        encoding = "cp932"
+           
+    return res, encoding
 
 def extract_text(filename):
-    res = identify_type(filename)
+    res, encoding = identify_type(filename)
     print(res.output.mime_type)
     
     if res.output.mime_type.startswith("text/"):
-        return process_text(res, filename)
+        return process_text(filename, res, encoding)
 
     # application/pdf
     elif res.output.mime_type == "application/pdf":
@@ -34,7 +45,7 @@ def extract_text(filename):
     elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.presentationml.presentation":
         return process_pptx(filename)
     else:
-        raise Exception("Unsupported file type: " + res.output.mime_type)
+        print("Unsupported file type: " + res.output.mime_type)
 
 
 # application/pdfのファイルを読み込んで文字列として返す関数
@@ -98,7 +109,7 @@ def process_pptx(filename):
     return output.getvalue()
 
 # text/*のファイルを読み込んで文字列として返す関数
-def process_text(res, filename):
+def process_text(filename, res, encoding):
     result = ""
     if res.output.mime_type == "text/html":
         # text/htmlの場合
@@ -123,14 +134,14 @@ def process_text(res, filename):
         from bs4 import BeautifulSoup
         from markdown import markdown
         # テキストを取得
-        with open(filename, "r" ,encoding="utf-8") as f:
+        with open(filename, "r" ,encoding=encoding) as f:
             text_data = f.read()
             md = markdown(text_data)
             soup = BeautifulSoup(md, "html.parser")
         result = soup.get_text()
     else:
         # その他のtext/*の場合
-        with open(filename, "r", encoding="utf-8") as f:
+        with open(filename, "r", encoding=encoding) as f:
             result = f.read()
         
     return result
