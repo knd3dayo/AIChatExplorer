@@ -11,7 +11,8 @@
     xmlns:view="clr-namespace:ClipboardApp.View.AutoProcessRuleView"
     Title="{Binding StringResources.ListAutoProcessRuleWindowTitle}"
     Width="800"
-    Height="550"
+    Height="580"
+    MinHeight="580"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -365,7 +366,10 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
