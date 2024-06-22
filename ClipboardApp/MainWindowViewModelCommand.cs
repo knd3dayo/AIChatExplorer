@@ -48,10 +48,10 @@ namespace ClipboardApp {
                     });
                 });
 
-                Tools.Info(StringResources.Instance.StartClipboardWatch);
+                LogWrapper.Info(StringResources.Instance.StartClipboardWatch);
             } else {
                 ClipboardController.Stop();
-                Tools.Info(StringResources.Instance.StopClipboardWatch);
+                LogWrapper.Info(StringResources.Instance.StopClipboardWatch);
             }
             // 通知
             windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsClipboardMonitor));
@@ -105,13 +105,13 @@ namespace ClipboardApp {
         /// <param name="obj"></param>
         public void CreateItemCommandExecute(ClipboardFolderViewModel? folderViewModel) {
             if (folderViewModel == null) {
-                Tools.Error("フォルダが選択されていません。");
+                LogWrapper.Error("フォルダが選択されていません。");
                 return;
             }
             EditItemWindow.OpenEditItemWindow(folderViewModel, null, () => {
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.Load();
-                Tools.Info("追加しました");
+                LogWrapper.Info("追加しました");
             });
         }
 
@@ -180,7 +180,7 @@ namespace ClipboardApp {
         public static void DeleteDisplayedItemCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             if (SelectedFolder == null) {
-                Tools.Error("フォルダが選択されていません");
+                LogWrapper.Error("フォルダが選択されていません");
                 return;
             }
             ClipboardFolderViewModel.DeleteDisplayedItemCommandExecute(SelectedFolder);
@@ -190,11 +190,11 @@ namespace ClipboardApp {
         public static void DeleteSelectedItemCommandExecute(MainWindowViewModel windowViewModel) {
             // 選択中のアイテムがない場合は処理をしない
             if (windowViewModel.SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             if (windowViewModel.SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
+                LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
 
@@ -224,12 +224,12 @@ namespace ClipboardApp {
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
+                LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
             // Cut Flagを立てる
@@ -241,7 +241,7 @@ namespace ClipboardApp {
             }
             windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
 
-            Tools.Info("切り取りしました");
+            LogWrapper.Info("切り取りしました");
 
         }
         // Ctrl + C が押された時の処理
@@ -251,16 +251,16 @@ namespace ClipboardApp {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItem == null) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
+                LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
 
@@ -275,11 +275,11 @@ namespace ClipboardApp {
 
             try {
                 ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
-                Tools.Info("コピーしました");
+                LogWrapper.Info("コピーしました");
 
             } catch (Exception e) {
                 string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                Tools.Error(message);
+                LogWrapper.Error(message);
             }
 
         }
@@ -291,7 +291,7 @@ namespace ClipboardApp {
 
             // 貼り付け先のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                Tools.Error("貼り付け先のフォルダがない");
+                LogWrapper.Error("貼り付け先のフォルダがない");
                 return;
             }
 
@@ -299,7 +299,7 @@ namespace ClipboardApp {
             if (CopiedItems.Count > 0) {
                 // コピー元のフォルダがない場合は処理をしない
                 if (CopiedItemFolder == null) {
-                    Tools.Error("コピー元のフォルダがない");
+                    LogWrapper.Error("コピー元のフォルダがない");
                     return;
                 }
                 ClipboardFolderViewModel.PasteClipboardItemCommandExecute(
@@ -335,12 +335,12 @@ namespace ClipboardApp {
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
+                LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
             ClipboardFolderViewModel.MergeItemCommandExecute(
@@ -356,12 +356,12 @@ namespace ClipboardApp {
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems.Count == 0) {
-                Tools.Error("選択中のアイテムがない");
+                LogWrapper.Error("選択中のアイテムがない");
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                Tools.Error("選択中のフォルダがない");
+                LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
             ClipboardFolderViewModel.MergeItemCommandExecute(

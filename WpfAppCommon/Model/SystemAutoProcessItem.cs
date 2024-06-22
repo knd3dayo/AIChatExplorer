@@ -97,11 +97,11 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.CopyToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
-                        Tools.Warn("フォルダが選択されていません");
+                        LogWrapper.Warn("フォルダが選択されていません");
                         return args.ClipboardItem;
                     }
 
-                    Tools.Info($"フォルダにコピーします{args.DestinationFolder.FolderPath}");
+                    LogWrapper.Info($"フォルダにコピーします{args.DestinationFolder.FolderPath}");
                     ClipboardItem newItem = args.ClipboardItem.Copy();
 
                     // Folderに追加
@@ -114,14 +114,14 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.MoveToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
-                        Tools.Warn("フォルダが選択されていません");
+                        LogWrapper.Warn("フォルダが選択されていません");
                         return args.ClipboardItem;
                     }
                     // Folderに追加
                     ClipboardItem newItem = args.ClipboardItem.Copy();
                     ClipboardItem result = args.DestinationFolder.AddItem(newItem);
                     // 元のフォルダから削除
-                    Tools.Info($"{args.ClipboardItem.FolderPath}から削除します");
+                    LogWrapper.Info($"{args.ClipboardItem.FolderPath}から削除します");
 
                     args.ClipboardItem.Delete();
 

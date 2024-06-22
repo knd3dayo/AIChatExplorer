@@ -84,7 +84,7 @@ namespace QAChat.View.VectorDBWindow {
             }
             // 現在はFaiss,Chroma(インメモリ)のみ
             if (selectedVectorDBType != VectorDBTypeEnum.Faiss && selectedVectorDBType != VectorDBTypeEnum.Chroma) {
-                Tools.Error("Faiss,Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません");
+                LogWrapper.Error("Faiss,Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません");
                 return;
             }
 

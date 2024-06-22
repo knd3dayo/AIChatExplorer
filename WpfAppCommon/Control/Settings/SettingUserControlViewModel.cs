@@ -463,7 +463,7 @@ namespace WpfAppCommon.Control.Settings {
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);
-            Tools.Info(message);
+            LogWrapper.Info(message);
         }
         public string CheckSetting() {
             StringBuilder stringBuilder = new();
@@ -766,7 +766,7 @@ namespace WpfAppCommon.Control.Settings {
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             ClipboardAppConfig.Reload();
-            Tools.Info("設定をキャンセルしました");
+            LogWrapper.Info("設定をキャンセルしました");
             // Windowを閉じる
             window.Close();
         });

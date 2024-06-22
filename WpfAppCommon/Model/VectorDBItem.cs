@@ -167,14 +167,14 @@ namespace WpfAppCommon.Model {
 
                 ChatResult result = PythonExecutor.PythonFunctions.LangChainChat([this], "Hello", []);
                 if (string.IsNullOrEmpty(result.Response)) {
-                    Tools.Error("[NG]:LangChainの実行に失敗しました。");
+                    LogWrapper.Error("[NG]:LangChainの実行に失敗しました。");
                 } else {
                     string Message = "[OK]:LangChainの実行が可能です。";
-                    Tools.Info(Message, true);
+                    LogWrapper.Info(Message);
                 }
             } catch (Exception ex) {
                 string Message = "[NG]:LangChainの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
-                Tools.Error(Message);
+                LogWrapper.Error(Message);
             }
         }
 

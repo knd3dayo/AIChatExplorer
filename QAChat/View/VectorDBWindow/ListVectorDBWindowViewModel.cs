@@ -85,7 +85,7 @@ namespace QAChat.View.VectorDBWindow {
         // Vector DB編集
         public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                Tools.Error("編集するベクトルDBを選択してください");
+                LogWrapper.Error("編集するベクトルDBを選択してください");
                 return;
             }
             // ベクトルDBの編集Windowを開く
@@ -103,7 +103,7 @@ namespace QAChat.View.VectorDBWindow {
         // DeleteVectorDBCommand
         public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                Tools.Error("削除するベクトルDBを選択してください");
+                LogWrapper.Error("削除するベクトルDBを選択してください");
                 return;
             }
             // 確認ダイアログを表示
@@ -123,7 +123,7 @@ namespace QAChat.View.VectorDBWindow {
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             if (SelectedVectorDBItem == null) {
-                Tools.Error("選択するベクトルDBを選択してください");
+                LogWrapper.Error("選択するベクトルDBを選択してください");
                 return;
             }
             callBackup?.Invoke(SelectedVectorDBItem.Item);

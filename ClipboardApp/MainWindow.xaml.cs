@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows;
-using WpfAppCommon.Control;
 using WpfAppCommon.Model;
 
 

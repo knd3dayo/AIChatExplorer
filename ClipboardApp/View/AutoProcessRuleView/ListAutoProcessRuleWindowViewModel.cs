@@ -156,9 +156,9 @@ namespace ClipboardApp.View.AutoProcessRuleView
         // SaveSystemCommonSettingCommand
         public SimpleDelegateCommand<object> SaveSystemCommonSettingCommand => new((parameter) => {
             if (SettingUserControlViewModel.Save()) {
-                Tools.Info("システム共通設定を保存しました。");
+                LogWrapper.Info("システム共通設定を保存しました。");
             } else {
-                Tools.Warn("システム共通設定の変更はありません。");
+                LogWrapper.Warn("システム共通設定の変更はありません。");
             }
         });
         // CloseCommand

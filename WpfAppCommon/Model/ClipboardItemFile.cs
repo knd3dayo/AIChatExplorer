@@ -63,13 +63,13 @@ namespace WpfAppCommon.Model {
                             Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
                             Signature committer = author;
                             repo.Commit("Auto commit", author, committer);
-                            //Tools.Info
-                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                            //LogWrapper.Info
+                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
                         }
                     } catch (RepositoryNotFoundException e) {
-                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
                     } catch (EmptyCommitException e) {
-                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
                     }
                 }
 
@@ -101,12 +101,12 @@ namespace WpfAppCommon.Model {
                             Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
                             Signature committer = author;
                             repo.Commit("Auto commit", author, committer);
-                            Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
                         }
                     } catch (RepositoryNotFoundException e) {
-                        Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
                     } catch (EmptyCommitException e) {
-                        Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
                     }
                 }
             }

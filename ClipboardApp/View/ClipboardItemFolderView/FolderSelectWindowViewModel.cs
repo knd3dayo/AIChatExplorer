@@ -48,11 +48,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
         public static SimpleDelegateCommand<FolderSelectWindow> SelectFolderCommand => new((folderSelectWindow) => {
             if (Instance == null) {
-                Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
+                LogWrapper.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
             if (Instance.SelectedFolder == null) {
-                Tools.Warn("エラーが発生しました。選択中のフォルダがない");
+                LogWrapper.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
             Instance.FolderSelectedAction?.Invoke(Instance.SelectedFolder);
@@ -69,11 +69,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         public static void FolderSelectWindowSelectFolderCommandExecute(object parameter) {
             if (Instance == null) {
-                Tools.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
+                LogWrapper.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
                 return;
             }
             if (parameter is not ClipboardFolderViewModel folder) {
-                Tools.Warn("エラーが発生しました。選択中のフォルダがない");
+                LogWrapper.Warn("エラーが発生しました。選択中のフォルダがない");
                 return;
             }
             folder.Load();

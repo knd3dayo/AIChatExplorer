@@ -347,7 +347,7 @@ namespace WpfAppCommon.Model {
 
 
             Task.Run(() => {
-                Tools.Info("OS上のファイルに保存します");
+                LogWrapper.Info("OS上のファイルに保存します");
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
                 if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                     // 保存先フォルダを取得
@@ -377,42 +377,42 @@ namespace WpfAppCommon.Model {
                                 Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
                                 Signature committer = author;
                                 repo.Commit("Auto commit", author, committer);
-                                Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                                LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
                             }
                         } catch (RepositoryNotFoundException e) {
-                            Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                            LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
                         } catch (EmptyCommitException e) {
-                            Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                            LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
                         }
                     }
 
                 }
-                Tools.Info("OS上のファイルに保存しました");
+                LogWrapper.Info("OS上のファイルに保存しました");
             });
 
             // AutoEmbedding == Trueの場合はEmbeddingを保存
             Task.Run(() => {
-                Tools.Info("Embeddingを保存します");
+                LogWrapper.Info("Embeddingを保存します");
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // Embeddingを保存
                     VectorDBItem.SystemCommonVectorDB.UpdateIndex(this);
                 }
-                Tools.Info("Embeddingを保存しました");
+                LogWrapper.Info("Embeddingを保存しました");
             });
         }
         // 自分自身をDBから削除する
         public void Delete() {
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
-                Tools.Info("Embeddingを削除します");
+                LogWrapper.Info("Embeddingを削除します");
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // Embeddingを削除
                     VectorDBItem.SystemCommonVectorDB.DeleteIndex(this);
                 }
-                Tools.Info("Embeddingを削除しました");
+                LogWrapper.Info("Embeddingを削除しました");
             });
             Task.Run(() => {
-                Tools.Info("OS上のファイルを削除します");
+                LogWrapper.Info("OS上のファイルを削除します");
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
                 if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                     // 保存先フォルダを取得
@@ -435,18 +435,18 @@ namespace WpfAppCommon.Model {
                                 Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
                                 Signature committer = author;
                                 repo.Commit("Auto commit", author, committer);
-                                Tools.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                                LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
                             }
 
                         } catch (RepositoryNotFoundException e) {
-                            Tools.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                            LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
                         } catch (EmptyCommitException e) {
-                            Tools.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                            LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
                         }
                     }
 
                 }
-                Tools.Info("OS上のファイルを削除しました");
+                LogWrapper.Info("OS上のファイルを削除しました");
 
             });
             // イメージが存在する場合は削除
@@ -535,10 +535,10 @@ namespace WpfAppCommon.Model {
                     clipboardItem.Content += text + "\n";
 
                 } catch (UnsupportedFileTypeException) {
-                    Tools.Info("サポートされていないファイル形式です");
+                    LogWrapper.Info("サポートされていないファイル形式です");
                     return clipboardItem;
                 }
-                Tools.Info($"{path}のテキストを抽出しました");
+                LogWrapper.Info($"{path}のテキストを抽出しました");
 
             }
             return clipboardItem;
@@ -549,14 +549,14 @@ namespace WpfAppCommon.Model {
         public ClipboardItem MaskDataCommandExecute() {
 
             if (this.ContentType != ClipboardContentTypes.Text) {
-                Tools.Info("テキスト以外のコンテンツはマスキングできません");
+                LogWrapper.Info("テキスト以外のコンテンツはマスキングできません");
                 return this;
             }
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, this.Content);
             this.Content = result;
 
-            Tools.Info("データをマスキングしました");
+            LogWrapper.Info("データをマスキングしました");
             return this;
         }
 
@@ -568,7 +568,7 @@ namespace WpfAppCommon.Model {
             string result = maskedText;
             foreach (var entity in maskedData.Entities) {
                 // ステータスバーにメッセージを表示
-                Tools.Info($"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n");
+                LogWrapper.Info($"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n");
                 result = result.Replace(entity.After, entity.Before);
             }
             return result;

@@ -227,14 +227,14 @@ namespace ClipboardApp.View.ClipboardItemView {
         // 選択中のアイテムを開く処理
         public static void OpenContentAsFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
             if (itemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません。");
+                LogWrapper.Error("クリップボードアイテムが選択されていません。");
                 return;
             }
             try {
                 // 選択中のアイテムを開く
                 ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(itemViewModel.ClipboardItem);
             } catch (ClipboardAppException e) {
-                Tools.Error(e.Message);
+                LogWrapper.Error(e.Message);
             }
 
         }

@@ -71,7 +71,7 @@ namespace ClipboardApp.View.PythonScriptView {
         // Scriptを編集するときの処理
         public SimpleDelegateCommand<object> EditScriptItemCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
-                Tools.Error("スクリプトを選択してください");
+                LogWrapper.Error("スクリプトを選択してください");
                 return;
             }
             PythonCommands.EditScriptItemCommandExecute(SelectedScriptItem);
@@ -79,7 +79,7 @@ namespace ClipboardApp.View.PythonScriptView {
         // Scriptを削除したときの処理
         public SimpleDelegateCommand<object> DeleteScriptCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
-                Tools.Error("スクリプトを選択してください");
+                LogWrapper.Error("スクリプトを選択してください");
                 return;
             }
             ScriptItem.DeleteScriptItem(SelectedScriptItem);
@@ -90,7 +90,7 @@ namespace ClipboardApp.View.PythonScriptView {
         // 選択ボタンを押したときの処理
         public SimpleDelegateCommand<object> SelectScriptItemCommand => new((parameter) => {
             if (_selectedScriptItem == null) {
-                Tools.Error("スクリプトを選択してください");
+                LogWrapper.Error("スクリプトを選択してください");
                 return;
             }
             // Actionを実行

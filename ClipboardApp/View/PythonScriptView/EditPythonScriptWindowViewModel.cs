@@ -23,7 +23,7 @@ namespace ClipboardApp.View.PythonScriptView {
             }
             //　descriptionのチェック
             if (string.IsNullOrEmpty(ScriptItem.Description)) {
-                Tools.Error("説明を入力してください");
+                LogWrapper.Error("説明を入力してください");
                 return;
 
             }

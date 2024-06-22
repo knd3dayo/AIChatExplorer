@@ -52,18 +52,18 @@ namespace ClipboardApp.View.TagView {
         // タグを追加したときの処理
         public SimpleDelegateCommand<string> AddTagCommand => new((parameter) => {
             if (parameter is not string) {
-                Tools.Error("パラメーターがありません");
+                LogWrapper.Error("パラメーターがありません");
                 return;
             }
             string tag = (string)parameter;
             if (string.IsNullOrEmpty(tag)) {
-                Tools.Error("タグが空です");
+                LogWrapper.Error("タグが空です");
                 return;
             }
             //tagが既に存在するかチェック
             foreach (var item in TagList) {
                 if (item.Tag == tag) {
-                    Tools.Error("タグが既に存在します");
+                    LogWrapper.Error("タグが既に存在します");
                     return;
                 }
             }

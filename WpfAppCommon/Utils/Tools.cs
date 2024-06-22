@@ -1,57 +1,29 @@
 using System.Text.RegularExpressions;
 using System.Windows;
+using NLog;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public partial class Tools {
 
-        public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
-
-        public static StatusText StatusText {
+        private static Window _ActiveWindow = Application.Current.MainWindow;
+        public static Window ActiveWindow {
             get {
-                return StatusText.GetStatusText(ActiveWindow);
+                return _ActiveWindow;
+            }
+            set {
+                // CustomLoggerのActiveWindowを設定する
+                CustomLogger.ActiveWindow = value;
+                _ActiveWindow = value;
             }
         }
 
-        public static NLog.Logger Logger { get; } = NLog.LogManager.GetCurrentClassLogger();
-
-        public static void Info(string message) {
-            Application.Current.Dispatcher.Invoke(() => {
-                Logger.Info(message);
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
-            });
-        }
-        public static void Info(string message, bool showMessageBox) {
-            Application.Current.Dispatcher.Invoke(() => {
-                Logger.Info(message);
-                if (showMessageBox) {
-                    System.Windows.MessageBox.Show(ActiveWindow, message);
-                }
-            });
+        public static StatusText StatusText {
+            get {
+                return StatusText.GetStatusText(ActiveWindow); ;
+            }
         }
 
-        public static void Warn(string message) {
-            Application.Current.Dispatcher.Invoke(() => {
-                Logger.Warn(message);
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
-                // 開発中はメッセージボックスを表示する
-                System.Windows.MessageBox.Show(ActiveWindow, message);
-            });
-        }
-
-        public static void Error(string message) {
-            Application.Current.Dispatcher.Invoke(() => {
-                Logger.Error(message);
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
-                System.Windows.MessageBox.Show(ActiveWindow, message);
-            });
-        }
         // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
         // Listの要素がNullの場合はNull > と返す
         public static string ListToString(List<string> list) {
@@ -92,10 +64,10 @@ namespace WpfAppCommon.Utils {
             get {
                 return (action) => {
                     if (action.MessageType == ActionMessage.MessageTypes.Error) {
-                        Error(action.Message);
+                        LogWrapper.Error(action.Message);
 
                     } else {
-                        Info(action.Message);
+                        LogWrapper.Info(action.Message);
                     }
 
                 };

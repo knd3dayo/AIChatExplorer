@@ -143,7 +143,7 @@ namespace QAChat.View.RAGWindow {
         // SelectRangeStartCommand
         public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) => {
             if (itemViewModel == null) {
-                Tools.Error("RAGSourceItemViewModelが設定されていません");
+                LogWrapper.Error("RAGSourceItemViewModelが設定されていません");
                 return;
             }
             // ラジオボタンの選択をIsRangeに変更
@@ -235,16 +235,16 @@ namespace QAChat.View.RAGWindow {
         // OKボタンのコマンド
         public SimpleDelegateCommand<object> OkButtonCommand => new(async (parameter) => {
             if (itemViewModel == null) {
-                Tools.Error("RAGSourceItemViewModelが設定されていません");
+                LogWrapper.Error("RAGSourceItemViewModelが設定されていません");
                 return;
             }
             if (IsRange) {
                 if (string.IsNullOrEmpty(RangeStart)) {
-                    Tools.Error("開始コミットを指定してください");
+                    LogWrapper.Error("開始コミットを指定してください");
                     return;
                 }
             } else if (IsAllCommit == false && IsAfterLastIndexedCommit == false) {
-                Tools.Error("対象を選択してください");
+                LogWrapper.Error("対象を選択してください");
                 return;
             }
             if (Mode == 0) {
@@ -315,10 +315,10 @@ namespace QAChat.View.RAGWindow {
                         return;
                     }
                 } catch (System.OperationCanceledException) {
-                    Tools.Info("インデックス作成処理を中断しました");
+                    LogWrapper.Info("インデックス作成処理を中断しました");
                     SetMode(1);
                 } catch (Exception e) {
-                    Tools.Error($"エラーが発生しました\n[メッセージ]\n{e.Message}\n[スタックトレース]\n{e.StackTrace}");
+                    LogWrapper.Error($"エラーが発生しました\n[メッセージ]\n{e.Message}\n[スタックトレース]\n{e.StackTrace}");
                     SetMode(1);
 
                 } finally {

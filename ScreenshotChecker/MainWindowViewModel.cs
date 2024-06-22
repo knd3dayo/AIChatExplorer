@@ -84,7 +84,7 @@ namespace ImageChat {
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
-                Tools.Error("画像ファイルが選択されていません。");
+                LogWrapper.Error("画像ファイルが選択されていません。");
                 return;
             }
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -104,14 +104,14 @@ namespace ImageChat {
                     // ScreenShotImageのリストからファイル名のリストを取得
                     List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
 
-                    Tools.Info($"プロンプト：{prompt}を送信します");
+                    LogWrapper.Info($"プロンプト：{prompt}を送信します");
                     result = PythonExecutor.PythonFunctions?.OpenAIChatWithVision(prompt, imageFileNames);
                     // result.ResponseをScreenShotCheckItems.FromJsonでScreenShotCheckItemsに変換
                     if (result != null && string.IsNullOrEmpty(result.Response) == false) {
-                        Tools.Info("処理結果を受信しました。" + result.Response);
+                        LogWrapper.Info("処理結果を受信しました。" + result.Response);
 
                     } else {
-                        Tools.Error("処理結果の受信に失敗しました。");
+                        LogWrapper.Error("処理結果の受信に失敗しました。");
                         return;
                     }
  
@@ -122,14 +122,14 @@ namespace ImageChat {
                 });
                 // 結果を表示
                 if (result == null) {
-                    Tools.Error("エラーが発生しました。");
+                    LogWrapper.Error("エラーが発生しました。");
                     return;
                 }
                 ResultText = result.Response;
 
 
             } catch (Exception e) {
-                Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+                LogWrapper.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
             } finally {
                 IsIndeterminate = false;
             }
@@ -205,7 +205,7 @@ namespace ImageChat {
                 };
                 Process.Start(psi);
             } else {
-                Tools.Error("ファイルが存在しません。");
+                LogWrapper.Error("ファイルが存在しません。");
             }
         });
 

@@ -174,7 +174,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
             if (ItemViewModel == null) {
-                Tools.Error("クリップボードアイテムが選択されていません");
+                LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
             TagWindow.OpenTagWindow(ItemViewModel, () => {
@@ -217,8 +217,8 @@ namespace ClipboardApp.View.ClipboardItemView {
             if (item != null) {
                 item.Save();
             } else {
-                // 自動処理に失敗した場合はTools.Info("自動処理に失敗しました");
-                Tools.Info("自動処理に失敗しました");
+                // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
+                LogWrapper.Info("自動処理に失敗しました");
             }
             // 更新後の処理を実行
             _afterUpdate.Invoke();

@@ -92,7 +92,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                Tools.Info("ファイルを実行できませんでした。テキストファイルとして開きます。" + ex.Message);
+                LogWrapper.Info("ファイルを実行できませんでした。テキストファイルとして開きます。" + ex.Message);
                 OpenTextFile(selectedText);
             }
         }
@@ -107,7 +107,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                Tools.Error("ファイルを実行できませんでした:" + ex.Message);
+                LogWrapper.Error("ファイルを実行できませんでした:" + ex.Message);
             }
         }
     }

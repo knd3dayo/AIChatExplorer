@@ -72,7 +72,7 @@ namespace WpfAppCommon.PythonIF {
             // Runtime.PythonDLLのファイルが存在するかチェック
             if (!File.Exists(Runtime.PythonDLL)) {
                 string message = StringResources.PythonDLLNotFound;
-                Tools.Error(message + Runtime.PythonDLL);
+                LogWrapper.Error(message + Runtime.PythonDLL);
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace WpfAppCommon.PythonIF {
 
             } catch (TypeInitializationException e) {
                 string message = StringResources.PythonInitFailed + e.Message;
-                Tools.Error(message);
+                LogWrapper.Error(message);
             }
         }
 
@@ -284,7 +284,7 @@ namespace WpfAppCommon.PythonIF {
                 PyObject? logObject = pyDict.GetItem("log");
                 if (logObject != null) {
                     string log = logObject.ToString() ?? "";
-                    Tools.Info($"log:{log}");
+                    LogWrapper.Info($"log:{log}");
                 }
 
             });
@@ -390,7 +390,7 @@ namespace WpfAppCommon.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                Tools.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"レスポンス:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -417,9 +417,9 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult OpenAIChat(Dictionary<string, string> props, string requestJson) {
             string propsJson = JsonSerializer.Serialize(props);
 
-            Tools.Info("OpenAI実行");
-            Tools.Info($"プロパティ情報 {propsJson}");
-            Tools.Info($"リクエスト:{requestJson}");
+            LogWrapper.Info("OpenAI実行");
+            LogWrapper.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info($"リクエスト:{requestJson}");
 
             // OpenAIChatExecuteを呼び出す
             return OpenAIChatExecute("run_openai_chat", (function_object) => {
@@ -445,10 +445,10 @@ namespace WpfAppCommon.PythonIF {
             string chat_history_json = ChatItem.ToJson(chatHistoryList);
             string propsJson = JsonSerializer.Serialize(props);
 
-            Tools.Info("OpenAI実行");
-            Tools.Info($"プロンプト:{prompt}");
-            Tools.Info($"チャット履歴:{chat_history_json}");
-            Tools.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info("OpenAI実行");
+            LogWrapper.Info($"プロンプト:{prompt}");
+            LogWrapper.Info($"チャット履歴:{chat_history_json}");
+            LogWrapper.Info($"プロパティ情報 {propsJson}");
 
             //OpenAIChatExecuteを呼び出す
             return OpenAIChatExecute("openai_chat", (function_object) => {
@@ -495,15 +495,15 @@ namespace WpfAppCommon.PythonIF {
                 // update_vector_db_index関数を呼び出す
                 try {
                     string resultString = pythonFunction(function_object);
-                    Tools.Info(resultString);
+                    LogWrapper.Info(resultString);
 
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {
                         throw new UnsupportedFileTypeException(e.Message);
                     }
-                    Tools.Info(e.Message);
-                    Tools.Info(e.StackTrace);
+                    LogWrapper.Info(e.Message);
+                    LogWrapper.Info(e.StackTrace);
                     throw;
                 }
             });
@@ -527,11 +527,11 @@ namespace WpfAppCommon.PythonIF {
             props["DocStoreURL"] = vectorDBItem.DocStoreURL;
             props["IsUseMultiVectorRetriever"] = vectorDBItem.IsUseMultiVectorRetriever.ToString();
 
-            Tools.Info("UpdateVectorDBIndex実行");
-            Tools.Info($"VectorDBTypeString:{vectorDBItem.VectorDBTypeString}");
-            Tools.Info($"VectorDBURL:{vectorDBItem.VectorDBURL}");
-            Tools.Info($"DocStoreURL:{vectorDBItem.DocStoreURL}");
-            Tools.Info($"IsUseMultiVectorRetriever:{vectorDBItem.IsUseMultiVectorRetriever}");
+            LogWrapper.Info("UpdateVectorDBIndex実行");
+            LogWrapper.Info($"VectorDBTypeString:{vectorDBItem.VectorDBTypeString}");
+            LogWrapper.Info($"VectorDBURL:{vectorDBItem.VectorDBURL}");
+            LogWrapper.Info($"DocStoreURL:{vectorDBItem.DocStoreURL}");
+            LogWrapper.Info($"IsUseMultiVectorRetriever:{vectorDBItem.IsUseMultiVectorRetriever}");
 
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute("update_index_with_clipboard_item", (function_object) => {
@@ -553,7 +553,7 @@ namespace WpfAppCommon.PythonIF {
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
             string filePath = Path.Combine(workingDirPath, fileStatus.Path);
             if (!File.Exists(filePath)) {
-                Tools.Info($"{StringResources.FileNotFound} : {filePath}");
+                LogWrapper.Info($"{StringResources.FileNotFound} : {filePath}");
             }
             // propsにVectorDBURLを追加
             var props = ClipboardAppConfig.CreateOpenAIProperties();
@@ -578,7 +578,7 @@ namespace WpfAppCommon.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                Tools.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"レスポンス:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -627,10 +627,10 @@ namespace WpfAppCommon.PythonIF {
             };
             string propsJson = JsonSerializer.Serialize(props, op);
 
-            Tools.Info("LangChain実行");
-            Tools.Info($"プロパティ情報 {propsJson}");
-            Tools.Info($"ベクトルDB情報 {vectorDBItemsJson}");
-            Tools.Info($"リクエスト:{request_json}");
+            LogWrapper.Info("LangChain実行");
+            LogWrapper.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info($"ベクトルDB情報 {vectorDBItemsJson}");
+            LogWrapper.Info($"リクエスト:{request_json}");
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
@@ -657,11 +657,11 @@ namespace WpfAppCommon.PythonIF {
             // propsをJSON文字列に変換
             string propsJson = JsonSerializer.Serialize(props);
 
-            Tools.Info("LangChain実行");
-            Tools.Info($"ベクトルDB情報 {vectorDBItemsJson}");
-            Tools.Info($"プロパティ情報 {propsJson}");
-            Tools.Info($"プロンプト:{prompt}");
-            Tools.Info($"チャット履歴:{chatItemsJSon}");
+            LogWrapper.Info("LangChain実行");
+            LogWrapper.Info($"ベクトルDB情報 {vectorDBItemsJson}");
+            LogWrapper.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info($"プロンプト:{prompt}");
+            LogWrapper.Info($"チャット履歴:{chatItemsJSon}");
 
             //LangChainChat関数を呼び出す
             ChatResult chatResult = LangChainChatExecute("langchain_chat", (function_object) => {

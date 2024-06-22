@@ -49,9 +49,9 @@ namespace WpfAppCommon.Model {
             if (clipboardItem.Description == null) {
                 return false;
             }
-            Tools.Logger.Debug("Description:" + clipboardItem.Description);
-            Tools.Logger.Debug("Keyword:" + keyword);
-            Tools.Logger.Debug("Contains:" + clipboardItem.Description.Contains(keyword));
+            LogWrapper.Info("Description:" + clipboardItem.Description);
+            LogWrapper.Info("Keyword:" + keyword);
+            LogWrapper.Info("Contains:" + clipboardItem.Description.Contains(keyword));
 
             return clipboardItem.Description.Contains(keyword);
 
@@ -213,16 +213,16 @@ namespace WpfAppCommon.Model {
         public ClipboardItem? RunAction(ClipboardItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
-                Tools.Info(RuleName + "は無効です");
+                LogWrapper.Info(RuleName + "は無効です");
                 return clipboardItem;
             }
 
             if (!IsMatch(clipboardItem)) {
-                Tools.Info("条件にマッチしませんでした");
+                LogWrapper.Info("条件にマッチしませんでした");
                 return clipboardItem;
             }
             if (RuleAction == null) {
-                Tools.Warn("アクションが設定されていません");
+                LogWrapper.Warn("アクションが設定されていません");
                 return clipboardItem;
             }
             return RuleAction.Execute(clipboardItem, DestinationFolder);
@@ -326,7 +326,7 @@ namespace WpfAppCommon.Model {
             };
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
             if (pathList.Distinct().Count() != pathList.Count) {
-                Tools.Warn($"無限ループを検出しました\n{Tools.ListToString(pathList)}");
+                LogWrapper.Warn($"無限ループを検出しました\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得

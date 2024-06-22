@@ -268,7 +268,7 @@ namespace WpfAppCommon.Control.QAChat {
                 });
 
                 if (result == null) {
-                    Tools.Error("チャットの送信に失敗しました。");
+                    LogWrapper.Error("チャットの送信に失敗しました。");
                     return;
                 }
                 // inputTextをクリア
@@ -281,7 +281,7 @@ namespace WpfAppCommon.Control.QAChat {
                 }
 
             } catch (Exception e) {
-                Tools.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+                LogWrapper.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
             } finally {
                 IsIndeterminate = false;
             }

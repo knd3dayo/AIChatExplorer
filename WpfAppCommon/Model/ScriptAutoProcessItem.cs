@@ -54,7 +54,7 @@ namespace WpfAppCommon.Model {
 
             string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, inputJson);
             ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
-                Tools.Info("Pythonスクリプトを実行しました");
+                LogWrapper.Info("Pythonスクリプトを実行しました");
 
             });
             resultItem?.CopyTo(clipboardItem);

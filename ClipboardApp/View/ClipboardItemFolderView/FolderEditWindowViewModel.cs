@@ -41,13 +41,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         }
         public SimpleDelegateCommand<Window> CreateCommand => new ((window) => {
             if (FolderViewModel == null) {
-                Tools.Error("フォルダが指定されていません");
+                LogWrapper.Error("フォルダが指定されていません");
                 return;
             }
 
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
-                Tools.Error("フォルダ名を入力してください");
+                LogWrapper.Error("フォルダ名を入力してください");
                 return;
             }
 

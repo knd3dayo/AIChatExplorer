@@ -75,7 +75,7 @@ namespace QAChat.View.RAGWindow {
         public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) => {
             try {
                 if (ItemViewModel == null) {
-                    Tools.Error("ItemViewModelがnullです");
+                    LogWrapper.Error("ItemViewModelがnullです");
                     return;
                 }
                 ItemViewModel.SourceURL = "";
@@ -83,7 +83,7 @@ namespace QAChat.View.RAGWindow {
                 ItemViewModel.CheckWorkingDirectory();
 
             } catch (Exception e) {
-                Tools.Error(e.Message);
+                LogWrapper.Error(e.Message);
             }
         });
 

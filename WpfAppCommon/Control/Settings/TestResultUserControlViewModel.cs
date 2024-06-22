@@ -26,7 +26,7 @@ namespace WpfAppCommon.Control.Settings {
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
-            Tools.Info("設定をキャンセルしました");
+            LogWrapper.Info("設定をキャンセルしました");
             // Windowを閉じる
             window.Close();
         });

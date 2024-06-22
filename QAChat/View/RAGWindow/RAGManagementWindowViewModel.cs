@@ -58,7 +58,7 @@ namespace QAChat.View.RAGWindow {
         // RAG Sourceの編集
         public SimpleDelegateCommand<object> EditRagSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
-                Tools.Error("編集するRAG Sourceを選択してください");
+                LogWrapper.Error("編集するRAG Sourceを選択してください");
                 return;
             }
             // RAG Sourceの編集Windowを開く
@@ -76,7 +76,7 @@ namespace QAChat.View.RAGWindow {
         // DeleteRAGSourceCommand
         public SimpleDelegateCommand<object> DeleteRAGSourceCommand => new((parameter) => {
             if (SelectedRagSourceItem == null) {
-                Tools.Error("削除するRAG Sourceを選択してください");
+                LogWrapper.Error("削除するRAG Sourceを選択してください");
                 return;
             }
             // 確認ダイアログを表示

@@ -127,7 +127,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    Tools.Error("数値を入力してください。");
+                    LogWrapper.Error("数値を入力してください。");
                     return;
                 }
                 _MinTextLineCount = intValue;
@@ -159,7 +159,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 }
                 // valueが数値でない場合はエラー
                 if (!int.TryParse(value.ToString(), out int intValue)) {
-                    Tools.Error("数値を入力してください。");
+                    LogWrapper.Error("数値を入力してください。");
                     return;
                 }
 
@@ -291,7 +291,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public void Initialize(
             Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             if (mainWindowViewModel == null) {
-                Tools.Error("MainWindowViewModelがNullです。");
+                LogWrapper.Error("MainWindowViewModelがNullです。");
                 return;
             }
             CurrentMode = mode;
@@ -432,17 +432,17 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {
             // TargetFolderがNullの場合はエラー
             if (TargetFolder == null) {
-                Tools.Error("フォルダが選択されていません。");
+                LogWrapper.Error("フォルダが選択されていません。");
                 return;
             }
             // RuleNameが空の場合はエラー
             if (string.IsNullOrEmpty(RuleName)) {
-                Tools.Error("ルール名を入力してください。");
+                LogWrapper.Error("ルール名を入力してください。");
                 return;
             }
             // SelectedAutoProcessItemが空の場合はエラー
             if (SelectedAutoProcessItem == null) {
-                Tools.Error("アクションを選択してください。");
+                LogWrapper.Error("アクションを選択してください。");
                 return;
             }
             // 新規作成
@@ -452,7 +452,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // 編集
             else {
                 if (TargetAutoProcessRule == null) {
-                    Tools.Error("編集対象のルールが見つかりません。");
+                    LogWrapper.Error("編集対象のルールが見つかりません。");
                     return;
                 }
                 TargetAutoProcessRule.Conditions.Clear();
@@ -519,26 +519,26 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                 // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
                 if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
                     if (DestinationFolder == null) {
-                        Tools.Error("コピーまたは移動先のフォルダを選択してください。");
+                        LogWrapper.Error("コピーまたは移動先のフォルダを選択してください。");
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
                     if (TargetFolder.ClipboardItemFolder.Id == DestinationFolder.ClipboardItemFolder.Id) {
-                        Tools.Error("同じフォルダにはコピーまたは移動できません。");
+                        LogWrapper.Error("同じフォルダにはコピーまたは移動できません。");
                         return;
                     }
                     TargetAutoProcessRule.DestinationFolder = DestinationFolder.ClipboardItemFolder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
-                    Tools.Error("コピー/移動処理の無限ループを検出しました。");
+                    LogWrapper.Error("コピー/移動処理の無限ループを検出しました。");
                     return;
                 }
             }
             // IsPromptTemplateCheckedがTrueの場合はSelectedPromptItemを追加
             else if (IsPromptTemplateChecked) {
                 if (SelectedPromptItem == null) {
-                    Tools.Error("PromptTemplateを選択してください。");
+                    LogWrapper.Error("PromptTemplateを選択してください。");
                     return;
                 }
                 PromptAutoProcessItem promptAutoProcessItem = new(SelectedPromptItem.PromptItem);
@@ -549,7 +549,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // IsPythonScriptCheckedがTrueの場合はSelectedScriptItemを追加
             else if (IsPythonScriptChecked) {
                 if (SelectedScriptItem == null) {
-                    Tools.Error("PythonScriptを選択してください。");
+                    LogWrapper.Error("PythonScriptを選択してください。");
                     return;
                 }
                 TargetAutoProcessRule.RuleAction = new ScriptAutoProcessItem(SelectedScriptItem);
@@ -557,7 +557,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // IsStoreVectorDBCheckedがTrueの場合はSelectedVectorDBItemを追加
             if (IsStoreVectorDBChecked) {
                 if (SelectedVectorDBItem == null) {
-                    Tools.Error("VectorDBを選択してください。");
+                    LogWrapper.Error("VectorDBを選択してください。");
                     return;
                 }
                 TargetAutoProcessRule.RuleAction = new VectorDBAutoProcessItem(SelectedVectorDBItem);
@@ -588,11 +588,11 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             }
             // コピーor移動先が同じフォルダの場合はエラー
             if (folder.ClipboardItemFolder.Id == TargetFolder?.ClipboardItemFolder.Id) {
-                Tools.Error("同じフォルダにはコピーまたは移動できません。");
+                LogWrapper.Error("同じフォルダにはコピーまたは移動できません。");
                 return;
             }// コピーor移動先が検索フォルダの場合はエラー
             if (folder.IsSearchFolder) {
-                Tools.Error("検索フォルダにはコピーまたは移動できません。");
+                LogWrapper.Error("検索フォルダにはコピーまたは移動できません。");
                 return;
             }
             DestinationFolder = folder;
@@ -603,7 +603,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // フォルダが選択されたら、DestinationFolderに設定
             ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
             if (rootFolderViewModel == null) {
-                Tools.Error("RootFolderViewModelがNullです。");
+                LogWrapper.Error("RootFolderViewModelがNullです。");
                 return;
             }
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
@@ -616,7 +616,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             // フォルダが選択されたら、TargetFolderに設定
             ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
             if (rootFolderViewModel == null) {
-                Tools.Error("RootFolderViewModelがNullです。");
+                LogWrapper.Error("RootFolderViewModelがNullです。");
                 return;
             }
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {

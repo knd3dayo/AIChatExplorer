@@ -47,7 +47,7 @@ namespace QAChat.View.RAGWindow {
         public SimpleDelegateCommand<Window> OkCommand => new((window) => {
             // 選択中のコミットハッシュが空の場合はエラー
             if (SelectedCommitInfo == null) {
-                Tools.Error("コミットを選択してください");
+                LogWrapper.Error("コミットを選択してください");
                 return;
             }
             // 選択中のコミットハッシュを設定
@@ -59,7 +59,7 @@ namespace QAChat.View.RAGWindow {
 
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
-            Tools.Info("設定をキャンセルしました");
+            LogWrapper.Info("設定をキャンセルしました");
             // Windowを閉じる
             window.Close();
         });

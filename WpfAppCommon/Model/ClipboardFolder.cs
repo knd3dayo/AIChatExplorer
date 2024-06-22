@@ -144,7 +144,7 @@ namespace WpfAppCommon.Model {
 
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
-                Tools.Info("自動処理でアイテムが削除または移動されました");
+                LogWrapper.Info("自動処理でアイテムが削除または移動されました");
                 return item;
             }
             // 保存
@@ -152,7 +152,7 @@ namespace WpfAppCommon.Model {
             // Itemsに追加
             Items.Add(result);
             // 通知
-            Tools.Info("アイテムを追加しました");
+            LogWrapper.Info("アイテムを追加しました");
             return item;
         }
         // ClipboardItemを削除
@@ -194,11 +194,11 @@ namespace WpfAppCommon.Model {
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
             foreach (var rule in AutoProcessRules) {
-                Tools.Info("自動処理を適用します " + rule.GetDescriptionString());
+                LogWrapper.Info("自動処理を適用します " + rule.GetDescriptionString());
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    Tools.Info("自動処理でアイテムが削除されました");
+                    LogWrapper.Info("自動処理でアイテムが削除されました");
                     return null;
                 }
             }
@@ -437,7 +437,7 @@ namespace WpfAppCommon.Model {
                     _afterClipboardChanged(updatedItem);
 
                 } catch (Exception ex) {
-                    Tools.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
+                    LogWrapper.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
                 } finally {
                     Application.Current.Dispatcher.Invoke(() => {
                         Tools.StatusText.ReadyText = oldReadyText;
@@ -499,12 +499,12 @@ namespace WpfAppCommon.Model {
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
             if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                Tools.Info(StringResources.Instance.AutoMerge);
+                LogWrapper.Info(StringResources.Instance.AutoMerge);
                 ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
-                Tools.Info(StringResources.Instance.ExecuteAutoFileExtract);
+                LogWrapper.Info(StringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
                     item.Content += "\n"　+ text;
@@ -515,22 +515,22 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.UseOCR && image != null) {
                 string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                 item.Content = text;
-                Tools.Info(StringResources.Instance.OCR);
+                LogWrapper.Info(StringResources.Instance.OCR);
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
-                Tools.Info(StringResources.Instance.AutoSetTag);
+                LogWrapper.Info(StringResources.Instance.AutoSetTag);
                     ClipboardItem.CreateAutoTags(item);
             }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
-                Tools.Info(StringResources.Instance.AutoSetTitle);
+                LogWrapper.Info(StringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitle(item);
 
             } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
-                Tools.Info(StringResources.Instance.AutoSetTitle);
+                LogWrapper.Info(StringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitleWithOpenAI(item);
             }
             return item;

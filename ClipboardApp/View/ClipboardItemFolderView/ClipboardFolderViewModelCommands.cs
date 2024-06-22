@@ -32,7 +32,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
             EditFolderCommandExecute(parameter, () => {
                 Load();
-                Tools.Info("フォルダを編集しました");
+                LogWrapper.Info("フォルダを編集しました");
             });
         });
 
@@ -77,7 +77,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
             // フォルダ内のアイテムを再読み込み
             toFolder.Load();
-            Tools.Info("貼り付けました");
+            LogWrapper.Info("貼り付けました");
         }
 
 
@@ -85,12 +85,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
 
             if (selectedItems.Count < 2) {
-                Tools.Error("マージするアイテムを2つ選択してください");
+                LogWrapper.Error("マージするアイテムを2つ選択してください");
                 return;
             }
             // マージ先のアイテム。SelectedItems[0]がマージ先
             if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
-                Tools.Error("マージ先のアイテムが選択されていません");
+                LogWrapper.Error("マージ先のアイテムが選択されていません");
                 return;
             }
             List<ClipboardItemViewModel> fromItemsViewModel = [];
@@ -98,7 +98,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
                 for (int i = 1; i < selectedItems.Count; i++) {
                     if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
-                        Tools.Error("マージ元のアイテムが選択されていません");
+                        LogWrapper.Error("マージ元のアイテムが選択されていません");
                         return;
                     }
                     fromItemsViewModel.Add(fromItemModelView);
@@ -114,11 +114,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.Load();
-                Tools.Info("マージしました");
+                LogWrapper.Info("マージしました");
 
             } catch (Exception e) {
                 string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                Tools.Error(message);
+                LogWrapper.Error(message);
             }
 
         }
@@ -126,7 +126,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             clipboardItemFolder.Load();
-            Tools.Info("リロードしました");
+            LogWrapper.Info("リロードしました");
         }
 
 
@@ -184,7 +184,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 string folderPath = dialog.FileName;
                 clipboardItemFolder.ClipboardItemFolder.ExportItemsToJson(folderPath);
                 // フォルダ内のアイテムを読み込む
-                Tools.Info("フォルダをエクスポートしました");
+                LogWrapper.Info("フォルダをエクスポートしました");
             }
         }
 
@@ -204,14 +204,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 string filaPath = dialog.FileName;
                 clipboardItemFolder.ClipboardItemFolder.ImportItemsFromJson(filaPath, (actionMessage) => {
                     if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
-                        Tools.Error(actionMessage.Message);
+                        LogWrapper.Error(actionMessage.Message);
                     } else {
-                        Tools.Info(actionMessage.Message);
+                        LogWrapper.Info(actionMessage.Message);
                     }
                 });
                 // フォルダ内のアイテムを読み込む
                 clipboardItemFolder.Load();
-                Tools.Info("フォルダをインポートしました");
+                LogWrapper.Info("フォルダをインポートしました");
             }
         }
 
@@ -223,13 +223,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
 
             if (parameter is not ClipboardFolderViewModel folderViewModel) {
-                Tools.Error("フォルダが選択されていません");
+                LogWrapper.Error("フォルダが選択されていません");
                 return;
             }
 
             if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id
                 || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
-                Tools.Error("ルートフォルダは削除できません");
+                LogWrapper.Error("ルートフォルダは削除できません");
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             // フォルダ内のアイテムを読み込む
             folderViewModel.Load();
 
-            Tools.Info("フォルダを削除しました");
+            LogWrapper.Info("フォルダを削除しました");
         });
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
                 // フォルダ内のアイテムを読み込む
                 folderViewModel.Load();
-                Tools.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
+                LogWrapper.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
             }
         }
 

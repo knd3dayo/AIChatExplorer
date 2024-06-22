@@ -110,7 +110,7 @@ namespace ClipboardApp.View.SearchView {
 
         public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {
-                Tools.Error("検索条件がNullです");
+                LogWrapper.Error("検索条件がNullです");
                 return;
             }
             // 検索条件をLiteDBに保存
@@ -127,11 +127,11 @@ namespace ClipboardApp.View.SearchView {
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
             if (SearchConditionRule == null) {
-                Tools.Error("検索条件がNullです");
+                LogWrapper.Error("検索条件がNullです");
                 return;
             }
             if (MainWindowViewModel.ActiveInstance == null) {
-                Tools.Error("MainWindowViewModelがNullです");
+                LogWrapper.Error("MainWindowViewModelがNullです");
                 return;
             }
 
@@ -149,11 +149,11 @@ namespace ClipboardApp.View.SearchView {
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             if (MainWindowViewModel.ActiveInstance == null) {
-                Tools.Error("MainWindowViewModelがNullです");
+                LogWrapper.Error("MainWindowViewModelがNullです");
                 return;
             }
             if (SearchConditionRule == null) {
-                Tools.Error("検索条件がNullです");
+                LogWrapper.Error("検索条件がNullです");
                 return;
             }
 

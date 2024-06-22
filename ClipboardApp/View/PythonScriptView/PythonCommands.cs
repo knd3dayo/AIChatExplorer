@@ -16,7 +16,7 @@ namespace ClipboardApp.View.PythonScriptView.PythonScriptView {
 
         public static void EditScriptItemCommandExecute(object obj) {
             if (obj is not ScriptItem scriptItem) {
-                Tools.Error("スクリプトを選択してください");
+                LogWrapper.Error("スクリプトを選択してください");
                 return;
             }
             EditPythonScriptWindow editScriptWindow = new EditPythonScriptWindow();
