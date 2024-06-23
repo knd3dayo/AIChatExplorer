@@ -102,6 +102,12 @@
                     ElementStyle="{StaticResource SingleLineTextBlock}"
                     Header="タイトル"
                     IsReadOnly="True" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding SourceApplicationTitleText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="ソースタイトル"
+                    IsReadOnly="True" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">

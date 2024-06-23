@@ -146,6 +146,16 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
 
+        public string SourceApplicationTitleText {
+            get {
+                return ClipboardItem.SourceApplicationTitle;
+            }
+            set {
+                ClipboardItem.SourceApplicationTitle = value;
+                OnPropertyChanged(nameof(SourceApplicationTitleText));
+            }
+        }
+
         // 表示用の文字列
         public string? HeaderText {
             get {
