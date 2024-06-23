@@ -2,7 +2,6 @@ using LibGit2Sharp;
 using LiteDB;
 using WpfAppCommon.Factory;
 using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 using static WpfAppCommon.PythonIF.IPythonFunctions;
 
 namespace WpfAppCommon.Model {
@@ -269,12 +268,12 @@ namespace WpfAppCommon.Model {
                     mode = VectorDBUpdateMode.delete;
                 }
                 GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
-                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(gitFileInfo, VectorDBItem);
+                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
                 result.Message = e.Message;
-            } 
+            }
 
             result.TokenCount = token;
             result.Result = UpdateIndexResult.UpdateIndexResultEnum.Success;

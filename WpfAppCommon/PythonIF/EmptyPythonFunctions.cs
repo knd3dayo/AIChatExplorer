@@ -32,7 +32,7 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public void OpenAIEmbedding(string text) {
+        public void OpenAIEmbedding(OpenAIProperties props, string text) { 
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
         
@@ -47,10 +47,10 @@ namespace WpfAppCommon.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public void UpdateVectorDBIndex(IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public void UpdateVectorDBIndex(IPythonFunctions.ClipboardInfo clipboard, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ClipboardInfo clipboard, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
         public string HelloWorld() {

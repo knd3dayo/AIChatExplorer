@@ -243,11 +243,11 @@ namespace ClipboardApp.View.ClipboardItemView {
                 // プログレスインジケーターを表示
                 MainWindowViewModel.UpdateProgressCircleVisibility(true);
                 ChatResult? result = new();
-                ChatRequest chatController = new();
+                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
                 chatController.ChatMode = mode;
-
+                chatController.ContentText = promptItemViewModel.PromptItem.Prompt;
                 await Task.Run(() => {
-                    result = itemViewModel.ClipboardItem.OpenAIChat(mode, promptItemViewModel.PromptItem.Prompt);
+                    result = chatController.ExecuteChat();
                 });
                 if (result == null) {
                     LogWrapper.Error("OpenAI Chatの実行に失敗しました");

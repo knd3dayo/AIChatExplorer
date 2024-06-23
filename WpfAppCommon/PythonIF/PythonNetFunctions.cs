@@ -4,10 +4,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
-using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using FileStatus = WpfAppCommon.Model.FileStatus;
 
 namespace WpfAppCommon.PythonIF {
     public enum SpacyEntityNames {
@@ -365,13 +363,13 @@ namespace WpfAppCommon.PythonIF {
             return actionResult;
         }
 
-        public void OpenAIEmbedding(string text) {
+        public void OpenAIEmbedding(OpenAIProperties props, string text) {
 
             ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_embedding";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                string propsJson = JsonSerializer.Serialize(ClipboardAppConfig.CreateOpenAIProperties());
+                string propsJson = props.ToJson();
                 // open_ai_chat関数を呼び出す
                 function_object(text, propsJson);
                 // System.Windows.MessageBox.Show(result);
@@ -468,7 +466,7 @@ namespace WpfAppCommon.PythonIF {
             });
         }
 
-        public void UpdateVectorDBIndex(IPythonFunctions.ClipboardInfo contentInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ClipboardInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
             if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
@@ -479,7 +477,6 @@ namespace WpfAppCommon.PythonIF {
                 return;
             }
             // propsにVectorDBURLを追加
-            var props = ClipboardAppConfig.CreateOpenAIProperties();
             props.VectorDBItems = [vectorDBItem];
             string propJson = props.ToJson();
             // ContentInfoをJSON文字列に変換
@@ -493,14 +490,13 @@ namespace WpfAppCommon.PythonIF {
                 return function_object(propJson, contentInfoJson);
             });
         }
-        public void UpdateVectorDBIndex(IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
             if (!File.Exists(gitFileInfo.AbsolutePath)) {
                 LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
             }
             // propsにVectorDBURLを追加
-            var props = ClipboardAppConfig.CreateOpenAIProperties();
             props.VectorDBItems = [vectorDBItem];
 
             string propJson = props.ToJson();

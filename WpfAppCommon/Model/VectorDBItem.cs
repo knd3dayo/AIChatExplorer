@@ -158,7 +158,7 @@ namespace WpfAppCommon.Model {
             string id = clipboardItem.Id == LiteDB.ObjectId.Empty ? "" : clipboardItem.Id.ToString();
             IPythonFunctions.ClipboardInfo clipboard = new(IPythonFunctions.VectorDBUpdateMode.update, id,  clipboardItem.Content);
 
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(clipboard, this);
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
         }
 
         public void DeleteIndex(ClipboardItem clipboardItem) {
@@ -166,13 +166,13 @@ namespace WpfAppCommon.Model {
             string id = clipboardItem.Id == LiteDB.ObjectId.Empty ? "" : clipboardItem.Id.ToString();
             IPythonFunctions.ClipboardInfo clipboard = new(IPythonFunctions.VectorDBUpdateMode.delete, id, clipboardItem.Content);
 
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(clipboard, this);
+            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
         }
 
         // TestLangChain
         public void TestLangChain() {
             try {
-                ChatRequest chatController = new();
+                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
                 List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "こんにちは")];
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.RAG;

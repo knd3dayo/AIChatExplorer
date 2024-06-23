@@ -481,18 +481,10 @@ namespace WpfAppCommon.Model {
         }
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
-            // TextとImageの場合
-            if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
-                item.Description = $"{item.SourceApplicationTitle} ";
-            }
-            // Fileの場合
-            else if (item.ContentType == ClipboardContentTypes.Files) {
-                item.Description = $"{item.SourceApplicationTitle}";
-                item.Description += " ファイル名：" + item.Content;
-            }
+
             // ChatCommandExecuteを実行
             string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルがつけられない場合は空文字列を返してください\n";
-            ChatRequest chatController = new();
+            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = prompt;
             chatController.ContentText = item.Content;
@@ -593,21 +585,6 @@ namespace WpfAppCommon.Model {
             }
 
             return clipboardItem;
-        }
-
-        public ChatResult? OpenAIChat(OpenAIExecutionModeEnum mode, string promptTemplateText) {
-
-
-            List<ChatItem> chatItems = [];
-            ChatRequest chatController = new();
-            chatController.ChatMode = mode;
-            chatController.PromptTemplateText = promptTemplateText;
-            chatController.ContentText = Content;
-
-            ClipboardFolder? folder = GetFolder() ?? throw new Exception("フォルダが取得できませんでした");
-            chatController.VectorDBItems = VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(folder.Id.ToString(), folder.Description);
-            ChatResult? result = chatController.ExecuteChat();
-            return result;
         }
 
     }

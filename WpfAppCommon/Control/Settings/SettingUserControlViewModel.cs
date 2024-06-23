@@ -658,14 +658,15 @@ namespace WpfAppCommon.Control.Settings {
             PythonExecutor.Init(PythonDllPath);
             try {
                 // ChatControllerを作成
-                ChatRequest chatController = new();
+                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
                 List<ChatItem> chatItems = [];
                 // ChatItemを追加
                 ChatItem chatItem = new(ChatItem.UserRole,"Hello");
                 chatItems.Add(chatItem);
                 chatController.ChatHistory = chatItems;
+                chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
 
-                string resultString = PythonExecutor.PythonFunctions.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), chatController).Response;
+                string resultString = chatController.ExecuteChat()?.Response ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = "[NG]:OpenAIの実行に失敗しました。";
                     testResult.Result = false;

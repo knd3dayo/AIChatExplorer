@@ -9,7 +9,7 @@ namespace WpfAppCommon.Model {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class ChatRequest {
+    public class ChatRequest(OpenAIProperties openAIProperties) {
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.RAG;
 
@@ -36,11 +36,11 @@ namespace WpfAppCommon.Model {
 
         public List<string> ImageURLs = [];
 
-        public List<ClipboardItem> AdditionalTextItems = [];
+        public List<string> AdditionalTextItems { get; set; } = [];
 
-        public List<ClipboardItem> AdditionalImageItems = [];
+        public List<string> AdditionalImageURLs { get; set; } = [];
 
-        public IEnumerable<VectorDBItem> VectorDBItems = [];
+        public IEnumerable<VectorDBItem> VectorDBItems { get; set; } = [];
 
         public string CreatePromptText() {
             // PromptTextを作成
@@ -58,7 +58,7 @@ namespace WpfAppCommon.Model {
                 promptText += "\n---------以下は関連情報です------\n";
                 // ContextItemsのContentを追加
                 foreach (var item in AdditionalTextItems) {
-                    promptText += item.Content + "\n";
+                    promptText += item + "\n";
                 }
             }
             return promptText;
@@ -73,13 +73,13 @@ namespace WpfAppCommon.Model {
         }
 
         public static string CreateImageURLBase64String(string base64String) {
+            string base64Header = base64String.Substring(0, 5);
             // 先頭の文字列からイメージのフォーマットを判別
             // PNG  iVBOR
             // gif  R0lGO
             //jpeg  /9j/4
             // となる
-            string formatText = "";
-            string base64Header = base64String.Substring(0, 5);
+            string formatText;
             if (base64Header == "iVBOR") {
                 formatText = "png";
             } else if (base64Header == "R0lGO") {
@@ -132,9 +132,12 @@ namespace WpfAppCommon.Model {
                 messages.Add(itemDict);
             }
             // このオブジェクトのプロパティを基にしたContentを作成
+            // ImageURLとAdditionalImageURLsを結合したリストを作成
+            List<string> imageUrls = ImageURLs.Concat(AdditionalImageURLs).ToList();
+
             var dc = new Dictionary<string, object> {
                 ["role"] = ChatItem.UserRole,
-                ["content"] = CreateOpenAIContentList(CreatePromptText(), ImageURLs)
+                ["content"] = CreateOpenAIContentList(CreatePromptText(), imageUrls)
             };
             messages.Add(dc);
 
@@ -179,9 +182,8 @@ namespace WpfAppCommon.Model {
             string prompt = CreatePromptText();
             // ChatModeがRAGの場合は、RAGChatを実行する。
             if (ChatMode == OpenAIExecutionModeEnum.RAG) {
-                OpenAIProperties props = ClipboardAppConfig.CreateOpenAIProperties();
-                props.VectorDBItems.AddRange(VectorDBItems);
-                ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(props, this);
+                openAIProperties.VectorDBItems.AddRange(VectorDBItems);
+                ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(openAIProperties, this);
                 if (result == null) {
                     return null;
                 }
@@ -194,7 +196,7 @@ namespace WpfAppCommon.Model {
 
             }
             if (ChatMode == OpenAIExecutionModeEnum.Normal) {
-                ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(ClipboardAppConfig.CreateOpenAIProperties(), this);
+                ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(openAIProperties, this);
                 // リクエストをChatItemsに追加
                 if (result == null) {
                     return null;
@@ -208,13 +210,6 @@ namespace WpfAppCommon.Model {
             return null;
         }
 
-        public void SetChatItems(ClipboardItem clipboardItem) {
-            // ClipboardItemのChatItemsを設定
-            clipboardItem.ChatItems.Clear();
-            foreach (var item in ChatHistory) {
-                clipboardItem.ChatItems.Add(item);
-            }
-        }
 
     }
 }

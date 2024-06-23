@@ -106,7 +106,7 @@ namespace ImageChat {
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatRequest.CreateImageURLFromFilePath(imageFileName)).ToList();
                     // ChatRequestを生成
-                    ChatRequest chatRequest = new() {
+                    ChatRequest chatRequest = new(ClipboardAppConfig.CreateOpenAIProperties()) {
                         ChatMode = OpenAIExecutionModeEnum.Normal,
                         ImageURLs = imageBase64Strings,
                         ContentText = prompt

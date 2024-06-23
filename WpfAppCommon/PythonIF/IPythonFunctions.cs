@@ -87,7 +87,7 @@ namespace WpfAppCommon.PythonIF {
         public MaskedData GetUnMaskedData(string spacyModel, List<string> maskedTextList);
 
 
-        public void OpenAIEmbedding(string text);
+        public void OpenAIEmbedding(OpenAIProperties props, string text);
 
         public string RunScript(string script, string input);
 
@@ -101,9 +101,9 @@ namespace WpfAppCommon.PythonIF {
         public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
 
 
-        public void UpdateVectorDBIndex(GitFileInfo gitFileInfo,  VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo,  VectorDBItem vectorDBItem);
 
-        public void UpdateVectorDBIndex(ClipboardInfo contentInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ClipboardInfo contentInfo, VectorDBItem vectorDBItem);
 
         //テスト用
         public string HelloWorld();

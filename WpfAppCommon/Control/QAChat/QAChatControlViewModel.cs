@@ -65,7 +65,7 @@ namespace WpfAppCommon.Control.QAChat {
 
         public ClipboardFolder? ClipboardFolder { get; set; }
 
-        public ChatRequest ChatController { get; set; } = new();
+        public ChatRequest ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
         // Progress Indicatorの表示状態
@@ -136,12 +136,14 @@ namespace WpfAppCommon.Control.QAChat {
         }
 
         // AdditionalTextItems
+        private ObservableCollection<ClipboardItem> _AdditionalTextItems = new();
         public ObservableCollection<ClipboardItem> AdditionalTextItems {
             get {
-                return [.. ChatController.AdditionalTextItems];
+
+                return _AdditionalTextItems;
             }
             set {
-                ChatController.AdditionalTextItems = [.. value];
+                _AdditionalTextItems = value;
                 OnPropertyChanged(nameof(AdditionalTextItems));
             }
         }
@@ -159,12 +161,13 @@ namespace WpfAppCommon.Control.QAChat {
         }
 
         // AdditionalTextItems
+        private ObservableCollection<ClipboardItem> _AdditionalImageItems = new();
         public ObservableCollection<ClipboardItem> AdditionalImageItems {
             get {
-                return [.. ChatController.AdditionalImageItems];
+                return _AdditionalImageItems;
             }
             set {
-                ChatController.AdditionalImageItems = [.. value];
+                _AdditionalImageItems = value;
                 OnPropertyChanged(nameof(AdditionalImageItems));
             }
         }
@@ -187,12 +190,14 @@ namespace WpfAppCommon.Control.QAChat {
 
         public string PreviewJson {
             get {
+                UpdateChatRequestAdditionalItems();
                 return ChatController.CreateOpenAIRequestJSON();
             }
         }
 
         public string PreviewText {
             get {
+                UpdateChatRequestAdditionalItems();
                 return ChatController.CreatePromptText();
             }
         }
@@ -250,6 +255,18 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
+        // ChatControllerにAdditionalTextItemとAdditionalImageItemを設定
+        private void UpdateChatRequestAdditionalItems() {
+            ChatController.AdditionalTextItems = AdditionalTextItems.Select(x => x.Content).ToList();
+            foreach (var item in AdditionalImageItems) {
+                foreach (var image in item.ClipboardItemImages) {
+                    ChatController.AdditionalImageURLs.Add(ChatRequest.CreateImageURLBase64String(image.ImageBase64));
+                }
+
+            }
+        }
+
+
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -262,6 +279,8 @@ namespace WpfAppCommon.Control.QAChat {
                 PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
 
                 await Task.Run(() => {
+                    //追加テキストと追加画像を設定
+                    UpdateChatRequestAdditionalItems();
                     // LangChainChat用。VectorDBItemの有効なアイテムを設定。
                     ChatController.VectorDBItems = VectorDBItems;
                     // OpenAIChat or LangChainChatを実行
@@ -276,10 +295,6 @@ namespace WpfAppCommon.Control.QAChat {
                 InputText = "";
                 OnPropertyChanged(nameof(ChatHistory));
 
-                // ClipboardItemがある場合は、結果をClipboardItemに設定
-                if (ClipboardItem != null) {
-                    ChatController.SetChatItems(ClipboardItem);
-                }
 
             } catch (Exception e) {
                 LogWrapper.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
@@ -358,7 +373,7 @@ namespace WpfAppCommon.Control.QAChat {
         // 追加テキストのコンテキストメニュー
         // クリア処理
         public SimpleDelegateCommand<object> AdditionalImageClearCommand => new((parameter) => {
-            ChatController.AdditionalImageItems.Clear();
+            ChatController.AdditionalImageURLs.Clear();
             OnPropertyChanged(nameof(AdditionalImageItems));
             OnPropertyChanged(nameof(PreviewJson));
         });
@@ -369,9 +384,7 @@ namespace WpfAppCommon.Control.QAChat {
             SetContentTextFromClipboardItemsAction((List<ClipboardItem> selectedItems) => {
                 // SelectedItemsのうち、ClipboardItemImagesがあるものを追加
                 foreach (var item in selectedItems) {
-                    if (item.ClipboardItemImages.Count != 0) {
-                        ChatController.AdditionalImageItems.Add(item);
-                    }
+                    AdditionalTextItems.Add(item);
                 }
             });
             OnPropertyChanged(nameof(AdditionalImageItems));
@@ -381,11 +394,9 @@ namespace WpfAppCommon.Control.QAChat {
         public SimpleDelegateCommand<object> AdditionalImageAddFromSearchCommand => new((parameter) => {
             // SearchWindowを表示
             ShowSearchWindowAction((List<ClipboardItem> selectedItems) => {
-                // SelectedItemsのうち、ClipboardItemImagesがあるものを追加
+                // AdditionalImageItemsに追加
                 foreach (var item in selectedItems) {
-                    if (item.ClipboardItemImages.Count != 0) {
-                        ChatController.AdditionalImageItems.Add(item);
-                    }
+                    AdditionalImageItems.Add(item);
                 }
             });
             OnPropertyChanged(nameof(AdditionalImageItems));
@@ -435,7 +446,7 @@ namespace WpfAppCommon.Control.QAChat {
         // 選択したクリップボードアイテムをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveClipboardItemCommand => new((parameter) => {
             if (SelectedContextItem != null) {
-                ChatController.AdditionalTextItems.Remove(SelectedContextItem);
+                AdditionalTextItems.Remove(SelectedContextItem);
             }
             OnPropertyChanged(nameof(AdditionalTextItems));
         });
