@@ -23,12 +23,13 @@ namespace WpfAppCommon.Model {
                 return null;
             }
             // VectorDBItemを取得
-            VectorDBItem? vectorDBItem = VectorDBItem.GetItemById(VectorDBItemId);
+            VectorDBItem? vectorDBItem = ClipboardAppVectorDBItem.GetItemById(VectorDBItemId);
             if (vectorDBItem == null) {
                 return clipboardItem;
             }
             // ベクトルDBを更新
-            vectorDBItem.UpdateIndex(clipboardItem);
+            IPythonFunctions.ClipboardInfo clipboard = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem.Id.ToString(), clipboardItem.Content);
+            vectorDBItem.UpdateIndex(clipboard);
 
             return clipboardItem;
         }

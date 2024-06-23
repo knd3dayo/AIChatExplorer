@@ -408,7 +408,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
                         return;
                     }
                     IsStoreVectorDBChecked = true;
-                    SelectedVectorDBItem = VectorDBItem.GetItemById(vectorDBAutoProcessItem.VectorDBItemId);
+                    SelectedVectorDBItem = ClipboardAppVectorDBItem.GetItemById(vectorDBAutoProcessItem.VectorDBItemId);
                 }
 
                 OnPropertyChanged(nameof(Conditions));

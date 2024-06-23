@@ -491,9 +491,12 @@ namespace WpfAppCommon.Factory.Default {
         //----  RAGSourceItem
         // update
         public void UpsertVectorDBItem(VectorDBItem item) {
+            if (item is not ClipboardAppVectorDBItem clipboardAppVectorDB) {
+                return;
+            }
             // VectorDBItemコレクションに、itemを追加または更新
-            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
-            collection.Upsert(item);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
+            collection.Upsert(clipboardAppVectorDB);
 
         }
         // delete

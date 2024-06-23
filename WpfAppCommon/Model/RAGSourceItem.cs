@@ -63,7 +63,7 @@ namespace WpfAppCommon.Model {
         // VectorDBItemの取得
         public VectorDBItem? VectorDBItem {
             get {
-                return VectorDBItem.GetItemById(VectorDBItemId);
+                return ClipboardAppVectorDBItem.GetItemById(VectorDBItemId);
             }
             set {
                 if (value == null) {

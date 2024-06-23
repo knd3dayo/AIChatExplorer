@@ -45,12 +45,12 @@ namespace QAChat.View.VectorDBWindow {
 
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            foreach (var item in VectorDBItem.GetItems()) {
+            foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
                 VectorDBItems.Add(new VectorDBItemViewModel(item));
             }
             // itemsが空の場合はSystemCommonVectorDBを追加
             if (VectorDBItems.Count == 0) {
-                VectorDBItems.Add(new VectorDBItemViewModel(VectorDBItem.SystemCommonVectorDB));
+                VectorDBItems.Add(new VectorDBItemViewModel(ClipboardAppVectorDBItem.SystemCommonVectorDB));
             }
 
             OnPropertyChanged(nameof(VectorDBItems));
@@ -70,12 +70,12 @@ namespace QAChat.View.VectorDBWindow {
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             // SelectVectorDBItemを設定
-            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
+            SelectedVectorDBItem = new VectorDBItemViewModel(new ClipboardAppVectorDBItem());
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新
                 VectorDBItems.Clear();
-                foreach (var item in VectorDBItem.GetItems()) {
+                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
                     VectorDBItems.Add(new VectorDBItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(VectorDBItems));
@@ -93,7 +93,7 @@ namespace QAChat.View.VectorDBWindow {
 
                 // リストを更新
                 VectorDBItems.Clear();
-                foreach (var item in VectorDBItem.GetItems()) {
+                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
                     VectorDBItems.Add(new VectorDBItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(VectorDBItems));
@@ -114,7 +114,7 @@ namespace QAChat.View.VectorDBWindow {
                 SelectedVectorDBItem.Delete();
                 // リストを更新
                 VectorDBItems.Clear();
-                foreach (var item in VectorDBItem.GetItems()) {
+                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
                     VectorDBItems.Add(new VectorDBItemViewModel(item));
                 }
             }

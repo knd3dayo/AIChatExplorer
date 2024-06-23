@@ -394,8 +394,11 @@ namespace WpfAppCommon.Model {
             Task.Run(() => {
                 LogWrapper.Info("Embeddingを保存します");
                 if (ClipboardAppConfig.AutoEmbedding) {
+                    // IPythonFunctions.ClipboardInfoを作成
+                    IPythonFunctions.ClipboardInfo clipboardInfo = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
+
                     // Embeddingを保存
-                    VectorDBItem.SystemCommonVectorDB.UpdateIndex(this);
+                    ClipboardAppVectorDBItem.SystemCommonVectorDB.UpdateIndex(clipboardInfo);
                 }
                 LogWrapper.Info("Embeddingを保存しました");
             });
@@ -406,8 +409,10 @@ namespace WpfAppCommon.Model {
             Task.Run(() => {
                 LogWrapper.Info("Embeddingを削除します");
                 if (ClipboardAppConfig.AutoEmbedding) {
+                    // IPythonFunctions.ClipboardInfoを作成
+                    IPythonFunctions.ClipboardInfo clipboardInfo = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
                     // Embeddingを削除
-                    VectorDBItem.SystemCommonVectorDB.DeleteIndex(this);
+                    ClipboardAppVectorDBItem.SystemCommonVectorDB.DeleteIndex(clipboardInfo);
                 }
                 LogWrapper.Info("Embeddingを削除しました");
             });

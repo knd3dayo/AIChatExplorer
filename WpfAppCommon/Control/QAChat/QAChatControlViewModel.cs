@@ -17,7 +17,7 @@ namespace WpfAppCommon.Control.QAChat {
             // クリップボードフォルダを設定
             ClipboardFolder = clipboardFolder;
             // VectorDBItemsを設定
-            VectorDBItems = [.. VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
+            VectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
 
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
@@ -319,7 +319,7 @@ namespace WpfAppCommon.Control.QAChat {
             ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがRAGの場合は、VectorDBItemを取得
             if (ChatController.ChatMode == OpenAIExecutionModeEnum.RAG) {
-                VectorDBItems = [.. VectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
+                VectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
             }
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));

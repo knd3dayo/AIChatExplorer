@@ -7,7 +7,6 @@ using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace QAChat {

@@ -58,7 +58,7 @@ namespace QAChat.View.RAGWindow {
         // ComboBoxの選択肢
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
-                return [.. VectorDBItem.GetItems()];
+                return [.. ClipboardAppVectorDBItem.GetItems()];
             }
         }
         public VectorDBItem? SelectedVectorDBItem {
