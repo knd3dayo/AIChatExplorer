@@ -502,13 +502,13 @@ namespace WpfAppCommon.Factory.Default {
         // delete
         public void DeleteVectorDBItem(VectorDBItem item) {
             // VectorDBItemコレクションから、itemを削除
-            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             collection.Delete(item.Id);
         }
         // get
         public IEnumerable<VectorDBItem> GetVectorDBItems() {
             // VectorDBItemコレクションから、すべてのアイテムを取得
-            var collection = GetClipboardDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();
         }
 
