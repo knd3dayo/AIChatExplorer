@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfAppCommon.PythonIF {
+namespace PythonAILib.PythonIF {
     public class UnsupportedFileTypeException : Exception{
 
         public UnsupportedFileTypeException(string message) : base(message) {

@@ -1,4 +1,5 @@
 using LiteDB;
+using PythonAILib.Model;
 using QAChat.Model;
 using WpfAppCommon.Model;
 

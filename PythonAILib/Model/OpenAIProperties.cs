@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 
-namespace WpfAppCommon.Model {
+namespace PythonAILib.Model {
     public class OpenAIProperties {
 
         [JsonPropertyName("OpenAIKey")]

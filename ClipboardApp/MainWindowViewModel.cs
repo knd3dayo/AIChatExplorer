@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.PythonIF;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;

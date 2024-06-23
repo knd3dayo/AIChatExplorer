@@ -7,6 +7,7 @@ using WpfAppCommon.Factory;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using QAChat.View.RAGWindow;
+using PythonAILib.Model;
 
 namespace QAChat.View.PromptTemplateWindow {
     public class ListPromptTemplateWindowViewModel : MyWindowViewModel {

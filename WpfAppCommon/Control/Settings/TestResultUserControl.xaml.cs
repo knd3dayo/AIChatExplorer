@@ -26,7 +26,7 @@ namespace WpfAppCommon.Control.Settings {
             TestResultUserControlViewModel testResultWindowViewModel = (TestResultUserControlViewModel)testResultWindow.DataContext;
             testResultWindowViewModel.LogText = resultString;
             Window window = new() {
-                Title = StringResources.Instance.SettingCheckResultWindowTitle,
+                Title = CommonStringResources.Instance.SettingCheckResultWindowTitle,
                 Content = testResultWindow
             };
             window.ShowDialog();

@@ -1,4 +1,5 @@
 using System.Windows;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.PromptTemplateWindow {

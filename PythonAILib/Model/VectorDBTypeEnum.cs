@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
-namespace WpfAppCommon.Model {
+namespace PythonAILib.Model {
     /// <summary>
     /// VectorDBの種類。現在はFaiss,Chroma(インメモリ)のみ
     /// </summary>

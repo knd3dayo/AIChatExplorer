@@ -10,106 +10,12 @@
 
   <ItemGroup>
     <None Remove="Nlog.config" />
-    <None Remove="python\ai_app.py" />
-    <None Remove="python\ai_app_pyocr.py" />
-    <None Remove="python\ai_app_spacy.py" />
-    <None Remove="python\clipboard_app_openai.py" />
-    <None Remove="python\clipboard_app_props.py" />
-    <None Remove="python\file_extractor.py" />
-    <None Remove="python\flask_app.py" />
-    <None Remove="python\langchain_client.py" />
-    <None Remove="python\langchain_doc_store.py" />
-    <None Remove="python\langchain_file_loader.py" />
-    <None Remove="python\langchain_file_processor.py" />
-    <None Remove="python\langchain_object_processor.py" />
-    <None Remove="python\langchain_openai_client.py" />
-    <None Remove="python\langchain_util.py" />
-    <None Remove="python\langchain_vector_db.py" />
-    <None Remove="python\langchain_vector_db_chroma.py" />
-    <None Remove="python\llamaindex_client.py" />
-    <None Remove="python\llamaindex_vector_db.py" />
-    <None Remove="python\llamaindex_vector_db_chroma.py" />
-    <None Remove="python\openai_client.py" />
-    <None Remove="python\openai_props.py" />
-    <None Remove="python\script_template.py" />
-    <None Remove="python\test_langchain_vector_db_chroma.py" />
-    <None Remove="python\test_openai_client.py" />
-    <None Remove="python\tools.json" />
     <None Remove="TestData\extract_test.png" />
     <None Remove="TestData\extract_test.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Nlog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\ai_app_pyocr.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\ai_app_spacy.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\ai_app.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\file_extractor.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_doc_store.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_vector_db_chroma.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_file_loader.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_object_processor.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_file_processor.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\flask_app.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_vector_db.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\test_langchain_vector_db_chroma.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db_faiss.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_util.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\test_openai_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\openai_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\openai_props.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\script_template.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\tools.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="TestData\extract_test.png">
@@ -128,9 +34,12 @@
     <PackageReference Include="Microsoft-WindowsAPICodePack-Core" Version="1.1.5" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="NLog" Version="5.2.8" />
-    <PackageReference Include="pythonnet" Version="3.1.0-preview2024-04-07" />
     <PackageReference Include="SharpClipboard" Version="3.5.2" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.0-preview.3.24172.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

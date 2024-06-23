@@ -2,9 +2,10 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using QAChat.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 using WpfAppCommon.View.QAChat;
 

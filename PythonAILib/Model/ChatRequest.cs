@@ -2,10 +2,10 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using QAChat.Model;
+using PythonAILib.PythonIF;
 using WpfAppCommon.PythonIF;
 
-namespace WpfAppCommon.Model {
+namespace PythonAILib.Model {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -150,7 +150,7 @@ namespace WpfAppCommon.Model {
 
             // ClipboardAppConfigの設定を取得
             // ChatModel
-            string model = ClipboardAppConfig.OpenAICompletionModel;
+            string model = openAIProperties.OpenAICompletionModel;
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {

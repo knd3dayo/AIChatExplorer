@@ -25,7 +25,7 @@ namespace WpfAppCommon.Control.Settings {
         public static void OpenSettingsWindow() {
             SettingsUserControl settingsControl = new();
             Window window = new() {
-                Title = StringResources.Instance.SettingWindowTitle,
+                Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };
             window.ShowDialog();

@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
+
+using PythonAILib.Model;
 
 namespace WpfAppCommon.Model {
     public class ClipboardAppConfig {

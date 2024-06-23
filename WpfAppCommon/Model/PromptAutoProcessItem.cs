@@ -1,8 +1,5 @@
-using LibGit2Sharp;
-using LiteDB;
+using PythonAILib.Model;
 using QAChat.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
     public  class PromptAutoProcessItem : SystemAutoProcessItem{

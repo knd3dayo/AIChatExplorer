@@ -4,8 +4,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
+using PythonAILib.Model;
+using PythonAILib.Utils;
+using WpfAppCommon.PythonIF;
 
 namespace WpfAppCommon.PythonIF {
     public enum SpacyEntityNames {
@@ -29,7 +30,7 @@ namespace WpfAppCommon.PythonIF {
     }
 }
 
-namespace WpfAppCommon.PythonIF {
+namespace PythonAILib.PythonIF {
     public class PythonTask(Action action) : Task(action) {
 
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
@@ -40,7 +41,7 @@ namespace WpfAppCommon.PythonIF {
         private readonly Dictionary<string, PyModule> PythonModules = [];
 
 
-        private static StringResources StringResources { get; } = StringResources.Instance;
+        private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
         public PyModule GetPyModule(string scriptPath) {
             if (PythonModules.TryGetValue(scriptPath, out PyModule? value)) {

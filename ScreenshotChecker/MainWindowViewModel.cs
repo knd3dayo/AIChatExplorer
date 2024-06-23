@@ -3,13 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using ImageChat.View;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using QAChat.Model;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace ImageChat {
@@ -191,7 +190,7 @@ namespace ImageChat {
             SettingsUserControl settingsControl = new();
             Window window = new() {
                 SizeToContent = SizeToContent.Height,
-                Title = StringResources.Instance.SettingWindowTitle,
+                Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };
             window.ShowDialog();

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.RAGWindow {

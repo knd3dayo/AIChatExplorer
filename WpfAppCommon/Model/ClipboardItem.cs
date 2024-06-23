@@ -5,8 +5,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using LibGit2Sharp;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using QAChat.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {

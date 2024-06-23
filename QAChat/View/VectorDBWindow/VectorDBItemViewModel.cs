@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.VectorDBWindow {

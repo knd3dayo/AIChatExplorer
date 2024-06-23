@@ -1,14 +1,7 @@
-using System.Security.Cryptography.Pkcs;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
-using QAChat.Model;
-using WpfAppCommon.Factory;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
+using PythonAILib.PythonIF;
 
-namespace WpfAppCommon.Model {
+namespace PythonAILib.Model {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>

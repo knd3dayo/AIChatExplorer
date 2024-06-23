@@ -48,10 +48,10 @@ namespace ClipboardApp {
                     });
                 });
 
-                LogWrapper.Info(StringResources.Instance.StartClipboardWatch);
+                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatch);
             } else {
                 ClipboardController.Stop();
-                LogWrapper.Info(StringResources.Instance.StopClipboardWatch);
+                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatch);
             }
             // 通知
             windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsClipboardMonitor));
@@ -207,7 +207,7 @@ namespace ClipboardApp {
             SettingsUserControl settingsControl = new();
             Window window = new() {
                 SizeToContent = SizeToContent.Height,
-                Title = StringResources.Instance.SettingWindowTitle,
+                Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };
             window.ShowDialog();

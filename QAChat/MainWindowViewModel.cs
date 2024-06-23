@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using PythonAILib.Model;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Control.QAChat;
@@ -111,7 +112,7 @@ namespace QAChat {
             SettingsUserControl settingsControl = new();
             Window window = new() {
                 SizeToContent = SizeToContent.Height,
-                Title = StringResources.Instance.SettingWindowTitle,
+                Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
             };
             window.ShowDialog();

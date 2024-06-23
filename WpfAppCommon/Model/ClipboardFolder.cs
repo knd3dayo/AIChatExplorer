@@ -3,9 +3,9 @@ using System.IO;
 using System.Text.Json.Nodes;
 using System.Windows;
 using LiteDB;
+using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -424,7 +424,7 @@ namespace WpfAppCommon.Model {
             Task.Run(() => {
                 string oldReadyText = Tools.StatusText.ReadyText;
                 Application.Current.Dispatcher.Invoke(() => {
-                    Tools.StatusText.ReadyText = StringResources.Instance.AutoProcessing;
+                    Tools.StatusText.ReadyText = CommonStringResources.Instance.AutoProcessing;
                 });
                 try {
                     // Apply automatic processing
@@ -437,7 +437,7 @@ namespace WpfAppCommon.Model {
                     _afterClipboardChanged(updatedItem);
 
                 } catch (Exception ex) {
-                    LogWrapper.Error($"{StringResources.Instance.AddItemFailed}\n{ex.Message}");
+                    LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}");
                 } finally {
                     Application.Current.Dispatcher.Invoke(() => {
                         Tools.StatusText.ReadyText = oldReadyText;
@@ -499,12 +499,12 @@ namespace WpfAppCommon.Model {
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
             if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
-                LogWrapper.Info(StringResources.Instance.AutoMerge);
+                LogWrapper.Info(CommonStringResources.Instance.AutoMerge);
                 ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
-                LogWrapper.Info(StringResources.Instance.ExecuteAutoFileExtract);
+                LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
                     item.Content += "\n"　+ text;
@@ -515,22 +515,22 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.UseOCR && image != null) {
                 string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                 item.Content = text;
-                LogWrapper.Info(StringResources.Instance.OCR);
+                LogWrapper.Info(CommonStringResources.Instance.OCR);
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
-                LogWrapper.Info(StringResources.Instance.AutoSetTag);
+                LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
                     ClipboardItem.CreateAutoTags(item);
             }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
-                LogWrapper.Info(StringResources.Instance.AutoSetTitle);
+                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitle(item);
 
             } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
-                LogWrapper.Info(StringResources.Instance.AutoSetTitle);
+                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitleWithOpenAI(item);
             }
             return item;

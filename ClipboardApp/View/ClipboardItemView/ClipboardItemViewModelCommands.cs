@@ -9,6 +9,8 @@ using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using ClipboardApp.Views.ClipboardItemView;
 using MS.WindowsAPICodePack.Internal;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;

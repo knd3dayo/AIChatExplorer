@@ -6,8 +6,8 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Model {
     public class MyWindowViewModel : ObservableObject{
 
-        // StringResources
-        public StringResources StringResources { get; } = StringResources.Instance;
+        // CommonStringResources
+        public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
 
         public virtual void OnLoadAction() { }
 

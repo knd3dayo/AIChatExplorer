@@ -1,15 +1,9 @@
-using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using LibGit2Sharp;
-using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
 
-namespace QAChat.Model {
+namespace PythonAILib.Model {
     public class ChatItem {
 
         public static string SystemRole { get; } = "system";

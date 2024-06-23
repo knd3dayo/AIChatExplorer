@@ -1,9 +1,9 @@
-using QAChat.Model;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 
-namespace WpfAppCommon.PythonIF {
+namespace PythonAILib.PythonIF {
     public class EmptyPythonFunctions : IPythonFunctions {
-        private static StringResources StringResources { get; } = StringResources.Instance;
+        private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
         public string ExtractText(string path) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }

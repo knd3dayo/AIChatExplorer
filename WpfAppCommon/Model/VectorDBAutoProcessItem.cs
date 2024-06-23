@@ -1,8 +1,6 @@
-using LibGit2Sharp;
-using LiteDB;
-using QAChat.Model;
-using WpfAppCommon.PythonIF;
-using WpfAppCommon.Utils;
+
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 
 namespace WpfAppCommon.Model {
     public class VectorDBAutoProcessItem : SystemAutoProcessItem {

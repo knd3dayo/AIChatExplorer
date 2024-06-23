@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfAppCommon.Model {
+namespace PythonAILib.Model {
     public class ChatResult {
 
         public List<Dictionary<string,string>> ReferencedContents { get; set; } = [];

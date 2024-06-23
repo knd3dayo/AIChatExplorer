@@ -1,11 +1,11 @@
 using System.IO;
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
+using PythonAILib.Model;
+using WpfAppCommon.PythonIF;
 
-namespace WpfAppCommon.PythonIF {
+namespace PythonAILib.PythonIF {
     public class PythonExecutor {
         // String definition instance
-        public static StringResources StringResources { get; } = StringResources.Instance;
+        public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
 
         // Template file for custom Python scripts
@@ -28,7 +28,7 @@ namespace WpfAppCommon.PythonIF {
 
                 file = new FileInfo(TemplateScript);
                 if (!file.Exists) {
-                    throw new ThisApplicationException(StringResources.TemplateScriptNotFound);
+                    throw new Exception(StringResources.TemplateScriptNotFound);
                 }
                 return File.ReadAllText(file.FullName);
             }

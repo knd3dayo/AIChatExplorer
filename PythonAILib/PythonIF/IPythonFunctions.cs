@@ -3,10 +3,9 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using QAChat.Model;
-using WpfAppCommon.Model;
+using PythonAILib.Model;
 
-namespace WpfAppCommon.PythonIF {
+namespace PythonAILib.PythonIF {
 
     public class MaskedData {
         public HashSet<MaskedEntity> Entities { get; set; } = [];

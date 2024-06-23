@@ -1,10 +1,9 @@
-
 using System.Configuration;
 using System.Text;
 using System.Windows;
-using QAChat.Model;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.Settings {

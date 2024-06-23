@@ -1,5 +1,6 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
