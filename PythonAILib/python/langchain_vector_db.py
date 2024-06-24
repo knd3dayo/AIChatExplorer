@@ -9,6 +9,8 @@ from langchain_client import LangChainOpenAIClient
 from langchain_doc_store import SQLDocStore
 from openai_props import VectorDBProps
 
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 class LangChainVectorDB:
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
@@ -25,16 +27,17 @@ class LangChainVectorDB:
     def load(self):
         pass
 
+    
+    # vector idのリストとmetadataのリストを返す
+    def _get_metadata_by_source(self, sources:list={}) -> (list, list):
+        pass
+
     def _save(self, documents:list=[]):
         pass
 
-    def _delete(self, sources:list=[]):
+    def _delete(self, doc_ids:list=[]):
         pass
-    
-    def _delete_docstore_data(self, doc_ids:list=[]):
-        if self.vector_db_props.DocStoreURL:
-            self.doc_store.mdelete(doc_ids)
-            
+
     def vector_search(self, query, k=10 , score_threshold=0.0):
         answers = self.db.similarity_search_with_relevance_scores(
             query, k=k, score_threshold=score_threshold)
@@ -42,24 +45,56 @@ class LangChainVectorDB:
         return answers
 
     def add_documents(self, documents: list):
-        # DocStoreURLが指定されている場合はdoc_idsを取得して、documentsに追加
+        # MultiVectorRetrieverのテスト
         if self.vector_db_props.DocStoreURL:
-            id_key = "doc_id"
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=200)
+            sub_docs = []
             doc_ids = []
             for doc in documents:
+                # doc_idを生成
                 doc_id = str(uuid.uuid4())
+                # doc_idsにdoc_idを追加
                 doc_ids.append(doc_id)
-                doc.metadata[id_key] = doc_id
-            # doc_storeに保存
-            self.doc_store.mset(list(zip(doc_ids, documents)))    
-                
-        self._save(documents)
+
+                # docを分割
+                tmp_sub_docs = text_splitter.split_documents([doc])
+                # sub_docsのmetadataにdoc_idを追加
+                for tmp_sub_doc in tmp_sub_docs:
+                    tmp_sub_doc.metadata["doc_id"] = doc_id
+                # sub_docsを追加
+                sub_docs.extend(tmp_sub_docs)    
+        
+            # ベクトルDB固有の保存メソッドを呼び出し                
+            self._save(sub_docs)
+            
+            # DocStoreに保存
+            self.doc_store.mset(list(zip(doc_ids, documents)))
+            
+        else:
+            # ベクトルDB固有の保存メソッドを呼び出し                
+            self._save(documents)
 
         return len(documents)
         
-    def delete_doucments(self, sources :list ):
-        self._delete(sources)
+    def delete_doucments(self, sources :list =[] ):
+        # ベクトルDB固有のvector id取得メソッドを呼び出し。
+        vector_ids, metadata = self._get_metadata_by_source(sources)
+        # vector_idsが空の場合は何もしない
+        if len(vector_ids) == 0:
+            return 0
+
+        # DocStoreURLが指定されている場合はDocStoreから削除
+        if self.vector_db_props.DocStoreURL:
+            # documentのmetadataのdoc_idを取得
+            doc_ids = [data.get("doc_id", None) for data in metadata]
+            # doc_idsが空ではない場合
+            if len(doc_ids) > 0:
+                # DocStoreから削除
+                self.doc_store.mdelete(doc_ids)
             
+        # ベクトルDB固有の削除メソッドを呼び出し
+        self._delete(vector_ids)
+    
         return len(sources)
     
 

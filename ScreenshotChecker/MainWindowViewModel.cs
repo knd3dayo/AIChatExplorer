@@ -15,6 +15,9 @@ namespace ImageChat {
     public class MainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public MainWindowViewModel() {
+            // PythonAILibのLogWrapperのログ出力設定
+            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+
         }
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;

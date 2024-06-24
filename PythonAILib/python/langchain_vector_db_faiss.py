@@ -1,5 +1,6 @@
 
 import os, json, sys
+from telnetlib import DO
 from langchain_community.vectorstores import FAISS
 from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
@@ -37,6 +38,16 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
                 allow_dangerous_deserialization=True
                 )  
 
+    def _get_metadata_by_source(self, sources:str=None) -> (list, list):
+        doc_ids = []
+        metadata = []
+        for _id, doc in self.db.docstore._dict.items():
+            if doc.metadata.get("source", None) in [source.metadata.get("source",None) for source in sources]:
+                doc_ids.append(_id)
+                metadata.append(doc.metadata)
+
+        return doc_ids, metadata
+
     def _save(self, documents:list=[]):
         if not self.vector_db_props.VectorDBURL:
             return
@@ -47,24 +58,22 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
             
         self.db.save_local(self.vector_db_props.VectorDBURL)
 
-    def _delete(self, sources:list=None):
-        if not self.vector_db_props.VectorDBURL:
+    def _delete(self, doc_ids:list=[]):
+        # doc_idsが空の場合は何もしない
+        if len(doc_ids) == 0:
             return
-        doc_ids = []
-        # 既存のDBから指定されたsourceを持つドキュメントを削除
-        
+        # metadataのキーdoc_idが引数のdoc_idsに含まれるDocumentの_idを取得
+        _ids = []
         for _id, doc in self.db.docstore._dict.items():
-            if not doc.metadata.get("source_url", None):
-                if doc.metadata.get("source", None) in [source.metadata.get("source",None) for source in sources]:
-                    doc_ids.append(_id)
-            else:
-                source_url_check =  doc.metadata.get("source_url", None)in [source.metadata.get("source_url", None) for source in sources]
-                source_path_check = doc.metadata.get("source", None) in [source.metadata.get("source", None) for source in sources]
-                if source_url_check and source_path_check:
-                    doc_ids.append(_id)
+            if doc.metadata.get("doc_id", None) in doc_ids:
+                _ids.append(_id)
 
-        if len(doc_ids) > 0:
-            self.db.delete(doc_ids)
-            self._save(self.vector_db_props.VectorDBURL)
-        return len(doc_ids)
+        # _idsが空の場合は何もしない
+        if len(_ids) == 0:
+            return
+        # _idsに含まれるDocumentを削除
+        self.db.delete(_ids)
+        self._save(self.vector_db_props.VectorDBURL)
+
+        return len(_ids)
     

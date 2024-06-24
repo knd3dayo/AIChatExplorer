@@ -34,28 +34,34 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             **params
             )
 
-    def _save(self, documents:list=None):
+    def _get_metadata_by_source(self, sources:str=None) -> (list, list):
+        ids=[]
+        metadata = []
+        for source in sources:
+            doc_dict = self.db.get(where={"source": source})
+
+            # デバッグ用
+            print("_get_documents_by_source doc_dict:", doc_dict)
+
+            # vector idを取得してidsに追加
+            ids.extend(doc_dict.get("ids", []))
+            # documentsを取得してdocumentsに追加
+            metadata.extend(doc_dict.get("metadata", []))
+
+
+        return ids, metadata
+    
+    def _save(self, documents:list=[]):
         if not self.vector_db_props.VectorDBURL:
-            return
+            return []
         
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
-
         
-    def _delete(self, sources:list=None):
-        # 既存のDBから指定されたsourceを持つドキュメントを削除
-        for source in sources:
-            docs = self.db.get(where={"source": source})
+    def _delete(self, doc_ids:list=[]):
+        if len(doc_ids) == 0:
+            return
 
-            print("docs:", docs)
-            
-            # docsのmetadataのdoc_idを取得
-            metadatas = docs.get("metadatas", [])
-            ids = [metadata.get("doc_id", None) for metadata in metadatas]
-            self._delete_docstore_data(doc_ids=ids)
+        self.db._collection.delete(ids=doc_ids)
 
-            ids = docs.get("ids", [])
-            if len(ids) > 0:
-                self.db._collection.delete(ids=ids)
-
-        return len(ids)    
+        return len(doc_ids)    
  

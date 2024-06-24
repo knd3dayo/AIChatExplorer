@@ -55,7 +55,8 @@ namespace ClipboardApp {
             // DBのバックアップの取得
             IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
             backupController.BackupNow();
-
+            // PythonAILibのLogWrapperのログ出力設定
+            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
         }
         // ClipboardController
         public static ClipboardController ClipboardController { get; } = new();

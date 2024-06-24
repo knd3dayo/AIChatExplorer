@@ -56,6 +56,9 @@ namespace QAChat {
         public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem) {
             ClipboardFolder = clipboardFolder;
             QAChatControlViewModel.Initialize(clipboardFolder, clipboardItem, PromptTemplateCommandExecute);
+            // PythonAILibのLogWrapperのログ出力設定
+            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+
         }
         public Action<Action<List<ClipboardItem>>> ShowSearchWindowAction {
             get {
