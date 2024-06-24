@@ -336,10 +336,6 @@ namespace WpfAppCommon.Model {
         // 自分自身をDBに保存する
         public void Save(bool contentIsModified = true) {
 
-            // 保存
-            SaveFiles();
-            SaveImages();
-
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
 
             if (contentIsModified == false) {
@@ -489,7 +485,7 @@ namespace WpfAppCommon.Model {
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
 
             // ChatCommandExecuteを実行
-            string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルがつけられない場合は空文字列を返してください\n";
+            string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルをつけることが難しい場合は[タイトルなし」と返してください\n";
             ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = prompt;

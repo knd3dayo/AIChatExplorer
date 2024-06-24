@@ -251,6 +251,10 @@ namespace WpfAppCommon.Factory.Default {
             foreach (var image in item.ClipboardItemImages) {
                 UpsertItemImage(image);
             }
+            // ファイルがある場合は、追加または更新
+            foreach (var file in item.ClipboardItemFiles) {
+                UpsertItemFile(file);
+            }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             collection.Upsert(item);
         }

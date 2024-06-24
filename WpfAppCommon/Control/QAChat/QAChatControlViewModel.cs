@@ -24,10 +24,7 @@ namespace WpfAppCommon.Control.QAChat {
             InputText = clipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
             if (ClipboardItem != null) {
-                ChatHistory.Clear();
-                foreach (var chatItem in ClipboardItem.ChatItems) {
-                    ChatHistory.Add(chatItem);
-                }
+                ChatHistory = [.. ClipboardItem.ChatItems];
             }
             // PromptTemplateCommandExecuteを設定
             if (PromptTemplateCommandExecute != null) {
@@ -292,6 +289,13 @@ namespace WpfAppCommon.Control.QAChat {
                     LogWrapper.Error("チャットの送信に失敗しました。");
                     return;
                 }
+                // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+                if (ClipboardItem != null) {
+                    ClipboardItem.ChatItems = [.. ChatHistory];
+                    // ClipboardItemを保存
+                    ClipboardItem.Save(false);
+
+                }
                 // inputTextをクリア
                 InputText = "";
                 OnPropertyChanged(nameof(ChatHistory));
@@ -308,8 +312,13 @@ namespace WpfAppCommon.Control.QAChat {
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             ChatHistory = [];
-
             InputText = "";
+            // ClipboardItemがある場合は、ChatItemsをクリア
+            if (ClipboardItem != null) {
+                ClipboardItem.ChatItems = [];
+                ClipboardItem.Save(false);
+            }
+            OnPropertyChanged(nameof(ChatHistory));
         });
 
         // モードが変更されたときの処理
