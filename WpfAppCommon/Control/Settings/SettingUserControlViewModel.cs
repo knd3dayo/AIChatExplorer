@@ -246,7 +246,7 @@ namespace WpfAppCommon.Control.Settings {
         // -------------------------------------
         // その他の設定
         // -------------------------------------
-        // 指定した行数未満の場合は無視する。
+        // 指定した行数以下の場合は無視する。
         public int IgnoreLineCount {
             get {
                 return ClipboardAppConfig.IgnoreLineCount;

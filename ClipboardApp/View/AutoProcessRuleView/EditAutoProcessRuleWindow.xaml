@@ -181,7 +181,7 @@
                         <Label
                             Width="150"
                             Margin="0,0,10,3"
-                            Content="行未満のテキスト"
+                            Content="行以下のテキスト"
                             DockPanel.Dock="Left" />
                     </DockPanel>
                     <DockPanel Grid.Row="2" HorizontalAlignment="Left">

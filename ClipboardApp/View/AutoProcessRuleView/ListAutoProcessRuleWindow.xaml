@@ -173,7 +173,7 @@
                             Grid.Column="0"
                             Margin="10,0,10,0"
                             VerticalAlignment="Center"
-                            Content="指定した行数未満のテキストアイテムを無視"
+                            Content="指定した行数以下のテキストアイテムを無視"
                             IsChecked="{Binding IgnoreLineCountChecked}" />
 
                         <DockPanel
@@ -188,7 +188,7 @@
                             <TextBlock
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
-                                Text="行未満" />
+                                Text="行以下" />
                         </DockPanel>
                         <TextBlock
                             Grid.Row="2"

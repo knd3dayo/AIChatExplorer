@@ -90,7 +90,7 @@ namespace WpfAppCommon.Model {
         }
 
         // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public  bool IsContentLineCountMoreThan(ClipboardItem clipboardItem) {
+        public  bool IsContentLineCountOver(ClipboardItem clipboardItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
@@ -99,10 +99,10 @@ namespace WpfAppCommon.Model {
             if (clipboardItem.Content == null) {
                 return false;
             }
-            return clipboardItem.Content.Split('\n').Length > MinLineCount;
+            return clipboardItem.Content.Split('\n').Length >= MinLineCount;
         }
-        // ClipboardItemのContentの行数が指定した行数未満かどうか
-        public bool IsContentLineCountLessThan(ClipboardItem clipboardItem) {
+        // ClipboardItemのContentの行数が指定した行数以下かどうか
+        public bool IsContentLineCountUnder(ClipboardItem clipboardItem) {
             // MaxLineCountが-1の場合はTrueを返す
             if (MaxLineCount == -1) {
                 return true;
@@ -111,7 +111,7 @@ namespace WpfAppCommon.Model {
             if (clipboardItem.Content == null) {
                 return false;
             }
-            return clipboardItem.Content.Split('\n').Length < MaxLineCount;
+            return clipboardItem.Content.Split('\n').Length <= MaxLineCount;
         }
 
         // ConditionTypeに対応する関数を実行してBoolを返す
@@ -134,7 +134,7 @@ namespace WpfAppCommon.Model {
                 return false;
             }
             if (clipboardItem.ContentType == ClipboardContentTypes.Text) {
-                return IsContentLineCountMoreThan(clipboardItem) && IsContentLineCountLessThan(clipboardItem);
+                return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
             }
             return true;
         }

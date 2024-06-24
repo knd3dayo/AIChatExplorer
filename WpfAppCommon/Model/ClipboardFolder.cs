@@ -490,9 +490,9 @@ namespace WpfAppCommon.Model {
         /// <param name="image"></param>
         private static ClipboardItem? ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
             // ★TODO Implement processing based on automatic processing rules.
-            // 指定した行数未満のテキストアイテムは無視
+            // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == ClipboardContentTypes.Text && lineCount < ClipboardAppConfig.IgnoreLineCount) {
+            if (item.ContentType == ClipboardContentTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
                 return null;
             }
 
