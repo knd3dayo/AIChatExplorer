@@ -336,11 +336,21 @@ namespace WpfAppCommon.Model {
         // 自分自身をDBに保存する
         public void Save(bool contentIsModified = true) {
 
+            if (contentIsModified) {
+                // ★TODO DBControllerに処理を移動する。
+                // 画像を保存
+                SaveImages();
+                // ファイルを保存
+                SaveFiles();
+            }
+
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
 
             if (contentIsModified == false) {
+                // ピン留め変更のみの場合を想定。
                 return;
             }
+
 
 
             Task.Run(() => {
@@ -485,14 +495,34 @@ namespace WpfAppCommon.Model {
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
 
             // ChatCommandExecuteを実行
-            string prompt = "この文章のタイトルを生成してください。改行はしないでください。タイトルをつけることが難しい場合は[タイトルなし」と返してください\n";
+            string prompt = "この文章のタイトルを生成してください。\n";
             ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = prompt;
-            chatController.ContentText = item.Content;
+            // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
+            chatController.ContentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
                 item.Description += result.Response;
+            }
+        }
+        // OpenAIを使用してイメージからテキスト抽出する。
+        public static void ExtractImageWithOpenAI(ClipboardItem item) {
+            // ClipboardItemImagesがない場合は処理しない
+            if (item.ClipboardItemImages.Count == 0) {
+                return;
+            }
+            // ChatCommandExecuteを実行
+            string prompt = "この画像のテキストを抽出してください。\n";
+            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties()) {
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                PromptTemplateText = prompt,
+            };
+            // ChatRequestにImageURLsを設定
+            chatController.ImageURLs = item.ClipboardItemImages.Select(image => ChatRequest.CreateImageURLBase64String(image.ImageBase64)).ToList();
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                item.Content += result.Response;
             }
         }
 

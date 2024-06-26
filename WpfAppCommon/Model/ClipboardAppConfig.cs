@@ -165,18 +165,18 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // UseOCR
-        private static Boolean? _useOCR;
-        public static bool UseOCR {
+        // AutoExtractImageWithPyOCR
+        private static Boolean? _autoExtractImageWithPyOCR;
+        public static bool AutoExtractImageWithPyOCR {
             get {
-                if (_useOCR == null) {
-                    _useOCR = WpfAppCommon.Properties.Settings.Default.UseOCR;
+                if (_autoExtractImageWithPyOCR == null) {
+                    _autoExtractImageWithPyOCR = WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithPyOCR;
                 }
-                return _useOCR.Value;
+                return _autoExtractImageWithPyOCR.Value;
             }
             set {
-                _useOCR = value;
-                WpfAppCommon.Properties.Settings.Default.UseOCR = value;
+                _autoExtractImageWithPyOCR = value;
+                WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithPyOCR = value;
             }
         }
 
@@ -313,7 +313,20 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
             }
         }
-
+        // AutoExtractImageWithOpenAI
+        private static Boolean? _autoExtractImageWithOpenAI;
+        public static bool AutoExtractImageWithOpenAI {
+            get {
+                if (_autoExtractImageWithOpenAI == null) {
+                    _autoExtractImageWithOpenAI = WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithOpenAI;
+                }
+                return _autoExtractImageWithOpenAI.Value;
+            }
+            set {
+                _autoExtractImageWithOpenAI = value;
+                WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithOpenAI = value;
+            }
+        }
         // UserMaskedDataInOpenAI
         private static Boolean? _userMaskedDataInOpenAI;
         public static bool UserMaskedDataInOpenAI {

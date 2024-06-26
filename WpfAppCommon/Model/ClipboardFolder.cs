@@ -507,21 +507,27 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
-                    item.Content += "\n"　+ text;
+                    item.Content += "\n" + text;
                 }
             }
             // ★TODO Implement processing based on automatic processing rules.
-            // If UseOCR is set, perform OCR
-            if (ClipboardAppConfig.UseOCR && image != null) {
+            // If AutoExtractImageWithPyOCR is set, perform OCR
+            if (ClipboardAppConfig.AutoExtractImageWithPyOCR && image != null) {
                 string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                 item.Content = text;
                 LogWrapper.Info(CommonStringResources.Instance.OCR);
+            } else if (ClipboardAppConfig.AutoExtractImageWithOpenAI) {
+
+                LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
+                ClipboardItem.ExtractImageWithOpenAI(item);
             }
+
+
             // ★TODO Implement processing based on automatic processing rules.
             // If AUTO_TAG is set, automatically set the tags
             if (ClipboardAppConfig.AutoTag) {
                 LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
-                    ClipboardItem.CreateAutoTags(item);
+                ClipboardItem.CreateAutoTags(item);
             }
             // If AUTO_DESCRIPTION is set, automatically set the Description
             if (ClipboardAppConfig.AutoDescription) {
@@ -533,6 +539,7 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitleWithOpenAI(item);
             }
+
             return item;
         }
 

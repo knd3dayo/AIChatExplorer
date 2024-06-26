@@ -55,7 +55,7 @@ namespace WpfAppCommon.Control.Settings {
                 OnPropertyChanged(nameof(UseOpenAIVisibility));
                 OnPropertyChanged(nameof(AzureOpenAIVisibility));
                 OnPropertyChanged(nameof(UseSpacyVisibility));
-                OnPropertyChanged(nameof(UseOCRVisibility));
+                OnPropertyChanged(nameof(AutoExtractImageWithPyOCRVisibility));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -167,21 +167,6 @@ namespace WpfAppCommon.Control.Settings {
             set {
                 ClipboardAppConfig.OpenAIEmbeddingBaseURL = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingBaseURL));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // UseOCR
-        public bool UseOCR {
-            get {
-                return ClipboardAppConfig.UseOCR;
-            }
-            set {
-                ClipboardAppConfig.UseOCR = value;
-                OnPropertyChanged(nameof(UseOCR));
-                // 関連項目の表示/非表示を更新
-                OnPropertyChanged(nameof(UseOCRVisibility));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -345,6 +330,39 @@ namespace WpfAppCommon.Control.Settings {
             }
         }
 
+        // AutoExtractTextFromImageNone
+        public bool AutoExtractImageNone {
+            get {
+                return AutoExtractImageWithOpenAI == false && AutoExtractImageWithPyOCR == false;
+            }
+        }
+        // AutoExtractImageWithPyOCR
+        public bool AutoExtractImageWithPyOCR {
+            get {
+                return ClipboardAppConfig.AutoExtractImageWithPyOCR;
+            }
+            set {
+                ClipboardAppConfig.AutoExtractImageWithPyOCR = value;
+                OnPropertyChanged(nameof(AutoExtractImageWithPyOCR));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+        //　AutoExtractImageWithOpenAI
+        public bool AutoExtractImageWithOpenAI {
+            get {
+                return ClipboardAppConfig.AutoExtractImageWithOpenAI;
+            }
+            set {
+                ClipboardAppConfig.AutoExtractImageWithOpenAI = value;
+                OnPropertyChanged(nameof(AutoExtractImageWithOpenAI));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
 
         // UserMaskedDataInOpenAI
         public bool UserMaskedDataInOpenAI {
@@ -450,10 +468,10 @@ namespace WpfAppCommon.Control.Settings {
                 }
             }
         }
-        // UseOCRが有効かどうか
-        public Visibility UseOCRVisibility {
+        // AutoExtractImageWithPyOCRが有効かどうか
+        public Visibility AutoExtractImageWithPyOCRVisibility {
             get {
-                if (UseOCR == true && PythonExecMode == true) {
+                if (AutoExtractImageWithPyOCR == true && PythonExecMode == true) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
@@ -562,8 +580,8 @@ namespace WpfAppCommon.Control.Settings {
                 }
                 
             }
-            // UseOCRが有効な場合
-            if (UseOCR == true) {
+            // AutoExtractImageWithPyOCRが有効な場合
+            if (AutoExtractImageWithPyOCR == true) {
                 bool ocrOK = true;
                 Log(stringBuilder, "OCRの設定チェック...");
                 if (string.IsNullOrEmpty(TesseractExePath)) {

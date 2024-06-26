@@ -194,12 +194,12 @@ namespace WpfAppCommon.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool UseOCR {
+        public bool AutoExtractImageWithPyOCR {
             get {
-                return ((bool)(this["UseOCR"]));
+                return ((bool)(this["AutoExtractImageWithPyOCR"]));
             }
             set {
-                this["UseOCR"] = value;
+                this["AutoExtractImageWithPyOCR"] = value;
             }
         }
         
@@ -368,6 +368,18 @@ namespace WpfAppCommon.Properties {
             }
             set {
                 this["IgnoreLineCount"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoExtractImageWithOpenAI {
+            get {
+                return ((bool)(this["AutoExtractImageWithOpenAI"]));
+            }
+            set {
+                this["AutoExtractImageWithOpenAI"] = value;
             }
         }
     }

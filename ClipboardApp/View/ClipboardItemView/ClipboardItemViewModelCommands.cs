@@ -306,7 +306,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                 return;
             }
             // OCRが使用不可の場合はエラー
-            if (!ClipboardAppConfig.UseOCR) {
+            if (!ClipboardAppConfig.AutoExtractImageWithPyOCR) {
                 LogWrapper.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
                 return;
             }

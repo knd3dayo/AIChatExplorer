@@ -219,6 +219,12 @@ namespace WpfAppCommon.Model {
         public string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";
         // タイトル設定処理が失敗しました
         public string SetTitleFailed { get; } = "タイトル設定処理が失敗しました";
+
+        // 自動イメージテキスト抽出処理を実行します
+        public string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
+        // イメージテキスト抽出処理が失敗しました
+        public string ExtractImageTextFailed { get; } = "イメージテキスト抽出処理が失敗しました";
+
         // 自動タグ設定処理を実行します
         public string AutoSetTag { get; } = "自動タグ設定処理を実行します";
         // タグ設定処理が失敗しました
