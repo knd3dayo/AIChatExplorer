@@ -11,6 +11,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
