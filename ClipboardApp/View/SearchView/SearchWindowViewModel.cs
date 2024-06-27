@@ -1,6 +1,5 @@
 using System.Windows;
 using ClipboardApp.View.ClipboardItemFolderView;
-using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -40,6 +39,12 @@ namespace ClipboardApp.View.SearchView {
             }
         }
 
+        public Visibility NameVisibility {
+            get {
+                return _isSearchFolder ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
         // 検索タイプ 標準 or 検索フォルダ
         public string SearchTypeText {
             get {
@@ -73,28 +78,45 @@ namespace ClipboardApp.View.SearchView {
             }
         }
 
+        private bool _isSearchFolder;
+
         private Action? _afterUpdate;
 
+        public string Name {
+            get {
+                return SearchConditionRule?.Name ?? "";
+            }
+            set {
+                if (SearchConditionRule == null) {
+                    LogWrapper.Error("SearchConditionRuleがNullです");
+                    return;
+                }
+                SearchConditionRule.Name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
         public void Initialize(
             SearchRule searchConditionRule,
-            ClipboardFolderViewModel? searchFolderViewModel,
+            ClipboardFolderViewModel? searchFolderViewModel, bool isSearchFolder,
             Action afterUpdate
             ) {
             this.SearchConditionRule = searchConditionRule;
+            this._isSearchFolder = isSearchFolder;
 
             _afterUpdate = afterUpdate;
             SearchFolderViewModel = searchFolderViewModel;
+
+            Name = searchFolderViewModel?.FolderName ?? "";
+
             SearchFolderPath = searchFolderViewModel?.FolderPath;
             TargetFolderPath = searchConditionRule.TargetFolder?.FolderPath;
 
             OnPropertyChanged(nameof(SearchTypeText));
             OnPropertyChanged(nameof(SearchFolderVisibility));
+            OnPropertyChanged(nameof(NameVisibility));
 
         }
 
-        public void Initialize(SearchRule searchConditionRule, Action afterUpdate) {
-            Initialize(searchConditionRule, null, afterUpdate);
-        }
         //--------------------------------------------------------------------------------
         // コマンド
         //--------------------------------------------------------------------------------
@@ -113,8 +135,15 @@ namespace ClipboardApp.View.SearchView {
                 LogWrapper.Error("検索条件がNullです");
                 return;
             }
+            if (_isSearchFolder && SearchFolderViewModel != null) {
+                // SearchConditionRuleのSearchFolderにSearchFolderViewModelのClipboardItemFolderを設定
+                SearchConditionRule.SearchFolder = SearchFolderViewModel.ClipboardItemFolder;
+                // _isSearchFolderがTrueの場合は、フォルダ名を更新
+                SearchFolderViewModel.FolderName = SearchConditionRule.Name;
+            }
             // 検索条件をLiteDBに保存
             SearchConditionRule.Save();
+
 
             // 検索条件を適用後に実行する処理
             _afterUpdate?.Invoke();
@@ -136,7 +165,7 @@ namespace ClipboardApp.View.SearchView {
             }
 
 
-            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel.ActiveInstance, ClipboardFolder.SearchRootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.SearchRootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolderViewModel = folderViewModel;
                 SearchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
@@ -157,7 +186,7 @@ namespace ClipboardApp.View.SearchView {
                 return;
             }
 
-            ClipboardFolderViewModel? rootFolderViewModel = new (MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
+            ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchConditionRule.TargetFolder = folderViewModel.ClipboardItemFolder;
                 TargetFolderPath = folderViewModel.FolderPath;

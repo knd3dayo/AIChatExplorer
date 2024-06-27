@@ -2,12 +2,10 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.SearchView;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
     public partial class ClipboardFolderViewModel {
@@ -19,7 +17,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         //--------------------------------------------------------------------------------
 
         // 新規フォルダ作成コマンド
-        public static SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+        public virtual SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
@@ -28,7 +26,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             });
         });
         // フォルダ編集コマンド
-        public SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((parameter) => {
+        public virtual SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((parameter) => {
 
             EditFolderCommandExecute(parameter, () => {
                 Load();
@@ -64,7 +62,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// <param name="toFolder"></param>
         /// <returns></returns>
 
-        public static void PasteClipboardItemCommandExecute(bool CutFlag,
+        public virtual void PasteClipboardItemCommandExecute(bool CutFlag,
             IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 ClipboardItemViewModel newItem = item.Copy();
@@ -81,7 +79,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
 
-        public static void MergeItemCommandExecute(
+        public virtual void MergeItemCommandExecute(
             ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
 
             if (selectedItems.Count < 2) {
@@ -140,13 +138,12 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// 新規フォルダが作成された場合は、リロード処理を行う.
         /// </summary>
         /// <param name="parameter"></param>
-        public static void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             ClipboardFolderViewModel childFolderViewModel = folderViewModel.CreateChild("");
             // folderViewModelが検索フォルダの場合は、子フォルダも検索フォルダにする
-            if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.SearchRootFolder.Id
-                || folderViewModel.IsSearchFolder) {
-                childFolderViewModel.IsSearchFolder = true;
+            if (folderViewModel.ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
+                childFolderViewModel.ClipboardItemFolder.FolderType = ClipboardFolder.FolderTypeEnum.Search;
             }
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
@@ -220,12 +217,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         /// フォルダを削除した後に、RootFolderをリロードする処理を行う。
         /// </summary>
         /// <param name="parameter"></param>        
-        public SimpleDelegateCommand<object> DeleteFolderCommand => new((parameter) => {
+        public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
-            if (parameter is not ClipboardFolderViewModel folderViewModel) {
-                LogWrapper.Error("フォルダが選択されていません");
-                return;
-            }
 
             if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id
                 || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
@@ -238,8 +231,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 return;
             }
             folderViewModel.Delete();
-            // フォルダ内のアイテムを読み込む
-            folderViewModel.Load();
+
+            // ルートフォルダを再読み込み
+            MainWindowViewModel.ReLoadRootFolders();
+
 
             LogWrapper.Info("フォルダを削除しました");
         });

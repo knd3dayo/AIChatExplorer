@@ -26,10 +26,13 @@ namespace WpfAppCommon.Factory {
         //-- ClipboardFolder
         
         public ClipboardFolder? GetFolder(ObjectId? objectId);
-
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId);
-
         public ClipboardFolder? GetRootFolder(string collectionName);
+
+        // -- SearchFolder
+        public SearchFolder? GetSearchFolder(ObjectId? objectId);
+
+        public List<SearchFolder> GetSearchFoldersByParentId(ObjectId? objectId);
 
 
         public void DeleteFolder(ClipboardFolder folder);

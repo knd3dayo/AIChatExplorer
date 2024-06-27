@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemView;
 using LibGit2Sharp;
 using WpfAppCommon.Factory.Default;
@@ -11,7 +12,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // ClipboardFolder
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
         // MainWindowViewModel
-        private MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
+        protected MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
         // Description
         public string Description {
@@ -21,17 +22,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             set {
                 ClipboardItemFolder.Description = value;
                 OnPropertyChanged(nameof(Description));
-            }
-        }
-
-        // 検索フォルダかどうか
-        public bool IsSearchFolder {
-            get {
-                return ClipboardItemFolder.IsSearchFolder;
-            }
-            set {
-                ClipboardItemFolder.IsSearchFolder = value;
-                OnPropertyChanged(nameof(IsSearchFolder));
             }
         }
 
@@ -51,9 +41,18 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
         public ClipboardFolderViewModel CreateChild(string folderName) {
-            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
-
-            return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
+            // 自身が標準フォルダの場合は、標準フォルダを作成
+            if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Normal) {
+                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
+                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Normal;
+                return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
+            }else if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
+                // 自身が検索フォルダの場合は、検索フォルダを作成
+                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
+                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Search;
+                return new SearchFolderViewModel(MainWindowViewModel, childFolder);
+            }
+            throw new Exception("Invalid FolderType");
         }
 
         public string FolderPath {
@@ -67,7 +66,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardItemFolder.Delete();
         }
         // LoadChildren
-        public void LoadChildren() {
+        public virtual void LoadChildren() {
             Children.Clear();
             foreach (var child in ClipboardItemFolder.Children) {
                 if (child == null) {
@@ -75,9 +74,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 }
                 Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, child));
             }
+
         }
         // LoadItems
-        public void LoadItems() {
+        public virtual void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
                 Items.Add(new ClipboardItemViewModel(item));
@@ -118,35 +118,65 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public bool IsDeleteVisible {
             get {
                 // RootFolderは削除不可
-                if (ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id) {
-                    return false;
-                }
-                // SearchRootFolderは削除不可
-                if (ClipboardItemFolder.Id == ClipboardFolder.SearchRootFolder.Id) {
-                    return false;
-                }
-                return true;
+                return ClipboardItemFolder.IsRootFolder == false;
             }
         }
         // - コンテキストメニューの編集を表示するかどうか xamlで使う
         public bool IsEditVisible {
             get {
-                // SearchRootFolderは編集不可
-                if (ClipboardItemFolder.Id == ClipboardFolder.SearchRootFolder.Id) {
-                    return false;
-                }
-                return true;
+                // RootFolderは編集不可
+                return ClipboardItemFolder.IsRootFolder == false;
             }
         }
-        // - コンテキストメニューの新規作成を表示するかどうか　xamlで使う
-        public bool IsCreateVisible {
-            get {   // 検索フォルダの子フォルダは新規作成不可
-                if (ClipboardItemFolder.IsSearchFolder) {
-                    return false;
-                }
-                return true;
+
+        public virtual ObservableCollection<MenuItem> MenuItems {
+            get {
+                // MenuItemのリストを作成
+                ObservableCollection<MenuItem> menuItems = [];
+                // 新規作成
+                MenuItem createMenuItem = new();
+                createMenuItem.Header = StringResources.Create;
+                createMenuItem.Command = CreateFolderCommand;
+                createMenuItem.CommandParameter = this;
+                menuItems.Add(createMenuItem);
+
+                // 編集
+                MenuItem editMenuItem = new();
+                editMenuItem.Header = StringResources.Edit;
+                editMenuItem.Command = EditFolderCommand;
+                editMenuItem.IsEnabled = IsEditVisible;
+                editMenuItem.CommandParameter = this;
+                menuItems.Add(editMenuItem);
+
+                // 削除
+                MenuItem deleteMenuItem = new();
+                deleteMenuItem.Header = StringResources.Delete;
+                deleteMenuItem.Command = DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = IsDeleteVisible;
+                deleteMenuItem.CommandParameter = this;
+                menuItems.Add(deleteMenuItem);
+
+                // インポート    
+                MenuItem importMenuItem = new();
+                importMenuItem.Header = StringResources.Import;
+                importMenuItem.Command = ImportItemsToFolderCommand;
+                importMenuItem.CommandParameter = this;
+                menuItems.Add(importMenuItem);
+
+                // エクスポート
+                MenuItem exportMenuItem = new();
+                exportMenuItem.Header = StringResources.Export;
+                exportMenuItem.Command = ExportItemsFromFolderCommand;
+                exportMenuItem.CommandParameter = this;
+                menuItems.Add(exportMenuItem);
+
+                return menuItems;
+
             }
+
+
         }
+
 
         private void UpdateStatusText() {
             string message = $"フォルダ[{FolderName}]";
@@ -162,7 +192,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
             // folderが検索フォルダの場合
             SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
-            if (ClipboardItemFolder.IsSearchFolder) {
+            if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             }
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;

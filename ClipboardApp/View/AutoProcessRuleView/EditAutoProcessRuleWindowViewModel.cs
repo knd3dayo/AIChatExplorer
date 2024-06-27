@@ -591,9 +591,9 @@ namespace ClipboardApp.View.AutoProcessRuleView {
             if (folder.ClipboardItemFolder.Id == TargetFolder?.ClipboardItemFolder.Id) {
                 LogWrapper.Error("同じフォルダにはコピーまたは移動できません。");
                 return;
-            }// コピーor移動先が検索フォルダの場合はエラー
-            if (folder.IsSearchFolder) {
-                LogWrapper.Error("検索フォルダにはコピーまたは移動できません。");
+            }// コピーor移動先が標準のフォルダ以外の場合はエラー
+            if (folder.ClipboardItemFolder.FolderType != ClipboardFolder.FolderTypeEnum.Normal) {
+                LogWrapper.Error("標準フォルダ以外にはコピーまたは移動できません。");
                 return;
             }
             DestinationFolder = folder;

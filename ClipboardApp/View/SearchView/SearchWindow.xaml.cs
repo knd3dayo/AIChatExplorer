@@ -15,11 +15,10 @@ namespace ClipboardApp.View.SearchView
         }
 
         public static void OpenSearchWindow(SearchRule searchConditionRule,
-            ClipboardFolderViewModel? searchFolderViewModel,
-            Action afterUpdate) {
+            ClipboardFolderViewModel? searchFolderViewModel, bool isSearchFolder, Action afterUpdate) {
             SearchWindow searchWindow = new();
             SearchWindowViewModel searchWindowViewModel = (SearchWindowViewModel)searchWindow.DataContext;
-            searchWindowViewModel.Initialize(searchConditionRule, searchFolderViewModel, afterUpdate);
+            searchWindowViewModel.Initialize(searchConditionRule, searchFolderViewModel, isSearchFolder, afterUpdate);
             searchWindow.ShowDialog();
         }
 

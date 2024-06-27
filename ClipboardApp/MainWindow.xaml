@@ -278,31 +278,7 @@
                                 </DockPanel.InputBindings>
                                 <DockPanel.ContextMenu>
                                     <!--  Folder context menu  -->
-                                    <ContextMenu FontSize="12">
-                                        <MenuItem
-                                            Command="{Binding CreateFolderCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Create, Mode=OneTime}"
-                                            IsEnabled="{Binding IsCreateVisible}" />
-                                        <MenuItem
-                                            Command="{Binding EditFolderCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Edit, Mode=OneTime}"
-                                            IsEnabled="{Binding IsEditVisible}" />
-                                        <MenuItem
-                                            Command="{Binding DeleteFolderCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Delete, Mode=OneTime}"
-                                            IsEnabled="{Binding IsDeleteVisible}" />
-                                        <MenuItem
-                                            Command="{Binding ExportItemsFromFolderCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Export, Mode=OneTime}" />
-                                        <MenuItem
-                                            Command="{Binding ImportItemsToFolderCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding}"
-                                            Header="{Binding StringResources.Import, Mode=OneTime}" />
-                                    </ContextMenu>
+                                    <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
                                 </DockPanel.ContextMenu>
                             </DockPanel>
                         </HierarchicalDataTemplate>

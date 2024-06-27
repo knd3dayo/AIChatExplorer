@@ -287,7 +287,7 @@ namespace WpfAppCommon.Model {
         }
 
         // Collectionに対応するClipboardFolderを取得
-        public ClipboardFolder? GetFolder() {
+        public ClipboardFolder? GetFolder(Type? objectType = null) {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
         }
         //--------------------------------------------------------------------------------

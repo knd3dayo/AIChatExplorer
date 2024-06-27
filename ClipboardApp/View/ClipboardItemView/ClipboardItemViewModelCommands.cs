@@ -190,7 +190,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             mainWindowViewModel.IsStartFromInternalApp = false;
             mainWindowViewModel.Initialize(folderViewModel?.ClipboardItemFolder, itemViewModel?.ClipboardItem);
             mainWindowViewModel.ShowSearchWindowAction = (afterSelect) =>{
-                SearchWindow.OpenSearchWindow(rule, null, () => {
+                SearchWindow.OpenSearchWindow(rule, null, false, () => {
                     // QAChatのContextを更新
                     List<ClipboardItem> clipboardItems = rule.SearchItems();
                     afterSelect(clipboardItems);

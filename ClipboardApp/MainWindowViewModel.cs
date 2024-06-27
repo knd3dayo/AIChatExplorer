@@ -33,7 +33,7 @@ namespace ClipboardApp {
         }
         public void Init() {
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.SearchRootFolder));
+            ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
 
             // ProgressIndicatorの表示更新用のアクションをセット
@@ -58,6 +58,13 @@ namespace ClipboardApp {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
         }
+
+        public void ReLoadRootFolders() {
+            foreach (var folder in ClipboardItemFolders) {
+                folder.Load();
+            }
+        }
+
         // ClipboardController
         public static ClipboardController ClipboardController { get; } = new();
 

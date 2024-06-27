@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.View.SearchView"
     Title="検索"
-    Width="500"
-    Height="Auto"
+    Width="800"
+    Height="500"
     SizeToContent="Height"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
@@ -39,10 +39,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -69,8 +66,22 @@
             </materialDesign:ColorZone>
         </StackPanel>
 
-        <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
-            <TextBlock Margin="10,10,10,00" Text="対象フォルダ" />
+        <Grid Grid.Row="1" Visibility="{Binding NameVisibility}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                Margin="10,10,10,0"
+                Text="名前" />
+            <TextBox
+                Grid.Column="1"
+                Margin="10,10,10,0"
+                Text="{Binding Name}" />
+        </Grid>
+        <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
+            <TextBlock Margin="10,10,10,00" Text="検索対象フォルダ" />
             <!--  適用対象を選択するツリービューを表示するボタン  -->
             <Button
                 Margin="10,10,10,0"
@@ -81,52 +92,7 @@
                 IsEnabled="False"
                 Text="{Binding TargetFolderPath}" />
         </DockPanel>
-        <Grid Grid.Row="2" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Column="0"
-                Margin="10,10,10,0"
-                Text="検索タイプ" />
-            <TextBlock
-                Grid.Column="1"
-                Margin="10,10,10,0"
-                Text="{Binding SearchTypeText}" />
-        </Grid>
-        <Grid Grid.Row="3" Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBlock
-                Grid.Column="0"
-                Margin="10,10,10,0"
-                Text="検索条件名" />
-            <TextBox
-                Grid.Column="1"
-                Margin="10,10,10,0"
-                IsEnabled="False"
-                Text="{Binding SearchConditionRule.Name}" />
-        </Grid>
-        <!--  Visibility="{Binding SearchFolderVisibility}"  -->
-        <DockPanel
-            Grid.Row="4"
-            HorizontalAlignment="Stretch"
-            Visibility="{Binding SearchFolderVisibility}">
-            <TextBlock Margin="10,10,10,0" Text="検索フォルダ" />
-            <!--  適用対象を選択するツリービューを表示するボタン  -->
-            <Button
-                Margin="10,10,10,0"
-                Command="{Binding OpenSelectSearchFolderWindowCommand}"
-                Content="選択" />
-            <TextBox
-                Margin="10,10,10,0"
-                IsEnabled="False"
-                Text="{Binding SearchFolderPath}" />
-        </DockPanel>
-        <Grid Grid.Row="5">
+        <Grid Grid.Row="3">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -281,15 +247,15 @@
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
                 SelectedDate="{Binding SearchConditionRule.SearchCondition.EndTime}" />
+            <DockPanel Grid.Row="7" HorizontalAlignment="Stretch">
+                <!--  適用対象配下も対象にするかどうか  -->
+                <CheckBox
+                    Margin="10,10,10,0"
+                    Content="適用対象配下のフォルダも対象にする"
+                    IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
+            </DockPanel>
         </Grid>
-        <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
-            <!--  適用対象配下も対象にするかどうか  -->
-            <CheckBox
-                Margin="10,10,10,0"
-                Content="適用対象配下のフォルダも対象にする"
-                IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
-        </DockPanel>
-        <Grid Grid.Row="7">
+        <Grid Grid.Row="4" VerticalAlignment="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -321,7 +287,7 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="8" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
 
     </Grid>
 

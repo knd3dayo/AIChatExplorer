@@ -12,6 +12,12 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace WpfAppCommon.Model {
     public class ClipboardFolder {
 
+        public enum FolderTypeEnum {
+            Normal,
+            Search,
+            ImageCheck,
+        }
+
         public class RootFolderInfo {
 
             public string FolderName { get; set; } = "";
@@ -30,11 +36,11 @@ namespace WpfAppCommon.Model {
         public ClipboardFolder() {
         }
 
-        private ClipboardFolder(ClipboardFolder? parent, string folderName) {
+        protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
 
             ParentId = parent?.Id ?? ObjectId.Empty;
             FolderName = folderName;
-
+            FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
             // クリップボードアイテムのロード
             Load();
 
@@ -46,6 +52,10 @@ namespace WpfAppCommon.Model {
 
         // 親フォルダのID
         public ObjectId ParentId { get; set; } = ObjectId.Empty;
+
+        // ルートフォルダか否か
+        public bool IsRootFolder { get; set; } = false;
+
 
         // フォルダの絶対パス ファイルシステム用
         public string FolderPath {
@@ -81,8 +91,9 @@ namespace WpfAppCommon.Model {
             Save();
         }
 
-        // 検索フォルダかどうか
-        public bool IsSearchFolder { get; set; } = false;
+        // フォルダの種類
+        public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
+
 
         // 現在、検索条件を適用中かどうか
         public bool IsApplyingSearchCondition { get; set; } = false;
@@ -97,14 +108,14 @@ namespace WpfAppCommon.Model {
             return child;
         }
 
-        public List<ClipboardFolder> Children {
+        public virtual List<ClipboardFolder> Children {
             get {
                 // DBからParentIDが自分のIDのものを取得
                 return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
             }
         }
 
-        private List<ClipboardItem> _items = [];
+        protected List<ClipboardItem> _items = [];
         // アイテム BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
         public List<ClipboardItem> Items {
             get {
@@ -135,7 +146,7 @@ namespace WpfAppCommon.Model {
             ClipboardDatabaseController.UpsertFolder(this);
         }
         // アイテムを追加する処理
-        public ClipboardItem AddItem(ClipboardItem item) {
+        public virtual ClipboardItem AddItem(ClipboardItem item) {
             // CollectionNameを設定
             item.FolderObjectId = this.Id;
 
@@ -156,7 +167,7 @@ namespace WpfAppCommon.Model {
             return item;
         }
         // ClipboardItemを削除
-        public void DeleteItem(ClipboardItem item) {
+        public virtual void DeleteItem(ClipboardItem item) {
             // LiteDBに保存
             item.Delete();
         }
@@ -165,31 +176,23 @@ namespace WpfAppCommon.Model {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.DeleteFolder(this);
         }
-        public void Load() {
+        public virtual void Load() {
 
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // フォルダに検索条件が設定されている場合
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
-            if (searchConditionRule != null) {
-                _items = [.. ClipboardDatabaseController.SearchItems(this, searchConditionRule.SearchCondition)];
+            // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
+            if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
+                _items = [.. ClipboardDatabaseController.SearchItems(this, GlobalSearchCondition.SearchCondition)];
 
-                // 検索対象フォルダパスがない場合は何もしない。
             } else {
-                // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
-                if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                    _items = [.. ClipboardDatabaseController.SearchItems(this, GlobalSearchCondition.SearchCondition)];
-
-                } else {
-                    // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                    _items = [.. ClipboardDatabaseController.GetItems(this)];
-                }
+                // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
+                _items = [.. ClipboardDatabaseController.GetItems(this)];
             }
         }
 
         // 自動処理を適用する処理
-        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {
+        public virtual ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {
             ClipboardItem? result = clipboardItem;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
@@ -251,7 +254,7 @@ namespace WpfAppCommon.Model {
 
         }
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
+        public virtual void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
             // SourceApplicationNameが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
                 return;
@@ -298,7 +301,7 @@ namespace WpfAppCommon.Model {
             DeleteItem(mergeToItem);
         }
         // 指定されたフォルダの全アイテムをマージするコマンド
-        public void MergeItemsCommandExecute(ClipboardItem item) {
+        public virtual void MergeItemsCommandExecute(ClipboardItem item) {
             if (Items.Count == 0) {
                 return;
             }
@@ -342,10 +345,14 @@ namespace WpfAppCommon.Model {
             get {
                 ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CLIPBOARD_ROOT_FOLDER_NAME);
                 if (rootFolder == null) {
-                    rootFolder = new();
-                    rootFolder.FolderName = CLIPBOARD_ROOT_FOLDER_NAME;
+                    rootFolder = new() {
+                        FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
+                        IsRootFolder = true
+                    };
                     rootFolder.Save();
                 }
+                // 既にRootFolder作成済みの環境のための措置
+                rootFolder.IsRootFolder = true;
                 return rootFolder;
             }
         }
@@ -353,11 +360,15 @@ namespace WpfAppCommon.Model {
             get {
                 ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(SEARCH_ROOT_FOLDER_NAME);
                 if (searchRootFolder == null) {
-                    searchRootFolder = new();
-                    searchRootFolder.FolderName = SEARCH_ROOT_FOLDER_NAME;
-                    searchRootFolder.IsSearchFolder = true;
+                    searchRootFolder = new SearchFolder {
+                        FolderName = SEARCH_ROOT_FOLDER_NAME,
+                        FolderType = FolderTypeEnum.Search,
+                        IsRootFolder = true
+                    };
                     searchRootFolder.Save();
                 }
+                // 既にSearchRootFolder作成済みの環境のための措置
+                searchRootFolder.IsRootFolder = true;
                 return searchRootFolder;
             }
         }

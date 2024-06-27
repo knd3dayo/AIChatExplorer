@@ -144,19 +144,16 @@ namespace ClipboardApp {
 
             SearchRule? searchConditionRule;
             // 選択されたフォルダが検索フォルダの場合
-            if (folderViewModel != null && folderViewModel.IsSearchFolder) {
+            if (folderViewModel != null && folderViewModel.ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folderViewModel.ClipboardItemFolder);
-                if (searchConditionRule == null) {
-                    searchConditionRule = new() {
-                        Type = SearchRule.SearchType.SearchFolder
+                searchConditionRule ??= new() {
+                        Type = SearchRule.SearchType.SearchFolder,
+                        SearchFolder = folderViewModel.ClipboardItemFolder
                     };
-                    searchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
-
-                }
             } else {
                 searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             }
-            SearchWindow.OpenSearchWindow(searchConditionRule, folderViewModel, () => { folderViewModel?.Load(); });
+            SearchWindow.OpenSearchWindow(searchConditionRule, folderViewModel, false, () => { folderViewModel?.Load(); });
 
         }
 
@@ -302,7 +299,7 @@ namespace ClipboardApp {
                     LogWrapper.Error("コピー元のフォルダがない");
                     return;
                 }
-                ClipboardFolderViewModel.PasteClipboardItemCommandExecute(
+                SelectedFolder.PasteClipboardItemCommandExecute(
                     windowViewModel.CutFlag,
                     CopiedItems,
                     CopiedItemFolder,
@@ -343,7 +340,7 @@ namespace ClipboardApp {
                 LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
-            ClipboardFolderViewModel.MergeItemCommandExecute(
+            SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
                 false
@@ -364,7 +361,7 @@ namespace ClipboardApp {
                 LogWrapper.Error("選択中のフォルダがない");
                 return;
             }
-            ClipboardFolderViewModel.MergeItemCommandExecute(
+            SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
                 true
