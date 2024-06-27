@@ -311,7 +311,7 @@ namespace ClipboardApp {
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
-                ClipboardFolder.ProcessClipboardItem(SelectedFolder.ClipboardItemFolder, ClipboardController.LastClipboardChangedEventArgs,
+                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem( ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {

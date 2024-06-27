@@ -97,7 +97,7 @@ namespace WpfAppCommon.Model {
             if (_clipboard == null) {
                 return;
             }
-            ClipboardFolder.ProcessClipboardItem(ClipboardFolder.RootFolder, e, _afterClipboardChanged);
+            ClipboardFolder.RootFolder.ProcessClipboardItem( e, _afterClipboardChanged);
 
         }
 

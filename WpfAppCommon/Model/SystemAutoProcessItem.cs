@@ -142,7 +142,7 @@ namespace WpfAppCommon.Model {
                 return (args) => {
                     ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
 
-                    folder.MergeItemsCommandExecute(args.ClipboardItem);
+                    folder.MergeItems(args.ClipboardItem);
                     return args.ClipboardItem;
                 };
             }

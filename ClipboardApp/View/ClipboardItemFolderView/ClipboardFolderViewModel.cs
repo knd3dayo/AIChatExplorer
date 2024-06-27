@@ -88,15 +88,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public void Load() {
             MainWindowViewModel.IsIndeterminate = true;
             try {
-                // DBから読み込み
-                ClipboardItemFolder.Load();
+
+                LoadChildren();
+                LoadItems();
 
                 UpdateStatusText();
             } finally {
                 MainWindowViewModel.IsIndeterminate = false;
             }
-            LoadChildren();
-            LoadItems();
 
         }
         // AddItem

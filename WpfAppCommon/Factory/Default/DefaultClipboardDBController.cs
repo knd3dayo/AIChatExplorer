@@ -131,34 +131,6 @@ namespace WpfAppCommon.Factory.Default {
             return result;
         }
 
-        //-- SearchFolder
-        public SearchFolder? GetSearchFolder(ObjectId? objectId) {
-            if (objectId == null) return null;
-            SearchFolder? result = null;
-            var collection = GetClipboardDatabase().GetCollection<SearchFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            var item = collection.FindById(objectId);
-            if (item != null) {
-                result = item;
-            }
-            return result;
-        }
-        public List<SearchFolder> GetSearchFoldersByParentId(ObjectId? objectId) {
-            List<SearchFolder> result = [];
-
-            // objectIdがnullの場合は、空のリストを返す
-            if (objectId == null) {
-                return result;
-            }
-            // objectIdに対応するフォルダをすべて取得して返す
-            var collection = GetClipboardDatabase().GetCollection<SearchFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            var items = collection.FindAll().Where(x => x.ParentId == objectId);
-            foreach (var i in items) {
-                result.Add(i);
-            }
-            return result;
-        }
-
-
         // ClipboardItemFolderをLiteDBに追加または更新する
         public void UpsertFolder(ClipboardFolder folder) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
