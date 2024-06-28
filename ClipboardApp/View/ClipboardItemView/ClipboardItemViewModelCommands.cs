@@ -41,7 +41,7 @@ namespace ClipboardApp.View.ClipboardItemView {
                     item.ClipboardItem.Delete();
                 }
                 // フォルダ内のアイテムを再読み込む
-                clipboardItemFolder.Load();
+                clipboardItemFolder.LoadFolderCommand.Execute();
                 LogWrapper.Info("削除しました");
             }
         }
@@ -79,7 +79,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
 
             // フォルダ内のアイテムを再読み込み
-            SelectedFolder.Load();
+            SelectedFolder.LoadFolderCommand.Execute();
 
         }
         public static void OpenItemCommandExecute(ClipboardFolderViewModel? folderViewModel, ClipboardItemViewModel? clipboardItemViewModel) {
@@ -93,7 +93,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
             EditItemWindow.OpenEditItemWindow(folderViewModel, clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
-                folderViewModel.Load();
+                folderViewModel.LoadFolderCommand.Execute();
                 LogWrapper.Info("更新しました");
             });
         }

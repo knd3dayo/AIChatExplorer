@@ -40,64 +40,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 OnPropertyChanged(nameof(FolderName));
             }
         }
-        public ClipboardFolderViewModel CreateChild(string folderName) {
-            // 自身が標準フォルダの場合は、標準フォルダを作成
-            if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Normal) {
-                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
-                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Normal;
-                return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
-            }else if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
-                // 自身が検索フォルダの場合は、検索フォルダを作成
-                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
-                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Search;
-                return new SearchFolderViewModel(MainWindowViewModel, childFolder);
-            }else if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.ImageCheck) {
-                // 自身が画像チェックフォルダの場合は、画像チェックフォルダを作成
-                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
-                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
-                return new ImageCheckFolderViewModel(MainWindowViewModel, childFolder);
-            }
-            throw new Exception("Invalid FolderType");
-        }
 
         public string FolderPath {
             get {
                 return ClipboardItemFolder.FolderPath;
             }
-        }
-
-        // LoadChildren
-        public virtual void LoadChildren() {
-            Children.Clear();
-            foreach (var child in ClipboardItemFolder.Children) {
-                if (child == null) {
-                    continue;
-                }
-                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, child));
-            }
-
-        }
-        // LoadItems
-        public virtual void LoadItems() {
-            Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(item));
-            }
-        }
-
-        // Load
-        public void Load() {
-            MainWindowViewModel.IsIndeterminate = true;
-            try {
-
-                LoadChildren();
-                LoadItems();
-
-                UpdateStatusText();
-            } finally {
-                MainWindowViewModel.IsIndeterminate = false;
-            }
-
         }
 
         // - コンテキストメニューの削除を表示するかどうか
@@ -113,54 +60,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 // RootFolderは編集不可
                 return ClipboardItemFolder.IsRootFolder == false;
             }
-        }
-
-        public virtual ObservableCollection<MenuItem> MenuItems {
-            get {
-                // MenuItemのリストを作成
-                ObservableCollection<MenuItem> menuItems = [];
-                // 新規作成
-                MenuItem createMenuItem = new();
-                createMenuItem.Header = StringResources.Create;
-                createMenuItem.Command = CreateFolderCommand;
-                createMenuItem.CommandParameter = this;
-                menuItems.Add(createMenuItem);
-
-                // 編集
-                MenuItem editMenuItem = new();
-                editMenuItem.Header = StringResources.Edit;
-                editMenuItem.Command = EditFolderCommand;
-                editMenuItem.IsEnabled = IsEditVisible;
-                editMenuItem.CommandParameter = this;
-                menuItems.Add(editMenuItem);
-
-                // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = IsDeleteVisible;
-                deleteMenuItem.CommandParameter = this;
-                menuItems.Add(deleteMenuItem);
-
-                // インポート    
-                MenuItem importMenuItem = new();
-                importMenuItem.Header = StringResources.Import;
-                importMenuItem.Command = ImportItemsToFolderCommand;
-                importMenuItem.CommandParameter = this;
-                menuItems.Add(importMenuItem);
-
-                // エクスポート
-                MenuItem exportMenuItem = new();
-                exportMenuItem.Header = StringResources.Export;
-                exportMenuItem.Command = ExportItemsFromFolderCommand;
-                exportMenuItem.CommandParameter = this;
-                menuItems.Add(exportMenuItem);
-
-                return menuItems;
-
-            }
-
-
         }
 
 

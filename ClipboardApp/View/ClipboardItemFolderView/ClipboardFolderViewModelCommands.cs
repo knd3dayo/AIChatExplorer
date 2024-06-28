@@ -9,9 +9,6 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
     public partial class ClipboardFolderViewModel {
-
-
-
         //--------------------------------------------------------------------------------
         //--コマンド
         //--------------------------------------------------------------------------------
@@ -34,20 +31,20 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
 
         // 新規フォルダ作成コマンド
-        public virtual SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
                 folderViewModel.ClipboardItemFolder.Save();
-                folderViewModel.Load();
+                folderViewModel.LoadFolderCommand.Execute();
 
             });
         });
         // フォルダ編集コマンド
-        public virtual SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((parameter) => {
+        public SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((folderViewModel) => {
 
-            EditFolderCommandExecute(parameter, () => {
-                Load();
+            EditFolderCommandExecute(folderViewModel, () => {
+                LoadFolderCommand.Execute(); 
                 LogWrapper.Info("フォルダを編集しました");
             });
         });
@@ -68,80 +65,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         });
 
 
-        /// <summary>
-        /// Ctrl + V が押された時の処理
-        /// コピー中のアイテムを選択中のフォルダにコピー/移動する
-        /// 貼り付け後にフォルダ内のアイテムを再読み込む
-        /// 
-        /// </summary>
-        /// <param name="Instance"></param>
-        /// <param name="item"></param>
-        /// <param name="fromFolder"></param>
-        /// <param name="toFolder"></param>
-        /// <returns></returns>
-
-        public virtual void PasteClipboardItemCommandExecute(bool CutFlag,
-            IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
-            foreach (var item in items) {
-                ClipboardItemViewModel newItem = item.Copy();
-                toFolder.AddItemCommand.Execute(newItem);
-                // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                if (CutFlag) {
-
-                    fromFolder.DeleteItemCommand.Execute(item);
-                }
-            }
-            // フォルダ内のアイテムを再読み込み
-            toFolder.Load();
-            LogWrapper.Info("貼り付けました");
-        }
-
-
-        public virtual void MergeItemCommandExecute(
-            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
-
-            if (selectedItems.Count < 2) {
-                LogWrapper.Error("マージするアイテムを2つ選択してください");
-                return;
-            }
-            // マージ先のアイテム。SelectedItems[0]がマージ先
-            if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
-                LogWrapper.Error("マージ先のアイテムが選択されていません");
-                return;
-            }
-            List<ClipboardItemViewModel> fromItemsViewModel = [];
-            try {
-                // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
-                for (int i = 1; i < selectedItems.Count; i++) {
-                    if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
-                        LogWrapper.Error("マージ元のアイテムが選択されていません");
-                        return;
-                    }
-                    fromItemsViewModel.Add(fromItemModelView);
-                }
-                toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader, Tools.DefaultAction);
-
-                // ClipboardItemをLiteDBに保存
-                toItemViewModel.Save();
-                // コピー元のアイテムを削除
-                foreach (var fromItem in fromItemsViewModel) {
-                    fromItem.Delete();
-                }
-
-                // フォルダ内のアイテムを再読み込み
-                folderViewModel.Load();
-                LogWrapper.Info("マージしました");
-
-            } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-                LogWrapper.Error(message);
-            }
-
-        }
 
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
-            clipboardItemFolder.Load();
+            clipboardItemFolder.LoadFolderCommand.Execute();
             LogWrapper.Info("リロードしました");
         }
 
@@ -150,42 +77,22 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み
         // --------------------------------------------------------------
 
-        /// <summary>
-        /// フォルダ作成コマンド
-        /// フォルダ作成ウィンドウを表示する処理
-        /// 新規フォルダが作成された場合は、リロード処理を行う.
-        /// </summary>
-        /// <param name="parameter"></param>
-        public void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-            // 子フォルダを作成する
-            ClipboardFolderViewModel childFolderViewModel = folderViewModel.CreateChild("");
-            // folderViewModelが検索フォルダの場合は、子フォルダも検索フォルダにする
-            if (folderViewModel.ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
-                childFolderViewModel.ClipboardItemFolder.FolderType = ClipboardFolder.FolderTypeEnum.Search;
+
+        public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+            MainWindowViewModel.IsIndeterminate = true;
+            try {
+
+                LoadChildren();
+                LoadItems();
+
+                UpdateStatusText();
+            } finally {
+                MainWindowViewModel.IsIndeterminate = false;
             }
-            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
+        });
 
-        }
 
-        /// <summary>
-        ///  フォルダ編集コマンド
-        ///  フォルダ編集ウィンドウを表示する処理
-        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
-        /// </summary>
-        /// <param name="parameter"></param>
-        public static void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
-
-        }
-
-        public virtual void CreateItemCommandExecute() {
-            EditItemWindow.OpenEditItemWindow(this, null, () => {
-                // フォルダ内のアイテムを再読み込み
-                this.Load();
-                LogWrapper.Info("追加しました");
-            });
-        }
 
         // フォルダーのアイテムをエクスポートする処理
         public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
@@ -233,7 +140,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                     }
                 });
                 // フォルダ内のアイテムを読み込む
-                clipboardItemFolder.Load();
+                clipboardItemFolder.LoadFolderCommand.Execute();
                 LogWrapper.Info("フォルダをインポートしました");
             }
         }
@@ -283,7 +190,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 }
 
                 // フォルダ内のアイテムを読み込む
-                folderViewModel.Load();
+                folderViewModel.LoadFolderCommand.Execute(null);
                 LogWrapper.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
             }
         }

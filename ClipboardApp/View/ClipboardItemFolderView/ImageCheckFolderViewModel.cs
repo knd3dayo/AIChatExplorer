@@ -72,6 +72,16 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
 
+        public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+            // 子フォルダを作成する
+            // 自身が画像チェックフォルダの場合は、画像チェックフォルダを作成
+            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
+            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
+            ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
+
+            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
+
+        }
 
         public override void PasteClipboardItemCommandExecute(bool CutFlag, IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
@@ -85,7 +95,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             ClipboardItemViewModel clipboardItemViewModel = new(clipboardItem);
             EditItemWindow.OpenEditItemWindow(this, clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
-                this.Load();
+                this.LoadFolderCommand.Execute();
                 LogWrapper.Info("追加しました");
             });
         }

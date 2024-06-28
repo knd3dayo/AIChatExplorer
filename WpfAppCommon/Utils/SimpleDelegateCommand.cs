@@ -17,6 +17,9 @@ namespace WpfAppCommon.Utils
             _executeDelegate = executeDelegate!;
         }
 
+        public void Execute() {
+            Execute(null);
+        }
 
         public void Execute(object? parameter)
         {

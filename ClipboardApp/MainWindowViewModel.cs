@@ -62,7 +62,7 @@ namespace ClipboardApp {
 
         public void ReLoadRootFolders() {
             foreach (var folder in ClipboardItemFolders) {
-                folder.Load();
+                folder.LoadFolderCommand.Execute();
             }
         }
 

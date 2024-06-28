@@ -44,7 +44,7 @@ namespace ClipboardApp {
                     });
 
                     Application.Current.Dispatcher.Invoke(() => {
-                        windowViewModel.SelectedFolder?.Load();
+                        windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
 
@@ -67,7 +67,7 @@ namespace ClipboardApp {
             SelectedFolder = clipboardItemFolderViewModel;
             if (SelectedFolder != null) {
                 // Load
-                SelectedFolder.Load();
+                SelectedFolder.LoadFolderCommand.Execute();
             }
 
         }
@@ -135,7 +135,7 @@ namespace ClipboardApp {
             } else {
                 searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             }
-            SearchWindow.OpenSearchWindow(searchConditionRule, folderViewModel, false, () => { folderViewModel?.Load(); });
+            SearchWindow.OpenSearchWindow(searchConditionRule, folderViewModel, false, () => { folderViewModel?.LoadFolderCommand.Execute(); });
 
         }
 
@@ -301,7 +301,7 @@ namespace ClipboardApp {
                         });
 
                         Application.Current.Dispatcher.Invoke(() => {
-                            windowViewModel.SelectedFolder?.Load();
+                            windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                         });
                     });
             }

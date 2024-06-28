@@ -73,9 +73,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
 
-
-        public override SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
-
+        public override  void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
             ClipboardFolder clipboardFolder = ClipboardItemFolder.CreateChild("新規フォルダ");
 
@@ -92,30 +90,22 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 searchFolderViewModel.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
                 folderViewModel.SaveFolderCommand.Execute(null);
-                folderViewModel.Load();
+                folderViewModel.LoadFolderCommand.Execute(null);
 
             });
 
-        });
+        }
 
-
-        public override SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((parameter) => {
-
+        public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this.ClipboardItemFolder);
             searchConditionRule ??= new() {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = this.ClipboardItemFolder
             };
+            SearchWindow.OpenSearchWindow(searchConditionRule, this, true, afterUpdate);
 
-            SearchWindow.OpenSearchWindow(searchConditionRule, this, true, () => {
-                // 保存と再読み込み
-                this.SaveFolderCommand.Execute(null);
-                this.Load();
-
-            });
-
-        });
+        }
 
         public override void PasteClipboardItemCommandExecute(bool CutFlag, IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
