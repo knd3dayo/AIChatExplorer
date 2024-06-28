@@ -10,29 +10,26 @@ namespace ImageChat.View {
     public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 
-        public ObservableCollection<ScreenShotCheckItem> ScreenShotCheckItems { get; set; } = [];
+        public ObservableCollection<ScreenShotCheckICondition> ScreenShotCheckItems { get; set; } = [];
 
         // CheckTypeList
         public ObservableCollection<CheckTypes> CheckTypeList { get; set; } = [.. CheckTypes.CheckTypeList];
 
 
 
-        Action<string> Action { get; set; } = (parameter) => { };
+        Action<List<ScreenShotCheckICondition>> Action { get; set; } = (parameter) => { };
 
         // Initialize
-        public void Initialize(Action<string> action) {
+        public void Initialize(List<ScreenShotCheckICondition> conditions , Action<List<ScreenShotCheckICondition>> action) {
+            ScreenShotCheckItems = [.. conditions];
             Action = action;
         }
 
         // OKCommand
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
-            // ScreenShotCheckItemsを文字列に変換
-            string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
-            foreach (ScreenShotCheckItem item in ScreenShotCheckItems) {
-                result += "- " + item.ToPromptString() + "\n";
-            }
+
             // Actionを実行
-            Action(result);
+            Action([.. ScreenShotCheckItems]);
             // Windowを閉じる
             window.Close();
 
@@ -72,7 +69,7 @@ namespace ImageChat.View {
             foreach (string line in lines) {
                 string[] items = line.Split('\t');
                 if (items.Length >= 2) {
-                    ScreenShotCheckItem item = new() {
+                    ScreenShotCheckICondition item = new() {
                         SettingItem = items[0],
                         SettingValue = items[1],
                     };

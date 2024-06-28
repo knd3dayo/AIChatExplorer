@@ -16,13 +16,31 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         //--コマンド
         //--------------------------------------------------------------------------------
 
+        // フォルダー保存コマンド
+        public SimpleDelegateCommand<ClipboardFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
+            this.ClipboardItemFolder.Save();
+        });
+
+        // アイテム削除コマンド
+        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((ClipboardItemViewModel item) => {
+            item.Delete();
+            Items.Remove(item);
+
+        });
+        // アイテム保存コマンド
+        public SimpleDelegateCommand<ClipboardItemViewModel> AddItemCommand => new((item) => {
+            ClipboardItemFolder.AddItem(item.ClipboardItem);
+        });
+
+
         // 新規フォルダ作成コマンド
         public virtual SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
-                folderViewModel.Save();
+                folderViewModel.ClipboardItemFolder.Save();
                 folderViewModel.Load();
+
             });
         });
         // フォルダ編集コマンド
@@ -66,11 +84,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 ClipboardItemViewModel newItem = item.Copy();
-                toFolder.AddItem(newItem);
+                toFolder.AddItemCommand.Execute(newItem);
                 // Cutフラグが立っている場合はコピー元のアイテムを削除する
                 if (CutFlag) {
 
-                    fromFolder.DeleteItem(item);
+                    fromFolder.DeleteItemCommand.Execute(item);
                 }
             }
             // フォルダ内のアイテムを再読み込み
@@ -161,6 +179,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         }
 
+        public virtual void CreateItemCommandExecute() {
+            EditItemWindow.OpenEditItemWindow(this, null, () => {
+                // フォルダ内のアイテムを再読み込み
+                this.Load();
+                LogWrapper.Info("追加しました");
+            });
+        }
+
         // フォルダーのアイテムをエクスポートする処理
         public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             DirectoryInfo directoryInfo = new("export");
@@ -230,7 +256,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             if (MessageBox.Show("フォルダを削除しますか？", "確認", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
-            folderViewModel.Delete();
+            folderViewModel.ClipboardItemFolder.Delete();
 
             // ルートフォルダを再読み込み
             MainWindowViewModel.ReLoadRootFolders();

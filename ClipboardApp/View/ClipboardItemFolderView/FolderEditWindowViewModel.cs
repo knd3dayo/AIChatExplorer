@@ -51,7 +51,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 return;
             }
 
-            FolderViewModel.Save();
+            FolderViewModel.SaveFolderCommand.Execute(null);
             // フォルダ作成後に実行するコマンドが設定されている場合
             _afterUpdate?.Invoke();
             // ウィンドウを閉じる

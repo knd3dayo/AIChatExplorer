@@ -57,6 +57,8 @@ namespace WpfAppCommon.Model {
         // ファイルのObjectId
         public List<LiteDB.ObjectId> FileObjectIds { get; set; } = [];
 
+        // 画像ファイルチェッカー
+        public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
 
         // 画像イメージ
         // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する

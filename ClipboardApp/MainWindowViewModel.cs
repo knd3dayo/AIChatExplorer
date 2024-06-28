@@ -34,6 +34,7 @@ namespace ClipboardApp {
         public void Init() {
             ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
+            ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
 
             // ProgressIndicatorの表示更新用のアクションをセット
@@ -317,7 +318,11 @@ namespace ClipboardApp {
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
-            CreateItemCommandExecute(this.SelectedFolder);
+            if (this.SelectedFolder == null) {
+                LogWrapper.Error("フォルダが選択されていません。");
+                return;
+            }
+            this.SelectedFolder.CreateItemCommandExecute();
         });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視

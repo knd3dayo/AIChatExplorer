@@ -51,6 +51,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
                 childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Search;
                 return new SearchFolderViewModel(MainWindowViewModel, childFolder);
+            }else if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.ImageCheck) {
+                // 自身が画像チェックフォルダの場合は、画像チェックフォルダを作成
+                ClipboardFolder childFolder = ClipboardItemFolder.CreateChild(folderName);
+                childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
+                return new ImageCheckFolderViewModel(MainWindowViewModel, childFolder);
             }
             throw new Exception("Invalid FolderType");
         }
@@ -61,10 +66,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
 
-        // Delete
-        public void Delete() {
-            ClipboardItemFolder.Delete();
-        }
         // LoadChildren
         public virtual void LoadChildren() {
             Children.Clear();
@@ -97,20 +98,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 MainWindowViewModel.IsIndeterminate = false;
             }
 
-        }
-        // AddItem
-        public void AddItem(ClipboardItemViewModel item) {
-            ClipboardItemFolder.AddItem(item.ClipboardItem);
-
-        }
-        public void DeleteItem(ClipboardItemViewModel item) {
-            item.Delete();
-            Items.Remove(item);
-
-        }
-        // Save
-        public void Save() {
-            ClipboardItemFolder.Save();
         }
 
         // - コンテキストメニューの削除を表示するかどうか

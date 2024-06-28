@@ -40,7 +40,7 @@ namespace ClipboardApp {
                 ClipboardController.Start(async (clipboardItem) => {
                     // クリップボードアイテムが追加された時の処理
                     await Task.Run(() => {
-                        RootFolderViewModel?.AddItem(new ClipboardItemViewModel(clipboardItem));
+                        RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(clipboardItem));
                     });
 
                     Application.Current.Dispatcher.Invoke(() => {
@@ -98,24 +98,6 @@ namespace ClipboardApp {
                 }
             }
         }
-        /// <summary>
-        /// クリップボードアイテムを新規作成する処理
-        /// 作成後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="obj"></param>
-        public void CreateItemCommandExecute(ClipboardFolderViewModel? folderViewModel) {
-            if (folderViewModel == null) {
-                LogWrapper.Error("フォルダが選択されていません。");
-                return;
-            }
-            EditItemWindow.OpenEditItemWindow(folderViewModel, null, () => {
-                // フォルダ内のアイテムを再読み込み
-                folderViewModel.Load();
-                LogWrapper.Info("追加しました");
-            });
-        }
-
-
 
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
@@ -124,7 +106,7 @@ namespace ClipboardApp {
         }
         // 画像エビデンスチェッカーを開くコマンド
         public static void OpenScreenshotCheckerWindowExecute() {
-            ImageChat.MainWindow.OpenMainWindow(false);
+            ImageChat.MainWindow.OpenMainWindow(null, false);
         }
 
         // OpenRAGManagementWindowCommandExecute メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
@@ -315,7 +297,7 @@ namespace ClipboardApp {
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
-                            SelectedFolder?.AddItem(new ClipboardItemViewModel(clipboardItem));
+                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(clipboardItem));
                         });
 
                         Application.Current.Dispatcher.Invoke(() => {

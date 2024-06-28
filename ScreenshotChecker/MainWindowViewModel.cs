@@ -42,34 +42,54 @@ namespace ImageChat {
                 OnPropertyChanged(nameof(IsStartFromInternalApp));
             }
         }
+        // データ保存用のClipboardItem
+        public ClipboardItem ClipboardItem { get; set; } = new(LiteDB.ObjectId.NewObjectId());
+
+        public void Initialize(ClipboardItem? clipboardItem, bool isStartFromInternalApp) {
+            IsStartFromInternalApp = isStartFromInternalApp;
+            if ( clipboardItem != null) {
+                ClipboardItem = clipboardItem;
+                OnPropertyChanged(nameof(InputText));
+                OnPropertyChanged(nameof(ResultText));
+                OnPropertyChanged(nameof(ImageFiles));
+                OnPropertyChanged(nameof(SaveButtonVisibility));
+
+            }
+        }
 
         public StringBuilder Log = new();
 
         // プロンプトの入力テキスト
-        private string inputText = "";
         public string InputText {
             get {
-                return inputText;
+                return ClipboardItem.ScreenShotCheckItem.InputText;
             }
             set {
-                inputText = value;
+                ClipboardItem.ScreenShotCheckItem.InputText = value;
                 OnPropertyChanged(nameof(InputText));
             }
         }
         // 結果のテキスト
-        private string resultText = "";
         public string ResultText {
             get {
-                return resultText;
+                return ClipboardItem.ScreenShotCheckItem.ResultText;
             }
             set {
-                resultText = value;
+                ClipboardItem.ScreenShotCheckItem.ResultText = value;
                 OnPropertyChanged(nameof(ResultText));
             }
         }
 
         // 画像ファイル
-        public ObservableCollection<ScreenShotImage> ImageFiles { get; set; } = [];
+        public ObservableCollection<ScreenShotImage> ImageFiles {
+            get {
+                return [.. ClipboardItem.ScreenShotCheckItem.ScreenShotImages];
+            }
+            set {
+                ClipboardItem.ScreenShotCheckItem.ScreenShotImages = [.. value];
+                OnPropertyChanged(nameof(ImageFiles));
+            }
+        }
 
         // 最後に選択された画像ファイルがあるフォルダ
         private string lastSelectedImageFolder = ".";
@@ -77,9 +97,34 @@ namespace ImageChat {
         // ScreenShotCheckPromptWindowを開くコマンド
         public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
-            ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow((parameter) => {
-                InputText = parameter;
+            ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow(ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions , (Conditions) => {
+                // ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditionsにConditionsをコピー
+                ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
+
+                // ScreenShotCheckItemsを文字列に変換
+                string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
+                foreach (ScreenShotCheckICondition item in Conditions) {
+                    result += "- " + item.ToPromptString() + "\n";
+                }
+
+                InputText = result;
             });
+        });
+        // SaveButtonを表示するか否か
+        private Visibility _IsSaveButtonVisibility = Visibility.Collapsed;
+        public Visibility SaveButtonVisibility {
+            get {
+                return _IsSaveButtonVisibility;
+            }
+            set {
+                _IsSaveButtonVisibility = value;
+                OnPropertyChanged(nameof(SaveButtonVisibility));
+            }
+        }
+        // SaveCommand
+        public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
+            // ClipboardItemを保存
+            ClipboardItem.Save();
         });
 
         // チャットを送信するコマンド
@@ -101,7 +146,7 @@ namespace ImageChat {
                 // モードがNormalの場合はOpenAIChatでチャットを送信
                 ChatResult? result = null;
                 await Task.Run(() => {
-                    string prompt = inputText;
+                    string prompt = InputText;
 
                     // ScreenShotImageのリストからファイル名のリストを取得
                     List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
@@ -151,7 +196,7 @@ namespace ImageChat {
                 InitialDirectory = lastSelectedImageFolder,
                 Multiselect = true,
                 Filters = {
-                    new CommonFileDialogFilter("画像ファイル", "*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff;*.tif"),
+                    new CommonFileDialogFilter("画像ファイル", "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
                     new CommonFileDialogFilter("すべてのファイル", "*.*"),
                 }
             };

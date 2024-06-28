@@ -21,6 +21,7 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel {
+
         /// <summary>
         /// 選択中のアイテムを削除する処理
         /// 削除後にフォルダ内のアイテムを再読み込む

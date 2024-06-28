@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfAppCommon.Model;
 
 namespace ImageChat {
     /// <summary>
@@ -17,11 +18,12 @@ namespace ImageChat {
         public MainWindow() {
             InitializeComponent();
         }
-        public static void OpenMainWindow(bool isStartFromInternalApp) {
+        public static void OpenMainWindow(ClipboardItem? clipboardItem, bool isStartFromInternalApp) {
             ImageChat.MainWindow imageEvidenceCheckerWindow = new();
             ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
-            // 内部プロジェクトからの起動をFalse
-            imageEvidenceCheckerWindowViewModel.IsStartFromInternalApp = isStartFromInternalApp;
+            // Initialize
+            imageEvidenceCheckerWindowViewModel.Initialize(clipboardItem, isStartFromInternalApp);
+
             imageEvidenceCheckerWindow.Show();
         }
     }

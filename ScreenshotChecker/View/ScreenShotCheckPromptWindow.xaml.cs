@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WpfAppCommon.Model;
 
 namespace ImageChat.View {
     /// <summary>
@@ -21,10 +22,10 @@ namespace ImageChat.View {
             InitializeComponent();
         }
 
-        public static void OpenScreenShotCheckPromptWindow(Action<string> action) {
+        public static void OpenScreenShotCheckPromptWindow(List<ScreenShotCheckICondition> conditions, Action<List<ScreenShotCheckICondition>> action) {
             ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
             ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
-            viewModel.Initialize(action);
+            viewModel.Initialize(conditions, action);
 
             screenShotCheckPromptWindow.ShowDialog();
         }
