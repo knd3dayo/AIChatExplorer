@@ -2,11 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SearchView;
+using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using static QAChat.MainWindowViewModel;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
-    public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+    public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -103,7 +105,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 if (child == null) {
                     continue;
                 }
-                Children.Add(new ImageCheckFolderViewModel(MainWindowViewModel, child));
+                Children.Add(new ChatFolderViewModel(MainWindowViewModel, child));
             }
 
         }
@@ -118,11 +120,46 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         // アイテム作成コマンドの実装. 画像チェックフォルダの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(this.ClipboardItemFolder.Id);
-            ImageChat.MainWindow.OpenMainWindow(clipboardItem, false);
+            ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
+            OpenItemCommandExecute(clipboardItemViewModel);
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
-            // 画像チェック画面を開く
-            ImageChat.MainWindow.OpenMainWindow(itemViewModel.ClipboardItem, false);
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
+            QAChatStartupProps props = new(this.ClipboardItemFolder, itemViewModel.ClipboardItem, false) {
+                SearchWindowAction = (afterSelect) => {
+                    SearchWindow.OpenSearchWindow(rule, null, false, () => {
+                        // QAChatのContextを更新
+                        List<ClipboardItem> clipboardItems = rule.SearchItems();
+                        afterSelect(clipboardItems);
+
+                    });
+                },
+                ContentTextFromClipboardItemsAction = (afterSelect) => {
+                    List<ClipboardItem> items = [];
+                    var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
+                    if (clipboardItemViews != null) {
+                        foreach (var item in clipboardItemViews) {
+                            items.Add(item.ClipboardItem);
+                        }
+                    }
+                    afterSelect(items);
+                },
+                // クリップボード編集画面を開くアクション
+                OpenClipboardItemAction = (clipboardItem) => {
+                    this.OpenItemCommand.Execute(this);
+                },
+
+                // ベクトルDBアイテムを開くアクション
+                OpenVectorDBItemAction = (vectorDBItem) => {
+                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
+                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+                }
+
+
+            };
+
+            QAChat.MainWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
@@ -132,7 +169,19 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
             ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
 
+            // TODO チャットフォルダ作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
+
+        }
+        /// <summary>
+        ///  フォルダ編集コマンド
+        ///  フォルダ編集ウィンドウを表示する処理
+        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
+        /// </summary>
+        /// <param name="parameter"></param>
+        public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+
+            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
 
         }
 

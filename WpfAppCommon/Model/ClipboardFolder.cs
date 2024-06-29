@@ -16,6 +16,7 @@ namespace WpfAppCommon.Model {
             Normal,
             Search,
             ImageCheck,
+            Chat,
         }
 
         public class RootFolderInfo {
@@ -30,6 +31,7 @@ namespace WpfAppCommon.Model {
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "クリップボード";
         public static readonly string SEARCH_ROOT_FOLDER_NAME = "検索フォルダ";
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェックフォルダ";
+        public static readonly string CHAT_ROOT_FOLDER_NAME = "チャットフォルダ";
 
 
         //--------------------------------------------------------------------------------
@@ -45,6 +47,80 @@ namespace WpfAppCommon.Model {
             // クリップボードアイテムのロード
 
         }
+
+        // アプリ共通の検索条件
+        public static SearchRule GlobalSearchCondition { get; set; } = new();
+
+        //--------------------------------------------------------------------------------
+        public static ClipboardFolder RootFolder {
+            get {
+                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CLIPBOARD_ROOT_FOLDER_NAME);
+                if (rootFolder == null) {
+                    rootFolder = new() {
+                        FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
+                        IsRootFolder = true
+                    };
+                    rootFolder.Save();
+                }
+                // 既にRootFolder作成済みの環境のための措置
+                rootFolder.IsRootFolder = true;
+                return rootFolder;
+            }
+        }
+
+        public static ClipboardFolder SearchRootFolder {
+            get {
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(SEARCH_ROOT_FOLDER_NAME);
+                if (searchRootFolder == null) {
+                    searchRootFolder = new ClipboardFolder {
+                        FolderName = SEARCH_ROOT_FOLDER_NAME,
+                        FolderType = FolderTypeEnum.Search,
+                        IsRootFolder = true
+                    };
+                    searchRootFolder.Save();
+                }
+                // 既にSearchRootFolder作成済みの環境のための措置
+                searchRootFolder.IsRootFolder = true;
+                return searchRootFolder;
+            }
+        }
+
+
+        public static ClipboardFolder ImageCheckRootFolder {
+            get {
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(IMAGECHECK_ROOT_FOLDER_NAME);
+                if (searchRootFolder == null) {
+                    searchRootFolder = new ClipboardFolder {
+                        FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
+                        FolderType = FolderTypeEnum.ImageCheck,
+                        IsRootFolder = true
+                    };
+                    searchRootFolder.Save();
+                }
+                // 既にSearchRootFolder作成済みの環境のための措置
+                searchRootFolder.IsRootFolder = true;
+                return searchRootFolder;
+            }
+        }
+
+        public static ClipboardFolder ChatRootFolder {
+            get {
+                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CHAT_ROOT_FOLDER_NAME);
+                if (chatRootFolder == null) {
+                    chatRootFolder = new ClipboardFolder {
+                        FolderName = CHAT_ROOT_FOLDER_NAME,
+                        FolderType = FolderTypeEnum.Chat,
+                        IsRootFolder = true
+                    };
+                    chatRootFolder.Save();
+                }
+                // 既にSearchRootFolder作成済みの環境のための措置
+                chatRootFolder.IsRootFolder = true;
+                return chatRootFolder;
+            }
+        }
+
+
 
         // プロパティ
         // LiteDBのID
@@ -363,62 +439,6 @@ namespace WpfAppCommon.Model {
             if (string.IsNullOrEmpty(childPath))
                 return parentPath;
             return Path.Combine(parentPath, childPath);
-        }
-
-
-        // アプリ共通の検索条件
-        public static SearchRule GlobalSearchCondition { get; set; } = new();
-
-        //--------------------------------------------------------------------------------
-        public static ClipboardFolder RootFolder {
-            get {
-                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CLIPBOARD_ROOT_FOLDER_NAME);
-                if (rootFolder == null) {
-                    rootFolder = new() {
-                        FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
-                        IsRootFolder = true
-                    };
-                    rootFolder.Save();
-                }
-                // 既にRootFolder作成済みの環境のための措置
-                rootFolder.IsRootFolder = true;
-                return rootFolder;
-            }
-        }
-
-        public static ClipboardFolder SearchRootFolder {
-            get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(SEARCH_ROOT_FOLDER_NAME);
-                if (searchRootFolder == null) {
-                    searchRootFolder = new ClipboardFolder {
-                        FolderName = SEARCH_ROOT_FOLDER_NAME,
-                        FolderType = FolderTypeEnum.Search,
-                        IsRootFolder = true
-                    };
-                    searchRootFolder.Save();
-                }
-                // 既にSearchRootFolder作成済みの環境のための措置
-                searchRootFolder.IsRootFolder = true;
-                return searchRootFolder;
-            }
-        }
-
-
-        public static ClipboardFolder ImageCheckRootFolder {
-            get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(IMAGECHECK_ROOT_FOLDER_NAME);
-                if (searchRootFolder == null) {
-                    searchRootFolder = new ClipboardFolder {
-                        FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
-                        FolderType = FolderTypeEnum.ImageCheck,
-                        IsRootFolder = true
-                    };
-                    searchRootFolder.Save();
-                }
-                // 既にSearchRootFolder作成済みの環境のための措置
-                searchRootFolder.IsRootFolder = true;
-                return searchRootFolder;
-            }
         }
 
 

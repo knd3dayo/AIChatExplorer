@@ -16,20 +16,6 @@ namespace ClipboardApp {
 
     public partial class MainWindowViewModel : MyWindowViewModel {
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// 
-        public static MainWindowViewModel? ActiveInstance { get; set; }
-
-        public override void OnActivatedAction() {
-
-            ActiveInstance = this;
-
-        }
-        // RootFolderのClipboardViewModel
-        public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
-
         public MainWindowViewModel() {
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
@@ -39,6 +25,7 @@ namespace ClipboardApp {
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
+            ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
 
             // ProgressIndicatorの表示更新用のアクションをセット
@@ -63,6 +50,20 @@ namespace ClipboardApp {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
         }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// 
+        public static MainWindowViewModel? ActiveInstance { get; set; }
+
+        public override void OnActivatedAction() {
+
+            ActiveInstance = this;
+
+        }
+        // RootFolderのClipboardViewModel
+        public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
 
         public void ReLoadRootFolders() {
             foreach (var folder in ClipboardItemFolders) {

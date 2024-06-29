@@ -12,6 +12,32 @@ using WpfAppCommon.Utils;
 
 namespace QAChat {
     public partial class MainWindowViewModel : MyWindowViewModel {
+
+        public class QAChatStartupProps {
+            public QAChatStartupProps(ClipboardFolder clipboardFolder, ClipboardItem clipboardItem, bool isStartFromInternalApp) {
+                ClipboardFolder = clipboardFolder;
+                ClipboardItem = clipboardItem;
+                IsStartFromInternalApp = isStartFromInternalApp;
+            }
+
+            public ClipboardFolder ClipboardFolder { get; set; }
+            public ClipboardItem ClipboardItem { get; set; }
+
+
+            // 内部アプリから起動されたか否か
+            public bool IsStartFromInternalApp { get; set; }
+
+            public Action<Action<List<ClipboardItem>>> SearchWindowAction = (action) => { };
+
+            public Action<Action<List<ClipboardItem>>> ContentTextFromClipboardItemsAction = (action) => { };
+
+            public Action<ClipboardItem> OpenClipboardItemAction = (clipboardItem) => { };
+
+            public Action<VectorDBItem> OpenVectorDBItemAction = (vectorDBItem) => { };
+
+        }
+
+
         // OnActivatedAction
         public override void OnActivatedAction() {
             if (ClipboardFolder == null) {
@@ -53,11 +79,15 @@ namespace QAChat {
         }
 
         //初期化
-        public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem) {
-            ClipboardFolder = clipboardFolder;
-            QAChatControlViewModel.Initialize(clipboardFolder, clipboardItem, PromptTemplateCommandExecute);
+        public void Initialize(QAChatStartupProps props) {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            QAChatControlViewModel.Initialize(props.ClipboardFolder, props.ClipboardItem, PromptTemplateCommandExecute);
+            IsStartFromInternalApp = props.IsStartFromInternalApp;
+            ShowSearchWindowAction = props.SearchWindowAction;
+            SetContentTextFromClipboardItemsAction = props.ContentTextFromClipboardItemsAction;
+            OpenClipboardItemAction = props.OpenClipboardItemAction;
+            OpenVectorDBItemAction = props.OpenVectorDBItemAction;
 
         }
         public Action<Action<List<ClipboardItem>>> ShowSearchWindowAction {

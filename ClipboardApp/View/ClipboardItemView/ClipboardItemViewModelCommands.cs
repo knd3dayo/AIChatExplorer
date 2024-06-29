@@ -9,10 +9,10 @@ using QAChat.View.VectorDBWindow;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using static QAChat.MainWindowViewModel;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel {
-
 
         // アイテム保存
         public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItem.Save);
@@ -83,37 +83,39 @@ namespace ClipboardApp.View.ClipboardItemView {
 
             QAChat.MainWindow openAIChatWindow = new();
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
-            // 外部プロジェクトとして設定
-            mainWindowViewModel.IsStartFromInternalApp = false;
-            mainWindowViewModel.Initialize(FolderViewModel.ClipboardItemFolder, this.ClipboardItem);
-            mainWindowViewModel.ShowSearchWindowAction = (afterSelect) => {
-                SearchWindow.OpenSearchWindow(rule, null, false, () => {
-                    // QAChatのContextを更新
-                    List<ClipboardItem> clipboardItems = rule.SearchItems();
-                    afterSelect(clipboardItems);
 
-                });
-            };
-            mainWindowViewModel.SetContentTextFromClipboardItemsAction = (afterSelect) => {
-                List<ClipboardItem> items = [];
-                var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
-                if (clipboardItemViews != null) {
-                    foreach (var item in clipboardItemViews) {
-                        items.Add(item.ClipboardItem);
+            QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, this.ClipboardItem, false) {
+                SearchWindowAction = (afterSelect) => {
+                    SearchWindow.OpenSearchWindow(rule, null, false, () => {
+                        // QAChatのContextを更新
+                        List<ClipboardItem> clipboardItems = rule.SearchItems();
+                        afterSelect(clipboardItems);
+
+                    });
+                },
+                ContentTextFromClipboardItemsAction = (afterSelect) => {
+                    List<ClipboardItem> items = [];
+                    var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
+                    if (clipboardItemViews != null) {
+                        foreach (var item in clipboardItemViews) {
+                            items.Add(item.ClipboardItem);
+                        }
                     }
+                    afterSelect(items);
+                },
+                // クリップボード編集画面を開くアクション
+                OpenClipboardItemAction = (clipboardItem) => {
+                    FolderViewModel.OpenItemCommand.Execute(this);
+                },
+
+                // ベクトルDBアイテムを開くアクション
+                OpenVectorDBItemAction = (vectorDBItem) => {
+                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
+                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
                 }
-                afterSelect(items);
-            };
-            // クリップボード編集画面を開くアクション
-            mainWindowViewModel.OpenClipboardItemAction = (clipboardItem) => {
-                FolderViewModel.OpenItemCommand.Execute(this);
-            };
-            // ベクトルDBアイテムを開くアクション
-            mainWindowViewModel.OpenVectorDBItemAction = (vectorDBItem) => {
-                VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
-                EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
             };
 
+            mainWindowViewModel.Initialize(qAChatStartupProps);
             openAIChatWindow.Show();
 
         });
