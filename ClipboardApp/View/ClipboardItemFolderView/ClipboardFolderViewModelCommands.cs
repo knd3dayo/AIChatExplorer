@@ -195,6 +195,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
 
+        //クリップボードアイテムを開く
+        public SimpleDelegateCommand<ClipboardItemViewModel> OpenItemCommand => new((itemViewModel) => {
+
+            OpenItemCommandExecute(itemViewModel);
+        });
+
+
     }
 
 }

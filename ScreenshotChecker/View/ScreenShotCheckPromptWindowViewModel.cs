@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -22,12 +23,17 @@ namespace ImageChat.View {
         // Initialize
         public void Initialize(List<ScreenShotCheckICondition> conditions , Action<List<ScreenShotCheckICondition>> action) {
             ScreenShotCheckItems = [.. conditions];
+            OnPropertyChanged(nameof(ScreenShotCheckItems));
             Action = action;
         }
 
         // OKCommand
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
+            // DataGridを取得
+            DataGrid dataGrid = (DataGrid)window.FindName("ScreenShotCheckDataGrid");
+            // DataGridのItemsSourceを取得
+            ScreenShotCheckItems = (ObservableCollection<ScreenShotCheckICondition>)dataGrid.ItemsSource;
             // Actionを実行
             Action([.. ScreenShotCheckItems]);
             // Windowを閉じる
@@ -77,7 +83,6 @@ namespace ImageChat.View {
                 }
             }
         });
-
         private static readonly string[] separator = ["\r\n", "\r", "\n"];
 
     }

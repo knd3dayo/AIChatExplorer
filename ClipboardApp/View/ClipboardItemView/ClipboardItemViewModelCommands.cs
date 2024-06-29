@@ -22,16 +22,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             ClipboardItem.Delete();
         });
 
-        public SimpleDelegateCommand<ClipboardFolderViewModel> OpenItemCommand => new ((ClipboardFolderViewModel folderViewModel) => {
-
-            EditItemWindow.OpenEditItemWindow(folderViewModel, this, () => {
-                // フォルダ内のアイテムを再読み込み
-                folderViewModel.LoadFolderCommand.Execute();
-                LogWrapper.Info("更新しました");
-            });
-        });
-
-        // ContentTypeがFileの場合にフォルダを開く処理
         public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             // ContentTypeがFileの場合のみフォルダを開く
             if (this.ContentType != ClipboardContentTypes.Files) {
@@ -87,7 +77,7 @@ namespace ClipboardApp.View.ClipboardItemView {
         });
 
         // OpenAI Chatを開くコマンド
-        public SimpleDelegateCommand<ClipboardFolderViewModel> OpenOpenAIChatWindowCommand => new((ClipboardFolderViewModel folderViewModel) => {
+        public SimpleDelegateCommand<object> OpenOpenAIChatWindowCommand => new((parameter) => {
 
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
@@ -95,7 +85,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
             // 外部プロジェクトとして設定
             mainWindowViewModel.IsStartFromInternalApp = false;
-            mainWindowViewModel.Initialize(folderViewModel?.ClipboardItemFolder, this.ClipboardItem);
+            mainWindowViewModel.Initialize(FolderViewModel.ClipboardItemFolder, this.ClipboardItem);
             mainWindowViewModel.ShowSearchWindowAction = (afterSelect) => {
                 SearchWindow.OpenSearchWindow(rule, null, false, () => {
                     // QAChatのContextを更新
@@ -116,8 +106,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             };
             // クリップボード編集画面を開くアクション
             mainWindowViewModel.OpenClipboardItemAction = (clipboardItem) => {
-                ClipboardItemViewModel clipboardItemViewModel = new(folderViewModel, clipboardItem);
-                clipboardItemViewModel.OpenItemCommand.Execute(folderViewModel);
+                FolderViewModel.OpenItemCommand.Execute(this);
             };
             // ベクトルDBアイテムを開くアクション
             mainWindowViewModel.OpenVectorDBItemAction = (vectorDBItem) => {

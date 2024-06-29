@@ -75,6 +75,7 @@
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding SelectImageFileCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="画像ファイル選択" />
                     </MenuItem>
@@ -142,7 +143,7 @@
                                 Text="{Binding FileName}" />
                             <Grid.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Gesture="LeftDoubleClick" />
                             </Grid.InputBindings>
@@ -231,8 +232,7 @@
                 Margin="10,10,10,10"
                 Command="{Binding SaveCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="保存"
-                Visibility="{Binding SaveButtonVisibility}" />
+                Content="保存" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding SendChatCommand}"

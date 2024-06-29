@@ -159,6 +159,13 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 LogWrapper.Info("追加しました");
             });
         }
+        public virtual void OpenItemCommandExecute(ClipboardItemViewModel item) {
+            EditItemWindow.OpenEditItemWindow(this, item, () => {
+                // フォルダ内のアイテムを再読み込み
+                this.LoadFolderCommand.Execute();
+                LogWrapper.Info("編集しました");
+            });
+        }
 
         /// <summary>
         /// Ctrl + V が押された時の処理

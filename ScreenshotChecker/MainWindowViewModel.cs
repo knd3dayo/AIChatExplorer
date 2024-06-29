@@ -19,6 +19,10 @@ namespace ImageChat {
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
 
         }
+        // データ保存用のClipboardItem
+        public ClipboardItem ClipboardItem { get; set; } = new(ClipboardFolder.ImageCheckRootFolder.Id);
+
+
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
         public bool IsIndeterminate {
@@ -42,9 +46,6 @@ namespace ImageChat {
                 OnPropertyChanged(nameof(IsStartFromInternalApp));
             }
         }
-        // データ保存用のClipboardItem
-        public ClipboardItem ClipboardItem { get; set; } = new(LiteDB.ObjectId.NewObjectId());
-
         public void Initialize(ClipboardItem? clipboardItem, bool isStartFromInternalApp) {
             IsStartFromInternalApp = isStartFromInternalApp;
             if ( clipboardItem != null) {
@@ -52,7 +53,6 @@ namespace ImageChat {
                 OnPropertyChanged(nameof(InputText));
                 OnPropertyChanged(nameof(ResultText));
                 OnPropertyChanged(nameof(ImageFiles));
-                OnPropertyChanged(nameof(SaveButtonVisibility));
 
             }
         }
@@ -108,19 +108,10 @@ namespace ImageChat {
                 }
 
                 InputText = result;
+
             });
         });
-        // SaveButtonを表示するか否か
-        private Visibility _IsSaveButtonVisibility = Visibility.Collapsed;
-        public Visibility SaveButtonVisibility {
-            get {
-                return _IsSaveButtonVisibility;
-            }
-            set {
-                _IsSaveButtonVisibility = value;
-                OnPropertyChanged(nameof(SaveButtonVisibility));
-            }
-        }
+
         // SaveCommand
         public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
             // ClipboardItemを保存
@@ -187,7 +178,7 @@ namespace ImageChat {
         });
 
         // 画像選択コマンド SelectImageFileCommand
-        public SimpleDelegateCommand<object> SelectImageFileCommand => new((parameter) => {
+        public SimpleDelegateCommand<Window> SelectImageFileCommand => new((window) => {
 
             //ファイルダイアログを表示
             // 画像ファイルを選択して画像ファイル名一覧に追加
@@ -214,16 +205,18 @@ namespace ImageChat {
                         ImagePath = filePath
                     };
                     // 画像ファイル名一覧に画像ファイル名を追加
-                    ImageFiles.Add(image);
+                    ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Add(image);
                 }
-
+                OnPropertyChanged(nameof(ImageFiles));
             }
+            window.Activate();
+
         });
 
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
-            ImageFiles.Clear();
+            ImageFiles = [];
 
         });
 
@@ -261,7 +254,8 @@ namespace ImageChat {
 
         // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
         public SimpleDelegateCommand<ScreenShotImage> RemoveSelectedImageFileCommand => new((image) => {
-            ImageFiles.Remove(image);
+            ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Remove(image);
+            OnPropertyChanged(nameof(ImageFiles));
         });
 
 

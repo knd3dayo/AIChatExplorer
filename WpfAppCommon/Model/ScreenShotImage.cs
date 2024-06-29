@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
+using LiteDB;
 
 namespace WpfAppCommon.Model {
     public class ScreenShotImage {
@@ -17,6 +18,7 @@ namespace WpfAppCommon.Model {
 
 
         // 画像
+        [BsonIgnore]
         public Image? Image {
             get {
                 if (string.IsNullOrEmpty(ImagePath)) {
@@ -30,6 +32,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 画像のBitmapImage
+        [BsonIgnore]
         public BitmapImage? BitmapImage {
             get {
                 if (Image == null) {
@@ -47,6 +50,7 @@ namespace WpfAppCommon.Model {
 
 
         // 画像のサムネイル
+        [BsonIgnore]
         public Image? Thumbnail {
             get {
                 return Image?.GetThumbnailImage(100, 100, () => false, IntPtr.Zero);
@@ -55,6 +59,7 @@ namespace WpfAppCommon.Model {
 
         }
         // 画像のサムネイルのBitmapImage
+        [BsonIgnore]
         public BitmapImage? ThumbnailBitmapImage {
             get {
                 if (Thumbnail == null) {

@@ -200,12 +200,8 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // QAChatButtonCommand
         public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
-            if (FolderViewModel == null) {
-                LogWrapper.Error("フォルダが選択されていません");
-                return;
-            }
             // QAChatControlのDrawerを開く
-            ItemViewModel?.OpenOpenAIChatWindowCommand.Execute(FolderViewModel);
+            ItemViewModel?.OpenOpenAIChatWindowCommand.Execute();
         });
 
         // Saveコマンド

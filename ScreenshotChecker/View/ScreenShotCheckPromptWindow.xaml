@@ -61,7 +61,7 @@
             </materialDesign:ColorZone>
         </StackPanel>
         <DataGrid
-            Name="datagrid1"
+            Name="ScreenShotCheckDataGrid"
             Grid.Row="1"
             Margin="10,0,10,0"
             AutoGenerateColumns="False"
@@ -80,17 +80,17 @@
             <DataGrid.Columns>
                 <DataGridTextColumn
                     Width="Auto"
-                    Binding="{Binding SettingItem}"
+                    Binding="{Binding SettingItem, UpdateSourceTrigger=PropertyChanged}"
                     Header="設定項目" />
                 <DataGridTextColumn
                     Width="Auto"
-                    Binding="{Binding SettingValue}"
+                    Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
                     Header="設定値" />
                 <DataGridComboBoxColumn
                     Width="Auto"
                     DisplayMemberPath="CheckTypeString"
                     Header="チェックタイプ"
-                    SelectedValueBinding="{Binding CheckType}">
+                    SelectedValueBinding="{Binding CheckType, UpdateSourceTrigger=PropertyChanged}">
                     <DataGridComboBoxColumn.ElementStyle>
                         <Style TargetType="{x:Type ComboBox}">
                             <Setter Property="ItemsSource" Value="{Binding Path=DataContext.CheckTypeList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
