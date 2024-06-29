@@ -153,7 +153,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
                 ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
-                ItemViewModel = new ClipboardItemViewModel(clipboardItem);
+                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 Title = "新規アイテム";
             } else {
                 Title = itemViewModel.ClipboardItem.Description;
@@ -200,8 +200,12 @@ namespace ClipboardApp.View.ClipboardItemView {
 
         // QAChatButtonCommand
         public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
+            if (FolderViewModel == null) {
+                LogWrapper.Error("フォルダが選択されていません");
+                return;
+            }
             // QAChatControlのDrawerを開く
-            ClipboardItemViewModel.OpenOpenAIChatWindowExecute(FolderViewModel, ItemViewModel);
+            ItemViewModel?.OpenOpenAIChatWindowCommand.Execute(FolderViewModel);
         });
 
         // Saveコマンド

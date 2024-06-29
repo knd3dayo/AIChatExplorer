@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
@@ -40,7 +41,7 @@ namespace ClipboardApp {
                 ClipboardController.Start(async (clipboardItem) => {
                     // クリップボードアイテムが追加された時の処理
                     await Task.Run(() => {
-                        RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(clipboardItem));
+                        windowViewModel.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(windowViewModel.RootFolderViewModel, clipboardItem));
                     });
 
                     Application.Current.Dispatcher.Invoke(() => {
@@ -102,7 +103,11 @@ namespace ClipboardApp {
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public void OpenOpenAIWindowCommandExecute() {
-            ClipboardItemViewModel.OpenOpenAIChatWindowExecute(SelectedFolder, null);
+            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
+            // ダミーのアイテム
+
+            ClipboardItemViewModel dummyItem = new(folderViewModel, new ClipboardItem(folderViewModel.ClipboardItemFolder.Id));
+            dummyItem.OpenOpenAIChatWindowCommand.Execute(folderViewModel);
         }
         // 画像エビデンスチェッカーを開くコマンド
         public static void OpenScreenshotCheckerWindowExecute() {
@@ -177,7 +182,7 @@ namespace ClipboardApp {
                 return;
             }
 
-            ClipboardItemViewModel.DeleteSelectedItemCommandExecute(windowViewModel.SelectedFolder, windowViewModel.SelectedItems);
+            DeleteSelectedItemCommandExecute(windowViewModel.SelectedFolder, windowViewModel.SelectedItems);
         }
 
         // メニューの「設定」をクリックしたときの処理
@@ -193,6 +198,29 @@ namespace ClipboardApp {
 
         }
 
+        // ピン留めの切り替え処理 複数アイテム処理可能
+        public SimpleDelegateCommand<object> ChangePinCommand => new((parameter) => {
+
+            // 選択中のアイテムがない場合は処理をしない
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error("選択中のアイテムがない");
+                return;
+            }
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error("選択中のフォルダがない");
+                return;
+            }
+
+            foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
+                clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
+                // ピン留めの時は更新日時を変更しない
+                clipboardItemViewModel.SaveClipboardItemCommand.Execute(false);
+            }
+
+            // フォルダ内のアイテムを再読み込み
+            SelectedFolder.LoadFolderCommand.Execute();
+        });
 
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
@@ -297,7 +325,7 @@ namespace ClipboardApp {
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
-                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(clipboardItem));
+                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                         });
 
                         Application.Current.Dispatcher.Invoke(() => {
@@ -384,6 +412,31 @@ namespace ClipboardApp {
             statusMessageWindowViewModel.Initialize();
             window.ShowDialog();
 
+        }
+
+
+        /// <summary>
+        /// 選択中のアイテムを削除する処理
+        /// 削除後にフォルダ内のアイテムを再読み込む
+        /// </summary>
+        /// <param name="obj"></param>        
+        public static void DeleteSelectedItemCommandExecute(
+            ClipboardFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
+
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                // 選択中のアイテムを削除
+                foreach (var item in itemViewModels) {
+                    if (item is null) {
+                        continue;
+                    }
+                    item.ClipboardItem.Delete();
+                }
+                // フォルダ内のアイテムを再読み込む
+                clipboardItemFolder.LoadFolderCommand.Execute();
+                LogWrapper.Info("削除しました");
+            }
         }
 
     }

@@ -99,18 +99,7 @@
                                 TextTrimming="None" />
                         </Grid>
                         <materialDesign:Card.ContextMenu>
-                            <ContextMenu FontSize="12" ItemsSource="{Binding ContextMenuItems}">
-                                <ContextMenu.ItemContainerStyle>
-                                    <Style TargetType="MenuItem">
-                                        <Setter Property="MenuItem.Header" Value="{Binding Title}" />
-                                        <Setter Property="MenuItem.Command" Value="{Binding Command}" />
-                                        <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
-                                        <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
-                                        <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
-                                    </Style>
-                                </ContextMenu.ItemContainerStyle>
-
-                            </ContextMenu>
+                            <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
                         </materialDesign:Card.ContextMenu>
                         <materialDesign:Card.InputBindings>
                             <!--  Open selected item window by double-clicking  -->

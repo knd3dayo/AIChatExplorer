@@ -91,6 +91,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             Tools.StatusText.Text = message;
 
         }
+
         
     }
 }

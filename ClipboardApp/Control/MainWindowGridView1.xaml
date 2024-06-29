@@ -13,17 +13,7 @@
         <ContextMenu
             x:Key="GridRowContextMenu"
             FontSize="12"
-            ItemsSource="{Binding ContextMenuItems}">
-            <ContextMenu.ItemContainerStyle>
-                <Style TargetType="MenuItem">
-                    <Setter Property="MenuItem.Header" Value="{Binding Title}" />
-                    <Setter Property="MenuItem.Command" Value="{Binding Command}" />
-                    <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
-                    <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
-                    <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
-                </Style>
-            </ContextMenu.ItemContainerStyle>
-        </ContextMenu>
+            ItemsSource="{Binding MenuItems}" />
         <Style x:Key="SingleLineTextBlock" TargetType="{x:Type TextBlock}">
             <Setter Property="Height" Value="15" />
             <Setter Property="TextWrapping" Value="NoWrap" />
@@ -206,19 +196,6 @@
                     Text="{Binding Path=SelectedItem.HeaderText}"
                     TextTrimming="None" />
             </Grid>
-            <materialDesign:Card.ContextMenu>
-                <ContextMenu FontSize="12" ItemsSource="{Binding SelectedItem.ContextMenuItems}">
-                    <ContextMenu.ItemContainerStyle>
-                        <Style TargetType="MenuItem">
-                            <Setter Property="MenuItem.Header" Value="{Binding Title}" />
-                            <Setter Property="MenuItem.Command" Value="{Binding Command}" />
-                            <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
-                            <Setter Property="MenuItem.ItemsSource" Value="{Binding SubMenuItems}" />
-                            <Setter Property="MenuItem.InputGestureText" Value="{Binding InputGestureText}" />
-                        </Style>
-                    </ContextMenu.ItemContainerStyle>
-                </ContextMenu>
-            </materialDesign:Card.ContextMenu>
             <materialDesign:Card.InputBindings>
                 <!--  Open selected item window by double-clicking  -->
                 <MouseBinding

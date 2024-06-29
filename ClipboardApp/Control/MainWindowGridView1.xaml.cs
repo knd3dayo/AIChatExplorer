@@ -2,9 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.Views.ClipboardItemView;
 
 namespace ClipboardApp.Control {
     /// <summary>

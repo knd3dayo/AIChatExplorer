@@ -56,7 +56,59 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
             }
         }
- 
+
+        // Itemのコンテキストメニュー
+        public virtual ObservableCollection<MenuItem> ItemContextMenuItems {
+            get {
+                // MenuItemのリストを作成
+                ObservableCollection<MenuItem> menuItems = [];
+                if (MainWindowViewModel.ActiveInstance == null) {
+                    return menuItems;
+                }
+                // 開く
+                MenuItem createMenuItem = new();
+                createMenuItem.Header = "開く";
+                createMenuItem.Command = MainWindowViewModel.ActiveInstance.OpenSelectedItemCommand;
+                createMenuItem.CommandParameter = this;
+                createMenuItem.InputGestureText = "Ctrl+O";
+                menuItems.Add(createMenuItem);
+
+                // ファイルとして開く
+                MenuItem openContentAsFileMenuItem = new();
+                openContentAsFileMenuItem.Header = "ファイルとして開く";
+                openContentAsFileMenuItem.Command = MainWindowViewModel.ActiveInstance.OpenContentAsFileCommand;
+                openContentAsFileMenuItem.CommandParameter = this;
+                openContentAsFileMenuItem.InputGestureText = "Ctrl+Shit+O";
+
+                // ピン留め
+                MenuItem pinnedStateChangeMenuItem = new();
+                pinnedStateChangeMenuItem.Header = "ピン留め";
+                pinnedStateChangeMenuItem.Command = MainWindowViewModel.ActiveInstance.ChangePinCommand;
+                pinnedStateChangeMenuItem.CommandParameter = this;
+                menuItems.Add(pinnedStateChangeMenuItem);
+
+                // コピー
+                MenuItem copyMenuItem = new();
+                copyMenuItem.Header = "コピー";
+                copyMenuItem.Command = MainWindowViewModel.ActiveInstance.CopyItemCommand;
+                copyMenuItem.CommandParameter = this;
+                copyMenuItem.InputGestureText = "Ctrl+C";
+                menuItems.Add(copyMenuItem);
+
+                // 削除
+                MenuItem deleteMnuItem = new();
+                deleteMnuItem.Header = "削除";
+                deleteMnuItem.Command = MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand;
+                deleteMnuItem.CommandParameter = this;
+                deleteMnuItem.InputGestureText = "Delete";
+                menuItems.Add(deleteMnuItem);
+
+                return menuItems;
+
+            }
+        }
+
+
         // LoadChildren
         public virtual void LoadChildren() {
             Children.Clear();
@@ -72,7 +124,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public virtual void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(item));
+                Items.Add(new ClipboardItemViewModel(this, item));
             }
         }
 
@@ -161,10 +213,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader, Tools.DefaultAction);
 
                 // ClipboardItemをLiteDBに保存
-                toItemViewModel.Save();
+                toItemViewModel.SaveClipboardItemCommand.Execute(true);
                 // コピー元のアイテムを削除
                 foreach (var fromItem in fromItemsViewModel) {
-                    fromItem.Delete();
+                    fromItem.DeleteClipboardItemCommand.Execute();
                 }
 
                 // フォルダ内のアイテムを再読み込み

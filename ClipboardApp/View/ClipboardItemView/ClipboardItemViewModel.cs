@@ -1,10 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.Views.ClipboardItemView;
+using ClipboardApp.View.TagView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
@@ -14,8 +15,10 @@ namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
-        public ClipboardItemViewModel(ClipboardItem clipboardItem) {
+        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel ,ClipboardItem clipboardItem) {
             this.ClipboardItem = clipboardItem;
+            this.FolderViewModel = folderViewModel;
+
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Images));
             OnPropertyChanged(nameof(Files));
@@ -24,6 +27,16 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; }
+        // FolderViewModel
+        public ClipboardFolderViewModel FolderViewModel { get; set; }
+
+        // Context Menu
+
+        public ObservableCollection<MenuItem> MenuItems {
+            get {
+                return FolderViewModel.ItemContextMenuItems;
+            }
+        }
 
         // Content
         public string Content {
@@ -102,6 +115,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
 
+
         // GUI関連
         // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
         public Visibility DescriptionVisibility {
@@ -178,14 +192,6 @@ namespace ClipboardApp.View.ClipboardItemView {
             }
         }
 
-        // Save
-        public void Save(bool updateModifiedTime = true) {
-            ClipboardItem.Save(updateModifiedTime);
-        }
-        // Delete
-        public void Delete() {
-            ClipboardItem.Delete();
-        }
         // IsPinned
         public bool IsPinned {
             get {
@@ -215,40 +221,22 @@ namespace ClipboardApp.View.ClipboardItemView {
         }
 
 
-        // Extract Image
-        private static void ExtractTextFromImage(ClipboardItemViewModel clipboardItemViewModel) {
-            ClipboardItem.ExtractTextFromImageCommandExecute(clipboardItemViewModel.ClipboardItem);
-
-            // 保存
-            clipboardItemViewModel.ClipboardItem.Save();
-        }
-
         // Copy
         public ClipboardItemViewModel Copy() {
-            return new ClipboardItemViewModel(ClipboardItem.Copy());
+            return new ClipboardItemViewModel(this.FolderViewModel, ClipboardItem.Copy());
         }
 
-
-        // テキストをファイルとして開くコマンド
-        public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
-            // 選択中のファイルを開く
-            OpenContentAsFileCommandExecute(this);
-        });
-        // 選択中のアイテムを開く処理
-        public static void OpenContentAsFileCommandExecute(ClipboardItemViewModel? itemViewModel) {
-            if (itemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません。");
-                return;
+        public void UpdateTagList(ObservableCollection<TagItemViewModel> tagList) {
+            // TagListのチェックを反映
+            foreach (var item in tagList) {
+                if (item.IsChecked) {
+                    Tags.Add(item.Tag);
+                } else {
+                    Tags.Remove(item.Tag);
+                }
             }
-            try {
-                // 選択中のアイテムを開く
-                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(itemViewModel.ClipboardItem);
-            } catch (ClipboardAppException e) {
-                LogWrapper.Error(e.Message);
-            }
-
+            // DBに反映
+            SaveClipboardItemCommand.Execute(true);
         }
-
-
     }
 }

@@ -68,7 +68,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public override void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(item));
+                Items.Add(new ClipboardItemViewModel(this, item));
             }
         }
 

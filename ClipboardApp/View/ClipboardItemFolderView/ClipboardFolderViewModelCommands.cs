@@ -20,7 +20,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         // アイテム削除コマンド
         public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((ClipboardItemViewModel item) => {
-            item.Delete();
+            item.DeleteClipboardItemCommand.Execute();
             Items.Remove(item);
 
         });
@@ -186,7 +186,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                         continue;
                     }
                     // item.ClipboardItemを削除
-                    item.Delete();
+                    item.DeleteClipboardItemCommand.Execute();
                 }
 
                 // フォルダ内のアイテムを読み込む

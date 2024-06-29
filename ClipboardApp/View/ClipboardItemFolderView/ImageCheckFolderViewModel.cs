@@ -68,7 +68,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public override void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(item));
+                Items.Add(new ClipboardItemViewModel(this, item));
             }
         }
 
@@ -92,7 +92,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(this.ClipboardItemFolder.Id);
-            ClipboardItemViewModel clipboardItemViewModel = new(clipboardItem);
+            ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             EditItemWindow.OpenEditItemWindow(this, clipboardItemViewModel, () => {
                 // フォルダ内のアイテムを再読み込み
                 this.LoadFolderCommand.Execute();

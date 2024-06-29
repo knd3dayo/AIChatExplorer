@@ -27,12 +27,16 @@ namespace ClipboardApp {
             ActiveInstance = this;
 
         }
+        // RootFolderのClipboardViewModel
+        public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
+
         public MainWindowViewModel() {
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
 
         }
         public void Init() {
-            ClipboardItemFolders.Add(new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder));
+            ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
@@ -97,9 +101,6 @@ namespace ClipboardApp {
         // ClipboardFolder
 
         public ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
-
-        // RootFolderのClipboardViewModel
-        public static ClipboardFolderViewModel? RootFolderViewModel { get; private set; }
 
         // Cutフラグ
         private bool _CutFlag = false;
@@ -373,18 +374,18 @@ namespace ClipboardApp {
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenItemCommandExecute(this.SelectedFolder, this.SelectedItem);
+            this.SelectedItem?.OpenItemCommand.Execute(this.SelectedFolder);
 
         });
 
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenContentAsFileCommandExecute(this.SelectedItem);
+            this.SelectedItem?.OpenContentAsFileCommand.Execute();
         });
 
         // 選択したアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenFileCommand => new((parameter) => {
-            ClipboardItemViewModel.OpenFileCommandExecute(this.SelectedItem);
+            this.SelectedItem?.OpenFileCommand.Execute();
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
