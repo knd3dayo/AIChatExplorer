@@ -32,7 +32,7 @@ namespace WpfAppCommon.Model {
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "クリップボード";
         public static readonly string SEARCH_ROOT_FOLDER_NAME = "検索フォルダ";
         public static readonly string CHAT_ROOT_FOLDER_NAME = "チャット履歴";
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェックフォルダ";
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェック";
 
 
         //--------------------------------------------------------------------------------

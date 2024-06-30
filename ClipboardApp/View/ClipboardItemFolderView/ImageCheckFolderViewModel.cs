@@ -115,7 +115,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
         }
 
-        // アイテム作成コマンドの実装. 画像チェックフォルダの場合は、画像チェックー画面を開く
+        // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(this.ClipboardItemFolder.Id);
             ImageChat.MainWindow.OpenMainWindow(clipboardItem, false);
@@ -127,7 +127,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
-            // 自身が画像チェックフォルダの場合は、画像チェックフォルダを作成
+            // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
             ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
