@@ -1,8 +1,9 @@
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Windows;
 using LiteDB;
+using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
@@ -30,8 +31,8 @@ namespace WpfAppCommon.Model {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "クリップボード";
         public static readonly string SEARCH_ROOT_FOLDER_NAME = "検索フォルダ";
+        public static readonly string CHAT_ROOT_FOLDER_NAME = "チャット履歴";
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェックフォルダ";
-        public static readonly string CHAT_ROOT_FOLDER_NAME = "チャットフォルダ";
 
 
         //--------------------------------------------------------------------------------
@@ -43,8 +44,10 @@ namespace WpfAppCommon.Model {
 
             ParentId = parent?.Id ?? ObjectId.Empty;
             FolderName = folderName;
+            // 親フォルダがnullの場合は、FolderTypeをNormalに設定
             FolderType = parent?.FolderType ?? FolderTypeEnum.Normal;
-            // クリップボードアイテムのロード
+            // 親フォルダのAutoProcessEnabledを継承
+            IsAutoProcessEnabled = parent?.IsAutoProcessEnabled ?? true;
 
         }
 
@@ -58,7 +61,8 @@ namespace WpfAppCommon.Model {
                 if (rootFolder == null) {
                     rootFolder = new() {
                         FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
-                        IsRootFolder = true
+                        IsRootFolder = true,
+                        IsAutoProcessEnabled = true
                     };
                     rootFolder.Save();
                 }
@@ -75,7 +79,9 @@ namespace WpfAppCommon.Model {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = SEARCH_ROOT_FOLDER_NAME,
                         FolderType = FolderTypeEnum.Search,
-                        IsRootFolder = true
+                        IsRootFolder = true,
+                        // 自動処理を無効にする
+                        IsAutoProcessEnabled = false
                     };
                     searchRootFolder.Save();
                 }
@@ -93,7 +99,10 @@ namespace WpfAppCommon.Model {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
                         FolderType = FolderTypeEnum.ImageCheck,
-                        IsRootFolder = true
+                        IsRootFolder = true,
+                        // 自動処理を無効にする
+                        IsAutoProcessEnabled = false
+
                     };
                     searchRootFolder.Save();
                 }
@@ -110,7 +119,9 @@ namespace WpfAppCommon.Model {
                     chatRootFolder = new ClipboardFolder {
                         FolderName = CHAT_ROOT_FOLDER_NAME,
                         FolderType = FolderTypeEnum.Chat,
-                        IsRootFolder = true
+                        IsRootFolder = true,
+                        // 自動処理を無効にする
+                        IsAutoProcessEnabled = false
                     };
                     chatRootFolder.Save();
                 }
@@ -135,6 +146,9 @@ namespace WpfAppCommon.Model {
 
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
+
+        // AutoProcessを有効にするかどうか
+        public bool IsAutoProcessEnabled { get; set; } = true;
 
 
         // フォルダの絶対パス ファイルシステム用
@@ -242,7 +256,10 @@ namespace WpfAppCommon.Model {
             item.FolderObjectId = this.Id;
 
             // 自動処理を適用
-            ClipboardItem? result = ApplyAutoProcess(item);
+            ClipboardItem? result = item;
+            if (IsAutoProcessEnabled) {
+                result = ApplyAutoProcess(item);
+            }
 
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
@@ -442,6 +459,64 @@ namespace WpfAppCommon.Model {
         }
 
 
+        // 親フォルダを取得する
+        public ClipboardFolder? GetParentFolder() {
+            return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
+        }
+
+        // 指定したFilePath名のフォルダを取得する。
+        public static ClipboardFolder? GetRFolder(string filePath, bool create = false) {
+            string[] pathList = filePath.Split(Path.DirectorySeparatorChar);
+            ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(pathList[0]);
+            // rootFolderがnullの場合は、Nullを返す
+            if (rootFolder == null) {
+                return null;
+            }
+            // pathListの1から最後までを取得
+            for (int i = 1; i < pathList.Length; i++) {
+                string folderName = pathList[i];
+                // 子フォルダのリストを取得
+                List<ClipboardFolder> children = rootFolder.Children;
+                // folderNameと一致するフォルダを取得
+                ClipboardFolder? folder = children.FirstOrDefault(x => x.FolderName == folderName);
+                if (folder == null) {
+                    if (create) {
+                        folder = rootFolder.CreateChild(folderName);
+                        rootFolder.Save();
+                        folder.Save();
+                    } else {
+                        return null;
+                    }
+                }
+                rootFolder = folder;
+            }
+            return rootFolder;
+        }
+
+        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder folder, string anotherTreeRoot, bool create = false) {
+            string path = folder.FolderPath;
+            // path先頭を取得
+            string rootPath = path.Split(Path.DirectorySeparatorChar)[0];
+            // pathの先頭を正規表現でAnotherTreeRootに置換.
+            string replacedPath = Regex.Replace(path, "^" + rootPath, anotherTreeRoot);
+            ClipboardFolder? chatFolder = GetRFolder(replacedPath, create);
+            // chatFolderがnullの場合は、ChatRootFolderを返す
+            if (chatFolder == null) {
+                return ChatRootFolder;
+            }
+            return chatFolder;
+
+        }
+
+        // SystemCommonVectorDBを取得する。
+        public IEnumerable<VectorDBItem> GetVectorDBItems() {
+            // このフォルダがCLIPBOARD_ROOT_FOLDER配下以外の場合はGetAnotherTreeFolderでCLIPBOARD_ROOT_FOLDERのフォルダを取得
+            if (FolderType != FolderTypeEnum.Normal) {
+                return GetAnotherTreeFolder(this, CLIPBOARD_ROOT_FOLDER_NAME).GetVectorDBItems();
+            }
+            return ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(Id.ToString(), Description);
+        }
+
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
         public void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
 
@@ -617,6 +692,8 @@ namespace WpfAppCommon.Model {
         }
 
         #endregion
+
+
     }
 }
 

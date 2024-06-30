@@ -28,7 +28,7 @@ namespace WpfAppCommon.Model {
             chatController.PromptTemplateText = PromptItem.Prompt;
             chatController.ChatMode = Mode;
             ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
-            chatController.VectorDBItems = ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(clipboardFolder?.Id.ToString(), clipboardFolder?.Description);
+            chatController.VectorDBItems = clipboardFolder?.GetVectorDBItems() ?? [];
 
             ChatResult? result = chatController.ExecuteChat();
             if (result == null) {

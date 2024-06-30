@@ -113,6 +113,7 @@ namespace WpfAppCommon.Factory.Default {
             return result;
         }
 
+
         // 親フォルダのCollectionNameを指定して子フォルダのリストを取得する
         private IEnumerable<ClipboardFolder> GetChildFolders(ObjectId folderObjectId) {
             List<ClipboardFolder> result = [];

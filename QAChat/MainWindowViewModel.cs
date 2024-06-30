@@ -82,7 +82,7 @@ namespace QAChat {
         public void Initialize(QAChatStartupProps props) {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
-            QAChatControlViewModel.Initialize(props.ClipboardFolder, props.ClipboardItem, PromptTemplateCommandExecute);
+            QAChatControlViewModel.Initialize(props.ClipboardItem, PromptTemplateCommandExecute);
             IsStartFromInternalApp = props.IsStartFromInternalApp;
             ShowSearchWindowAction = props.SearchWindowAction;
             SetContentTextFromClipboardItemsAction = props.ContentTextFromClipboardItemsAction;

@@ -418,6 +418,11 @@
                     Orientation="Horizontal">
                     <Button
                         Margin="10,0,10,5"
+                        Command="{Binding SaveCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="保存" />
+                    <Button
+                        Margin="10,0,10,5"
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="送信" />

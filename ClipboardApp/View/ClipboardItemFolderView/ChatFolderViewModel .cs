@@ -169,7 +169,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
             ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
 
-            // TODO チャットフォルダ作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
+            // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 
         }

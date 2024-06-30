@@ -12,13 +12,24 @@ using WpfAppCommon.View.QAChat;
 namespace WpfAppCommon.Control.QAChat {
     public class QAChatControlViewModel : ObservableObject{
         //初期化
-        public void Initialize(ClipboardFolder? clipboardFolder, ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
-            // クリップボードアイテムを設定
-            ClipboardItem = clipboardItem;
-            // クリップボードフォルダを設定
-            ClipboardFolder = clipboardFolder;
+        public void Initialize(ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
+            if (clipboardItem == null) {
+                // ClipboardItemが存在しない場合はチャット履歴フォルダに保存
+                ClipboardItem = new(ClipboardFolder.ChatRootFolder.Id);
+                ClipboardFolder = ClipboardFolder.ChatRootFolder;
+
+            } else {
+                // クリップボードアイテムを設定
+                ClipboardItem = clipboardItem;
+                // クリップボードフォルダを設定
+                ClipboardFolder = clipboardItem.GetFolder();
+                // チャット履歴用のItemの設定
+                // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
+                ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(ClipboardFolder, ClipboardFolder.CHAT_ROOT_FOLDER_NAME, true);
+                ChatHistoryItem = new(chatFolder.Id);
+            }
             // VectorDBItemsを設定
-            VectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
+            VectorDBItems = [.. ClipboardFolder?.GetVectorDBItems()];
 
             // InputTextを設定
             InputText = clipboardItem?.Content ?? "";
@@ -31,6 +42,9 @@ namespace WpfAppCommon.Control.QAChat {
                 this.PromptTemplateCommandExecute = PromptTemplateCommandExecute;
             }
         }
+
+        // チャット履歴用のItem
+        public ClipboardItem? ChatHistoryItem { get; set; }
 
         // CollectionName
         private string? _CollectionName = null;
@@ -292,8 +306,6 @@ namespace WpfAppCommon.Control.QAChat {
                 // ClipboardItemがある場合はClipboardItemのChatItemsを更新
                 if (ClipboardItem != null) {
                     ClipboardItem.ChatItems = [.. ChatHistory];
-                    // ClipboardItemを保存
-                    ClipboardItem.Save(false);
 
                 }
                 // inputTextをクリア
@@ -309,6 +321,23 @@ namespace WpfAppCommon.Control.QAChat {
 
         });
 
+        // Saveコマンド
+        public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
+            // ChatHistoryをClipboardItemに設定
+            if (ClipboardItem == null) {
+                return;
+            }
+            ClipboardItem.ChatItems = [.. ChatHistory];
+            // ClipboardItemを保存
+            ClipboardItem.Save();
+
+            //ChatHistoryItemがある場合は保存
+            if (ChatHistoryItem != null) {
+                ClipboardItem.CopyTo(ChatHistoryItem);
+                ChatHistoryItem.Save();
+            }
+
+        });
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             ChatHistory = [];
@@ -316,7 +345,6 @@ namespace WpfAppCommon.Control.QAChat {
             // ClipboardItemがある場合は、ChatItemsをクリア
             if (ClipboardItem != null) {
                 ClipboardItem.ChatItems = [];
-                ClipboardItem.Save(false);
             }
             OnPropertyChanged(nameof(ChatHistory));
         });
@@ -329,7 +357,7 @@ namespace WpfAppCommon.Control.QAChat {
             ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがRAGの場合は、VectorDBItemを取得
             if (ChatController.ChatMode == OpenAIExecutionModeEnum.RAG) {
-                VectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(ClipboardFolder?.Id.ToString(), ClipboardFolder?.Description)];
+                VectorDBItems = [.. ClipboardFolder?.GetVectorDBItems()];
             }
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));
