@@ -27,6 +27,10 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
         return result
 
     # ドキュメントを取得
+    # textのlenが0の場合は何もしない
+    if len(text) == 0:
+        return result
+        
     documents = get_document_list(text, object_id_string)
     
     # DBにdockumentsを更新
