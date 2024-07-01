@@ -87,6 +87,7 @@ namespace WpfAppCommon.Model {
                 }
                 // 既にSearchRootFolder作成済みの環境のための措置
                 searchRootFolder.IsRootFolder = true;
+                searchRootFolder.FolderType = FolderTypeEnum.Search;
                 return searchRootFolder;
             }
         }
