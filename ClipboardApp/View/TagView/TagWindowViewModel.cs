@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.Model;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -10,32 +12,19 @@ namespace ClipboardApp.View.TagView {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
-        private ClipboardItemViewModel? itemViewModel;
+        public List<TagItemViewModel> SelectedTagList { get; set; } = [];
 
-        Action? _afterUpdate;
+        private ClipboardItemViewModel? ClipboardItemViewModel { get; set; }
+
+        private Action? AfterUpdate { get; set; }
 
         public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
-            this.itemViewModel = itemViewModel;
-            _afterUpdate = afterUpdate;
-            // itemViewModelがnullでない場合、IsShowCommonTagをFalseにする
-            IsShowCommonTag = itemViewModel == null;
+            ClipboardItemViewModel = itemViewModel;
+            AfterUpdate = afterUpdate;
 
             ReloadTagList();
 
         }
-        // 共通タグを表示するかどうか
-        private bool _isShowCommonTag = false;
-        public bool IsShowCommonTag {
-            get {
-                return _isShowCommonTag;
-            }
-            set {
-                _isShowCommonTag = value;
-                ReloadTagList();
-                OnPropertyChanged(nameof(IsShowCommonTag));
-            }
-        }
-
 
         //新規タグのテキスト
         private string _newTag = "";
@@ -80,51 +69,40 @@ namespace ClipboardApp.View.TagView {
         // LiteDBから再読み込み
         public void ReloadTagList() {
             TagList.Clear();
-            IEnumerable<TagItem> commonTagList = ClipboardAppFactory.Instance.GetClipboardDBController().GetTagList();
-
-            // ItemViewModelがnullの場合またはIsShowCommonTagがTrueの場合、commonTagListを表示
-            if (IsShowCommonTag) {
-                foreach (var item in commonTagList) {
-                    TagItemViewModel tagItemViewModel = new(item);
-                    tagItemViewModel.IsCommonTag = true;
-                    TagList.Add(new TagItemViewModel(item));
+            IEnumerable<TagItem> tagItems = ClipboardAppFactory.Instance.GetClipboardDBController().GetTagList();
+            foreach (var item in tagItems) {
+                TagItemViewModel tagItemViewModel = new(item);
+                if (ClipboardItemViewModel != null) {
+                    var tagString = item.Tag;
+                    tagItemViewModel.IsChecked = ClipboardItemViewModel.Tags.Contains(tagString);
                 }
+                TagList.Add(tagItemViewModel);
             }
-
-            if (itemViewModel == null) {
-                return;
-            }
-            // ItemViewModelがnullでない場合、ItemViewModelのタグを表示
-            foreach (var tag in itemViewModel.Tags) {
-                // tagがTagListに含まれている場合はそれを取得
-                TagItemViewModel? itemViewModel = TagList.FirstOrDefault(x => x.Tag == tag);
-                if (itemViewModel != null) {
-                    itemViewModel.IsChecked = true;
-                }
-                if (itemViewModel == null) {
-                    TagItem item = new TagItem() { Tag = tag };
-                    itemViewModel = new TagItemViewModel(item);
-                    itemViewModel.IsChecked = true;
-                    TagList.Add(itemViewModel);
-                }
-            }
+            OnPropertyChanged(nameof(TagList));
         }
 
         // 選択したタグを削除する。
         public SimpleDelegateCommand<object> DeleteSelectedTagCommand => new((parameter) => {
-            // IsCheckedがTrueのものを削除
-            foreach (var item in TagList) {
-                if (item.IsChecked) {
-                    // LiteDBから削除
-                    item.TagItem.Delete();
-                    // itemViewModel.Tagsから削除
-                    if (itemViewModel != null) {
-                        itemViewModel.Tags.Remove(item.Tag);
-                    }
-                }
+            // 選択中のアイテムを削除
+
+            foreach (var item in SelectedTagList) {
+                // LiteDBから削除
+                item.TagItem.Delete();
             }
             // LiteDBから再読み込み
             ReloadTagList();
+        });
+
+
+        // OpenAIExecutionModeSelectionChangeCommand
+        public SimpleDelegateCommand<RoutedEventArgs> SelectionChangeCommand => new((routedEventArgs) => {
+            ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
+            // 選択中のアイテムを取得
+            SelectedTagList.Clear();
+            foreach (TagItemViewModel item in listBox.SelectedItems) {
+                SelectedTagList.Add(item);
+            }
+
         });
 
         // すべて選択
@@ -141,16 +119,11 @@ namespace ClipboardApp.View.TagView {
             }
             OnPropertyChanged(nameof(TagList));
         });
-        // 共通タグへ追加
-        public SimpleDelegateCommand<object> AddCommonTagCommand => new((parameter) => {
-            TagItemViewModel.AddCommonTags(TagList);
-        });
 
-        // OKボタンを押したときの処理
         public SimpleDelegateCommand<Window> OkCommand => new((window) => {
-            itemViewModel?.UpdateTagList(TagList);
+            ClipboardItemViewModel?.UpdateTagList(TagList);
             // 更新後の処理を実行
-            _afterUpdate?.Invoke();
+            AfterUpdate?.Invoke();
 
             // ウィンドウを閉じる
             window.Close();
@@ -170,9 +143,9 @@ namespace ClipboardApp.View.TagView {
                 TagList.Clear();
                 foreach (var item in TagItem.FilterTag(tag, exclude)) {
                     TagList.Add(new TagItemViewModel(item));
-                    if (itemViewModel != null) {
+                    if (ClipboardItemViewModel != null) {
                         var tagString = item.Tag;
-                        TagList.Last().IsChecked = itemViewModel.Tags.Contains(tagString);
+                        TagList.Last().IsChecked = ClipboardItemViewModel.Tags.Contains(tagString);
                     }
                 }
 
