@@ -44,6 +44,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public SimpleDelegateCommand<ClipboardFolderViewModel> EditFolderCommand => new((folderViewModel) => {
 
             EditFolderCommandExecute(folderViewModel, () => {
+                //　フォルダを保存
+                folderViewModel.ClipboardItemFolder.Save();
                 LoadFolderCommand.Execute(); 
                 LogWrapper.Info("フォルダを編集しました");
             });
