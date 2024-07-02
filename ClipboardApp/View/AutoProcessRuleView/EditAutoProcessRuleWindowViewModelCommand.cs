@@ -190,7 +190,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 LogWrapper.Error("RootFolderViewModelがNullです。");
                 return;
@@ -203,7 +203,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、TargetFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel.RootFolderViewModel;
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 LogWrapper.Error("RootFolderViewModelがNullです。");
                 return;

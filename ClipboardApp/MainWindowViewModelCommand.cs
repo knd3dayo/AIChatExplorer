@@ -110,8 +110,10 @@ namespace ClipboardApp {
             dummyItem.OpenOpenAIChatWindowCommand.Execute();
         }
         // 画像エビデンスチェッカーを開くコマンド
-        public static void OpenScreenshotCheckerWindowExecute() {
-            ImageChat.MainWindow.OpenMainWindow(null, false);
+        public  void OpenScreenshotCheckerWindowExecute() {
+            ImageChat.MainWindow.OpenMainWindow(null, false, () => {
+                SelectedFolder?.LoadFolderCommand.Execute();
+            });
         }
 
         // OpenRAGManagementWindowCommandExecute メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視

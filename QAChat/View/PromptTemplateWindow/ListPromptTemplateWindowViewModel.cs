@@ -54,13 +54,11 @@ namespace QAChat.View.PromptTemplateWindow {
                 return ActionMode == ActionModeEum.Exec ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-
-        private Action<PromptItemViewModel> AfterEdit { get; set; } = (promptItemViewModel) => { };
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
         // 初期化
         public void Initialize(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
             // PromptItemsを更新
-            Reload();
+            ReloadCommand.Execute();
             AfterSelect = afterUpdate;
             // ActionModeを設定
             ActionMode = actionMode;
@@ -75,17 +73,17 @@ namespace QAChat.View.PromptTemplateWindow {
 
         }
 
-        public void Reload() {
+        public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
             // PromptItemsを更新
             PromptItems.Clear();
             IClipboardDBController clipboardDBController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            foreach(var item in clipboardDBController.GetAllPromptTemplates()) {
+            foreach (var item in clipboardDBController.GetAllPromptTemplates()) {
                 PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
                 PromptItems.Add(itemViewModel);
             }
             OnPropertyChanged(nameof(PromptItems));
 
-        }
+        });
 
         public string Title {
             get {
@@ -107,7 +105,7 @@ namespace QAChat.View.PromptTemplateWindow {
             }
             EditPromptItemWindow.OpenEditPromptItemWindow(SelectedPromptItem, (PromptItemViewModel) => {
                 // PromptItemsを更新
-                Reload();
+                ReloadCommand.Execute();
             });
         });
 
@@ -116,7 +114,7 @@ namespace QAChat.View.PromptTemplateWindow {
             PromptItemViewModel itemViewModel = new PromptItemViewModel(new PromptItem());
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
                 // PromptItemsを更新
-                Reload();
+                ReloadCommand.Execute();
             });
         });
 

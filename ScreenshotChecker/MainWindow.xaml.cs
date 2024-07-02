@@ -18,11 +18,11 @@ namespace ImageChat {
         public MainWindow() {
             InitializeComponent();
         }
-        public static void OpenMainWindow(ClipboardItem? clipboardItem, bool isStartFromInternalApp) {
+        public static void OpenMainWindow(ClipboardItem? clipboardItem, bool isStartFromInternalApp, Action afterUpdate) {
             ImageChat.MainWindow imageEvidenceCheckerWindow = new();
             ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
             // Initialize
-            imageEvidenceCheckerWindowViewModel.Initialize(clipboardItem, isStartFromInternalApp);
+            imageEvidenceCheckerWindowViewModel.Initialize(clipboardItem, isStartFromInternalApp, afterUpdate);
 
             imageEvidenceCheckerWindow.Show();
         }

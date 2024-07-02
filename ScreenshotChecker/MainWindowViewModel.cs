@@ -46,10 +46,15 @@ namespace ImageChat {
                 OnPropertyChanged(nameof(IsStartFromInternalApp));
             }
         }
-        public void Initialize(ClipboardItem? clipboardItem, bool isStartFromInternalApp) {
+        // 更新後の処理
+        public Action AfterUpdate { get; set; } = () => { };
+
+        public void Initialize(ClipboardItem? clipboardItem, bool isStartFromInternalApp, Action afterUpdate) {
             IsStartFromInternalApp = isStartFromInternalApp;
+            AfterUpdate = afterUpdate;
             if ( clipboardItem != null) {
                 ClipboardItem = clipboardItem;
+                OnPropertyChanged(nameof(Description));
                 OnPropertyChanged(nameof(InputText));
                 OnPropertyChanged(nameof(ResultText));
                 OnPropertyChanged(nameof(ImageFiles));
@@ -79,6 +84,17 @@ namespace ImageChat {
                 OnPropertyChanged(nameof(ResultText));
             }
         }
+        // ClipboardItemの説明
+        public string Description {
+            get {
+                return ClipboardItem.Description;
+            }
+            set {
+                ClipboardItem.Description = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
+
 
         // 画像ファイル
         public ObservableCollection<ScreenShotImage> ImageFiles {
@@ -222,6 +238,7 @@ namespace ImageChat {
 
         // Closeコマンド
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+            AfterUpdate();
             window.Close();
         });
 
