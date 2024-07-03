@@ -79,11 +79,11 @@
             VerticalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTextColumn
-                    Width="Auto"
+                    Width="300"
                     Binding="{Binding SettingItem, UpdateSourceTrigger=PropertyChanged}"
                     Header="設定項目" />
                 <DataGridTextColumn
-                    Width="Auto"
+                    Width="300"
                     Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
                     Header="設定値" />
                 <DataGridComboBoxColumn
