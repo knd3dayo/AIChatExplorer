@@ -35,6 +35,20 @@ namespace QAChat.View.VectorDBWindow {
                 OnPropertyChanged(nameof(SelectedVectorDBItem));
             }
         }
+        // システム用のVectorDBItemを表示するか否か
+        private bool isShowSystemCommonVectorDB;
+        public bool IsShowSystemCommonVectorDB {
+            get {
+                return isShowSystemCommonVectorDB;
+            }
+            set {
+                isShowSystemCommonVectorDB = value;
+                OnPropertyChanged(nameof(IsShowSystemCommonVectorDB));
+                // リストを更新
+                LoadVectorItemsCommand.Execute();
+
+            }
+        }
 
         private ActionModeEnum mode;
         Action<VectorDBItem>? callBackup;
@@ -43,20 +57,10 @@ namespace QAChat.View.VectorDBWindow {
 
             this.mode = mode;
             this.callBackup = callBackup;
+            LoadVectorItemsCommand.Execute();
 
-            // VectorDBItemのリストを初期化
-            VectorDBItems.Clear();
-            foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
-                VectorDBItems.Add(new VectorDBItemViewModel(item));
-            }
-            // itemsが空の場合はSystemCommonVectorDBを追加
-            if (VectorDBItems.Count == 0) {
-                VectorDBItems.Add(new VectorDBItemViewModel(ClipboardAppVectorDBItem.SystemCommonVectorDB));
-            }
-
-            OnPropertyChanged(nameof(VectorDBItems));
-            OnPropertyChanged(nameof(SelectModeVisibility));
         }
+
 
         // 選択ボタンの表示可否
         public Visibility SelectModeVisibility {
@@ -68,6 +72,16 @@ namespace QAChat.View.VectorDBWindow {
             }
         }
 
+        // VectorDBItemのロード
+        public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
+            // VectorDBItemのリストを初期化
+            VectorDBItems.Clear();
+            foreach (var item in ClipboardAppVectorDBItem.GetItems(IsShowSystemCommonVectorDB)) {
+                VectorDBItems.Add(new VectorDBItemViewModel(item));
+            }
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
+
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             // SelectVectorDBItemを設定
@@ -75,11 +89,7 @@ namespace QAChat.View.VectorDBWindow {
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新
-                VectorDBItems.Clear();
-                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
-                    VectorDBItems.Add(new VectorDBItemViewModel(item));
-                }
-                OnPropertyChanged(nameof(VectorDBItems));
+                LoadVectorItemsCommand.Execute();
             });
 
         });
@@ -93,11 +103,7 @@ namespace QAChat.View.VectorDBWindow {
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
 
                 // リストを更新
-                VectorDBItems.Clear();
-                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
-                    VectorDBItems.Add(new VectorDBItemViewModel(item));
-                }
-                OnPropertyChanged(nameof(VectorDBItems));
+                LoadVectorItemsCommand.Execute();
             });
 
         });
@@ -114,17 +120,14 @@ namespace QAChat.View.VectorDBWindow {
                 // 削除
                 SelectedVectorDBItem.Delete();
                 // リストを更新
-                VectorDBItems.Clear();
-                foreach (var item in ClipboardAppVectorDBItem.GetItems()) {
-                    VectorDBItems.Add(new VectorDBItemViewModel(item));
-                }
+                LoadVectorItemsCommand.Execute();
             }
         });
 
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error("選択するベクトルDBを選択してください");
+                LogWrapper.Error("ベクトルDBを選択してください");
                 return;
             }
             callBackup?.Invoke(SelectedVectorDBItem.Item);

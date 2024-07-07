@@ -21,7 +21,7 @@ namespace WpfAppCommon.Model {
         public static VectorDBItem SystemCommonVectorDB {
             get {
                 // DBからベクトルDBを取得
-                var item = GetItems().FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
+                var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
                 if (item == null) {
                     item = new ClipboardAppVectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
@@ -31,10 +31,13 @@ namespace WpfAppCommon.Model {
                         VectorDBURL = "clipboard_vector_db",
                         DocStoreURL = "sqlite:///clipboard_doc_store",
                         IsUseMultiVectorRetriever = true,
-                        IsEnabled = true
+                        IsEnabled = true,
+                        IsSystem = true
                     };
                     item.Save();
                 }
+                // IsSystemフラグ導入前のバージョンへの対応
+                item.IsSystem = true;
                 return item;
 
             }
@@ -61,38 +64,41 @@ namespace WpfAppCommon.Model {
             dbController.DeleteVectorDBItem(this);
         }
         // Get
-        public static IEnumerable<VectorDBItem> GetItems() {
+        public static IEnumerable<VectorDBItem> GetItems(bool includeSystemVectorDB) {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // GetItemsメソッドを呼び出して取得
             IEnumerable<VectorDBItem> items = dbController.GetVectorDBItems();
+            if (!includeSystemVectorDB) {
+                items = items.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName);
+            }
+
             return items;
         }
-        // IsEnabled=Trueのアイテムを取得
-        public static IEnumerable<VectorDBItem> GetEnabledItems() {
-            return GetItems().Where(item => item.IsEnabled);
+        public static IEnumerable<VectorDBItem> GetEnabledItems(bool includeSystemVectorDB) {
+            return GetItems(includeSystemVectorDB).Where(item => item.IsEnabled);
         }
 
-        // IsEnabled=Trueのアイテムを取得して、SystemCommonVectorDBのCollectionNameを指定した文字列に置換する
-        public static IEnumerable<VectorDBItem> GetEnabledItemsWithSystemCommonVectorDBCollectionName(string? name, string? description) {
-            if (name == null) {
-                return GetEnabledItems();
-            }
-            return GetItems().Where(item => item.IsEnabled).Select(item => {
-                if (item.Name == SystemCommonVectorDBName) {
-                    item.CollectionName = name;
-                    if (description != null) {
-                        item.Description += description;
-                    }
-
-                }
-
-                return item;
-            });
+        public static VectorDBItem GetFolderVectorDBItem(ClipboardFolder folder) {
+            // SystemCommonVectorDBからコピーを作成
+            ClipboardAppVectorDBItem item = new() {
+                Id = SystemCommonVectorDB.Id,
+                Name = folder.FolderName,
+                CollectionName = folder.Id.ToString(),
+                Description = folder.FolderName,
+                Type = SystemCommonVectorDB.Type,
+                VectorDBURL = SystemCommonVectorDB.VectorDBURL,
+                DocStoreURL = SystemCommonVectorDB.DocStoreURL,
+                IsUseMultiVectorRetriever = SystemCommonVectorDB.IsUseMultiVectorRetriever,
+                IsEnabled = SystemCommonVectorDB.IsEnabled,
+                IsSystem = SystemCommonVectorDB.IsSystem
+            };
+            return item;
         }
+
         // GetItemById
         public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {
-            return GetItems().FirstOrDefault(item => item.Id == id);
+            return GetItems(true).FirstOrDefault(item => item.Id == id);
         }
 
         // Json文字列化する

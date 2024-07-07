@@ -65,7 +65,7 @@
                         Command="{Binding SettingCommand}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="設定"
-                        IsEnabled="{Binding IsStartFromInternalApp}" />
+                        IsEnabled="{Binding QAChatControlViewModel.QAChatStartupProps.IsStartFromInternalApp}" />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>

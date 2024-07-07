@@ -28,7 +28,10 @@ namespace WpfAppCommon.Model {
             chatController.PromptTemplateText = PromptItem.Prompt;
             chatController.ChatMode = Mode;
             ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
-            chatController.VectorDBItems = clipboardFolder?.GetVectorDBItems() ?? [];
+
+            chatController.VectorDBItems = [];
+            // フォルダのVectorDBItemを追加
+            chatController.VectorDBItems.Add(clipboardFolder.GetVectorDBItem());
 
             ChatResult? result = chatController.ExecuteChat();
             if (result == null) {

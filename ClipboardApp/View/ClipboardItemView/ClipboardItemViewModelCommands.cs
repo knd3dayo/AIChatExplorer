@@ -7,6 +7,7 @@ using PythonAILib.PythonIF;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon;
+using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static QAChat.MainWindowViewModel;
@@ -85,34 +86,37 @@ namespace ClipboardApp.View.ClipboardItemView {
             QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
 
             QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, this.ClipboardItem, false) {
-                SearchWindowAction = (afterSelect) => {
-                    SearchWindow.OpenSearchWindow(rule, null, false, () => {
-                        // QAChatのContextを更新
-                        List<ClipboardItem> clipboardItems = rule.SearchItems();
-                        afterSelect(clipboardItems);
-
-                    });
-                },
-                ContentTextFromClipboardItemsAction = (afterSelect) => {
-                    List<ClipboardItem> items = [];
-                    var clipboardItemViews = MainWindowViewModel.ActiveInstance?.SelectedFolder?.Items;
-                    if (clipboardItemViews != null) {
-                        foreach (var item in clipboardItemViews) {
-                            items.Add(item.ClipboardItem);
-                        }
-                    }
-                    afterSelect(items);
-                },
-                // クリップボード編集画面を開くアクション
-                OpenClipboardItemAction = (clipboardItem) => {
-                    FolderViewModel.OpenItemCommand.Execute(this);
-                },
 
                 // ベクトルDBアイテムを開くアクション
                 OpenVectorDBItemAction = (vectorDBItem) => {
                     VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
                     EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+                },
+                // フォルダ選択アクション
+                SelectFolderAction = (vectorDBItems) => {
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        return;
+                    }
+                    FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
+                        vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
+                    });
+                },
+                // 選択中のクリップボードアイテムを取得するアクション
+                GetSelectedClipboardItemImageFunction = () => {
+                    List<ClipboardItemImage> images = [];
+                    var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
+                    if (selectedItems == null) {
+                        return images;
+                    }
+                    foreach (ClipboardItemViewModel selectedItem in selectedItems) {
+                        selectedItem.ClipboardItem.ClipboardItemImages.ForEach((image) => {
+                            images.Add(image);
+                        });
+                    }
+                    return images;
                 }
+
             };
 
             mainWindowViewModel.Initialize(qAChatStartupProps);

@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using LibGit2Sharp;
 using LiteDB;
@@ -23,7 +18,7 @@ namespace WpfAppCommon.Model {
         public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
             ClipboardItemImage itemImage = new();
             itemImage.ClipboardItem = clipboardItem;
-            itemImage.SetImage(image);
+            itemImage.Image = image;
             return itemImage;
         }
 
@@ -32,52 +27,64 @@ namespace WpfAppCommon.Model {
         public string ImageBase64 { get; set; } = String.Empty;
 
         // 画像イメージ
-        public void SetImage(Image image) {
-            using MemoryStream ms = new ();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            ImageBase64 = Convert.ToBase64String(ms.ToArray());
+        [BsonIgnore]
+        public Image? Image {
+            get {
+                if (string.IsNullOrEmpty(ImageBase64)) {
+                    return null;
+                }
+                byte[] imageBytes = Convert.FromBase64String(ImageBase64);
+                using MemoryStream ms = new(imageBytes);
+                return Image.FromStream(ms);
+            }
+            set {
+                using MemoryStream ms = new();
+                value?.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                ImageBase64 = Convert.ToBase64String(ms.ToArray());
+            }
         }
-        public Image? GetImage() {
-            if (string.IsNullOrEmpty(ImageBase64)) {
-                return null;
+        [BsonIgnore]
+        public BitmapImage? BitmapImage {
+            get {
+                if (string.IsNullOrEmpty(ImageBase64)) {
+                    return null;
+                }
+                byte[] binaryData = Convert.FromBase64String(ImageBase64);
+                MemoryStream ms = new(binaryData, 0, binaryData.Length);
+                BitmapImage bi = new();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.EndInit();
+                return bi;
             }
-            byte[] imageBytes = Convert.FromBase64String(ImageBase64);
-            using MemoryStream ms = new (imageBytes);
-            return Image.FromStream(ms);
-        }   
-        public BitmapImage? GetBitmapImage() {
-            if (string.IsNullOrEmpty(ImageBase64)) {
-                return null;
-            }
-            byte[] binaryData = Convert.FromBase64String(ImageBase64);
-            MemoryStream ms = new (binaryData, 0, binaryData.Length);
-            BitmapImage bi = new ();
-            bi.BeginInit();
-            bi.StreamSource = ms;
-            bi.EndInit();
-            return bi;
         }
         // 画像データのサムネイル
-        public Image? GetThumbnailImage() {
-            Image? image = GetImage();
-            if (image == null) {
-                return null;
+        [BsonIgnore]
+        public Image? ThumbnailImage {
+            get {
+                if (Image == null) {
+                    return null;
+                }
+                return Image.GetThumbnailImage(100, 100, () => false, IntPtr.Zero);
             }
-            return image.GetThumbnailImage(100, 100, () => false, IntPtr.Zero);
+
         }
         // 画像データのサムネイルのBitmapImage
-        public BitmapImage? GetThumbnailBitmapImage() {
-            Image? image = GetThumbnailImage();
-            if (image == null) {
-                return null;
+        [BsonIgnore]
+        public BitmapImage? ThumbnailBitmapImage {
+            get {
+                Image? image = ThumbnailImage;
+                if (image == null) {
+                    return null;
+                }
+                MemoryStream ms = new();
+                Image?.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                BitmapImage bi = new();
+                bi.BeginInit();
+                bi.StreamSource = ms;
+                bi.EndInit();
+                return bi;
             }
-            MemoryStream ms = new ();
-            image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            BitmapImage bi = new ();
-            bi.BeginInit();
-            bi.StreamSource = ms;
-            bi.EndInit();
-            return bi;
         }
 
         // 削除
@@ -91,7 +98,7 @@ namespace WpfAppCommon.Model {
                     throw new Exception("FilePath is null");
                 }
                 string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
-                string syncFilePath = System.IO.Path.Combine(syncFolder,Id.ToString());
+                string syncFilePath = System.IO.Path.Combine(syncFolder, Id.ToString());
                 if (System.IO.File.Exists(syncFilePath)) {
                     System.IO.File.Delete(syncFilePath);
                 }
@@ -128,11 +135,10 @@ namespace WpfAppCommon.Model {
                 if (!System.IO.Directory.Exists(syncFolder)) {
                     System.IO.Directory.CreateDirectory(syncFolder);
                 }
-                Image? image = GetImage();
-                if (image == null) {
+                if (Image == null) {
                     throw new Exception("image is null");
                 }
-                image.Save(syncFilePath, System.Drawing.Imaging.ImageFormat.Png);
+                Image.Save(syncFilePath, System.Drawing.Imaging.ImageFormat.Png);
 
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
@@ -152,6 +158,7 @@ namespace WpfAppCommon.Model {
                 }
             }
         }
+
         // 取得
         public static ClipboardItemImage? GetItems(LiteDB.ObjectId objectId) {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(objectId);

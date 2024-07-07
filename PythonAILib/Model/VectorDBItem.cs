@@ -43,6 +43,10 @@ namespace PythonAILib.Model {
         [JsonIgnore]
         public bool IsEnabled { get; set; } = true;
 
+        // システム用のフラグ
+        [JsonIgnore]
+        public bool IsSystem { get; set; } = false;
+
         // Save
         public abstract void Save();
 

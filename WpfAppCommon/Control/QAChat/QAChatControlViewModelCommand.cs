@@ -1,17 +1,24 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
-using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfAppCommon.View.QAChat;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.IO;
+using System.Diagnostics;
+using System.Drawing;
+using System.Windows.Media.Imaging;
 
 namespace WpfAppCommon.Control.QAChat {
     public partial class QAChatControlViewModel {
-      
+        // ベクトルDB(フォルダ)を追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemFolderCommand => new((parameter) => {
+            // フォルダを選択
+            SelectFolderAction(SystemVectorDBItems);
+            OnPropertyChanged(nameof(SystemVectorDBItems));
+        });
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -24,10 +31,20 @@ namespace WpfAppCommon.Control.QAChat {
                 PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
 
                 await Task.Run(() => {
-                    //追加テキストと追加画像を設定
-                    UpdateChatRequestAdditionalItems();
-                    // LangChainChat用。VectorDBItemの有効なアイテムを設定。
-                    ChatController.VectorDBItems = VectorDBItems;
+
+                    // LangChainChat用。VectorDBItemsを設定
+                    List<VectorDBItem> items = [.. SystemVectorDBItems, .. ExternalVectorDBItems];
+                    ChatController.VectorDBItems = items;
+
+                    // ImageFilesとImageItemsのImageをChatControllerに設定
+                    ChatController.ImageURLs = [];
+                    foreach (var item in ImageFiles) {
+                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
+                    }
+                    foreach (var item in ImageItems) {
+                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURLBase64String(item.ClipboardItemImage.ImageBase64));
+                    }
+
                     // OpenAIChat or LangChainChatを実行
                     result = ChatController.ExecuteChat();
                 });
@@ -71,6 +88,7 @@ namespace WpfAppCommon.Control.QAChat {
             }
 
         });
+
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             ChatHistory = [];
@@ -89,8 +107,12 @@ namespace WpfAppCommon.Control.QAChat {
             int index = comboBox.SelectedIndex;
             ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがRAGの場合は、VectorDBItemを取得
+            ExternalVectorDBItems = [];
             if (ChatController.ChatMode == OpenAIExecutionModeEnum.RAG) {
-                VectorDBItems = [.. ClipboardFolder?.GetVectorDBItems()];
+                VectorDBItem? item = ClipboardFolder?.GetVectorDBItem();
+                if (item != null) {
+                    ExternalVectorDBItems.Add(item);
+                }
             }
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));
@@ -111,67 +133,6 @@ namespace WpfAppCommon.Control.QAChat {
 
 
             }
-        });
-
-        // 追加テキストのコンテキストメニュー
-        // クリア処理
-        public SimpleDelegateCommand<object> AdditionalTextClearCommand => new((parameter) => {
-            ChatController.AdditionalTextItems.Clear();
-            OnPropertyChanged(nameof(AdditionalTextItems));
-            OnPropertyChanged(nameof(PreviewJson));
-        });
-        // 選択したフォルダのアイテムを追加
-
-        public SimpleDelegateCommand<object> AdditionalTextAddFromFolderCommand => new((parameter) => {
-            // ClipboardItemを選択
-            SetContentTextFromClipboardItemsAction((List<ClipboardItem> selectedItems) => {
-                AdditionalTextItems = [.. selectedItems];
-            });
-            OnPropertyChanged(nameof(AdditionalTextItems));
-            OnPropertyChanged(nameof(PreviewJson));
-        });
-        // 検索結果のアイテムを追加
-        public SimpleDelegateCommand<object> AdditionalTextAddFromSearchCommand => new((parameter) => {
-            // SearchWindowを表示
-            ShowSearchWindowAction((List<ClipboardItem> selectedItems) => {
-                AdditionalTextItems = [.. selectedItems];
-            });
-            OnPropertyChanged(nameof(AdditionalTextItems));
-            OnPropertyChanged(nameof(PreviewJson));
-        });
-
-
-        // 追加テキストのコンテキストメニュー
-        // クリア処理
-        public SimpleDelegateCommand<object> AdditionalImageClearCommand => new((parameter) => {
-            ChatController.AdditionalImageURLs.Clear();
-            OnPropertyChanged(nameof(AdditionalImageItems));
-            OnPropertyChanged(nameof(PreviewJson));
-        });
-        // 選択したフォルダのアイテムを追加
-
-        public SimpleDelegateCommand<object> AdditionalImageAddFromFolderCommand => new((parameter) => {
-            // ClipboardItemを選択
-            SetContentTextFromClipboardItemsAction((List<ClipboardItem> selectedItems) => {
-                // SelectedItemsのうち、ClipboardItemImagesがあるものを追加
-                foreach (var item in selectedItems) {
-                    AdditionalTextItems.Add(item);
-                }
-            });
-            OnPropertyChanged(nameof(AdditionalImageItems));
-            OnPropertyChanged(nameof(PreviewJson));
-        });
-        // 検索結果のアイテムを追加
-        public SimpleDelegateCommand<object> AdditionalImageAddFromSearchCommand => new((parameter) => {
-            // SearchWindowを表示
-            ShowSearchWindowAction((List<ClipboardItem> selectedItems) => {
-                // AdditionalImageItemsに追加
-                foreach (var item in selectedItems) {
-                    AdditionalImageItems.Add(item);
-                }
-            });
-            OnPropertyChanged(nameof(AdditionalImageItems));
-            OnPropertyChanged(nameof(PreviewJson));
         });
 
         // プロンプトテンプレート画面を開くコマンド
@@ -224,18 +185,69 @@ namespace WpfAppCommon.Control.QAChat {
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorDBItem != null) {
-                OpenVectorDBItemAction(SelectedVectorDBItem);
+            if (SelectedExternalVectorDBItem != null) {
+                OpenVectorDBItemAction(SelectedExternalVectorDBItem);
             }
         });
 
         // 選択したVectorDBItemをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorDBItem != null) {
-                VectorDBItems.Remove(SelectedVectorDBItem);
+            if (SelectedExternalVectorDBItem != null) {
+                ExternalVectorDBItems.Remove(SelectedExternalVectorDBItem);
             }
-            OnPropertyChanged(nameof(VectorDBItems));
+            OnPropertyChanged(nameof(ExternalVectorDBItems));
         });
+
+        // 画像選択コマンド SelectImageFileCommand
+        public SimpleDelegateCommand<Window> SelectImageFileCommand => new((window) => {
+
+            //ファイルダイアログを表示
+            // 画像ファイルを選択して画像ファイル名一覧に追加
+            CommonOpenFileDialog dialog = new() {
+                Title = "画像ファイルを選択してください",
+                InitialDirectory = lastSelectedImageFolder,
+                Multiselect = true,
+                Filters = {
+                    new CommonFileDialogFilter("画像ファイル", "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
+                    new CommonFileDialogFilter("すべてのファイル", "*.*"),
+                }
+            };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                foreach (string filePath in dialog.FileNames) {
+                    // filePathをフォルダ名とファイル名に分割してフォルダ名を取得
+                    string? folderPath = Path.GetDirectoryName(filePath);
+                    if (folderPath != null) {
+                        lastSelectedImageFolder = folderPath;
+                    }
+                    // ScreenShotImageを生成してImageFilesに追加
+                    ScreenShotImage image = new() {
+                        ImagePath = filePath
+                    };
+                    // 画像ファイル名一覧に画像ファイル名を追加
+                    ImageFiles.Add(new ScreenShotImageViewModel(this, image));
+                }
+                OnPropertyChanged(nameof(ImageFiles));
+            }
+            window.Activate();
+
+        });
+
+
+
+        // クリップボードの画像アイテムを追加
+        public SimpleDelegateCommand<Window> PasteImageItemCommand => new((window) => {
+            // 選択中のClipboardItemを取得
+            List<ClipboardItemImage>? images = QAChatStartupProps?.GetSelectedClipboardItemImageFunction();
+            if (images == null) {
+                return;
+            }
+            foreach (ClipboardItemImage image in images) {
+                ImageItems.Add(new ClipboardItemImageViewModel(this, image));
+            }
+        });
+
 
     }
 

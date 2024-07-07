@@ -169,7 +169,7 @@ namespace WpfAppCommon.Model {
             //-- 画像がある場合はコピー
             foreach (var imageObjectId in ImageObjectIds) {
                 ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.GetImage() ?? throw new ThisApplicationException("画像が取得できません"));
+                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.Image ?? throw new ThisApplicationException("画像が取得できません"));
                 newImage.ImageBase64 = image.ImageBase64;
                 newItem.ImageObjectIds.Add(newImage.Id);
             }
@@ -611,7 +611,7 @@ namespace WpfAppCommon.Model {
                 if (imageItem == null) {
                     throw new ThisApplicationException("画像が取得できません");
                 }
-                Image? image = imageItem.GetImage();
+                Image? image = imageItem.Image;
                 if (image == null) {
                     throw new ThisApplicationException("画像が取得できません");
                 }

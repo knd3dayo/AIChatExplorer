@@ -34,6 +34,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -56,11 +57,19 @@
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="" />
                 </Menu>
-
             </materialDesign:ColorZone>
         </StackPanel>
-        <ListView
+        <StackPanel
             Grid.Row="1"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <CheckBox
+                Margin="10,10,0,0"
+                Content="システム用のベクトルを表示"
+                IsChecked="{Binding IsShowSystemCommonVectorDB}" />
+        </StackPanel>
+        <ListView
+            Grid.Row="2"
             ItemsSource="{Binding VectorDBItems}"
             SelectedItem="{Binding SelectedVectorDBItem}">
             <ListView.View>
@@ -94,7 +103,7 @@
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -134,6 +143,6 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

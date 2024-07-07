@@ -53,7 +53,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             get {
                 ObservableCollection<ImageSource> imageSources = [];
                 foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
-                    BitmapImage? bitmapImage = clipboardItemImage.GetBitmapImage();
+                    BitmapImage? bitmapImage = clipboardItemImage.BitmapImage;
                     if (bitmapImage != null) {
                         imageSources.Add(bitmapImage);
                     }
@@ -74,7 +74,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             get {
                 ObservableCollection<ImageSource> imageSources = new();
                 foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
-                    BitmapImage? bitmapImage = clipboardItemImage.GetThumbnailBitmapImage();
+                    BitmapImage? bitmapImage = clipboardItemImage.ThumbnailBitmapImage;
                     if (bitmapImage != null) {
                         imageSources.Add(bitmapImage);
                     }

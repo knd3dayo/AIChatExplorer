@@ -1,38 +1,42 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
-using PythonAILib.PythonIF;
-using QAChat.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using WpfAppCommon.View.QAChat;
 
 namespace WpfAppCommon.Control.QAChat {
-    public partial class QAChatControlViewModel : ObservableObject{
+
+    public partial class QAChatControlViewModel : ObservableObject {
         //初期化
-        public void Initialize(ClipboardItem? clipboardItem, Action<object>? PromptTemplateCommandExecute) {
-            if (clipboardItem == null) {
+        public void Initialize(QAChatStartupProps props, Action<object>? PromptTemplateCommandExecute) {
+
+            QAChatStartupProps = props;
+
+            if (props.ClipboardItem == null) {
                 // ClipboardItemが存在しない場合はチャット履歴フォルダに保存
                 ClipboardItem = new(ClipboardFolder.ChatRootFolder.Id);
                 ClipboardFolder = ClipboardFolder.ChatRootFolder;
 
             } else {
                 // クリップボードアイテムを設定
-                ClipboardItem = clipboardItem;
+                ClipboardItem = props.ClipboardItem;
                 // クリップボードフォルダを設定
-                ClipboardFolder = clipboardItem.GetFolder();
+                ClipboardFolder = ClipboardItem.GetFolder();
                 // チャット履歴用のItemの設定
                 // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
                 ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(ClipboardFolder, ClipboardFolder.CHAT_ROOT_FOLDER_NAME, true);
                 ChatHistoryItem = new(chatFolder.Id);
             }
-            // VectorDBItemsを設定
-            VectorDBItems = [.. ClipboardFolder?.GetVectorDBItems()];
+            // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
+            SystemVectorDBItems.Add(ClipboardFolder.GetVectorDBItem());
+            // ExternalVectorDBItemsを設定 ClipboardVectorDBItemのEnabledがTrueのものを取得
+            ExternalVectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
+
+
 
             // InputTextを設定
-            InputText = clipboardItem?.Content ?? "";
+            InputText = ClipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
             if (ClipboardItem != null) {
                 ChatHistory = [.. ClipboardItem.ChatItems];
@@ -43,6 +47,11 @@ namespace WpfAppCommon.Control.QAChat {
             }
 
         }
+
+        public QAChatStartupProps? QAChatStartupProps { get; set; }
+
+        // 最後に画僧を選択したフォルダ
+        private string? lastSelectedImageFolder = null;
 
         // チャット履歴用のItem
         public ClipboardItem? ChatHistoryItem { get; set; }
@@ -69,6 +78,9 @@ namespace WpfAppCommon.Control.QAChat {
 
         // VectorDBItemを開くアクション
         public Action<VectorDBItem> OpenVectorDBItemAction { get; set; } = (item) => { };
+
+        // フォルダを選択するアクション
+        public Action<ObservableCollection<VectorDBItem>> SelectFolderAction { get; set; } = (afterSelect) => { };
 
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
@@ -103,17 +115,6 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
-        private ObservableCollection<VectorDBItem> vectorDBItems = [];
-        public ObservableCollection<VectorDBItem> VectorDBItems {
-            get {
-                return vectorDBItems;
-            }
-            set {
-                vectorDBItems = value;
-                OnPropertyChanged(nameof(VectorDBItems));
-            }
-        }
-
         public static ChatItem? SelectedItem { get; set; }
 
         public ObservableCollection<ChatItem> ChatHistory {
@@ -126,6 +127,76 @@ namespace WpfAppCommon.Control.QAChat {
             }
 
         }
+
+        private ObservableCollection<VectorDBItem> _externalVectorDBItems = [];
+        public ObservableCollection<VectorDBItem> ExternalVectorDBItems {
+            get {
+                return _externalVectorDBItems;
+            }
+            set {
+                _externalVectorDBItems = value;
+                OnPropertyChanged(nameof(ExternalVectorDBItems));
+            }
+        }
+
+        // SelectedExternalVectorDBItem
+        private VectorDBItem? _SelectedExternalVectorDBItem = null;
+        public VectorDBItem? SelectedExternalVectorDBItem {
+            get {
+                return _SelectedExternalVectorDBItem;
+            }
+            set {
+                _SelectedExternalVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedExternalVectorDBItem));
+            }
+        }
+
+        // ベクトルDB(フォルダ)
+        private ObservableCollection<VectorDBItem> _SystemVectorDBItems = [];
+        public ObservableCollection<VectorDBItem> SystemVectorDBItems {
+            get {
+                return _SystemVectorDBItems;
+            }
+            set {
+                _SystemVectorDBItems = value;
+                OnPropertyChanged(nameof(SystemVectorDBItems));
+            }
+        }
+        // ベクトルDB(フォルダ)の選択中のアイテム
+        private ClipboardFolder? _SelectedSystemVectorDBItem = null;
+        public ClipboardFolder? SelectedSystemVectorDBItem {
+            get {
+                return _SelectedSystemVectorDBItem;
+            }
+            set {
+                _SelectedSystemVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedSystemVectorDBItem));
+            }
+        }
+
+        // 画像アイテムのリスト
+        private ObservableCollection<ClipboardItemImageViewModel> _ImageItems = new();
+        public ObservableCollection<ClipboardItemImageViewModel> ImageItems {
+            get {
+                return _ImageItems;
+            }
+            set {
+                _ImageItems = value;
+                OnPropertyChanged(nameof(ImageItems));
+            }
+        }
+        // 画像ファイルのリスト
+        private ObservableCollection<ScreenShotImageViewModel> _ImageFiles = new();
+        public ObservableCollection<ScreenShotImageViewModel> ImageFiles {
+            get {
+                return _ImageFiles;
+            }
+            set {
+                _ImageFiles = value;
+                OnPropertyChanged(nameof(ImageFiles));
+            }
+        }
+
 
         public string InputText {
             get {
@@ -173,47 +244,31 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
 
-        // AdditionalTextItems
-        private ObservableCollection<ClipboardItem> _AdditionalImageItems = new();
-        public ObservableCollection<ClipboardItem> AdditionalImageItems {
-            get {
-                return _AdditionalImageItems;
-            }
-            set {
-                _AdditionalImageItems = value;
-                OnPropertyChanged(nameof(AdditionalImageItems));
-            }
-        }
-
-        // SelectedVectorDBItem
-        private VectorDBItem? _SelectedVectorDBItem = null;
-        public VectorDBItem? SelectedVectorDBItem {
-            get {
-                return _SelectedVectorDBItem;
-            }
-            set {
-                _SelectedVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedVectorDBItem));
-            }
-        }
-
 
         public string PreviewJson {
             get {
-                UpdateChatRequestAdditionalItems();
+                // ImageFilesとImageItemsのImageをChatControllerに設定
+                ChatController.ImageURLs = [];
+                foreach (var item in ImageFiles) {
+                    ChatController.ImageURLs.Add(ChatRequest.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
+                }
+                foreach (var item in ImageItems) {
+                    ChatController.ImageURLs.Add(ChatRequest.CreateImageURLBase64String(item.ClipboardItemImage.ImageBase64));
+                }
+
                 return ChatController.CreateOpenAIRequestJSON();
             }
         }
 
         public string PreviewText {
             get {
-                UpdateChatRequestAdditionalItems();
                 return ChatController.CreatePromptText();
             }
         }
 
         private readonly TextSelector TextSelector = new();
 
+        // 左側メニューのDrawer表示状態
         private bool _IsDrawerOpen = true;
         public bool IsDrawerOpen {
             get {
@@ -224,55 +279,58 @@ namespace WpfAppCommon.Control.QAChat {
                 OnPropertyChanged(nameof(IsDrawerOpen));
             }
         }
-        // 追加コンテキスト情報用のDrawer表示状態
-        private bool _IsAdditionalContextDrawerOpen = false;
-        public bool IsAdditionalContextDrawerOpen {
+
+        // システムベクトルDBのDrawer表示状態
+        private bool _IsSystemVectorDBDrawerOpen = false;
+        public bool IsSystemVectorDBDrawerOpen {
             get {
-                return _IsAdditionalContextDrawerOpen;
+                return _IsSystemVectorDBDrawerOpen;
             }
             set {
-                _IsAdditionalContextDrawerOpen = value;
-                OnPropertyChanged(nameof(IsAdditionalContextDrawerOpen));
-            }
-        }
-        // ベクトルDBのDrawer表示状態
-        private bool _IsVectorDBDrawerOpen = false;
-        public bool IsVectorDBDrawerOpen {
-            get {
-                return _IsVectorDBDrawerOpen;
-            }
-            set {
-                _IsVectorDBDrawerOpen = value;
-                OnPropertyChanged(nameof(IsVectorDBDrawerOpen));
-            }
-        }
-        // 追加画像情報用のDrawer表示状態
-        private bool _IsAdditionalImageDrawerOpen = false;
-        public bool IsAdditionalImageDrawerOpen {
-            get {
-                return _IsAdditionalImageDrawerOpen;
-            }
-            set {
-                _IsAdditionalImageDrawerOpen = value;
-                OnPropertyChanged(nameof(IsAdditionalImageDrawerOpen));
+                _IsSystemVectorDBDrawerOpen = value;
+                OnPropertyChanged(nameof(IsSystemVectorDBDrawerOpen));
             }
         }
 
+        // 外部ベクトルDBのDrawer表示状態
+        private bool _IsExternalVectorDBDrawerOpen = false;
+        public bool IsExternalVectorDBDrawerOpen {
+            get {
+                return _IsExternalVectorDBDrawerOpen;
+            }
+            set {
+                _IsExternalVectorDBDrawerOpen = value;
+                OnPropertyChanged(nameof(IsExternalVectorDBDrawerOpen));
+            }
+        }
 
+        // 画像アイテム用のDrawer表示状態
+        private bool _IsImageItemDrawerOpen = false;
+        public bool IsImageItemDrawerOpen {
+            get {
+                return _IsImageItemDrawerOpen;
+            }
+            set {
+                _IsImageItemDrawerOpen = value;
+                OnPropertyChanged(nameof(IsImageItemDrawerOpen));
+            }
+        }
+        // 画像ファイル用のDrawer表示状態
+        private bool _IsImageFileDrawerOpen = false;
+        public bool IsImageFileDrawerOpen {
+            get {
+                return _IsImageFileDrawerOpen;
+            }
+            set {
+                _IsImageFileDrawerOpen = value;
+                OnPropertyChanged(nameof(IsImageFileDrawerOpen));
+            }
+        }
+
+        //
         public Visibility VectorDBItemVisibility {
             get {
                 return ChatController.ChatMode == OpenAIExecutionModeEnum.RAG ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        // ChatControllerにAdditionalTextItemとAdditionalImageItemを設定
-        private void UpdateChatRequestAdditionalItems() {
-            ChatController.AdditionalTextItems = AdditionalTextItems.Select(x => x.Content).ToList();
-            foreach (var item in AdditionalImageItems) {
-                foreach (var image in item.ClipboardItemImages) {
-                    ChatController.AdditionalImageURLs.Add(ChatRequest.CreateImageURLBase64String(image.ImageBase64));
-                }
-
             }
         }
     }

@@ -40,7 +40,7 @@ namespace PythonAILib.Model {
 
         public List<string> AdditionalImageURLs { get; set; } = [];
 
-        public IEnumerable<VectorDBItem> VectorDBItems { get; set; } = [];
+        public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
         public string CreatePromptText() {
             // PromptTextを作成

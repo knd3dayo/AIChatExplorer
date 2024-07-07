@@ -510,12 +510,8 @@ namespace WpfAppCommon.Model {
         }
 
         // SystemCommonVectorDBを取得する。
-        public IEnumerable<VectorDBItem> GetVectorDBItems() {
-            // このフォルダがCLIPBOARD_ROOT_FOLDER配下以外の場合はGetAnotherTreeFolderでCLIPBOARD_ROOT_FOLDERのフォルダを取得
-            if (FolderType != FolderTypeEnum.Normal) {
-                return GetAnotherTreeFolder(this, CLIPBOARD_ROOT_FOLDER_NAME).GetVectorDBItems();
-            }
-            return ClipboardAppVectorDBItem.GetEnabledItemsWithSystemCommonVectorDBCollectionName(Id.ToString(), Description);
+        public VectorDBItem GetVectorDBItem() {
+            return ClipboardAppVectorDBItem.GetFolderVectorDBItem(this);
         }
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
@@ -608,7 +604,7 @@ namespace WpfAppCommon.Model {
             // If ContentType is Image, set image data
             if (contentTypes == ClipboardContentTypes.Image && image != null) {
                 ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
-                imageItem.SetImage(image);
+                imageItem.Image = image;
                 item.ClipboardItemImages.Add(imageItem);
             }
             // If ContentType is Files, set file data
