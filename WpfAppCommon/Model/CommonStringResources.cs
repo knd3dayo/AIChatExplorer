@@ -19,6 +19,10 @@ namespace WpfAppCommon.Model {
         public string Stop { get; } = "停止";
         // 選択
         public string Select { get; } = "選択";
+        // ヘルプ
+        public string Help { get; } = "ヘルプ";
+        // バージョン情報
+        public string VersionInfo { get; } = "バージョン情報";
 
         // 表示
         public string View { get; } = "表示";

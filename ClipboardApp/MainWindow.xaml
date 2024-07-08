@@ -233,6 +233,16 @@
                             Command="{Binding SettingCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding StringResources.Setting, Mode=OneTime}" />
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding StringResources.Help, Mode=OneTime}">
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding OpenVersionInfoCommand, Mode=OneTime}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.VersionInfo, Mode=OneTime}" />
+                        </MenuItem>
                     </Menu>
                 </materialDesign:ColorZone>
             </StackPanel>

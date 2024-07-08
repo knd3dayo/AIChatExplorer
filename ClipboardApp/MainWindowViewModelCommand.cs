@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.HelpView;
 using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
@@ -551,6 +552,11 @@ namespace ClipboardApp {
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
             OpenTagWindowCommandExecute();
+        });
+
+        // バージョン情報画面を開く処理
+        public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
+            VersionWindow.OpenVersionWindow();
         });
 
     }
