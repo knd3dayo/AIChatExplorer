@@ -10,13 +10,17 @@ using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat {
-    public partial class MainWindowViewModel : MyWindowViewModel {
+namespace QAChat.ViewModel
+{
+    public partial class MainWindowViewModel : MyWindowViewModel
+    {
 
 
         // OnActivatedAction
-        public override void OnActivatedAction() {
-            if (ClipboardFolder == null) {
+        public override void OnActivatedAction()
+        {
+            if (ClipboardFolder == null)
+            {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
@@ -25,31 +29,38 @@ namespace QAChat {
             Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolder?.FolderName}]";
         }
         private ClipboardFolder? _ClipboardFolder;
-        public ClipboardFolder? ClipboardFolder {
-            get {
+        public ClipboardFolder? ClipboardFolder
+        {
+            get
+            {
                 return _ClipboardFolder;
             }
-            set {
+            set
+            {
                 _ClipboardFolder = value;
                 OnPropertyChanged(nameof(ClipboardFolder));
             }
         }
 
         //初期化
-        public void Initialize(QAChatStartupProps props) {
+        public void Initialize(QAChatStartupProps props)
+        {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
             QAChatControlViewModel.Initialize(props, PromptTemplateCommandExecute);
 
         }
- 
+
 
         // 選択中のフォルダの全てのClipboardItem
-        public ObservableCollection<ClipboardItem> ClipboardItems {
-            get {
+        public ObservableCollection<ClipboardItem> ClipboardItems
+        {
+            get
+            {
                 return QAChatControlViewModel.ClipboardItems;
             }
-            set {
+            set
+            {
                 QAChatControlViewModel.ClipboardItems = value;
                 OnPropertyChanged(nameof(ClipboardItems));
             }
@@ -61,10 +72,12 @@ namespace QAChat {
 
 
         // 設定画面を開くコマンド
-        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> SettingCommand => new((parameter) =>
+        {
             // SettingUserControlを生成してWindowを表示する。
             SettingsUserControl settingsControl = new();
-            Window window = new() {
+            Window window = new()
+            {
                 SizeToContent = SizeToContent.Height,
                 Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
@@ -74,8 +87,10 @@ namespace QAChat {
 
         );
 
-        private void PromptTemplateCommandExecute(object parameter) {
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+        private void PromptTemplateCommandExecute(object parameter)
+        {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) =>
+            {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
 
             });

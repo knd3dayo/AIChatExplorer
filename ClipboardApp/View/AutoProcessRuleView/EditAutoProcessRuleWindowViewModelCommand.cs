@@ -10,7 +10,7 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static QAChat.View.PromptTemplateWindow.ListPromptTemplateWindowViewModel;
+using  QAChat.ViewModel;
 
 namespace ClipboardApp.View.AutoProcessRuleView {
     public partial class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
@@ -236,7 +236,7 @@ namespace ClipboardApp.View.AutoProcessRuleView {
 
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(
                 // PromptTemplateが選択されたら、PromptTemplateに設定
-                ActionModeEum.Select, ((promptItemViewModel, mode) => {
+                ListPromptTemplateWindowViewModel.ActionModeEum.Select, ((promptItemViewModel, mode) => {
                     SelectedPromptItem = promptItemViewModel;
                 }));
         });

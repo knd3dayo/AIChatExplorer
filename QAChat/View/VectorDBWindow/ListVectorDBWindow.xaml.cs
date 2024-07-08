@@ -12,9 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PythonAILib.Model;
+using QAChat.ViewModel;
 using WpfAppCommon.Model;
 
-namespace QAChat.View.VectorDBWindow {
+namespace QAChat.View.VectorDBWindow
+{
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>

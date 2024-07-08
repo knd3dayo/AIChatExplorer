@@ -5,7 +5,7 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.View.RAGWindow"
+    xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="UpdateRAGIndexWindow"

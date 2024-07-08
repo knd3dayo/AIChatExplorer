@@ -11,9 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ImageChat.ViewModel;
 using WpfAppCommon.Model;
 
-namespace ImageChat.View {
+namespace ImageChat.View
+{
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>

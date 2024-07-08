@@ -6,7 +6,7 @@ using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static QAChat.MainWindowViewModel;
+using QAChat.ViewModel;
 
 namespace ClipboardApp.View.ClipboardItemFolderView {
     public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {

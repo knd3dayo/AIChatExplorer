@@ -1,7 +1,9 @@
 using System.Windows;
+using QAChat.ViewModel;
 using WpfAppCommon.Control.QAChat;
 
-namespace QAChat {
+namespace QAChat
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -12,7 +14,7 @@ namespace QAChat {
 
         public static void OpenOpenAIChatWindow(QAChatStartupProps props) {
             QAChat.MainWindow openAIChatWindow = new();
-            QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
+            MainWindowViewModel mainWindowViewModel = (MainWindowViewModel)openAIChatWindow.DataContext;
             mainWindowViewModel.Initialize(props);
 
             openAIChatWindow.Show();

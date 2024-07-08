@@ -11,8 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using QAChat.ViewModel;
 
-namespace QAChat.View.PromptTemplateWindow {
+namespace QAChat.View.PromptTemplateWindow
+{
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

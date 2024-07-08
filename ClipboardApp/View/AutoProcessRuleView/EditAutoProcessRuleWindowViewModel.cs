@@ -10,7 +10,7 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static QAChat.View.PromptTemplateWindow.ListPromptTemplateWindowViewModel;
+using QAChat.ViewModel;
 
 namespace ClipboardApp.View.AutoProcessRuleView {
     public partial class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {

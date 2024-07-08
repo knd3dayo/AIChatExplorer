@@ -10,7 +10,7 @@ using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static QAChat.MainWindowViewModel;
+using QAChat.ViewModel;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel {
@@ -83,7 +83,7 @@ namespace ClipboardApp.View.ClipboardItemView {
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChat.MainWindow openAIChatWindow = new();
-            QAChat.MainWindowViewModel mainWindowViewModel = (QAChat.MainWindowViewModel)openAIChatWindow.DataContext;
+            QAChat.ViewModel.MainWindowViewModel mainWindowViewModel = (QAChat.ViewModel.MainWindowViewModel)openAIChatWindow.DataContext;
 
             QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, this.ClipboardItem, false) {
 

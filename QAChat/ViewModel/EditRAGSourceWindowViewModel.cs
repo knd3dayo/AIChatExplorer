@@ -1,9 +1,11 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using QAChat.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.View.RAGWindow {
+namespace QAChat.View.RAGWindow
+{
     public class EditRAGSourceWindowViewModel : MyWindowViewModel {
 
         private RAGSourceItemViewModel? itemViewModel;

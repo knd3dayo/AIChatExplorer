@@ -16,6 +16,7 @@ using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
+using QAChat.ViewModel;
 
 namespace ClipboardApp {
     public partial class MainWindowViewModel {

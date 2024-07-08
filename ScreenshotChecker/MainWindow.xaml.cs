@@ -8,9 +8,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ImageChat.ViewModel;
 using WpfAppCommon.Model;
 
-namespace ImageChat {
+namespace ImageChat
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -20,7 +22,7 @@ namespace ImageChat {
         }
         public static void OpenMainWindow(ClipboardItem? clipboardItem, bool isStartFromInternalApp, Action afterUpdate) {
             ImageChat.MainWindow imageEvidenceCheckerWindow = new();
-            ImageChat.MainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChat.MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
+            MainWindowViewModel imageEvidenceCheckerWindowViewModel = (MainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
             // Initialize
             imageEvidenceCheckerWindowViewModel.Initialize(clipboardItem, isStartFromInternalApp, afterUpdate);
 

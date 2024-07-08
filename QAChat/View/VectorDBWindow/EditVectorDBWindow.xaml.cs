@@ -1,6 +1,8 @@
 using System.Windows;
+using QAChat.ViewModel;
 
-namespace QAChat.View.VectorDBWindow {
+namespace QAChat.View.VectorDBWindow
+{
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

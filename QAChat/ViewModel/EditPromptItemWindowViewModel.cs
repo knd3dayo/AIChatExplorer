@@ -1,14 +1,12 @@
 using System.Windows;
-using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.View.PromptTemplateWindow {
+namespace QAChat.ViewModel {
     public class EditPromptItemWindowViewModel : MyWindowViewModel {
-            
+
         private PromptItemViewModel? itemViewModel;
         public PromptItemViewModel? ItemViewModel {
             get {
@@ -57,7 +55,7 @@ namespace QAChat.View.PromptTemplateWindow {
                 return itemViewModel == null ? "新規作成" : "編集"; ;
             }
         }
-            
+
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
         // 初期化
         public void Initialize(PromptItemViewModel? itemViewModel, Action<PromptItemViewModel> afterUpdate) {

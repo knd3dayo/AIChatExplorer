@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Model;
 
-namespace QAChat.View.PromptTemplateWindow {
-    public class PromptItemViewModel : ObservableObject{
+namespace QAChat.ViewModel {
+    public class PromptItemViewModel : ObservableObject {
         public PromptItem PromptItem { get; set; }
         public string Content {
             get => PromptItem.Prompt;
@@ -17,7 +12,7 @@ namespace QAChat.View.PromptTemplateWindow {
             }
         }
 
-        public string Description { 
+        public string Description {
             get => PromptItem.Description;
             set {
                 PromptItem.Description = value;
