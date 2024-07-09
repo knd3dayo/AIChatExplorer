@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.TagView {
-    public class TagSearchWindowViewModel: MyWindowViewModel{
+namespace ClipboardApp.ViewModel {
+    public class TagSearchWindowViewModel : MyWindowViewModel {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
         public void Initialize(Action<string, bool> afterUpdate) {

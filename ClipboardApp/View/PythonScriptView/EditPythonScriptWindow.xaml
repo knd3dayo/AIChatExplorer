@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:ClipboardApp.View.PythonScriptView"
+    xmlns:view="clr-namespace:ClipboardApp.ViewModel"
     Title="{Binding StringResources.EditPythonScriptWindowTitle}"
     Width="800"
     SizeToContent="Height"

@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfAppCommon;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.View.TagView {
+namespace ClipboardApp.ViewModel {
     public class TagItemViewModel : MyWindowViewModel {
 
         // コンストラクタ

@@ -10,9 +10,11 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using  QAChat.ViewModel;
+using QAChat.ViewModel;
+using ClipboardApp.ViewModel;
 
-namespace ClipboardApp.View.AutoProcessRuleView {
+namespace ClipboardApp.View.AutoProcessRuleView
+{
     public partial class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
 
         // OKボタンが押されたときの処理

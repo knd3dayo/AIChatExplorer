@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.View.PythonScriptView.PythonScriptView;
-using CommunityToolkit.Mvvm.ComponentModel;
+using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.PythonScriptView {
+namespace ClipboardApp.ViewModel {
     public class ListPythonScriptWindowViewModel : MyWindowViewModel {
 
         public enum ActionModeEnum {
@@ -41,7 +40,7 @@ namespace ClipboardApp.View.PythonScriptView {
         // ExecモードまたはSelectモード時は、実行ボタンを表示する。
         public Visibility ExecButtonVisibility {
             get {
-                return (ActionMode == ActionModeEnum.Exec || ActionMode == ActionModeEnum.Select)? Visibility.Visible : Visibility.Collapsed;
+                return ActionMode == ActionModeEnum.Exec || ActionMode == ActionModeEnum.Select ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // Selectボタンのテキスト Selectモード時は「選択」、Execモード時は「実行」
@@ -52,7 +51,7 @@ namespace ClipboardApp.View.PythonScriptView {
         }
 
 
-        public void Initialize(ActionModeEnum actionModeEnum ,Action<ScriptItem> afterSelect) {
+        public void Initialize(ActionModeEnum actionModeEnum, Action<ScriptItem> afterSelect) {
             ActionMode = actionModeEnum;
             this.afterSelect = afterSelect;
 

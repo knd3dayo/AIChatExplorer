@@ -1,5 +1,6 @@
 using System.Windows;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.ViewModel;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.View.SearchView

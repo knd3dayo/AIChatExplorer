@@ -1,5 +1,6 @@
 using System.Windows;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.ViewModel;
 
 namespace ClipboardApp.View.TagView
 {

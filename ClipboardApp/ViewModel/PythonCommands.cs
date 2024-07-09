@@ -1,13 +1,11 @@
-using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.PythonScriptView;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.PythonScriptView.PythonScriptView {
+namespace ClipboardApp.ViewModel
+{
     public class PythonCommands {
-
-
         public static void CreateScriptCommandExecute(object obj) {
             EditPythonScriptWindow editScriptWindow = new EditPythonScriptWindow();
             EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
@@ -47,7 +45,7 @@ namespace ClipboardApp.View.PythonScriptView.PythonScriptView {
                 ScriptItem.DeleteScriptItem(scriptItem);
             }
         }
- 
+
 
     }
 }

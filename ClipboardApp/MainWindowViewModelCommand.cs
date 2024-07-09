@@ -6,7 +6,6 @@ using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.HelpView;
-using ClipboardApp.View.PythonScriptView.PythonScriptView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using QAChat.View.PromptTemplateWindow;
@@ -17,8 +16,10 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
 using QAChat.ViewModel;
+using ClipboardApp.ViewModel;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel {
 
 

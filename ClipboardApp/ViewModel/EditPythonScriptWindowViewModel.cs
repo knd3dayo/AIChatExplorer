@@ -1,8 +1,8 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using ClipboardApp.View.PythonScriptView;
 
-namespace ClipboardApp.View.PythonScriptView {
+namespace ClipboardApp.ViewModel {
     class EditPythonScriptWindowViewModel : MyWindowViewModel {
         private ScriptItem? scriptItem;
         public ScriptItem? ScriptItem {

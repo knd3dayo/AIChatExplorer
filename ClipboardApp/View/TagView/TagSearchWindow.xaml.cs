@@ -12,8 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ClipboardApp.View.SearchView;
+using ClipboardApp.ViewModel;
 
-namespace ClipboardApp.View.TagView {
+namespace ClipboardApp.View.TagView
+{
     /// <summary>
     /// TagSearchWindow.xaml の相互作用ロジック
     /// </summary>

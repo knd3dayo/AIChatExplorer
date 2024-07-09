@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.HelpView {
+namespace ClipboardApp.ViewModel {
     public class VersionWindowViewModel {
 
         public string Version { get; set; }

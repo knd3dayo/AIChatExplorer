@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemView;
-using PythonAILib.Model;
+using ClipboardApp.View.TagView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.TagView {
+namespace ClipboardApp.ViewModel {
     public class TagWindowViewModel : MyWindowViewModel {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
@@ -39,12 +39,7 @@ namespace ClipboardApp.View.TagView {
         }
 
         // タグを追加したときの処理
-        public SimpleDelegateCommand<string> AddTagCommand => new((parameter) => {
-            if (parameter is not string) {
-                LogWrapper.Error("パラメーターがありません");
-                return;
-            }
-            string tag = (string)parameter;
+        public SimpleDelegateCommand<string> AddTagCommand => new((tag) => {
             if (string.IsNullOrEmpty(tag)) {
                 LogWrapper.Error("タグが空です");
                 return;

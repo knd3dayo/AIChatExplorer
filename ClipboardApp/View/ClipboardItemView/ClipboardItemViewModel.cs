@@ -5,13 +5,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.TagView;
+using ClipboardApp.ViewModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemView {
+namespace ClipboardApp.View.ClipboardItemView
+{
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
