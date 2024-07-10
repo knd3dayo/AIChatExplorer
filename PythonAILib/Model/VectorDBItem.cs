@@ -52,8 +52,8 @@ namespace PythonAILib.Model {
 
         // Delete
         public abstract void Delete();
-        public abstract void UpdateIndex(IPythonFunctions.ClipboardInfo clipboard);
-        public abstract void DeleteIndex(IPythonFunctions.ClipboardInfo clipboard);
+        public abstract void UpdateIndex(IPythonFunctions.ContentInfo clipboard);
+        public abstract void DeleteIndex(IPythonFunctions.ContentInfo clipboard);
 
     }
 }

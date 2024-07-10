@@ -26,7 +26,7 @@ namespace WpfAppCommon.Model {
                 return clipboardItem;
             }
             // ベクトルDBを更新
-            IPythonFunctions.ClipboardInfo clipboard = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem.Id.ToString(), clipboardItem.Content);
+            IPythonFunctions.ContentInfo clipboard = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, clipboardItem.Id.ToString(), clipboardItem.Content);
             vectorDBItem.UpdateIndex(clipboard);
 
             return clipboardItem;

@@ -7,7 +7,14 @@ import langchain_util
 from langchain_vector_db import LangChainVectorDB
 from openai_props import OpenAIProps, VectorDBProps
 
-def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
+def update_content_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
+    return _update_index(props, vector_db_props, mode, text, object_id_string, get_document_list)
+
+def update_image_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, image_url, object_id_string):
+    return _update_index(props, vector_db_props, mode, image_url, object_id_string, get_document_list)
+
+
+def _update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string, get_document_list_function):
 
     # 結果格納用のdict
     result = {}
@@ -31,13 +38,15 @@ def update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text,
     if len(text) == 0:
         return result
         
-    documents = get_document_list(text, object_id_string)
+    documents = get_document_list_function(text, object_id_string)
     
     # DBにdockumentsを更新
     vector_db.add_documents(documents)
     result["update_count"] = len(documents)
     
     return result
+
+
 
 
 def get_document_list(text, object_id_string):

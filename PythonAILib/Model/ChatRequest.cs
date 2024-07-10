@@ -3,7 +3,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using PythonAILib.PythonIF;
-using WpfAppCommon.PythonIF;
 
 namespace PythonAILib.Model {
     /// <summary>
@@ -67,12 +66,18 @@ namespace PythonAILib.Model {
         public static string CreateImageURLFromFilePath(string filePath) {
             // filePathから画像のBase64文字列を作成
             byte[] imageBytes = File.ReadAllBytes(filePath);
-            string base64String = Convert.ToBase64String(imageBytes);
-            string result = CreateImageURLBase64String(base64String);
+            string result = CreateImageURL(imageBytes);
             return result;
         }
 
-        public static string CreateImageURLBase64String(string base64String) {
+        public static string CreateImageURL(byte[] imageBytes) {
+            // filePathから画像のBase64文字列を作成
+            string base64String = Convert.ToBase64String(imageBytes);
+            string result = CreateImageURL(base64String);
+            return result;
+        }
+
+        public static string CreateImageURL(string base64String) {
             string base64Header = base64String.Substring(0, 5);
             // 先頭の文字列からイメージのフォーマットを判別
             // PNG  iVBOR
@@ -97,7 +102,7 @@ namespace PythonAILib.Model {
         }
 
 
-        public List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
+        public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
 
             //OpenAIのリクエストパラメーターのContent部分のデータを作成
             List<Dictionary<string, object>> parameters = [];

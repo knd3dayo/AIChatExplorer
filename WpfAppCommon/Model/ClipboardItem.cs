@@ -405,7 +405,7 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info("Embeddingを保存します");
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // IPythonFunctions.ClipboardInfoを作成
-                    IPythonFunctions.ClipboardInfo clipboardInfo = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
+                    IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
 
                     // Embeddingを保存
                     ClipboardAppVectorDBItem.SystemCommonVectorDB.UpdateIndex(clipboardInfo);
@@ -420,7 +420,7 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info("Embeddingを削除します");
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // IPythonFunctions.ClipboardInfoを作成
-                    IPythonFunctions.ClipboardInfo clipboardInfo = new IPythonFunctions.ClipboardInfo(IPythonFunctions.VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                    IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
                     // Embeddingを削除
                     ClipboardAppVectorDBItem.SystemCommonVectorDB.DeleteIndex(clipboardInfo);
                 }
@@ -522,7 +522,7 @@ namespace WpfAppCommon.Model {
                 PromptTemplateText = prompt,
             };
             // ChatRequestにImageURLsを設定
-            chatController.ImageURLs = item.ClipboardItemImages.Select(image => ChatRequest.CreateImageURLBase64String(image.ImageBase64)).ToList();
+            chatController.ImageURLs = item.ClipboardItemImages.Select(image => ChatRequest.CreateImageURL(image.ImageBase64)).ToList();
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
                 item.Content += result.Response;

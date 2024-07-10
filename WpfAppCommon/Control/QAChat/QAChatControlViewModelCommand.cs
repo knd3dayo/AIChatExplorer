@@ -42,7 +42,7 @@ namespace WpfAppCommon.Control.QAChat {
                         ChatController.ImageURLs.Add(ChatRequest.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
                     }
                     foreach (var item in ImageItems) {
-                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURLBase64String(item.ClipboardItemImage.ImageBase64));
+                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURL(item.ClipboardItemImage.ImageBase64));
                     }
 
                     // OpenAIChat or LangChainChatを実行

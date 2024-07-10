@@ -50,7 +50,7 @@ namespace PythonAILib.PythonIF {
         public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
-        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ClipboardInfo clipboard, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ContentInfo clipboard, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
         public string HelloWorld() {

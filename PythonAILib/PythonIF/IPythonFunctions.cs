@@ -57,7 +57,7 @@ namespace PythonAILib.PythonIF {
                 return JsonSerializer.Serialize(this, options);
             }
         }
-        public class ClipboardInfo(IPythonFunctions.VectorDBUpdateMode mode, string id, string content) {
+        public class ContentInfo(VectorDBUpdateMode mode, string id, string content) {
 
             [JsonPropertyName("Id")]
             public string Id { get; set; } = id;
@@ -75,7 +75,25 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        public string ExtractText(string path);
+        public class ImageInfo(VectorDBUpdateMode mode, string id, byte[] base64bytes) {
+            [JsonPropertyName("Id")]
+            public string Id { get; set; } = id;
+            [JsonPropertyName("image_url")]
+            public string ImageURL { get; set; } = ChatRequest.CreateImageURL(base64bytes);
+            [JsonPropertyName("Mode")]
+            public VectorDBUpdateMode Mode { get; set; } = mode;
+
+            public string ToJson() {
+                var options = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                return JsonSerializer.Serialize(this, options);
+            }
+        }
+
+
+            public string ExtractText(string path);
         public string GetMaskedString(string spacyModel, string text);
         public string GetUnmaskedString(string spacyModel, string maskedText);
 
@@ -102,7 +120,7 @@ namespace PythonAILib.PythonIF {
 
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo,  VectorDBItem vectorDBItem);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ClipboardInfo contentInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
 
         //テスト用
         public string HelloWorld();

@@ -110,12 +110,12 @@ namespace WpfAppCommon.Model {
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
 
-        public override void UpdateIndex(IPythonFunctions.ClipboardInfo clipboard) {
+        public override void UpdateIndex(IPythonFunctions.ContentInfo clipboard) {
 
             PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
         }
 
-        public override void DeleteIndex(IPythonFunctions.ClipboardInfo clipboard) {
+        public override void DeleteIndex(IPythonFunctions.ContentInfo clipboard) {
 
             PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
         }

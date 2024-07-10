@@ -128,7 +128,14 @@ def run_langchain_chat( props_json: str, prompt: str, request_json: str):
     return result_json
 
 # vector db関連
-def update_index(props_json, request_json):
+def update_file_index(props_json, request_json):
+    return _update_file_index(props_json, request_json, "update")
+
+def delete_file_index(props_json, request_json):
+    return _update_file_index(props_json, request_json, "delete")
+
+
+def _update_file_index(props_json, request_json, mode):
 
     # update_indexを実行する関数を定義
     def func () -> dict:
@@ -138,7 +145,6 @@ def update_index(props_json, request_json):
         
         # request_jsonをdictに変換
         request = json.loads(request_json)
-        mode = request["Mode"]
         workdir = request["WorkDirectory"]
         relative_path = request["RelativePath"]
         url = request["RepositoryURL"]
@@ -159,7 +165,13 @@ def update_index(props_json, request_json):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-def update_index_with_clipboard_item(props_json, request_json):
+def delete_content_index(props_json, request_json):
+    return _update_content_index(props_json, request_json, "delete")
+
+def update_content_index(props_json, request_json):
+    return _update_content_index(props_json, request_json, "update")
+
+def _update_content_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         props = json.loads(props_json)
@@ -168,12 +180,11 @@ def update_index_with_clipboard_item(props_json, request_json):
     
         # request_jsonをdictに変換
         request = json.loads(request_json)
-        mode = request["Mode"]
         text = request["Content"]
         object_id_string = request["Id"]
         
         import langchain_object_processor
-        result = langchain_object_processor.update_index(openai_props, vector_db_props, mode, text, object_id_string)
+        result = langchain_object_processor.update_content_index(openai_props, vector_db_props, mode, text, object_id_string)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -187,6 +198,42 @@ def update_index_with_clipboard_item(props_json, request_json):
     # resultをJSONに変換して返す
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
+
+def delete_image_index(props_json, request_json):
+    return _update_image_index(props_json, request_json, "delete")
+
+def update_image_index(props_json, request_json):
+    return _update_image_index(props_json, request_json, "update")
+
+def _update_image_index(props_json, request_json, mode):
+    # update_indexを実行する関数を定義
+    def func () -> dict:
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
+        vector_db_props = openai_props.VectorDBItems[0]
+    
+        # request_jsonをdictに変換
+        request = json.loads(request_json)
+        image_url = request["image_url"]
+        object_id_string = request["Id"]
+        
+        import langchain_object_processor
+        result = langchain_object_processor.update_image_index(openai_props, vector_db_props, mode, text, object_id_string)
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
+
 
 
 # pyocr関連

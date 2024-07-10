@@ -467,7 +467,7 @@ namespace PythonAILib.PythonIF {
             });
         }
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ClipboardInfo contentInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
             if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
@@ -485,12 +485,56 @@ namespace PythonAILib.PythonIF {
 
             LogWrapper.Info("UpdateVectorDBIndex実行");
             LogWrapper.Info($"プロパティ情報 {propJson}");
+            string function_name = "";
 
+            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+                function_name = "update_content_index";
+            } else if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+                function_name = "delete_content_index";
+            } else {
+                throw new Exception("modeが不正です");
+            }
             // UpdateVectorDBIndexExecuteを呼び出す
-            UpdateVectorDBIndexExecute("update_index_with_clipboard_item", (function_object) => {
+            UpdateVectorDBIndexExecute(function_name, (function_object) => {
                 return function_object(propJson, contentInfoJson);
             });
         }
+
+
+        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ImageInfo imageInfo, VectorDBItem vectorDBItem) {
+
+            // modeがUpdateでItem.Contentが空の場合は何もしない
+            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(imageInfo.ImageURL)) {
+                return;
+            }
+            // modeがDeleteで、Item.Idが空の場合は何もしない
+            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete && string.IsNullOrEmpty(imageInfo.Id)) {
+                return;
+            }
+            // propsにVectorDBURLを追加
+            props.VectorDBItems = [vectorDBItem];
+            string propJson = props.ToJson();
+            // ContentInfoをJSON文字列に変換
+            string contentInfoJson = imageInfo.ToJson();
+
+            LogWrapper.Info("UpdateVectorDBIndex実行");
+            LogWrapper.Info($"プロパティ情報 {propJson}");
+
+            string function_name = "";
+            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+                function_name = "update_image_index";
+            } else if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+                function_name = "delete_image_index";
+            } else {
+                throw new Exception("modeが不正です");
+            }
+            // UpdateVectorDBIndexExecuteを呼び出す
+            UpdateVectorDBIndexExecute(function_name, (function_object) => {
+                return function_object(propJson, contentInfoJson);
+            });
+        }
+
+
         public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
@@ -504,8 +548,17 @@ namespace PythonAILib.PythonIF {
             // GitFileInfoをJSON文字列に変換
             string gitFileInfoJson = gitFileInfo.ToJson();
 
+            string function_name = "";
+            if (gitFileInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+                function_name = "update_file_index";
+            } else if (gitFileInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+                function_name = "delete_file_index";
+            } else {
+                throw new Exception("modeが不正です");
+            }
+
             // UpdateVectorDBIndexExecuteを呼び出す
-            UpdateVectorDBIndexExecute("update_index", (function_object) => {
+            UpdateVectorDBIndexExecute(function_name, (function_object) => {
                 return function_object(propJson, gitFileInfoJson);
             });
         }
