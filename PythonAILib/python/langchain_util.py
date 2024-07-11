@@ -95,10 +95,17 @@ class RetrievalQAUtil:
         # tool: Tool
         #   ツール
         '''
+        
+        # TODO Nameが2バイト文字の場合、エラーが発生するので修正が必要
+        # 暫定的にNameのhash値を使う
+        import hashlib
+        
+        tool_name = hashlib.md5(vector_db_item.Name.encode()).hexdigest()
+        
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         qa = self.__create_retrieval_qa(vector_db_item)
         tool = Tool(
-                name=vector_db_item.Name,
+                name=tool_name,
                 func=qa,
                 description = vector_db_item.VectorDBDescription
             )

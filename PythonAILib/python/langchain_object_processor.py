@@ -11,7 +11,7 @@ def update_content_index(props: OpenAIProps, vector_db_props: VectorDBProps, mod
     return _update_index(props, vector_db_props, mode, text, object_id_string, get_document_list)
 
 def update_image_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, image_url, object_id_string):
-    return _update_index(props, vector_db_props, mode, image_url, object_id_string, get_document_list)
+    return _update_index(props, vector_db_props, mode, image_url, object_id_string, get_image_document_list)
 
 
 def _update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string, get_document_list_function):
@@ -52,6 +52,11 @@ def _update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text
 def get_document_list(text, object_id_string):
     text_list = split_text(text)
     return [ Document(page_content=text, metadata={"source_url": "", "source": object_id_string}) for text in text_list]    
+
+def get_image_document_list(text, object_id_string):
+    text_list = split_text(text)
+    return [ Document(page_content=text, metadata={"source_url": "", "source": object_id_string}) for text in text_list]    
+
 
 def split_text(text, chunk_size=500):
     text_list = []

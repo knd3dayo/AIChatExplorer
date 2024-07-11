@@ -218,7 +218,7 @@ def _update_image_index(props_json, request_json, mode):
         object_id_string = request["Id"]
         
         import langchain_object_processor
-        result = langchain_object_processor.update_image_index(openai_props, vector_db_props, mode, text, object_id_string)
+        result = langchain_object_processor.update_image_index(openai_props, vector_db_props, mode, image_url, object_id_string)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
