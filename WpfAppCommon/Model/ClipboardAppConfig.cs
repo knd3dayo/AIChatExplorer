@@ -1,9 +1,22 @@
 
+using System.IO;
 using PythonAILib.Model;
 
 namespace WpfAppCommon.Model {
     public class ClipboardAppConfig {
 
+
+        // このアプリケーションのデータ用のフォルダを取得
+        public static string AppDataFolder {
+            get {
+                string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string appDataFolder = Path.Combine(appDataPath, "ClipboardApp");
+                if (!Directory.Exists(appDataFolder)) {
+                    Directory.CreateDirectory(appDataFolder);
+                }
+                return appDataFolder;
+            }
+        }
         // WpfCommon.Properties.Settingsの値をプロパティとして宣言する。
 
         // MonitorTargetAppNames

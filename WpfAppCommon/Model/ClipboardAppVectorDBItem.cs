@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -23,13 +24,14 @@ namespace WpfAppCommon.Model {
                 // DBからベクトルDBを取得
                 var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
                 if (item == null) {
+                    string dbPath = Path.Combine( ClipboardAppConfig.AppDataFolder, "clipboard_doc_store.db");
                     item = new ClipboardAppVectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
                         Name = SystemCommonVectorDBName,
                         Description = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。",
                         Type = VectorDBTypeEnum.Chroma,
                         VectorDBURL = "clipboard_vector_db",
-                        DocStoreURL = "sqlite:///clipboard_doc_store",
+                        DocStoreURL = $"sqlite:///{dbPath}",
                         IsUseMultiVectorRetriever = true,
                         IsEnabled = true,
                         IsSystem = true

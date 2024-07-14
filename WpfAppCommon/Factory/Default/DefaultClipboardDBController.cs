@@ -1,3 +1,4 @@
+using System.IO;
 using LiteDB;
 using PythonAILib.Model;
 using QAChat.Model;
@@ -35,7 +36,11 @@ namespace WpfAppCommon.Factory.Default {
         public static LiteDatabase GetClipboardDatabase() {
             if (db == null) {
                 try {
-                    db = new LiteDatabase("clipboard.db");
+                    /// AppDataフォルダーパスを取得
+                    string appDataPath = ClipboardAppConfig.AppDataFolder;
+                    // データベースファイルのパスを作成
+                    string dbPath = Path.Combine(appDataPath, "clipboard.db");
+                    db = new LiteDatabase(dbPath);
 
                     // BSonMapperの設定
                     // ClipboardItemFolderのChildren, Items, SearchConditionを無視する
