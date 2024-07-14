@@ -61,6 +61,11 @@ class OpenAIClient:
     def run_openai_chat(self, input_dict: dict) -> str:
         # OpenAIのchatを実行する
         client = self.get_completion_client()
+        # AzureOpenAIの場合はmax_tokensとstream=Falseを設定する
+        if self.props.AzureOpenAI:
+            input_dict["max_tokens"] = 4096
+            input_dict["stream"] = False
+            
         response = client.chat.completions.create(
             **input_dict
             )
