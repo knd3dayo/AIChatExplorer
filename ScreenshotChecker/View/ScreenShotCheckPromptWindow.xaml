@@ -86,22 +86,13 @@
                     Width="300"
                     Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
                     Header="設定値" />
-                <DataGridComboBoxColumn
-                    Width="Auto"
-                    DisplayMemberPath="CheckTypeString"
-                    Header="チェックタイプ"
-                    SelectedValueBinding="{Binding CheckType, UpdateSourceTrigger=PropertyChanged}">
-                    <DataGridComboBoxColumn.ElementStyle>
-                        <Style TargetType="{x:Type ComboBox}">
-                            <Setter Property="ItemsSource" Value="{Binding Path=DataContext.CheckTypeList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
-                        </Style>
-                    </DataGridComboBoxColumn.ElementStyle>
-                    <DataGridComboBoxColumn.EditingElementStyle>
-                        <Style TargetType="{x:Type ComboBox}">
-                            <Setter Property="ItemsSource" Value="{Binding Path=DataContext.CheckTypeList, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
-                        </Style>
-                    </DataGridComboBoxColumn.EditingElementStyle>
-                </DataGridComboBoxColumn>
+                <DataGridTemplateColumn Width="150" Header="チェックタイプ">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding CheckTypeList}" SelectedItem="{Binding CheckTypeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
             <DataGrid.ContextMenu>
                 <ContextMenu>

@@ -24,7 +24,7 @@ namespace ImageChat.View
             InitializeComponent();
         }
 
-        public static void OpenScreenShotCheckPromptWindow(List<ScreenShotCheckICondition> conditions, Action<List<ScreenShotCheckICondition>> action) {
+        public static void OpenScreenShotCheckPromptWindow(List<ScreenShotCheckCondition> conditions, Action<List<ScreenShotCheckCondition>> action) {
             ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
             ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
             viewModel.Initialize(conditions, action);

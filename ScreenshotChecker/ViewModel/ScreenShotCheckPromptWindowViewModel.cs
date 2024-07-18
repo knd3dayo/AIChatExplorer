@@ -1,43 +1,33 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ImageChat.ViewModel
-{
+namespace ImageChat.ViewModel {
 
-    public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel
-    {
+    public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 
-        public ObservableCollection<ScreenShotCheckICondition> ScreenShotCheckItems { get; set; } = [];
+        public ObservableCollection<ScreenShotCheckCondition> ScreenShotCheckItems { get; set; } = [];  
 
-        // CheckTypeList
-        public ObservableCollection<CheckTypes> CheckTypeList { get; set; } = [.. CheckTypes.CheckTypeList];
-
-
-
-        Action<List<ScreenShotCheckICondition>> Action { get; set; } = (parameter) => { };
+        
+        Action<List<ScreenShotCheckCondition>> Action { get; set; } = (parameter) => { };
 
         // Initialize
-        public void Initialize(List<ScreenShotCheckICondition> conditions, Action<List<ScreenShotCheckICondition>> action)
-        {
+        public void Initialize(List<ScreenShotCheckCondition> conditions, Action<List<ScreenShotCheckCondition>> action) {
             ScreenShotCheckItems = [.. conditions];
             OnPropertyChanged(nameof(ScreenShotCheckItems));
             Action = action;
         }
 
         // OKCommand
-        public SimpleDelegateCommand<Window> OKCommand => new((window) =>
-        {
+        public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
             // DataGridを取得
             DataGrid dataGrid = (DataGrid)window.FindName("ScreenShotCheckDataGrid");
             // DataGridのItemsSourceを取得
-            ScreenShotCheckItems = (ObservableCollection<ScreenShotCheckICondition>)dataGrid.ItemsSource;
+            ScreenShotCheckItems = (ObservableCollection<ScreenShotCheckCondition>)dataGrid.ItemsSource;
             // Actionを実行
             Action([.. ScreenShotCheckItems]);
             // Windowを閉じる
@@ -46,55 +36,49 @@ namespace ImageChat.ViewModel
         });
 
         // CancelCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) =>
-        {
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             // Windowを閉じる
             window.Close();
         });
         // クリアコマンド
-        public SimpleDelegateCommand<object> ClearCommand => new((parameter) =>
-        {
+        public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             // InputText = "";
             ScreenShotCheckItems.Clear();
 
         });
 
         // DataGridにデータを貼り付けるコマンド
-        public SimpleDelegateCommand<object> PasteDataGridCommand => new((parameter) =>
-        {
+        public SimpleDelegateCommand<object> PasteDataGridCommand => new((parameter) => {
             // クリップボードからデータを取得
             IDataObject clipboardData = Clipboard.GetDataObject();
-            if (clipboardData == null)
-            {
+            if (clipboardData == null) {
                 return;
             }
-            if (clipboardData.GetData(DataFormats.Text) is not string clipboardText)
-            {
+            if (clipboardData.GetData(DataFormats.Text) is not string clipboardText) {
                 return;
             }
             // データを行に分割
             string[] lines = clipboardText.Split(separator, StringSplitOptions.None);
-            if (lines.Length == 0)
-            {
+            if (lines.Length == 0) {
                 return;
             }
             // DataGridのItemsSourceをクリア
-            ScreenShotCheckItems.Clear();
+            ScreenShotCheckItems = [];
 
             // 行を列に分割
-            foreach (string line in lines)
-            {
+            foreach (string line in lines) {
                 string[] items = line.Split('\t');
-                if (items.Length >= 2)
-                {
-                    ScreenShotCheckICondition item = new()
-                    {
+                if (items.Length >= 2) {
+                    ScreenShotCheckCondition item = new() {
                         SettingItem = items[0],
                         SettingValue = items[1],
+                        CheckTypeString = ScreenShotCheckCondition.CheckTypeEqual
                     };
                     ScreenShotCheckItems.Add(item);
                 }
             }
+            // DataGridのItemsSourceを更新
+            OnPropertyChanged(nameof(ScreenShotCheckItems));
         });
         private static readonly string[] separator = ["\r\n", "\r", "\n"];
 

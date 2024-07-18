@@ -8,7 +8,7 @@ namespace WpfAppCommon.Model {
     public class ScreenShotCheckItem {
 
         // チェック条件のリスト
-        public List<ScreenShotCheckICondition> ScreenShotCheckIConditions { get; set; } = [];
+        public List<ScreenShotCheckCondition> ScreenShotCheckIConditions { get; set; } = [];
 
         // InputText
         public string InputText { get; set; } = "";

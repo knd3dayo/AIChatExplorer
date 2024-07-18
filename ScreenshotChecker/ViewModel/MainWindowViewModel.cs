@@ -144,7 +144,7 @@ namespace ImageChat.ViewModel
 
                 // ScreenShotCheckItemsを文字列に変換
                 string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
-                foreach (ScreenShotCheckICondition item in Conditions)
+                foreach (ScreenShotCheckCondition item in Conditions)
                 {
                     result += "- " + item.ToPromptString() + "\n";
                 }
