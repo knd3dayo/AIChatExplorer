@@ -194,12 +194,6 @@
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.CompactMode, Mode=OneTime}"
-                                IsCheckable="True"
-                                IsChecked="{Binding CompactMode}" />
-                            <MenuItem
-                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.PreviewMode, Mode=OneTime}"
                                 IsCheckable="True"
                                 IsChecked="{Binding PreviewMode}" />
@@ -304,18 +298,6 @@
                     Width="5"
                     HorizontalAlignment="Stretch" />
                 <!--  Clipboard ListBox  -->
-                <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
-                <lc:MainWindowListView1
-                    x:Name="MainWindowListView1"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    HorizontalAlignment="Stretch"
-                    ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
-                    ExecuteSelectedTextCommand="{Binding ExecuteSelectedTextCommand}"
-                    ItemsSource="{Binding SelectedFolder.Items}"
-                    OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
-                    SelectTextCommand="{Binding SelectTextCommand}"
-                    Visibility="{Binding ExpandModeVisibility}" />
 
                 <lc:MainWindowGridView1
                     x:Name="MainWindowGridView1"

@@ -211,20 +211,7 @@ namespace ClipboardApp {
                 return ClipboardAppConfig.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-        // コンパクトモード表示するかどうか
-        public bool CompactMode {
-            get {
-                return WpfAppCommon.Properties.Settings.Default.CompactViewMode;
-            }
-            set {
-                // Save
-                WpfAppCommon.Properties.Settings.Default.CompactViewMode = value;
-                WpfAppCommon.Properties.Settings.Default.Save();
-                OnPropertyChanged(nameof(CompactMode));
-                // アプリケーション再起動後に反映されるようにメッセージを表示
-                MessageBox.Show("アプリケーションを再起動すると、表示モードが変更されます。", "情報", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
+        
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {
