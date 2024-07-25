@@ -14,7 +14,6 @@ using QAChat.ViewModel;
 
 namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel {
-
         // アイテム保存
         public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItem.Save);
 

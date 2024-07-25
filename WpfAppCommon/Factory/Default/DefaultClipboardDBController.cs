@@ -246,6 +246,12 @@ namespace WpfAppCommon.Factory.Default {
 
         #region クリップボードアイテム関連
         // --- クリップボードアイテム関連 ----------------------------------------------
+        // ClipboardItemを取得する。
+        public ClipboardItem? GetItem(ObjectId id) {
+            var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
+            var item = collection.FindById(id);
+            return item;
+        }
 
         // ClipboardItemをLiteDBに追加または更新する
         public void UpsertItem(ClipboardItem item, bool updateModifiedTime = true) {

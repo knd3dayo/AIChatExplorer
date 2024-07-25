@@ -346,6 +346,8 @@ namespace WpfAppCommon.Model {
                 // ファイルを保存
                 SaveFiles();
             }
+            // 保存済みのアイテムを取得
+            ClipboardItem? savedItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItem(Id);
 
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
 
@@ -355,64 +357,78 @@ namespace WpfAppCommon.Model {
             }
 
 
+            // SaveContentがNullの場合、またはContentが変更されている場合はOS上のファイル更新とEmbedding更新を行う
+            if (savedItem == null || savedItem.Content != Content) {
+                // OS上のファイルに保存
+                Task.Run(() => {
+                    SaveToOSFolder();
+                });
 
-            Task.Run(() => {
-                LogWrapper.Info("OS上のファイルに保存します");
-                // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
-                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                    // 保存先フォルダを取得
-                    string syncFolder = ClipboardAppConfig.SyncFolderName;
-                    // フォルダが存在しない場合は作成
-                    if (Directory.Exists(syncFolder) == false) {
-                        Directory.CreateDirectory(syncFolder);
-                    }
-                    // syncFolder/フォルダ名を作成
-                    string folderPath = Path.Combine(syncFolder, FolderPath);
-                    // フォルダが存在しない場合は作成
-                    if (Directory.Exists(folderPath) == false) {
-                        Directory.CreateDirectory(folderPath);
-                    }
-
-                    // folderPath + Id + .txtをファイル名として保存
-                    string syncFilePath = Path.Combine(folderPath, Id + ".txt");
-                    // 保存
-                    File.WriteAllText(syncFilePath, this.Content);
-
-                    // 自動コミットが有効の場合はGitにコミット
-                    if (ClipboardAppConfig.AutoCommit) {
-                        try {
-
-                            using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                                Commands.Stage(repo, syncFilePath);
-                                Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                                Signature committer = author;
-                                repo.Commit("Auto commit", author, committer);
-                                LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                            }
-                        } catch (RepositoryNotFoundException e) {
-                            LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                        } catch (EmptyCommitException e) {
-                            LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                        }
-                    }
-
-                }
-                LogWrapper.Info("OS上のファイルに保存しました");
-            });
-
-            // AutoEmbedding == Trueの場合はEmbeddingを保存
-            Task.Run(() => {
-                LogWrapper.Info("Embeddingを保存します");
-                if (ClipboardAppConfig.AutoEmbedding) {
-                    // IPythonFunctions.ClipboardInfoを作成
-                    IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
-
-                    // Embeddingを保存
-                    ClipboardAppVectorDBItem.SystemCommonVectorDB.UpdateIndex(clipboardInfo);
-                }
-                LogWrapper.Info("Embeddingを保存しました");
-            });
+                // Embeddingを更新
+                Task.Run(() => {
+                    UpdateEmbedding();
+                });
+            }
         }
+
+        // OS上のファイルに保存する
+        private void SaveToOSFolder() {
+            LogWrapper.Info("OS上のファイルに保存します");
+            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
+            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                // 保存先フォルダを取得
+                string syncFolder = ClipboardAppConfig.SyncFolderName;
+                // フォルダが存在しない場合は作成
+                if (Directory.Exists(syncFolder) == false) {
+                    Directory.CreateDirectory(syncFolder);
+                }
+                // syncFolder/フォルダ名を作成
+                string folderPath = Path.Combine(syncFolder, FolderPath);
+                // フォルダが存在しない場合は作成
+                if (Directory.Exists(folderPath) == false) {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // folderPath + Id + .txtをファイル名として保存
+                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+                // 保存
+                File.WriteAllText(syncFilePath, this.Content);
+
+                // 自動コミットが有効の場合はGitにコミット
+                if (ClipboardAppConfig.AutoCommit) {
+                    try {
+
+                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                            Commands.Stage(repo, syncFilePath);
+                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                            Signature committer = author;
+                            repo.Commit("Auto commit", author, committer);
+                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                        }
+                    } catch (RepositoryNotFoundException e) {
+                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                    } catch (EmptyCommitException e) {
+                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
+                    }
+                }
+
+            }
+            LogWrapper.Info("OS上のファイルに保存しました");
+        }
+
+        // Embeddingを更新する
+        private void UpdateEmbedding() {
+            LogWrapper.Info("Embeddingを保存します");
+            if (ClipboardAppConfig.AutoEmbedding) {
+                // IPythonFunctions.ClipboardInfoを作成
+                IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
+
+                // Embeddingを保存
+                ClipboardAppVectorDBItem.SystemCommonVectorDB.UpdateIndex(clipboardInfo);
+            }
+            LogWrapper.Info("Embeddingを保存しました");
+        }
+
         // 自分自身をDBから削除する
         public void Delete() {
             // AutoEmbedding == Trueの場合はEmbeddingを削除

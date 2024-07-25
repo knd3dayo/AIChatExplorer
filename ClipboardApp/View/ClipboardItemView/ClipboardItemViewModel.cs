@@ -3,20 +3,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.ViewModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemView
-{
+namespace ClipboardApp.View.ClipboardItemView {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
-        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel ,ClipboardItem clipboardItem) {
+        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) {
             this.ClipboardItem = clipboardItem;
             this.FolderViewModel = folderViewModel;
 

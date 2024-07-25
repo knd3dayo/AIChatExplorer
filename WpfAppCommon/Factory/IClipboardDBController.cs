@@ -8,6 +8,8 @@ namespace WpfAppCommon.Factory {
 
 
         //-- ClipboardItem
+        public ClipboardItem? GetItem(ObjectId id);
+
         public void UpsertItem(ClipboardItem item, bool contentIsModified = true);
         public void DeleteItem(ClipboardItem item);
         public IEnumerable<ClipboardItem> SearchItems(ClipboardFolder folder, SearchCondition searchCondition);
