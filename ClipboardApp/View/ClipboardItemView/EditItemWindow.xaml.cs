@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
