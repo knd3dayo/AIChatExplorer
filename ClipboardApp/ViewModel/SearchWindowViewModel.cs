@@ -3,7 +3,8 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class SearchWindowViewModel : MyWindowViewModel {
         public MainWindowViewModel? MainWindowViewModel { get; private set; }
 

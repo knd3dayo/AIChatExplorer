@@ -1,12 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.View.SearchView;
+using ClipboardApp.View.ClipboardItemFolderView;
+using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel;
+using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
-    public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+namespace ClipboardApp.ViewModel
+{
+    public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -103,7 +106,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
                 if (child == null) {
                     continue;
                 }
-                Children.Add(new ImageCheckFolderViewModel(MainWindowViewModel, child));
+                Children.Add(new ChatFolderViewModel(MainWindowViewModel, child));
             }
 
         }
@@ -117,16 +120,48 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(this.ClipboardItemFolder.Id);
-            ImageChat.MainWindow.OpenMainWindow(clipboardItem, false, () => {
-                this.LoadFolderCommand.Execute();
-            });
+            ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
+            ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
+            OpenItemCommandExecute(clipboardItemViewModel);
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
-            // 画像チェック画面を開く
-            ImageChat.MainWindow.OpenMainWindow(itemViewModel.ClipboardItem, false, () => {
-                this.LoadFolderCommand.Execute();
-            });
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
+            QAChatStartupProps props = new(ClipboardItemFolder, itemViewModel.ClipboardItem, false) {
+                // ベクトルDBアイテムを開くアクション
+                OpenVectorDBItemAction = (vectorDBItem) => {
+                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
+                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+                },
+                // フォルダ選択アクション
+                SelectFolderAction = (vectorDBItems) => {
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        return;
+                    }
+                    FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
+                        vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
+                    });
+
+                },
+                // 選択中のクリップボードアイテムを取得するアクション
+                GetSelectedClipboardItemImageFunction = () => {
+                    List<ClipboardItemImage> images = [];
+                    var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
+                    if (selectedItems == null) {
+                        return images;
+                    }
+                    foreach (ClipboardItemViewModel selectedItem in selectedItems) {
+                        selectedItem.ClipboardItem.ClipboardItemImages.ForEach((image) => {
+                            images.Add(image);
+                        });
+                    }
+                    return images;
+                }
+
+            };
+
+            QAChat.MainWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
@@ -136,7 +171,19 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
             ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
 
+            // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
+
+        }
+        /// <summary>
+        ///  フォルダ編集コマンド
+        ///  フォルダ編集ウィンドウを表示する処理
+        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
+        /// </summary>
+        /// <param name="parameter"></param>
+        public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+
+            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
 
         }
 

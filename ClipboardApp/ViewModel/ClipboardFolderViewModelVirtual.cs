@@ -1,16 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {
+
+        // -- virtual
         public virtual ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -155,14 +156,14 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public virtual void CreateItemCommandExecute() {
             EditItemWindow.OpenEditItemWindow(this, null, () => {
                 // フォルダ内のアイテムを再読み込み
-                this.LoadFolderCommand.Execute();
+                LoadFolderCommand.Execute();
                 LogWrapper.Info("追加しました");
             });
         }
         public virtual void OpenItemCommandExecute(ClipboardItemViewModel item) {
             EditItemWindow.OpenEditItemWindow(this, item, () => {
                 // フォルダ内のアイテムを再読み込み
-                this.LoadFolderCommand.Execute();
+                LoadFolderCommand.Execute();
                 LogWrapper.Info("編集しました");
             });
         }
@@ -236,6 +237,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             }
 
         }
+
 
     }
 }

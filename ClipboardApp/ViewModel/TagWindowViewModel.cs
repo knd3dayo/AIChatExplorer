@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.TagView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class TagWindowViewModel : MyWindowViewModel {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];

@@ -1,25 +1,24 @@
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
-using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.View.SearchView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {
+
+        //-----コマンド
         //--------------------------------------------------------------------------------
         //--コマンド
         //--------------------------------------------------------------------------------
 
         // フォルダー保存コマンド
         public SimpleDelegateCommand<ClipboardFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            this.ClipboardItemFolder.Save();
+            ClipboardItemFolder.Save();
         });
 
         // アイテム削除コマンド
-        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((ClipboardItemViewModel item) => {
+        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((item) => {
             item.DeleteClipboardItemCommand.Execute();
             Items.Remove(item);
 
@@ -46,7 +45,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             EditFolderCommandExecute(folderViewModel, () => {
                 //　フォルダを保存
                 folderViewModel.ClipboardItemFolder.Save();
-                LoadFolderCommand.Execute(); 
+                LoadFolderCommand.Execute();
                 LogWrapper.Info("フォルダを編集しました");
             });
         });
@@ -100,8 +99,8 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             DirectoryInfo directoryInfo = new("export");
             // exportフォルダが存在しない場合は作成
-            if (!System.IO.Directory.Exists("export")) {
-                directoryInfo = System.IO.Directory.CreateDirectory("export");
+            if (!Directory.Exists("export")) {
+                directoryInfo = Directory.CreateDirectory("export");
             }
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
@@ -203,7 +202,5 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             OpenItemCommandExecute(itemViewModel);
         });
 
-
     }
-
 }

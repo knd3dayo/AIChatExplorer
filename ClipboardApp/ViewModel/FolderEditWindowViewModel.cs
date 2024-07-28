@@ -1,10 +1,10 @@
 using System.Windows;
-using WpfAppCommon.Utils;
 using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView
+namespace ClipboardApp.ViewModel
 {
-    public partial class FolderEditWindowViewModel : MyWindowViewModel {
+    public class FolderEditWindowViewModel : MyWindowViewModel {
 
 
         private ClipboardFolderViewModel? _FolderViewModel = null;
@@ -17,7 +17,6 @@ namespace ClipboardApp.View.ClipboardItemFolderView
                 OnPropertyChanged(nameof(FolderViewModel));
             }
         }
-
         // 検索条件を常時適用するかどうか
         private bool _alwaysApplySearchCondition = false;
         public bool AlwaysApplySearchCondition {
@@ -39,7 +38,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView
             FolderViewModel = folderViewModel;
 
         }
-        public SimpleDelegateCommand<Window> CreateCommand => new ((window) => {
+        public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             if (FolderViewModel == null) {
                 LogWrapper.Error("フォルダが指定されていません");
                 return;
@@ -59,14 +58,11 @@ namespace ClipboardApp.View.ClipboardItemFolderView
         });
 
 
-        public SimpleDelegateCommand<Window> CancelCommand => new ((window) => {
+        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
 
         });
-
-        [System.Text.RegularExpressions.GeneratedRegex("^[a-zA-Z0-9]+$")]
-        private static partial System.Text.RegularExpressions.Regex MyRegex();
     }
 
 }

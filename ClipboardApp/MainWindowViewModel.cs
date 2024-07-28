@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.ViewModel;
 using PythonAILib.PythonIF;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
@@ -12,7 +11,8 @@ using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
 
     public partial class MainWindowViewModel : MyWindowViewModel {
 

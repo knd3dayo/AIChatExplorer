@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SearchView;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.ViewModel
+{
     public class SearchFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {
@@ -73,7 +72,7 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
         }
 
 
-        public override  void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
             ClipboardFolder clipboardFolder = ClipboardItemFolder.CreateChild("新規フォルダ");
 
@@ -98,10 +97,10 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
 
         public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
 
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this.ClipboardItemFolder);
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             searchConditionRule ??= new() {
                 Type = SearchRule.SearchType.SearchFolder,
-                SearchFolder = this.ClipboardItemFolder
+                SearchFolder = ClipboardItemFolder
             };
             SearchWindow.OpenSearchWindow(searchConditionRule, this, true, afterUpdate);
 

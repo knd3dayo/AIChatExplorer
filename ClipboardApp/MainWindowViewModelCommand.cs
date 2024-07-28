@@ -3,8 +3,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;

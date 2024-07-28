@@ -1,4 +1,5 @@
 using System.Windows;
+using ClipboardApp.ViewModel;
 
 namespace ClipboardApp.View.ClipboardItemFolderView
 {

@@ -1,12 +1,8 @@
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemView;
-using LibGit2Sharp;
-using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
 
         // ClipboardFolder
@@ -91,7 +87,5 @@ namespace ClipboardApp.View.ClipboardItemFolderView {
             Tools.StatusText.Text = message;
 
         }
-
-        
     }
 }

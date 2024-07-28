@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.ViewModel
+{
 
     public class FolderSelectWindowViewModel : MyWindowViewModel {
         private static FolderSelectWindowViewModel? Instance;

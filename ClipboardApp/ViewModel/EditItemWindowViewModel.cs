@@ -1,8 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.TagView;
 using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
