@@ -27,10 +27,23 @@ namespace WpfAppCommon.Model {
         // 表示
         public string View { get; } = "表示";
 
+        // クリップボード監視開始
+        public string StartClipboardWatch { get; } = "クリップボード監視開始";
+        // クリップボード監視停止
+        public string StopClipboardWatch { get; } = "クリップボード監視停止";
+        // Windows通知監視開始
+        public string StartNotificationWatch { get; } = "Windows通知監視開始";
+        // Windows通知監視停止
+        public string StopNotificationWatch { get; } = "Windows通知監視停止";
+
         // クリップボード監視を開始しました
-        public string StartClipboardWatch { get; } = "クリップボード監視を開始しました";
+        public string StartClipboardWatchMessage { get; } = "クリップボード監視を開始しました";
         // クリップボード監視を停止しました
-        public string StopClipboardWatch { get; } = "クリップボード監視を停止しました";
+        public string StopClipboardWatchMessage { get; } = "クリップボード監視を停止しました";
+        // Windows通知監視を開始しました
+        public string StartNotificationWatchMessage { get; } = "Windows通知監視を開始しました";
+        // Windows通知監視を停止しました
+        public string StopNotificationWatchMessage { get; } = "Windows通知監視を停止しました";
 
         // タグ編集
         public string EditTag { get; } = "タグ編集";
@@ -95,6 +108,9 @@ namespace WpfAppCommon.Model {
         // --- ToolTip ---
         // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
         public string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
+
+        // 開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.
+        public string ToggleNotificationWatchToolTop { get; } = "開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.";
 
         // 選択中のフォルダにアイテムを作成します。
         public string CreateItemToolTip { get; } = "選択中のフォルダにアイテムを作成します。";

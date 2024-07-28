@@ -91,11 +91,20 @@ namespace ClipboardApp {
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
-                return IsClipboardMonitor ? StringResources.Stop : StringResources.Start;
+                return IsClipboardMonitor ? StringResources.StopClipboardWatch : StringResources.StartClipboardWatch;
             }
         }
         // クリップボード監視を開始、終了するフラグ
         public bool IsClipboardMonitor { get; set; } = false;
+
+        // Windows通知監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
+        public string WindowsNotificationMonitorButtonText {
+            get {
+                return IsWindowsNotificationMonitor ? StringResources.StopNotificationWatch : StringResources.StartNotificationWatch;
+            }
+        }
+        // Windows通知監視が開始、終了するフラグ
+        public bool IsWindowsNotificationMonitor { get; set; } = false;
 
         // ClipboardFolder
 
@@ -290,6 +299,11 @@ namespace ClipboardApp {
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
             ToggleClipboardMonitorCommand(this);
+        });
+        // Windows通知監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
+            ToggleWindowsNotificationMonitorCommand(this);
         });
 
         // フォルダが選択された時の処理

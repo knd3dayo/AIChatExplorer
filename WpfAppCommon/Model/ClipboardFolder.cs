@@ -517,53 +517,24 @@ namespace WpfAppCommon.Model {
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
         public void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
 
-            // Is the content copied of text type?
-            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                string? text = e.Content.ToString();
-                if (text == null) {
-                    return;
-                }
-                // Get the cut/copied text.
-                ProcessClipboardItem(this, ClipboardContentTypes.Text, text, null, e, _afterClipboardChanged);
-            }
-            // Is the content copied of file type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                string[] files = (string[])e.Content;
+            // Get the cut/copied text.
+            ClipboardItem? item = CreateClipboardItem(this, e);
 
-                // Get the cut/copied file/files.
-                for (int i = 0; i < files.Length; i++) {
-                    ProcessClipboardItem(this, ClipboardContentTypes.Files, files[i], null, e, _afterClipboardChanged);
-                }
-
-            }
-            // Is the content copied of image type?
-            else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                // Get the cut/copied image.
-                System.Drawing.Image img = (System.Drawing.Image)e.Content;
-                ProcessClipboardItem(this, ClipboardContentTypes.Image, "", img, e, _afterClipboardChanged);
-
-            }
-            // If the cut/copied content is complex, use 'Other'.
-            else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                // Do nothing
-                // System.Windows.MessageBox.Show(_clipboard.ClipboardObject.ToString());
+            if (item == null) {
+                return;
             }
 
+            ProcessClipboardItem(item, _afterClipboardChanged);
 
         }
 
+        /// Process clipboard item 
         /// <summary>
         /// Process clipboard item
         /// </summary>
-        /// <param name="contentTypes"></param>
-        /// <param name="content"></param>
-        /// <param name="image"></param>
-        /// <param name="e"></param>
-        public static void ProcessClipboardItem(
-            ClipboardFolder clipboardFolder,
-            ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
-
-            ClipboardItem item = CreateClipboardItem(clipboardFolder, contentTypes, content, image, e);
+        /// <param name="item"></param>
+        /// <param name="_afterClipboardChanged"></param>
+        public static void ProcessClipboardItem(ClipboardItem item, Action<ClipboardItem> _afterClipboardChanged) {
 
             // Execute in a separate thread
             Task.Run(() => {
@@ -573,7 +544,7 @@ namespace WpfAppCommon.Model {
                 });
                 try {
                     // Apply automatic processing
-                    ClipboardItem? updatedItem = ApplyAutoAction(item, image);
+                    ClipboardItem? updatedItem = ApplyAutoAction(item);
                     if (updatedItem == null) {
                         // If the item is ignored, return
                         return;
@@ -582,7 +553,7 @@ namespace WpfAppCommon.Model {
                     _afterClipboardChanged(updatedItem);
 
                 } catch (Exception ex) {
-                    LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}");
+                    LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
                 } finally {
                     Application.Current.Dispatcher.Invoke(() => {
                         Tools.StatusText.ReadyText = oldReadyText;
@@ -593,24 +564,45 @@ namespace WpfAppCommon.Model {
 
 
         /// Create ClipboardItem
-        private static ClipboardItem CreateClipboardItem(
-            ClipboardFolder clipboardFolder, ClipboardContentTypes contentTypes, string content, System.Drawing.Image? image, ClipboardChangedEventArgs e) {
+        public static ClipboardItem? CreateClipboardItem(
+            ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
+
+            ClipboardContentTypes contentTypes = ClipboardContentTypes.Text;
+            if (e.ContentType == SharpClipboard.ContentTypes.Text) {
+                contentTypes = ClipboardContentTypes.Text;
+            } else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
+                contentTypes = ClipboardContentTypes.Files;
+            } else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
+                contentTypes = ClipboardContentTypes.Image;
+            } else if ( e.ContentType == SharpClipboard.ContentTypes.Other) {
+                return null;
+            } else {
+                return null;
+            }
+
             ClipboardItem item = new(clipboardFolder.Id) {
                 ContentType = contentTypes
             };
             SetApplicationInfo(item, e);
-            item.Content = content;
-
+            // If ContentType is Text, set text data
+            if (contentTypes == ClipboardContentTypes.Text) {
+                item.Content = (string)e.Content;
+            }
             // If ContentType is Image, set image data
-            if (contentTypes == ClipboardContentTypes.Image && image != null) {
+            if (contentTypes == ClipboardContentTypes.Image) {
+                System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
-                imageItem.Image = image;
                 item.ClipboardItemImages.Add(imageItem);
             }
             // If ContentType is Files, set file data
             else if (contentTypes == ClipboardContentTypes.Files) {
-                ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, content);
-                item.ClipboardItemFiles.Add(clipboardItemFile);
+                string[] files = (string[])e.Content;
+
+                // Get the cut/copied file/files.
+                for (int i = 0; i < files.Length; i++) {
+                    ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, files[i]);
+                    item.ClipboardItemFiles.Add(clipboardItemFile);
+                }
             }
             return item;
 
@@ -633,7 +625,7 @@ namespace WpfAppCommon.Model {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        private static ClipboardItem? ApplyAutoAction(ClipboardItem item, System.Drawing.Image? image) {
+        private static ClipboardItem? ApplyAutoAction(ClipboardItem item) {
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
@@ -657,10 +649,16 @@ namespace WpfAppCommon.Model {
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoExtractImageWithPyOCR is set, perform OCR
-            if (ClipboardAppConfig.AutoExtractImageWithPyOCR && image != null) {
-                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                item.Content = text;
+            if (ClipboardAppConfig.AutoExtractImageWithPyOCR) {
+                foreach (var imageItem in item.ClipboardItemImages) {
+                    if (imageItem.Image == null) {
+                        continue;
+                    }
+                    string extractImageText = PythonExecutor.PythonFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
+                    item.Content += "\n" + extractImageText;
+                }
                 LogWrapper.Info(CommonStringResources.Instance.OCR);
+
             } else if (ClipboardAppConfig.AutoExtractImageWithOpenAI) {
 
                 LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);

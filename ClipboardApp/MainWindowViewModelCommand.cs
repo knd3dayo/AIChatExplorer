@@ -35,7 +35,7 @@ namespace ClipboardApp
         }
         /// <summary>
         /// クリップボード監視開始終了フラグを反転させる
-        /// メニューの「開始」、「停止」をクリックしたときの処理
+        /// メニューの「クリップボード監視開始」、「クリップボード監視停止」をクリックしたときの処理
         /// </summary>
         /// <param name="windowViewModel"></param>
         public static void ToggleClipboardMonitorCommand(MainWindowViewModel windowViewModel) {
@@ -52,15 +52,41 @@ namespace ClipboardApp
                     });
                 });
 
-                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatch);
+                LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
             } else {
                 ClipboardController.Stop();
-                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatch);
+                LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
             // 通知
             windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsClipboardMonitor));
             // ボタンのテキストを変更
             windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.ClipboardMonitorButtonText));
+        }
+        /// <summary>
+        /// Windows通知監視開始終了フラグを反転させる
+        /// メニューの「Windows通知監視開始」、「Windows通知監視停止」をクリックしたときの処理
+        /// </summary>
+        /// <param name="windowViewModel"></param>
+        public static void ToggleWindowsNotificationMonitorCommand(MainWindowViewModel windowViewModel) {
+            windowViewModel.IsWindowsNotificationMonitor = !windowViewModel.IsWindowsNotificationMonitor;
+            if (windowViewModel.IsWindowsNotificationMonitor) {
+                WindowsNotificationController.Start(windowViewModel.RootFolderViewModel.ClipboardItemFolder, (item) => {
+                    // クリップボードアイテムが追加された時の処理
+                    windowViewModel.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(windowViewModel.RootFolderViewModel, item));
+                    Application.Current.Dispatcher.Invoke(() => {
+                        windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                    });
+                });
+                LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
+
+            } else {
+                ClipboardController.Stop();
+                LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
+            }
+            // 通知
+            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsWindowsNotificationMonitor));
+            // ボタンのテキストを変更
+            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.WindowsNotificationMonitorButtonText));
         }
 
         // フォルダが選択された時の処理
