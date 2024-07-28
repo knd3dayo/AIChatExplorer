@@ -557,6 +557,27 @@ namespace WpfAppCommon.Model {
             }
 
         }
+        // 自動でコンテキスト情報を付与するコマンド
+        public static void CreateAutoBackgroundInfo(ClipboardItem item) {
+            // LangchainChatを実行
+            string prompt = "この文章のコンテキスト情報を生成してください。\n";
+            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
+            chatController.PromptTemplateText = prompt;
+            chatController.ContentText = item.Content;
+
+            // ベクトルDBの設定
+            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
+
+            chatController.VectorDBItems = new List<VectorDBItem> { vectorDBItem };
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                item.Content += "\n----背景情報-----\n" + result.Response;
+            }
+        }
+
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {
 

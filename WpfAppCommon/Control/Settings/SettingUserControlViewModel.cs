@@ -228,6 +228,20 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AutoBackgroundInfo
+        public bool AutoBackgroundInfo {
+            get {
+                return ClipboardAppConfig.AutoBackgroundInfo;
+            }
+            set {
+                ClipboardAppConfig.AutoBackgroundInfo = value;
+                OnPropertyChanged(nameof(AutoBackgroundInfo));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // -------------------------------------
         // その他の設定
         // -------------------------------------

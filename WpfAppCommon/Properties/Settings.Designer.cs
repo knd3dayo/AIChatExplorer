@@ -382,5 +382,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoExtractImageWithOpenAI"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoBackgroundInfo {
+            get {
+                return ((bool)(this["AutoBackgroundInfo"]));
+            }
+            set {
+                this["AutoBackgroundInfo"] = value;
+            }
+        }
     }
 }

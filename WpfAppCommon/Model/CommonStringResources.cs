@@ -240,6 +240,12 @@ namespace WpfAppCommon.Model {
         // タイトル設定処理が失敗しました
         public string SetTitleFailed { get; } = "タイトル設定処理が失敗しました";
 
+        // 自動背景情報追加処理を実行します
+        public string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
+        // 背景情報追加処理が失敗しました
+        public string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
+
+
         // 自動イメージテキスト抽出処理を実行します
         public string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
         // イメージテキスト抽出処理が失敗しました

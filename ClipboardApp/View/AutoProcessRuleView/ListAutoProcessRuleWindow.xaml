@@ -155,6 +155,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  MonitorTargetAppNames  -->
                         <TextBlock
@@ -293,6 +294,17 @@
                             Content="OpenAIを使用してテキスト抽出します"
                             GroupName="AutoExtractImage"
                             IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithOpenAI}" />
+                        <TextBlock
+                            Grid.Row="12"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動背景情報追加" />
+                        <CheckBox
+                            Grid.Row="12"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="同じフォルダにあるアイテムから背景情報を生成します。"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
 
                     </Grid>
                     <!--  その他の設定  -->

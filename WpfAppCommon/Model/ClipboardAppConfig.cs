@@ -311,6 +311,21 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
             }
         }
+        // AutoBackgroundInfo
+        private static Boolean? _autoBackgroundInfo;
+        public static bool AutoBackgroundInfo {
+            get {
+                if (_autoBackgroundInfo == null) {
+                    _autoBackgroundInfo = WpfAppCommon.Properties.Settings.Default.AutoBackgroundInfo;
+                }
+                return _autoBackgroundInfo.Value;
+            }
+            set {
+                _autoBackgroundInfo = value;
+                WpfAppCommon.Properties.Settings.Default.AutoBackgroundInfo = value;
+            }
+        }
+
 
         // AutoDescriptionWithOpenAI
         private static Boolean? _autoDescriptionWithOpenAI;

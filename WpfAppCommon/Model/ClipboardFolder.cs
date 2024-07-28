@@ -682,7 +682,11 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                 ClipboardItem.CreateAutoTitleWithOpenAI(item);
             }
-
+            // 背景情報
+            if (ClipboardAppConfig.AutoBackgroundInfo) {
+                LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
+                ClipboardItem.CreateAutoBackgroundInfo(item);
+            }
             return item;
         }
 
