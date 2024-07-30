@@ -418,20 +418,15 @@
                     Content="自動処理ルール編集" />
             </DockPanel>
             <DockPanel
-                Grid.Column="0"
+                Grid.Column="1"
                 Margin="10,0,0,10"
-                HorizontalAlignment="Left"
-                Visibility="{Binding SaveSystemCommonSettingButtonVisibility}">
+                HorizontalAlignment="Right">
                 <Button
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding SaveSystemCommonSettingCommand}"
-                    Content="システム共通設定を保存" />
-            </DockPanel>
-            <DockPanel
-                Grid.Column="1"
-                Margin="10,0,0,10"
-                HorizontalAlignment="Right">
+                    Content="システム共通設定を保存"
+                    Visibility="{Binding SaveSystemCommonSettingButtonVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
