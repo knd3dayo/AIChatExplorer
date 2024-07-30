@@ -13,6 +13,10 @@ namespace WpfAppCommon.Model {
         public string Exit { get; } = "終了";
         // 編集
         public string Edit { get; } = "編集";
+
+        // 背景情報を生成
+        public string GenerateBackgroundInfo { get; } = "背景情報を生成";
+
         // 開始
         public string Start { get; } = "開始";
         // 停止

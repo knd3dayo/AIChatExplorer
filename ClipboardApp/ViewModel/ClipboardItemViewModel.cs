@@ -53,6 +53,17 @@ namespace ClipboardApp.ViewModel
                 OnPropertyChanged(nameof(Content));
             }
         }
+        // BackgroundInfo
+        public string BackgroundInfo {
+            get {
+                return ClipboardItem.BackgroundInfo;
+            }
+            set {
+                ClipboardItem.BackgroundInfo = value;
+                OnPropertyChanged(nameof(BackgroundInfo));
+            }
+        }
+
         // Image
         public ObservableCollection<ImageSource> Images {
             get {
@@ -152,6 +163,17 @@ namespace ClipboardApp.ViewModel
                 }
             }
         }
+        // BackgroundInfoが空の場合はCollapsed,それ以外はVisible
+        public Visibility BackgroundInfoVisibility {
+            get {
+                if (string.IsNullOrEmpty(ClipboardItem.BackgroundInfo)) {
+                    return Visibility.Collapsed;
+                } else {
+                    return Visibility.Visible;
+                }
+            }
+        }
+
         public string DescriptionText {
             get {
                 string result = "";
@@ -364,6 +386,19 @@ namespace ClipboardApp.ViewModel
             // 選択中のアイテムを開く
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, true);
         });
+
+        // 背景情報を生成するコマンド
+        public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
+            LogWrapper.Info("背景情報を生成します");
+            await Task.Run(() => {
+                ClipboardItem.CreateAutoBackgroundInfo(this.ClipboardItem);
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info("背景情報を生成しました");
+
+        });
+
 
         // 画像を開くコマンド
         public SimpleDelegateCommand<object> OpenImageCommand => new((obj) => {

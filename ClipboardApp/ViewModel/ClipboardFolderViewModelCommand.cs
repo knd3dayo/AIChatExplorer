@@ -93,8 +93,6 @@ namespace ClipboardApp.ViewModel {
         });
 
 
-
-
         // フォルダーのアイテムをエクスポートする処理
         public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             DirectoryInfo directoryInfo = new("export");

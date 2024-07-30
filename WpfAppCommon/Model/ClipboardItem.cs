@@ -51,6 +51,9 @@ namespace WpfAppCommon.Model {
         // クリップボードの内容
         public string Content { get; set; } = "";
 
+        // 背景情報
+        public string BackgroundInfo { get; set; } = "";
+
         //　画像イメージのObjectId
         public List<LiteDB.ObjectId> ImageObjectIds { get; set; } = [];
 
@@ -580,7 +583,7 @@ namespace WpfAppCommon.Model {
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
-                item.Content += "\n\n----背景情報-----\n\n" + result.Response +"\n--------------------\n";
+                item.BackgroundInfo = result.Response;
             }
         }
 

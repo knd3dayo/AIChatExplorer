@@ -81,6 +81,13 @@ namespace ClipboardApp.ViewModel {
                 openContentAsFileMenuItem.CommandParameter = this;
                 openContentAsFileMenuItem.InputGestureText = "Ctrl+Shit+O";
 
+                // 背景情報生成
+                MenuItem generateBackgroundInfoMenuItem = new();
+                generateBackgroundInfoMenuItem.Header = StringResources.GenerateBackgroundInfo;
+                generateBackgroundInfoMenuItem.Command = MainWindowViewModel.ActiveInstance.GenerateBackgroundInfoCommand;
+                generateBackgroundInfoMenuItem.CommandParameter = this;
+                menuItems.Add(generateBackgroundInfoMenuItem);
+
                 // ピン留め
                 MenuItem pinnedStateChangeMenuItem = new();
                 pinnedStateChangeMenuItem.Header = "ピン留め";

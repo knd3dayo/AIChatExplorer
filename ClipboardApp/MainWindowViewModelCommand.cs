@@ -540,6 +540,15 @@ namespace ClipboardApp
             this.SelectedItem?.OpenFileCommand.Execute();
         });
 
+        // 背景情報を生成する処理 複数アイテム処理不可
+
+        // 背景情報を生成する処理
+        public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
+            this.SelectedItem?.GenerateBackgroundInfoCommand.Execute();
+        });
+
+
+
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
             CutItemCommandExecute(this);
@@ -585,5 +594,6 @@ namespace ClipboardApp
             VersionWindow.OpenVersionWindow();
         });
 
+        
     }
 }
