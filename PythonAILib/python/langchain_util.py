@@ -107,7 +107,8 @@ class RetrievalQAUtil:
         tool = Tool(
                 name=tool_name,
                 func=qa,
-                description = vector_db_item.VectorDBDescription
+                description = vector_db_item.VectorDBDescription,
+                # description= ""
             )
         return tool
 

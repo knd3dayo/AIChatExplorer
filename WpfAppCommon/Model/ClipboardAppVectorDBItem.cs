@@ -4,9 +4,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
-using QAChat.Model;
 using WpfAppCommon.Factory;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
@@ -14,7 +12,7 @@ namespace WpfAppCommon.Model {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public class ClipboardAppVectorDBItem: VectorDBItem {
+    public class ClipboardAppVectorDBItem : VectorDBItem {
 
         // システム共通のベクトルDBの名前
         public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
@@ -24,14 +22,15 @@ namespace WpfAppCommon.Model {
                 // DBからベクトルDBを取得
                 var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
                 if (item == null) {
-                    string dbPath = Path.Combine( ClipboardAppConfig.AppDataFolder, "clipboard_doc_store.db");
+                    string docDBPath = Path.Combine(ClipboardAppConfig.AppDataFolder, "clipboard_doc_store.db");
+                    string vectorDBPath = Path.Combine(ClipboardAppConfig.AppDataFolder, "clipboard_vector_db.db");
                     item = new ClipboardAppVectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
                         Name = SystemCommonVectorDBName,
                         Description = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。",
                         Type = VectorDBTypeEnum.Chroma,
-                        VectorDBURL = "clipboard_vector_db",
-                        DocStoreURL = $"sqlite:///{dbPath}",
+                        VectorDBURL = vectorDBPath,
+                        DocStoreURL = $"sqlite:///{docDBPath}",
                         IsUseMultiVectorRetriever = true,
                         IsEnabled = true,
                         IsSystem = true
@@ -87,7 +86,9 @@ namespace WpfAppCommon.Model {
                 Id = SystemCommonVectorDB.Id,
                 Name = folder.FolderName,
                 CollectionName = folder.Id.ToString(),
-                Description = folder.FolderName,
+                // ★TODO デスクリプションはLangChainのToolのDescriptionに使用するが、適切なものでない場合はToolsが選択されないためとりあえず空文字に設定する。
+                // Description = folder.FolderName,
+                Description = "",
                 Type = SystemCommonVectorDB.Type,
                 VectorDBURL = SystemCommonVectorDB.VectorDBURL,
                 DocStoreURL = SystemCommonVectorDB.DocStoreURL,
@@ -113,7 +114,7 @@ namespace WpfAppCommon.Model {
         }
 
         public override void UpdateIndex(IPythonFunctions.ContentInfo clipboard) {
-
+            // CollectionNameの設定
             PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
         }
 

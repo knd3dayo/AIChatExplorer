@@ -418,15 +418,17 @@ namespace WpfAppCommon.Model {
 
         // Embeddingを更新する
         private void UpdateEmbedding() {
-            LogWrapper.Info("Embeddingを保存します");
             if (ClipboardAppConfig.AutoEmbedding) {
+                LogWrapper.Info("Embeddingを保存します");
                 // IPythonFunctions.ClipboardInfoを作成
                 IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
 
+                // VectorDBItemを取得
+                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
                 // Embeddingを保存
-                ClipboardAppVectorDBItem.SystemCommonVectorDB.UpdateIndex(clipboardInfo);
+                folderVectorDBItem.UpdateIndex(clipboardInfo);
+                LogWrapper.Info("Embeddingを保存しました");
             }
-            LogWrapper.Info("Embeddingを保存しました");
         }
 
         // 自分自身をDBから削除する
@@ -437,8 +439,12 @@ namespace WpfAppCommon.Model {
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // IPythonFunctions.ClipboardInfoを作成
                     IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+
+                    // VectorDBItemを取得
+                    VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+
                     // Embeddingを削除
-                    ClipboardAppVectorDBItem.SystemCommonVectorDB.DeleteIndex(clipboardInfo);
+                    folderVectorDBItem.DeleteIndex(clipboardInfo);
                 }
                 LogWrapper.Info("Embeddingを削除しました");
             });
@@ -560,7 +566,7 @@ namespace WpfAppCommon.Model {
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             // LangchainChatを実行
-            string prompt = "この文章のコンテキスト情報を生成してください。\n";
+            string prompt = "汎用ベクトルDBの情報を参考にして、この文章の背景情報を生成してください。\n";
             ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
             chatController.PromptTemplateText = prompt;
@@ -570,11 +576,11 @@ namespace WpfAppCommon.Model {
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
 
-            chatController.VectorDBItems = new List<VectorDBItem> { vectorDBItem };
+            chatController.VectorDBItems = [vectorDBItem];
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
-                item.Content += "\n----背景情報-----\n" + result.Response;
+                item.Content += "\n\n----背景情報-----\n\n" + result.Response +"\n--------------------\n";
             }
         }
 

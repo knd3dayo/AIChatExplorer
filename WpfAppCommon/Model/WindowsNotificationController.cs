@@ -59,6 +59,7 @@ namespace WpfAppCommon.Model {
                         IReadOnlyList<AdaptiveNotificationText> textElements = toastBinding.GetTextElements();
 
                         // string? titleText = textElements.FirstOrDefault()?.Text;
+
                         // string bodyText = string.Join("\n", textElements.Skip(1).Select(t => t.Text));
                         string displayName = n.AppInfo.DisplayInfo.DisplayName;
                         string text = string.Join("\n", textElements.Select(t => t.Text));

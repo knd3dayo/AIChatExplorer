@@ -11,7 +11,9 @@ class OpenAIProps:
         self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel")
         
         self.AzureOpenAI =props_dict.get("AzureOpenAI", False)
-
+        if type(self.AzureOpenAI) == str:
+            self.AzureOpenAI = self.AzureOpenAI.upper() == "TRUE"
+            
         self.AzureOpenAIEmbeddingVersion = props_dict.get("AzureOpenAIEmbeddingVersion", None)
         self.AzureOpenAICompletionVersion = props_dict.get("AzureOpenAICompletionVersion", None)
         self.AzureOpenAIWhisperVersion = props_dict.get("AzureOpenAIWhisperVersion", None)
@@ -116,6 +118,7 @@ class VectorDBProps:
         # Collectionの設定
         self.CollectionName = props_dict.get("CollectionName", None)
 
+
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}
         vector_db_dict["name"] = self.Name
@@ -149,6 +152,7 @@ def get_vector_db_settings() -> VectorDBProps:
         "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
         "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER").upper() == "TRUE",
         "DocStoreURL": os.getenv("DOC_STORE_URL"),
+        "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME")
     }
     vectorDBProps = VectorDBProps(props)
     return vectorDBProps

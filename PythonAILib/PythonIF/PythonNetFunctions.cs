@@ -371,6 +371,11 @@ namespace PythonAILib.PythonIF {
                 string function_name = "openai_embedding";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 string propsJson = props.ToJson();
+
+                LogWrapper.Info("Embedding実行");
+                LogWrapper.Info($"プロパティ情報 {propsJson}");
+                LogWrapper.Info($"テキスト:{text}");
+
                 // open_ai_chat関数を呼び出す
                 function_object(text, propsJson);
                 // System.Windows.MessageBox.Show(result);
