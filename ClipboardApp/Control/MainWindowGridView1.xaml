@@ -109,7 +109,8 @@
             Grid.Row="1"
             Height="5"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Center" />
+            VerticalAlignment="Center"
+            Visibility="{Binding PreviewModeVisibility, ElementName=Root}" />
         <materialDesign:Card
             Grid.Row="2"
             Margin="3,3,3,3"

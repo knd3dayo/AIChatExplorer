@@ -224,12 +224,12 @@ namespace ClipboardApp
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {
-                return WpfAppCommon.Properties.Settings.Default.PreviewMode;
+                return ClipboardAppConfig.PreviewMode;
             }
             set {
-                WpfAppCommon.Properties.Settings.Default.PreviewMode = value;
+                ClipboardAppConfig.PreviewMode = value;
                 // Save
-                WpfAppCommon.Properties.Settings.Default.Save();
+                ClipboardAppConfig.Save();
 
                 OnPropertyChanged(nameof(PreviewMode));
                 OnPropertyChanged(nameof(PreviewModeVisibility));
