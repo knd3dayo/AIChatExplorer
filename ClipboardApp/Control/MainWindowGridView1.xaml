@@ -87,6 +87,12 @@
                     Header="種別"
                     IsReadOnly="True" />
                 <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding TagsText}"
+                    ElementStyle="{StaticResource SingleLineTextBlock}"
+                    Header="タグ"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
                     Width="*"
                     Binding="{Binding DescriptionText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"

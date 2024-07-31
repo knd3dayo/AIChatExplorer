@@ -180,10 +180,12 @@ namespace ClipboardApp.ViewModel
                 if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
                     result += ClipboardItem.Description;
                 }
-                if (ClipboardItem.Tags.Count > 0) {
-                    result += " タグ：" + string.Join(",", ClipboardItem.Tags);
-                }
                 return result;
+            }
+        }
+        public string TagsText {
+            get {
+                return string.Join(",", ClipboardItem.Tags);
             }
         }
 
