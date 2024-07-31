@@ -394,5 +394,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoBackgroundInfo"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IncludeBackgroundInfoInEmbedding {
+            get {
+                return ((bool)(this["IncludeBackgroundInfoInEmbedding"]));
+            }
+            set {
+                this["IncludeBackgroundInfoInEmbedding"] = value;
+            }
+        }
     }
 }

@@ -241,6 +241,19 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // IncludeBackgroundInfoInEmbedding
+        public bool IncludeBackgroundInfoInEmbedding {
+            get {
+                return ClipboardAppConfig.IncludeBackgroundInfoInEmbedding;
+            }
+            set {
+                ClipboardAppConfig.IncludeBackgroundInfoInEmbedding = value;
+                OnPropertyChanged(nameof(IncludeBackgroundInfoInEmbedding));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         // -------------------------------------
         // その他の設定

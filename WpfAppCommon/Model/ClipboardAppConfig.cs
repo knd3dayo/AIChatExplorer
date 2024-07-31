@@ -384,6 +384,22 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.AutoEmbedding = value;
             }
         }
+        // Embeddingの対象に背景情報を含める
+        private static Boolean? _includeBackgroundInfoInEmbedding;
+
+        public static bool IncludeBackgroundInfoInEmbedding {
+            get {
+                if (_includeBackgroundInfoInEmbedding == null) {
+                    _includeBackgroundInfoInEmbedding = WpfAppCommon.Properties.Settings.Default.IncludeBackgroundInfoInEmbedding;
+                }
+                return _includeBackgroundInfoInEmbedding.Value;
+            }
+            set {
+                _includeBackgroundInfoInEmbedding = value;
+                WpfAppCommon.Properties.Settings.Default.IncludeBackgroundInfoInEmbedding = value;
+            }
+        }
+
 
         // AutoFileExtract
         private static Boolean? _autoFileExtract;

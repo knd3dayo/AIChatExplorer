@@ -424,6 +424,8 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.AutoEmbedding) {
                 LogWrapper.Info("Embeddingを保存します");
                 // IPythonFunctions.ClipboardInfoを作成
+                string content = this.Content;
+
                 IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
 
                 // VectorDBItemを取得
@@ -569,11 +571,16 @@ namespace WpfAppCommon.Model {
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             // LangchainChatを実行
-            string prompt = "汎用ベクトルDBの情報を参考にして、この文章の背景情報を生成してください。\n";
+            string prompt = "汎用ベクトルDBの情報を参考にして、この文章の背景情報(経緯、目的、原因、構成要素など)を生成してください。\n";
             ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
             chatController.PromptTemplateText = prompt;
-            chatController.ContentText = item.Content;
+            string contentText = item.Content;
+            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
+            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
+            }
+            chatController.ContentText = contentText;
 
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;

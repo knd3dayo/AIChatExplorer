@@ -156,6 +156,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  MonitorTargetAppNames  -->
                         <TextBlock
@@ -306,6 +307,17 @@
                             Content="同じフォルダにあるアイテムから背景情報を生成します。"
                             IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
 
+                        <TextBlock
+                            Grid.Row="13"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="Embeddingに背景情報を含める" />
+                        <CheckBox
+                            Grid.Row="13"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="Embedding生成時に本文のほかに背景情報を含めます。"
+                            IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
                     </Grid>
                     <!--  その他の設定  -->
                     <Grid Grid.Row="1">
