@@ -571,7 +571,7 @@ namespace WpfAppCommon.Model {
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             // LangchainChatを実行
-            string prompt = "汎用ベクトルDBの情報を参考にして、この文章の背景情報(経緯、目的、原因、構成要素など)を生成してください。\n";
+            string prompt = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
             ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
             chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
             chatController.PromptTemplateText = prompt;

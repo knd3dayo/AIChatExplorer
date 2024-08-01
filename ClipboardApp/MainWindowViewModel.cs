@@ -21,40 +21,46 @@ namespace ClipboardApp
             Init();
 
         }
-        public void Init() {
-            ClipboardItemFolders.Add(RootFolderViewModel);
-            ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
-            ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
-            ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
-            OnPropertyChanged(nameof(ClipboardItemFolders));
+        private void Init() {
+
+            ActiveInstance = this;
 
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
 
-            ActiveInstance = this;
-
-
-            // データベースのチェックポイント処理
-            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
+            // フォルダの初期化
+            InitClipboardFolders();
 
             // Python処理機能の初期化
             PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+
+            // データベースのチェックポイント処理
+            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
 
             // DBのバックアップの取得
             IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
             backupController.BackupNow();
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+
         }
 
-        /// <summary>
-        /// コンストラクタ
-        /// </summary>
-        /// 
+        private void InitClipboardFolders() {
+            ClipboardItemFolders.Add(RootFolderViewModel);
+            ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
+            ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
+            ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
+            OnPropertyChanged(nameof(ClipboardItemFolders));
+        }
+
+
         public static MainWindowViewModel? ActiveInstance { get; set; }
 
+        /// <summary>
+        /// ウィンドウがアクティブになった時の処理
+        /// </summary>
         public override void OnActivatedAction() {
 
             ActiveInstance = this;
@@ -145,10 +151,8 @@ namespace ClipboardApp
             set {
                 _selectedItem = value;
                 OnPropertyChanged(nameof(SelectedItem));
-                SelectedItemStatic = value;
             }
         }
-        public static ClipboardItemViewModel? SelectedItemStatic { get; set; } = null;
 
         // 選択中のフォルダ
         private ClipboardFolderViewModel? _selectedFolder;
@@ -251,20 +255,12 @@ namespace ClipboardApp
         }
 
         /// <summary>
-        /// ListBoxの先頭にスクロール
+        /// 外部からプロパティの変更を通知する
         /// </summary>
-        private static void ScrollToTop() {
-
-            ListBox? listBox = Application.Current.MainWindow.FindName("listBox1") as ListBox;
-            // ListBoxの先頭にスクロール
-            if (listBox?.Items.Count > 0) {
-                listBox?.ScrollIntoView(listBox.Items[0]);
-            }
-        }
+        /// <param name="propertyName"></param>
         public void NotifyPropertyChanged(string propertyName) {
             OnPropertyChanged(propertyName);
         }
-
 
         public TextSelector TextSelector { get; } = new();
 
@@ -287,33 +283,6 @@ namespace ClipboardApp
         //--------------------------------------------------------------------------------
         // コマンド
         //--------------------------------------------------------------------------------
-        // アプリケーションを終了する。
-        // Ctrl + Q が押された時の処理
-        // メニューの「終了」をクリックしたときの処理
-
-        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            ExitCommandExecute();
-        });
-
-        // クリップボード監視開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            ToggleClipboardMonitorCommand(this);
-        });
-        // Windows通知監視開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
-            ToggleWindowsNotificationMonitorCommand(this);
-        });
-
-        // フォルダが選択された時の処理
-        // TreeViewで、SelectedItemChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new(FolderSelectionChangedCommandExecute);
-
-        // クリップボードアイテムが選択された時の処理
-        // ListBoxで、SelectionChangedが発生したときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new(ClipboardItemSelectionChangedCommandExecute);
-
 
 
     }

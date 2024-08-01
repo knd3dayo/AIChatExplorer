@@ -21,32 +21,34 @@ namespace ClipboardApp
     public partial class MainWindowViewModel {
 
 
-        /// <summary>
-        /// 終了コマンド
-        /// </summary>
-        public static void ExitCommandExecute() {
+
+
+        // アプリケーションを終了する。
+        // Ctrl + Q が押された時の処理
+        // メニューの「終了」をクリックしたときの処理
+
+        public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
             // 終了確認ダイアログを表示。Yesならアプリケーションを終了
             MessageBoxResult result = MessageBox.Show("終了しますか?", "Confirmation", MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 Application.Current.Shutdown();
             }
-        }
-        /// <summary>
-        /// クリップボード監視開始終了フラグを反転させる
-        /// メニューの「クリップボード監視開始」、「クリップボード監視停止」をクリックしたときの処理
-        /// </summary>
-        /// <param name="windowViewModel"></param>
-        public static void ToggleClipboardMonitorCommand(MainWindowViewModel windowViewModel) {
-            windowViewModel.IsClipboardMonitor = !windowViewModel.IsClipboardMonitor;
-            if (windowViewModel.IsClipboardMonitor) {
+        });
+
+
+        // クリップボード監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
+            IsClipboardMonitor = !IsClipboardMonitor;
+            if (IsClipboardMonitor) {
                 ClipboardController.Start(async (clipboardItem) => {
                     // クリップボードアイテムが追加された時の処理
                     await Task.Run(() => {
-                        windowViewModel.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(windowViewModel.RootFolderViewModel, clipboardItem));
+                        RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, clipboardItem));
                     });
 
                     Application.Current.Dispatcher.Invoke(() => {
-                        windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                        SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
 
@@ -56,23 +58,21 @@ namespace ClipboardApp
                 LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
             // 通知
-            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsClipboardMonitor));
+            NotifyPropertyChanged(nameof(IsClipboardMonitor));
             // ボタンのテキストを変更
-            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.ClipboardMonitorButtonText));
-        }
-        /// <summary>
-        /// Windows通知監視開始終了フラグを反転させる
-        /// メニューの「Windows通知監視開始」、「Windows通知監視停止」をクリックしたときの処理
-        /// </summary>
-        /// <param name="windowViewModel"></param>
-        public static void ToggleWindowsNotificationMonitorCommand(MainWindowViewModel windowViewModel) {
-            windowViewModel.IsWindowsNotificationMonitor = !windowViewModel.IsWindowsNotificationMonitor;
-            if (windowViewModel.IsWindowsNotificationMonitor) {
-                WindowsNotificationController.Start(windowViewModel.RootFolderViewModel.ClipboardItemFolder, (item) => {
+            NotifyPropertyChanged(nameof(ClipboardMonitorButtonText));
+        });
+
+        // Windows通知監視開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
+            IsWindowsNotificationMonitor = !IsWindowsNotificationMonitor;
+            if (IsWindowsNotificationMonitor) {
+                WindowsNotificationController.Start(RootFolderViewModel.ClipboardItemFolder, (item) => {
                     // クリップボードアイテムが追加された時の処理
-                    windowViewModel.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(windowViewModel.RootFolderViewModel, item));
+                    RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, item));
                     Application.Current.Dispatcher.Invoke(() => {
-                        windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                        SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
@@ -82,14 +82,14 @@ namespace ClipboardApp
                 LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
             }
             // 通知
-            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.IsWindowsNotificationMonitor));
+            NotifyPropertyChanged(nameof(IsWindowsNotificationMonitor));
             // ボタンのテキストを変更
-            windowViewModel.NotifyPropertyChanged(nameof(windowViewModel.WindowsNotificationMonitorButtonText));
-        }
+            NotifyPropertyChanged(nameof(WindowsNotificationMonitorButtonText));
+        });
 
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
-        public void FolderSelectionChangedCommandExecute(RoutedEventArgs routedEventArgs) {
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
             ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
             SelectedFolder = clipboardItemFolderViewModel;
@@ -97,12 +97,11 @@ namespace ClipboardApp
                 // Load
                 SelectedFolder.LoadFolderCommand.Execute();
             }
-
-        }
+        });
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
-        public void ClipboardItemSelectionChangedCommandExecute(RoutedEventArgs routedEventArgs) {
+        public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
             // ListBoxの場合
             if (routedEventArgs.OriginalSource is ListBox) {
                 ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
@@ -125,8 +124,8 @@ namespace ClipboardApp
                     SelectedItems.Add(item);
                 }
             }
-        }
 
+        });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
         public void OpenOpenAIWindowCommandExecute() {
