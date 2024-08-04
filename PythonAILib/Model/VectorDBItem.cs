@@ -1,4 +1,7 @@
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using PythonAILib.PythonIF;
 
 namespace PythonAILib.Model {
@@ -46,6 +49,24 @@ namespace PythonAILib.Model {
         // システム用のフラグ
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
+
+        // Json文字列化する
+        public static string ToJson(IEnumerable<VectorDBItem> items) {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return System.Text.Json.JsonSerializer.Serialize(items, options);
+        }
+        // Json文字列化する
+        public static string ToJson(VectorDBItem item) {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return System.Text.Json.JsonSerializer.Serialize(item, options);
+        }
+
 
         // Save
         public abstract void Save();

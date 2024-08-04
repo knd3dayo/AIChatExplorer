@@ -425,8 +425,12 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info("Embeddingを保存します");
                 // IPythonFunctions.ClipboardInfoを作成
                 string content = this.Content;
+                // 背景情報を含める場合
+                if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                    content += "\n---背景情報--\n" + BackgroundInfo;
+                }
 
-                IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), this.Content);
+                IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), content);
 
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
@@ -556,6 +560,22 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // ベクトル検索を実行する
+        public static List<VectorSearchResult> VectorSearchCommandExecute(ClipboardItem item) {
+            // VectorDBItemを取得
+            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
+            string contentText = item.Content;
+            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
+            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
+            }
+            // ベクトル検索を実行
+            List<VectorSearchResult> results = PythonExecutor.PythonFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
+            return results;
+        }
+
+
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
             // PythonでItem.ContentからEntityを抽出
@@ -593,6 +613,7 @@ namespace WpfAppCommon.Model {
                 item.BackgroundInfo = result.Response;
             }
         }
+       
 
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {

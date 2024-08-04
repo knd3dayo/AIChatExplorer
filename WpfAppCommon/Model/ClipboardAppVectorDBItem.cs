@@ -104,14 +104,7 @@ namespace WpfAppCommon.Model {
             return GetItems(true).FirstOrDefault(item => item.Id == id);
         }
 
-        // Json文字列化する
-        public static string ToJson(IEnumerable<VectorDBItem> items) {
-            var options = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return System.Text.Json.JsonSerializer.Serialize(items, options);
-        }
+
 
         public override void UpdateIndex(IPythonFunctions.ContentInfo clipboard) {
             // CollectionNameの設定

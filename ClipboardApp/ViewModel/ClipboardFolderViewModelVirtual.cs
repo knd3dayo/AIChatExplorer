@@ -88,6 +88,13 @@ namespace ClipboardApp.ViewModel {
                 generateBackgroundInfoMenuItem.CommandParameter = this;
                 menuItems.Add(generateBackgroundInfoMenuItem);
 
+                // ベクトル検索
+                MenuItem vectorSearchMenuItem = new();
+                vectorSearchMenuItem.Header = StringResources.VectorSearch;
+                vectorSearchMenuItem.Command = MainWindowViewModel.ActiveInstance.VectorSearchCommand;
+                vectorSearchMenuItem.CommandParameter = this;
+                menuItems.Add(vectorSearchMenuItem);
+
                 // ピン留め
                 MenuItem pinnedStateChangeMenuItem = new();
                 pinnedStateChangeMenuItem.Header = "ピン留め";

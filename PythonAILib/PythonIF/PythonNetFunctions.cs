@@ -640,5 +640,56 @@ namespace PythonAILib.PythonIF {
             return chatResult;
         }
 
+        private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
+            // VectorSearchResultのリストを作成
+            List<VectorSearchResult> vectorSearchResults = new();
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
+                string resultString = pythonFunction(function_object);
+
+                // resultStringをログに出力
+                LogWrapper.Info($"レスポンス:{resultString}");
+                // resultStringからDictionaryに変換する。
+                var op = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                if (resultDict == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+                // documents を取得
+                JsonElement? documentsObject = (JsonElement)resultDict["documents"];
+                if (documentsObject == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+                // List<VectorSearchResult>に変換
+                vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
+
+            });
+            return vectorSearchResults;
+        }
+
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, string content) {
+            // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
+            openAIProperties.VectorDBItems = [vectorDBItem];
+            // propsをJSON文字列に変換
+            string propsJson = openAIProperties.ToJson();
+            LogWrapper.Info("VectorSearch実行");
+            LogWrapper.Info($"プロパティ情報 {propsJson}");
+            LogWrapper.Info($"コンテンツ:{content}");
+
+            // VectorSearch関数を呼び出す
+            return VectorSearchExecute("run_vector_search", (function_object) => {
+                string resultString = function_object(propsJson, content);
+                return resultString;
+            });
+        }   
+
     }
 }

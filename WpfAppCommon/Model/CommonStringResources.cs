@@ -17,6 +17,9 @@ namespace WpfAppCommon.Model {
         // 背景情報を生成
         public string GenerateBackgroundInfo { get; } = "背景情報を生成";
 
+        //ベクトル検索
+        public string VectorSearch { get; } = "ベクトル検索";
+
         // 開始
         public string Start { get; } = "開始";
         // 停止

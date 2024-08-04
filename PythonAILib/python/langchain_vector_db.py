@@ -59,8 +59,12 @@ class LangChainVectorDB:
                 # docを分割
                 tmp_sub_docs = text_splitter.split_documents([doc])
                 # sub_docsのmetadataにdoc_idを追加
+                print(f"add_documents doc_id:{doc_id}")
+
                 for tmp_sub_doc in tmp_sub_docs:
                     tmp_sub_doc.metadata["doc_id"] = doc_id
+                    print(f"sub_document:{tmp_sub_doc}")
+                    
                 # sub_docsを追加
                 sub_docs.extend(tmp_sub_docs)    
         

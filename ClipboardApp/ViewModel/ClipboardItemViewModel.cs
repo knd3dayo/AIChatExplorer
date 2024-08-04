@@ -6,7 +6,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
@@ -398,6 +400,18 @@ namespace ClipboardApp.ViewModel
                 SaveClipboardItemCommand.Execute(false);
             });
             LogWrapper.Info("背景情報を生成しました");
+
+        });
+        // ベクトル検索を実行するコマンド
+        public SimpleDelegateCommand<object> VectorSearchCommand => new(async (obj) => {
+            // ClipboardItemを元にベクトル検索を実行
+            List<VectorSearchResult> vectorSearchResults = [];
+            await Task.Run(() => {
+                // ベクトル検索を実行
+                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardItem));
+            });
+            // ベクトル検索結果ウィンドウを開く
+            VectorSearchResultWindow.OpenVectorSearchResultWindow(vectorSearchResults);
 
         });
 

@@ -546,6 +546,10 @@ namespace ClipboardApp
             this.SelectedItem?.GenerateBackgroundInfoCommand.Execute();
         });
 
+        // ベクトル検索を実行する処理 複数アイテム処理不可
+        public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
+            this.SelectedItem?.VectorSearchCommand.Execute();
+        });
 
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能

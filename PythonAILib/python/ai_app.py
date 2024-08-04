@@ -108,6 +108,25 @@ def list_openai_models(props_json: str):
 ########################
 # langchain関連
 ########################
+
+def run_vector_search(props_json: str, prompt: str):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> dict:
+        result = langchain_util.run_vector_search(props_json, prompt)
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
 def run_langchain_chat( props_json: str, prompt: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:

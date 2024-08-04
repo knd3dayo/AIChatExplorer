@@ -42,10 +42,10 @@ class RetrieverUtil:
 
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
         # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
-        print("CollectionName:", vector_db_props.CollectionName)
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
         if vector_db_props.IsUseMultiVectorRetriever:
+            print("MultiVectorRetrieverを生成")
             langChainVectorDB = get_vector_db(self.client, vector_db_props)
             retriever = MultiVectorRetriever(
                 vectorstore=langChainVectorDB.db,
@@ -55,6 +55,7 @@ class RetrieverUtil:
             )
 
         else:
+            print("通常のRetrieverを生成")
             langChainVectorDB = get_vector_db(self.client, vector_db_props)
             retriever = langChainVectorDB.db.as_retriever(
                 # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
@@ -294,6 +295,47 @@ class RetrievalQAUtil:
                 langchain_chat_history.append(AIMessage(content))
         return langchain_chat_history
 
+# ベクトル検索を行う
+def run_vector_search( props_json: str, prompt: str):    
+    # OpenAIPorpsを生成
+    props = json.loads(props_json)
+    openai_props = OpenAIProps(props)
+    vector_db_props = openai_props.VectorDBItems
+    # vector_db_propsが空の場合はエラーを返す
+    if len(vector_db_props) == 0:
+        raise Exception("vector_db_props is empty")
+
+    vector_db_item = vector_db_props[0]
+    # vector_searchを実行
+    documents = vector_search(openai_props, vector_db_item, prompt)
+    print(f"documents:\n{documents}")
+    # documentsの要素からcontent, source, source_urlを取得
+    result = []
+    for doc in documents:
+        doc: Document
+        content = doc.page_content
+        source = doc.metadata.get("source", "")
+        source_url = doc.metadata.get("source_url", "")
+        result.append({"content": content, "source": source, "source_url": source_url})
+        
+    return {"documents": result}
+
+def vector_search( props: OpenAIProps, vector_db_item: VectorDBProps, prompt: str):
+
+    vector_db_props = props.VectorDBItems
+    client = LangChainOpenAIClient(props)
+
+    # デバッグ出力
+    print(f'プロンプト: {prompt}')
+    print('ベクトルDBの設定')
+    print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+
+    retriever = RetrieverUtil(client, vector_db_item).create_retriever()
+    result = retriever.invoke(prompt)
+    # result = retriever.vectorstore.similarity_search(prompt)
+    return result
+
+# langchain_chatを実行する
 def run_langchain_chat( props_json: str, prompt, request_json: str):
     
     # request_jsonをdictに変換

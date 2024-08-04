@@ -32,6 +32,10 @@ namespace PythonAILib.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, string content) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
+
         public void OpenAIEmbedding(OpenAIProperties props, string text) { 
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
