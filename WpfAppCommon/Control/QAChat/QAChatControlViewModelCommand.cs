@@ -7,18 +7,10 @@ using WpfAppCommon.Utils;
 using WpfAppCommon.View.QAChat;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
-using System.Diagnostics;
-using System.Drawing;
-using System.Windows.Media.Imaging;
 
 namespace WpfAppCommon.Control.QAChat {
     public partial class QAChatControlViewModel {
-        // ベクトルDB(フォルダ)を追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemFolderCommand => new((parameter) => {
-            // フォルダを選択
-            SelectFolderAction(SystemVectorDBItems);
-            OnPropertyChanged(nameof(SystemVectorDBItems));
-        });
+
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -167,31 +159,28 @@ namespace WpfAppCommon.Control.QAChat {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
-        // 選択したクリップボードアイテムを開くコマンド
-
-        public SimpleDelegateCommand<object> OpenClipboardItemCommand => new((parameter) => {
-            if (SelectedContextItem != null) {
-                OpenClipboardItemAction(SelectedContextItem);
+        // ベクトルDB(フォルダ)をリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedSystemVectorDBItem != null) {
+                SystemVectorDBItems.Remove(SelectedSystemVectorDBItem);
             }
+            OnPropertyChanged(nameof(SystemVectorDBItems));
+        });
+        // ベクトルDB(フォルダ)を追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemFolderCommand => new((parameter) => {
+            // フォルダを選択
+            QAChatStartupProps?.SelectFolderAction(SystemVectorDBItems);
+            OnPropertyChanged(nameof(SystemVectorDBItems));
         });
 
-        // 選択したクリップボードアイテムをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveClipboardItemCommand => new((parameter) => {
-            if (SelectedContextItem != null) {
-                AdditionalTextItems.Remove(SelectedContextItem);
-            }
-            OnPropertyChanged(nameof(AdditionalTextItems));
-        });
 
         // 選択したVectorDBItemの編集画面を開くコマンド
-        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            if (SelectedExternalVectorDBItem != null) {
-                OpenVectorDBItemAction(SelectedExternalVectorDBItem);
-            }
+        public SimpleDelegateCommand<object> OpenExternalVectorDBItemCommand => new((parameter) => {
+            QAChatStartupProps?.SelectVectorDBItemsAction(ExternalVectorDBItems);
         });
 
         // 選択したVectorDBItemをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> RemoveExternalVectorDBItemCommand => new((parameter) => {
             if (SelectedExternalVectorDBItem != null) {
                 ExternalVectorDBItems.Remove(SelectedExternalVectorDBItem);
             }

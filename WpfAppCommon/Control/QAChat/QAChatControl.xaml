@@ -33,309 +33,324 @@
     <UserControl.DataContext>
         <local:QAChatControlViewModel />
     </UserControl.DataContext>
-
-    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
-        <materialDesign:DrawerHost.LeftDrawerContent>
-            <Grid Width="250" Margin="10,10,10,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        Grid.Column="0"
-                        Margin="10,0,10,0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="モード" />
-                    <ComboBox
-                        Grid.Column="1"
-                        Margin="10,0,10,0"
-                        SelectedIndex="{Binding Mode}">
-                        <ComboBoxItem Content="OpenAI" />
-                        <ComboBoxItem Content="LangChain" />
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                </Grid>
-                <!--  ベクトルDB(フォルダ)  -->
-                <StackPanel
-                    Grid.Row="1"
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Column="0"
+            Width="250"
+            Margin="10,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="モード" />
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="10,0,10,0"
+                    SelectedIndex="{Binding Mode}">
+                    <ComboBoxItem Content="OpenAI" />
+                    <ComboBoxItem Content="LangChain" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </Grid>
+            <!--  ベクトルDB(フォルダ)  -->
+            <StackPanel
+                Grid.Row="1"
+                HorizontalAlignment="Left"
+                Visibility="{Binding VectorDBItemVisibility}">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
                     HorizontalAlignment="Left"
-                    Visibility="{Binding VectorDBItemVisibility}">
-                    <ToggleButton
-                        Width="200"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsSystemVectorDBDrawerOpen}"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                        <DockPanel Width="200">
-                            <materialDesign:PackIcon Kind="Menu" />
-                            <TextBlock Text="ベクトルDB(フォルダ)" />
-                        </DockPanel>
-                    </ToggleButton>
-                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsSystemVectorDBDrawerOpen}" OpenMode="Standard">
-                        <materialDesign:DrawerHost.BottomDrawerContent>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Margin="10,10,10,10"
-                                    HorizontalAlignment="Left"
-                                    FontSize="10"
-                                    Text="ここをクリックしてアイテムを追加">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding Command="{Binding AddVectorDBItemFolderCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                                <ListBox
-                                    Grid.Row="1"
-                                    Margin="10,10,10,10"
-                                    ItemsSource="{Binding SystemVectorDBItems}"
-                                    SelectedItem="{Binding SelectedSystemVectorDBItem}"
-                                    Visibility="{Binding VectorDBItemVisibility}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" />
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </Grid>
-                        </materialDesign:DrawerHost.BottomDrawerContent>
-                    </materialDesign:DrawerHost>
-                </StackPanel>
-                <StackPanel
-                    Grid.Row="2"
+                    IsChecked="{Binding IsSystemVectorDBDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="ベクトルDB(フォルダ)" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsSystemVectorDBDrawerOpen}" OpenMode="Standard">
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                FontSize="10"
+                                Text="ここをクリックしてベクトルDB(フォルダ)を追加">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding AddVectorDBItemFolderCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <ListBox
+                                Grid.Row="1"
+                                Margin="10,10,10,10"
+                                ItemsSource="{Binding SystemVectorDBItems}"
+                                SelectedItem="{Binding SelectedSystemVectorDBItem}"
+                                Visibility="{Binding VectorDBItemVisibility}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+            <StackPanel
+                Grid.Row="2"
+                HorizontalAlignment="Left"
+                Visibility="{Binding VectorDBItemVisibility}">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
                     HorizontalAlignment="Left"
-                    Visibility="{Binding VectorDBItemVisibility}">
-                    <ToggleButton
-                        Width="200"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsExternalVectorDBDrawerOpen}"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                        <DockPanel Width="200">
-                            <materialDesign:PackIcon Kind="Menu" />
-                            <TextBlock Text="ベクトルDB(外部)" />
-                        </DockPanel>
-                    </ToggleButton>
-                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsExternalVectorDBDrawerOpen}" OpenMode="Standard">
-                        <materialDesign:DrawerHost.BottomDrawerContent>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <ListBox
-                                    Grid.Row="0"
-                                    Margin="10,10,10,10"
-                                    ItemsSource="{Binding ExternalVectorDBItems}"
-                                    SelectedItem="{Binding SelectedExternalVectorDBItem}"
-                                    Visibility="{Binding VectorDBItemVisibility}">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" />
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseDoubleClick">
-                                            <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                    <ListBox.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" Header="開く" />
-                                            <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
-                                        </ContextMenu>
-                                    </ListBox.ContextMenu>
-                                </ListBox>
-                            </Grid>
-                        </materialDesign:DrawerHost.BottomDrawerContent>
-                    </materialDesign:DrawerHost>
-                </StackPanel>
-                <StackPanel Grid.Row="3">
-                    <ToggleButton
-                        Width="200"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsImageItemDrawerOpen}"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                        <DockPanel Width="200">
-                            <materialDesign:PackIcon Kind="Menu" />
-                            <TextBlock Text="画像アイテム" />
-                        </DockPanel>
-                    </ToggleButton>
-                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageItemDrawerOpen}" OpenMode="Standard">
-                        <!--  画像アイテム  -->
-                        <materialDesign:DrawerHost.BottomDrawerContent>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Margin="10,10,10,10"
-                                    HorizontalAlignment="Left"
-                                    FontSize="10"
-                                    Text="ここをクリックして選択中のアイテムを貼り付け">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding Command="{Binding PasteImageItemCommand}" MouseAction="LeftDoubleClick" />
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                                <ListBox
-                                    Name="ListBox0"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Margin="0,0,10,0"
-                                    ItemsSource="{Binding ImageItems}"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    SelectionMode="Extended">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <Image
-                                                    Grid.Row="0"
-                                                    Height="100"
-                                                    Margin="0,0,0,0"
-                                                    Source="{Binding ClipboardItemImage.BitmapImage}" />
+                    IsChecked="{Binding IsExternalVectorDBDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="ベクトルDB(外部)" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsExternalVectorDBDrawerOpen}" OpenMode="Standard">
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                FontSize="10"
+                                Text="ここをクリックしてベクトルDB(外部)を追加">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <ListBox
+                                Grid.Row="1"
+                                Margin="10,10,10,10"
+                                ItemsSource="{Binding ExternalVectorDBItems}"
+                                SelectedItem="{Binding SelectedExternalVectorDBItem}"
+                                Visibility="{Binding VectorDBItemVisibility}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+            <StackPanel Grid.Row="3">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding IsImageItemDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="画像アイテム" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageItemDrawerOpen}" OpenMode="Standard">
+                    <!--  画像アイテム  -->
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                FontSize="10"
+                                Text="ここをクリックして選択中のアイテムを貼り付け">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding PasteImageItemCommand}" MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <ListBox
+                                Name="ListBox0"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,0,10,0"
+                                ItemsSource="{Binding ImageItems}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                SelectionMode="Extended">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Image
+                                                Grid.Row="0"
+                                                Height="100"
+                                                Margin="0,0,0,0"
+                                                Source="{Binding ClipboardItemImage.BitmapImage}" />
 
-                                                <Grid.InputBindings>
-                                                    <MouseBinding
+                                            <Grid.InputBindings>
+                                                <MouseBinding
+                                                    Command="{Binding OpenSelectedImageItemCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Gesture="LeftDoubleClick" />
+                                            </Grid.InputBindings>
+                                            <Grid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem
                                                         Command="{Binding OpenSelectedImageItemCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Gesture="LeftDoubleClick" />
-                                                </Grid.InputBindings>
-                                                <Grid.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem
-                                                            Command="{Binding OpenSelectedImageItemCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Header="開く" />
-                                                        <MenuItem
-                                                            Command="{Binding RemoveSelectedImageItemCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Header="削除" />
-                                                    </ContextMenu>
-                                                </Grid.ContextMenu>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
+                                                        Header="開く" />
+                                                    <MenuItem
+                                                        Command="{Binding RemoveSelectedImageItemCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Header="削除" />
+                                                </ContextMenu>
+                                            </Grid.ContextMenu>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
 
-                        </materialDesign:DrawerHost.BottomDrawerContent>
-                    </materialDesign:DrawerHost>
-                </StackPanel>
-                <StackPanel Grid.Row="4">
-                    <ToggleButton
-                        Width="200"
-                        Padding="10,0,10,0"
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsImageFileDrawerOpen}"
-                        Style="{StaticResource MaterialDesignFlatButton}">
-                        <DockPanel Width="200">
-                            <materialDesign:PackIcon Kind="Menu" />
-                            <TextBlock Text="画像ファイル" />
-                        </DockPanel>
-                    </ToggleButton>
-                    <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageFileDrawerOpen}" OpenMode="Standard">
-                        <!--  追加画像情報  -->
-                        <materialDesign:DrawerHost.BottomDrawerContent>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Margin="10,10,10,10"
-                                    HorizontalAlignment="Left"
-                                    FontSize="10"
-                                    Text="ここをクリックして画像ファイルを追加">
-                                    <TextBlock.InputBindings>
-                                        <MouseBinding
-                                            Command="{Binding SelectImageFileCommand, Mode=OneTime}"
-                                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                            MouseAction="LeftDoubleClick" />
-                                    </TextBlock.InputBindings>
-                                </TextBlock>
-                                <ListBox
-                                    Name="ListBox1"
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Margin="0,0,10,0"
-                                    ItemsSource="{Binding ImageFiles}"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                    SelectionMode="Extended">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <Image
-                                                    Grid.Row="0"
-                                                    Height="100"
-                                                    Margin="0,0,0,0"
-                                                    Source="{Binding ScreenShotImage.BitmapImage}" />
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+            <StackPanel Grid.Row="4">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding IsImageFileDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="画像ファイル" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageFileDrawerOpen}" OpenMode="Standard">
+                    <!--  追加画像情報  -->
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                FontSize="10"
+                                Text="ここをクリックして画像ファイルを追加">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding
+                                        Command="{Binding SelectImageFileCommand, Mode=OneTime}"
+                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                                        MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <ListBox
+                                Name="ListBox1"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,0,10,0"
+                                ItemsSource="{Binding ImageFiles}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                SelectionMode="Extended">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Image
+                                                Grid.Row="0"
+                                                Height="100"
+                                                Margin="0,0,0,0"
+                                                Source="{Binding ScreenShotImage.BitmapImage}" />
 
-                                                <TextBlock
-                                                    Grid.Row="1"
-                                                    Margin="0,0,10,0"
-                                                    Text="{Binding ScreenShotImage.FileName}" />
-                                                <Grid.InputBindings>
-                                                    <MouseBinding
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Margin="0,0,10,0"
+                                                Text="{Binding ScreenShotImage.FileName}" />
+                                            <Grid.InputBindings>
+                                                <MouseBinding
+                                                    Command="{Binding OpenSelectedImageFileCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    Gesture="LeftDoubleClick" />
+                                            </Grid.InputBindings>
+                                            <Grid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem
                                                         Command="{Binding OpenSelectedImageFileCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Gesture="LeftDoubleClick" />
-                                                </Grid.InputBindings>
-                                                <Grid.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem
-                                                            Command="{Binding OpenSelectedImageFileCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Header="開く" />
-                                                        <MenuItem
-                                                            Command="{Binding RemoveSelectedImageFileCommand}"
-                                                            CommandParameter="{Binding}"
-                                                            Header="削除" />
-                                                    </ContextMenu>
-                                                </Grid.ContextMenu>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
+                                                        Header="開く" />
+                                                    <MenuItem
+                                                        Command="{Binding RemoveSelectedImageFileCommand}"
+                                                        CommandParameter="{Binding}"
+                                                        Header="削除" />
+                                                </ContextMenu>
+                                            </Grid.ContextMenu>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
 
-                        </materialDesign:DrawerHost.BottomDrawerContent>
-                    </materialDesign:DrawerHost>
-                </StackPanel>
-
-            </Grid>
-        </materialDesign:DrawerHost.LeftDrawerContent>
-        <Grid>
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+        </Grid>
+        <GridSplitter Grid.Column="1" Width="5" />
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
@@ -554,5 +569,5 @@
                 Value="0" />
 
         </Grid>
-    </materialDesign:DrawerHost>
+    </Grid>
 </UserControl>

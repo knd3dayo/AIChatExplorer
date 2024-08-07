@@ -133,6 +133,12 @@ namespace ClipboardApp.ViewModel
                     VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
                     EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
                 },
+                // ベクトルDBアイテムを選択するアクション
+                SelectVectorDBItemsAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                        vectorDBItems.Add(selectedItem);
+                    });
+                },
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
                     if (MainWindowViewModel.ActiveInstance == null) {

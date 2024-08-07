@@ -337,15 +337,18 @@ namespace ClipboardApp.ViewModel
 
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
-            QAChat.MainWindow openAIChatWindow = new();
-            QAChat.ViewModel.MainWindowViewModel mainWindowViewModel = (QAChat.ViewModel.MainWindowViewModel)openAIChatWindow.DataContext;
-
             QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, ClipboardItem, false) {
 
                 // ベクトルDBアイテムを開くアクション
                 OpenVectorDBItemAction = (vectorDBItem) => {
                     VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
                     EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+                },
+                // ベクトルDBアイテムを選択するアクション
+                SelectVectorDBItemsAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                        vectorDBItems.Add(selectedItem);
+                    });
                 },
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
@@ -373,9 +376,7 @@ namespace ClipboardApp.ViewModel
                 }
 
             };
-
-            mainWindowViewModel.Initialize(qAChatStartupProps);
-            openAIChatWindow.Show();
+            QAChat.MainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
 
         });
 

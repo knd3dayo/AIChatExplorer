@@ -17,6 +17,8 @@ namespace WpfAppCommon.Control.QAChat {
 
         public Action<VectorDBItem> OpenVectorDBItemAction { get; set; } = (vectorDBItem) => { };
 
+        public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemsAction { get; set; } = (vectorDBItems) => { };
+
         public Action<ObservableCollection<VectorDBItem>> SelectFolderAction { get; set; } = (folders) => { };
 
         public Func<List<ClipboardItemImage>> GetSelectedClipboardItemImageFunction { get; set; } = () => { return []; };

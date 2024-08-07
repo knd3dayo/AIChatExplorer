@@ -76,15 +76,7 @@ namespace WpfAppCommon.Control.QAChat {
         // ClipboardItemを選択するアクション
         public Action<Action<List<ClipboardItem>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
 
-        // ClipboardItemを開くアクション
-        public Action<ClipboardItem> OpenClipboardItemAction { get; set; } = (item) => { };
-
-        // VectorDBItemを開くアクション
-        public Action<VectorDBItem> OpenVectorDBItemAction { get; set; } = (item) => { };
-
-        // フォルダを選択するアクション
-        public Action<ObservableCollection<VectorDBItem>> SelectFolderAction { get; set; } = (afterSelect) => { };
-
+        
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
 
@@ -166,8 +158,8 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
         // ベクトルDB(フォルダ)の選択中のアイテム
-        private ClipboardFolder? _SelectedSystemVectorDBItem = null;
-        public ClipboardFolder? SelectedSystemVectorDBItem {
+        private VectorDBItem? _SelectedSystemVectorDBItem = null;
+        public VectorDBItem? SelectedSystemVectorDBItem {
             get {
                 return _SelectedSystemVectorDBItem;
             }
