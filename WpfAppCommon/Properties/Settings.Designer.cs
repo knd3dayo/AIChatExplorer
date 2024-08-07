@@ -406,5 +406,17 @@ namespace WpfAppCommon.Properties {
                 this["IncludeBackgroundInfoInEmbedding"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool TextWrapping {
+            get {
+                return ((bool)(this["TextWrapping"]));
+            }
+            set {
+                this["TextWrapping"] = value;
+            }
+        }
     }
 }

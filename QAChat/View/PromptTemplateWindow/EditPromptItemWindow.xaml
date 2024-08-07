@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel"
@@ -115,7 +116,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsEnabled="True"
                 Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="Wrap"
+                TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">

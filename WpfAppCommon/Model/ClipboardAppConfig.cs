@@ -1,5 +1,6 @@
 
 using System.IO;
+using System.Windows;
 using PythonAILib.Model;
 
 namespace WpfAppCommon.Model {
@@ -444,6 +445,20 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
             }
         }
+
+        // TextWrapping
+        private static bool _textWrapping = false;
+        public static System.Windows.TextWrapping TextWrapping {
+            get {
+                _textWrapping = WpfAppCommon.Properties.Settings.Default.TextWrapping;
+                return _textWrapping ? System.Windows.TextWrapping.Wrap : System.Windows.TextWrapping.NoWrap;
+            }
+            set {
+                _textWrapping = value == System.Windows.TextWrapping.Wrap;
+                WpfAppCommon.Properties.Settings.Default.TextWrapping = _textWrapping;
+            }
+        }
+
 
         // PreviewMode
         private static Boolean? _previewMode;

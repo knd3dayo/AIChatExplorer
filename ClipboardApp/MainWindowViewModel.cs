@@ -218,12 +218,31 @@ namespace ClipboardApp
             }
         }
 
-        // コンパクトモードでプレビューを表示するかどうか
+        // テキストを右端で折り返すかどうか
+        public bool TextWrapping {
+            get {
+                return ClipboardAppConfig.TextWrapping == System.Windows.TextWrapping.Wrap;
+            }
+            set {
+                if (value) {
+                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.Wrap;
+                } else {
+                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.NoWrap;
+                }
+                // Save
+                ClipboardAppConfig.Save();
+                OnPropertyChanged(nameof(TextWrapping));
+            }
+        }
+
+        // プレビューモード　プレビューを表示するかどうか
         public static Visibility PreviewModeVisibility {
             get {
                 return ClipboardAppConfig.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+
         
         //　プレビューモード表示するかどうか
         public bool PreviewMode {

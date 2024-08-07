@@ -64,6 +64,8 @@ namespace WpfAppCommon.Model {
         public string EditGitRagSource { get; } = "RAGソース(git)編集";
 
         // -- 表示メニュー
+        // テキストを右端で折り返す
+        public string TextWrapping { get; } = "テキストを右端で折り返す";
         // プレビューモード
         public string PreviewMode { get; } = "プレビューを有効にする";
         // コンパクト表示モード

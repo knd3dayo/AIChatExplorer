@@ -3,11 +3,12 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel"
     Title="{Binding Title}"
     Width="900"
     Height="600"
@@ -22,7 +23,7 @@
         </Style>
     </Window.Resources>
     <Window.DataContext>
-        <local:EditItemWindowViewModel />
+        <viewModel:EditItemWindowViewModel />
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -161,7 +162,7 @@
                         HorizontalScrollBarVisibility="Auto"
                         IsEnabled="True"
                         Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap"
+                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
                         VerticalScrollBarVisibility="Auto">
                         <TextBox.InputBindings>
                             <KeyBinding
@@ -195,6 +196,7 @@
                     Header="背景情報"
                     Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
                     <TextBox
+                        xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
                         Name="BackgrondInfo"
                         Margin="10,3,10,3"
                         AcceptsReturn="True"
@@ -202,7 +204,6 @@
                         HorizontalScrollBarVisibility="Auto"
                         IsEnabled="True"
                         Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap"
                         VerticalScrollBarVisibility="Auto">
                         <TextBox.InputBindings>
                             <KeyBinding
