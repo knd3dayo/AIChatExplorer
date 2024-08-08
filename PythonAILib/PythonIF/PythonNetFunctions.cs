@@ -471,7 +471,7 @@ namespace PythonAILib.PythonIF {
                 }
             });
         }
-
+                    
         public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない

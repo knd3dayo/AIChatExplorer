@@ -149,28 +149,31 @@ def run_langchain_chat( props_json: str, prompt: str, request_json: str):
 
 # vector db関連
 def update_file_index(props_json, request_json):
-    return _update_file_index(props_json, request_json, "update")
+    return __update_or_delete_file_index(props_json, request_json, "update")
 
 def delete_file_index(props_json, request_json):
-    return _update_file_index(props_json, request_json, "delete")
+    return __update_or_delete_file_index(props_json, request_json, "delete")
 
 
-def _update_file_index(props_json, request_json, mode):
+def __update_or_delete_file_index(props_json, request_json, mode):
 
     # update_indexを実行する関数を定義
     def func () -> dict:
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        vector_db_props = openai_props.VectorDBItems[0]
-        
-        # request_jsonをdictに変換
-        request = json.loads(request_json)
-        workdir = request["WorkDirectory"]
-        relative_path = request["RelativePath"]
-        url = request["RepositoryURL"]
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, mode, workdir, relative_path, urlを取得
+        openai_props, vector_db_props, document_root, relative_path, url = langchain_object_processor.process_file_update_or_datele_request_params(props_json, request_json)
+        # LangChainFileProcessorオブジェクトを生成
+        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
 
-        import langchain_file_processor
-        result = langchain_file_processor.update_index(openai_props, vector_db_props, mode, workdir, relative_path,  url)
+        # modeに応じて処理を分岐
+        if mode == "delete":
+            # delete_file_indexを実行
+            processor.delete_file_index(document_root, relative_path, url)
+        if mode == "update":
+            # update_file_indexを実行
+            processor.update_file_index(document_root, relative_path, url)
+
+        # 結果用のdictを生成
+        result = {}
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -201,21 +204,15 @@ def __update_or_delete_content_index(props_json, request_json, mode):
         # LangChainObjectProcessorオブジェクトを生成
         processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
         
-        # 初期化
-        update_count = 0
-        delete_count = 0
-        
         if mode == "delete":
             # delete_content_indexを実行
-            delete_count = processor.delete_content_index(source)
+            processor.delete_content_index(source)
         if mode == "update":
             # update_content_indexを実行
-            update_count = processor.update_content_index(mode, text, source)
+            processor.update_content_index(mode, text, source)
             
         # 結果用のdictを生成
         result = {}
-        result["update_count"] = update_count
-        result["delete_count"] = delete_count
         return result
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -229,7 +226,6 @@ def __update_or_delete_content_index(props_json, request_json, mode):
     # resultをJSONに変換して返す
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
-
 
 # ベクトルDBの画像インデックスを削除する
 def delete_image_index(props_json, request_json):
@@ -253,15 +249,13 @@ def __update_or_delete_image_index(props_json, request_json, mode):
         
         if mode == "delete":
             # delete_image_indexを実行
-            delete_count = processor.delete_image_index(source)
+             processor.delete_image_index(source)
         if mode == "update":
             # update_image_indexを実行
-            update_count = processor.update_image_index(mode, image_url, source)
+            processor.update_image_index(mode, image_url, source)
             
         # 結果用のdictを生成
         result = {}
-        result["update_count"] = update_count
-        result["delete_count"] = delete_count
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -275,8 +269,6 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     # resultをJSONに変換して返す
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
-
-
 
 # pyocr関連
 def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:

@@ -35,7 +35,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             **params
             )
 
-    def _get_metadata_by_source(self, sources:str=None) -> (list, list):
+    def _get_metadata_by_source(self, sources:str=None) -> tuple[list, list]:
         ids=[]
         metadata = []
         for source in sources:
@@ -53,9 +53,6 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         return ids, metadata
     
     def _save(self, documents:list=[]):
-        if not self.vector_db_props.VectorDBURL:
-            return []
-        
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
         
     def _delete(self, doc_ids:list=[]):
