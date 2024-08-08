@@ -7,6 +7,7 @@ sys.path.append("python")
 from openai_props import OpenAIProps, VectorDBProps
 from openai_client import OpenAIClient
 import langchain_util
+import langchain_object_processor
 
 # sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
 # see: https://github.com/huggingface/transformers/issues/24047
@@ -184,28 +185,39 @@ def _update_file_index(props_json, request_json, mode):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
+# ベクトルDBのコンテンツインデックスを削除する
 def delete_content_index(props_json, request_json):
-    return _update_content_index(props_json, request_json, "delete")
+    return __update_or_delete_content_index(props_json, request_json, "delete")
 
+# ベクトルDBのコンテンツインデックスを更新する
 def update_content_index(props_json, request_json):
-    return _update_content_index(props_json, request_json, "update")
+    return __update_or_delete_content_index(props_json, request_json, "update")
 
-def _update_content_index(props_json, request_json, mode):
+def __update_or_delete_content_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        vector_db_props = openai_props.VectorDBItems[0]
-    
-        # request_jsonをdictに変換
-        request = json.loads(request_json)
-        text = request["Content"]
-        object_id_string = request["Id"]
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
+        openai_props, vector_db_props, text, source = langchain_object_processor.process_content_update_or_datele_request_params(props_json, request_json)
+        # LangChainObjectProcessorオブジェクトを生成
+        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
         
-        import langchain_object_processor
-        result = langchain_object_processor.update_content_index(openai_props, vector_db_props, mode, text, object_id_string)
+        # 初期化
+        update_count = 0
+        delete_count = 0
+        
+        if mode == "delete":
+            # delete_content_indexを実行
+            delete_count = processor.delete_content_index(source)
+        if mode == "update":
+            # update_content_indexを実行
+            update_count = processor.update_content_index(mode, text, source)
+            
+        # 結果用のdictを生成
+        result = {}
+        result["update_count"] = update_count
+        result["delete_count"] = delete_count
         return result
-    
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行
@@ -218,26 +230,38 @@ def _update_content_index(props_json, request_json, mode):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
+
+# ベクトルDBの画像インデックスを削除する
 def delete_image_index(props_json, request_json):
-    return _update_image_index(props_json, request_json, "delete")
+    return __update_or_delete_image_index(props_json, request_json, "delete")
 
+# ベクトルDBの画像インデックスを更新する
 def update_image_index(props_json, request_json):
-    return _update_image_index(props_json, request_json, "update")
+    return __update_or_delete_image_index(props_json, request_json, "update")
 
-def _update_image_index(props_json, request_json, mode):
+def __update_or_delete_image_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        vector_db_props = openai_props.VectorDBItems[0]
-    
-        # request_jsonをdictに変換
-        request = json.loads(request_json)
-        image_url = request["image_url"]
-        object_id_string = request["Id"]
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, image_url, sourceを取得
+        openai_props, vector_db_props, image_url, source = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
+        # LangChainObjectProcessorオブジェクトを生成
+        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
         
-        import langchain_object_processor
-        result = langchain_object_processor.update_image_index(openai_props, vector_db_props, mode, image_url, object_id_string)
+        # 初期化
+        update_count = 0
+        delete_count = 0
+        
+        if mode == "delete":
+            # delete_image_indexを実行
+            delete_count = processor.delete_image_index(source)
+        if mode == "update":
+            # update_image_indexを実行
+            update_count = processor.update_image_index(mode, image_url, source)
+            
+        # 結果用のdictを生成
+        result = {}
+        result["update_count"] = update_count
+        result["delete_count"] = delete_count
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -251,7 +275,6 @@ def _update_image_index(props_json, request_json, mode):
     # resultをJSONに変換して返す
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
-
 
 
 

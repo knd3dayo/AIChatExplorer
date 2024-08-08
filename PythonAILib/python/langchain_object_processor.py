@@ -7,60 +7,71 @@ import langchain_util
 from langchain_vector_db import LangChainVectorDB
 from openai_props import OpenAIProps, VectorDBProps
 
-def update_content_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string):
-    return _update_index(props, vector_db_props, mode, text, object_id_string, get_document_list)
-
-def update_image_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, image_url, object_id_string):
-    return _update_index(props, vector_db_props, mode, image_url, object_id_string, get_image_document_list)
-
-
-def _update_index(props: OpenAIProps, vector_db_props: VectorDBProps, mode, text, object_id_string, get_document_list_function):
-
-    # 結果格納用のdict
-    result = {}
-    # 初期化
-    result["delete_count"] = 0
-    result["update_count"] = 0
-
-    client = LangChainOpenAIClient(props)
-    vector_db: LangChainVectorDB= langchain_util.get_vector_db(client, vector_db_props)
-
-    # DBからsourceを指定して既存ドキュメントを削除
-    delete_count = vector_db.delete_doucments([object_id_string])
-    result["delete_count"] = delete_count
-
-    # mode == "delete"の場合、削除のみ行う
-    if mode == "delete":
-        return result
-
-    # ドキュメントを取得
-    # textのlenが0の場合は何もしない
-    if len(text) == 0:
-        return result
+class LangChainObjectProcessor:
+    def __init__(self, openai_props: OpenAIProps, vector_db_props: VectorDBProps):
         
-    documents = get_document_list_function(text, object_id_string)
+        langchain_client = LangChainOpenAIClient(openai_props)
+        self.vector_db = langchain_util.get_vector_db(langchain_client, vector_db_props)
+
+    def delete_content_index(self, source: str):
+        # DBからsourceを指定して既存ドキュメントを削除
+        delete_count = self.vector_db.delete_doucments([source])
+        # 削除したドキュメント数を返す
+        return delete_count
     
-    # DBにdockumentsを更新
-    vector_db.add_documents(documents)
-    result["update_count"] = len(documents)
+    def update_content_index(self, text: str, source: str, source_url: str):
+        # 既に存在するドキュメントを削除
+        self.delete_content_index(source)
+        # ドキュメントを取得
+        documents = self._get_document_list(text, source, source_url)
+        # DBにdockumentsを更新
+        self.vector_db.add_documents(documents)
+        # 更新したドキュメント数を返す
+        return len(documents)
     
-    return result
+    def update_image_index(self, image_url: str, source: str):
+        # ★TODO *_content_indexと同じ処理になっているので、共通化する
+        
+        # 既に存在するドキュメントを削除
+        delete_count = self.delete_content_index(source)
+        # ドキュメントを取得
+        documents = self.get_image_document_list(image_url, source)
+        # DBにdockumentsを更新
+        self.vector_db.add_documents(documents)
+        # 更新したドキュメント数を返す
+        return len(documents)
+    
+    def _get_document_list(self, text: str, source: str, source_url: str):
+        text_list = self._split_text(text)
+        return [ Document(page_content=text, metadata={"source_url": source_url, "source": source}) for text in text_list]    
 
+    def _split_text(self, text: str, chunk_size: int=500):
+        text_list = []
+        # テキストをchunk_sizeで分割
+        for i in range(0, len(text), chunk_size):
+            text_list.append(text[i:i + chunk_size])
+        return text_list
 
+def process_content_update_or_datele_request_params(props_json: str, request_json: str):
+    props = json.loads(props_json)
+    openai_props = OpenAIProps(props)
+    vector_db_props = openai_props.VectorDBItems[0]
+    
+    # request_jsonをdictに変換
+    request = json.loads(request_json)
+    text = request["Content"]
+    source = request["Id"]
 
+    return openai_props, vector_db_props, text, source        
 
-def get_document_list(text, object_id_string):
-    text_list = split_text(text)
-    return [ Document(page_content=text, metadata={"source_url": "", "source": object_id_string}) for text in text_list]    
+def process_image_update_or_datele_request_params(props_json: str, request_json: str):
+    props = json.loads(props_json)
+    openai_props = OpenAIProps(props)
+    vector_db_props = openai_props.VectorDBItems[0]
+    
+    # request_jsonをdictに変換
+    request = json.loads(request_json)
+    image_url = request["image_url"]
+    source = request["Id"]
 
-def get_image_document_list(text, object_id_string):
-    text_list = split_text(text)
-    return [ Document(page_content=text, metadata={"source_url": "", "source": object_id_string}) for text in text_list]    
-
-
-def split_text(text, chunk_size=500):
-    text_list = []
-    # テキストをchunk_sizeで分割
-    for i in range(0, len(text), chunk_size):
-        text_list.append(text[i:i + chunk_size])
-    return text_list
+    return openai_props, vector_db_props, image_url, source
