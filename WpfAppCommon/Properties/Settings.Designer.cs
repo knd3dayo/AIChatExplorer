@@ -418,5 +418,17 @@ namespace WpfAppCommon.Properties {
                 this["TextWrapping"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoSummary {
+            get {
+                return ((bool)(this["AutoSummary"]));
+            }
+            set {
+                this["AutoSummary"] = value;
+            }
+        }
     }
 }

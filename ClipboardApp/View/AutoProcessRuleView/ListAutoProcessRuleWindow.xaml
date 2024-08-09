@@ -157,6 +157,7 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <!--  MonitorTargetAppNames  -->
                         <TextBlock
@@ -318,6 +319,17 @@
                             Margin="10,10,10,0"
                             Content="Embedding生成時に本文のほかに背景情報を含めます。"
                             IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
+                        <TextBlock
+                            Grid.Row="14"
+                            Grid.Column="0"
+                            Margin="10,10,10,0"
+                            Text="自動サマリー生成" />
+                        <CheckBox
+                            Grid.Row="12"
+                            Grid.Column="1"
+                            Margin="10,10,10,0"
+                            Content="コンテンツからサマリーテキストを生成します。"
+                            IsChecked="{Binding SettingUserControlViewModel.AutoSummary}" />
                     </Grid>
                     <!--  その他の設定  -->
                     <Grid Grid.Row="1">

@@ -54,6 +54,9 @@ namespace WpfAppCommon.Model {
         // 背景情報
         public string BackgroundInfo { get; set; } = "";
 
+        // サマリー
+        public string Summary { get; set; } = "";
+
         //　画像イメージのObjectId
         public List<LiteDB.ObjectId> ImageObjectIds { get; set; } = [];
 
@@ -168,6 +171,10 @@ namespace WpfAppCommon.Model {
             newItem.SourceApplicationPath = SourceApplicationPath;
             newItem.Tags = new HashSet<string>(Tags);
             newItem.Description = Description;
+            // 背景情報
+            newItem.BackgroundInfo = BackgroundInfo;
+            // サマリー
+            newItem.Summary = Summary;
 
             //-- 画像がある場合はコピー
             foreach (var imageObjectId in ImageObjectIds) {
@@ -234,18 +241,7 @@ namespace WpfAppCommon.Model {
                 return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
-        public string ContentSummary {
-            get {
-                if (Content == null) {
-                    return "";
-                }
-                if (Content.Length > 50) {
-                    return Content[..50] + "...";
-                } else {
-                    return Content;
-                }
-            }
-        }
+
         public string ContentTypeString {
             get {
                 if (ContentType == ClipboardContentTypes.Text) {
@@ -613,7 +609,33 @@ namespace WpfAppCommon.Model {
                 item.BackgroundInfo = result.Response;
             }
         }
-       
+
+        // 自動でサマリーを付与するコマンド
+        public static void CreateAutoSummary(ClipboardItem item) {
+            // LangchainChatを実行
+            string prompt = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
+            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
+            chatController.PromptTemplateText = prompt;
+            string contentText = item.Content;
+            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
+            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
+            }
+            chatController.ContentText = contentText;
+
+            // ベクトルDBの設定
+            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
+
+            chatController.VectorDBItems = [vectorDBItem];
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                item.Summary = result.Response;
+            }
+        }
+
 
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {

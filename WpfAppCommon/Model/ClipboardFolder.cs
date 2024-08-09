@@ -687,6 +687,12 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
                 ClipboardItem.CreateAutoBackgroundInfo(item);
             }
+            // サマリー
+            if (ClipboardAppConfig.AutoSummary) {
+                LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
+                ClipboardItem.CreateAutoSummary(item);
+            }
+
             return item;
         }
 

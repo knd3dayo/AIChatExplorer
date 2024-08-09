@@ -241,6 +241,21 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AutoSummary
+        public bool AutoSummary {
+            get {
+                return ClipboardAppConfig.AutoSummary;
+            }
+            set {
+                ClipboardAppConfig.AutoSummary = value;
+                OnPropertyChanged(nameof(AutoSummary));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+
         // IncludeBackgroundInfoInEmbedding
         public bool IncludeBackgroundInfoInEmbedding {
             get {

@@ -175,6 +175,16 @@ namespace ClipboardApp.ViewModel
                 }
             }
         }
+        // サマリーが空の場合はCollapsed,それ以外はVisible
+        public Visibility SummaryVisibility {
+            get {
+                if (string.IsNullOrEmpty(ClipboardItem.Summary)) {
+                    return Visibility.Collapsed;
+                } else {
+                    return Visibility.Visible;
+                }
+            }
+        }
 
         public string DescriptionText {
             get {
@@ -212,9 +222,9 @@ namespace ClipboardApp.ViewModel
                 return ClipboardItem.UpdatedAtString;
             }
         }
-        public string ContentSummary {
+        public string Summary {
             get {
-                return ClipboardItem.ContentSummary;
+                return ClipboardItem.Summary;
             }
         }
         public string ContentTypeString {
@@ -403,6 +413,18 @@ namespace ClipboardApp.ViewModel
             LogWrapper.Info("背景情報を生成しました");
 
         });
+        // サマリーを生成するコマンド
+        public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
+            LogWrapper.Info("サマリーを生成します");
+            await Task.Run(() => {
+                ClipboardItem.CreateAutoSummary(this.ClipboardItem);
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info("サマリーを生成しました");
+
+        });
+
         // ベクトル検索を実行するコマンド
         public SimpleDelegateCommand<object> VectorSearchCommand => new(async (obj) => {
             // ClipboardItemを元にベクトル検索を実行

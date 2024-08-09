@@ -88,6 +88,13 @@ namespace ClipboardApp.ViewModel {
                 generateBackgroundInfoMenuItem.CommandParameter = this;
                 menuItems.Add(generateBackgroundInfoMenuItem);
 
+                // サマリーを生成
+                MenuItem generateSummaryMenuItem = new();
+                generateSummaryMenuItem.Header = StringResources.GenerateSummary;
+                generateSummaryMenuItem.Command = MainWindowViewModel.ActiveInstance.GenerateSummaryCommand;
+                generateSummaryMenuItem.CommandParameter = this;
+                menuItems.Add(generateSummaryMenuItem);
+
                 // ベクトル検索
                 MenuItem vectorSearchMenuItem = new();
                 vectorSearchMenuItem.Header = StringResources.VectorSearch;

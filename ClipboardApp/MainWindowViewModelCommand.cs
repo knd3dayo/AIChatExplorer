@@ -545,6 +545,11 @@ namespace ClipboardApp
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
             this.SelectedItem?.GenerateBackgroundInfoCommand.Execute();
         });
+        // サマリーを生成する処理
+        public SimpleDelegateCommand<object> GenerateSummaryCommand => new((parameter) => {
+            this.SelectedItem?.GenerateSummaryCommand.Execute();
+        });
+
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {

@@ -17,6 +17,9 @@ namespace WpfAppCommon.Model {
         // 背景情報を生成
         public string GenerateBackgroundInfo { get; } = "背景情報を生成";
 
+        // サマリーを生成
+        public string GenerateSummary { get; } = "サマリーを生成";
+
         //ベクトル検索
         public string VectorSearch { get; } = "ベクトル検索";
 
@@ -253,6 +256,11 @@ namespace WpfAppCommon.Model {
         public string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
         // 背景情報追加処理が失敗しました
         public string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
+
+        // 自動サマリー作成処理を実行します
+        public string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
+        // サマリー作成処理が失敗しました
+        public string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
 
 
         // 自動イメージテキスト抽出処理を実行します
