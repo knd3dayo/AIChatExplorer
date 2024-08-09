@@ -65,6 +65,15 @@ namespace ClipboardApp.ViewModel
                 OnPropertyChanged(nameof(BackgroundInfo));
             }
         }
+        public string Summary {
+            get {
+                return ClipboardItem.Summary;
+            }
+            set {
+                ClipboardItem.Summary = value;
+                OnPropertyChanged(nameof(Summary));
+            }
+        }
 
         // Image
         public ObservableCollection<ImageSource> Images {
@@ -222,11 +231,7 @@ namespace ClipboardApp.ViewModel
                 return ClipboardItem.UpdatedAtString;
             }
         }
-        public string Summary {
-            get {
-                return ClipboardItem.Summary;
-            }
-        }
+
         public string ContentTypeString {
             get {
                 return ClipboardItem.ContentTypeString;
