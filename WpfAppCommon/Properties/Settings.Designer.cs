@@ -85,18 +85,6 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int PythonExecution {
-            get {
-                return ((int)(this["PythonExecution"]));
-            }
-            set {
-                this["PythonExecution"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Python311\\python311.dll")]
         public string PythonDllPath {
             get {
@@ -217,18 +205,6 @@ namespace WpfAppCommon.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool UseOpenAI {
-            get {
-                return ((bool)(this["UseOpenAI"]));
-            }
-            set {
-                this["UseOpenAI"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string AzureOpenAIEndpoint {
             get {
@@ -296,18 +272,6 @@ namespace WpfAppCommon.Properties {
             }
             set {
                 this["AutoCommit"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CompactViewMode {
-            get {
-                return ((bool)(this["CompactViewMode"]));
-            }
-            set {
-                this["CompactViewMode"] = value;
             }
         }
         

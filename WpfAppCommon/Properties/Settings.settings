@@ -17,9 +17,6 @@
     <Setting Name="SpacyModel" Type="System.String" Scope="User">
       <Value Profile="(Default)">ja_core_news_sm</Value>
     </Setting>
-    <Setting Name="PythonExecution" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
     <Setting Name="PythonDllPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Python311\python311.dll</Value>
     </Setting>
@@ -50,9 +47,6 @@
     <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="UseOpenAI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
@@ -70,9 +64,6 @@
     </Setting>
     <Setting Name="AutoCommit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="CompactViewMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="PreviewMode" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

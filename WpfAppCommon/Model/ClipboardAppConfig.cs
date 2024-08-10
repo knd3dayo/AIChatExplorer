@@ -48,20 +48,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // PythonExecution
-        private static int _pythonExecute = -1;
-        public static int PythonExecute {
-            get {
-                if (_pythonExecute == -1) {
-                    _pythonExecute = WpfAppCommon.Properties.Settings.Default.PythonExecution;
-                }
-                return _pythonExecute;
-            }
-            set {
-                _pythonExecute = value;
-                WpfAppCommon.Properties.Settings.Default.PythonExecution = value;
-            }
-        }
         // PythonDllPath
         private static string? _pythonDllPath;
         public static string PythonDllPath {
@@ -74,21 +60,6 @@ namespace WpfAppCommon.Model {
             set {
                 _pythonDllPath = value;
                 WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
-            }
-        }
-
-        // UseOpenAI
-        private static Boolean? _pythonExePath;
-        public static bool UseOpenAI {
-            get {
-                if (_pythonExePath == null) {
-                    _pythonExePath = WpfAppCommon.Properties.Settings.Default.UseOpenAI;
-                }
-                return _pythonExePath.Value;
-            }
-            set {
-                _pythonExePath = value;
-                WpfAppCommon.Properties.Settings.Default.UseOpenAI = value;
             }
         }
 
@@ -207,35 +178,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // UseSpacy
-        private static Boolean? _useSpacy;
-        public static bool UseSpacy {
-            get {
-                if (_useSpacy == null) {
-                    _useSpacy = WpfAppCommon.Properties.Settings.Default.UseSpacy;
-                }
-                return _useSpacy.Value;
-            }
-            set {
-                _useSpacy = value;
-                WpfAppCommon.Properties.Settings.Default.UseSpacy = value;
-            }
-        }
-        // SpacyModel
-        private static string? _spacyModel;
-        public static string SpacyModel {
-            get {
-                if (_spacyModel == null) {
-                    _spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
-                }
-                return _spacyModel;
-            }
-            set {
-                _spacyModel = value;
-                WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
-            }
-        }
-
         // SyncClipboardItemAndOSFolder
         private static Boolean? _syncClipboardItemAndOSFolder;
         public static bool SyncClipboardItemAndOSFolder {
@@ -296,35 +238,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // AutoTag
-        private static Boolean? _autoTag;
-        public static bool AutoTag {
-            get {
-                if (_autoTag == null) {
-                    _autoTag = WpfAppCommon.Properties.Settings.Default.AutoTag;
-                }
-                return _autoTag.Value;
-            }
-            set {
-                _autoTag = value;
-                WpfAppCommon.Properties.Settings.Default.AutoTag = value;
-            }
-        }
-
-        // AutoDescription
-        private static Boolean? _autoDescription;
-        public static bool AutoDescription {
-            get {
-                if (_autoDescription == null) {
-                    _autoDescription = WpfAppCommon.Properties.Settings.Default.AutoDescription;
-                }
-                return _autoDescription.Value;
-            }
-            set {
-                _autoDescription = value;
-                WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
-            }
-        }
         // AutoBackgroundInfo
         private static Boolean? _autoBackgroundInfo;
         public static bool AutoBackgroundInfo {
@@ -457,20 +370,7 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // TesseractExePath
-        private static string? _tesseractExePath;
-        public static string TesseractExePath {
-            get {
-                if (_tesseractExePath == null) {
-                    _tesseractExePath = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
-                }
-                return _tesseractExePath;
-            }
-            set {
-                _tesseractExePath = value;
-                WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
-            }
-        }
+
 
         // TextWrapping
         private static bool _textWrapping = false;
@@ -501,21 +401,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // CompactViewMode
-        private static Boolean? _compactViewMode;
-        public static bool CompactViewMode {
-            get {
-                if (_compactViewMode == null) {
-                    _compactViewMode = WpfAppCommon.Properties.Settings.Default.CompactViewMode;
-                }
-                return _compactViewMode.Value;
-            }
-            set {
-                _compactViewMode = value;
-                WpfAppCommon.Properties.Settings.Default.CompactViewMode = value;
-            }
-        }
-
         // IgnoreLineCount
         private static int _ignoreLineCount = -1;
         public static int IgnoreLineCount {
@@ -530,6 +415,81 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.IgnoreLineCount = value;
             }
         }
+        #region 開発中機能関連の設定
+        // UseSpacy
+        private static Boolean? _useSpacy;
+        public static bool UseSpacy {
+            get {
+                if (_useSpacy == null) {
+                    _useSpacy = WpfAppCommon.Properties.Settings.Default.UseSpacy;
+                }
+                return _useSpacy.Value;
+            }
+            set {
+                _useSpacy = value;
+                WpfAppCommon.Properties.Settings.Default.UseSpacy = value;
+            }
+        }
+        // SpacyModel
+        private static string? _spacyModel;
+        public static string SpacyModel {
+            get {
+                if (_spacyModel == null) {
+                    _spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+                }
+                return _spacyModel;
+            }
+            set {
+                _spacyModel = value;
+                WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
+            }
+        }
+        // TesseractExePath
+        private static string? _tesseractExePath;
+        public static string TesseractExePath {
+            get {
+                if (_tesseractExePath == null) {
+                    _tesseractExePath = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
+                }
+                return _tesseractExePath;
+            }
+            set {
+                _tesseractExePath = value;
+                WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
+            }
+        }
+
+        // AutoTag
+        private static Boolean? _autoTag;
+        public static bool AutoTag {
+            get {
+                if (_autoTag == null) {
+                    _autoTag = WpfAppCommon.Properties.Settings.Default.AutoTag;
+                }
+                return _autoTag.Value;
+            }
+            set {
+                _autoTag = value;
+                WpfAppCommon.Properties.Settings.Default.AutoTag = value;
+            }
+        }
+
+        // AutoDescription
+        private static Boolean? _autoDescription;
+        public static bool AutoDescription {
+            get {
+                if (_autoDescription == null) {
+                    _autoDescription = WpfAppCommon.Properties.Settings.Default.AutoDescription;
+                }
+                return _autoDescription.Value;
+            }
+            set {
+                _autoDescription = value;
+                WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
+            }
+        }
+        #endregion
+
 
         public static void Save() {
             WpfAppCommon.Properties.Settings.Default.Save();
@@ -560,6 +520,7 @@ namespace WpfAppCommon.Model {
         }
 
     }
+
     public class MiscConfig {
 
         private static DateTime? _windowsNotificationLastCheckedTime;

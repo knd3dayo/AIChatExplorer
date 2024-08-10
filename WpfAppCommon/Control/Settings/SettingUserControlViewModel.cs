@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Text;
 using System.Windows;
 using PythonAILib.Model;
@@ -14,6 +13,8 @@ namespace WpfAppCommon.Control.Settings {
         // プロパティが変更されたか否か
         private bool isPropertyChanged = false;
         // MonitorTargetAppNames
+
+
         public string MonitorTargetAppNames {
             get {
                 return ClipboardAppConfig.MonitorTargetAppNames;
@@ -25,6 +26,7 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+
         // PythonDLLのパス
         public string PythonDllPath {
             get {
@@ -37,47 +39,7 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-        public bool PythonExecMode {
-            get {
-                int mode = ClipboardAppConfig.PythonExecute;
-                if (mode == 0) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-            set {
-                int mode = value ? 1 : 0;
-                ClipboardAppConfig.PythonExecute = mode;
-                OnPropertyChanged(nameof(PythonExecMode));
-                // 関連項目の表示/非表示を更新
-                OnPropertyChanged(nameof(UsePythonVisibility));
-                OnPropertyChanged(nameof(UseOpenAIVisibility));
-                OnPropertyChanged(nameof(AzureOpenAIVisibility));
-                OnPropertyChanged(nameof(UseSpacyVisibility));
-                OnPropertyChanged(nameof(AutoExtractImageWithPyOCRVisibility));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // OpenAIを使用するかどうか
-        public bool UseOpenAI {
-            get {
-                return ClipboardAppConfig.UseOpenAI;
-            }
-            set {
-                ClipboardAppConfig.UseOpenAI = value;
-                OnPropertyChanged(nameof(UseOpenAI));
-                // 関連項目の表示/非表示を更新
-                OnPropertyChanged(nameof(UseOpenAIVisibility));
-                OnPropertyChanged(nameof(AzureOpenAIVisibility));
-                OnPropertyChanged(nameof(UseSpacyVisibility));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // Azure OpenAIを使用するかどうか
         public bool AzureOpenAI {
             get {
@@ -85,10 +47,6 @@ namespace WpfAppCommon.Control.Settings {
             }
             set {
                 ClipboardAppConfig.AzureOpenAI = value;
-                OnPropertyChanged(nameof(AzureOpenAI));
-                // 関連項目の表示/非表示を更新
-                OnPropertyChanged(nameof(AzureOpenAIVisibility));
-
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
             }
@@ -172,48 +130,6 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-        // TesseractExePath
-        public string TesseractExePath {
-            get {
-                return ClipboardAppConfig.TesseractExePath;
-            }
-            set {
-                ClipboardAppConfig.TesseractExePath = value;
-                OnPropertyChanged(nameof(TesseractExePath));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
-        // UseSpacy
-        public bool UseSpacy {
-            get {
-                return ClipboardAppConfig.UseSpacy;
-            }
-            set {
-                ClipboardAppConfig.UseSpacy = value;
-                OnPropertyChanged(nameof(UseSpacy));
-                // 関連項目の表示/非表示を更新
-                OnPropertyChanged(nameof(UseSpacyVisibility));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // SpacyModel
-        public string SpacyModel {
-            get {
-                return ClipboardAppConfig.SpacyModel;
-            }
-            set {
-                ClipboardAppConfig.SpacyModel = value;
-                OnPropertyChanged(nameof(SpacyModel));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
 
         // AutoMergeItemsBySourceApplicationTitle
         public bool AutoMergeItemsBySourceApplicationTitle {
@@ -254,7 +170,6 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-
 
         // IncludeBackgroundInfoInEmbedding
         public bool IncludeBackgroundInfoInEmbedding {
@@ -326,38 +241,13 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-        // AutoTag
-        public bool AutoTag {
-            get {
-                return ClipboardAppConfig.AutoTag;
-            }
-            set {
-                ClipboardAppConfig.AutoTag = value;
-                OnPropertyChanged(nameof(AutoTag));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoDescriptionNone
         public bool AutoDescriptionNone {
             get {
                 return AutoDescription == false && AutoDescriptionWithOpenAI == false;
             }
         }
-        // AutoDescription
-        public bool AutoDescription {
-            get {
-                return ClipboardAppConfig.AutoDescription;
-            }
-            set {
-                ClipboardAppConfig.AutoDescription = value;
-                OnPropertyChanged(nameof(AutoDescription));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoDescriptionWithOpenAI
         public bool AutoDescriptionWithOpenAI {
             get {
@@ -378,19 +268,7 @@ namespace WpfAppCommon.Control.Settings {
                 return AutoExtractImageWithOpenAI == false && AutoExtractImageWithPyOCR == false;
             }
         }
-        // AutoExtractImageWithPyOCR
-        public bool AutoExtractImageWithPyOCR {
-            get {
-                return ClipboardAppConfig.AutoExtractImageWithPyOCR;
-            }
-            set {
-                ClipboardAppConfig.AutoExtractImageWithPyOCR = value;
-                OnPropertyChanged(nameof(AutoExtractImageWithPyOCR));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         //　AutoExtractImageWithOpenAI
         public bool AutoExtractImageWithOpenAI {
             get {
@@ -405,20 +283,6 @@ namespace WpfAppCommon.Control.Settings {
             }
         }
 
-
-        // UserMaskedDataInOpenAI
-        public bool UserMaskedDataInOpenAI {
-            get {
-                return ClipboardAppConfig.UserMaskedDataInOpenAI;
-            }
-            set {
-                ClipboardAppConfig.UserMaskedDataInOpenAI = value;
-                OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
         public bool AutoEmbedding {
             get {
@@ -459,47 +323,7 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
-        // 表示/非表示の制御
-        // 
-        public Visibility UsePythonVisibility {
-            get {
-                if (PythonExecMode == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-        // OpenAIが有効かどうか
-        public Visibility UseOpenAIVisibility {
-            get {
-                if (UseOpenAI == true && PythonExecMode == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-        // Azure OpenAIが有効かどうか
-        public Visibility AzureOpenAIVisibility {
-            get {
-                if (AzureOpenAI == true && UseOpenAI == true && PythonExecMode == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-        // Spacyが有効かどうか
-        public Visibility UseSpacyVisibility {
-            get {
-                if (UseSpacy == true && PythonExecMode == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+
         // SyncClipboardItemAndOSFolderが有効かどうか
         public Visibility SyncClipboardItemAndOSFolderVisibility {
             get {
@@ -510,101 +334,90 @@ namespace WpfAppCommon.Control.Settings {
                 }
             }
         }
-        // AutoExtractImageWithPyOCRが有効かどうか
-        public Visibility AutoExtractImageWithPyOCRVisibility {
-            get {
-                if (AutoExtractImageWithPyOCR == true && PythonExecMode == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);
             LogWrapper.Info(message);
         }
+
         public string CheckSetting() {
             StringBuilder stringBuilder = new();
-            if (PythonExecMode == true) {
-                bool pythonOK = true;
-                Log(stringBuilder, "Pythonの設定チェック...");
+            bool pythonOK = true;
+            Log(stringBuilder, "Pythonの設定チェック...");
 
-                if (string.IsNullOrEmpty(PythonDllPath)) {
-                    Log(stringBuilder, "[NG]:PythonDLLのパスが設定されていません");
+            if (string.IsNullOrEmpty(PythonDllPath)) {
+                Log(stringBuilder, "[NG]:PythonDLLのパスが設定されていません");
+                pythonOK = false;
+            } else {
+                Log(stringBuilder, "[OK]:PythonDLLのパスが設定されています");
+                if (System.IO.File.Exists(PythonDllPath) == false) {
+                    Log(stringBuilder, "[NG]:PythonDLLのパスが存在しません");
                     pythonOK = false;
                 } else {
-                    Log(stringBuilder, "[OK]:PythonDLLのパスが設定されています");
-                    if (System.IO.File.Exists(PythonDllPath) == false) {
-                        Log(stringBuilder, "[NG]:PythonDLLのパスが存在しません");
-                        pythonOK = false;
-                    } else {
-                        Log(stringBuilder, "[OK]:PythonDLLのパスが存在します");
-                    }
-                }
-                if (pythonOK == true) {
-                    // TestPythonを実行
-                    Log(stringBuilder, "Pythonスクリプトをテスト実行...");
-                    TestResult result = TestPython();
-                    Log(stringBuilder, result.Message);
-                    // TestExtractTextを実行
-                    Log(stringBuilder, "テキスト抽出のテスト実行...");
-                    result = TestExtractText();
-                    Log(stringBuilder, result.Message);
-
-                }
-
-            }
-            if (UseOpenAI == true) {
-                bool openAIOK = true;
-                Log(stringBuilder, "OpenAIの設定チェック...");
-                if (string.IsNullOrEmpty(OpenAIKey)) {
-                    Log(stringBuilder, "[NG]:OpenAIのAPIキーが設定されていません");
-                    openAIOK = false;
-                } else {
-                    Log(stringBuilder, "[OK]:OpenAIのAPIキーが設定されています");
-                }
-                if (string.IsNullOrEmpty(OpenAICompletionModel)) {
-                    Log(stringBuilder, "[NG]:OpenAIのCompletionModelが設定されていません");
-                    openAIOK = false;
-                } else {
-                    Log(stringBuilder, "[OK]:OpenAIのCompletionModelが設定されています");
-                }
-                if (string.IsNullOrEmpty(OpenAIEmbeddingModel)) {
-                    Log(stringBuilder, "[NG]:OpenAIのEmbeddingModelが設定されていません");
-                    openAIOK = false;
-                } else {
-                    Log(stringBuilder, "[OK]:OpenAIのEmbeddingModelが設定されています");
-                }
-
-                if (AzureOpenAI == true) {
-
-                    Log(stringBuilder, "Azure OpenAIの設定チェック...");
-                    if (string.IsNullOrEmpty(AzureOpenAIEndpoint)) {
-
-                        stringBuilder.AppendLine();
-                        Log(stringBuilder, "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック");
-                        if (string.IsNullOrEmpty(OpenAICompletionBaseURL) || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL)) {
-                            Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください");
-                            openAIOK = false;
-                        }
-                    } else {
-                        if (string.IsNullOrEmpty(OpenAICompletionBaseURL) == false || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL) == false) {
-                            Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません");
-                            openAIOK = false;
-                        }
-                    }
-                }
-
-                if (openAIOK == true) {
-                    // TestOpenAIを実行
-                    Log(stringBuilder, "OpenAIのテスト実行...");
-                    TestResult result = TestOpenAI();
-                    Log(stringBuilder, result.Message);
-
+                    Log(stringBuilder, "[OK]:PythonDLLのパスが存在します");
                 }
             }
+            if (pythonOK == true) {
+                // TestPythonを実行
+                Log(stringBuilder, "Pythonスクリプトをテスト実行...");
+                TestResult result = TestPython();
+                Log(stringBuilder, result.Message);
+                // TestExtractTextを実行
+                Log(stringBuilder, "テキスト抽出のテスト実行...");
+                result = TestExtractText();
+                Log(stringBuilder, result.Message);
+
+            }
+
+            bool openAIOK = true;
+            Log(stringBuilder, "OpenAIの設定チェック...");
+            if (string.IsNullOrEmpty(OpenAIKey)) {
+                Log(stringBuilder, "[NG]:OpenAIのAPIキーが設定されていません");
+                openAIOK = false;
+            } else {
+                Log(stringBuilder, "[OK]:OpenAIのAPIキーが設定されています");
+            }
+            if (string.IsNullOrEmpty(OpenAICompletionModel)) {
+                Log(stringBuilder, "[NG]:OpenAIのCompletionModelが設定されていません");
+                openAIOK = false;
+            } else {
+                Log(stringBuilder, "[OK]:OpenAIのCompletionModelが設定されています");
+            }
+            if (string.IsNullOrEmpty(OpenAIEmbeddingModel)) {
+                Log(stringBuilder, "[NG]:OpenAIのEmbeddingModelが設定されていません");
+                openAIOK = false;
+            } else {
+                Log(stringBuilder, "[OK]:OpenAIのEmbeddingModelが設定されています");
+            }
+
+            if (AzureOpenAI == true) {
+
+                Log(stringBuilder, "Azure OpenAIの設定チェック...");
+                if (string.IsNullOrEmpty(AzureOpenAIEndpoint)) {
+
+                    stringBuilder.AppendLine();
+                    Log(stringBuilder, "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック");
+                    if (string.IsNullOrEmpty(OpenAICompletionBaseURL) || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL)) {
+                        Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください");
+                        openAIOK = false;
+                    }
+                } else {
+                    if (string.IsNullOrEmpty(OpenAICompletionBaseURL) == false || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL) == false) {
+                        Log(stringBuilder, "[NG]:Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません");
+                        openAIOK = false;
+                    }
+                }
+            }
+
+            if (openAIOK == true) {
+                // TestOpenAIを実行
+                Log(stringBuilder, "OpenAIのテスト実行...");
+                TestResult result = TestOpenAI();
+                Log(stringBuilder, result.Message);
+
+            }
+
             if (UseSpacy == true) {
                 bool spacyOK = true;
                 Log(stringBuilder, "Spacyが使用可能かチェック...");
@@ -620,7 +433,7 @@ namespace WpfAppCommon.Control.Settings {
                     Log(stringBuilder, result.Message);
 
                 }
-                
+
             }
             // AutoExtractImageWithPyOCRが有効な場合
             if (AutoExtractImageWithPyOCR == true) {
@@ -648,6 +461,7 @@ namespace WpfAppCommon.Control.Settings {
             }
             return stringBuilder.ToString();
         }
+
         private class TestResult {
             public bool Result { get; set; } = false;
             public string Message { get; set; } = "";
@@ -658,7 +472,7 @@ namespace WpfAppCommon.Control.Settings {
             PythonExecutor.Init(PythonDllPath);
             try {
                 string result = PythonExecutor.PythonFunctions.HelloWorld();
-                if ( result != "Hello World") {
+                if (result != "Hello World") {
                     testResult.Message = "[NG]:Pythonの実行に失敗しました。";
                     testResult.Result = false;
 
@@ -720,7 +534,7 @@ namespace WpfAppCommon.Control.Settings {
                 ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
                 List<ChatItem> chatItems = [];
                 // ChatItemを追加
-                ChatItem chatItem = new(ChatItem.UserRole,"Hello");
+                ChatItem chatItem = new(ChatItem.UserRole, "Hello");
                 chatItems.Add(chatItem);
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
@@ -735,33 +549,6 @@ namespace WpfAppCommon.Control.Settings {
                 }
             } catch (Exception ex) {
                 testResult.Message = "[NG]:OpenAIの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
-                testResult.Result = false;
-            }
-            return testResult;
-        }
-
-        private TestResult TestSpacy() {
-            TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath);
-            StringBuilder stringBuilder = new();
-            stringBuilder.AppendLine("def execute(input_str):");
-            stringBuilder.AppendLine("    import spacy");
-            stringBuilder.AppendLine("    nlp = spacy.load(\"" + SpacyModel  + "\")");
-            stringBuilder.AppendLine("    doc = nlp(input_str)");
-            stringBuilder.AppendLine("    return doc.text" );
-
-
-            try {
-                string resultString = PythonExecutor.PythonFunctions.RunScript(stringBuilder.ToString(), "Hello World!");
-                if (string.IsNullOrEmpty(resultString)) {
-                    testResult.Message = "[NG]:Spacyの実行に失敗しました。";
-                    testResult.Result = false;
-                } else {
-                    testResult.Message = "[OK]:Spacyの実行が可能です。";
-                    testResult.Result = true;
-                }
-            } catch (Exception ex) {
-                testResult.Message = "[NG]:Spacyの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
                 testResult.Result = false;
             }
             return testResult;
@@ -782,9 +569,7 @@ namespace WpfAppCommon.Control.Settings {
         public SimpleDelegateCommand<object> CheckCommand => new(async (parameter) => {
             // 実行するか否かメッセージダイアログを表示する、
             string message = "[OK]をクリックすると設定チェックを行います。\n";
-            if (UseOpenAI) {
-                message += "OpenAIの設定チェックの際には実際にOpenAI APIを呼び出しますのでトークンを消費します.\n";
-            }
+            message += "OpenAIの設定チェックの際には実際にOpenAI APIを呼び出しますのでトークンを消費します.\n";
             message += "実行しますか？";
 
             MessageBoxResult result = MessageBox.Show(message, "確認", MessageBoxButton.YesNo);
@@ -830,7 +615,7 @@ namespace WpfAppCommon.Control.Settings {
             window.Close();
         });
 
-       
+
 
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {

@@ -153,11 +153,11 @@
                                 Header="{Binding StringResources.Exit, Mode=OneTime}"
                                 ToolTip="{Binding StringResources.ExitToolTip, Mode=OneTime}" />
                         </MenuItem>
+                        <!--  Edit  -->
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding StringResources.Edit, Mode=OneTime}">
-                            <!--  Edit Tag  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenTagWindowCommand, Mode=OneTime}"
@@ -174,25 +174,22 @@
                                 Command="{Binding OpenListPythonScriptWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.EditPythonScript}"
-                                Visibility="{Binding UsePythonVisibility}" />
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenListPromptTemplateWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditPromptTemplate, Mode=OneTime}"
-                                Visibility="{Binding UseOpenAIVisibility}" />
+                                Header="{Binding StringResources.EditPromptTemplate, Mode=OneTime}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenRAGManagementWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditGitRagSource, Mode=OneTime}"
-                                Visibility="{Binding UseOpenAIVisibility}" />
+                                Header="{Binding StringResources.EditGitRagSource, Mode=OneTime}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenVectorDBManagementWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.EditVectorDB, Mode=OneTime}"
-                                Visibility="{Binding UseOpenAIVisibility}" />
+                                Header="{Binding StringResources.EditVectorDB, Mode=OneTime}" />
                         </MenuItem>
                         <!--  View  -->
                         <MenuItem
@@ -221,14 +218,12 @@
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenOpenAIWindowCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.OpenAIChat, Mode=OneTime}"
-                                Visibility="{Binding UseOpenAIVisibility}" />
+                                Header="{Binding StringResources.OpenAIChat, Mode=OneTime}" />
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding OpenScreenshotCheckerWindow, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.ImageChat, Mode=OneTime}"
-                                Visibility="{Binding UseOpenAIVisibility}" />
+                                Header="{Binding StringResources.ImageChat, Mode=OneTime}" />
                         </MenuItem>
 
                         <MenuItem

@@ -197,27 +197,6 @@ namespace ClipboardApp
             }
         }
 
-
-        // 表示・非表示の設定
-        /// <summary>
-        /// Pythonが有効な場合はVisible、無効な場合はCollapsed
-        /// </summary>
-        public static Visibility UsePythonVisibility {
-            get {
-                return ClipboardAppConfig.PythonExecute == 0 ? Visibility.Collapsed : Visibility.Visible;
-            }
-        }
-        /// <summary>
-        /// OpenAIが有効な場合はVisible、無効な場合はCollapsed
-        public static Visibility UseOpenAIVisibility {
-            get {
-                if (ClipboardAppConfig.UseOpenAI && ClipboardAppConfig.PythonExecute != 0) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
-
         // テキストを右端で折り返すかどうか
         public bool TextWrapping {
             get {
@@ -261,18 +240,6 @@ namespace ClipboardApp
             }
         }
 
-        public static Visibility CompactModeVisibility {
-            get {
-                return ClipboardAppConfig.CompactViewMode ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-        // ExpandModeVisibility
-        public static Visibility ExpandModeVisibility {
-            get {
-                return ClipboardAppConfig.CompactViewMode ? Visibility.Collapsed : Visibility.Visible;
-            }
-        }
-
         /// <summary>
         /// 外部からプロパティの変更を通知する
         /// </summary>
@@ -298,6 +265,26 @@ namespace ClipboardApp
 
         });
 
+
+        // 開発中の機能を有効にするかどうか
+        public bool EnableDevFeatures {
+            get {
+                return ClipboardAppConfig.EnableDevFeatures;
+            }
+            set {
+                ClipboardAppConfig.EnableDevFeatures = value;
+                // Save
+                ClipboardAppConfig.Save();
+                OnPropertyChanged(nameof(EnableDevFeatures));
+                OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
+            }
+        }
+        // 開発中機能の表示
+        public Visibility EnableDevFeaturesVisibility {
+            get {
+                return ClipboardAppConfig.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         //--------------------------------------------------------------------------------
         // コマンド

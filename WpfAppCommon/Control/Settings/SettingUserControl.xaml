@@ -67,7 +67,9 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
+
                 <!--  基本設定  -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -87,34 +89,18 @@
                         Margin="10,10,10,0"
                         Text="基本設定" />
 
-                    <!--  PythonExecution  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="Pythonの使用"
-                        Visibility="Collapsed" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        Content="Pythonを使用します。多くの機能はPythonを使用しますので、Pythonのインストールと有効化をお勧めします。"
-                        IsChecked="{Binding PythonExecMode}"
-                        Visibility="Collapsed" />
                     <!--  PythonDLLPath  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="PythonDLLのパス"
-                        Visibility="{Binding UsePythonVisibility}" />
+                        Text="PythonDLLのパス" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="Pythonインストール先のpython3**.dllを指定。例"
-                        Text="{Binding PythonDllPath}"
-                        Visibility="{Binding UsePythonVisibility}" />
+                        Text="{Binding PythonDllPath}" />
 
                     <!--  Backup Generation  -->
                     <TextBlock
@@ -154,20 +140,6 @@
                         Grid.Column="0"
                         Margin="10,10,10,0"
                         Text="OpenAI設定" />
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="OpenAIを使用する"
-                        TextWrapping="Wrap"
-                        Visibility="Collapsed" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        Content="OpenAIまたはAzure OpenAIを使用します。API Keyが必要です。"
-                        IsChecked="{Binding UseOpenAI}"
-                        Visibility="Collapsed" />
                     <!--  OpenAI  API Key  -->
                     <TextBlock
                         Grid.Row="0"
@@ -261,7 +233,7 @@
                 </Grid>
 
                 <!--  Spacy設定  -->
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" Visibility="{Binding EnableDevFeaturesVisibility}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150" />
                         <ColumnDefinition Width="260" />
@@ -289,7 +261,7 @@
                         Text="{Binding SpacyModel}" />
                 </Grid>
                 <!--  Python OCR設定  -->
-                <Grid Grid.Row="3">
+                <Grid Grid.Row="3" Visibility="{Binding EnableDevFeaturesVisibility}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="150" />
                         <ColumnDefinition Width="260" />
@@ -314,6 +286,34 @@
                         Grid.Column="2"
                         Margin="10,10,10,0"
                         Text="{Binding TesseractExePath}" />
+                </Grid>
+                <!--  その他  -->
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="260" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="10,10,10,0"
+                        Text="その他" />
+
+                    <!--  開発中機能を有効にする  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="開発中機能を有効にする" />
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        IsChecked="{Binding EnableDevFeatures}" />
                 </Grid>
             </Grid>
         </ScrollViewer>
