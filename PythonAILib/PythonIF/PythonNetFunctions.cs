@@ -420,9 +420,10 @@ namespace PythonAILib.PythonIF {
 
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat( OpenAIProperties props, ChatRequest chatController) {
+        public ChatResult OpenAIChat( ChatRequest chatRequest) {
 
-            string chat_history_json =chatController.CreateOpenAIRequestJSON();
+            string chat_history_json =chatRequest.CreateOpenAIRequestJSON();
+            OpenAIProperties props = chatRequest.OpenAIProperties;
             string propsJson = props.ToJson();
 
             LogWrapper.Info("OpenAI実行");
@@ -610,18 +611,20 @@ namespace PythonAILib.PythonIF {
             return chatResult;
 
         }
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatRequest chatController) {
+        public ChatResult LangChainChat(ChatRequest chatRequest) {
 
-            string prompt = chatController.CreatePromptText();
-            string chatHistoryJson = chatController.CreateOpenAIRequestJSON();
-
+            string prompt = chatRequest.CreatePromptText();
+            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON();
+            OpenAIProperties openAIProperties = chatRequest.OpenAIProperties;
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
             // VectorDBItemsのサイズが0の場合は例外をスロー
-            if (!openAIProperties.VectorDBItems.Any()) {
+            if (!chatRequest.VectorDBItems.Any()) {
                 throw new Exception(StringResources.VectorDBItemsEmpty);
             }
+            // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
+            openAIProperties.VectorDBItems = chatRequest.VectorDBItems;
 
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();

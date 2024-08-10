@@ -67,7 +67,9 @@
                     Margin="10,0,10,0"
                     SelectedIndex="{Binding Mode}">
                     <ComboBoxItem Content="OpenAI" />
+                    <ComboBoxItem Content="OpenAI+RAG" />
                     <ComboBoxItem Content="LangChain" />
+                    <ComboBoxItem Content="実験的機能1(文章解析+辞書生成+RAG)" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

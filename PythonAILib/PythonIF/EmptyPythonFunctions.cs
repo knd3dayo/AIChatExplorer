@@ -24,11 +24,11 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public ChatResult OpenAIChat(OpenAIProperties props,  ChatRequest chatController) {
+        public ChatResult OpenAIChat(ChatRequest chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties , ChatRequest chatController) {
+        public ChatResult LangChainChat(ChatRequest chatController) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 

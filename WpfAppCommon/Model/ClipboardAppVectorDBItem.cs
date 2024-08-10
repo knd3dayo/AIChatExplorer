@@ -122,7 +122,7 @@ namespace WpfAppCommon.Model {
                 ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
                 List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "こんにちは")];
                 chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
+                chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
                 ChatResult? result = chatController.ExecuteChat();
                 if (string.IsNullOrEmpty(result?.Response)) {
                     LogWrapper.Error("[NG]:LangChainの実行に失敗しました。");

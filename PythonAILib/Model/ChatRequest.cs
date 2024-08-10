@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -8,9 +9,13 @@ namespace PythonAILib.Model {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class ChatRequest(OpenAIProperties openAIProperties) {
+    public class ChatRequest {
 
-        public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.RAG;
+        public ChatRequest(OpenAIProperties openAIProperties) {
+            OpenAIProperties = openAIProperties;
+        }
+
+        public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
         public List<ChatItem> ChatHistory { get; set; } = [];
 
@@ -29,11 +34,18 @@ namespace PythonAILib.Model {
                 return lastAssistantChatItem;
             }
         }
+        public OpenAIProperties OpenAIProperties { get; set; }
 
         public string PromptTemplateText { get; set; } = "";
         public string ContentText { get; set; } = "";
 
         public List<string> ImageURLs = [];
+
+        // リクエスト時の調整用のパラメーター
+        public double Temperature { get; set; } = 0.5;
+        public bool JsonMode { get; set; } = false;
+        public int MaxTokens { get; set; } = 0;
+
 
         public List<string> AdditionalTextItems { get; set; } = [];
 
@@ -150,26 +162,30 @@ namespace PythonAILib.Model {
 
         }
 
-        public string CreateOpenAIRequestJSON(double temperature = 0.5, bool jsonMode = false, int maxTokens = 0) {
+        public string CreateOpenAIRequestJSON() {
             // OpenAIのAPIに送信するJSONを作成
 
             // ClipboardAppConfigの設定を取得
             // ChatModel
-            string model = openAIProperties.OpenAICompletionModel;
+            string model = OpenAIProperties.OpenAICompletionModel;
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {
                 ["model"] = model,
                 ["messages"] = CreateOpenAIMessagesList(),
-                ["temperature"] = temperature
+                ["temperature"] = Temperature
             };
             // jsonModeがTrueの場合は、response_formatを json_objectに設定する
-            if (jsonMode) {
-                dc["response_format"] = "type:json_object";
+            if (JsonMode) {
+                Dictionary<string, string> responseFormat = new() {
+                    ["type"] = "json_object"
+                };
+                dc["response_format"] = responseFormat;
+
             }
             // maxTokensが0より大きい場合は、max_tokensを設定する
-            if (maxTokens > 0) {
-                dc["max_tokens"] = maxTokens;
+            if (MaxTokens > 0) {
+                dc["max_tokens"] = MaxTokens;
             }
 
             //Encode設定
@@ -184,37 +200,205 @@ namespace PythonAILib.Model {
 
         // OpenAIChatを実行する。
         public ChatResult? ExecuteChat() {
-            string prompt = CreatePromptText();
-            // ChatModeがRAGの場合は、RAGChatを実行する。
-            if (ChatMode == OpenAIExecutionModeEnum.RAG) {
-                openAIProperties.VectorDBItems.AddRange(VectorDBItems);
-                ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(openAIProperties, this);
-                if (result == null) {
-                    return null;
-                }
-                // リクエストをChatItemsに追加
-                ChatHistory.Add(new ChatItem(ChatItem.UserRole, prompt));
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
-                return result;
-
-            }
             if (ChatMode == OpenAIExecutionModeEnum.Normal) {
-                ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(openAIProperties, this);
-                // リクエストをChatItemsに追加
-                if (result == null) {
-                    return null;
-                }
-                ChatHistory.Add(new ChatItem(ChatItem.UserRole, prompt));
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
-                return result;
+                // 通常のChatを実行する。
+                return ExecuteChatNormal();
             }
+            if (ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
+                return ExecuteChatOpenAIRAG();
+            }
+            if (ChatMode == OpenAIExecutionModeEnum.LangChain) {
+                // ChatModeがLangChainの場合は、LangChainChatを実行する。
+                return ExecuteChatLangChain();
+            }
+            if (ChatMode == OpenAIExecutionModeEnum.AnalyzeAndDictionarize) {
+                return ExecuteChatAnalyzeAndDictionarize();
+            }
+
             return null;
         }
+        private ChatResult? ExecuteChatLangChain() {
+            OpenAIProperties.VectorDBItems.AddRange(VectorDBItems);
+            ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(this);
+            if (result == null) {
+                return null;
+            }
+            // リクエストをChatItemsに追加
+            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
+            return result;
+        }
 
+        private ChatResult? ExecuteChatNormal() {
+            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            // リクエストをChatItemsに追加
+            if (result == null) {
+                return null;
+            }
+            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
+            return result;
+        }
+        private ChatResult? ExecuteChatOpenAIRAG() {
+            // ContentTextの内容をベクトル検索する。
+            StringBuilder sb = new();
+            sb.AppendLine("上記の文章の不明点については、以下の関連情報を参考にしてください");
+            sb.AppendLine("----------------------------------------------------");
+            // ベクトル検索が存在するか否かのフラグ
+            bool hasVectorSearch = false;
+            foreach (var vectorDBItem in VectorDBItems) {
+                List<VectorSearchResult> results = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, ContentText) ?? [];
+                foreach (var vectorSearchResult in results) {
+                    sb.AppendLine(vectorSearchResult.Content);
+                    hasVectorSearch = true;
+                }
+            }
+            if (hasVectorSearch) {
+                // 結果をContentTextに追加
+                ContentText += "\n" + sb.ToString();
+            }
+
+            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            // リクエストをChatItemsに追加
+            if (result == null) {
+                return null;
+            }
+            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
+            return result;
+
+        }
+        private ChatResult? ExecuteChatAnalyzeAndDictionarize() {
+            // 実験的機能1(文章解析+辞書生成+RAG)
+            // 新規のChatRequestを作成.ContentTextにはこのChatRequestのContentTextを設定する.
+            // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
+            string newRequestPrompt = "以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
+                "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
+                "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
+                "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}";
+
+            ChatRequest newRequest = new(OpenAIProperties) {
+                ContentText = ContentText,
+                PromptTemplateText = newRequestPrompt,
+                JsonMode = true,
+            };
+
+            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(newRequest);
+            // リクエストをChatItemsに追加
+            if (result == null) {
+                throw new Exception("ChatResultがnullです。");
+            }
+            // レスポンスからJsonSerializerでDictionary<string,List<Dictionary<string, object>>>を取得
+            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(result.Response);
+            if (resultDict == null) {
+                throw new Exception("ChatResultのResponseが不正です。");
+            }
+            // documents を取得
+            JsonElement? documentsObject = (JsonElement)resultDict["result"];
+            if (documentsObject == null) {
+                throw new Exception("ChatResultのResponseにresultが含まれていません。");
+            }
+            string documents = documentsObject.ToString() ?? "[]";
+            // documentsをList<Dictionary<string, object>>に変換
+            List<Dictionary<string, object>> jsonList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(documents) ?? [];
+
+            // リストの要素毎にVectorSearchを実行
+            // 結果用のStringBuilderを作成
+            StringBuilder sb = new();
+            sb.AppendLine("定義が不明な文章については、以下の説明を参考にしてください");
+            sb.AppendLine("----------------------------------------------------");
+            // ベクトル検索が存在するか否かのフラグ
+            bool hasVectorSearch = false;
+            foreach (var item in jsonList) {
+                string sentence = item["sentence"] as string ?? "";
+                if (string.IsNullOrEmpty(sentence)) {
+                    continue;
+                }
+                sb.AppendLine($"### {sentence} ###");
+                // VectorSearchを実行
+                foreach (var vectorDBItem in VectorDBItems) {
+                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, sentence) ?? [];
+                    foreach (var vectorSearchResult in vectorSearchResults) {
+                        sb.AppendLine($"{vectorSearchResult.Content}");
+                        hasVectorSearch = true;
+                    }
+                }
+            }
+            if (hasVectorSearch) {
+                // 結果を元のContentTextに追加
+                ContentText += "\n" + sb.ToString();
+            }
+            // NormalChatを実行
+            return ExecuteChatNormal();
+
+        }
+
+        public static string CreateSummary(OpenAIProperties openAIProperties, string content) {
+            ChatRequest chatController = new(openAIProperties);
+            // Normal Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatController.PromptTemplateText = "以下の文章から100～200文字程度のサマリーを生成してください。\n"; ;
+            chatController.ContentText = content;
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
+
+        // 背景情報を作成する
+        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content) {
+            ChatRequest chatController = new(openAIProperties);
+            // OpenAI+RAG Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
+            chatController.PromptTemplateText = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
+            chatController.ContentText = content;
+
+            chatController.VectorDBItems = vectorDBItems;
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
+
+        // タイトルを作成する
+        public static string CreateTitle(OpenAIProperties openAIProperties, string content) {
+            ChatRequest chatController = new(openAIProperties);
+            // Normal Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatController.PromptTemplateText = "以下の文章からタイトルを生成してください。\n";
+            chatController.ContentText = content;
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
+        // 画像からテキストを抽出する
+        public static string ExtractTextFromImage(OpenAIProperties openAIProperties, List<string> ImageBase64List) {
+            ChatRequest chatController = new(openAIProperties);
+            // Normal Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatController.PromptTemplateText = "この画像のテキストを抽出してください。\n";
+            chatController.ContentText = "";
+            chatController.ImageURLs = ImageBase64List.Select(image => ChatRequest.CreateImageURL(image)).ToList();
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
     }
 }

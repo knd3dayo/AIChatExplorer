@@ -1,6 +1,8 @@
 namespace PythonAILib.Model {
     public enum OpenAIExecutionModeEnum {
         Normal = 0,
-        RAG = 1,
+        OpenAIRAG = 1,
+        LangChain = 2,
+        AnalyzeAndDictionarize = 3,
     }
 }

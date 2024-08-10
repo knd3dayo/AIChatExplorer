@@ -692,7 +692,11 @@ namespace ClipboardApp.ViewModel {
             if (selectedIndex == 0) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.Normal;
             } else if (selectedIndex == 1) {
-                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.RAG;
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.OpenAIRAG;
+            } else if (selectedIndex == 2) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.LangChain;
+            } else if (selectedIndex == 3) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AnalyzeAndDictionarize;
             } else {
                 return;
             }

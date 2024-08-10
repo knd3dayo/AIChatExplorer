@@ -524,16 +524,13 @@ namespace WpfAppCommon.Model {
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
 
-            // ChatCommandExecuteを実行
-            string prompt = "この文章のタイトルを生成してください。\n";
-            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = prompt;
             // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
-            chatController.ContentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
-            ChatResult? result = chatController.ExecuteChat();
-            if (result != null) {
-                item.Description += result.Response;
+            string contentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
+            // ChatRequest.CreateTitleを実行
+            string result = ChatRequest.CreateTitle(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
+
+            if (string.IsNullOrEmpty(result) == false) {
+                item.Description += result;
             }
         }
         // OpenAIを使用してイメージからテキスト抽出する。
@@ -542,17 +539,9 @@ namespace WpfAppCommon.Model {
             if (item.ClipboardItemImages.Count == 0) {
                 return;
             }
-            // ChatCommandExecuteを実行
-            string prompt = "この画像のテキストを抽出してください。\n";
-            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties()) {
-                ChatMode = OpenAIExecutionModeEnum.Normal,
-                PromptTemplateText = prompt,
-            };
-            // ChatRequestにImageURLsを設定
-            chatController.ImageURLs = item.ClipboardItemImages.Select(image => ChatRequest.CreateImageURL(image.ImageBase64)).ToList();
-            ChatResult? result = chatController.ExecuteChat();
-            if (result != null) {
-                item.Content += result.Response;
+            string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), item.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
+            if (string.IsNullOrEmpty(result) == false) {
+                item.Content += result;
             }
         }
 
@@ -586,56 +575,33 @@ namespace WpfAppCommon.Model {
         }
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
-            // LangchainChatを実行
-            string prompt = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
-            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-            chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
-            chatController.PromptTemplateText = prompt;
             string contentText = item.Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
             if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
                 contentText += "\n---背景情報--\n" + item.BackgroundInfo;
             }
-            chatController.ContentText = contentText;
-
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
 
-            chatController.VectorDBItems = [vectorDBItem];
-
-            ChatResult? result = chatController.ExecuteChat();
-            if (result != null) {
-                item.BackgroundInfo = result.Response;
+            string result = ChatRequest.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem],  contentText);
+            if (string.IsNullOrEmpty(result) == false) {
+                item.BackgroundInfo = result;
             }
         }
 
         // 自動でサマリーを付与するコマンド
         public static void CreateAutoSummary(ClipboardItem item) {
-            // LangchainChatを実行
-            string prompt = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
-            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-            chatController.ChatMode = OpenAIExecutionModeEnum.RAG;
-            chatController.PromptTemplateText = prompt;
             string contentText = item.Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
             if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
                 contentText += "\n---背景情報--\n" + item.BackgroundInfo;
             }
-            chatController.ContentText = contentText;
-
-            // ベクトルDBの設定
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
-
-            chatController.VectorDBItems = [vectorDBItem];
-
-            ChatResult? result = chatController.ExecuteChat();
-            if (result != null) {
-                item.Summary = result.Response;
+            string result = ChatRequest.CreateSummary(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
+            if (string.IsNullOrEmpty(result) == false) {
+                item.Summary = result;
             }
         }
-
 
         // 自動処理でテキストを抽出」を実行するコマンド
         public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {

@@ -325,7 +325,11 @@ namespace WpfAppCommon.Control.QAChat {
         //
         public Visibility VectorDBItemVisibility {
             get {
-                return ChatController.ChatMode == OpenAIExecutionModeEnum.RAG ? Visibility.Visible : Visibility.Collapsed;
+                if (ChatController.ChatMode == OpenAIExecutionModeEnum.Normal) {
+                    return Visibility.Collapsed;
+                } else {
+                    return Visibility.Visible;
+                }
             }
         }
     }

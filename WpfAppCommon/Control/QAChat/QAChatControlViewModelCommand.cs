@@ -98,9 +98,9 @@ namespace WpfAppCommon.Control.QAChat {
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
             ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
-            // ModeがRAGの場合は、VectorDBItemを取得
+            // ModeがNormal以外の場合は、VectorDBItemを取得
             ExternalVectorDBItems = [];
-            if (ChatController.ChatMode == OpenAIExecutionModeEnum.RAG) {
+            if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
                 VectorDBItem? item = ClipboardFolder?.GetVectorDBItem();
                 if (item != null) {
                     ExternalVectorDBItems.Add(item);

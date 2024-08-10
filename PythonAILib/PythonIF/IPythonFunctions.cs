@@ -24,12 +24,12 @@ namespace PythonAILib.PythonIF {
         public HashSet<string> ExtractEntity(string SpacyModel, string text);
 
 
-        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
+        public ChatResult OpenAIChat(ChatRequest chatController);
 
 
-        public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
+        public ChatResult LangChainChat(ChatRequest chatController);
 
-
+        
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, string content);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
