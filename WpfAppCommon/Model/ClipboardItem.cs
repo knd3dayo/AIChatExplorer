@@ -551,6 +551,10 @@ namespace WpfAppCommon.Model {
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
             string contentText = item.Content;
+            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
+            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
+            }
             // ベクトル検索を実行
             List<VectorSearchResult> results = PythonExecutor.PythonFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
             return results;
