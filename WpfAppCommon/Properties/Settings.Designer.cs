@@ -430,5 +430,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoSummary"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EnableDevFeatures {
+            get {
+                return ((bool)(this["EnableDevFeatures"]));
+            }
+            set {
+                this["EnableDevFeatures"] = value;
+            }
+        }
     }
 }

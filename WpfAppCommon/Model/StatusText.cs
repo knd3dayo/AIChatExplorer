@@ -26,7 +26,6 @@ namespace WpfAppCommon.Model {
                 return statusText;
             }
         }
-        private static  StatusText CurrentStatusText = new();
 
         public static string DefaultText { get; } = "Ready";
 

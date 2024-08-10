@@ -1,11 +1,24 @@
 
 using System.IO;
-using System.Windows;
 using PythonAILib.Model;
 
 namespace WpfAppCommon.Model {
     public class ClipboardAppConfig {
 
+        // 開発中機能の有効化
+        private static Boolean? _enableDevFeatures;
+        public static bool EnableDevFeatures {
+            get {
+                if (_enableDevFeatures == null) {
+                    _enableDevFeatures = Properties.Settings.Default.EnableDevFeatures;
+                }
+                return _enableDevFeatures.Value;
+            }
+            set {
+                _enableDevFeatures = value;
+                Properties.Settings.Default.EnableDevFeatures = value;
+            }
+        }
 
         // このアプリケーションのデータ用のフォルダを取得
         public static string AppDataFolder {
