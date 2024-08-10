@@ -322,12 +322,12 @@
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
-                                Grid.Row="13"
+                                Grid.Row="14"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="自動サマリー生成" />
                             <CheckBox
-                                Grid.Row="13"
+                                Grid.Row="14"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="コンテンツからサマリーテキストを生成します。"
