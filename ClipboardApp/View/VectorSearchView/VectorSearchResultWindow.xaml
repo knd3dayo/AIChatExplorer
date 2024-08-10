@@ -45,37 +45,32 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <ListBox
+        <DataGrid
             Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            BorderThickness="1"
+            Margin="10,10,10,10"
+            AutoGenerateColumns="False"
             ItemsSource="{Binding VectorSearchResults}"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            SelectionMode="Extended"
-            VirtualizingPanel.VirtualizationMode="Recycling"
-            VirtualizingStackPanel.IsVirtualizing="True">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Content}" TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
-                        <TextBlock Text="{Binding Source}" TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
-                        <TextBlock Text="{Binding SourceUrl}" TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding Source}"
+                    Header="Source" />
+                <DataGridTextColumn
+                    Width="100"
+                    Binding="{Binding SourceUrl}"
+                    Header="SourceUrl" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Content}"
+                    Header="Content" />
+            </DataGrid.Columns>
+        </DataGrid>
         <DockPanel
             Grid.Row="2"
             Margin="10,10,10,10"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom">
-            <Button
-                Width="100"
-                Margin="10,0,10,0"
-                HorizontalAlignment="Right"
-                Command="{Binding ClearCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="クリア" />
             <Button
                 Width="100"
                 Margin="10,0,10,0"
