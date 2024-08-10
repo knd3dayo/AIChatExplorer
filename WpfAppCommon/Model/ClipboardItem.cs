@@ -551,10 +551,6 @@ namespace WpfAppCommon.Model {
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
             string contentText = item.Content;
-            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
-            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
-            }
             // ベクトル検索を実行
             List<VectorSearchResult> results = PythonExecutor.PythonFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
             return results;
@@ -576,10 +572,6 @@ namespace WpfAppCommon.Model {
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             string contentText = item.Content;
-            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
-            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
-            }
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
@@ -593,10 +585,6 @@ namespace WpfAppCommon.Model {
         // 自動でサマリーを付与するコマンド
         public static void CreateAutoSummary(ClipboardItem item) {
             string contentText = item.Content;
-            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
-            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
-            }
             string result = ChatRequest.CreateSummary(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
             if (string.IsNullOrEmpty(result) == false) {
                 item.Summary = result;
