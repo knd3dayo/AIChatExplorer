@@ -20,6 +20,10 @@ namespace WpfAppCommon.Model {
         // サマリーを生成
         public string GenerateSummary { get; } = "サマリーを生成";
 
+        // ベクトル生成
+        public string GenerateVector { get; } = "ベクトル生成";
+
+
         //ベクトル検索
         public string VectorSearch { get; } = "ベクトル検索";
 

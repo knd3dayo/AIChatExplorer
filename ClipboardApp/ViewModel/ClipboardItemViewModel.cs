@@ -429,7 +429,17 @@ namespace ClipboardApp.ViewModel
             LogWrapper.Info("サマリーを生成しました");
 
         });
+        // ベクトルを生成するコマンド
+        public SimpleDelegateCommand<object> GenerateVectorCommand => new(async (obj) => {
+            LogWrapper.Info("ベクトルを生成します");
+            await Task.Run(() => {
+                ClipboardItem.UpdateEmbedding();
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info("ベクトルを生成しました");
 
+        });
         // ベクトル検索を実行するコマンド
         public SimpleDelegateCommand<object> VectorSearchCommand => new(async (obj) => {
             // ClipboardItemを元にベクトル検索を実行

@@ -416,7 +416,7 @@ namespace WpfAppCommon.Model {
         }
 
         // Embeddingを更新する
-        private void UpdateEmbedding() {
+        public void UpdateEmbedding() {
             if (ClipboardAppConfig.AutoEmbedding) {
                 LogWrapper.Info("Embeddingを保存します");
                 // IPythonFunctions.ClipboardInfoを作成

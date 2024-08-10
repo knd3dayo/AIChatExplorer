@@ -550,6 +550,10 @@ namespace ClipboardApp
             this.SelectedItem?.GenerateSummaryCommand.Execute();
         });
 
+        // ベクトルを生成する処理 複数アイテム処理不可
+        public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
+            this.SelectedItem?.GenerateVectorCommand.Execute();
+        });
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
