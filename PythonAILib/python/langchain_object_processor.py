@@ -116,7 +116,7 @@ class LangChainObjectProcessor:
         for text in text_list:
             # doc_idを生成
             doc_id = str(uuid.uuid4())
-            document = Document(page_content=content_text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type})
+            document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type})
             document_list.append(document)
         
         return document_list
