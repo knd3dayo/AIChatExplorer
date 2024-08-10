@@ -303,11 +303,11 @@ namespace PythonAILib.Model {
             // documents を取得
             JsonElement? documentsObject = (JsonElement)resultDict["result"];
             if (documentsObject == null) {
-                throw new Exception("ChatResultのResponseにresultが含まれていません。");
+                throw new Exception("ChatResultのResponseにResultが含まれていません。");
             }
             string documents = documentsObject.ToString() ?? "[]";
             // documentsをList<Dictionary<string, object>>に変換
-            List<Dictionary<string, object>> jsonList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(documents) ?? [];
+            List<Dictionary<string, string>> jsonList = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(documents) ?? [];
 
             // リストの要素毎にVectorSearchを実行
             // 結果用のStringBuilderを作成
