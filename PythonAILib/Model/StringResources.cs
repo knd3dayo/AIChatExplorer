@@ -245,8 +245,11 @@ namespace PythonAILib.Model {
         // カスタムPythonスクリプトの、templateファイル
         public string TemplateScript { get; } = "python/script_template.py";
 
-        // クリップボードアプリ用のPythonスクリプト
-        public string WpfAppCommonUtilsScript { get; } = "python/ai_app.py";
+        // OpenAI用のPythonスクリプト
+        public string WpfAppCommonOpenAIScript { get; } = "python/ai_app.py";
+
+        // その他用のPythonスクリプト
+        public string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
 
         // テンプレートファイルが見つかりません
         public string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";

@@ -1,8 +1,6 @@
-﻿namespace PythonAILib.PythonIF {
-    public partial interface IPythonFunctions {
-        public enum VectorDBUpdateMode {
-            update,
-            delete
-        }
+namespace PythonAILib.PythonIF {
+    public enum VectorDBUpdateMode {
+        update,
+        delete
     }
 }

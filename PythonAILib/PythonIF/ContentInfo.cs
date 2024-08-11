@@ -4,28 +4,26 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace PythonAILib.PythonIF {
-    public partial interface IPythonFunctions {
-        public class ContentInfo(VectorDBUpdateMode mode, string id, string content) {
+    public class ContentInfo(VectorDBUpdateMode mode, string id, string content) {
 
-            [JsonPropertyName("id")]
-            public string Id { get; set; } = id;
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = id;
 
-            [JsonPropertyName("content")]
-            public string Content { get; set; } = content;
+        [JsonPropertyName("content")]
+        public string Content { get; set; } = content;
 
-            [JsonPropertyName("description")]
-            public string Description { get; set; } = "";
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = "";
 
-            [JsonPropertyName("mode")]
-            public VectorDBUpdateMode Mode { get; set; } = mode;
+        [JsonPropertyName("mode")]
+        public VectorDBUpdateMode Mode { get; set; } = mode;
 
-            public string ToJson() {
-                var options = new JsonSerializerOptions {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true
-                };
-                return JsonSerializer.Serialize(this, options);
-            }
+        public string ToJson() {
+            var options = new JsonSerializerOptions {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return JsonSerializer.Serialize(this, options);
         }
     }
 }

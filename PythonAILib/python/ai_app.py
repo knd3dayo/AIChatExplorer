@@ -9,20 +9,8 @@ from openai_client import OpenAIClient
 import langchain_util
 import langchain_object_processor
 
-# sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
-# see: https://github.com/huggingface/transformers/issues/24047
-if sys.stdout is None:
-    sys.stdout = open(os.devnull, "w", encoding="utf-8")
-if sys.stderr is None:
-    sys.stderr = open(os.devnull, "w", encoding="utf-8")
 
-# FaissのIndex更新後にretrieveを行うと
-# OMP: Error #15: Initializing libomp140.x86_64.dll, but found libiomp5md.dll already initialized.
-# が出力されることへの対応。
-# see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-
-import openai_client, ai_app_spacy, ai_app_pyocr
+import openai_client
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -48,16 +36,11 @@ def capture_stdout_stderr(func):
         return result, log
     return wrapper
 
+# ファイルからテキストを抽出する
 def extract_text(filename):
     import file_extractor
     return file_extractor.extract_text(filename)
 
-# spacy関連
-def mask_data(textList: list, props = {}):
-    return ai_app_spacy.mask_data(textList, props)
-
-def extract_entity(text, props = {}):
-    return ai_app_spacy.extract_entity(text, props)
 
 ########################
 # openai関連
@@ -270,26 +253,6 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-# pyocr関連
-def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
-    
-    result: str =  ai_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
-    # strout,stderrorを元に戻す
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    
-    result_dict = {"text": result, "log": buffer.getvalue()}
-    return result_dict
-
-# run_script関数
-def run_script(script, input_str):
-    exec(script, globals())
-    result = execute(input_str)
-    return result
     
 # テスト用
 def hello_world():

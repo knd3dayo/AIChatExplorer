@@ -159,7 +159,7 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="DocStore用のSQLLite3の場所"
+                    Text="DocStore用のSQLite3の場所"
                     Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
                 <TextBox
                     Grid.Row="6"

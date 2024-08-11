@@ -1,4 +1,3 @@
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -7,7 +6,6 @@ using System.Text.Unicode;
 using LibGit2Sharp;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
-using QAChat.Model;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
@@ -17,7 +15,7 @@ namespace WpfAppCommon.Model {
         Image,
         Unknown
     }
-    public class ClipboardItem {
+    public partial class ClipboardItem {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
             CreatedAt = DateTime.Now;
@@ -419,14 +417,14 @@ namespace WpfAppCommon.Model {
         public void UpdateEmbedding() {
             if (ClipboardAppConfig.AutoEmbedding) {
                 LogWrapper.Info("Embeddingを保存します");
-                // IPythonFunctions.ClipboardInfoを作成
+                // IPythonAIFunctions.ClipboardInfoを作成
                 string content = this.Content;
                 // 背景情報を含める場合
                 if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
                     content += "\n---背景情報--\n" + BackgroundInfo;
                 }
 
-                IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.update, this.Id.ToString(), content);
+                ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.update, this.Id.ToString(), content);
 
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
@@ -442,8 +440,8 @@ namespace WpfAppCommon.Model {
             Task.Run(() => {
                 LogWrapper.Info("Embeddingを削除します");
                 if (ClipboardAppConfig.AutoEmbedding) {
-                    // IPythonFunctions.ClipboardInfoを作成
-                    IPythonFunctions.ContentInfo clipboardInfo = new IPythonFunctions.ContentInfo(IPythonFunctions.VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                    // IPythonAIFunctions.ClipboardInfoを作成
+                    ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
 
                     // VectorDBItemを取得
                     VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
@@ -504,23 +502,6 @@ namespace WpfAppCommon.Model {
 
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
-
-        public static void CreateAutoTitle(ClipboardItem item) {
-            // TextとImageの場合
-            if (item.ContentType == ClipboardContentTypes.Text || item.ContentType == ClipboardContentTypes.Image) {
-                item.Description = $"{item.SourceApplicationTitle}";
-            }
-            // Fileの場合
-            else if (item.ContentType == ClipboardContentTypes.Files) {
-                item.Description = $"{item.SourceApplicationTitle}";
-                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
-                if (item.Content.Length > 20) {
-                    item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
-                } else {
-                    item.Description += " ファイル：" + item.Content;
-                }
-            }
-        }
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
 
@@ -556,23 +537,11 @@ namespace WpfAppCommon.Model {
                 contentText += "\n---背景情報--\n" + item.BackgroundInfo;
             }
             // ベクトル検索を実行
-            List<VectorSearchResult> results = PythonExecutor.PythonFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
             return results;
         }
 
 
-        // 自動でタグを付与するコマンド
-        public static void CreateAutoTags(ClipboardItem item) {
-            // PythonでItem.ContentからEntityを抽出
-            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
-            HashSet<string> entities = PythonExecutor.PythonFunctions.ExtractEntity(spacyModel, item.Content);
-            foreach (var entity in entities) {
-
-                // タグを追加
-                item.Tags.Add(entity);
-            }
-
-        }
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             string contentText = item.Content;
@@ -612,7 +581,7 @@ namespace WpfAppCommon.Model {
                     throw new ThisApplicationException("ファイルパスが取得できません");
                 }
                 try {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(path);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractText(path);
                     clipboardItem.Content += text + "\n";
 
                 } catch (UnsupportedFileTypeException) {
@@ -625,56 +594,5 @@ namespace WpfAppCommon.Model {
             return clipboardItem;
 
         }
-
-        // 自動処理でデータをマスキング」を実行するコマンド
-        public ClipboardItem MaskDataCommandExecute() {
-
-            if (this.ContentType != ClipboardContentTypes.Text) {
-                LogWrapper.Info("テキスト以外のコンテンツはマスキングできません");
-                return this;
-            }
-            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
-            string result = PythonExecutor.PythonFunctions.GetMaskedString(spacyModel, this.Content);
-            this.Content = result;
-
-            LogWrapper.Info("データをマスキングしました");
-            return this;
-        }
-
-        public static string CovertMaskedDataToOriginalData(MaskedData? maskedData, string maskedText) {
-            if (maskedData == null) {
-                return maskedText;
-            }
-            // マスキングデータをもとに戻す
-            string result = maskedText;
-            foreach (var entity in maskedData.Entities) {
-                // ステータスバーにメッセージを表示
-                LogWrapper.Info($"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n");
-                result = result.Replace(entity.After, entity.Before);
-            }
-            return result;
-        }
-
-        // 画像からイメージを抽出するコマンド
-        public static ClipboardItem ExtractTextFromImageCommandExecute(ClipboardItem clipboardItem) {
-            if (clipboardItem.ContentType != ClipboardContentTypes.Image) {
-                throw new ThisApplicationException("画像以外のコンテンツはテキストを抽出できません");
-            }
-            foreach (var imageObjectId in clipboardItem.ImageObjectIds) {
-                ClipboardItemImage? imageItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                if (imageItem == null) {
-                    throw new ThisApplicationException("画像が取得できません");
-                }
-                Image? image = imageItem.Image;
-                if (image == null) {
-                    throw new ThisApplicationException("画像が取得できません");
-                }
-                string text = PythonExecutor.PythonFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
-                clipboardItem.Content += text + "\n";
-            }
-
-            return clipboardItem;
-        }
-
     }
 }

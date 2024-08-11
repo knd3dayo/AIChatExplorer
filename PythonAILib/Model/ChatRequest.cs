@@ -220,7 +220,7 @@ namespace PythonAILib.Model {
         }
         private ChatResult? ExecuteChatLangChain() {
             OpenAIProperties.VectorDBItems.AddRange(VectorDBItems);
-            ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(this);
             if (result == null) {
                 return null;
             }
@@ -233,7 +233,7 @@ namespace PythonAILib.Model {
         }
 
         private ChatResult? ExecuteChatNormal() {
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(this);
             // リクエストをChatItemsに追加
             if (result == null) {
                 return null;
@@ -252,7 +252,7 @@ namespace PythonAILib.Model {
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
             foreach (var vectorDBItem in VectorDBItems) {
-                List<VectorSearchResult> results = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, ContentText) ?? [];
+                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, ContentText) ?? [];
                 foreach (var vectorSearchResult in results) {
                     sb.AppendLine(vectorSearchResult.Content);
                     hasVectorSearch = true;
@@ -263,7 +263,7 @@ namespace PythonAILib.Model {
                 ContentText += "\n" + sb.ToString();
             }
 
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(this);
             // リクエストをChatItemsに追加
             if (result == null) {
                 return null;
@@ -290,7 +290,7 @@ namespace PythonAILib.Model {
                 JsonMode = true,
             };
 
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(newRequest);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(newRequest);
             // リクエストをChatItemsに追加
             if (result == null) {
                 throw new Exception("ChatResultがnullです。");
@@ -324,7 +324,7 @@ namespace PythonAILib.Model {
                 sb.AppendLine($"### {sentence} ###");
                 // VectorSearchを実行
                 foreach (var vectorDBItem in VectorDBItems) {
-                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, sentence) ?? [];
+                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, sentence) ?? [];
                     foreach (var vectorSearchResult in vectorSearchResults) {
                         sb.AppendLine($"{vectorSearchResult.Content}");
                         hasVectorSearch = true;
@@ -392,7 +392,10 @@ namespace PythonAILib.Model {
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = "この画像のテキストを抽出してください。\n";
             chatController.ContentText = "";
-            chatController.ImageURLs = ImageBase64List.Select(image => ChatRequest.CreateImageURL(image)).ToList();
+            chatController.ImageURLs = ImageBase64List.Select(ChatRequest.CreateImageURL).ToList();
+            if (chatController.ImageURLs.Count == 0) {
+                return "";
+            }
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {

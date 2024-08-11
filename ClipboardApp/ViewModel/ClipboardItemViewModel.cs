@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Utils;
@@ -16,10 +15,11 @@ using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using System.Windows.Controls;
 
 namespace ClipboardApp.ViewModel
 {
-    public class ClipboardItemViewModel : ObservableObject {
+    public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
         public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) {
@@ -41,7 +41,7 @@ namespace ClipboardApp.ViewModel
 
         public ObservableCollection<MenuItem> MenuItems {
             get {
-                return FolderViewModel.ItemContextMenuItems;
+                return FolderViewModel.CreateItemContextMenuItems(this);
             }
         }
 
@@ -289,7 +289,7 @@ namespace ClipboardApp.ViewModel
         public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItem.Save);
 
         // Delete
-        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteClipboardItemCommand => new((obj) => {
+        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((obj) => {
             ClipboardItem.Delete();
         });
 
@@ -322,31 +322,6 @@ namespace ClipboardApp.ViewModel
             // 保存
             SaveClipboardItemCommand.Execute(true);
         });
-
-        // メニューの「Pythonスクリプトを実行」をクリックしたときの処理
-        public SimpleDelegateCommand<ScriptItem> MenuItemRunPythonScriptCommandExecute => new(async (scriptItem) => {
-            try {
-                MainWindowViewModel.UpdateProgressCircleVisibility(true);
-                // clipboardItemをJsonに変換
-                string input_str = Content;
-                // Pythonスクリプトを実行
-                string result = input_str;
-                await Task.Run(() => {
-                    string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, input_str);
-                    // 結果をClipboardItemに設定
-                    Content = result;
-                    // 保存
-                    SaveClipboardItemCommand.Execute(true);
-                });
-
-            } catch (ClipboardAppException e) {
-                LogWrapper.Error(e.Message);
-            } finally {
-                MainWindowViewModel.UpdateProgressCircleVisibility(false);
-            }
-
-        });
-
         // OpenAI Chatを開くコマンド
         public SimpleDelegateCommand<object> OpenOpenAIChatWindowCommand => new((parameter) => {
 
@@ -460,38 +435,6 @@ namespace ClipboardApp.ViewModel
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemImage(ClipboardItem);
         });
 
-        // 画像からテキストを抽出するコマンド
-        public SimpleDelegateCommand<object> MenuItemExtractTextFromImageCommand => new((parameter) => {
-            // 画像以外の場合はエラー
-            if (ContentType != ClipboardContentTypes.Image) {
-                // 対話処理のため、エラー時はダイアログを表示
-                LogWrapper.Error("画像以外のコンテンツはテキストを抽出できません");
-                return;
-            }
-            // OCRが使用不可の場合はエラー
-            if (!ClipboardAppConfig.AutoExtractImageWithPyOCR) {
-                LogWrapper.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
-                return;
-            }
-            try {
-                ClipboardItem.ExtractTextFromImageCommandExecute(ClipboardItem);
-                // 保存
-                ClipboardItem.Save();
-            } catch (Exception ex) {
-                LogWrapper.Error($"OCR処理が失敗しました。\n{ex.Message}");
-            }
-        });
-
-        // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
-
-            ClipboardItem.MaskDataCommandExecute();
-            // 保存
-            SaveClipboardItemCommand.Execute(true);
-
-        });
-
-
         // テキストをファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
             try {
@@ -500,6 +443,21 @@ namespace ClipboardApp.ViewModel
             } catch (ClipboardAppException e) {
                 LogWrapper.Error(e.Message);
             }
+        });
+
+        // 画像からイメージを抽出するコマンド
+        public SimpleDelegateCommand<object> ExtractTextFromImageWithOpenAICommand => new((obj) => {
+            if (ClipboardItem.ContentType != ClipboardContentTypes.Image) {
+                throw new Exception("画像以外のコンテンツはテキストを抽出できません");
+            }
+            ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
+
+        });
+        // ピン留めの切り替えコマンド
+        public SimpleDelegateCommand<object> ChangePinCommand => new((obj) => {
+            IsPinned = !IsPinned;
+            // ピン留めの時は更新日時を変更しない
+            SaveClipboardItemCommand.Execute(false);
         });
     }
 }

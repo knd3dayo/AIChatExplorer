@@ -1,10 +1,47 @@
-import sys
-from unittest import result
+import sys,io,os
 sys.path.append("python")
+from PIL import Image
+import pyocr
+from unittest import result
+import sqlite3
+from io import StringIO
+
+# sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
+# see: https://github.com/huggingface/transformers/issues/24047
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
+# FaissのIndex更新後にretrieveを行うと
+# OMP: Error #15: Initializing libomp140.x86_64.dll, but found libiomp5md.dll already initialized.
+# が出力されることへの対応。
+# see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+
+# pyocr関連
+def extract_text_from_image_impl(byte_data, tessercat_exe_path):
+    # OCRエンジンを取得
+    # pyocr.tesseract.TESSERACT_CMD = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+    pyocr.tesseract.TESSERACT_CMD = tessercat_exe_path
+    engines = pyocr.get_available_tools()
+    
+    tool = engines[0]
+
+    # langs = tool.get_available_languages()
+    # print("Available languages: %s" % ", ".join(langs))
+
+
+    txt = tool.image_to_string(
+        Image.open(io.BytesIO(byte_data)),
+        lang="jpn",
+        # builder=pyocr.builders.TextBuilder(tesseract_layout=6)
+        )
+    return txt
+
 
 nlp = None
 
-import sqlite3
 dbname = 'clipboard_pyhton.db'
 
 
@@ -160,4 +197,33 @@ def extract_entity(text, props = {}):
             result_set.add(ent.text)
 
     return result_set
+
+# 外部公開用の関数
+# spacy関連
+def mask_data(textList: list, props = {}):
+    return mask_data(textList, props)
+
+def extract_entity(text, props = {}):
+    return extract_entity(text, props)
+
+# run_script関数
+def run_script(script, input_str):
+    exec(script, globals())
+    result = execute(input_str)
+    return result
+
+# pyocr関連
+def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
+    # strout,stderrorをStringIOでキャプチャする
+    buffer = StringIO()
+    sys.stdout = buffer
+    sys.stderr = buffer
+    
+    result: str =  extract_text_from_image_impl(byte_data, tessercat_exe_path)
+    # strout,stderrorを元に戻す
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+    
+    result_dict = {"text": result, "log": buffer.getvalue()}
+    return result_dict
 

@@ -19,7 +19,7 @@ namespace ClipboardApp.ViewModel {
 
         // アイテム削除コマンド
         public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((item) => {
-            item.DeleteClipboardItemCommand.Execute();
+            item.DeleteItemCommand.Execute();
             Items.Remove(item);
 
         });
@@ -185,7 +185,7 @@ namespace ClipboardApp.ViewModel {
                         continue;
                     }
                     // item.ClipboardItemを削除
-                    item.DeleteClipboardItemCommand.Execute();
+                    item.DeleteItemCommand.Execute();
                 }
 
                 // フォルダ内のアイテムを読み込む

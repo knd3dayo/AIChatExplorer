@@ -643,7 +643,7 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractText(fileItem.FilePath);
                     item.Content += "\n" + text;
                 }
             }
@@ -654,7 +654,7 @@ namespace WpfAppCommon.Model {
                     if (imageItem.Image == null) {
                         continue;
                     }
-                    string extractImageText = PythonExecutor.PythonFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
+                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
                     item.Content += "\n" + extractImageText;
                 }
                 LogWrapper.Info(CommonStringResources.Instance.OCR);

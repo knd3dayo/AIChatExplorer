@@ -471,7 +471,7 @@ namespace WpfAppCommon.Control.Settings {
             TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
-                string result = PythonExecutor.PythonFunctions.HelloWorld();
+                string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
                     testResult.Message = "[NG]:Pythonの実行に失敗しました。";
                     testResult.Result = false;
@@ -490,7 +490,7 @@ namespace WpfAppCommon.Control.Settings {
             TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
-                string result = PythonExecutor.PythonFunctions.ExtractText("TestData/extract_test.txt");
+                string result = PythonExecutor.PythonAIFunctions.ExtractText("TestData/extract_test.txt");
                 if (result != "Hello World!") {
                     testResult.Message = "[NG]:テキストファイルからのテキスト抽出に失敗しました。";
                     testResult.Result = false;
@@ -510,7 +510,7 @@ namespace WpfAppCommon.Control.Settings {
             TestResult testResult = new();
             PythonExecutor.Init(PythonDllPath);
             try {
-                string result = PythonExecutor.PythonFunctions.ExtractTextFromImage(
+                string result = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(
                     new System.Drawing.Bitmap("TestData/extract_test.png"), TesseractExePath);
                 if (result != "Hello World!") {
                     testResult.Message = "[NG]:画像ファイルからのテキスト抽出に失敗しました。";

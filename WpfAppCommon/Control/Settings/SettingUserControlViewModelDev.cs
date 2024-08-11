@@ -147,7 +147,7 @@ namespace WpfAppCommon.Control.Settings {
 
 
             try {
-                string resultString = PythonExecutor.PythonFunctions.RunScript(stringBuilder.ToString(), "Hello World!");
+                string resultString = PythonExecutor.PythonMiscFunctions.RunScript(stringBuilder.ToString(), "Hello World!");
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = "[NG]:Spacyの実行に失敗しました。";
                     testResult.Result = false;

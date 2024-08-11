@@ -84,13 +84,20 @@
                         <!--  テキスト抽出  -->
                         <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="テキストを抽出" />
 
-                        <MenuItem Command="{Binding ItemViewModel.OpenContentAsFileCommand}" Header="テキストをファイルとして開く" />
+                        <MenuItem
+                            Command="{Binding ItemViewModel.OpenContentAsFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="テキストをファイルとして開く" />
 
-                        <MenuItem Command="{Binding ItemViewModel.MaskDataCommand}" Header="データをマスキング" />
                         <!--  画像を開く  -->
                         <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="画像を開く" />
                         <!--  画像からテキストを抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.MenuItemExtractTextFromImageCommand}" Header="画像からテキストを抽出" />
+                        <MenuItem Command="{Binding ItemViewModel.ExtractTextFromImageWithOpenAICommand}" Header="画像からテキストを抽出" />
+
+                        <MenuItem
+                            Command="{Binding ItemViewModel.MaskDataCommand}"
+                            Header="データをマスキング"
+                            Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
                     </MenuItem>
                 </Menu>
 

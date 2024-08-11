@@ -1,6 +1,5 @@
 using System.IO;
 using PythonAILib.Model;
-using WpfAppCommon.PythonIF;
 
 namespace PythonAILib.PythonIF {
     public class PythonExecutor {
@@ -11,13 +10,20 @@ namespace PythonAILib.PythonIF {
         // Template file for custom Python scripts
         public static string TemplateScript { get; } = StringResources.TemplateScript;
 
-        // Python script for clipboard app
-        public static string WpfAppCommonUtilsScript { get; } = StringResources.WpfAppCommonUtilsScript;
+        // Python script for OpenAI
+        public static string WpfAppCommonOpenAIScript { get; } = StringResources.WpfAppCommonOpenAIScript;
+        // Python script for Misc
+        public static string WpfAppCommonMiscScript { get; } = StringResources.WpfAppCommonMiscScript;
 
-        public static IPythonFunctions PythonFunctions { get; set; } = new EmptyPythonFunctions();
+
+        public static IPythonAIFunctions PythonAIFunctions { get; set; } = new EmptyPythonAIFunctions();
+
+        public static IPythonMiscFunctions PythonMiscFunctions { get; set; } = new EmptyPythonMiscFunctions();
+        // Initialize Python functions
         public static void Init(string pythonPath) {
 
-            PythonFunctions = new PythonNetFunctions(pythonPath);
+            PythonAIFunctions = new PythonNetFunctions(pythonPath);
+            PythonMiscFunctions = new PythonMiscFunctions(pythonPath);
         }
 
         // Load Python script

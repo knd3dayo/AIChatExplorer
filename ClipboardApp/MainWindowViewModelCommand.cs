@@ -198,21 +198,6 @@ namespace ClipboardApp
             ClipboardFolderViewModel.DeleteDisplayedItemCommandExecute(SelectedFolder);
         }
 
-        // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public static void DeleteSelectedItemCommandExecute(MainWindowViewModel windowViewModel) {
-            // 選択中のアイテムがない場合は処理をしない
-            if (windowViewModel.SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
-                return;
-            }
-            if (windowViewModel.SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
-                return;
-            }
-
-            DeleteSelectedItemCommandExecute(windowViewModel.SelectedFolder, windowViewModel.SelectedItems);
-        }
-
         // メニューの「設定」をクリックしたときの処理
         public static void SettingCommandExecute() {
             // UserControlの設定ウィンドウを開く
@@ -241,9 +226,7 @@ namespace ClipboardApp
             }
 
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
-                clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
-                // ピン留めの時は更新日時を変更しない
-                clipboardItemViewModel.SaveClipboardItemCommand.Execute(false);
+                clipboardItemViewModel.ChangePinCommand.Execute();
             }
 
             // フォルダ内のアイテムを再読み込み
@@ -442,30 +425,6 @@ namespace ClipboardApp
 
         }
 
-
-        /// <summary>
-        /// 選択中のアイテムを削除する処理
-        /// 削除後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="obj"></param>        
-        public static void DeleteSelectedItemCommandExecute(
-            ClipboardFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
-
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                // 選択中のアイテムを削除
-                foreach (var item in itemViewModels) {
-                    if (item is null) {
-                        continue;
-                    }
-                    item.ClipboardItem.Delete();
-                }
-                // フォルダ内のアイテムを再読み込む
-                clipboardItemFolder.LoadFolderCommand.Execute();
-                LogWrapper.Info("削除しました");
-            }
-        }
         // クリップボードアイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
@@ -513,7 +472,26 @@ namespace ClipboardApp
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand<object> DeleteSelectedItemCommand => new((parameter) => {
-            DeleteSelectedItemCommandExecute(this);
+            // 選択中のアイテムがない場合は処理をしない
+            if (SelectedItems.Count == 0) {
+                LogWrapper.Error("選択中のアイテムがない");
+                return;
+            }
+            if (SelectedFolder == null) {
+                LogWrapper.Error("選択中のフォルダがない");
+                return;
+            }
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                // 選択中のアイテムを削除
+                foreach (var item in SelectedItems) {
+                    item.DeleteItemCommand.Execute();
+                }
+                // フォルダ内のアイテムを再読み込む
+                SelectedFolder.LoadFolderCommand.Execute();
+                LogWrapper.Info("削除しました");
+            }
         });
 
 

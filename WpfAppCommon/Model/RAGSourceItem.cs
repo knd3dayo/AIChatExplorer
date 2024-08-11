@@ -261,14 +261,14 @@ namespace WpfAppCommon.Model {
             int token = 0;
             try {
                 // GitFileInfoの作成
-                IPythonFunctions.VectorDBUpdateMode mode = IPythonFunctions.VectorDBUpdateMode.update;
+                VectorDBUpdateMode mode = VectorDBUpdateMode.update;
                 if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
-                    mode = IPythonFunctions.VectorDBUpdateMode.update;
+                    mode = VectorDBUpdateMode.update;
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                    mode = IPythonFunctions.VectorDBUpdateMode.delete;
+                    mode = VectorDBUpdateMode.delete;
                 }
-                IPythonFunctions.GitFileInfo gitFileInfo = new IPythonFunctions.GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
-                PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
+                GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
+                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
