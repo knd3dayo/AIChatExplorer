@@ -320,7 +320,8 @@
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
                     PreviewModeVisibility="{Binding PreviewModeVisibility}"
-                    SelectTextCommand="{Binding SelectTextCommand}" />
+                    SelectTextCommand="{Binding SelectTextCommand}"
+                    SelectedItem="{Binding SelectedItem}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar

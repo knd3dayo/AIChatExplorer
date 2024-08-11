@@ -32,6 +32,9 @@ namespace ClipboardApp.ViewModel
             OnPropertyChanged(nameof(ThumbnailImages));
 
         }
+        // StringResources
+        public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
+
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; }
         // FolderViewModel

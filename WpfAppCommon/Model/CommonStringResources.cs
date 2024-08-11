@@ -1,7 +1,16 @@
 namespace WpfAppCommon.Model {
     public class CommonStringResources {
 
-        public static CommonStringResources Instance { get; } = new CommonStringResources();
+        private static CommonStringResources? _instance;
+        public static CommonStringResources Instance {
+            get {
+                if (_instance == null) {
+                    _instance = new CommonStringResources();
+                }
+                return _instance;
+            }
+        }
+
         public string AppName { get; } = "コピペアプリ";
         // ファイル
         public string File { get; } = "ファイル";
@@ -350,7 +359,19 @@ namespace WpfAppCommon.Model {
         // ファイルが存在しません
         public string FileNotFound { get; } = "ファイルが存在しません";
 
+        // -- ClipboardApp.MainWindowDataGrid1 --
+        // 更新日
+        public string UpdateDate { get; } = "更新日";
+        // タイトル
+        public string Title { get; } = "タイトル";
 
+        // ソースタイトル
+        public string SourceTitle { get; } = "ソースタイトル";
+        // ピン留め
+        public string Pin { get; } = "ピン留め";
+
+        // 種別
+        public string Type { get; } = "種別";
 
     }
 }
