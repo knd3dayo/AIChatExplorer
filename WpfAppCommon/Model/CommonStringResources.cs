@@ -547,7 +547,18 @@ namespace WpfAppCommon.Model {
         // システム共通設定を保存
         public string SaveSystemCommonSettings { get; } = "システム共通設定を保存";
 
+        // -- FolderEditWindow --
+        // クリップボードフォルダ編集
+        public string EditClipboardFolder { get; } = "クリップボードフォルダ編集";
 
+        // 名前
+        public string Name { get; } = "名前";
+
+        // 説明
+        public string Description { get; } = "説明";
+
+        // フォルダ選択
+        public string SelectFolder { get; } = "フォルダ選択";
     }
 }
     

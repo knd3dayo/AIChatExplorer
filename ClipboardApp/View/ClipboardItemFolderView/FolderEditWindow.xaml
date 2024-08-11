@@ -5,11 +5,10 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
-    Title="クリップボードフォルダ編集"
+    Title="{Binding StringResources.EditClipboardFolder}"
     Width="500"
     Height="300"
     mc:Ignorable="d">
@@ -76,7 +75,7 @@
                 Grid.Column="0"
                 Width="120"
                 Margin="10,10,10,10"
-                Text="名前" />
+                Text="{Binding StringResources.Name}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -87,7 +86,7 @@
                 Grid.Column="0"
                 Width="120"
                 Margin="10,10,10,10"
-                Text="説明" />
+                Text="{Binding StringResources.Description}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="1"
@@ -101,13 +100,13 @@
                     Margin="10,10,0,0"
                     Command="{Binding CreateCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
