@@ -75,28 +75,28 @@
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="ファイル">
-                        <!--  ファイルを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileCommand}" Header="ファイルを開く" />
-                        <!--  新規ファイルとして開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" Header="新規ファイルとして開く" />
-                        <!--  フォルダを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="フォルダを開く" />
-                        <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="テキストを抽出" />
-
                         <MenuItem
                             Command="{Binding ItemViewModel.OpenContentAsFileCommand}"
                             CommandParameter="{Binding ItemViewModel}"
-                            Header="テキストをファイルとして開く" />
+                            Header="{Binding StringResources.OpenTextAsFile}" />
+                        <!--  ファイルを開く  -->
+                        <MenuItem Command="{Binding ItemViewModel.OpenFileCommand}" Header="{Binding StringResources.OpenFile}" />
+                        <!--  新規ファイルとして開く  -->
+                        <MenuItem Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" Header="{Binding StringResources.OpenAsNewFile}" />
+                        <!--  フォルダを開く  -->
+                        <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder}" />
+                        <!--  テキスト抽出  -->
+                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="{Binding StringResources.ExtractText}" />
+
 
                         <!--  画像を開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="画像を開く" />
+                        <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="{Binding StringResources.OpenImage}" />
                         <!--  画像からテキストを抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextFromImageWithOpenAICommand}" Header="画像からテキストを抽出" />
+                        <MenuItem Command="{Binding ItemViewModel.ExtractTextFromImageWithOpenAICommand}" Header="{Binding StringResources.ExtractTextFromImage}" />
 
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
-                            Header="データをマスキング"
+                            Header="{Binding StringResources.MaskData}"
                             Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
                     </MenuItem>
                 </Menu>
@@ -124,7 +124,7 @@
                     Width="100"
                     Margin="10,10,10,0"
                     HorizontalContentAlignment="Center"
-                    Content="タイトル" />
+                    Content="{Binding StringResources.Title}" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -142,7 +142,7 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="ここをクリックするとタグ編集画面が開きます"
+                    materialDesign:HintAssist.Hint="{Binding StringResources.ClickHereToOpenTheTagEditScreen}"
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
                     <TextBox.InputBindings>
@@ -160,7 +160,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="テキスト">
+                    Header="{Binding StringResources.Text}">
                     <TextBox
                         Name="Editor"
                         Margin="10,3,10,3"
@@ -311,7 +311,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="ファイルパス" />
+                                Text="{Binding StringResources.FilePath}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -337,7 +337,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="フォルダ" />
+                                Text="{Binding StringResources.Folder}" />
 
                             <TextBox
                                 Grid.Row="1"
@@ -363,7 +363,7 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="ファイル名" />
+                                Text="{Binding StringResources.FileName}" />
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="1"
@@ -388,7 +388,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="フォルダ名とファイル名" />
+                                Text="{Binding StringResources.FolderNameAndFileName}" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="1"
@@ -418,7 +418,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="イメージ"
+                    Header="{Binding StringResources.Image}"
                     Visibility="{Binding ImageTabVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
@@ -437,7 +437,7 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="画像" />
+                                                <TextBlock Text="{Binding StringResources.Image}" />
                                                 <ContentControl>
                                                     <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
                                                 </ContentControl>
@@ -491,7 +491,7 @@
                         Margin="10,10,10,10"
                         Command="{Binding QAChatButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="QpenAIチャット"
+                        Content="{Binding StringResources.OpenAIChat}"
                         DockPanel.Dock="Right" />
                     <Button
                         Grid.Column="1"
@@ -500,7 +500,7 @@
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="OK"
+                        Content="{Binding StringResources.OK}"
                         DockPanel.Dock="Right" />
                     <Button
                         Grid.Column="2"
@@ -509,7 +509,7 @@
                         Margin="10,10,10,10"
                         Command="{Binding CancelButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="キャンセル"
+                        Content="{Binding StringResources.Cancel}"
                         DockPanel.Dock="Right" />
                 </Grid>
             </DockPanel>

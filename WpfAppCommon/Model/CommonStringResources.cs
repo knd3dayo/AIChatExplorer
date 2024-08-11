@@ -559,6 +559,54 @@ namespace WpfAppCommon.Model {
 
         // フォルダ選択
         public string SelectFolder { get; } = "フォルダ選択";
+
+        // -- EditItemWindow --
+        // テキストをファイルとして開く
+        public string OpenTextAsFile { get; } = "テキストをファイルとして開く";
+
+        // ファイルを開く
+        public string OpenFile { get; } = "ファイルを開く";
+
+        // 新規ファイルとして開く
+        public string OpenAsNewFile { get; } = "新規ファイルとして開く";
+
+        // フォルダを開く
+        public string OpenFolder { get; } = "フォルダを開く";
+
+        // テキストを抽出
+        public string ExtractText { get; } = "テキストを抽出";
+
+        // 画像を開く
+        public string OpenImage { get; } = "画像を開く";
+
+        // 画像からテキストを抽出
+        public string ExtractTextFromImage { get; } = "画像からテキストを抽出";
+
+        // データをマスキング
+        public string MaskData { get; } = "データをマスキング";
+
+        // ここをクリックするとタグ編集画面が開きます
+        public string ClickHereToOpenTheTagEditScreen { get; } = "ここをクリックするとタグ編集画面が開きます";
+
+        // テキスト
+        public string Text { get; } = "テキスト";
+
+        // ファイルパス
+        public string FilePath { get; } = "ファイルパス";
+
+        // フォルダ
+        public string Folder { get; } = "フォルダ";
+
+        // ファイル名
+        public string FileName { get; } = "ファイル名";
+
+        // フォルダ名とファイル名
+        public string FolderNameAndFileName { get; } = "フォルダ名とファイル名";
+
+        // イメージ
+        public string Image { get; } = "イメージ";
+
+
     }
 }
     
