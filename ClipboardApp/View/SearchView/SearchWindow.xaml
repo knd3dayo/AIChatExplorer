@@ -5,11 +5,10 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
-    Title="検索"
+    Title="{Binding StringResources.Search}"
     Width="800"
     Height="500"
     SizeToContent="Height"
@@ -74,14 +73,14 @@
             <TextBlock
                 Grid.Column="0"
                 Margin="10,10,10,0"
-                Text="名前" />
+                Text="{Binding StringResources.Name}" />
             <TextBox
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 Text="{Binding Name}" />
         </Grid>
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
-            <TextBlock Margin="10,10,10,00" Text="検索対象フォルダ" />
+            <TextBlock Margin="10,10,10,00" Text="{Binding StringResources.SearchTargetFolder}" />
             <!--  適用対象を選択するツリービューを表示するボタン  -->
             <Button
                 Margin="10,10,10,0"
@@ -113,14 +112,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="除外"
+                Content="{Binding StringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeDescription}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="説明" />
+                Text="{Binding StringResources.Description}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="2"
@@ -133,14 +132,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="除外"
+                Content="{Binding StringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeContent}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="内容" />
+                Text="{Binding StringResources.Content}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="2"
@@ -153,14 +152,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="除外"
+                Content="{Binding StringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeTags}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="タグ" />
+                Text="{Binding StringResources.Tag}" />
             <TextBox
                 Grid.Row="2"
                 Grid.Column="2"
@@ -173,14 +172,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="除外"
+                Content="{Binding StringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationName}" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="コピー元アプリ名" />
+                Text="{Binding StringResources.SourceAppName}" />
             <TextBox
                 Grid.Row="3"
                 Grid.Column="2"
@@ -193,14 +192,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="除外"
+                Content="{Binding StringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationTitle}" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="コピー元タイトル" />
+                Text="{Binding StringResources.SourceTitle}" />
             <TextBox
                 Grid.Row="4"
                 Grid.Column="2"
@@ -213,14 +212,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="有効"
+                Content="{Binding StringResources.Enable}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableStartTime}" />
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="開始日" />
+                Text="{Binding StringResources.StartDate}" />
             <DatePicker
                 Grid.Row="5"
                 Grid.Column="2"
@@ -233,14 +232,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="有効"
+                Content="{Binding StringResources.Enable}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableEndTime}" />
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="終了日" />
+                Text="{Binding StringResources.EndDate}" />
             <DatePicker
                 Grid.Row="6"
                 Grid.Column="2"
@@ -251,7 +250,7 @@
                 <!--  適用対象配下も対象にするかどうか  -->
                 <CheckBox
                     Margin="10,10,10,0"
-                    Content="適用対象配下のフォルダも対象にする"
+                    Content="{Binding StringResources.IncludeSubfolders}"
                     IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
             </DockPanel>
         </Grid>
@@ -265,7 +264,7 @@
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding ClearCommand}"
-                    Content="クリア"
+                    Content="{Binding StringResources.Clear}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
@@ -277,13 +276,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding ApplyCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

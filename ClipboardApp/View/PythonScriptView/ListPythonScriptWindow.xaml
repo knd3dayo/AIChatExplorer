@@ -75,11 +75,11 @@
                     <GridViewColumn
                         Width="160"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="名前" />
+                        Header="{Binding StringResources.Name}" />
                     <GridViewColumn
                         Width="350"
                         DisplayMemberBinding="{Binding Description}"
-                        Header="説明" />
+                        Header="{Binding StringResources.Description}" />
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
@@ -87,7 +87,7 @@
                     <MenuItem
                         Command="{Binding DeleteScriptCommand}"
                         CommandParameter="{Binding}"
-                        Header="削除" />
+                        Header="{Binding StringResources.Delete}" />
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.InputBindings>
@@ -115,12 +115,12 @@
                     Margin="10,0,0,0"
                     Command="{Binding CreateScriptItemCommand}"
                     CommandParameter=""
-                    Content="新規Pythonスクリプト" />
+                    Content="{Binding StringResources.NewPythonScript}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding EditScriptItemCommand}"
-                    Content="Pythonスクリプト編集" />
+                    Content="{Binding StringResources.EditPythonScript}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -138,7 +138,7 @@
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

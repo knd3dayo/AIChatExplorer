@@ -606,7 +606,43 @@ namespace WpfAppCommon.Model {
         // イメージ
         public string Image { get; } = "イメージ";
 
+        // -- EditPythonScriptWindow --
+        // 内容
+        public string Content { get; } = "内容";
 
+        // -- ListPythonScriptWindow --
+        // 新規Pythonスクリプト
+        public string NewPythonScript { get; } = "新規Pythonスクリプト";
+
+        // -- SearchWindow --
+        // 検索対象フォルダ
+        public string SearchTargetFolder { get; } = "検索対象フォルダ";
+
+        // 除外
+        public string Exclude { get; } = "除外";
+
+        // コピー元アプリ名
+        public string SourceAppName { get; } = "コピー元アプリ名";
+
+        // 開始日
+        public string StartDate { get; } = "開始日";
+
+        // 終了日
+        public string EndDate { get; } = "終了日";
+
+        // 適用対象配下のフォルダも対象にする
+        public string IncludeSubfolders { get; } = "適用対象配下のフォルダも対象にする";
+
+        // クリア
+        public string Clear { get; } = "クリア";
+
+        // -- TagSearchWindow
+        // タグ検索
+        public string TagSearch { get; } = "タグ検索";
+
+        // -- VectorSearchResultWindow
+        // ベクトル検索結果
+        public string VectorSearchResult { get; } = "ベクトル検索結果";
     }
 }
     

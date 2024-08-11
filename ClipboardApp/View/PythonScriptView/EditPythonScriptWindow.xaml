@@ -5,7 +5,6 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
@@ -75,7 +74,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="10,10,10,0"
-                Text="名前" />
+                Text="{Binding StringResources.Name}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -86,7 +85,7 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Margin="10,0,10,0"
-                Text="説明" />
+                Text="{Binding StringResources.Description}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="1"
@@ -97,7 +96,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Margin="10,0,10,0"
-                Text="内容" />
+                Text="{Binding StringResources.Content}" />
             <ScrollViewer
                 Grid.Row="2"
                 Grid.Column="1"
@@ -119,12 +118,12 @@
                 Margin="10,10,10,10"
                 Command="{Binding OKButtonCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="OK" />
+                Content="{Binding StringResources.OK}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding CancelButtonCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="キャンセル" />
+                Content="{Binding StringResources.Cancel}" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
     </Grid>
