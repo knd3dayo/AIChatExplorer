@@ -3,12 +3,10 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
-using PythonAILib.PythonIF;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
 using WpfAppCommon;
@@ -443,7 +441,7 @@ namespace ClipboardApp.ViewModel
             try {
                 // 選択中のアイテムを開く
                 ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(ClipboardItem);
-            } catch (ClipboardAppException e) {
+            } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }
         });

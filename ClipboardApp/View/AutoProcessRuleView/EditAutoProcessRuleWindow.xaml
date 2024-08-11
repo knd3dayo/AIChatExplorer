@@ -5,7 +5,6 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
@@ -80,7 +79,7 @@
                     Grid.Column="0"
                     Margin="10,10,10,3"
                     VerticalAlignment="Center"
-                    Content="ルール名" />
+                    Content="{Binding StringResources.RuleName}" />
                 <TextBox
                     Grid.Column="1"
                     Margin="10,10,10,3"
@@ -89,14 +88,14 @@
                 <CheckBox
                     Grid.Column="2"
                     Margin="10,10,10,3"
-                    Content="有効"
+                    Content="{Binding StringResources.Enable}"
                     IsChecked="{Binding IsAutoProcessRuleEnabled}" />
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
                 <Label
                     Width="260"
                     Margin="10,3,10,3"
-                    Content="適用対象フォルダ" />
+                    Content="{Binding StringResources.TargetFolder}" />
                 <!--  適用対象を選択するツリービューを表示するボタン  -->
                 <Button
                     Margin="10,3,10,3"
@@ -128,7 +127,7 @@
                         Grid.Row="0"
                         Width="260"
                         Margin="20,3,10,3"
-                        Content="すべてのアイテムに適用"
+                        Content="{Binding StringResources.ApplyAllItems}"
                         DockPanel.Dock="Left"
                         GroupName="AllorConditions"
                         IsChecked="{Binding IsAllItemsRuleChecked}" />
@@ -136,7 +135,7 @@
                         Grid.Row="1"
                         Width="260"
                         Margin="20,3,10,3"
-                        Content="次の条件に合致するアイテムに適用"
+                        Content="{Binding StringResources.ApplyMatchedItems}"
                         DockPanel.Dock="Left"
                         GroupName="AllorConditions"
                         IsChecked="{Binding IsNotAllItemsRuleChecked}" />
@@ -154,7 +153,7 @@
                         <Label
                             Width="260"
                             Margin="10,0,10,0"
-                            Content="アイテムの種類"
+                            Content="{Binding StringResources.ItemType}"
                             DockPanel.Dock="Left" />
                     </DockPanel>
 
@@ -162,7 +161,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="アイテムのタイプがテキストの場合"
+                            Content="{Binding StringResources.ItemTypeText}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsTextItemApplied}" />
                         <TextBox
@@ -172,7 +171,7 @@
                         <Label
                             Width="20"
                             Margin="0,0,10,3"
-                            Content="行以上"
+                            Content="{Binding StringResources.LineOrMore}"
                             DockPanel.Dock="Left" />
                         <TextBox
                             Width="50"
@@ -181,14 +180,14 @@
                         <Label
                             Width="150"
                             Margin="0,0,10,3"
-                            Content="行以下のテキスト"
+                            Content="{Binding StringResources.LineOrLess}"
                             DockPanel.Dock="Left" />
                     </DockPanel>
                     <DockPanel Grid.Row="2" HorizontalAlignment="Left">
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="アイテムのタイプがファイルの場合"
+                            Content="{Binding StringResources.ItemTypeFile}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsFileItemApplied}" />
                     </DockPanel>
@@ -196,7 +195,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="アイテムのタイプがイメージの場合"
+                            Content="{Binding StringResources.ItemTypeImage}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsImageItemApplied}" />
                     </DockPanel>
@@ -216,7 +215,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="タイトルに次の文字が含まれる場合"
+                            Content="{Binding StringResources.TitleContains}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsDescriptionRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
@@ -225,7 +224,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="本文に次の文字列が含まれる場合"
+                            Content="{Binding StringResources.BodyContains}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsContentRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
@@ -235,7 +234,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="ソースアプリの名前に次の文字列が含まれる場合"
+                            Content="{Binding StringResources.SourceAppContains}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsSourceApplicationRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
@@ -256,12 +255,12 @@
                 <Label
                     Grid.Row="0"
                     Margin="10,0,10,0"
-                    Content="実行する処理" />
+                    Content="{Binding StringResources.ExecuteProcess}" />
                 <DockPanel Grid.Row="1" Margin="0,0,0,0">
                     <RadioButton
                         Width="260"
                         Margin="10,0,10,0"
-                        Content="次の処理を実行する"
+                        Content="{Binding StringResources.ExecuteNextProcess}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsBasicProcessChecked}" />
                     <ComboBox
@@ -286,7 +285,7 @@
                     <Label
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="コピー/移動/マージ先" />
+                        Content="{Binding StringResources.CopyMoveMergeTarget}" />
                     <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"
@@ -301,7 +300,7 @@
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="Pythonスクリプトを実行する"
+                        Content="{Binding StringResources.ExecutePythonScript}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPythonScriptChecked}" />
                     <!--  Pythonスクリプト一覧画面を表示するボタン  -->
@@ -318,7 +317,7 @@
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="OpenAIのプロンプトを実行する"
+                        Content="{Binding StringResources.ExecuteOpenAI}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPromptTemplateChecked}" />
                     <!--  プロンプトテンプレート一覧画面を表示するボタン  -->
@@ -338,7 +337,7 @@
                     <Label
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="OpenAIの実行モード" />
+                        Content="{Binding StringResources.OpenAIMode}" />
                     <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
                     <ComboBox Margin="10,3,10,3" SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}">
                         <ComboBoxItem Name="Normal">通常</ComboBoxItem>
@@ -354,7 +353,7 @@
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="ベクトルDBに格納する"
+                        Content="{Binding StringResources.StoreVectorDB}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsStoreVectorDBChecked}" />
                     <!--  ベクトルDB一覧画面を表示するボタン  -->

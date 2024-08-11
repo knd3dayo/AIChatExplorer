@@ -74,7 +74,7 @@
                 Margin="10,3,10,0"
                 Padding="0"
                 FontSize="10"
-                Header="フォルダ単位">
+                Header="{Binding StringResources.FolderUnit}">
                 <!--  ルール一覧のListBox  -->
                 <ListView
                     MinHeight="300"
@@ -83,7 +83,7 @@
                     SelectedItem="{Binding SelectedAutoProcessRule}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Width="100" Header="有効">
+                            <GridViewColumn Width="100" Header="{Binding StringResources.Enable}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -94,11 +94,11 @@
                             <GridViewColumn
                                 Width="350"
                                 DisplayMemberBinding="{Binding RuleName}"
-                                Header="ルール名" />
+                                Header="{Binding StringResources.RuleName}" />
                             <GridViewColumn
                                 Width="200"
                                 DisplayMemberBinding="{Binding TargetFolder.FolderPath}"
-                                Header="適用対象フォルダ(パス)" />
+                                Header="{Binding StringResources.TargetFolderFullPath}" />
                         </GridView>
                     </ListView.View>
                     <!--  コンテキストメニュー  -->
@@ -107,13 +107,13 @@
                             <MenuItem
                                 Command="{Binding ChangePriorityCommand}"
                                 CommandParameter="up"
-                                Header="上へ" />
+                                Header="{Binding StringResources.Up}" />
                             <MenuItem
                                 Command="{Binding ChangePriorityCommand}"
                                 CommandParameter="down"
-                                Header="下へ" />
-                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
-                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
+                                Header="{Binding StringResources.Down}" />
+                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="{Binding StringResources.Edit}" />
+                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="{Binding StringResources.Delete}" />
                         </ContextMenu>
                     </ListView.ContextMenu>
                     <i:Interaction.Triggers>
@@ -167,21 +167,21 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                Text="クリップボード監視対象のソースアプリ名" />
+                                Text="{Binding StringResources.SourceApp}" />
 
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SourceAppExample}"
                                 Text="{Binding SettingUserControlViewModel.MonitorTargetAppNames}" />
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
-                                Content="指定した行数以下のテキストアイテムを無視"
+                                Content="{Binding StringResources.IgnoreTextLessOrEqualToSpecifiedLines}"
                                 IsChecked="{Binding IgnoreLineCountChecked}" />
 
                             <DockPanel
@@ -196,141 +196,142 @@
                                 <TextBlock
                                     Margin="10,0,0,0"
                                     VerticalAlignment="Center"
-                                    Text="行以下" />
+                                    Text="{Binding StringResources.LineOrLess}" />
                             </DockPanel>
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動タイトル生成" />
+                                Text="{Binding StringResources.AutoTitleGeneration}" />
                             <RadioButton
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="しない"
+                                Content="{Binding StringResources.DoNot}"
                                 GroupName="AutoDescription"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="自動的にタイトルを生成する"
+                                Content="{Binding StringResources.AutoTitleGeneration}"
                                 GroupName="AutoDescription"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoDescription}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoDescription}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <RadioButton
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIを使用して自動的にタイトルを生成する"
+                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI}"
                                 GroupName="AutoDescription"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}"
-                                Visibility="{Binding SettingUserControlViewModel.UseOpenAIVisibility}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でタグ生成する"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Text="{Binding StringResources.AutomaticallyGenerateTags}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードの内容から自動的にタグを生成します"
+                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoTag}"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でマージ" />
+                                Text="{Binding StringResources.AutomaticallyMerge}" />
                             <CheckBox
                                 Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
+                                Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoMergeItemsBySourceApplicationTitle}" />
                             <TextBlock
                                 Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でEmbedding" />
+                                Text="{Binding StringResources.AutomaticallyEmbedding}" />
                             <CheckBox
                                 Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテム保存時に自動でEmbeddingを行います"
+                                Content="{Binding StringResources.AutomaticallyEmbeddingWhenSavingClipboardItems}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
                             <TextBlock
                                 Grid.Row="8"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="ファイルから自動でテキスト抽出" />
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromFile}" />
                             <CheckBox
                                 Grid.Row="8"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います"
+                                Content="{Binding StringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock
                                 Grid.Row="9"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="画像から自動でテキスト抽出" />
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromImage}" />
                             <RadioButton
                                 Grid.Row="9"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="しない"
+                                Content="{Binding StringResources.DoNot}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="10"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="PyOCRを使用してテキスト抽出します"
+                                Content="{Binding StringResources.ExtractTextUsingPyOCR}"
                                 GroupName="AutoExtractImage"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithPyOCR}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithPyOCR}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <RadioButton
                                 Grid.Row="11"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIを使用してテキスト抽出します"
+                                Content="{Binding StringResources.ExtractTextUsingOpenAI}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="12"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動背景情報追加" />
+                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation}" />
                             <CheckBox
                                 Grid.Row="12"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="同じフォルダにあるアイテムから背景情報を生成します。"
+                                Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
                             <TextBlock
                                 Grid.Row="13"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="Embeddingに背景情報を含める" />
+                                Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding}" />
                             <CheckBox
                                 Grid.Row="13"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="Embedding対象テキストに背景情報を含めます。"
+                                Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText}"
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
                                 Grid.Row="14"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動サマリー生成" />
+                                Text="{Binding StringResources.AutomaticallyGenerateSummary}" />
                             <CheckBox
                                 Grid.Row="14"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="コンテンツからサマリーテキストを生成します。"
+                                Content="{Binding StringResources.GenerateSummaryTextFromContent}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoSummary}" />
                         </Grid>
                         <!--  その他の設定  -->
@@ -349,12 +350,12 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="クリップボードアイテムをOS上のフォルダと同期させる" />
+                                Text="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOS}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテムをOS上のフォルダと同期させます。"
+                                Content="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOSDescription}"
                                 IsChecked="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolder}" />
                             <!--  同期先のフォルダ名  -->
                             <DockPanel
@@ -365,12 +366,12 @@
                                 <Label
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
-                                    Content="同期先のフォルダ名"
+                                    Content="{Binding StringResources.SyncTargetFolderName}"
                                     Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                                 <TextBox
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
-                                    materialDesign:HintAssist.Hint="クリップボードアイテムを同期するOS上のフォルダ名を指定。"
+                                    materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems}"
                                     Text="{Binding SettingUserControlViewModel.SyncFolderName}"
                                     Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                             </DockPanel>
@@ -379,7 +380,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。"
+                                Content="{Binding StringResources.IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoCommit}"
                                 Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                         </Grid>
@@ -398,23 +399,23 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="エンティティ抽出/データマスキング"
-                                Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                                Text="{Binding StringResources.EntityExtractionDataMasking}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います"
+                                Content="{Binding StringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent}"
                                 IsChecked="{Binding SettingUserControlViewModel.UseSpacy}"
-                                Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
 
                             <CheckBox
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
+                                Content="{Binding StringResources.MaskPersonalInformationInDataSentToOpenAI}"
                                 IsChecked="{Binding SettingUserControlViewModel.UserMaskedDataInOpenAI}"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                         </Grid>
                     </Grid>
                 </ScrollViewer>
@@ -437,12 +438,12 @@
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding AddAutoProcessRuleCommand}"
-                    Content="新規自動処理ルール" />
+                    Content="{Binding StringResources.NewAutoProcessRule}" />
                 <Button
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding EditAutoProcessRuleCommand}"
-                    Content="自動処理ルール編集" />
+                    Content="{Binding StringResources.EditAutoProcessRule}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -452,14 +453,14 @@
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding SaveSystemCommonSettingCommand}"
-                    Content="システム共通設定を保存"
+                    Content="{Binding StringResources.SaveSystemCommonSettings}"
                     Visibility="{Binding SaveSystemCommonSettingButtonVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

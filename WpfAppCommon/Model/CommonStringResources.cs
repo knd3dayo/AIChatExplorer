@@ -373,6 +373,181 @@ namespace WpfAppCommon.Model {
         // 種別
         public string Type { get; } = "種別";
 
+        // -- AutoProcessRule --
+        // 自動処理ルール
+
+        // ルール名
+        public string RuleName { get; } = "ルール名";
+
+        // 有効
+        public string Enable { get; } = "有効";
+
+        // 適用対象フォルダ
+        public string TargetFolder { get; } = "適用対象フォルダ";
+
+        // すべてのアイテムに適用
+        public string ApplyAllItems { get; } = "すべてのアイテムに適用";
+
+        // 次の条件に合致するアイテムに適用
+        public string ApplyMatchedItems { get; } = "次の条件に合致するアイテムに適用";
+
+        // アイテムの種類
+        public string ItemType { get; } = "アイテムの種類";
+        // アイテムのタイプがテキストの場合
+        public string ItemTypeText { get; } = "アイテムのタイプがテキストの場合";
+        // 行以上
+        public string LineOrMore { get; } = "行以上";
+
+        // 行以下のテキスト
+        public string LineOrLess { get; } = "行以下のテキスト";
+
+        // アイテムのタイプがファイルの場合
+        public string ItemTypeFile { get; } = "アイテムのタイプがファイルの場合";
+
+        // アイテムのタイプがイメージの場合
+        public string ItemTypeImage { get; } = "アイテムのタイプがイメージの場合";
+
+        // タイトルに次の文字が含まれる場合
+        public string TitleContains { get; } = "タイトルに次の文字が含まれる場合";
+
+        // 本文に次の文字列が含まれる場合
+        public string BodyContains { get; } = "本文に次の文字列が含まれる場合";
+
+        // ソースアプリの名前に次の文字列が含まれる場合
+        public string SourceAppContains { get; } = "ソースアプリの名前に次の文字列が含まれる場合";
+
+        // 実行する処理
+        public string ExecuteProcess { get; } = "実行する処理";
+
+        // 次の処理を実行する
+        public string ExecuteNextProcess { get; } = "次の処理を実行する";
+
+        // コピー/移動/マージ先
+        public string CopyMoveMergeTarget { get; } = "コピー/移動/マージ先";
+
+        // Pythonスクリプトを実行する
+        public string ExecutePythonScript { get; } = "Pythonスクリプトを実行する";
+
+        // OpenAIのプロンプトを実行する
+        public string ExecuteOpenAI { get; } = "OpenAIのプロンプトを実行する";
+
+        // OpenAIの実行モード
+        public string OpenAIMode { get; } = "OpenAIの実行モード";
+
+        // ベクトルDBに格納する
+        public string StoreVectorDB { get; } = "ベクトルDBに格納する";
+
+        // 適用対象フォルダ(パス)
+        public string TargetFolderFullPath { get; } = "適用対象フォルダ(パス)";
+
+        // フォルダ単位
+        public string FolderUnit { get; } = "フォルダ単位";
+
+        // 上へ
+        public string Up { get; } = "上へ";
+        // 下へ
+        public string Down { get; } = "下へ";
+
+        // クリップボード監視対象のソースアプリ名
+        public string SourceApp { get; } = "クリップボード監視対象のソースアプリ名";
+
+        // 監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe
+        public string SourceAppExample { get; } = "監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe";
+
+        // 指定した行数以下のテキストアイテムを無視
+       public string IgnoreTextLessOrEqualToSpecifiedLines { get; } = "指定した行数以下のテキストアイテムを無視";
+
+        // 自動タイトル生成
+        public string AutoTitleGeneration { get; } = "自動タイトル生成";
+
+        // しない
+        public string DoNot { get; } = "しない";
+
+        // OpenAIを使用して自動的にタイトルを生成する
+        public string AutomaticallyGenerateTitleUsingOpenAI { get; } = "OpenAIを使用して自動的にタイトルを生成する";
+
+        // 自動でタグ生成する
+        public string AutomaticallyGenerateTags { get; } = "自動でタグ生成する";
+
+        // クリップボードの内容から自動的にタグを生成します
+        public string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
+
+        // 自動でマージ
+        public string AutomaticallyMerge { get; } = "自動でマージ";
+
+        // コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします
+        public string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; } = "コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします";
+
+        // 自動でEmbedding
+        public string AutomaticallyEmbedding { get; } = "自動でEmbedding";
+
+        // クリップボードアイテム保存時に自動でEmbeddingを行います
+        public string AutomaticallyEmbeddingWhenSavingClipboardItems { get; } = "クリップボードアイテム保存時に自動でEmbeddingを行います";
+
+        // ファイルから自動でテキスト抽出
+        public string AutomaticallyExtractTextFromFile { get; } = "ファイルから自動でテキスト抽出";
+
+        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
+        public string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います";
+
+        // 画像から自動でテキスト抽出
+        public string AutomaticallyExtractTextFromImage { get; } = "画像から自動でテキスト抽出";
+
+        // PyOCRを使用してテキスト抽出します
+        public string ExtractTextUsingPyOCR { get; } = "PyOCRを使用してテキスト抽出します";
+
+        // OpenAIを使用してテキスト抽出します
+        public string ExtractTextUsingOpenAI { get; } = "OpenAIを使用してテキスト抽出します";
+
+        // 自動背景情報追加
+        public string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
+
+        // 同じフォルダにあるアイテムから背景情報を生成します。
+        public string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "同じフォルダにあるアイテムから背景情報を生成します。";
+
+        // Embeddingに背景情報を含める
+        public string IncludeBackgroundInformationInEmbedding { get; } = "Embeddingに背景情報を含める";
+
+        // Embedding対象テキストに背景情報を含めます。
+        public string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Embedding対象テキストに背景情報を含めます。";
+
+        // 自動サマリー生成
+        public string AutomaticallyGenerateSummary { get; } = "自動サマリー生成";
+
+        // コンテンツからサマリーテキストを生成します。
+        public string GenerateSummaryTextFromContent { get; } = "コンテンツからサマリーテキストを生成します。";
+
+        // クリップボードアイテムをOS上のフォルダと同期させる
+        public string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
+
+        // クリップボードアイテムをOS上のフォルダと同期させます。
+        public string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "クリップボードアイテムをOS上のフォルダと同期させます。";
+
+        // 同期先のフォルダ名
+        public string SyncTargetFolderName { get; } = "同期先のフォルダ名";
+
+        // クリップボードアイテムを同期するOS上のフォルダ名を指定。
+        public string SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems { get; } = "クリップボードアイテムを同期するOS上のフォルダ名を指定。";
+
+        // 同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。
+        public string IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated { get; } = "同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。";
+
+        // エンティティ抽出/データマスキング
+        public string EntityExtractionDataMasking { get; } = "エンティティ抽出/データマスキング";
+
+        // クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います
+        public string ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent { get; } = "クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います";
+
+        // OpenAIに送信するデータ内の個人情報などをマスキングします。
+        public string MaskPersonalInformationInDataSentToOpenAI { get; } = "OpenAIに送信するデータ内の個人情報などをマスキングします。";
+
+        // 新規自動処理ルール
+        public string NewAutoProcessRule { get; } = "新規自動処理ルール";
+
+        // システム共通設定を保存
+        public string SaveSystemCommonSettings { get; } = "システム共通設定を保存";
+
+
     }
 }
     
