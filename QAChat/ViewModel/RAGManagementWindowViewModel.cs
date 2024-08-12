@@ -111,13 +111,5 @@ namespace QAChat.ViewModel
                 }
             }
         });
-        // CancelCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) =>
-        {
-            // Windowを閉じる
-            window.Close();
-        });
-
-
     }
 }

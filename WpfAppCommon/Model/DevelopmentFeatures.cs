@@ -19,9 +19,9 @@ namespace WpfAppCommon.Model {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
-                    item.Description += " ファイル：" + item.Content[..20] + "..." + item.Content[^30..];
+                    item.Description += $" {StringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
                 } else {
-                    item.Description += " ファイル：" + item.Content;
+                    item.Description += $" {StringResources.Instance.File}:" + item.Content;
                 }
             }
         }
@@ -44,14 +44,14 @@ namespace WpfAppCommon.Model {
         public ClipboardItem MaskDataCommandExecute() {
 
             if (this.ContentType != ClipboardContentTypes.Text) {
-                LogWrapper.Info("テキスト以外のコンテンツはマスキングできません");
+                LogWrapper.Info(CommonStringResources.Instance.CannotMaskNonTextContent);
                 return this;
             }
             string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonMiscFunctions.GetMaskedString(spacyModel, this.Content);
             this.Content = result;
 
-            LogWrapper.Info("データをマスキングしました");
+            LogWrapper.Info(CommonStringResources.Instance.MaskedData);
             return this;
         }
 
@@ -63,7 +63,7 @@ namespace WpfAppCommon.Model {
             string result = maskedText;
             foreach (var entity in maskedData.Entities) {
                 // ステータスバーにメッセージを表示
-                LogWrapper.Info($"マスキングデータをもとに戻します: {entity.Before} -> {entity.After}\n");
+                LogWrapper.Info($"{CommonStringResources.Instance.RestoreMaskingData}: {entity.Before} -> {entity.After}\n");
                 result = result.Replace(entity.After, entity.Before);
             }
             return result;
@@ -72,16 +72,16 @@ namespace WpfAppCommon.Model {
         // 画像からイメージを抽出するコマンド
         public static ClipboardItem ExtractTextFromImageCommandExecute(ClipboardItem clipboardItem) {
             if (clipboardItem.ContentType != ClipboardContentTypes.Image) {
-                throw new ThisApplicationException("画像以外のコンテンツはテキストを抽出できません");
+                throw new ThisApplicationException(CommonStringResources.Instance.CannotExtractTextForNonImageContent);
             }
             foreach (var imageObjectId in clipboardItem.ImageObjectIds) {
                 ClipboardItemImage? imageItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
                 if (imageItem == null) {
-                    throw new ThisApplicationException("画像が取得できません");
+                    throw new ThisApplicationException(CommonStringResources.Instance.CannotGetImage);
                 }
                 Image? image = imageItem.Image;
                 if (image == null) {
-                    throw new ThisApplicationException("画像が取得できません");
+                    throw new ThisApplicationException(CommonStringResources.Instance.CannotGetImage);
                 }
                 string text = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                 clipboardItem.Content += text + "\n";

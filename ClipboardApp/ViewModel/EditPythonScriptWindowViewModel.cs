@@ -23,7 +23,7 @@ namespace ClipboardApp.ViewModel {
             }
             //　descriptionのチェック
             if (string.IsNullOrEmpty(ScriptItem.Description)) {
-                LogWrapper.Error("説明を入力してください");
+                LogWrapper.Error(StringResources.EnterDescription);
                 return;
 
             }

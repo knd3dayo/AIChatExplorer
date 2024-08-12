@@ -3,8 +3,7 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
 
     public class FolderSelectWindowViewModel : MyWindowViewModel {
         private static FolderSelectWindowViewModel? Instance;
@@ -49,11 +48,11 @@ namespace ClipboardApp.ViewModel
         }
         public static SimpleDelegateCommand<FolderSelectWindow> SelectFolderCommand => new((folderSelectWindow) => {
             if (Instance == null) {
-                LogWrapper.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
+                LogWrapper.Warn(CommonStringResources.Instance.FolderSelectWindowViewModelInstanceNotFound);
                 return;
             }
             if (Instance.SelectedFolder == null) {
-                LogWrapper.Warn("エラーが発生しました。選択中のフォルダがない");
+                LogWrapper.Warn(CommonStringResources.Instance.SelectedFolderNotFound);
                 return;
             }
             Instance.FolderSelectedAction?.Invoke(Instance.SelectedFolder);
@@ -64,11 +63,11 @@ namespace ClipboardApp.ViewModel
 
         public static void FolderSelectWindowSelectFolderCommandExecute(object parameter) {
             if (Instance == null) {
-                LogWrapper.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
+                LogWrapper.Warn(CommonStringResources.Instance.FolderSelectWindowViewModelInstanceNotFound);
                 return;
             }
             if (parameter is not ClipboardFolderViewModel folder) {
-                LogWrapper.Warn("エラーが発生しました。選択中のフォルダがない");
+                LogWrapper.Warn(CommonStringResources.Instance.SelectedFolderNotFound);
                 return;
             }
             folder.LoadFolderCommand.Execute();

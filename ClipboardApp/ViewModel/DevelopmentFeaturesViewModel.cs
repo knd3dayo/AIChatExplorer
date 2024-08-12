@@ -9,8 +9,6 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
-    internal class DevelopmentFeaturesViewModel {
-    }
 
     public partial class ClipboardItemViewModel {
 
@@ -54,7 +52,7 @@ namespace ClipboardApp.ViewModel {
             // 画像以外の場合はエラー
             if (ContentType != ClipboardContentTypes.Image) {
                 // 対話処理のため、エラー時はダイアログを表示
-                LogWrapper.Error("画像以外のコンテンツはテキストを抽出できません");
+                LogWrapper.Error(StringResources.CannotExtractTextForNonImageContent);
                 return;
             }
             try {
@@ -62,7 +60,7 @@ namespace ClipboardApp.ViewModel {
                 // 保存
                 ClipboardItem.Save();
             } catch (Exception ex) {
-                LogWrapper.Error($"OCR処理が失敗しました。\n{ex.Message}");
+                LogWrapper.Error($"{StringResources.OCRFailed} \n{ex.Message}");
             }
         });
 

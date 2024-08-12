@@ -1,7 +1,15 @@
 namespace PythonAILib.Model {
     public class PythonAILibStringResources {
 
-        public static PythonAILibStringResources Instance { get; } = new PythonAILibStringResources();
+        private static PythonAILibStringResources?  _Instance;
+        public static PythonAILibStringResources Instance {
+            get {
+                if (_Instance == null) {
+                    _Instance = new PythonAILibStringResources();
+    }
+                return _Instance;
+            }
+        }
 
         // --- namespace WpfAppCommon.PythonIF ---
 
@@ -99,7 +107,102 @@ namespace PythonAILib.Model {
         // ファイルが存在しません
         public string FileNotFound { get; } = "ファイルが存在しません";
 
+        // --- ChatItem.cs ---
 
+        // <参照元ドキュメントルート>
+        public string SourceDocumentRoot { get; } = "<参照元ドキュメントルート>";
+
+        // --- ChatRequest.cs ---
+        // \n---------以下は本文です------\n
+        public string ContentHeader { get; } = "\n---------以下は本文です------\n";
+
+        // \n---------以下は関連情報です------\n
+        public string SourcesHeader { get; } = "\n---------以下は関連情報です------\n";
+
+        // 画像のフォーマットが不明です。
+        public string UnknownImageFormat { get; } = "画像のフォーマットが不明です。";
+
+        // 上記の文章の不明点については、以下の関連情報を参考にしてください
+        public string UnknownContent { get; } = "上記の文章の不明点については、以下の関連情報を参考にしてください";
+
+        // 以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
+        // "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
+        // "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
+        // "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}"
+
+        public string AnalyzeAndDictionarizeRequest { get; } = "以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
+            "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
+            "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
+            "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}";
+
+        // "ChatResultがnullです。"
+        public string ChatResultNull { get; } = "ChatResultがnullです。";
+
+        // ChatResultのResponseが不正です。
+        public string ChatResultResponseInvalid { get; } = "ChatResultのResponseが不正です。";
+
+        // ChatResultのResponseにResultが含まれていません。
+        public string ChatResultResponseResultNotFound { get; } = "ChatResultのResponseにResultが含まれていません。";
+
+        // 定義が不明な文章については、以下の説明を参考にしてください
+        public string UnknownContentDescription { get; } = "定義が不明な文章については、以下の説明を参考にしてください";
+
+        // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
+        public string SummarizeRequest { get; } = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
+
+        // "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n"
+        public string BackgroundInfoRequest { get; } = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
+
+        // "以下の文章からタイトルを生成してください。\n"
+        public string TitleRequest { get; } = "以下の文章からタイトルを生成してください。\n";
+
+        // "この画像のテキストを抽出してください。\n"
+        public string ExtractTextRequest { get; } = "この画像のテキストを抽出してください。\n";
+
+        // --- VectorDBItem.cs ---
+        // "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+        public string VectorDBDescription { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+
+
+        // --- PythonNetFunctions.cs ---
+
+        // Embedding実行
+        public string EmbeddingExecute { get; } = "Embedding実行";
+
+        // プロパティ情報
+        public string PropertyInfo { get; } = "プロパティ情報";
+
+        // テキスト
+        public string Text { get; } = "テキスト";
+
+        // レスポンス
+        public string Response { get; } = "レスポンス";
+
+        // OpenAI実行
+        public string OpenAIExecute { get; } = "OpenAI実行";
+
+        // チャット履歴
+        public string ChatHistory { get; } = "チャット履歴";
+
+        // UpdateVectorDBIndex実行
+        public string UpdateVectorDBIndexExecute { get; } = "UpdateVectorDBIndex実行";
+
+        // モードが不正です
+        public string InvalidMode { get; } = "モードが不正です";
+
+        // UpdateVectorDBIndex実行
+        public string UpdateVectorDBIndex { get; } = "UpdateVectorDBIndex実行";
+
+        // LangChain実行
+        public string LangChainExecute { get; } = "LangChain実行";
+        // プロンプト
+        public string Prompt { get; } = "プロンプト";
+
+        // VectorSearch実行
+        public string VectorSearchExecute { get; } = "VectorSearch実行";
+
+        // コンテンツ
+        public string Content { get; } = "コンテンツ";
 
     }
 }

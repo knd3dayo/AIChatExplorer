@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiteDB;
 
 namespace WpfAppCommon.Model {
@@ -43,14 +38,14 @@ namespace WpfAppCommon.Model {
         // 保存
         public void Save() {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertSearchRule(this);
-        }   
+        }
 
         public List<ClipboardItem> SearchItems() {
             List<ClipboardItem> result = [];
             if (TargetFolder == null) {
                 return result;
             }
-            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder , SearchCondition).ToList();
+            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder, SearchCondition).ToList();
         }
 
         public SearchRule Copy() {

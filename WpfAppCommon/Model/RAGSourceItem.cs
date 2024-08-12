@@ -5,7 +5,6 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Factory;
 
 namespace WpfAppCommon.Model {
-
     public enum FileStatusEnum {
         Untracked,
         Modified,
@@ -107,7 +106,7 @@ namespace WpfAppCommon.Model {
                 }
                 LibGit2Sharp.Repository repo = new(path);
                 // リモートリポジトリのURLを取得
-                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception("リモートリポジトリが設定されていません");
+                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 return remoteURL.Value;
 
@@ -121,20 +120,20 @@ namespace WpfAppCommon.Model {
         public bool CheckWorkingDirectory() {
             string path = WorkingDirectory;
             if (string.IsNullOrEmpty(path)) {
-                throw new Exception("作業ディレクトリが指定されていません");
+                throw new Exception(CommonStringResources.Instance.NoWorkingDirectorySpecified);
             }
             if (!System.IO.Directory.Exists(path)) {
-                throw new Exception("指定されたディレクトリが存在しません");
+                throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryDoesNotExist);
             }
             try {
                 LibGit2Sharp.Repository repo = new(path);
                 // リモートリポジトリのURLを取得
-                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception("リモートリポジトリが設定されていません");
+                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 SourceURL = remoteURL.Value;
 
             } catch (LibGit2Sharp.RepositoryNotFoundException) {
-                throw new Exception("指定されたディレクトリはGitリポジトリではありません");
+                throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryIsNotAGitRepository);
             }
             return true;
 
@@ -256,7 +255,7 @@ namespace WpfAppCommon.Model {
         public UpdateIndexResult UpdateIndex(FileStatus fileStatus, UpdateIndexResult result) {
 
             if (VectorDBItem == null) {
-                throw new Exception("ベクトルDBが設定されていません");
+                throw new Exception(CommonStringResources.Instance.NoVectorDBSet);
             }
             int token = 0;
             try {

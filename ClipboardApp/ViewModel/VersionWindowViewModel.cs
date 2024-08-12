@@ -1,4 +1,6 @@
 
+using WpfAppCommon.Model;
+
 namespace ClipboardApp.ViewModel {
     public class VersionWindowViewModel {
 
@@ -8,7 +10,7 @@ namespace ClipboardApp.ViewModel {
 
         public string Url { get; set; }
 
-        public string Title { get; set; } = "バージョン情報";
+        public string Title { get; set; } = CommonStringResources.Instance.VersionInformation;
         public VersionWindowViewModel() {
             Version = "0.1.0";
             CopyRight = "© 2024 by knd3dayo";

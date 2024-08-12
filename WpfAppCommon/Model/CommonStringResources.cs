@@ -455,7 +455,7 @@ namespace WpfAppCommon.Model {
         public string SourceAppExample { get; } = "監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe";
 
         // 指定した行数以下のテキストアイテムを無視
-       public string IgnoreTextLessOrEqualToSpecifiedLines { get; } = "指定した行数以下のテキストアイテムを無視";
+        public string IgnoreTextLessOrEqualToSpecifiedLines { get; } = "指定した行数以下のテキストアイテムを無視";
 
         // 自動タイトル生成
         public string AutoTitleGeneration { get; } = "自動タイトル生成";
@@ -737,6 +737,317 @@ namespace WpfAppCommon.Model {
 
         // プレビュー(JSON)
         public string PreviewJSON { get; } = "プレビュー(JSON)";
+
+        // Copy
+        public string Copy { get; } = "Copy";
+
+        // --- ClipboardFolderViewModel ---
+        // 自動処理が設定されています
+        public string AutoProcessingIsSet { get; } = "自動処理が設定されています";
+
+        // 検索条件
+        public string SearchCondition { get; } = "検索条件";
+
+        // フォルダを編集しました
+        public string FolderEdited { get; } = "フォルダを編集しました";
+
+        // リロードしました
+        public string Reloaded { get; } = "リロードしました";
+
+        // フォルダを選択してください
+        public string SelectFolderPlease { get; } = "フォルダを選択してください";
+
+        // フォルダをエクスポートしました
+        public string FolderExported { get; } = "フォルダをエクスポートしました";
+
+        // フォルダをインポートしました
+        public string FolderImported { get; } = "フォルダをインポートしました";
+
+        // ルートフォルダは削除できません
+        public string RootFolderCannotBeDeleted { get; } = "ルートフォルダは削除できません";
+
+        // 確認
+        public string Confirm { get; } = "確認";
+
+        // "フォルダを削除しますか？"
+        public string ConfirmDeleteFolder { get; } = "フォルダを削除しますか？";
+
+        // "フォルダを削除しました"
+        public string FolderDeleted { get; } = "フォルダを削除しました";
+
+        // "ピン留めされたアイテム以外の表示中のアイテムを削除しますか?"
+        public string ConfirmDeleteItems { get; } = "ピン留めされたアイテム以外の表示中のアイテムを削除しますか?";
+
+        // アイテムを削除しました
+        public string DeletedItems { get; } = "アイテムを削除しました";
+
+        // "追加しました"
+        public string Added { get; } = "追加しました";
+
+        // "編集しました"
+        public string Edited { get; } = "編集しました";
+
+        // 貼り付けました
+        public string Pasted { get; } = "貼り付けました";
+
+        // "マージするアイテムを2つ選択してください"
+        public string SelectTwoItemsToMerge { get; } = "マージするアイテムを2つ選択してください";
+
+        // マージ先のアイテムが選択されていません
+        public string MergeTargetNotSelected { get; } = "マージ先のアイテムが選択されていません";
+
+        // マージ元のアイテムが選択されていません
+        public string MergeSourceNotSelected { get; } = "マージ元のアイテムが選択されていません";
+
+        // "マージしました"
+        public string Merged { get; } = "マージしました";
+
+        // エラーが発生しました。\nメッセージ
+        public string ErrorOccurredAndMessage { get; } = "エラーが発生しました。\nメッセージ";
+
+        // スタックトレース
+        public string StackTrace { get; } = "スタックトレース";
+
+        // --- ClipboardItemViewModel ---
+        // ファイル以外のコンテンツはフォルダを開けません
+        public string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";
+
+        // ファイル以外のコンテンツはテキストを抽出できません
+        public string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
+
+        // "MainWindowViewModelがNullです"
+        public string MainWindowViewModelIsNull { get; } = "MainWindowViewModelがNullです";
+
+        // 背景情報を生成します
+        public string GenerateBackgroundInformation { get; } = "背景情報を生成します";
+
+        // "背景情報を生成しました"
+        public string GeneratedBackgroundInformation { get; } = "背景情報を生成しました";
+
+        // "サマリーを生成します"
+        public string GenerateSummary2 { get; } = "サマリーを生成します";
+
+        // "サマリーを生成しました"
+        public string GeneratedSummary { get; } = "サマリーを生成しました";
+
+        // ベクトルを生成します
+        public string GenerateVector2 { get; } = "ベクトルを生成します";
+
+        // "ベクトルを生成しました"
+        public string GeneratedVector { get; } = "ベクトルを生成しました";
+
+        // 画像以外のコンテンツはテキストを抽出できません
+        public string CannotExtractTextForNonImageContent { get; } = "画像以外のコンテンツはテキストを抽出できません";
+
+        // "数値を入力してください。"
+        public string EnterANumber { get; } = "数値を入力してください。";
+
+        // フォルダが選択されていません。
+        public string FolderNotSelected { get; } = "フォルダが選択されていません。";
+
+        // ルール名を入力してください。
+        public string EnterRuleName { get; } = "ルール名を入力してください。";
+
+        // "アクションを選択してください。"
+        public string SelectAction { get; } = "アクションを選択してください。";
+
+        // "編集対象のルールが見つかりません。"
+        public string RuleNotFound { get; } = "編集対象のルールが見つかりません。";
+
+        // コピーまたは移動先のフォルダを選択してください。
+        public string SelectCopyOrMoveTargetFolder { get; } = "コピーまたは移動先のフォルダを選択してください。";
+
+        // "同じフォルダにはコピーまたは移動できません。"
+        public string CannotCopyOrMoveToTheSameFolder { get; } = "同じフォルダにはコピーまたは移動できません。";
+
+        // "コピー/移動処理の無限ループを検出しました。"
+        public string DetectedAnInfiniteLoopInCopyMoveProcessing { get; } = "コピー/移動処理の無限ループを検出しました。";
+
+        // "PromptTemplateを選択してください。"
+        public string SelectPromptTemplate { get; } = "PromptTemplateを選択してください。";
+
+        // PythonScriptを選択してください。
+        public string SelectPythonScript { get; } = "PythonScriptを選択してください。";
+
+        // "VectorDBを選択してください。"
+        public string SelectVectorDB { get; } = "VectorDBを選択してください。";
+
+        // 標準フォルダ以外にはコピーまたは移動できません。
+        public string CannotCopyOrMoveToNonStandardFolders { get; } = "標準フォルダ以外にはコピーまたは移動できません。";
+
+        // RootFolderViewModelがNullです。
+        public string RootFolderViewModelIsNull { get; } = "RootFolderViewModelがNullです。";
+
+        // --- EditPythonScriptWindowViewModel ---
+        // 説明を入力してください
+        public string EnterDescription { get; } = "説明を入力してください";
+
+        // --- FolderEditWindowViewModel ---
+        // フォルダが指定されていません
+        public string FolderNotSpecified { get; } = "フォルダが指定されていません";
+
+        // フォルダ名を入力してください
+        public string EnterFolderName { get; } = "フォルダ名を入力してください";
+
+        // --- FolderSelectWindowViewModel ---
+        // "エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない
+        public string FolderSelectWindowViewModelInstanceNotFound { get; } = "エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない";
+
+        // エラーが発生しました。選択中のフォルダがない
+        public string SelectedFolderNotFound { get; } = "エラーが発生しました。選択中のフォルダがない";
+
+        // --- ListAutoProcessRuleWindowViewModel ---
+        // 自動処理ルールが選択されていません。
+        public string AutoProcessRuleNotSelected { get; } = "自動処理ルールが選択されていません。";
+
+        // を削除しますか？
+        public string ConfirmDelete { get; } = "を削除しますか？";
+
+        // "システム共通設定を保存しました。"
+        public string SavedSystemCommonSettings { get; } = "システム共通設定を保存しました。";
+
+        // "システム共通設定の変更はありません。"
+        public string NoChangesToSystemCommonSettings { get; } = "システム共通設定の変更はありません。";
+
+        // --- ListPythonScriptWindowViewModel ---
+        // 実行
+        public string Execute { get; } = "実行";
+
+        // スクリプトを選択してください
+        public string SelectScript { get; } = "スクリプトを選択してください";
+
+        // --- SearchWindowViewModel ---
+        // 検索フォルダ
+        public string SearchFolder { get; } = "検索フォルダ";
+
+        // 標準
+        public string Standard { get; } = "標準";
+
+        // SearchConditionRuleがNullです
+        public string SearchConditionRuleIsNull { get; } = "SearchConditionRuleがNullです";
+
+        // 検索条件がありません
+        public string NoSearchConditions { get; } = "検索条件がありません";
+
+        // --- TagSearchWindowViewModel ---
+        // "タグが空です"
+        public string TagIsEmpty { get; } = "タグが空です";
+
+        // "タグが既に存在します"
+        public string TagAlreadyExists { get; } = "タグが既に存在します";
+
+        // バージョン情報
+        public string VersionInformation { get; } = "バージョン情報";
+
+        // -- ClipboardApp.MainWindowViewModel --
+        // "アプリケーションを再起動すると、表示モードが変更されます。"
+        public string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "アプリケーションを再起動すると、表示モードが変更されます。";
+        // 情報
+        public string Information { get; } = "情報";
+
+        // "終了しますか?"
+        public string ConfirmExit { get; } = "終了しますか?";
+
+        // 選択中のアイテムがない"
+        public string NoItemSelected { get; } = "選択中のアイテムがない";
+
+        // 切り取りました"
+        public string Cut { get; } = "切り取りました";
+
+        // コピーしました"
+        public string Copied { get; } = "コピーしました";
+
+        // 貼り付け先のフォルダがない
+        public string NoPasteFolder { get; } = "貼り付け先のフォルダがない";
+
+        // "コピー元のフォルダがない"
+        public string NoCopyFolder { get; } = "コピー元のフォルダがない";
+
+        // "選択中のアイテムを削除しますか?"
+        public string ConfirmDeleteSelectedItems { get; } = "選択中のアイテムを削除しますか?";
+
+        // "削除しました"
+        public string Deleted { get; } = "削除しました";
+
+        // --- ImageCHat ---
+        // 画像を確認して以下の各文が正しいか否かを教えてください\n\n
+        public string ConfirmTheFollowingSentencesAreCorrectOrNot { get; } = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
+
+        // 画像ファイルが選択されていません。
+        public string NoImageFileSelected { get; } = "画像ファイルが選択されていません。";
+
+        // プロンプトを送信します
+        public string SendPrompt { get; } = "プロンプトを送信します";
+        // 画像ファイル名
+        public string ImageFileName { get; } = "画像ファイル名";
+
+        // エラーが発生しました。
+        public string ErrorOccurred { get; } = "エラーが発生しました。";
+
+        // 画像ファイルを選択してください
+        public string SelectImageFilePlease { get; } = "画像ファイルを選択してください";
+
+        // すべてのファイル
+        public string AllFiles { get; } = "すべてのファイル";
+
+        // "ファイルが存在しません。"
+        public string FileDoesNotExist { get; } = "ファイルが存在しません。";
+
+        // -- EditPromptItemWindowViewModel --
+        // プロンプト編集
+        public string EditPrompt { get; } = "プロンプト編集";
+
+        // -- ListPromptTemplateWindow -- 
+        // 新規プロンプトテンプレート
+        public string NewPromptTemplate { get; } = "新規プロンプトテンプレート";
+
+        // RAG
+        public string RAG { get; } = "RAG";
+
+        // -- DevFeatures.cs
+        // テキスト以外のコンテンツはマスキングできません
+        public string CannotMaskNonTextContent { get; } = "テキスト以外のコンテンツはマスキングできません";
+
+        // データをマスキングしました
+        public string MaskedData { get; } = "データをマスキングしました";
+
+        // マスキングデータをもとに戻します
+        public string RestoreMaskingData { get; } = "マスキングデータをもとに戻します";
+
+        // 画像が取得できません
+        public string CannotGetImage { get; } = "画像が取得できません";
+
+        // リモートリポジトリが設定されていません
+        public string NoRemoteRepositorySet { get; } = "リモートリポジトリが設定されていません";
+
+        // 作業ディレクトリが指定されていません
+        public string NoWorkingDirectorySpecified { get; } = "作業ディレクトリが指定されていません";
+
+        // "指定されたディレクトリが存在しません"
+        public string SpecifiedDirectoryDoesNotExist { get; } = "指定されたディレクトリが存在しません";
+
+        // "指定されたディレクトリはGitリポジトリではありません"
+        public string SpecifiedDirectoryIsNotAGitRepository { get; } = "指定されたディレクトリはGitリポジトリではありません";
+
+        // "ベクトルDBが設定されていません"
+        public string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
+
+        // -- ScreenShotCheckCondition.cs --
+
+        public string CheckTypeEqual { get; } = "等しい";
+        public string CheckTypeNotEqual { get; } = "等しくない";
+        public string CheckTypeInclude { get; } = "含む";
+        public string CheckTypeNotInclude { get; } = "含まない";
+        public string CheckTypeStartWith { get; } = "開始している";
+        public string CheckTypeNotStartWith { get; } = "開始していない";
+        public string CheckTypeEndWith { get; } = "終わっている";
+        public string CheckTypeNotEndWith { get; } = "終わっていない";
+        public string CheckTypeEmpty { get; } = "空である";
+        public string CheckTypeCheckBox { get; } = "チェックボックス";
+
+        // -- ScriptAutoProcessItem.cs --
+        // Pythonスクリプトを実行しました
+        public string ExecutedPythonScript { get; } = "Pythonスクリプトを実行しました";
+
     }
 }
-    

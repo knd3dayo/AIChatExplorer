@@ -1,10 +1,7 @@
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -67,20 +64,21 @@ namespace ClipboardApp.ViewModel {
                 }
             // 開く
             MenuItem createMenuItem = new() {
-                Header = "開く",
+                Header = StringResources.Open,
                 Command = OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
             };
             menuItems.Add(createMenuItem);
 
-            // ファイルとして開く
+            // テキストをファイルとして開く
             MenuItem openContentAsFileMenuItem = new() {
-                Header = "ファイルとして開く",
+                Header = StringResources.OpenTextAsFile,
                 Command = itemViewModel.OpenContentAsFileCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+Shit+O"
             };
+            menuItems.Add(openContentAsFileMenuItem);
 
             // 背景情報生成
             MenuItem generateBackgroundInfoMenuItem = new() {
@@ -117,7 +115,7 @@ namespace ClipboardApp.ViewModel {
 
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
-                Header = "ピン留め",
+                Header = StringResources.Pin,
                 Command = itemViewModel.ChangePinCommand,
                 CommandParameter = itemViewModel
             };
@@ -125,7 +123,7 @@ namespace ClipboardApp.ViewModel {
 
             // コピー
             MenuItem copyMenuItem = new() {
-                Header = "コピー",
+                Header = StringResources.Copy,
                 Command = MainWindowViewModel.ActiveInstance.CopyItemCommand,
                 CommandParameter = this,
                 InputGestureText = "Ctrl+C"
@@ -134,7 +132,7 @@ namespace ClipboardApp.ViewModel {
 
             // 削除
             MenuItem deleteMnuItem = new() {
-                Header = "削除",
+                Header = StringResources.Delete,
                 Command = itemViewModel.DeleteItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Delete"
@@ -193,14 +191,14 @@ namespace ClipboardApp.ViewModel {
             EditItemWindow.OpenEditItemWindow(this, null, () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
-                LogWrapper.Info("追加しました");
+                LogWrapper.Info(StringResources.Added);
             });
         }
         public virtual void OpenItemCommandExecute(ClipboardItemViewModel item) {
             EditItemWindow.OpenEditItemWindow(this, item, () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
-                LogWrapper.Info("編集しました");
+                LogWrapper.Info(StringResources.Edited);
             });
         }
 
@@ -229,19 +227,19 @@ namespace ClipboardApp.ViewModel {
             }
             // フォルダ内のアイテムを再読み込み
             toFolder.LoadFolderCommand.Execute();
-            LogWrapper.Info("貼り付けました");
+            LogWrapper.Info(StringResources.Pasted);
         }
 
         public virtual void MergeItemCommandExecute(
             ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
 
             if (selectedItems.Count < 2) {
-                LogWrapper.Error("マージするアイテムを2つ選択してください");
+                LogWrapper.Error(StringResources.SelectTwoItemsToMerge);
                 return;
             }
             // マージ先のアイテム。SelectedItems[0]がマージ先
             if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
-                LogWrapper.Error("マージ先のアイテムが選択されていません");
+                LogWrapper.Error(StringResources.MergeTargetNotSelected);
                 return;
             }
             List<ClipboardItemViewModel> fromItemsViewModel = [];
@@ -249,7 +247,7 @@ namespace ClipboardApp.ViewModel {
                 // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
                 for (int i = 1; i < selectedItems.Count; i++) {
                     if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
-                        LogWrapper.Error("マージ元のアイテムが選択されていません");
+                        LogWrapper.Error(StringResources.MergeSourceNotSelected);
                         return;
                     }
                     fromItemsViewModel.Add(fromItemModelView);
@@ -265,15 +263,12 @@ namespace ClipboardApp.ViewModel {
 
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.LoadFolderCommand.Execute();
-                LogWrapper.Info("マージしました");
+                LogWrapper.Info(StringResources.Merged);
 
             } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+                string message = $"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
-
         }
-
-
     }
 }

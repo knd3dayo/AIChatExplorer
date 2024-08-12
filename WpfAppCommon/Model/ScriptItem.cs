@@ -1,11 +1,9 @@
-﻿using LiteDB;
-using WpfAppCommon.Factory.Default;
 using System.Collections.ObjectModel;
+using LiteDB;
+using WpfAppCommon.Factory.Default;
 
-namespace WpfAppCommon.Model
-{
-    public enum ScriptType
-    {
+namespace WpfAppCommon.Model {
+    public enum ScriptType {
         Python,
         PowerShell,
         Batch,
@@ -15,8 +13,7 @@ namespace WpfAppCommon.Model
         CSharp,
         Other
     }
-    public class ScriptItem
-    {
+    public class ScriptItem {
         public ObjectId? Id { get; set; }
 
         public string Name { get; set; }
@@ -25,8 +22,7 @@ namespace WpfAppCommon.Model
 
         public ScriptType Type { get; set; }
 
-        public ScriptItem(string name, string description, string content, ScriptType type)
-        {
+        public ScriptItem(string name, string description, string content, ScriptType type) {
             Name = name;
             Description = description;
             Content = content;

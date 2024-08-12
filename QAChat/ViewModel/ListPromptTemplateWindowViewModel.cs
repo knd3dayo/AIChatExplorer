@@ -185,13 +185,5 @@ namespace QAChat.ViewModel
             ClipboardAppFactory.Instance.GetClipboardDBController().DeletePromptTemplate(item);
             OnPropertyChanged(nameof(PromptItems));
         }
-
-        // CloseCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) =>
-        {
-
-            window.Close();
-        });
-
     }
 }

@@ -45,7 +45,8 @@ class RetrieverUtil:
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
         if vector_db_props.IsUseMultiVectorRetriever:
-            print("MultiVectorRetrieverを生成")
+            print("Creating MultiVectorRetriever")
+            
             langChainVectorDB = get_vector_db(self.client, vector_db_props)
             retriever = MultiVectorRetriever(
                 vectorstore=langChainVectorDB.db,
@@ -55,7 +56,7 @@ class RetrieverUtil:
             )
 
         else:
-            print("通常のRetrieverを生成")
+            print("Creating a regular Retriever")
             langChainVectorDB = get_vector_db(self.client, vector_db_props)
             retriever = langChainVectorDB.db.as_retriever(
                 # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
@@ -129,13 +130,14 @@ class RetrievalQAUtil:
         # デフォルトのプロンプトのテンプレート
         # contextはベクトルDB検索用のRetrieverオブジェクトの検索結果のcontext
         # questionはユーザーからの質問
-        prompt_template_str = """あなたは親切で優しいアシスタントです。丁寧に、日本語でお答えください！
-        もし以下の情報が探している情報に関連していない場合は、不明とのみ答えてください。
+        prompt_template_str = """You are a helpful and kind assistant.
+            If the following information is not related to the information you are looking for, please answer with "unknown" only.
+            The output language is the same as the language of the question.
 
-        {summaries}
+            {summaries}
 
-        質問: {question}
-        回答（日本語）:"""
+            Question: {question}
+            Answer:"""
         return prompt_template_str
 
     
@@ -375,9 +377,9 @@ def run_langchain_chat( props_json: str, prompt, request_json: str):
     vector_db_props = openai_props.VectorDBItems
 
     # デバッグ出力
-    print(f'プロンプト: {prompt}')
+    print(f'prompt: {prompt}')
     print(f'chat_history_json: {chat_history_json}')
-    print('ベクトルDBの設定')
+    print('vector db')
     for item in vector_db_props:
         print(f'Name:{item.Name} VectorDBDescription:{item.VectorDBDescription} VectorDBTypeString:{item.VectorDBTypeString} VectorDBURL:{item.VectorDBURL} CollectionName:{item.CollectionName}')
         
@@ -422,7 +424,7 @@ if __name__ == '__main__':
     props:OpenAIProps  = env_to_props()
     vector_db_item: VectorDBProps = get_vector_db_settings()
 
-    question1 = input("質問をどうぞ:")
+    question1 = input("Please enter your question:")
     result1 = langchain_chat(props, [vector_db_item], question1)
 
     print(result1.get("output",""))

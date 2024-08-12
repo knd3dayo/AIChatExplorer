@@ -2,13 +2,12 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
-    public  class ScriptAutoProcessItem : SystemAutoProcessItem{
+    public class ScriptAutoProcessItem : SystemAutoProcessItem {
         public ScriptItem? ScriptItem { get; set; }
 
-        public ScriptAutoProcessItem() {
-        }
+        public ScriptAutoProcessItem() { }
 
-        public ScriptAutoProcessItem(ScriptItem scriptItem){
+        public ScriptAutoProcessItem(ScriptItem scriptItem) {
 
             ScriptItem = scriptItem;
             Name = scriptItem.Name;
@@ -17,8 +16,6 @@ namespace WpfAppCommon.Model {
             Type = TypeEnum.RunPythonScript;
 
         }
-
-
         public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems() {
             // DBからスクリプトのScriptItemを取得
             List<ScriptItem> items = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()];
@@ -30,7 +27,7 @@ namespace WpfAppCommon.Model {
 
         }
         public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
-            
+
             if (ScriptItem == null) {
                 return null;
             }
@@ -53,7 +50,7 @@ namespace WpfAppCommon.Model {
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);
             ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
-                LogWrapper.Info("Pythonスクリプトを実行しました");
+                LogWrapper.Info(CommonStringResources.Instance.ExecutedPythonScript);
 
             });
             resultItem?.CopyTo(clipboardItem);

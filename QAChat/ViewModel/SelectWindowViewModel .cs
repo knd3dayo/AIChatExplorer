@@ -65,15 +65,5 @@ namespace QAChat.ViewModel
             // Windowを閉じる
             window.Close();
         });
-
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) =>
-        {
-            WpfAppCommon.Properties.Settings.Default.Reload();
-            LogWrapper.Info("設定をキャンセルしました");
-            // Windowを閉じる
-            window.Close();
-        });
-
-
     }
 }

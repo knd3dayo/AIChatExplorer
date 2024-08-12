@@ -97,7 +97,7 @@ namespace ClipboardApp.ViewModel {
         // 優先順位を上げる処理
         public SimpleDelegateCommand<string> ChangePriorityCommand => new((parameter) => {
             if (SelectedAutoProcessRule == null) {
-                MessageBox.Show("自動処理ルールが選択されていません。");
+                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
             if (parameter == "down") {
@@ -119,7 +119,7 @@ namespace ClipboardApp.ViewModel {
             }
             // debug
             if (SelectedAutoProcessRule == null) {
-                MessageBox.Show("自動処理ルールが選択されていません。");
+                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
             EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(EditAutoProcessRuleWindowViewModel.Mode.Edit, _mainWindowViewModel, SelectedAutoProcessRule, AutoProcessRuleUpdated);
@@ -141,10 +141,10 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<object> DeleteAutoProcessRuleCommand => new((parameter) => {
             AutoProcessRule? rule = SelectedAutoProcessRule;
             if (rule == null) {
-                MessageBox.Show("自動処理ルールが選択されていません。");
+                LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
-            if (MessageBox.Show($"自動処理ルール{rule.RuleName}を削除しますか？", "確認", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show($"{rule.RuleName}{StringResources.ConfirmDelete}", StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             AutoProcessRules.Remove(rule);
@@ -156,9 +156,9 @@ namespace ClipboardApp.ViewModel {
         // SaveSystemCommonSettingCommand
         public SimpleDelegateCommand<object> SaveSystemCommonSettingCommand => new((parameter) => {
             if (SettingUserControlViewModel.Save()) {
-                LogWrapper.Info("システム共通設定を保存しました。");
+                LogWrapper.Info(StringResources.SavedSystemCommonSettings);
             } else {
-                LogWrapper.Warn("システム共通設定の変更はありません。");
+                LogWrapper.Warn(StringResources.NoChangesToSystemCommonSettings);
             }
         });
     }

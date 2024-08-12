@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -13,10 +14,8 @@ using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using System.Windows.Controls;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -297,16 +296,17 @@ namespace ClipboardApp.ViewModel
         public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             // ContentTypeがFileの場合のみフォルダを開く
             if (ContentType != ClipboardContentTypes.Files) {
-                LogWrapper.Error("ファイル以外のコンテンツはフォルダを開けません");
+                LogWrapper.Error(StringResources.CannotOpenFolderForNonFileContent);
                 return;
             }
             // Process.Startでフォルダを開く
             foreach (var item in ClipboardItem.ClipboardItemFiles) {
                 string? folderPath = item.FolderName;
                 if (folderPath != null) {
-                    var p = new Process();
-                    p.StartInfo = new ProcessStartInfo(folderPath) {
-                        UseShellExecute = true
+                    var p = new Process {
+                        StartInfo = new ProcessStartInfo(folderPath) {
+                            UseShellExecute = true
+                        }
                     };
                     p.Start();
                 }
@@ -316,7 +316,7 @@ namespace ClipboardApp.ViewModel
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
             if (ContentType != ClipboardContentTypes.Files) {
-                LogWrapper.Error("ファイル以外のコンテンツはテキストを抽出できません");
+                LogWrapper.Error(StringResources.CannotExtractTextForNonFileContent);
                 return;
             }
             ClipboardItem.ExtractTextCommandExecute(ClipboardItem);
@@ -344,7 +344,7 @@ namespace ClipboardApp.ViewModel
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
                     if (MainWindowViewModel.ActiveInstance == null) {
-                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
                         return;
                     }
                     FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
@@ -385,35 +385,35 @@ namespace ClipboardApp.ViewModel
 
         // 背景情報を生成するコマンド
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
-            LogWrapper.Info("背景情報を生成します");
+            LogWrapper.Info(StringResources.GenerateBackgroundInformation);
             await Task.Run(() => {
                 ClipboardItem.CreateAutoBackgroundInfo(this.ClipboardItem);
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("背景情報を生成しました");
+            LogWrapper.Info(StringResources.GeneratedBackgroundInformation);
 
         });
         // サマリーを生成するコマンド
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
-            LogWrapper.Info("サマリーを生成します");
+            LogWrapper.Info(StringResources.GenerateSummary2);
             await Task.Run(() => {
                 ClipboardItem.CreateAutoSummary(this.ClipboardItem);
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("サマリーを生成しました");
+            LogWrapper.Info(StringResources.GeneratedSummary);
 
         });
         // ベクトルを生成するコマンド
         public SimpleDelegateCommand<object> GenerateVectorCommand => new(async (obj) => {
-            LogWrapper.Info("ベクトルを生成します");
+            LogWrapper.Info(StringResources.GenerateVector2);
             await Task.Run(() => {
                 ClipboardItem.UpdateEmbedding();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("ベクトルを生成しました");
+            LogWrapper.Info(StringResources.GeneratedVector);
 
         });
         // ベクトル検索を実行するコマンド
@@ -449,7 +449,7 @@ namespace ClipboardApp.ViewModel
         // 画像からイメージを抽出するコマンド
         public SimpleDelegateCommand<object> ExtractTextFromImageWithOpenAICommand => new((obj) => {
             if (ClipboardItem.ContentType != ClipboardContentTypes.Image) {
-                throw new Exception("画像以外のコンテンツはテキストを抽出できません");
+                throw new Exception(StringResources.CannotExtractTextForNonImageContent);
             }
             ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
 

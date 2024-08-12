@@ -59,7 +59,7 @@ namespace ClipboardApp.ViewModel {
             }
             // 開く
             MenuItem createMenuItem = new() {
-                Header = "開く",
+                Header = StringResources.Open,
                 Command = OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
@@ -68,7 +68,7 @@ namespace ClipboardApp.ViewModel {
 
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
-                Header = "ピン留め",
+                Header = StringResources.Pin,
                 Command = itemViewModel.ChangePinCommand,
                 CommandParameter = itemViewModel
             };
@@ -76,7 +76,7 @@ namespace ClipboardApp.ViewModel {
 
             // コピー
             MenuItem copyMenuItem = new() {
-                Header = "コピー",
+                Header = StringResources.Copy,
                 Command = MainWindowViewModel.ActiveInstance.CopyItemCommand,
                 CommandParameter = this,
                 InputGestureText = "Ctrl+C"
@@ -85,7 +85,7 @@ namespace ClipboardApp.ViewModel {
 
             // 削除
             MenuItem deleteMnuItem = new() {
-                Header = "削除",
+                Header = StringResources.Delete,
                 Command = itemViewModel.DeleteItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Delete"

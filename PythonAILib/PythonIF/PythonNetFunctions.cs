@@ -128,9 +128,9 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 string propsJson = props.ToJson();
 
-                LogWrapper.Info("Embedding実行");
-                LogWrapper.Info($"プロパティ情報 {propsJson}");
-                LogWrapper.Info($"テキスト:{text}");
+                LogWrapper.Info(PythonAILibStringResources.Instance.EmbeddingExecute);
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Text}:{text}");
 
                 // open_ai_chat関数を呼び出す
                 function_object(text, propsJson);
@@ -150,7 +150,7 @@ namespace PythonAILib.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -182,9 +182,9 @@ namespace PythonAILib.PythonIF {
             OpenAIProperties props = chatRequest.OpenAIProperties;
             string propsJson = props.ToJson();
 
-            LogWrapper.Info("OpenAI実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"チャット履歴:{chat_history_json}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_history_json}");
 
             //OpenAIChatExecuteを呼び出す
             return OpenAIChatExecute("run_openai_chat", (function_object) => {
@@ -245,8 +245,8 @@ namespace PythonAILib.PythonIF {
             // ContentInfoをJSON文字列に変換
             string contentInfoJson = contentInfo.ToJson();
 
-            LogWrapper.Info("UpdateVectorDBIndex実行");
-            LogWrapper.Info($"プロパティ情報 {propJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
             string function_name = "";
 
             if (contentInfo.Mode == VectorDBUpdateMode.update) {
@@ -254,7 +254,7 @@ namespace PythonAILib.PythonIF {
             } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_content_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute(function_name, (function_object) => {
@@ -279,8 +279,8 @@ namespace PythonAILib.PythonIF {
             // ContentInfoをJSON文字列に変換
             string contentInfoJson = imageInfo.ToJson();
 
-            LogWrapper.Info("UpdateVectorDBIndex実行");
-            LogWrapper.Info($"プロパティ情報 {propJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndex);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
 
             string function_name = "";
             if (imageInfo.Mode == VectorDBUpdateMode.update) {
@@ -288,7 +288,7 @@ namespace PythonAILib.PythonIF {
             } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_image_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute(function_name, (function_object) => {
@@ -316,7 +316,7 @@ namespace PythonAILib.PythonIF {
             } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_file_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
 
             // UpdateVectorDBIndexExecuteを呼び出す
@@ -335,7 +335,7 @@ namespace PythonAILib.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -385,10 +385,10 @@ namespace PythonAILib.PythonIF {
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
 
-            LogWrapper.Info("LangChain実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"プロンプト:{prompt}");
-            LogWrapper.Info($"チャット履歴:{chatHistoryJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.LangChainExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Prompt}:{prompt}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatHistoryJson}");
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
@@ -412,7 +412,7 @@ namespace PythonAILib.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 var op = new JsonSerializerOptions {
                     Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -439,9 +439,9 @@ namespace PythonAILib.PythonIF {
             openAIProperties.VectorDBItems = [vectorDBItem];
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
-            LogWrapper.Info("VectorSearch実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"コンテンツ:{content}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Content}:{content}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("run_vector_search", (function_object) => {

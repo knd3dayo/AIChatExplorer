@@ -10,8 +10,6 @@ namespace ImageChat.ViewModel {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 
         public ObservableCollection<ScreenShotCheckCondition> ScreenShotCheckItems { get; set; } = [];  
-
-        
         Action<List<ScreenShotCheckCondition>> Action { get; set; } = (parameter) => { };
 
         // Initialize
@@ -33,12 +31,6 @@ namespace ImageChat.ViewModel {
             // Windowを閉じる
             window.Close();
 
-        });
-
-        // CancelCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            // Windowを閉じる
-            window.Close();
         });
         // クリアコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {

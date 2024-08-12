@@ -235,7 +235,7 @@ namespace ClipboardApp
                 OnPropertyChanged(nameof(PreviewMode));
                 OnPropertyChanged(nameof(PreviewModeVisibility));
                 // アプリケーション再起動後に反映されるようにメッセージを表示
-                MessageBox.Show("アプリケーションを再起動すると、表示モードが変更されます。", "情報", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(StringResources.DisplayModeWillChangeWhenYouRestartTheApplication, StringResources.Information, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

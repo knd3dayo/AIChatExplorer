@@ -15,8 +15,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-
-
         // 画像
         [BsonIgnore]
         public Image? Image {

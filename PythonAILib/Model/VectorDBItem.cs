@@ -17,7 +17,7 @@ namespace PythonAILib.Model {
         public string Name { get; set; } = "";
         // 説明
         [JsonPropertyName("VectorDBDescription")]
-        public string Description { get; set; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+        public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
 
         [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";

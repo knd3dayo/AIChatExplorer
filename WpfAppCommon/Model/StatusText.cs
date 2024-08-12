@@ -5,7 +5,7 @@ namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
 
         // StatusTextDictionaryのキー
-        public static string GetStatusTextKey(Window window){
+        public static string GetStatusTextKey(Window window) {
             Type type = window.GetType();
             string? key = type.FullName;
             if (key == null) {

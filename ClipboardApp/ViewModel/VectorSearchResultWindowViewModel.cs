@@ -27,12 +27,5 @@ namespace ClipboardApp.ViewModel {
             OnPropertyChanged(nameof(VectorSearchResults));
         });
 
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-
-        });
-
-
     }
 }

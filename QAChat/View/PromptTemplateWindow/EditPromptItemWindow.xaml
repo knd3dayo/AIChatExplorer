@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding WindowTitle}"
+    Title="{Binding StringResources.EditPrompt}"
     Width="800"
     Height="450"
     Style="{StaticResource MaterialDesignWindow}"

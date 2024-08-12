@@ -46,7 +46,7 @@ namespace ClipboardApp.ViewModel {
                 //　フォルダを保存
                 folderViewModel.ClipboardItemFolder.Save();
                 LoadFolderCommand.Execute();
-                LogWrapper.Info("フォルダを編集しました");
+                LogWrapper.Info(StringResources.FolderEdited);
             });
         });
 
@@ -70,7 +70,7 @@ namespace ClipboardApp.ViewModel {
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
             clipboardItemFolder.LoadFolderCommand.Execute();
-            LogWrapper.Info("リロードしました");
+            LogWrapper.Info(CommonStringResources.Instance.Reloaded);
         }
 
 
@@ -102,7 +102,7 @@ namespace ClipboardApp.ViewModel {
             }
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
-                Title = "フォルダを選択してください",
+                Title = CommonStringResources.Instance.SelectFolderPlease,
                 InitialDirectory = directoryInfo.FullName,
                 // フォルダ選択モードにする
                 IsFolderPicker = true,
@@ -113,7 +113,7 @@ namespace ClipboardApp.ViewModel {
                 string folderPath = dialog.FileName;
                 clipboardItemFolder.ClipboardItemFolder.ExportItemsToJson(folderPath);
                 // フォルダ内のアイテムを読み込む
-                LogWrapper.Info("フォルダをエクスポートしました");
+                LogWrapper.Info(CommonStringResources.Instance.FolderExported);
             }
         }
 
@@ -122,7 +122,7 @@ namespace ClipboardApp.ViewModel {
 
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
-                Title = "フォルダを選択してください",
+                Title = CommonStringResources.Instance.SelectFolderPlease,
                 InitialDirectory = @".",
                 // フォルダ選択モードにする
                 IsFolderPicker = true,
@@ -140,7 +140,7 @@ namespace ClipboardApp.ViewModel {
                 });
                 // フォルダ内のアイテムを読み込む
                 clipboardItemFolder.LoadFolderCommand.Execute();
-                LogWrapper.Info("フォルダをインポートしました");
+                LogWrapper.Info(CommonStringResources.Instance.FolderImported);
             }
         }
 
@@ -154,12 +154,12 @@ namespace ClipboardApp.ViewModel {
 
             if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id
                 || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
-                LogWrapper.Error("ルートフォルダは削除できません");
+                LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
                 return;
             }
 
             // フォルダ削除するかどうか確認
-            if (MessageBox.Show("フォルダを削除しますか？", "確認", MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+            if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
             folderViewModel.ClipboardItemFolder.Delete();
@@ -168,7 +168,7 @@ namespace ClipboardApp.ViewModel {
             MainWindowViewModel.ReLoadRootFolders();
 
 
-            LogWrapper.Info("フォルダを削除しました");
+            LogWrapper.Info(StringResources.FolderDeleted);
         });
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace ClipboardApp.ViewModel {
         /// <param name="obj"></param>
         public static void DeleteDisplayedItemCommandExecute(ClipboardFolderViewModel folderViewModel) {
             //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show("ピン留めされたアイテム以外の表示中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 foreach (ClipboardItemViewModel item in folderViewModel.Items) {
                     if (item.IsPinned) {
@@ -190,7 +190,7 @@ namespace ClipboardApp.ViewModel {
 
                 // フォルダ内のアイテムを読み込む
                 folderViewModel.LoadFolderCommand.Execute(null);
-                LogWrapper.Info("ピン留めされたアイテム以外の表示中のアイテムを削除しました");
+                LogWrapper.Info(CommonStringResources.Instance.DeletedItems);
             }
         }
 

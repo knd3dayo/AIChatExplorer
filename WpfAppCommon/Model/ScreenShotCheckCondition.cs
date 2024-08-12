@@ -8,21 +8,21 @@ namespace WpfAppCommon.Model {
 
     public class ScreenShotCheckCondition {
 
-        public static readonly string CheckTypeEqual = "等しい";
-        public static readonly string CheckTypeNotEqual = "等しくない";
-        public static readonly string CheckTypeInclude = "含む";
-        public static readonly string CheckTypeNotInclude = "含まない";
-        public static readonly string CheckTypeStartWith = "開始している";
-        public static readonly string CheckTypeNotStartWith = "開始していない";
-        public static readonly string CheckTypeEndWith = "終わっている";
-        public static readonly string CheckTypeNotEndWith = "終わっていない";
-        public static readonly string CheckTypeEmpty = "空である";
-        public static readonly string CheckTypeCheckBox = "チェックボックス";
+        public static readonly string CheckTypeEqual = CommonStringResources.Instance.CheckTypeEqual;
+        public static readonly string CheckTypeNotEqual = CommonStringResources.Instance.CheckTypeNotEqual;
+        public static readonly string CheckTypeInclude = CommonStringResources.Instance.CheckTypeInclude;
+        public static readonly string CheckTypeNotInclude = CommonStringResources.Instance.CheckTypeNotInclude;
+        public static readonly string CheckTypeStartWith = CommonStringResources.Instance.CheckTypeStartWith;
+        public static readonly string CheckTypeNotStartWith = CommonStringResources.Instance.CheckTypeNotStartWith;
+        public static readonly string CheckTypeEndWith = CommonStringResources.Instance.CheckTypeEndWith;
+        public static readonly string CheckTypeNotEndWith = CommonStringResources.Instance.CheckTypeNotEndWith;
+        public static readonly string CheckTypeEmpty = CommonStringResources.Instance.CheckTypeEmpty;
+        public static readonly string CheckTypeCheckBox = CommonStringResources.Instance.CheckTypeCheckBox;
 
         public ObservableCollection<string> CheckTypeList {
             get {
                 // チェック用の定数のリストを返す
-                return new() {
+                return [
                     CheckTypeEqual,
                     CheckTypeNotEqual,
                     CheckTypeInclude,
@@ -33,7 +33,7 @@ namespace WpfAppCommon.Model {
                     CheckTypeNotEndWith,
                     CheckTypeEmpty,
                     CheckTypeCheckBox,
-                };
+                ];
             }
         }
 

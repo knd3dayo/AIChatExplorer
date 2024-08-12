@@ -118,7 +118,7 @@ namespace ImageChat.ViewModel {
                 ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
 
                 // ScreenShotCheckItemsを文字列に変換
-                string result = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
+                string result = StringResources.ConfirmTheFollowingSentencesAreCorrectOrNot;
                 foreach (ScreenShotCheckCondition item in Conditions) {
                     result += "- " + item.ToPromptString() + "\n";
                 }
@@ -138,7 +138,7 @@ namespace ImageChat.ViewModel {
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
-                LogWrapper.Error("画像ファイルが選択されていません。");
+                LogWrapper.Error(StringResources.NoImageFileSelected);
                 return;
             }
             // OpenAIにチャットを送信してレスポンスを受け取る
@@ -166,9 +166,9 @@ namespace ImageChat.ViewModel {
                         ContentText = prompt
                     };
                     // ログ
-                    LogWrapper.Info($"プロンプト：{prompt}を送信します");
+                    LogWrapper.Info($"{StringResources.SendPrompt}{prompt}");
                     // imageFileNamesをログに追加
-                    LogWrapper.Info($"画像ファイル名：{string.Join(",", imageFileNames)}");
+                    LogWrapper.Info($"{StringResources.ImageFileName}:{string.Join(",", imageFileNames)}");
                     // ChatRequestを送信してChatResultを受信
                     result = chatRequest.ExecuteChat();
 
@@ -179,14 +179,14 @@ namespace ImageChat.ViewModel {
                 });
                 // 結果を表示
                 if (result == null) {
-                    LogWrapper.Error("エラーが発生しました。");
+                    LogWrapper.Error(StringResources.ErrorOccurred);
                     return;
                 }
                 ResultText = result.Response;
 
 
             } catch (Exception e) {
-                LogWrapper.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
             } finally {
                 IsIndeterminate = false;
             }
@@ -199,12 +199,12 @@ namespace ImageChat.ViewModel {
             //ファイルダイアログを表示
             // 画像ファイルを選択して画像ファイル名一覧に追加
             CommonOpenFileDialog dialog = new() {
-                Title = "画像ファイルを選択してください",
+                Title = StringResources.SelectImageFilePlease,
                 InitialDirectory = lastSelectedImageFolder,
                 Multiselect = true,
                 Filters = {
-                    new CommonFileDialogFilter("画像ファイル", "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
-                    new CommonFileDialogFilter("すべてのファイル", "*.*"),
+                    new CommonFileDialogFilter(StringResources.ImageFile, "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
+                    new CommonFileDialogFilter(StringResources.AllFiles, "*.*"),
                 }
             };
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
@@ -257,7 +257,7 @@ namespace ImageChat.ViewModel {
                 };
                 Process.Start(psi);
             } else {
-                LogWrapper.Error("ファイルが存在しません。");
+                LogWrapper.Error(StringResources.FileDoesNotExist);
             }
         });
 
