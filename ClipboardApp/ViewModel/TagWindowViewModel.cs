@@ -125,12 +125,6 @@ namespace ClipboardApp.ViewModel
 
         });
 
-        // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-
-            window.Close();
-        });
-
         // 検索ウィンドウを開く
         public SimpleDelegateCommand<object> OpenSearchWindowCommand => new((parameter) => {
             TagSearchWindow.OpenTagSearchWindow((tag, exclude) => {

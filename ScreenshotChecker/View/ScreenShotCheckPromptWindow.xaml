@@ -13,17 +13,17 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:ScreenShotCheckPromptWindowViewModel x:Name="datacontext" />
+    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:ScreenShotCheckPromptWindowViewModel x:Name="datacontext" />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
@@ -32,6 +32,12 @@
             <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -81,12 +87,12 @@
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingItem, UpdateSourceTrigger=PropertyChanged}"
-                    Header="設定項目" />
+                    Header="{Binding StringResources.SettingItem}" />
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
-                    Header="設定値" />
-                <DataGridTemplateColumn Width="150" Header="チェックタイプ">
+                    Header="{Binding StringResources.SettingValue}" />
+                <DataGridTemplateColumn Width="150" Header="{Binding StringResources.CheckType}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding CheckTypeList}" SelectedItem="{Binding CheckTypeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -97,7 +103,7 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <!--  貼り付け  -->
-                    <MenuItem Command="{Binding PasteDataGridCommand}" Header="貼り付け" />
+                    <MenuItem Command="{Binding PasteDataGridCommand}" Header="{Binding StringResources.Paste}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
@@ -114,7 +120,7 @@
                     Width="100"
                     Margin="10,0,0,0"
                     Command="{Binding ClearCommand}"
-                    Content="クリア" />
+                    Content="{Binding StringResources.Clear}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -125,13 +131,13 @@
                     Margin="10,0,20,0"
                     Command="{Binding OKCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

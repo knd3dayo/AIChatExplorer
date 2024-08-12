@@ -579,12 +579,7 @@ namespace ClipboardApp.ViewModel {
             window.Close();
 
         });
-        // キャンセルボタンが押されたときの処理
-        public SimpleDelegateCommand<Window> CancelButtonClickedCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
 
-        });
         // OnSelectedFolderChanged
         public void OnSelectedFolderChanged(ClipboardFolderViewModel? folder) {
             if (folder == null) {
@@ -702,10 +697,6 @@ namespace ClipboardApp.ViewModel {
             }
 
         });
-
-
-
-
 
     }
 }

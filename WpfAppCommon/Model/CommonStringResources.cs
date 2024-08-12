@@ -643,6 +643,100 @@ namespace WpfAppCommon.Model {
         // -- VectorSearchResultWindow
         // ベクトル検索結果
         public string VectorSearchResult { get; } = "ベクトル検索結果";
+
+        // -- ImageChatWindow
+        // 設定項目
+        public string SettingItem { get; } = "設定項目";
+
+        // 設定値
+        public string SettingValue { get; } = "設定値";
+
+        // チェックタイプ
+        public string CheckType { get; } = "チェックタイプ";
+
+        // 貼り付け
+        public string Paste { get; } = "貼り付け";
+
+        // -- ImageChat.MainWindow --
+        // 画像ファイル選択
+        public string SelectImageFile { get; } = "画像ファイル選択";
+
+        // 画像エビデンスチェック項目編集
+        public string EditImageEvidenceCheckItem { get; } = "画像エビデンスチェック項目編集";
+
+        // 開く
+        public string Open { get; } = "開く";
+
+        // ここに回答が表示されます
+        public string TheAnswerWillBeDisplayedHere { get; } = "ここに回答が表示されます";
+
+        // ここに質問を入力
+        public string EnterYourQuestionHere { get; } = "ここに質問を入力";
+
+        // 保存
+        public string Save { get; } = "保存";
+
+        // 送信
+        public string Send { get; } = "送信";
+
+        // -- ListVectorDBWindow --
+        // システム用のベクトルを表示
+        public string DisplayVectorsForTheSystem { get; } = "システム用のベクトルを表示";
+
+        // ベクトルDBの場所
+        public string VectorDBLocation { get; } = "ベクトルDBの場所";
+
+        // ベクトルDBのタイプ
+        public string VectorDBType { get; } = "ベクトルDBのタイプ";
+
+        // 新規ベクトルDB設定
+        public string NewVectorDBSetting { get; } = "新規ベクトルDB設定";
+
+        // ベクトルDB設定編集
+        public string EditVectorDBSetting { get; } = "ベクトルDB設定編集";
+
+        // -- QAChatControl --
+        // 実験的機能1(文章解析+辞書生成+RAG)"
+        public string ExperimentalFunction1 { get; } = "実験的機能1(文章解析+辞書生成+RAG)";
+
+        // ベクトルDB(フォルダ)
+        public string VectorDBFolder { get; } = "ベクトルDB(フォルダ)";
+
+        // ここをクリックしてベクトルDB(フォルダ)を追加
+        public string ClickHereToAddVectorDBFolder { get; } = "ここをクリックしてベクトルDB(フォルダ)を追加";
+
+        // リストから除外
+        public string ExcludeFromList { get; } = "リストから除外";
+
+        // ベクトルDB(外部)
+        public string VectorDBExternal { get; } = "ベクトルDB(外部)";
+
+        // ここをクリックしてベクトルDB(外部)を追加
+        public string ClickHereToAddVectorDBExternal { get; } = "ここをクリックしてベクトルDB(外部)を追加";
+
+        // 画像アイテム
+        public string ImageItem { get; } = "画像アイテム";
+
+        // ここをクリックして選択中のアイテムを貼り付け
+        public string ClickHereToPasteTheSelectedItem { get; } = "ここをクリックして選択中のアイテムを貼り付け";
+
+        // 画像ファイル
+        public string ImageFile { get; } = "画像ファイル";
+
+        // ここをクリックして画像ファイルを追加
+        public string ClickHereToAddImageFile { get; } = "ここをクリックして画像ファイルを追加";
+
+        // チャット
+        public string Chat { get; } = "チャット";
+
+        // プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+        public string PromptTemplate { get; } = "プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。";
+
+        // プレビュー
+        public string Preview { get; } = "プレビュー";
+
+        // プレビュー(JSON)
+        public string PreviewJSON { get; } = "プレビュー(JSON)";
     }
 }
     

@@ -34,11 +34,5 @@ namespace ClipboardApp.ViewModel {
             editScriptWindow.Close();
         });
 
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<EditPythonScriptWindow> CancelButtonCommand => new((editScriptWindow) => {
-            // ウィンドウを閉じる
-            editScriptWindow.Close();
-        });
-
     }
 }

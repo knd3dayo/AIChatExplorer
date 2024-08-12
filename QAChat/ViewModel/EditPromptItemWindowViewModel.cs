@@ -98,11 +98,6 @@ namespace QAChat.ViewModel {
             // ウィンドウを閉じる
             window.Close();
         });
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-        });
 
     }
 }

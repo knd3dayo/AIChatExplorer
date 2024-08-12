@@ -44,5 +44,12 @@ namespace WpfAppCommon.Model {
             }
         });
 
+        // CloseButtonを押した時の処理
+        public SimpleDelegateCommand<Window?> CloseCommand => new((window) => {
+            if (window != null) {
+                window.Close();
+            }
+        });
+
     }
 }

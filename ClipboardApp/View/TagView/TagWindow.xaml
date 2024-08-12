@@ -12,17 +12,25 @@
     Width="500"
     Height="300"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:TagWindowViewModel />
+    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="30" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:TagWindowViewModel />
-    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Enter"
@@ -30,7 +38,7 @@
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CancelCommand}"
+            Command="{Binding CloseCommand}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="F"
@@ -40,17 +48,7 @@
             Key="A"
             Command="{Binding SelectAllCommand}"
             Modifiers="Ctrl" />
-
     </Window.InputBindings>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
-        </i:EventTrigger>
-        <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -151,7 +149,7 @@
                 Width="100"
                 Height="Auto"
                 Margin="10"
-                Command="{Binding CancelCommand}"
+                Command="{Binding CloseCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                 Content="{Binding StringResources.Cancel}"
                 FontSize="12" />

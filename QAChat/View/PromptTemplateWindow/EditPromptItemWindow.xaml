@@ -17,6 +17,14 @@
     <Window.DataContext>
         <local:EditPromptItemWindowViewModel />
     </Window.DataContext>
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="30" />
+        </Style>
+    </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
@@ -25,7 +33,6 @@
             <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
     <Window.InputBindings>
         <KeyBinding
             Key="Enter"
@@ -33,7 +40,7 @@
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CancelButtonCommand}"
+            Command="{Binding CloseCommand}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>
@@ -86,7 +93,7 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="名前" />
+                    Text="{Binding StringResources.Name}" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -96,11 +103,10 @@
                 <TextBlock
                     Grid.Row="1"
                     Grid.Column="0"
-                    Width="100"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="説明" />
+                    Text="{Binding StringResources.Description}" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
@@ -120,19 +126,19 @@
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
+            <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
                 <Button
                     Width="100"
-                    Margin="10,10,10,0"
+                    Margin="10,0,10,0"
                     Command="{Binding OKButtonCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK}" />
                 <Button
                     Width="100"
-                    Margin="10,10,10,0"
-                    Command="{Binding CancelButtonCommand}"
+                    Margin="10,0,10,0"
+                    Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

@@ -2,7 +2,7 @@
     x:Class="WpfAppCommon.Control.QAChat.QAChatControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+    xmlns:commonModel="clr-namespace:WpfAppCommon.Model"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:WpfAppCommon.Control.QAChat"
@@ -14,6 +14,7 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -22,10 +23,6 @@
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding
-            Key="Enter"
-            Command="{Binding SendChatCommand, Mode=OneTime}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
             Command="{Binding CloseCommand, Mode=OneTime}"
@@ -69,7 +66,7 @@
                     <ComboBoxItem Content="OpenAI" />
                     <ComboBoxItem Content="OpenAI+RAG" />
                     <ComboBoxItem Content="LangChain" />
-                    <ComboBoxItem Content="実験的機能1(文章解析+辞書生成+RAG)" />
+                    <ComboBoxItem Content="{Binding StringResources.ExperimentalFunction1}" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -90,7 +87,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="ベクトルDB(フォルダ)" />
+                        <TextBlock Text="{Binding StringResources.VectorDBFolder}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsSystemVectorDBDrawerOpen}" OpenMode="Standard">
@@ -105,7 +102,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="ここをクリックしてベクトルDB(フォルダ)を追加">
+                                Text="{Binding StringResources.ClickHereToAddVectorDBFolder}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding AddVectorDBItemFolderCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -123,7 +120,7 @@
                                 </ListBox.ItemTemplate>
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList}" />
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
@@ -143,7 +140,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="ベクトルDB(外部)" />
+                        <TextBlock Text="{Binding StringResources.VectorDBExternal}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsExternalVectorDBDrawerOpen}" OpenMode="Standard">
@@ -158,7 +155,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="ここをクリックしてベクトルDB(外部)を追加">
+                                Text="{Binding StringResources.ClickHereToAddVectorDBExternal}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -181,7 +178,7 @@
                                 </i:Interaction.Triggers>
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="リストから除外" />
+                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList}" />
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
@@ -198,7 +195,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="画像アイテム" />
+                        <TextBlock Text="{Binding StringResources.ImageItem}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageItemDrawerOpen}" OpenMode="Standard">
@@ -214,7 +211,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="ここをクリックして選択中のアイテムを貼り付け">
+                                Text="{Binding StringResources.ClickHereToPasteTheSelectedItem}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding PasteImageItemCommand}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -250,11 +247,11 @@
                                                     <MenuItem
                                                         Command="{Binding OpenSelectedImageItemCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="開く" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Select}" />
                                                     <MenuItem
                                                         Command="{Binding RemoveSelectedImageItemCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="削除" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete}" />
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                         </Grid>
@@ -275,7 +272,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="画像ファイル" />
+                        <TextBlock Text="{Binding StringResources.ImageFile}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageFileDrawerOpen}" OpenMode="Standard">
@@ -291,7 +288,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="ここをクリックして画像ファイルを追加">
+                                Text="{Binding StringResources.ClickHereToAddImageFile}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
                                         Command="{Binding SelectImageFileCommand, Mode=OneTime}"
@@ -335,11 +332,11 @@
                                                     <MenuItem
                                                         Command="{Binding OpenSelectedImageFileCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="開く" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open}" />
                                                     <MenuItem
                                                         Command="{Binding RemoveSelectedImageFileCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="削除" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete}" />
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                         </Grid>
@@ -368,7 +365,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="チャット">
+                    Header="{Binding StringResources.Chat}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*" />
@@ -439,7 +436,7 @@
                             <TextBox
                                 MinHeight="20"
                                 Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate}"
                                 AcceptsReturn="True"
                                 Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
@@ -459,7 +456,7 @@
                             <TextBox
                                 MinHeight="50"
                                 Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="ここに質問を入力"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere}"
                                 AcceptsReturn="True"
                                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
@@ -487,7 +484,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="プレビュー">
+                    Header="{Binding StringResources.Preview}">
                     <ScrollViewer
                         Height="300"
                         VerticalAlignment="Top"
@@ -505,7 +502,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="プレビュー(JSON)">
+                    Header="{Binding StringResources.PreviewJSON}">
                     <ScrollViewer
                         Height="300"
                         VerticalAlignment="Top"
@@ -548,21 +545,21 @@
                         Margin="10,0,10,5"
                         Command="{Binding SaveCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="保存" />
+                        Content="{Binding StringResources.Save}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="送信" />
+                        Content="{Binding StringResources.Send}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearChatCommand, Mode=OneTime}"
-                        Content="クリア" />
+                        Content="{Binding StringResources.Clear}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="閉じる" />
+                        Content="{Binding StringResources.Close}" />
                 </StackPanel>
             </Grid>
             <ProgressBar

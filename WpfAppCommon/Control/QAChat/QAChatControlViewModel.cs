@@ -51,6 +51,8 @@ namespace WpfAppCommon.Control.QAChat {
 
         }
 
+        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
+
         public QAChatStartupProps? QAChatStartupProps { get; set; }
 
         // 最後に画僧を選択したフォルダ

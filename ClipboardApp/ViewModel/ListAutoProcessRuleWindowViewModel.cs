@@ -161,9 +161,5 @@ namespace ClipboardApp.ViewModel {
                 LogWrapper.Warn("システム共通設定の変更はありません。");
             }
         });
-        // CloseCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            window.Close();
-        });
     }
 }

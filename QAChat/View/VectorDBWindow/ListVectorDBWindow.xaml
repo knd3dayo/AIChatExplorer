@@ -12,17 +12,17 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:ListVectorDBWindowViewModel />
+    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:ListVectorDBWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
@@ -31,6 +31,12 @@
             <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -65,7 +71,7 @@
             Orientation="Vertical">
             <CheckBox
                 Margin="10,10,0,0"
-                Content="システム用のベクトルを表示"
+                Content="{Binding StringResources.DisplayVectorsForTheSystem}"
                 IsChecked="{Binding IsShowSystemCommonVectorDB}" />
         </StackPanel>
         <ListView
@@ -74,7 +80,7 @@
             SelectedItem="{Binding SelectedVectorDBItem}">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="Auto" Header="有効">
+                    <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -84,22 +90,22 @@
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="名前" />
+                        Header="{Binding StringResources.Name}" />
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBURL}"
-                        Header="ベクトルDBの場所" />
+                        Header="{Binding StringResources.VectorDBLocation}" />
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBTypeString}"
-                        Header="ベクトルDBのタイプ" />
+                        Header="{Binding StringResources.VectorDBType}" />
                 </GridView>
             </ListView.View>
             <!--  コンテキストメニュー  -->
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding EditVectorDBCommand}" Header="編集" />
-                    <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="削除" />
+                    <MenuItem Command="{Binding EditVectorDBCommand}" Header="{Binding StringResources.Edit}" />
+                    <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="{Binding StringResources.Delete}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -116,12 +122,12 @@
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding AddVectorDBCommand}"
-                    Content="新規ベクトルDB設定" />
+                    Content="{Binding StringResources.NewVectorDBSetting}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding EditVectorDBCommand}"
-                    Content="ベクトルDB設定編集" />
+                    Content="{Binding StringResources.EditVectorDBSetting}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -132,14 +138,14 @@
                     Margin="10,0,20,0"
                     Command="{Binding SelectCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="選択"
+                    Content="{Binding StringResources.Select}"
                     Visibility="{Binding SelectModeVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

@@ -19,7 +19,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -33,15 +33,10 @@
             <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
     <Window.InputBindings>
         <KeyBinding
-            Key="Enter"
-            Command="{Binding OKButtonCommand, Mode=OneTime}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-        <KeyBinding
             Key="Escape"
-            Command="{Binding CancelButtonCommand, Mode=OneTime}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <!--  Ctrl + Sで保存  -->
         <KeyBinding
@@ -178,7 +173,7 @@
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
                             <KeyBinding
                                 Key="Escape"
-                                Command="{Binding CancelButtonCommand, Mode=OneTime}"
+                                Command="{Binding CloseCommand, Mode=OneTime}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
                             <KeyBinding
                                 Key="A"
@@ -469,7 +464,6 @@
             <DockPanel HorizontalAlignment="Left">
                 <ToggleButton
                     x:Name="MenuToggleButton"
-                    Height="30"
                     Margin="10,10,10,10"
                     AutomationProperties.Name="HamburgerToggleButton"
                     DockPanel.Dock="Left"
@@ -487,7 +481,6 @@
                     <Button
                         Grid.Column="0"
                         Width="120"
-                        Height="30"
                         Margin="10,10,10,10"
                         Command="{Binding QAChatButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
@@ -496,7 +489,6 @@
                     <Button
                         Grid.Column="1"
                         Width="100"
-                        Height="30"
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
@@ -505,9 +497,8 @@
                     <Button
                         Grid.Column="2"
                         Width="100"
-                        Height="30"
                         Margin="10,10,10,10"
-                        Command="{Binding CancelButtonCommand, Mode=OneTime}"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{Binding StringResources.Cancel}"
                         DockPanel.Dock="Right" />

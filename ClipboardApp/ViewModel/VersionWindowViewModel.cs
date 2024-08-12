@@ -1,5 +1,3 @@
-using System.Windows;
-using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
     public class VersionWindowViewModel {
@@ -23,10 +21,5 @@ namespace ClipboardApp.ViewModel {
                 return $"{Title}\nVersion: {Version}\nCopyRight: {CopyRight}\nUrl: {Url}";
             }
         }
-
-        // CloseCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            window.Close();
-        });
     }
 }

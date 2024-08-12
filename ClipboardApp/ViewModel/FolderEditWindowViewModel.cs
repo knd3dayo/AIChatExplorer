@@ -57,12 +57,6 @@ namespace ClipboardApp.ViewModel
             window.Close();
         });
 
-
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-
-        });
     }
 
 }

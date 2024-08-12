@@ -16,8 +16,6 @@
             x:Key="GridRowContextMenu"
             FontSize="12"
             ItemsSource="{Binding MenuItems}" />
-        <FrameworkElement x:Key="ProxyElement" DataContext="{Binding}" />
-
         <Style x:Key="SingleLineTextBlock" TargetType="{x:Type TextBlock}">
             <Setter Property="Height" Value="15" />
             <Setter Property="TextWrapping" Value="NoWrap" />

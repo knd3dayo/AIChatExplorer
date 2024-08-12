@@ -62,12 +62,6 @@ namespace ClipboardApp.ViewModel
 
         });
 
-        public SimpleDelegateCommand<FolderSelectWindow> CancelCommand => new((folderSelectWindow) => {
-            // Windowを閉じる
-            folderSelectWindow.Close();
-
-        });
-
         public static void FolderSelectWindowSelectFolderCommandExecute(object parameter) {
             if (Instance == null) {
                 LogWrapper.Warn("エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない");
