@@ -72,16 +72,16 @@ namespace WpfAppCommon.Model {
         // 画像からイメージを抽出するコマンド
         public static ClipboardItem ExtractTextFromImageCommandExecute(ClipboardItem clipboardItem) {
             if (clipboardItem.ContentType != ClipboardContentTypes.Image) {
-                throw new ThisApplicationException(CommonStringResources.Instance.CannotExtractTextForNonImageContent);
+                throw new Exception(CommonStringResources.Instance.CannotExtractTextForNonImageContent);
             }
             foreach (var imageObjectId in clipboardItem.ImageObjectIds) {
                 ClipboardItemImage? imageItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
                 if (imageItem == null) {
-                    throw new ThisApplicationException(CommonStringResources.Instance.CannotGetImage);
+                    throw new Exception(CommonStringResources.Instance.CannotGetImage);
                 }
                 Image? image = imageItem.Image;
                 if (image == null) {
-                    throw new ThisApplicationException(CommonStringResources.Instance.CannotGetImage);
+                    throw new Exception(CommonStringResources.Instance.CannotGetImage);
                 }
                 string text = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(image, ClipboardAppConfig.TesseractExePath);
                 clipboardItem.Content += text + "\n";

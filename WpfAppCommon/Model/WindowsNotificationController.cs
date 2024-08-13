@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PythonAILib.PythonIF;
 using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
@@ -17,7 +12,6 @@ namespace WpfAppCommon.Model {
             _Enabled = true;
             Task.Run(() => StartTask(clipboardFolder, afterUpdate));
         }
-
         public static void Stop() {
 
             _Enabled = false;
@@ -34,7 +28,7 @@ namespace WpfAppCommon.Model {
 
             UserNotificationListenerAccessStatus accessStatus = await listener.RequestAccessAsync();
             if (accessStatus != UserNotificationListenerAccessStatus.Allowed) {
-                LogWrapper.Error("アクセス拒否");
+                LogWrapper.Error(CommonStringResources.Instance.AccessDenied);
                 return;
             }
             // Python処理機能の初期化

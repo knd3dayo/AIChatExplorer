@@ -177,7 +177,7 @@ namespace WpfAppCommon.Model {
             //-- 画像がある場合はコピー
             foreach (var imageObjectId in ImageObjectIds) {
                 ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.Image ?? throw new ThisApplicationException("画像が取得できません"));
+                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.Image ?? throw new Exception("画像が取得できません"));
                 newImage.ImageBase64 = image.ImageBase64;
                 newItem.ImageObjectIds.Add(newImage.Id);
             }
@@ -257,6 +257,7 @@ namespace WpfAppCommon.Model {
 
         public string? HeaderText {
             get {
+
                 string header1 = "";
                 // 更新日時文字列を追加
                 header1 += "[更新日時]" + UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
@@ -571,14 +572,14 @@ namespace WpfAppCommon.Model {
                 ClipboardItemFile? clipboardItemFile = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
 
                 if (clipboardItemFile == null) {
-                    throw new ThisApplicationException("ファイルが取得できません");
+                    throw new Exception("ファイルが取得できません");
                 }
                 if (clipboardItemFile.FilePath == null) {
-                    throw new ThisApplicationException("ファイルパスが取得できません");
+                    throw new Exception("ファイルパスが取得できません");
                 }
                 string path = clipboardItemFile.FilePath;
                 if (string.IsNullOrEmpty(path)) {
-                    throw new ThisApplicationException("ファイルパスが取得できません");
+                    throw new Exception("ファイルパスが取得できません");
                 }
                 try {
                     string text = PythonExecutor.PythonAIFunctions.ExtractText(path);

@@ -8,7 +8,6 @@ namespace WpfAppCommon.Model {
     // IsGlobalSearchがFalseの場合は検索フォルダのみ検索を行う
     // このクラスのオブジェクトはLiteDBに保存される
     public class SearchRule {
-
         public enum SearchType {
             // 標準 or 検索フォルダ
             Normal,

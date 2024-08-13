@@ -2,6 +2,7 @@ using LiteDB;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
+    // TODO 多言語化
     public partial class SystemAutoProcessItem {
         public enum TypeEnum {
             Ignore,
@@ -45,7 +46,7 @@ namespace WpfAppCommon.Model {
                     return item;
                 }
             }
-            throw new ThisApplicationException("AutoProcessItemが見つかりません");
+            throw new Exception(CommonStringResources.Instance.AutoProcessItemNotFound);
         }
 
         public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
@@ -140,7 +141,7 @@ namespace WpfAppCommon.Model {
             }
             if (name == TypeEnum.MergeAllItems.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception("フォルダが選択されていません");
 
                     folder.MergeItems(args.ClipboardItem);
                     return args.ClipboardItem;
@@ -148,7 +149,7 @@ namespace WpfAppCommon.Model {
             }
             if (name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception("フォルダが選択されていません");
 
                     folder.MergeItemsBySourceApplicationTitleCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;

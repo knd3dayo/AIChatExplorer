@@ -17,7 +17,6 @@ namespace WpfAppCommon.Utils {
                 return StatusText.GetStatusText(ActiveWindow);
             }
         }
-
         public new void Info(string message) {
             // 親クラスのメソッドを呼び出す
             base.Info(message);

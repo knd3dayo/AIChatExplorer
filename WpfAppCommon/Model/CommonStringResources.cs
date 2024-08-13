@@ -1049,5 +1049,18 @@ namespace WpfAppCommon.Model {
         // Pythonスクリプトを実行しました
         public string ExecutedPythonScript { get; } = "Pythonスクリプトを実行しました";
 
+        // -- SystemAutoProcessItem.cs --
+        // AutoProcessItemが見つかりません
+        public string AutoProcessItemNotFound { get; } = "AutoProcessItemが見つかりません";
+
+        // -- EnumDescription.cs --
+
+        // Enum型ではありません
+        public string NotEnumType { get; } = "Enum型ではありません";
+
+        // --- WindowsNotificationController.cs ---
+        // アクセス拒否
+        public string AccessDenied { get; } = "アクセス拒否";
+
     }
 }

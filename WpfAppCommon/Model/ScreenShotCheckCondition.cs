@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace WpfAppCommon.Model {
+    // TODO 多言語化
 
     public class ScreenShotCheckCondition {
 

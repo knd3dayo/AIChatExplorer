@@ -13,7 +13,6 @@ namespace WpfAppCommon.Model {
             }
             return key;
         }
-
         public static Dictionary<string, StatusText> StatusTextDictionary { get; } = [];
 
         public static StatusText GetStatusText(Window window) {
