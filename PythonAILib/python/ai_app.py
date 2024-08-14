@@ -222,7 +222,7 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, image_url, description = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
+        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
         # LangChainObjectProcessorオブジェクトを生成
         processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
         
@@ -235,7 +235,7 @@ def __update_or_delete_image_index(props_json, request_json, mode):
              processor.delete_image_index(source)
         if mode == "update":
             # update_image_indexを実行
-            processor.update_image_index(text, image_url, source, description=description)
+            processor.update_image_index(text,  source, source_url, description=description, image_url=image_url)
             
         # 結果用のdictを生成
         result = {}

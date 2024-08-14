@@ -49,12 +49,11 @@ class LangChainObjectProcessor:
             # DBからsourceを指定して既存ドキュメントを削除
             self.vector_db.delete_document(source)
             
-    def update_image_index(self, text: str, image_url: str, source: str, description:str="", chunk_size: int=500):
-        # ★TODO *_content_indexと同じ処理になっているので、共通化する
+    def update_image_index(self, text: str, source: str, source_url: str, description:str="", image_url:str = "", chunk_size: int=500):
         # 既に存在するドキュメントを削除
         self.delete_content_index(source)
         # ドキュメントを取得
-        documents = self._get_document_list(text, description, image_url, source, chunk_size, content_type="image")
+        documents = self._get_document_list(text, description, source_url, source, chunk_size, content_type="image", image_url=image_url)
         # MultiVectorRetrieverの場合
         if self.vector_db_props.IsUseMultiVectorRetriever:
             for document in documents:
@@ -109,14 +108,21 @@ class LangChainObjectProcessor:
         # テキストを分割してDocumentのリストを返す
         return self._get_document_list(text, description, relative_path, source_url, chunk_size)
 
-    def _get_document_list(self, content_text: str, description_text: str, source: str, source_url: str, chunk_size: int, content_type:str="text" ):
+    def _get_document_list(self, content_text: str, description_text: str, source: str, source_url: str, chunk_size: int, content_type:str="text" , image_url="" ):
         # 入力テキストを分割してDocumentのリストを返す
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         document_list = []
         for text in text_list:
             # doc_idを生成
             doc_id = str(uuid.uuid4())
-            document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type})
+            if content_type == "text":
+                document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type})
+            elif content_type == "image":
+                document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type, "image_url": image_url})
+            else:
+                # 例外処理
+                raise ValueError("content_type is invalid")
+
             document_list.append(document)
         
         return document_list
@@ -152,12 +158,13 @@ def process_image_update_or_datele_request_params(props_json: str, request_json:
     # request_jsonをdictに変換
     request = json.loads(request_json)
     text = request["content"]
-    image_url = request["image_url"]
     source = request["id"]
+    source_url = ""
+    image_url = request["image_url"]
 
     description = request.get("description", "")
 
-    return openai_props, vector_db_props, text, source, image_url, description
+    return openai_props, vector_db_props, text, source, source_url, description, image_url
 
 def process_file_update_or_datele_request_params(props_json: str, request_json: str):
     props = json.loads(props_json)

@@ -34,6 +34,9 @@ namespace PythonAILib.PythonIF {
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo clipboard, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
         public string HelloWorld() {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }

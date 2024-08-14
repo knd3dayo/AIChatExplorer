@@ -20,6 +20,8 @@ namespace PythonAILib.PythonIF {
 
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
 
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem);
+
         //テスト用
         public string HelloWorld();
     }
