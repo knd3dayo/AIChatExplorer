@@ -31,7 +31,7 @@ namespace WpfAppCommon.Model {
             get { return _description; }
             set {
                 _description = value;
-                OnPropertyChanged("Description");
+                OnPropertyChanged(nameof(Description));
             }
         }
 
@@ -39,28 +39,28 @@ namespace WpfAppCommon.Model {
             get { return _content; }
             set {
                 _content = value;
-                OnPropertyChanged("Content");
+                OnPropertyChanged(nameof(Content));
             }
         }
         public string Tags {
             get { return _tags; }
             set {
                 _tags = value;
-                OnPropertyChanged("Tags");
+                OnPropertyChanged(nameof(Tags));
             }
         }
         public string SourceApplicationName {
             get { return _sourceApplicationName; }
             set {
                 _sourceApplicationName = value;
-                OnPropertyChanged("SourceApplicationName");
+                OnPropertyChanged(nameof(SourceApplicationName));
             }
         }
         public string SourceApplicationTitle {
             get { return _sourceApplicationTitle; }
             set {
                 _sourceApplicationTitle = value;
-                OnPropertyChanged("SourceApplicationTitle");
+                OnPropertyChanged(nameof(SourceApplicationTitle));
             }
         }
 
@@ -68,7 +68,7 @@ namespace WpfAppCommon.Model {
             get { return _startTime; }
             set {
                 _startTime = value;
-                OnPropertyChanged("StartTime");
+                OnPropertyChanged(nameof(StartTime));
             }
         }
 
@@ -76,21 +76,21 @@ namespace WpfAppCommon.Model {
             get { return _endTime; }
             set {
                 _endTime = value;
-                OnPropertyChanged("EndTime");
+                OnPropertyChanged(nameof(EndTime));
             }
         }
         public bool EnableStartTime {
             get { return _enableStartTime; }
             set {
                 _enableStartTime = value;
-                OnPropertyChanged("EnableStartTime");
+                OnPropertyChanged(nameof(EnableStartTime));
             }
         }
         public bool EnableEndTime {
             get { return _enableEndTime; }
             set {
                 _enableEndTime = value;
-                OnPropertyChanged("EnableEndTime");
+                OnPropertyChanged(nameof(EnableEndTime));
             }
         }
 
@@ -98,35 +98,35 @@ namespace WpfAppCommon.Model {
             get { return _ExcludeDescription; }
             set {
                 _ExcludeDescription = value;
-                OnPropertyChanged("ExcludeDescription");
+                OnPropertyChanged(nameof(ExcludeDescription));
             }
         }
         public bool ExcludeContent {
             get { return _ExcludeContent; }
             set {
                 _ExcludeContent = value;
-                OnPropertyChanged("ExcludeContent");
+                OnPropertyChanged(nameof(ExcludeContent));
             }
         }
         public bool ExcludeTags {
             get { return _ExcludeTags; }
             set {
                 _ExcludeTags = value;
-                OnPropertyChanged("ExcludeTags");
+                OnPropertyChanged(nameof(ExcludeTags));
             }
         }
         public bool ExcludeSourceApplicationName {
             get { return _ExcludeSourceApplicationName; }
             set {
                 _ExcludeSourceApplicationName = value;
-                OnPropertyChanged("ExcludeSourceApplicationName");
+                OnPropertyChanged(nameof(ExcludeSourceApplicationName));
             }
         }
         public bool ExcludeSourceApplicationTitle {
             get { return _ExcludeSourceApplicationTitle; }
             set {
                 _ExcludeSourceApplicationTitle = value;
-                OnPropertyChanged("ExcludeSourceApplicationTitle");
+                OnPropertyChanged(nameof(ExcludeSourceApplicationTitle));
             }
         }
 

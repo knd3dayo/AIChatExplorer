@@ -1,46 +1,31 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
 
-namespace QAChat.ViewModel
-{
-    public class RAGSourceItemViewModel : MyWindowViewModel
-    {
+namespace QAChat.ViewModel {
+    public class RAGSourceItemViewModel : MyWindowViewModel {
 
         private readonly RAGSourceItem item;
-        public RAGSourceItemViewModel(RAGSourceItem item)
-        {
+        public RAGSourceItemViewModel(RAGSourceItem item) {
             this.item = item;
         }
-        public RAGSourceItem Item
-        {
-            get
-            {
+        public RAGSourceItem Item {
+            get {
                 return item;
             }
         }
         // SourceURL
-        public string SourceURL
-        {
+        public string SourceURL {
             get => Item.SourceURL;
-            set
-            {
+            set {
                 Item.SourceURL = value;
                 OnPropertyChanged(nameof(SourceURL));
             }
         }
         // WorkingDirectory
-        public string WorkingDirectory
-        {
+        public string WorkingDirectory {
             get => Item.WorkingDirectory;
-            set
-            {
+            set {
                 Item.WorkingDirectory = value;
                 // フォルダが存在する場合はソースURLを取得してSourceURLを更新
                 SourceURL = Item.SeekSourceURL(value);
@@ -49,58 +34,45 @@ namespace QAChat.ViewModel
             }
         }
         // LastIndexCommitHash
-        public string LastIndexCommitHash
-        {
+        public string LastIndexCommitHash {
             get => Item.LastIndexCommitHash;
-            set
-            {
+            set {
                 Item.LastIndexCommitHash = value;
                 OnPropertyChanged(nameof(LastIndexCommitHash));
             }
         }
 
         // VectorDBItem
-        public VectorDBItem? VectorDBItem
-        {
+        public VectorDBItem? VectorDBItem {
             get => Item.VectorDBItem;
-            set
-            {
+            set {
                 Item.VectorDBItem = value;
                 OnPropertyChanged(nameof(VectorDBItem));
             }
         }
         // ComboBoxの選択肢
-        public ObservableCollection<VectorDBItem> VectorDBItems
-        {
-            get
-            {
+        public ObservableCollection<VectorDBItem> VectorDBItems {
+            get {
                 return [.. ClipboardAppVectorDBItem.GetItems(false)];
             }
         }
-        public VectorDBItem? SelectedVectorDBItem
-        {
-            get
-            {
+        public VectorDBItem? SelectedVectorDBItem {
+            get {
                 return Item.VectorDBItem;
             }
-            set
-            {
+            set {
                 Item.VectorDBItem = value;
                 OnPropertyChanged(nameof(SelectedVectorDBItem));
             }
         }
 
         // 最後にインデックス化したコミットの情報
-        public string LastIndexedCommitInfo
-        {
-            get
-            {
-                if (Item == null)
-                {
+        public string LastIndexedCommitInfo {
+            get {
+                if (Item == null) {
                     return "";
                 }
-                if (string.IsNullOrEmpty(Item.LastIndexCommitHash))
-                {
+                if (string.IsNullOrEmpty(Item.LastIndexCommitHash)) {
                     return "";
                 }
                 CommitInfo commitInfo = Item.GetCommit(Item.LastIndexCommitHash);
@@ -111,18 +83,15 @@ namespace QAChat.ViewModel
             }
         }
         // save
-        public void Save()
-        {
+        public void Save() {
             Item.Save();
         }
         // delete
-        public void Delete()
-        {
+        public void Delete() {
             Item.Delete();
         }
         // checkWorkingDirectory
-        public bool CheckWorkingDirectory()
-        {
+        public bool CheckWorkingDirectory() {
             return Item.CheckWorkingDirectory();
         }
     }

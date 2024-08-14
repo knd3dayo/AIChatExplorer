@@ -30,14 +30,5 @@ namespace WpfAppCommon.View.QAChat {
             TextSelector.ExecuteSelectedText(textbox);
 
         });
-
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-        });
-
-
-
     }
 }

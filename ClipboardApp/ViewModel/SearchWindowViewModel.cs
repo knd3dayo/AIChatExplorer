@@ -127,10 +127,6 @@ namespace ClipboardApp.ViewModel
             SearchConditionRule?.SearchCondition?.Clear();
         });
 
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-
-            window.Close();
-        });
 
         public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {

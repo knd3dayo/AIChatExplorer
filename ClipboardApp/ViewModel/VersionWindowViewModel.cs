@@ -2,7 +2,7 @@
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.ViewModel {
-    public class VersionWindowViewModel {
+    public class VersionWindowViewModel: MyWindowViewModel {
 
         public string Version { get; set; }
 
@@ -23,5 +23,6 @@ namespace ClipboardApp.ViewModel {
                 return $"{Title}\nVersion: {Version}\nCopyRight: {CopyRight}\nUrl: {Url}";
             }
         }
+        
     }
 }

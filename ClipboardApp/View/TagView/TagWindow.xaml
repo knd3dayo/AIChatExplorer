@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListTagWindowTitle}"
+    Title="{Binding StringResources.ListTagWindowTitle, Mode=OneTime}"
     Width="500"
     Height="300"
     mc:Ignorable="d">
@@ -20,33 +20,33 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Enter"
-            Command="{Binding OkCommand}"
+            Command="{Binding OkCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="F"
-            Command="{Binding OpenSearchWindowCommand}"
+            Command="{Binding OpenSearchWindowCommand, Mode=OneTime}"
             Modifiers="Ctrl" />
         <KeyBinding
             Key="A"
-            Command="{Binding SelectAllCommand}"
+            Command="{Binding SelectAllCommand, Mode=OneTime}"
             Modifiers="Ctrl" />
     </Window.InputBindings>
     <Grid>
@@ -74,9 +74,9 @@
                     IsMainMenu="False">
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding OpenSearchWindowCommand}"
+                        Command="{Binding OpenSearchWindowCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Search}" />
+                        Header="{Binding StringResources.Search, Mode=OneTime}" />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
@@ -91,7 +91,7 @@
             SelectionMode="Extended">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding SelectionChangeCommand}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding SelectionChangeCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <ListBox.ItemTemplate>
@@ -106,9 +106,9 @@
             </ListBox.ItemTemplate>
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding DeleteSelectedTagCommand}" Header="{Binding StringResources.DeleteSelectedTag}" />
-                    <MenuItem Command="{Binding SelectAllCommand}" Header="{Binding StringResources.SelectAll}" />
-                    <MenuItem Command="{Binding UnselectAllCommand}" Header="{Binding StringResources.UnselectAll}" />
+                    <MenuItem Command="{Binding DeleteSelectedTagCommand}" Header="{Binding StringResources.DeleteSelectedTag, Mode=OneTime}" />
+                    <MenuItem Command="{Binding SelectAllCommand}" Header="{Binding StringResources.SelectAll, Mode=OneTime}" />
+                    <MenuItem Command="{Binding UnselectAllCommand}" Header="{Binding StringResources.UnselectAll, Mode=OneTime}" />
 
                 </ContextMenu>
             </ListBox.ContextMenu>
@@ -119,7 +119,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" HorizontalAlignment="Stretch">
-                <TextBlock Margin="10,0,10,0" Text="{Binding StringResources.NewTag}" />
+                <TextBlock Margin="10,0,10,0" Text="{Binding StringResources.NewTag, Mode=OneTime}" />
                 <TextBox Margin="10,0,10,0" Text="{Binding NewTag}" />
             </DockPanel>
             <Button
@@ -128,9 +128,9 @@
                 Height="Auto"
                 Margin="10,0,10,0"
                 HorizontalAlignment="Right"
-                Command="{Binding AddTagCommand}"
+                Command="{Binding AddTagCommand, Mode=OneTime}"
                 CommandParameter="{Binding NewTag}"
-                Content="{Binding StringResources.Add}"
+                Content="{Binding StringResources.Add, Mode=OneTime}"
                 FontSize="12" />
         </Grid>
         <StackPanel
@@ -141,17 +141,17 @@
                 Width="100"
                 Height="Auto"
                 Margin="10"
-                Command="{Binding OkCommand}"
+                Command="{Binding OkCommand, Mode=OneTime}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.OK}"
+                Content="{Binding StringResources.OK, Mode=OneTime}"
                 FontSize="12" />
             <Button
                 Width="100"
                 Height="Auto"
                 Margin="10"
-                Command="{Binding CloseCommand}"
+                Command="{Binding CloseCommand, Mode=OneTime}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Cancel}"
+                Content="{Binding StringResources.Cancel, Mode=OneTime}"
                 FontSize="12" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />

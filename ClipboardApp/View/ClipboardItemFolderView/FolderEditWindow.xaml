@@ -8,7 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
-    Title="{Binding StringResources.EditClipboardFolder}"
+    Title="{Binding StringResources.EditClipboardFolder, Mode=OneTime}"
     Width="500"
     SizeToContent="Height"
     mc:Ignorable="d">
@@ -20,15 +20,15 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
@@ -81,7 +81,7 @@
                 Grid.Column="0"
                 Width="120"
                 Margin="10,10,10,10"
-                Text="{Binding StringResources.Name}" />
+                Text="{Binding StringResources.Name, Mode=OneTime}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -92,7 +92,7 @@
                 Grid.Column="0"
                 Width="120"
                 Margin="10,10,10,10"
-                Text="{Binding StringResources.Description}" />
+                Text="{Binding StringResources.Description, Mode=OneTime}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="1"
@@ -104,15 +104,15 @@
                 <Button
                     Width="100"
                     Margin="10,10,0,0"
-                    Command="{Binding CreateCommand}"
+                    Command="{Binding CreateCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK}" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,0"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel}"
+                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

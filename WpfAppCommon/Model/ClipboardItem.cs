@@ -177,7 +177,7 @@ namespace WpfAppCommon.Model {
             //-- 画像がある場合はコピー
             foreach (var imageObjectId in ImageObjectIds) {
                 ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.Image ?? throw new Exception("画像が取得できません"));
+                ClipboardItemImage newImage = ClipboardItemImage.Create(newItem, image?.Image ?? throw new Exception(CommonStringResources.Instance.CannotGetImage));
                 newImage.ImageBase64 = image.ImageBase64;
                 newItem.ImageObjectIds.Add(newImage.Id);
             }
@@ -194,7 +194,7 @@ namespace WpfAppCommon.Model {
 
         public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {
             if (ContentType != ClipboardContentTypes.Text) {
-                action?.Invoke(ActionMessage.Error("Text以外のアイテムへのマージはできません"));
+                action?.Invoke(ActionMessage.Error(CommonStringResources.Instance.CannotMergeToNonTextItems));
                 return;
             }
             string mergeText = "\n";
@@ -205,7 +205,7 @@ namespace WpfAppCommon.Model {
 
                 // Itemの種別がText以外が含まれている場合はマージしない
                 if (item.ContentType != ClipboardContentTypes.Text) {
-                    action?.Invoke(ActionMessage.Error("Text以外のアイテムが含まれているアイテムはマージできません"));
+                    action?.Invoke(ActionMessage.Error(CommonStringResources.Instance.CannotMergeItemsContainingNonTextItems));
                     return;
                 }
             }
@@ -260,28 +260,28 @@ namespace WpfAppCommon.Model {
 
                 string header1 = "";
                 // 更新日時文字列を追加
-                header1 += "[更新日時]" + UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
+                header1 += $"[{CommonStringResources.Instance.UpdateDate}]" + UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
                 // 作成日時文字列を追加
-                header1 += "[作成日時]" + CreatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
+                header1 += $"[{CommonStringResources.Instance.CreationDateTime}]" + CreatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
                 // 貼り付け元のアプリケーション名を追加
-                header1 += "[ソースアプリ名]" + SourceApplicationName + "\n";
+                header1 += $"[{CommonStringResources.Instance.SourceAppName}]" + SourceApplicationName + "\n";
                 // 貼り付け元のアプリケーションのタイトルを追加
-                header1 += "[ソースタイトル]" + SourceApplicationTitle + "\n";
+                header1 += $"[{CommonStringResources.Instance.SourceTitle}]" + SourceApplicationTitle + "\n";
                 // Tags
-                header1 += "[タグ]" + TagsString() + "\n";
+                header1 += $"[{CommonStringResources.Instance.Tag}]" + TagsString() + "\n";
                 // ピン留め中かどうか
                 if (IsPinned) {
-                    header1 += "[ピン留めしてます]\n";
+                    header1 += $"[{CommonStringResources.Instance.Pinned}]\n";
                 }
 
                 if (ContentType == ClipboardContentTypes.Text) {
-                    return header1 + "[種類]Text";
+                    return header1 + $"[{CommonStringResources.Instance.Type}]Text";
                 } else if (ContentType == ClipboardContentTypes.Files) {
-                    return header1 + "[種類]File";
+                    return header1 + $"[{CommonStringResources.Instance.Type}]File";
                 } else if (ContentType == ClipboardContentTypes.Image) {
-                    return header1 + "[種類]Image";
+                    return header1 + $"[{CommonStringResources.Instance.Type}]Image";
                 } else {
-                    return header1 + "[種類]Unknown";
+                    return header1 + $"[{CommonStringResources.Instance.Type}]Unknown";
                 }
             }
         }
@@ -289,7 +289,7 @@ namespace WpfAppCommon.Model {
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder GetFolder(Type? objectType = null) {
             ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
-            return folder ?? throw new Exception("フォルダが取得できません");
+            return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
         }
         //--------------------------------------------------------------------------------
         // staticメソッド
@@ -313,7 +313,7 @@ namespace WpfAppCommon.Model {
             var options = jsonSerializerOptions;
             ClipboardItem? item = System.Text.Json.JsonSerializer.Deserialize<ClipboardItem>(json, options);
             if (item == null) {
-                action(ActionMessage.Error("JSON文字列をClipboardItemに変換できませんでした"));
+                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
                 return null;
             }
             return item;
@@ -371,7 +371,7 @@ namespace WpfAppCommon.Model {
 
         // OS上のファイルに保存する
         private void SaveToOSFolder() {
-            LogWrapper.Info("OS上のファイルに保存します");
+            LogWrapper.Info(CommonStringResources.Instance.SaveToFileOnOS);
             // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
             if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                 // 保存先フォルダを取得
@@ -394,35 +394,39 @@ namespace WpfAppCommon.Model {
 
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    try {
-
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                    }
+                    GitCommit(syncFilePath);
                 }
 
             }
-            LogWrapper.Info("OS上のファイルに保存しました");
+            LogWrapper.Info(CommonStringResources.Instance.SavedToFileOnOS);
+        }
+
+        public void GitCommit(string syncFilePath) {
+            try {
+
+                using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                    Commands.Stage(repo, syncFilePath);
+                    Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
+                    Signature committer = author;
+                    repo.Commit("Auto commit", author, committer);
+                    LogWrapper.Info($"{CommonStringResources.Instance.CommittedToGit}:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                }
+            } catch (RepositoryNotFoundException e) {
+                LogWrapper.Info($"{CommonStringResources.Instance.RepositoryNotFound}:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+            } catch (EmptyCommitException e) {
+                LogWrapper.Info($"{CommonStringResources.Instance.CommitIsEmpty}:{syncFilePath} {e.Message}");
+            }
         }
 
         // Embeddingを更新する
         public void UpdateEmbedding() {
             if (ClipboardAppConfig.AutoEmbedding) {
-                LogWrapper.Info("Embeddingを保存します");
+                LogWrapper.Info(CommonStringResources.Instance.SaveEmbedding);
                 // IPythonAIFunctions.ClipboardInfoを作成
                 string content = this.Content;
                 // 背景情報を含める場合
                 if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                    content += "\n---背景情報--\n" + BackgroundInfo;
+                    content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
                 }
 
                 ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.update, this.Id.ToString(), content);
@@ -431,7 +435,7 @@ namespace WpfAppCommon.Model {
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
                 // Embeddingを保存
                 folderVectorDBItem.UpdateIndex(clipboardInfo);
-                LogWrapper.Info("Embeddingを保存しました");
+                LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
             }
         }
 
@@ -439,7 +443,7 @@ namespace WpfAppCommon.Model {
         public void Delete() {
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
-                LogWrapper.Info("Embeddingを削除します");
+                LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
                 if (ClipboardAppConfig.AutoEmbedding) {
                     // IPythonAIFunctions.ClipboardInfoを作成
                     ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
@@ -450,10 +454,10 @@ namespace WpfAppCommon.Model {
                     // Embeddingを削除
                     folderVectorDBItem.DeleteIndex(clipboardInfo);
                 }
-                LogWrapper.Info("Embeddingを削除しました");
+                LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
             });
             Task.Run(() => {
-                LogWrapper.Info("OS上のファイルを削除します");
+                LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
                 if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                     // 保存先フォルダを取得
@@ -469,25 +473,11 @@ namespace WpfAppCommon.Model {
                     }
                     // 自動コミットが有効の場合はGitにコミット
                     if (ClipboardAppConfig.AutoCommit) {
-                        try {
-
-                            using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                                Commands.Stage(repo, syncFilePath);
-                                Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                                Signature committer = author;
-                                repo.Commit("Auto commit", author, committer);
-                                LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                            }
-
-                        } catch (RepositoryNotFoundException e) {
-                            LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                        } catch (EmptyCommitException e) {
-                            LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                        }
+                        GitCommit(syncFilePath);
                     }
 
                 }
-                LogWrapper.Info("OS上のファイルを削除しました");
+                LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
 
             });
             // イメージが存在する場合は削除
@@ -535,7 +525,7 @@ namespace WpfAppCommon.Model {
             string contentText = item.Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
             if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                contentText += "\n---背景情報--\n" + item.BackgroundInfo;
+                contentText += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{item.BackgroundInfo}";
             }
             // ベクトル検索を実行
             List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
@@ -571,29 +561,24 @@ namespace WpfAppCommon.Model {
             foreach (var fileObjectId in clipboardItem.FileObjectIds) {
                 ClipboardItemFile? clipboardItemFile = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
 
-                if (clipboardItemFile == null) {
-                    throw new Exception("ファイルが取得できません");
-                }
-                if (clipboardItemFile.FilePath == null) {
-                    throw new Exception("ファイルパスが取得できません");
+                if (clipboardItemFile == null || clipboardItemFile.FilePath == null) {
+                    throw new Exception(CommonStringResources.Instance.FileDoesNotExist);
                 }
                 string path = clipboardItemFile.FilePath;
                 if (string.IsNullOrEmpty(path)) {
-                    throw new Exception("ファイルパスが取得できません");
+                    throw new Exception(CommonStringResources.Instance.FileDoesNotExist);
                 }
                 try {
                     string text = PythonExecutor.PythonAIFunctions.ExtractText(path);
                     clipboardItem.Content += text + "\n";
 
                 } catch (UnsupportedFileTypeException) {
-                    LogWrapper.Info("サポートされていないファイル形式です");
+                    LogWrapper.Info(CommonStringResources.Instance.UnsupportedFileType);
                     return clipboardItem;
                 }
-                LogWrapper.Info($"{path}のテキストを抽出しました");
-
+                LogWrapper.Info($"{CommonStringResources.Instance.ExtractedText}:{path}");
             }
             return clipboardItem;
-
         }
     }
 }

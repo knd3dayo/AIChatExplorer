@@ -1,11 +1,9 @@
 using System.Windows;
-using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.View.RAGWindow
-{
+namespace QAChat.View.RAGWindow {
     public class EditRAGSourceWindowViewModel : MyWindowViewModel {
 
         private RAGSourceItemViewModel? itemViewModel;
@@ -19,20 +17,11 @@ namespace QAChat.View.RAGWindow
             }
         }
 
-        // Windowのタイトル　ItemViewModelがnullの場合は新規作成、それ以外は編集
-        public string WindowTitle {
-            get {
-                return itemViewModel == null ? "新規作成" : "編集"; ;
-            }
-        }
 
         private Action<RAGSourceItemViewModel> AfterUpdate { get; set; } = (promptItem) => { };
         // 初期化
         public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
             ItemViewModel = itemViewModel;
-
-            // Windowのタイトルを更新
-            OnPropertyChanged(nameof(WindowTitle));
 
             // test
             if (ItemViewModel != null) {
@@ -77,7 +66,7 @@ namespace QAChat.View.RAGWindow
         public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) => {
             try {
                 if (ItemViewModel == null) {
-                    LogWrapper.Error("ItemViewModelがnullです");
+                    LogWrapper.Error(StringResources.ItemViewModelIsNull);
                     return;
                 }
                 ItemViewModel.SourceURL = "";

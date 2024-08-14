@@ -14,9 +14,10 @@ namespace WpfAppCommon.Model {
             DisplayName = scriptItem.Name;
             Description = scriptItem.Description;
             Type = TypeEnum.RunPythonScript;
-
         }
+
         public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems() {
+
             // DBからスクリプトのScriptItemを取得
             List<ScriptItem> items = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()];
             List<ScriptAutoProcessItem> result = [];
@@ -24,7 +25,6 @@ namespace WpfAppCommon.Model {
                 result.Add(new ScriptAutoProcessItem(item));
             }
             return result;
-
         }
         public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
 

@@ -42,7 +42,7 @@ namespace WpfAppCommon.Control.QAChat {
                 });
 
                 if (result == null) {
-                    LogWrapper.Error("チャットの送信に失敗しました。");
+                    LogWrapper.Error(StringResources.FailedToSendChat);
                     return;
                 }
                 // ClipboardItemがある場合はClipboardItemのChatItemsを更新
@@ -56,7 +56,7 @@ namespace WpfAppCommon.Control.QAChat {
 
 
             } catch (Exception e) {
-                LogWrapper.Error($"エラーが発生ました:\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}");
+                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
             } finally {
                 IsIndeterminate = false;
             }
@@ -193,12 +193,12 @@ namespace WpfAppCommon.Control.QAChat {
             //ファイルダイアログを表示
             // 画像ファイルを選択して画像ファイル名一覧に追加
             CommonOpenFileDialog dialog = new() {
-                Title = "画像ファイルを選択してください",
+                Title = StringResources.SelectImageFilePlease,
                 InitialDirectory = lastSelectedImageFolder,
                 Multiselect = true,
                 Filters = {
-                    new CommonFileDialogFilter("画像ファイル", "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
-                    new CommonFileDialogFilter("すべてのファイル", "*.*"),
+                    new CommonFileDialogFilter(StringResources.ImageFile, "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
+                    new CommonFileDialogFilter(StringResources.AllFiles, "*.*"),
                 }
             };
             if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
@@ -222,8 +222,6 @@ namespace WpfAppCommon.Control.QAChat {
             window.Activate();
 
         });
-
-
 
         // クリップボードの画像アイテムを追加
         public SimpleDelegateCommand<Window> PasteImageItemCommand => new((window) => {

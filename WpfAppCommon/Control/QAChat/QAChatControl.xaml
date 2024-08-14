@@ -19,7 +19,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </UserControl.Resources>
     <UserControl.InputBindings>
@@ -66,7 +66,7 @@
                     <ComboBoxItem Content="OpenAI" />
                     <ComboBoxItem Content="OpenAI+RAG" />
                     <ComboBoxItem Content="LangChain" />
-                    <ComboBoxItem Content="{Binding StringResources.ExperimentalFunction1}" />
+                    <ComboBoxItem Content="{Binding StringResources.ExperimentalFunction1, Mode=OneTime}" />
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -87,7 +87,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.VectorDBFolder}" />
+                        <TextBlock Text="{Binding StringResources.VectorDBFolder, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsSystemVectorDBDrawerOpen}" OpenMode="Standard">
@@ -102,7 +102,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddVectorDBFolder}">
+                                Text="{Binding StringResources.ClickHereToAddVectorDBFolder, Mode=OneTime}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding AddVectorDBItemFolderCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -120,7 +120,7 @@
                                 </ListBox.ItemTemplate>
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList}" />
+                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
@@ -140,7 +140,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.VectorDBExternal}" />
+                        <TextBlock Text="{Binding StringResources.VectorDBExternal, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsExternalVectorDBDrawerOpen}" OpenMode="Standard">
@@ -155,7 +155,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddVectorDBExternal}">
+                                Text="{Binding StringResources.ClickHereToAddVectorDBExternal, Mode=OneTime}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
@@ -178,7 +178,7 @@
                                 </i:Interaction.Triggers>
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList}" />
+                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
                                     </ContextMenu>
                                 </ListBox.ContextMenu>
                             </ListBox>
@@ -195,7 +195,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.ImageItem}" />
+                        <TextBlock Text="{Binding StringResources.ImageItem, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageItemDrawerOpen}" OpenMode="Standard">
@@ -211,9 +211,9 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="{Binding StringResources.ClickHereToPasteTheSelectedItem}">
+                                Text="{Binding StringResources.ClickHereToPasteTheSelectedItem, Mode=OneTime}">
                                 <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding PasteImageItemCommand}" MouseAction="LeftClick" />
+                                    <MouseBinding Command="{Binding PasteImageItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
                             </TextBlock>
                             <ListBox
@@ -238,20 +238,20 @@
 
                                             <Grid.InputBindings>
                                                 <MouseBinding
-                                                    Command="{Binding OpenSelectedImageItemCommand}"
+                                                    Command="{Binding OpenSelectedImageItemCommand, Mode=OneTime}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftDoubleClick" />
                                             </Grid.InputBindings>
                                             <Grid.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem
-                                                        Command="{Binding OpenSelectedImageItemCommand}"
+                                                        Command="{Binding OpenSelectedImageItemCommand, Mode=OneTime}"
                                                         CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Select}" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Select}" />
                                                     <MenuItem
                                                         Command="{Binding RemoveSelectedImageItemCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete}" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Delete}" />
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                         </Grid>
@@ -272,7 +272,7 @@
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.ImageFile}" />
+                        <TextBlock Text="{Binding StringResources.ImageFile, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
                 <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageFileDrawerOpen}" OpenMode="Standard">
@@ -288,7 +288,7 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddImageFile}">
+                                Text="{Binding StringResources.ClickHereToAddImageFile, Mode=OneTime}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding
                                         Command="{Binding SelectImageFileCommand, Mode=OneTime}"
@@ -323,20 +323,20 @@
                                                 Text="{Binding ScreenShotImage.FileName}" />
                                             <Grid.InputBindings>
                                                 <MouseBinding
-                                                    Command="{Binding OpenSelectedImageFileCommand}"
+                                                    Command="{Binding OpenSelectedImageFileCommand, Mode=OneTime}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftDoubleClick" />
                                             </Grid.InputBindings>
                                             <Grid.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem
-                                                        Command="{Binding OpenSelectedImageFileCommand}"
+                                                        Command="{Binding OpenSelectedImageFileCommand, Mode=OneTime}"
                                                         CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open}" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
                                                     <MenuItem
                                                         Command="{Binding RemoveSelectedImageFileCommand}"
                                                         CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete}" />
+                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                         </Grid>
@@ -365,7 +365,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Chat}">
+                    Header="{Binding StringResources.Chat, Mode=OneTime}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="5*" />
@@ -436,7 +436,7 @@
                             <TextBox
                                 MinHeight="20"
                                 Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate}"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
                                 AcceptsReturn="True"
                                 Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
@@ -456,7 +456,7 @@
                             <TextBox
                                 MinHeight="50"
                                 Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere}"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
                                 AcceptsReturn="True"
                                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}">
                                 <TextBox.InputBindings>
@@ -484,7 +484,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Preview}">
+                    Header="{Binding StringResources.Preview, Mode=OneTime}">
                     <ScrollViewer
                         Height="300"
                         VerticalAlignment="Top"
@@ -545,21 +545,21 @@
                         Margin="10,0,10,5"
                         Command="{Binding SaveCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Save}" />
+                        Content="{Binding StringResources.Save, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Send}" />
+                        Content="{Binding StringResources.Send, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearChatCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.Clear}" />
+                        Content="{Binding StringResources.Clear, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Close}" />
+                        Content="{Binding StringResources.Close, Mode=OneTime}" />
                 </StackPanel>
             </Grid>
             <ProgressBar

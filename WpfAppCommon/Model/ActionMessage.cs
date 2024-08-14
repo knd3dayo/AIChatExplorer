@@ -1,4 +1,4 @@
-﻿namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model {
 
     // アクションの情報を表すクラス
     public class ActionMessage {
@@ -12,7 +12,6 @@
         public string Message { get; set; }
         public MessageTypes MessageType { get; set; }
 
-
         private ActionMessage(MessageTypes messageType, string message) {
             MessageType = messageType;
             Message = message;
@@ -23,7 +22,5 @@
         public static ActionMessage Error(string message) {
             return new(MessageTypes.Error, message);
         }
-
-
     }
 }

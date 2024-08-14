@@ -29,10 +29,10 @@ namespace WpfAppCommon.Model {
 
         }
 
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "クリップボード";
-        public static readonly string SEARCH_ROOT_FOLDER_NAME = "検索フォルダ";
-        public static readonly string CHAT_ROOT_FOLDER_NAME = "チャット履歴";
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェック";
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
+        public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
 
 
         //--------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ namespace WpfAppCommon.Model {
 
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
-                LogWrapper.Info("自動処理でアイテムが削除または移動されました");
+                LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
                 return item;
             }
             // 保存
@@ -272,7 +272,7 @@ namespace WpfAppCommon.Model {
             // Itemsに追加
             Items.Add(result);
             // 通知
-            LogWrapper.Info("アイテムを追加しました");
+            LogWrapper.Info(CommonStringResources.Instance.AddedItems);
             return item;
         }
 
@@ -298,11 +298,11 @@ namespace WpfAppCommon.Model {
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
             foreach (var rule in AutoProcessRules) {
-                LogWrapper.Info("自動処理を適用します " + rule.GetDescriptionString());
+                LogWrapper.Info($"{CommonStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    LogWrapper.Info("自動処理でアイテムが削除されました");
+                    LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedByAutoProcessing);
                     return null;
                 }
             }
@@ -326,12 +326,12 @@ namespace WpfAppCommon.Model {
         public void ImportItemsFromJson(string json, Action<ActionMessage> action) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
                 return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
                 return;
             }
 
@@ -692,13 +692,9 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
                 ClipboardItem.CreateAutoSummary(item);
             }
-
             return item;
         }
-
         #endregion
-
-
     }
 }
 

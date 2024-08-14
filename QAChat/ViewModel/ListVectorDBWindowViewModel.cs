@@ -90,7 +90,7 @@ namespace QAChat.ViewModel {
         // Vector DB編集
         public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error("編集するベクトルDBを選択してください");
+                LogWrapper.Error(StringResources.SelectVectorDBToEdit);
                 return;
             }
             // ベクトルDBの編集Windowを開く
@@ -104,11 +104,11 @@ namespace QAChat.ViewModel {
         // DeleteVectorDBCommand
         public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error("削除するベクトルDBを選択してください");
+                LogWrapper.Error(StringResources.SelectVectorDBToDelete);
                 return;
             }
             // 確認ダイアログを表示
-            MessageBoxResult result = MessageBox.Show("選択中のベクトルDBを削除しますか？", "確認", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedVectorDB, StringResources.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
 
                 // 削除
@@ -121,7 +121,7 @@ namespace QAChat.ViewModel {
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             if (SelectedVectorDBItem == null) {
-                LogWrapper.Error("ベクトルDBを選択してください");
+                LogWrapper.Error(StringResources.SelectVectorDBPlease);
                 return;
             }
             callBackup?.Invoke(SelectedVectorDBItem.Item);

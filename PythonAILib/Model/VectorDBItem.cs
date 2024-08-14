@@ -29,7 +29,7 @@ namespace PythonAILib.Model {
         public string DocStoreURL { get; set; } = "";
 
         [JsonIgnore]
-        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Faiss;
+        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
         // VectorDBTypeString
         [JsonPropertyName("VectorDBTypeString")]

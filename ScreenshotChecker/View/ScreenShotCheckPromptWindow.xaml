@@ -9,7 +9,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="root"
-    Title="{Binding StringResources.ScreenShotCheckPromptWindowTitle}"
+    Title="{Binding StringResources.ScreenShotCheckPromptWindowTitle, Mode=OneTime}"
     Width="800"
     Height="450"
     mc:Ignorable="d">
@@ -26,10 +26,10 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
@@ -87,12 +87,12 @@
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingItem, UpdateSourceTrigger=PropertyChanged}"
-                    Header="{Binding StringResources.SettingItem}" />
+                    Header="{Binding StringResources.SettingItem, Mode=OneTime}" />
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
-                    Header="{Binding StringResources.SettingValue}" />
-                <DataGridTemplateColumn Width="150" Header="{Binding StringResources.CheckType}">
+                    Header="{Binding StringResources.SettingValue, Mode=OneTime}" />
+                <DataGridTemplateColumn Width="150" Header="{Binding StringResources.CheckType, Mode=OneTime}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding CheckTypeList}" SelectedItem="{Binding CheckTypeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -103,7 +103,7 @@
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <!--  貼り付け  -->
-                    <MenuItem Command="{Binding PasteDataGridCommand}" Header="{Binding StringResources.Paste}" />
+                    <MenuItem Command="{Binding PasteDataGridCommand, Mode=OneTime}" Header="{Binding StringResources.Paste, Mode=OneTime}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
@@ -119,8 +119,8 @@
                 <Button
                     Width="100"
                     Margin="10,0,0,0"
-                    Command="{Binding ClearCommand}"
-                    Content="{Binding StringResources.Clear}" />
+                    Command="{Binding ClearCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.Clear, Mode=OneTime}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -129,9 +129,9 @@
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
-                    Command="{Binding OKCommand}"
+                    Command="{Binding OKCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK}" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"

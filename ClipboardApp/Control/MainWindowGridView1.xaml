@@ -66,38 +66,38 @@
                 <DataGridCheckBoxColumn
                     Width="100"
                     Binding="{Binding IsPinned}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.Pin}" />
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Pin}" />
                 <DataGridTextColumn
                     Width="150"
                     MaxWidth="300"
                     Binding="{Binding UpdatedAtString}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.UpdateDate}"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.UpdateDate}"
                     IsReadOnly="True" />
                 <!--  ContentType  -->
                 <DataGridTextColumn
                     Width="100"
                     Binding="{Binding ContentTypeString}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.Type}"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Type}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="100"
                     Binding="{Binding TagsText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.Tag}"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Tag}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding DescriptionText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.Title}"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Title}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding SourceApplicationTitleText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="{Binding Source={StaticResource StringResources}, Path=Instance.SourceTitle}"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.SourceTitle}"
                     IsReadOnly="True" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>

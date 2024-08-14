@@ -213,54 +213,54 @@ namespace WpfAppCommon.Model {
         public ClipboardItem? RunAction(ClipboardItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
-                LogWrapper.Info(RuleName + "は無効です");
+                LogWrapper.Info(CommonStringResources.Instance.RuleNameIsInvalid(RuleName));
                 return clipboardItem;
             }
 
             if (!IsMatch(clipboardItem)) {
-                LogWrapper.Info("条件にマッチしませんでした");
+                LogWrapper.Info(CommonStringResources.Instance.NoMatch);
                 return clipboardItem;
             }
             if (RuleAction == null) {
-                LogWrapper.Warn("アクションが設定されていません");
+                LogWrapper.Warn(CommonStringResources.Instance.NoActionSet);
                 return clipboardItem;
             }
             return RuleAction.Execute(clipboardItem, DestinationFolder);
         }
         public string GetDescriptionString() {
-            string result = "条件\n";
+            string result = $"{CommonStringResources.Instance.Condition}\n";
             foreach (var condition in Conditions) {
                 // ConditionTypeごとに処理
                 switch (condition.Type) {
                     case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
-                        result += "Descriptionが" + condition.Keyword + "を含む \n";
+                        result += CommonStringResources.Instance.DescriptionContains( condition.Keyword ) +"\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
-                        result += "Contentが" + condition.Keyword + "を含む \n";
+                        result += CommonStringResources.Instance.ContentContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
-                        result += "SourceApplicationNameが" + condition.Keyword + "を含む \n";
+                        result += CommonStringResources.Instance.SourceApplicationNameContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
-                        result += "SourceApplicationTitleが" + condition.Keyword + "を含む \n";
+                        result += CommonStringResources.Instance.SourceApplicationTitleContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationPathContains:
-                        result += "SourceApplicationPathが" + condition.Keyword + "を含む \n";
+                        result += CommonStringResources.Instance.SourceApplicationPathContains(condition.Keyword) + "\n";
                         break;
                 }
                 // AutoProcessItemが設定されている場合
                 if (RuleAction != null) {
-                    result += "アクション:" + RuleAction.Description + "\n";
+                    result += $"{CommonStringResources.Instance.Action}:{RuleAction.Description}\n";
                 } else {
-                    result += "アクション:なし\n";
+                    result += $"{CommonStringResources.Instance.ActionNone}\n";
                 }
                 // Type が CopyToFolderまたはMoveToFolderの場合
                 if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
                     // DestinationFolderが設定されている場合
                     if (DestinationFolder != null) {
-                        result += "フォルダ:" + DestinationFolder.FolderPath + "\n";
+                        result += $"{CommonStringResources.Instance.Folder}:{DestinationFolder.FolderPath}\n";
                     } else {
-                        result += "フォルダ:なし\n";
+                        result += $"{CommonStringResources.Instance.FolderNone}\n";
                     }
                 }
             }
@@ -326,7 +326,7 @@ namespace WpfAppCommon.Model {
             };
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
             if (pathList.Distinct().Count() != pathList.Count) {
-                LogWrapper.Warn($"無限ループを検出しました\n{Tools.ListToString(pathList)}");
+                LogWrapper.Warn($"{CommonStringResources.Instance.DetectedAnInfiniteLoop}\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得
@@ -385,8 +385,6 @@ namespace WpfAppCommon.Model {
                 // 保存
                 autoProcessRules[i].Save();
             }
-
         }
-
     }
 }

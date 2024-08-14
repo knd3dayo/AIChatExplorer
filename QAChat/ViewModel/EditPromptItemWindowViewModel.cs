@@ -80,7 +80,7 @@ namespace QAChat.ViewModel {
             promptItem.Name = Name;
             // Nameが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Name)) {
-                MessageBox.Show("名前を入力してください。");
+                LogWrapper.Error(StringResources.EnterName);
                 return;
             }
             // ClipboardItemを更新

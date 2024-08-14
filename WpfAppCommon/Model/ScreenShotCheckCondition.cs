@@ -84,46 +84,46 @@ namespace WpfAppCommon.Model {
         }
 
         public string ToPromptString() {
-            string result = $"{SettingItem}の値は{SettingValue}である";
+            string result = $"{CommonStringResources.Instance.SettingValueIs(SettingItem, SettingValue)}";
             // CheckType.CheckTypeがEqualの場合
             if (CheckTypeString == CheckTypeEqual) {
-                result = $"{SettingItem}の値は{SettingValue}である";
+                result = $"{CommonStringResources.Instance.SettingValueIs(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotEqualの場合
             if (CheckTypeString == CheckTypeNotEqual) {
-                result = $"{SettingItem}の値は{SettingValue}でない";
+                result = $"{CommonStringResources.Instance.SettingValueIsNot(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがIncludeの場合
             if (CheckTypeString == CheckTypeInclude) {
-                result = $"{SettingItem}の値に{SettingValue}が含まれている";
+                result = $"{CommonStringResources.Instance.SettingValueContains(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotIncludeの場合
             if (CheckTypeString == CheckTypeNotInclude) {
-                result = $"{SettingItem}の値に{SettingValue}が含まれていない";
+                result = $"{CommonStringResources.Instance.SettingValueNotContain(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがStartWithの場合
             if (CheckTypeString == CheckTypeStartWith) {
-                result = $"{SettingItem}の値が{SettingValue}で始まっている";
+                result = $"{CommonStringResources.Instance.SettingValueStartsWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotStartWithの場合
             if (CheckTypeString == CheckTypeNotStartWith) {
-                result = $"{SettingItem}の値が{SettingValue}で始まっていない";
+                result = $"{CommonStringResources.Instance.SettingValueNotStartWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがEndWithの場合
             if (CheckTypeString == CheckTypeEndWith) {
-                result = $"{SettingItem}の値が{SettingValue}で終わっている";
+                result = $"{CommonStringResources.Instance.SettingValueEndsWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがNotEndWithの場合
             if (CheckTypeString == CheckTypeNotEndWith) {
-                result = $"{SettingItem}の値が{SettingValue}で終わっていない";
+                result = $"{CommonStringResources.Instance.SettingValueNotEndWith(SettingItem, SettingValue)}";
             }
             // CheckType.CheckTypeがEmptyの場合
             if (CheckTypeString == CheckTypeEmpty) {
-                result = $"{SettingItem}の値が空である";
+                result = $"{CommonStringResources.Instance.SettingValueIsEmpty(SettingItem)}";
             }
             // CheckType.CheckTypeがCheckBoxの場合
             if (CheckTypeString == CheckTypeCheckBox) {
-                result = $"{SettingItem}のチェックボックスが{SettingValue}になっている";
+                result = $"{CommonStringResources.Instance.SettingValueIsChecked(SettingItem, SettingValue)}";
             }
             return result;
         }

@@ -622,7 +622,7 @@ namespace WpfAppCommon.Model {
         public string Exclude { get; } = "除外";
 
         // コピー元アプリ名
-        public string SourceAppName { get; } = "コピー元アプリ名";
+        public string CopySourceAppName { get; } = "コピー元アプリ名";
 
         // 開始日
         public string StartDate { get; } = "開始日";
@@ -1061,6 +1061,427 @@ namespace WpfAppCommon.Model {
         // --- WindowsNotificationController.cs ---
         // アクセス拒否
         public string AccessDenied { get; } = "アクセス拒否";
+
+        // --- EditPromptItemWindowViewModel ---
+        // 名前を入力してください
+        public string EnterName { get; } = "名前を入力してください";
+
+        // --- EditRAGSourceWindowViewModel ---
+        // RAGソース編集
+        public string EditRAGSource { get; } = "RAGソース編集";
+
+        // ItemViewModelがnullです"
+        public string ItemViewModelIsNull { get; } = "ItemViewModelがnullです";
+
+        // EditVectorDBWindowViewModel
+        // Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません
+        public string OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported { get; } = "Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません";
+
+        // プロンプトテンプレート一覧
+        public string PromptTemplateList { get; } = "プロンプトテンプレート一覧";
+
+        // プロンプトテンプレートが選択されていません
+        public string NoPromptTemplateSelected { get; } = "プロンプトテンプレートが選択されていません";
+
+        // ListVectorDBWindowViewModel
+        // 編集するベクトルDBを選択してください
+        public string SelectVectorDBToEdit { get; } = "編集するベクトルDBを選択してください";
+
+        // 削除するベクトルDBを選択してください
+        public string SelectVectorDBToDelete { get; } = "削除するベクトルDBを選択してください";
+
+        // 選択中のベクトルDBを削除しますか？
+        public string ConfirmDeleteSelectedVectorDB { get; } = "選択中のベクトルDBを削除しますか？";
+
+        // ベクトルDBを選択してください
+        public string SelectVectorDBPlease { get; } = "ベクトルDBを選択してください";
+
+        // RAGManagementWindowViewModel
+        // 編集するRAG Sourceを選択してください
+        public string SelectRAGSourceToEdit { get; } = "編集するRAG Sourceを選択してください";
+
+        // 削除するRAG Sourceを選択してください
+        public string SelectRAGSourceToDelete { get; } = "削除するRAG Sourceを選択してください";
+
+        // 選択中のRAG Sourceを削除しますか？
+        public string ConfirmDeleteSelectedRAGSource { get; } = "選択中のRAG Sourceを削除しますか？";
+
+        // コミットを選択してください
+        public string SelectCommitPlease { get; } = "コミットを選択してください";
+
+        // --- UpdateRAGIndexWindowViewModel
+        // インデックス化対象ファイル
+        public string IndexingTargetFile { get; } = "インデックス化対象ファイル";
+
+        // ファイル追加
+        public string AddFile { get; } = "ファイル追加";
+        // ファイル削除
+        public string DeleteFile { get; } = "ファイル削除";
+
+        // ファイル更新
+        public string UpdateFile { get; } = "ファイル更新";
+
+        // 対象ファイル取得
+        public string GetTargetFile { get; } = "対象ファイル取得";
+
+        // インデックス作成
+        public string CreateIndex { get; } = "インデックス作成";
+
+        //  "戻る"
+        public string Back { get; } = "戻る";
+
+        // RAGSourceItemViewModelが設定されていません
+        public string RAGSourceItemViewModelNotSet { get; } = "RAGSourceItemViewModelが設定されていません";
+
+        // "開始コミットを指定してください"
+        public string SpecifyStartCommit { get; } = "開始コミットを指定してください";
+
+        // "対象を選択してください"
+        public string SelectTarget { get; } = "対象を選択してください";
+
+        // 処理ファイル数
+        public string ProcessedFileCount { get; } = "処理ファイル数";
+
+        // インデックス作成中
+        public string CreatingIndex { get; } = "インデックス作成中";
+
+        // 完了
+        public string Completed { get; } = "完了";
+
+        // 未対応ファイルタイプのためスキップ
+        public string SkipUnsupportedFileType { get; } = "未対応ファイルタイプのためスキップ";
+
+        // 失敗
+        public string Failed { get; } = "失敗";
+
+        // "インデックス作成が完了しました"
+        public string IndexCreationCompleted { get; } = "インデックス作成が完了しました";
+
+        // インデックス作成処理を中断しました
+        public string IndexCreationInterrupted { get; } = "インデックス作成処理を中断しました";
+
+        // チャットの送信に失敗しました。
+        public string FailedToSendChat { get; } = "チャットの送信に失敗しました。";
+
+        // --- SettingUserControlViewModel
+        // Pythonの設定チェック
+        public string PythonSettingCheck { get; } = "Pythonの設定チェック";
+
+        // PythonDLLのパスが設定されていません
+        public string PythonDLLPathNotSet { get; } = "PythonDLLのパスが設定されていません";
+
+        // PythonDLLのパスが設定されています
+        public string PythonDLLPathSet { get; } = "PythonDLLのパスが設定されています";
+
+        // PythonDLLのファイルが存在しません
+        public string PythonDLLFileDoesNotExist { get; } = "PythonDLLのファイルが存在しません";
+
+        // PythonDLLのファイルが存在します
+        public string PythonDLLFileExists { get; } = "PythonDLLのファイルが存在します";
+
+        // Pythonスクリプトをテスト実行
+        public string TestRunPythonScript { get; } = "Pythonスクリプトをテスト実行";
+
+        // OpenAIの設定チェック
+        public string OpenAISettingCheck { get; } = "OpenAIの設定チェック";
+
+        // OpenAIのAPIキーが設定されていません
+        public string OpenAIKeyNotSet { get; } = "OpenAIのAPIキーが設定されていません";
+        // OpenAIのAPIキーが設定されています
+        public string OpenAIKeySet { get; } = "OpenAIのAPIキーが設定されています";
+
+        // OpenAIのCompletionModelが設定されていません
+        public string OpenAICompletionModelNotSet { get; } = "OpenAIのCompletionModelが設定されていません";
+
+        // OpenAIのCompletionModelが設定されています
+        public string OpenAICompletionModelSet { get; } = "OpenAIのCompletionModelが設定されています";
+
+        // OpenAIのEmbeddingModelが設定されていません
+        public string OpenAIEmbeddingModelNotSet { get; } = "OpenAIのEmbeddingModelが設定されていません";
+
+        // OpenAIのEmbeddingModelが設定されています
+        public string OpenAIEmbeddingModelSet { get; } = "OpenAIのEmbeddingModelが設定されています";
+
+        // Azure OpenAIの設定チェック
+        public string AzureOpenAISettingCheck { get; } = "Azure OpenAIの設定チェック";
+
+        // Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック
+        public string AzureOpenAIEndpointNotSet { get; } = "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック";
+
+        // Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください
+        public string SetAzureOpenAIEndpointOrBaseURL { get; } = "Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください";
+
+        // Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません
+        public string CannotSetBothAzureOpenAIEndpointAndBaseURL { get; } = "Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません";
+
+        // OpenAIのテスト実行
+        public string TestRunOpenAI { get; } = "OpenAIのテスト実行";
+
+        // Pythonの実行に失敗しました
+        public string FailedToRunPython { get; } = "Pythonの実行に失敗しました";
+
+        // Pythonの実行が可能です
+        public string PythonRunIsPossible { get; } = "Pythonの実行が可能です";
+
+        // OpenAIの実行に失敗しました
+        public string FailedToRunOpenAI { get; } = "OpenAIの実行に失敗しました";
+
+        // OpenAIの実行が可能です。
+        public string OpenAIRunIsPossible { get; } = "OpenAIの実行が可能です。";
+
+        // LangChainの実行に失敗しました
+        public string FailedToRunLangChain { get; } = "LangChainの実行に失敗しました";
+
+        // LangChainの実行が可能です。
+        public string LangChainRunIsPossible { get; } = "LangChainの実行が可能です。";
+        // 実行しますか？
+        public string ConfirmRun { get; } = "実行しますか？";
+
+        // 設定チェック中
+        public string CheckingSettings { get; } = "設定チェック中";
+
+        // 設定を保存しました。
+        public string SettingsSaved { get; } = "設定を保存しました。";
+
+        // "キャンセルしました"
+        public string Canceled { get; } = "キャンセルしました";
+
+        // MyStatusBarViewModel
+        // ログ
+        public string Log { get; } = "ログ";
+
+        // --- AutoProcessRule.cs ---
+        // RuleName + "は無効です"
+        public string RuleNameIsInvalid(string RuleName) {
+            return RuleName + "は無効です";
+        }
+        // 条件にマッチしませんでした
+        public string NoMatch { get; } = "条件にマッチしませんでした";
+
+        // アクションが設定されていません
+        public string NoActionSet { get; } = "アクションが設定されていません";
+
+        // 条件
+        public string Condition { get; } = "条件";
+
+        // アクション
+        public string Action { get; } = "アクション";
+
+        // アクション:なし
+        public string ActionNone { get; } = "アクション:なし";
+
+        // フォルダ:なし
+        public string FolderNone { get; } = "フォルダ:なし";
+
+        // 無限ループを検出しました
+        public string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
+
+        // "Descriptionが" + condition.Keyword + "を含む
+        public string DescriptionContains(string Keyword) {
+            return "Descriptionが" + Keyword + "を含む";
+        }
+        // "Contentが" + condition.Keyword + "を含む 
+        public string ContentContains(string Keyword) {
+            return "Contentが" + Keyword + "を含む";
+        }
+        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
+        public string SourceApplicationNameContains(string Keyword) {
+            return "SourceApplicationNameが" + Keyword + "を含む \n";
+        }
+        // "SourceApplicationTitleが" + condition.Keyword + "を含む
+        public string SourceApplicationTitleContains(string Keyword) {
+            return "SourceApplicationTitleが" + Keyword + "を含む";
+        }
+        // "SourceApplicationPathが" + condition.Keyword + "を含む
+        public string SourceApplicationPathContains(string Keyword) {
+            return "SourceApplicationPathが" + Keyword + "を含む";
+        }
+        // --- ClipboardAppVectorDBItem
+        //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+        public string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+
+        // --- ClipboardFolder.cs ---
+        // クリップボード
+        public string Clipboard { get; } = "クリップボード";
+
+        // チャット履歴
+        public string ChatHistory { get; } = "チャット履歴";
+
+        // 自動処理でアイテムが削除または移動されました
+        public string ItemsDeletedOrMovedByAutoProcessing { get; } = "自動処理でアイテムが削除または移動されました";
+
+        // "アイテムを追加しました"
+        public string AddedItems { get; } = "アイテムを追加しました";
+
+        // 自動処理を適用します
+        public string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理でアイテムが削除されました
+        public string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
+
+        // JSON文字列をパースできませんでした
+        public string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
+
+        // ClipboardItem
+        // Text以外のアイテムへのマージはできません
+        public string CannotMergeToNonTextItems { get; } = "Text以外のアイテムへのマージはできません";
+
+        // "Text以外のアイテムが含まれているアイテムはマージできません"
+        public string CannotMergeItemsContainingNonTextItems { get; } = "Text以外のアイテムが含まれているアイテムはマージできません";
+
+        // 作成日時
+        public string CreationDateTime { get; } = "作成日時";
+
+        // ソースアプリ名
+        public string SourceAppName { get; } = "ソースアプリ名";
+
+        // ピン留めしてます
+        public string Pinned { get; } = "ピン留めしてます";
+
+        // フォルダを取得できません
+        public string CannotGetFolder { get; } = "フォルダを取得できません";
+
+        // OS上のファイルに保存します
+        public string SaveToFileOnOS { get; } = "OS上のファイルに保存します";
+
+        // Gitコミットしました
+        public string CommittedToGit { get; } = "Gitコミットしました";
+
+        // リポジトリが見つかりませんでした
+        public string RepositoryNotFound { get; } = "リポジトリが見つかりませんでした";
+
+        // コミットが空です
+        public string CommitIsEmpty { get; } = "コミットが空です";
+
+        // OS上のファイルに保存しました
+        public string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
+
+        // "Embeddingを保存します
+        public string SaveEmbedding { get; } = "Embeddingを保存します";
+
+        // 背景情報
+        public string BackgroundInformation { get; } = "背景情報";
+
+        // Embeddingを保存しました
+        public string SavedEmbedding { get; } = "Embeddingを保存しました";
+
+        // Embeddingを削除します
+        public string DeleteEmbedding { get; } = "Embeddingを削除します";
+
+        // Embeddingを削除しました
+        public string DeletedEmbedding { get; } = "Embeddingを削除しました";
+
+        // "OS上のファイルを削除します"
+        public string DeleteFileOnOS { get; } = "OS上のファイルを削除します";
+        // OS上のファイルを削除しました
+        public string DeletedFileOnOS { get; } = "OS上のファイルを削除しました";
+
+        // サポートされていないファイル形式です
+        public string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
+
+        // テキストを抽出しました
+        public string ExtractedText { get; } = "テキストを抽出しました";
+
+        // --- ScreenShotCheckCondition.cs ---
+        //  $"{SettingItem}の値は{SettingValue}である";
+        public string SettingValueIs(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値は{SettingValue}である";
+        }
+
+        // $"{SettingItem}の値は{SettingValue}でない";
+        public string SettingValueIsNot(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値は{SettingValue}でない";
+        }
+        // $"{SettingItem}の値に{SettingValue}が含まれている";
+        public string SettingValueContains(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値に{SettingValue}が含まれている";
+        }
+        // $"{SettingItem}の値に{SettingValue}が含まれていない";
+        public string SettingValueNotContain(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値に{SettingValue}が含まれていない";
+        }
+
+        // $"{SettingItem}の値が{SettingValue}で始まっている";
+        public string SettingValueStartsWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で始まっている";
+        }
+
+        // $"{SettingItem}の値が{SettingValue}で始まっていない";
+        public string SettingValueNotStartWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で始まっていない";
+        }
+        // $"{SettingItem}の値が{SettingValue}で終わっている";
+        public string SettingValueEndsWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で終わっている";
+        }
+        // $"{SettingItem}の値が{SettingValue}で終わっていない";
+        public string SettingValueNotEndWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で終わっていない";
+        }
+
+        //  $"{SettingItem}の値が空である";
+        public string SettingValueIsEmpty(string SettingItem) {
+            return $"{SettingItem}の値が空である";
+        }
+        // $"{SettingItem}のチェックボックスが{SettingValue}になっている";
+        public string SettingValueIsChecked(string SettingItem, string SettingValue) {
+            return $"{SettingItem}のチェックボックスが{SettingValue}になっている";
+        }
+
+        // --- SystemAutoProcessItem.cs ---
+        // 無視
+        public string Ignore { get; } = "無視";
+        // "何もしません"
+        public string DoNothing { get; } = "何もしません";
+
+        // フォルダにコピー
+        public string CopyToFolder { get; } = "フォルダにコピー";
+        // クリップボードの内容を指定されたフォルダにコピーします
+        public string CopyClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダにコピーします";
+
+        // フォルダに移動"
+        public string MoveToFolder { get; } = "フォルダに移動";
+        // "クリップボードの内容を指定されたフォルダに移動します"
+        public string MoveClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダに移動します";
+
+        // "クリップボードのテキストを抽出します"
+        public string ExtractClipboardText { get; } = "クリップボードのテキストを抽出します";
+
+        // "データマスキング",
+        public string DataMasking { get; } = "データマスキング";
+        // "クリップボードのテキストをマスキングします"
+        public string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
+
+        //  "フォルダ内のアイテムをマージ", 
+        public string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
+
+        // "フォルダ内のアイテムをマージします"
+        public string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
+
+        // "同じSourceApplicationTitleを持つアイテムをマージ",
+        public string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
+        // "同じSourceApplicationTitleを持つアイテムをマージします"
+        public string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
+
+        // フォルダが選択されていません
+        public string NoFolderSelected { get; } = "フォルダが選択されていません";
+
+        // フォルダにコピーします
+        public string CopyToFolderDescription { get; } = "フォルダにコピーします";
+
+        // ディレクトリは新規ファイルとして開けません
+        public string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
+
+        // --- TextSelector.cs ---
+        // ファイルを実行できませんでした
+        public string FailedToRunFile { get; } = "ファイルを実行できませんでした";
+
+        // テキストファイルとして開きます。
+        public string OpenAsTextFile { get; } = "テキストファイルとして開きます。";
+
+        // --- EditChatItemWindow ---
+        // チャットアイテム
+        public string ChatItem { get; } = "チャットアイテム";
 
     }
 }

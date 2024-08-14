@@ -8,7 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
-    Title="{Binding StringResources.EditAutoProcessRuleWindowTitle}"
+    Title="{Binding StringResources.EditAutoProcessRuleWindowTitle, Mode=OneTime}"
     Width="700"
     SizeToContent="Height"
     mc:Ignorable="d">
@@ -17,7 +17,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -25,10 +25,10 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
@@ -84,7 +84,7 @@
                     Grid.Column="0"
                     Margin="10,10,10,3"
                     VerticalAlignment="Center"
-                    Content="{Binding StringResources.RuleName}" />
+                    Content="{Binding StringResources.RuleName, Mode=OneTime}" />
                 <TextBox
                     Grid.Column="1"
                     Margin="10,10,10,3"
@@ -93,19 +93,19 @@
                 <CheckBox
                     Grid.Column="2"
                     Margin="10,10,10,3"
-                    Content="{Binding StringResources.Enable}"
+                    Content="{Binding StringResources.Enable, Mode=OneTime}"
                     IsChecked="{Binding IsAutoProcessRuleEnabled}" />
             </Grid>
             <DockPanel Grid.Row="1" HorizontalAlignment="Stretch">
                 <Label
                     Width="260"
                     Margin="10,3,10,3"
-                    Content="{Binding StringResources.TargetFolder}" />
+                    Content="{Binding StringResources.TargetFolder, Mode=OneTime}" />
                 <!--  適用対象を選択するツリービューを表示するボタン  -->
                 <Button
                     Margin="10,3,10,3"
-                    Command="{Binding OpenSelectTargetFolderWindowCommand}"
-                    Content="{Binding StringResources.Select}" />
+                    Command="{Binding OpenSelectTargetFolderWindowCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.Select, Mode=OneTime}" />
                 <TextBox
                     Margin="10,3,10,3"
                     IsEnabled="False"
@@ -132,7 +132,7 @@
                         Grid.Row="0"
                         Width="260"
                         Margin="20,3,10,3"
-                        Content="{Binding StringResources.ApplyAllItems}"
+                        Content="{Binding StringResources.ApplyAllItems, Mode=OneTime}"
                         DockPanel.Dock="Left"
                         GroupName="AllorConditions"
                         IsChecked="{Binding IsAllItemsRuleChecked}" />
@@ -140,7 +140,7 @@
                         Grid.Row="1"
                         Width="260"
                         Margin="20,3,10,3"
-                        Content="{Binding StringResources.ApplyMatchedItems}"
+                        Content="{Binding StringResources.ApplyMatchedItems, Mode=OneTime}"
                         DockPanel.Dock="Left"
                         GroupName="AllorConditions"
                         IsChecked="{Binding IsNotAllItemsRuleChecked}" />
@@ -158,7 +158,7 @@
                         <Label
                             Width="260"
                             Margin="10,0,10,0"
-                            Content="{Binding StringResources.ItemType}"
+                            Content="{Binding StringResources.ItemType, Mode=OneTime}"
                             DockPanel.Dock="Left" />
                     </DockPanel>
 
@@ -166,7 +166,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="{Binding StringResources.ItemTypeText}"
+                            Content="{Binding StringResources.ItemTypeText, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsTextItemApplied}" />
                         <TextBox
@@ -176,7 +176,7 @@
                         <Label
                             Width="20"
                             Margin="0,0,10,3"
-                            Content="{Binding StringResources.LineOrMore}"
+                            Content="{Binding StringResources.LineOrMore, Mode=OneTime}"
                             DockPanel.Dock="Left" />
                         <TextBox
                             Width="50"
@@ -185,14 +185,14 @@
                         <Label
                             Width="150"
                             Margin="0,0,10,3"
-                            Content="{Binding StringResources.LineOrLess}"
+                            Content="{Binding StringResources.LineOrLess, Mode=OneTime}"
                             DockPanel.Dock="Left" />
                     </DockPanel>
                     <DockPanel Grid.Row="2" HorizontalAlignment="Left">
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="{Binding StringResources.ItemTypeFile}"
+                            Content="{Binding StringResources.ItemTypeFile, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsFileItemApplied}" />
                     </DockPanel>
@@ -200,7 +200,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,3"
-                            Content="{Binding StringResources.ItemTypeImage}"
+                            Content="{Binding StringResources.ItemTypeImage, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsImageItemApplied}" />
                     </DockPanel>
@@ -220,7 +220,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="{Binding StringResources.TitleContains}"
+                            Content="{Binding StringResources.TitleContains, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsDescriptionRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding Description}" />
@@ -229,7 +229,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="{Binding StringResources.BodyContains}"
+                            Content="{Binding StringResources.BodyContains, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsContentRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding Content}" />
@@ -239,7 +239,7 @@
                         <CheckBox
                             Width="260"
                             Margin="20,0,10,0"
-                            Content="{Binding StringResources.SourceAppContains}"
+                            Content="{Binding StringResources.SourceAppContains, Mode=OneTime}"
                             DockPanel.Dock="Left"
                             IsChecked="{Binding IsSourceApplicationRuleChecked}" />
                         <TextBox Margin="20,0,10,0" Text="{Binding SourceApplicationName}" />
@@ -260,12 +260,12 @@
                 <Label
                     Grid.Row="0"
                     Margin="10,0,10,0"
-                    Content="{Binding StringResources.ExecuteProcess}" />
+                    Content="{Binding StringResources.ExecuteProcess, Mode=OneTime}" />
                 <DockPanel Grid.Row="1" Margin="0,0,0,0">
                     <RadioButton
                         Width="260"
                         Margin="10,0,10,0"
-                        Content="{Binding StringResources.ExecuteNextProcess}"
+                        Content="{Binding StringResources.ExecuteNextProcess, Mode=OneTime}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsBasicProcessChecked}" />
                     <ComboBox
@@ -278,7 +278,7 @@
                         SelectedValuePath="Name">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand}" />
+                                <i:InvokeCommandAction Command="{Binding AutoProcessItemSelectionChangedCommand, Mode=OneTime}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -290,12 +290,12 @@
                     <Label
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{Binding StringResources.CopyMoveMergeTarget}" />
+                        Content="{Binding StringResources.CopyMoveMergeTarget, Mode=OneTime}" />
                     <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"
                         Command="{Binding OpenSelectDestinationFolderWindowCommand}"
-                        Content="{Binding StringResources.Select}" />
+                        Content="{Binding StringResources.Select, Mode=OneTime}" />
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
@@ -305,35 +305,35 @@
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{Binding StringResources.ExecutePythonScript}"
+                        Content="{Binding StringResources.ExecutePythonScript, Mode=OneTime}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPythonScriptChecked}" />
                     <!--  Pythonスクリプト一覧画面を表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"
-                        Command="{Binding OpenSelectScriptWindowCommand}"
-                        Content="{Binding StringResources.Select}" />
+                        Command="{Binding OpenSelectScriptWindowCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.Select, Mode=OneTime}" />
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
-                        Text="{Binding SelectedScriptItem.Name}" />
+                        Text="{Binding SelectedScriptItem.Name, Mode=OneTime}" />
                 </DockPanel>
                 <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{Binding StringResources.ExecuteOpenAI}"
+                        Content="{Binding StringResources.ExecuteOpenAI, Mode=OneTime}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPromptTemplateChecked}" />
                     <!--  プロンプトテンプレート一覧画面を表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"
-                        Command="{Binding OpenSelectPromptTemplateWindowCommand}"
-                        Content="{Binding StringResources.Select}" />
+                        Command="{Binding OpenSelectPromptTemplateWindowCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.Select, Mode=OneTime}" />
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
-                        Text="{Binding SelectedPromptItem.Name}" />
+                        Text="{Binding SelectedPromptItem.Name, Mode=OneTime}" />
                 </DockPanel>
                 <DockPanel
                     Grid.Row="5"
@@ -342,14 +342,14 @@
                     <Label
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{Binding StringResources.OpenAIMode}" />
+                        Content="{Binding StringResources.OpenAIMode, Mode=OneTime}" />
                     <!--  通常のOpenAI/RAGのいずれかを選択するComboBox  -->
                     <ComboBox Margin="10,3,10,3" SelectedIndex="{Binding OpenAIExecutionModeSelectedIndex}">
                         <ComboBoxItem Name="Normal">通常</ComboBoxItem>
                         <ComboBoxItem Name="RAG">RAG</ComboBoxItem>
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding OpenAIExecutionModeSelectionChangeCommand}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding OpenAIExecutionModeSelectionChangeCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
@@ -364,12 +364,12 @@
                     <!--  ベクトルDB一覧画面を表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"
-                        Command="{Binding OpenSelectVectorDBWindowCommand}"
-                        Content="{Binding StringResources.Select}" />
+                        Command="{Binding OpenSelectVectorDBWindowCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.Select, Mode=OneTime}" />
                     <TextBox
                         Margin="10,3,10,3"
                         IsEnabled="False"
-                        Text="{Binding SelectedVectorDBItem.Name}" />
+                        Text="{Binding SelectedVectorDBItem.Name, Mode=OneTime}" />
                 </DockPanel>
             </Grid>
             <Grid Grid.Row="4" VerticalAlignment="Bottom">
@@ -380,15 +380,15 @@
                     <Button
                         Width="100"
                         Margin="10,0,0,0"
-                        Command="{Binding OKButtonClickedCommand}"
+                        Command="{Binding OKButtonClickedCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.OK}" />
+                        Content="{Binding StringResources.OK, Mode=OneTime}" />
                     <Button
                         Width="100"
                         Margin="10,0,30,0"
-                        Command="{Binding CloseCommand}"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Cancel}"
+                        Content="{Binding StringResources.Cancel, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                 </DockPanel>
             </Grid>

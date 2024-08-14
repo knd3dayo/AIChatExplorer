@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:ImageChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ImageChat}"
+    Title="{Binding StringResources.ImageChat, Mode=OneTime}"
     Width="800"
     Height="450"
     WindowState="Maximized"
@@ -28,16 +28,16 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>
@@ -69,25 +69,25 @@
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.File}">
+                        Header="{Binding StringResources.File, Mode=OneTime}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SelectImageFileCommand}"
+                            Command="{Binding SelectImageFileComman, Mode=OneTime}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.SelectImageFile}" />
+                            Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Edit}">
+                        Header="{Binding StringResources.Edit, Mode=OneTime}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ScreenShotCheckPromptCommand}"
+                            Command="{Binding ScreenShotCheckPromptCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditImageEvidenceCheckItem}" />
+                            Header="{Binding StringResources.EditImageEvidenceCheckItem, Mode=OneTime}" />
                     </MenuItem>
                 </Menu>
                 <Menu
@@ -100,9 +100,9 @@
                     <MenuItem
                         Height="Auto"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding SettingCommand}"
+                        Command="{Binding SettingCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Setting}"
+                        Header="{Binding StringResources.Setting, Mode=OneTime}"
                         IsEnabled="{Binding IsStartFromInternalApp}" />
                 </Menu>
 
@@ -122,7 +122,7 @@
                 Margin="10,0,10,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.Title}" />
+                Text="{Binding StringResources.Title, Mode=OneTime}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -165,20 +165,20 @@
                                 Text="{Binding FileName}" />
                             <Grid.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Gesture="LeftDoubleClick" />
                             </Grid.InputBindings>
                             <Grid.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem
-                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
-                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open}" />
+                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
                                     <MenuItem
-                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
-                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete}" />
+                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
                                 </ContextMenu>
                             </Grid.ContextMenu>
                         </Grid>
@@ -205,7 +205,7 @@
                     <TextBox
                         MinHeight="50"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.TheAnswerWillBeDisplayedHere}"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.TheAnswerWillBeDisplayedHere, Mode=OneTime}"
                         AcceptsReturn="True"
                         FontSize="12"
                         IsReadOnly="True"
@@ -225,14 +225,13 @@
                     <TextBox
                         MinHeight="50"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere}"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
                         AcceptsReturn="True"
                         FontSize="12"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
-                            <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+                            <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
                         </TextBox.InputBindings>
                     </TextBox>
                 </ScrollViewer>

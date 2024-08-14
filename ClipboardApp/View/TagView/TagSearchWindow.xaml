@@ -6,7 +6,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.TagSearch}"
+    Title="{Binding StringResources.TagSearch, Mode=OneTime}"
     Width="400"
     ResizeMode="NoResize"
     SizeToContent="Height"
@@ -19,15 +19,15 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="30" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
@@ -54,13 +54,13 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="10,10,10,10"
-                Content="{Binding StringResources.Exclude}"
+                Content="{Binding StringResources.Exclude, Mode=OneTime}"
                 IsChecked="{Binding ExcludeTag}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="10,10,10,10"
-                Text="{Binding StringResources.Tag}" />
+                Text="{Binding StringResources.Tag, Mode=OneTime}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="2"
@@ -79,8 +79,8 @@
                 <Button
                     Width="100"
                     Margin="10,10,10,10"
-                    Command="{Binding ClearCommand}"
-                    Content="{Binding StringResources.Clear}"
+                    Command="{Binding ClearCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.Clear, Mode=OneTime}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
@@ -90,9 +90,9 @@
                 <Button
                     Width="100"
                     Margin="10,10,10,10"
-                    Command="{Binding SearchCommand}"
+                    Command="{Binding SearchCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK}" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,10"

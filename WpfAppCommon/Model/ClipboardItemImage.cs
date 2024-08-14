@@ -10,18 +10,17 @@ namespace WpfAppCommon.Model {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
-        public ClipboardItem? ClipboardItem { get; set; }
+        public ClipboardItem ClipboardItem { get; set; }
 
-        public ClipboardItemImage() {
-
+        public ClipboardItemImage(ClipboardItem clipboardItem) {
+            ClipboardItem = clipboardItem;
         }
         public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
-            ClipboardItemImage itemImage = new();
-            itemImage.ClipboardItem = clipboardItem;
-            itemImage.Image = image;
+            ClipboardItemImage itemImage = new(clipboardItem) {
+                Image = image
+            };
             return itemImage;
         }
-
 
         // 画像イメージのBase64文字列
         public string ImageBase64 { get; set; } = String.Empty;
@@ -104,19 +103,7 @@ namespace WpfAppCommon.Model {
                 }
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    try {
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                    }
+                    ClipboardItem.GitCommit(syncFilePath);
                 }
             }
         }
@@ -142,19 +129,7 @@ namespace WpfAppCommon.Model {
 
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    try {
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                    }
+                    ClipboardItem.GitCommit(syncFilePath);
                 }
             }
         }
