@@ -429,7 +429,7 @@ namespace WpfAppCommon.Model {
                     content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
                 }
 
-                ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.update, this.Id.ToString(), content);
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
 
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());

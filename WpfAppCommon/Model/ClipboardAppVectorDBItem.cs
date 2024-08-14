@@ -104,14 +104,16 @@ namespace WpfAppCommon.Model {
             return GetItems(true).FirstOrDefault(item => item.Id == id);
         }
 
-        public override void UpdateIndex(ContentInfo clipboard) {
+        public override void UpdateIndex(ContentInfo contentInfo) {
             // CollectionNameの設定
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
+
+
         }
 
-        public override void DeleteIndex(ContentInfo clipboard) {
+        public override void DeleteIndex(ContentInfo contentInfo) {
 
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
         }
     }
 }

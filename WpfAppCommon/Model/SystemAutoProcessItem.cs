@@ -47,7 +47,7 @@ namespace WpfAppCommon.Model {
 
         public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
 
-            Func<AutoProcessItemArgs, ClipboardItem?> action = SystemAutoProcessItem.GetAction(this.Name);
+            Func<AutoProcessItemArgs, ClipboardItem?> action = GetAction(this.Name);
             ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
             return result;
         }

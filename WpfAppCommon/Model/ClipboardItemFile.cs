@@ -6,11 +6,11 @@ namespace WpfAppCommon.Model {
     public class ClipboardItemFile {
 
         // コンストラクタ
-        public ClipboardItemFile() {
+        public ClipboardItemFile(ClipboardItem clipboardItem) {
+            ClipboardItem = clipboardItem;
         }
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
-            ClipboardItemFile itemFile = new() {
-                ClipboardItem = clipboardItem,
+            ClipboardItemFile itemFile = new(clipboardItem) {
                 ClipboardFolderPath = clipboardItem.FolderPath,
                 FilePath = filePath
             };
