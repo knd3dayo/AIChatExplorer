@@ -7,7 +7,6 @@ using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
-using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -238,15 +237,6 @@ namespace ClipboardApp.ViewModel {
                 OnPropertyChanged(nameof(SelectedScriptItem));
             }
         }
-        // VectorDBItem
-        private VectorDBItem? _selectedVectorDBItem;
-        public VectorDBItem? SelectedVectorDBItem {
-            get => _selectedVectorDBItem;
-            set {
-                _selectedVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedVectorDBItem));
-            }
-        }
 
         // 基本処理のラジオボタンが選択中かどうか
 
@@ -263,9 +253,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
         public bool IsPythonScriptChecked { get; set; } = false;
-
-        // ベクトルDBに格納する場合のラジオボタンが選択中かどうか
-        public bool IsStoreVectorDBChecked { get; set; } = false;
 
         // OpenAIExecutionMode
         public OpenAIExecutionModeEnum OpenAIExecutionModeEnum { get; set; } = OpenAIExecutionModeEnum.Normal;
@@ -402,14 +389,6 @@ namespace ClipboardApp.ViewModel {
                     }
                     IsPythonScriptChecked = true;
                     SelectedScriptItem = scriptAutoProcessItem.ScriptItem;
-                }
-                // VectorDBAutoProcessItemの場合
-                else if (TargetAutoProcessRule.RuleAction is VectorDBAutoProcessItem vectorDBAutoProcessItem) {
-                    if (vectorDBAutoProcessItem.VectorDBItemId == LiteDB.ObjectId.Empty) {
-                        return;
-                    }
-                    IsStoreVectorDBChecked = true;
-                    SelectedVectorDBItem = ClipboardAppVectorDBItem.GetItemById(vectorDBAutoProcessItem.VectorDBItemId);
                 }
 
                 OnPropertyChanged(nameof(Conditions));
@@ -556,14 +535,6 @@ namespace ClipboardApp.ViewModel {
                 }
                 TargetAutoProcessRule.RuleAction = new ScriptAutoProcessItem(SelectedScriptItem);
             }
-            // IsStoreVectorDBCheckedがTrueの場合はSelectedVectorDBItemを追加
-            if (IsStoreVectorDBChecked) {
-                if (SelectedVectorDBItem == null) {
-                    LogWrapper.Error(StringResources.SelectVectorDB);
-                    return;
-                }
-                TargetAutoProcessRule.RuleAction = new VectorDBAutoProcessItem(SelectedVectorDBItem);
-            }
 
             // LiteDBに保存
             TargetAutoProcessRule.Save();
@@ -661,21 +632,6 @@ namespace ClipboardApp.ViewModel {
             });
         });
 
-        // OpenSelectVectorDBWindowCommand
-        public SimpleDelegateCommand<object> OpenSelectVectorDBWindowCommand => new((parameter) => {
-            // ラジオボタンをIsStoreVectorDBChecked = trueにする
-            IsStoreVectorDBChecked = true;
-            OnPropertyChanged(nameof(IsStoreVectorDBChecked));
-
-            // ベクトルDB一覧画面を表示する
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (vectorDBItem) => {
-                // ベクトルDBを選択したら、SelectedVectorDBItemに設定
-                SelectedVectorDBItem = vectorDBItem;
-
-            });
-
-
-        });
         // OpenAIExecutionModeSelectionChangeCommand
         public SimpleDelegateCommand<RoutedEventArgs> OpenAIExecutionModeSelectionChangeCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;

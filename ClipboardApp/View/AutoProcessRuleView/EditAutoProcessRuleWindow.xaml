@@ -121,7 +121,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0" HorizontalAlignment="Left">
                     <Grid.RowDefinitions>
@@ -353,23 +352,6 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
-                </DockPanel>
-                <DockPanel Grid.Row="6" HorizontalAlignment="Stretch">
-                    <RadioButton
-                        Width="260"
-                        Margin="10,3,10,3"
-                        Content="{Binding StringResources.StoreVectorDB}"
-                        GroupName="ActionTypes"
-                        IsChecked="{Binding IsStoreVectorDBChecked}" />
-                    <!--  ベクトルDB一覧画面を表示するボタン  -->
-                    <Button
-                        Margin="10,3,10,3"
-                        Command="{Binding OpenSelectVectorDBWindowCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.Select, Mode=OneTime}" />
-                    <TextBox
-                        Margin="10,3,10,3"
-                        IsEnabled="False"
-                        Text="{Binding SelectedVectorDBItem.Name, Mode=OneTime}" />
                 </DockPanel>
             </Grid>
             <Grid Grid.Row="4" VerticalAlignment="Bottom">
