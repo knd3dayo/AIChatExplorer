@@ -178,6 +178,21 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // EmbeddingWhenExtractingTextFromImage
+        private static Boolean? _embeddingWhenExtractingTextFromImage;
+        public static bool EmbeddingWhenExtractingTextFromImage {
+            get {
+                if (_embeddingWhenExtractingTextFromImage == null) {
+                    _embeddingWhenExtractingTextFromImage = WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage;
+                }
+                return _embeddingWhenExtractingTextFromImage.Value;
+            }
+            set {
+                _embeddingWhenExtractingTextFromImage = value;
+                WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage = value;
+            }
+        }
+
         // SyncClipboardItemAndOSFolder
         private static Boolean? _syncClipboardItemAndOSFolder;
         public static bool SyncClipboardItemAndOSFolder {

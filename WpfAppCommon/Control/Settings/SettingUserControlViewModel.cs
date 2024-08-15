@@ -282,6 +282,21 @@ namespace WpfAppCommon.Control.Settings {
             }
         }
 
+        // EmbeddingWhenExtractingTextFromImage
+        public bool EmbeddingWhenExtractingTextFromImage {
+            get {
+                return ClipboardAppConfig.EmbeddingWhenExtractingTextFromImage;
+            }
+            set {
+                ClipboardAppConfig.EmbeddingWhenExtractingTextFromImage = value;
+                OnPropertyChanged(nameof(EmbeddingWhenExtractingTextFromImage));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
+
         // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
         public bool AutoEmbedding {
             get {

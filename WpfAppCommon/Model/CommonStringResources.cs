@@ -499,6 +499,12 @@ namespace WpfAppCommon.Model {
         // OpenAIを使用してテキスト抽出します
         public string ExtractTextUsingOpenAI { get; } = "OpenAIを使用してテキスト抽出します";
 
+        // 画像からテキスト抽出時にEmbedding
+        public string EmbeddingWhenExtractingTextFromImage { get; } = "画像からテキスト抽出時にEmbedding";
+        // 画像からテキスト抽出時にEmbeddingを行います
+        public string EmbeddingWhenExtractingTextFromImageDescription { get; } = "画像からテキスト抽出時にEmbeddingを行います";
+
+
         // 自動背景情報追加
         public string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
 
@@ -1356,11 +1362,12 @@ namespace WpfAppCommon.Model {
         // OS上のファイルに保存しました
         public string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
 
+        // 背景情報
+        public string BackgroundInformation { get; } = "背景情報";
+
         // "Embeddingを保存します
         public string SaveEmbedding { get; } = "Embeddingを保存します";
 
-        // 背景情報
-        public string BackgroundInformation { get; } = "背景情報";
 
         // Embeddingを保存しました
         public string SavedEmbedding { get; } = "Embeddingを保存しました";
@@ -1370,6 +1377,17 @@ namespace WpfAppCommon.Model {
 
         // Embeddingを削除しました
         public string DeletedEmbedding { get; } = "Embeddingを削除しました";
+
+        // 画像から抽出したテキストのEmbeddingを保存します
+        public string SaveTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存します";
+        // 画像から抽出したテキストのEmbeddingを保存しました
+        public string SavedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存しました";
+
+        // 画像から抽出したテキストのEmbeddingを削除します
+        public string DeleteTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除します";
+        // 画像から抽出したテキストのEmbeddingを削除しました
+        public string DeletedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除しました";
+
 
         // "OS上のファイルを削除します"
         public string DeleteFileOnOS { get; } = "OS上のファイルを削除します";

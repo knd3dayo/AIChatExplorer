@@ -165,6 +165,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <!--  MonitorTargetAppNames  -->
                             <TextBlock
@@ -308,32 +309,43 @@
                                 Grid.Row="12"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
+                                Text="{Binding StringResources.EmbeddingWhenExtractingTextFromImage, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="12"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.EmbeddingWhenExtractingTextFromImage}" />
+                            <TextBlock
+                                Grid.Row="13"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="13"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
                             <TextBlock
-                                Grid.Row="13"
+                                Grid.Row="14"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="13"
+                                Grid.Row="14"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
-                                Grid.Row="14"
+                                Grid.Row="15"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="14"
+                                Grid.Row="15"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"

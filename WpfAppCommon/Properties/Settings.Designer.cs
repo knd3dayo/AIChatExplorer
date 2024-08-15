@@ -406,5 +406,17 @@ namespace WpfAppCommon.Properties {
                 this["EnableDevFeatures"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EmbeddingWhenExtractingTextFromImage {
+            get {
+                return ((bool)(this["EmbeddingWhenExtractingTextFromImage"]));
+            }
+            set {
+                this["EmbeddingWhenExtractingTextFromImage"] = value;
+            }
+        }
     }
 }

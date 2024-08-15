@@ -359,12 +359,17 @@ namespace WpfAppCommon.Model {
             if (savedItem == null || savedItem.Content != Content) {
                 // OS上のファイルに保存
                 Task.Run(() => {
-                    SaveToOSFolder();
+                    // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
+                    if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                        SaveToOSFolder();
+                    }
                 });
 
                 // Embeddingを更新
                 Task.Run(() => {
-                    UpdateEmbedding();
+                    if (ClipboardAppConfig.AutoEmbedding) {
+                        UpdateEmbedding();
+                    }
                 });
             }
         }
@@ -372,32 +377,29 @@ namespace WpfAppCommon.Model {
         // OS上のファイルに保存する
         private void SaveToOSFolder() {
             LogWrapper.Info(CommonStringResources.Instance.SaveToFileOnOS);
-            // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                // 保存先フォルダを取得
-                string syncFolder = ClipboardAppConfig.SyncFolderName;
-                // フォルダが存在しない場合は作成
-                if (Directory.Exists(syncFolder) == false) {
-                    Directory.CreateDirectory(syncFolder);
-                }
-                // syncFolder/フォルダ名を作成
-                string folderPath = Path.Combine(syncFolder, FolderPath);
-                // フォルダが存在しない場合は作成
-                if (Directory.Exists(folderPath) == false) {
-                    Directory.CreateDirectory(folderPath);
-                }
-
-                // folderPath + Id + .txtをファイル名として保存
-                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
-                // 保存
-                File.WriteAllText(syncFilePath, this.Content);
-
-                // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
-                    GitCommit(syncFilePath);
-                }
-
+            // 保存先フォルダを取得
+            string syncFolder = ClipboardAppConfig.SyncFolderName;
+            // フォルダが存在しない場合は作成
+            if (Directory.Exists(syncFolder) == false) {
+                Directory.CreateDirectory(syncFolder);
             }
+            // syncFolder/フォルダ名を作成
+            string folderPath = Path.Combine(syncFolder, FolderPath);
+            // フォルダが存在しない場合は作成
+            if (Directory.Exists(folderPath) == false) {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            // folderPath + Id + .txtをファイル名として保存
+            string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+            // 保存
+            File.WriteAllText(syncFilePath, this.Content);
+
+            // 自動コミットが有効の場合はGitにコミット
+            if (ClipboardAppConfig.AutoCommit) {
+                GitCommit(syncFilePath);
+            }
+
             LogWrapper.Info(CommonStringResources.Instance.SavedToFileOnOS);
         }
 
@@ -420,32 +422,41 @@ namespace WpfAppCommon.Model {
 
         // Embeddingを更新する
         public void UpdateEmbedding() {
-            if (ClipboardAppConfig.AutoEmbedding) {
-                LogWrapper.Info(CommonStringResources.Instance.SaveEmbedding);
-                // IPythonAIFunctions.ClipboardInfoを作成
-                string content = this.Content;
-                // 背景情報を含める場合
-                if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                    content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
-                }
-
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
-
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(clipboardInfo);
-                LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
+            LogWrapper.Info(CommonStringResources.Instance.SaveEmbedding);
+            // IPythonAIFunctions.ClipboardInfoを作成
+            string content = this.Content;
+            // 背景情報を含める場合
+            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
             }
+
+            ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
+
+            // VectorDBItemを取得
+            VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+            // Embeddingを保存
+            folderVectorDBItem.UpdateIndex(clipboardInfo);
+            LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
         }
 
         // 自分自身をDBから削除する
         public void Delete() {
+            // IPythonAIFunctions.ClipboardInfoを作成
+            ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+
+            // 保存先フォルダを取得
+            string folderPath = ClipboardAppConfig.SyncFolderName;
+            // syncFolder/フォルダ名を取得
+            folderPath = Path.Combine(folderPath, FolderPath);
+            // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
+            string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+
+            // ImageObjectIdsのコピーを作成
+            List<LiteDB.ObjectId> imageObjectIds = new(ImageObjectIds);
+
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
-                // IPythonAIFunctions.ClipboardInfoを作成
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
 
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
@@ -458,13 +469,6 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
                 if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                    // 保存先フォルダを取得
-                    string folderPath = ClipboardAppConfig.SyncFolderName;
-                    // syncFolder/フォルダ名を取得
-                    folderPath = Path.Combine(folderPath, FolderPath);
-
-                    // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-                    string syncFilePath = Path.Combine(folderPath, Id + ".txt");
                     // ファイルが存在する場合は削除
                     if (File.Exists(syncFilePath)) {
                         File.Delete(syncFilePath);
@@ -473,31 +477,22 @@ namespace WpfAppCommon.Model {
                     if (ClipboardAppConfig.AutoCommit) {
                         GitCommit(syncFilePath);
                     }
-
                 }
                 LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
 
             });
-            
-            Task.Run(() => {
-                // イメージが存在する場合は削除
-                LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
-                foreach (var imageObjectId in ImageObjectIds) {
-                    ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                    if (image == null) {
-                        continue;
-                    }
-                    // ベクトルDBのEmbeddingを削除
-                    ImageInfo imageInfo = new(VectorDBUpdateMode.delete, image.Id.ToString(), []);
-                    // VectorDBItemを取得
-                    VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                    // Embeddingを削除
-                    folderVectorDBItem.DeleteIndex(imageInfo);
-                    image.Delete();
-
+            // ★TODO イメージ削除とファイル削除を並列で非同期で行う。
+            // イメージが存在する場合は削除
+            LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
+            foreach (var imageObjectId in imageObjectIds) {
+                ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                if (image == null) {
+                    continue;
                 }
-                LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
-            });
+                image.Delete();
+
+            }
+            LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
 
             // ファイルが存在する場合は削除
             foreach (var fileObjectId in FileObjectIds) {
@@ -525,9 +520,21 @@ namespace WpfAppCommon.Model {
             if (item.ClipboardItemImages.Count == 0) {
                 return;
             }
-            string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), item.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
-            if (string.IsNullOrEmpty(result) == false) {
-                item.Content += result;
+            foreach (var image in item.ClipboardItemImages) {
+                // ImageBase64がない場合は処理しない
+                if (string.IsNullOrEmpty(image.ImageBase64)) {
+                    continue;
+                }
+                string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), [image.ImageBase64]);
+                if (string.IsNullOrEmpty(result) == false) {
+                    item.Content += "\n" + result;
+
+                    // EmbeddingWhenExtractingTextFromImageがTrueの場合はEmbeddingを更新
+                    if (ClipboardAppConfig.EmbeddingWhenExtractingTextFromImage) {
+                        image.UpdateEmbedding();
+                    }
+
+                }
             }
         }
 
