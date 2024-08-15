@@ -434,18 +434,20 @@ namespace PythonAILib.PythonIF {
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, string content) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, VectorSearchRequest vectorSearchRequest) {
             // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
             openAIProperties.VectorDBItems = [vectorDBItem];
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
+            // vectorSearchRequestをJSON文字列に変換
+            string vectorSearchRequestJson = vectorSearchRequest.ToJson();
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Content}:{content}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("run_vector_search", (function_object) => {
-                string resultString = function_object(propsJson, content);
+                string resultString = function_object(propsJson, vectorSearchRequestJson);
                 return resultString;
             });
         }   

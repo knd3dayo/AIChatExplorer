@@ -16,7 +16,7 @@ namespace PythonAILib.PythonIF {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, string content) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, VectorSearchRequest request) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
 

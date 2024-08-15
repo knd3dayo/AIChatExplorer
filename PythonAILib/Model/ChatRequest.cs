@@ -19,7 +19,6 @@ namespace PythonAILib.Model {
 
         public List<ChatItem> ChatHistory { get; set; } = [];
 
-
         public ChatItem? LastSendItem {
             get {
                 // ChatItemsのうち、ユーザー発言の最後のものを取得
@@ -113,7 +112,6 @@ namespace PythonAILib.Model {
             return result;
         }
 
-
         public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
 
             //OpenAIのリクエストパラメーターのContent部分のデータを作成
@@ -157,9 +155,7 @@ namespace PythonAILib.Model {
                 ["content"] = CreateOpenAIContentList(CreatePromptText(), imageUrls)
             };
             messages.Add(dc);
-
             return messages;
-
         }
 
         public string CreateOpenAIRequestJSON() {
@@ -228,8 +224,8 @@ namespace PythonAILib.Model {
             ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
             ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
             return result;
+
         }
 
         private ChatResult? ExecuteChatNormal() {
@@ -251,8 +247,19 @@ namespace PythonAILib.Model {
             sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
+            // VectorSearchRequestを作成. テスト用にFilterを設定
+            VectorSearchRequest request = new() {
+                Query = ContentText,
+                SearchKWArgs = new Dictionary<string, object> {
+                    ["k"] = 10,
+                    // filter
+                    ["filter"] = new Dictionary<string, object> {
+                        ["content_type"] = "text"
+                    }
+                }
+            };
             foreach (var vectorDBItem in VectorDBItems) {
-                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, ContentText) ?? [];
+                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, request) ?? [];
                 foreach (var vectorSearchResult in results) {
                     sb.AppendLine(vectorSearchResult.Content);
                     hasVectorSearch = true;
@@ -319,9 +326,20 @@ namespace PythonAILib.Model {
                     continue;
                 }
                 sb.AppendLine($"### {sentence} ###");
+                // VectorSearchRequestを作成. テスト用にFilterを設定
+                VectorSearchRequest request = new() {
+                    Query = sentence,
+                    SearchKWArgs = new Dictionary<string, object> {
+                        ["k"] = 10,
+                        // filter
+                        ["filter"] = new Dictionary<string, object> {
+                            ["content_type"] = "text"
+                        }
+                    }
+                };
                 // VectorSearchを実行
                 foreach (var vectorDBItem in VectorDBItems) {
-                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, sentence) ?? [];
+                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, request) ?? [];
                     foreach (var vectorSearchResult in vectorSearchResults) {
                         sb.AppendLine($"{vectorSearchResult.Content}");
                         hasVectorSearch = true;

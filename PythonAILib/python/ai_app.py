@@ -93,10 +93,10 @@ def list_openai_models(props_json: str):
 # langchain関連
 ########################
 
-def run_vector_search(props_json: str, prompt: str):
+def run_vector_search(props_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        result = langchain_util.run_vector_search(props_json, prompt)
+        result = langchain_util.run_vector_search(props_json, request_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

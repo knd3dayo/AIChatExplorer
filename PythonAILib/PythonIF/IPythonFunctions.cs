@@ -14,7 +14,7 @@ namespace PythonAILib.PythonIF {
         public ChatResult LangChainChat(ChatRequest chatController);
 
         
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, string content);
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, VectorSearchRequest request);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
 

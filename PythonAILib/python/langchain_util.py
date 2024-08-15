@@ -300,18 +300,18 @@ class RetrievalQAUtil:
         return langchain_chat_history
 
 # ベクトル検索を行う
-def run_vector_search( props_json: str, prompt: str):    
-    openai_props, vector_db_item, prompt, search_kwarg = process_vector_search_parameter(props_json, prompt)
+def run_vector_search( props_json: str, request_json: str):    
+    openai_props, vector_db_item, query, search_kwarg = process_vector_search_parameter(props_json, request_json)
 
     client = LangChainOpenAIClient(openai_props)
 
     # デバッグ出力
-    print(f'プロンプト: {prompt}')
+    print(f'検索条件: {query}')
     print('ベクトルDBの設定')
     print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
 
     retriever = RetrieverUtil(client, vector_db_item).create_retriever(search_kwarg=search_kwarg)
-    documents = retriever.invoke(prompt)
+    documents = retriever.invoke(query)
 
     print(f"documents:\n{documents}")
     # documentsの要素からcontent, source, source_urlを取得
@@ -325,7 +325,7 @@ def run_vector_search( props_json: str, prompt: str):
         
     return {"documents": result}
 
-def process_vector_search_parameter(props_json: str, prompt: str):
+def process_vector_search_parameter(props_json: str, request_json: str):
     # OpenAIPorpsを生成
     props = json.loads(props_json)
     openai_props = OpenAIProps(props)
@@ -334,13 +334,14 @@ def process_vector_search_parameter(props_json: str, prompt: str):
     if len(vector_db_props) == 0:
         raise Exception("vector_db_props is empty")
 
+    # queryを取得
+    request = json.loads(request_json)
+    query = request.get("query", "")
     # search_kwargを取得
-    # ★TODO リクエストにsearch_kwargを追加する
-    # search_kwarg = request.get("search_kwarg", {"k": 10, "filter":{"content_type": "text"}})
-    search_kwarg = {"k": 10 }
+    search_kwarg = request.get("search_kwarg", {"k": 10})
 
     vector_db_item = vector_db_props[0]
-    return openai_props, vector_db_item, prompt, search_kwarg
+    return openai_props, vector_db_item, query, search_kwarg
 
 def process_langchain_chat_parameter(props_json: str, prompt, request_json: str):
     # request_jsonをdictに変換

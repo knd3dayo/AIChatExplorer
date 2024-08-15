@@ -201,8 +201,8 @@ namespace PythonAILib.Model {
         // VectorSearch実行
         public string VectorSearchExecute { get; } = "VectorSearch実行";
 
-        // コンテンツ
-        public string Content { get; } = "コンテンツ";
+        // ベクトル検索リクエスト
+        public string VectorSearchRequest { get; } = "ベクトル検索リクエスト";
 
     }
 }

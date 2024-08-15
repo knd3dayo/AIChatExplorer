@@ -548,8 +548,15 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
                 contentText += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{item.BackgroundInfo}";
             }
+            // VectorSearchRequestを作成
+            VectorSearchRequest request = new() {
+                Query = contentText,
+                SearchKWArgs = new Dictionary<string, object> {
+                    ["k"] = 10
+                }
+            };
             // ベクトル検索を実行
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, contentText);
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, request);
             return results;
         }
 
