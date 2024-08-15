@@ -107,13 +107,22 @@ namespace WpfAppCommon.Model {
         public override void UpdateIndex(ContentInfo contentInfo) {
             // CollectionNameの設定
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
-
-
         }
 
         public override void DeleteIndex(ContentInfo contentInfo) {
 
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
         }
+
+        public override void UpdateIndex(ImageInfo imageInfo) {
+            // CollectionNameの設定
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
+        }
+
+        public override void DeleteIndex(ImageInfo imageInfo) {
+
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
+        }
+
     }
 }

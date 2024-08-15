@@ -10,13 +10,11 @@ namespace WpfAppCommon.Model {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
-        public ClipboardItem ClipboardItem { get; set; }
+        public ClipboardItem? ClipboardItem { get; set; }
 
-        public ClipboardItemImage(ClipboardItem clipboardItem) {
-            ClipboardItem = clipboardItem;
-        }
         public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
-            ClipboardItemImage itemImage = new(clipboardItem) {
+            ClipboardItemImage itemImage = new() {
+                ClipboardItem = clipboardItem,
                 Image = image
             };
             return itemImage;

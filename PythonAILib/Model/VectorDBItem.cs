@@ -76,5 +76,9 @@ namespace PythonAILib.Model {
         public abstract void UpdateIndex(ContentInfo clipboard);
         public abstract void DeleteIndex(ContentInfo clipboard);
 
+        public abstract void UpdateIndex(ImageInfo imageInfo);
+
+        public abstract void DeleteIndex(ImageInfo imageInfo);
+
     }
 }

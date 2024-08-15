@@ -446,12 +446,13 @@ namespace ClipboardApp.ViewModel {
             }
         });
 
-        // 画像からイメージを抽出するコマンド
+        // 画像からテキストを抽出するコマンド
         public SimpleDelegateCommand<object> ExtractTextFromImageWithOpenAICommand => new((obj) => {
             if (ClipboardItem.ContentType != ClipboardContentTypes.Image) {
                 throw new Exception(StringResources.CannotExtractTextForNonImageContent);
             }
-            ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
+            string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
+            // 結果をContentに設定
 
         });
         // ピン留めの切り替えコマンド

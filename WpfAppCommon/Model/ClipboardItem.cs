@@ -444,17 +444,15 @@ namespace WpfAppCommon.Model {
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
-                if (ClipboardAppConfig.AutoEmbedding) {
-                    // IPythonAIFunctions.ClipboardInfoを作成
-                    ContentInfo clipboardInfo = new ContentInfo(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                // IPythonAIFunctions.ClipboardInfoを作成
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
 
-                    // VectorDBItemを取得
-                    VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-
-                    // Embeddingを削除
-                    folderVectorDBItem.DeleteIndex(clipboardInfo);
-                }
+                // VectorDBItemを取得
+                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+                // Embeddingを削除
+                folderVectorDBItem.DeleteIndex(clipboardInfo);
                 LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
+
             });
             Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
@@ -480,11 +478,27 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
 
             });
-            // イメージが存在する場合は削除
-            foreach (var imageObjectId in ImageObjectIds) {
-                ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
-                image?.Delete();
-            }
+            
+            Task.Run(() => {
+                // イメージが存在する場合は削除
+                LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
+                foreach (var imageObjectId in ImageObjectIds) {
+                    ClipboardItemImage? image = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(imageObjectId);
+                    if (image == null) {
+                        continue;
+                    }
+                    // ベクトルDBのEmbeddingを削除
+                    ImageInfo imageInfo = new(VectorDBUpdateMode.delete, image.Id.ToString(), []);
+                    // VectorDBItemを取得
+                    VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+                    // Embeddingを削除
+                    folderVectorDBItem.DeleteIndex(imageInfo);
+                    image.Delete();
+
+                }
+                LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
+            });
+
             // ファイルが存在する場合は削除
             foreach (var fileObjectId in FileObjectIds) {
                 ClipboardItemFile? file = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
@@ -540,7 +554,7 @@ namespace WpfAppCommon.Model {
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
 
-            string result = ChatRequest.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem],  contentText);
+            string result = ChatRequest.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
             if (string.IsNullOrEmpty(result) == false) {
                 item.BackgroundInfo = result;
             }
