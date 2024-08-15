@@ -5,12 +5,9 @@ using WpfAppCommon.Utils;
 namespace WpfAppCommon.Model {
     public class ClipboardItemFile {
 
-        // コンストラクタ
-        public ClipboardItemFile(ClipboardItem clipboardItem) {
-            ClipboardItem = clipboardItem;
-        }
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
-            ClipboardItemFile itemFile = new(clipboardItem) {
+            ClipboardItemFile itemFile = new() {
+                ClipboardItem = clipboardItem,
                 ClipboardFolderPath = clipboardItem.FolderPath,
                 FilePath = filePath
             };
@@ -20,7 +17,7 @@ namespace WpfAppCommon.Model {
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         [BsonIgnore]
-        public ClipboardItem ClipboardItem { get; set; }
+        public ClipboardItem? ClipboardItem { get; set; }
 
         // クリップボードアイテムのフォルダパス
         public string ClipboardFolderPath { get; set; } = "";
@@ -61,7 +58,7 @@ namespace WpfAppCommon.Model {
                 }
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    ClipboardItem.GitCommit(syncFilePath);
+                    ClipboardItem?.GitCommit(syncFilePath);
                 }
 
             }
@@ -86,7 +83,7 @@ namespace WpfAppCommon.Model {
                 }
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    ClipboardItem.GitCommit(syncFilePath);
+                    ClipboardItem?.GitCommit(syncFilePath);
                 }
             }
         }

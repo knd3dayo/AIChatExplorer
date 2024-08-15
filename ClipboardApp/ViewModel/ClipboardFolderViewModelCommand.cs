@@ -55,14 +55,55 @@ namespace ClipboardApp.ViewModel {
         public static SimpleDelegateCommand<object> FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
 
         // フォルダ内のアイテムをJSON形式でエクスポートする処理
-        public SimpleDelegateCommand<object> ExportItemsFromFolderCommand => new(
-            (parameter) => {
-                ExportItemsFromFolderCommandExecute(this);
-            });
+        public SimpleDelegateCommand<object> BackupItemsFromFolderCommand => new((parameter) => {
+            DirectoryInfo directoryInfo = new("export");
+            // exportフォルダが存在しない場合は作成
+            if (!Directory.Exists("export")) {
+                directoryInfo = Directory.CreateDirectory("export");
+            }
+            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.ClipboardItemFolder.Id.ToString() + ".json";
+
+            //ファイルダイアログを表示
+            using var dialog = new CommonOpenFileDialog() {
+                Title = CommonStringResources.Instance.SelectFolderPlease,
+                InitialDirectory = directoryInfo.FullName,
+                // デフォルトのファイル名を設定
+                DefaultFileName = fileName,
+            };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                string resultFilePath = dialog.FileName;
+                this.ClipboardItemFolder.ExportItemsToJson(resultFilePath);
+                // フォルダ内のアイテムを読み込む
+                LogWrapper.Info(CommonStringResources.Instance.FolderExported);
+            }
+        });
 
         // フォルダ内のアイテムをJSON形式でインポートする処理
-        public SimpleDelegateCommand<object> ImportItemsToFolderCommand => new((parameter) => {
-            ImportItemsToFolderCommandExecute(this);
+        public SimpleDelegateCommand<object> RestoreItemsToFolderCommand => new((parameter) => {
+            //ファイルダイアログを表示
+            using var dialog = new CommonOpenFileDialog() {
+                Title = CommonStringResources.Instance.SelectFolderPlease,
+                InitialDirectory = @".",
+            };
+            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+                return;
+            } else {
+                string filaPath = dialog.FileName;
+                // ファイルを読み込む
+                string jsonString = File.ReadAllText(filaPath);
+                this.ClipboardItemFolder.ImportItemsFromJson(jsonString, (actionMessage) => {
+                    if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
+                        LogWrapper.Error(actionMessage.Message);
+                    } else {
+                        LogWrapper.Info(actionMessage.Message);
+                    }
+                });
+                // フォルダ内のアイテムを読み込む
+                this.LoadFolderCommand.Execute();
+                LogWrapper.Info(CommonStringResources.Instance.FolderImported);
+            }
         });
 
 
@@ -92,57 +133,6 @@ namespace ClipboardApp.ViewModel {
             }
         });
 
-
-        // フォルダーのアイテムをエクスポートする処理
-        public static void ExportItemsFromFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
-            DirectoryInfo directoryInfo = new("export");
-            // exportフォルダが存在しない場合は作成
-            if (!Directory.Exists("export")) {
-                directoryInfo = Directory.CreateDirectory("export");
-            }
-            //ファイルダイアログを表示
-            using var dialog = new CommonOpenFileDialog() {
-                Title = CommonStringResources.Instance.SelectFolderPlease,
-                InitialDirectory = directoryInfo.FullName,
-                // フォルダ選択モードにする
-                IsFolderPicker = true,
-            };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
-                return;
-            } else {
-                string folderPath = dialog.FileName;
-                clipboardItemFolder.ClipboardItemFolder.ExportItemsToJson(folderPath);
-                // フォルダ内のアイテムを読み込む
-                LogWrapper.Info(CommonStringResources.Instance.FolderExported);
-            }
-        }
-
-        //フォルダーのアイテムをインポートする処理
-        public static void ImportItemsToFolderCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
-
-            //ファイルダイアログを表示
-            using var dialog = new CommonOpenFileDialog() {
-                Title = CommonStringResources.Instance.SelectFolderPlease,
-                InitialDirectory = @".",
-                // フォルダ選択モードにする
-                IsFolderPicker = true,
-            };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
-                return;
-            } else {
-                string filaPath = dialog.FileName;
-                clipboardItemFolder.ClipboardItemFolder.ImportItemsFromJson(filaPath, (actionMessage) => {
-                    if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
-                        LogWrapper.Error(actionMessage.Message);
-                    } else {
-                        LogWrapper.Info(actionMessage.Message);
-                    }
-                });
-                // フォルダ内のアイテムを読み込む
-                clipboardItemFolder.LoadFolderCommand.Execute();
-                LogWrapper.Info(CommonStringResources.Instance.FolderImported);
-            }
-        }
 
         /// <summary>
         /// フォルダ削除コマンド

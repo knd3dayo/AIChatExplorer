@@ -1,6 +1,9 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Windows;
 using LiteDB;
 using PythonAILib.Model;
@@ -310,15 +313,15 @@ namespace WpfAppCommon.Model {
         }
 
         // フォルダ内のアイテムをJSON形式でExport
-        public void ExportItemsToJson(string directoryPath) {
-            JsonArray jsonArray = [];
-            foreach (ClipboardItem item in Items) {
-                jsonArray.Add(ClipboardItem.ToJson(item));
-            }
-            string jsonString = jsonArray.ToString();
-            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.Id.ToString() + ".json";
+        public void ExportItemsToJson(string fileName) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            string jsonString =  System.Text.Json.JsonSerializer.Serialize(Items, options);
 
-            File.WriteAllText(Path.Combine(directoryPath, fileName), jsonString);
+            File.WriteAllText(fileName, jsonString);
 
         }
 
@@ -338,15 +341,17 @@ namespace WpfAppCommon.Model {
             // Itemsをクリア
             Items.Clear();
 
-            foreach (JsonValue? jsonValue in jsonArray.Cast<JsonValue?>()) {
+            foreach (JsonObject? jsonValue in jsonArray.Cast<JsonObject?>()) {
                 if (jsonValue == null) {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
                 ClipboardItem? item = ClipboardItem.FromJson(jsonString, action);
+
                 if (item == null) {
                     continue;
                 }
+                item.FolderObjectId = Id;
                 // Itemsに追加
                 Items.Add(item);
                 //保存

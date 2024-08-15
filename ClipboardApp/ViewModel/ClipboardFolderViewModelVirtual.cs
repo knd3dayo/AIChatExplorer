@@ -36,19 +36,27 @@ namespace ClipboardApp.ViewModel {
                 deleteMenuItem.CommandParameter = this;
                 menuItems.Add(deleteMenuItem);
 
-                // インポート    
-                MenuItem importMenuItem = new();
-                importMenuItem.Header = StringResources.Import;
-                importMenuItem.Command = ImportItemsToFolderCommand;
-                importMenuItem.CommandParameter = this;
-                menuItems.Add(importMenuItem);
+                // アイテムのバックアップ/リストア
+                MenuItem backupRestoreMenuItem = new();
+                backupRestoreMenuItem.Header = StringResources.BackupRestore;
 
-                // エクスポート
-                MenuItem exportMenuItem = new();
-                exportMenuItem.Header = StringResources.Export;
-                exportMenuItem.Command = ExportItemsFromFolderCommand;
-                exportMenuItem.CommandParameter = this;
-                menuItems.Add(exportMenuItem);
+                // バックアップ
+                MenuItem backupMenuItem = new() {
+                    Header = StringResources.BackupItem,
+                    Command = BackupItemsFromFolderCommand,
+                    CommandParameter = this
+                };
+                backupRestoreMenuItem.Items.Add(backupMenuItem);
+
+
+                // リストア
+                MenuItem restoreMenuItem = new();
+                restoreMenuItem.Header = StringResources.RestoreItem;
+                restoreMenuItem.Command = RestoreItemsToFolderCommand;
+                restoreMenuItem.CommandParameter = this;
+                backupRestoreMenuItem.Items.Add(restoreMenuItem);
+
+                menuItems.Add(backupRestoreMenuItem);
 
                 return menuItems;
 

@@ -108,10 +108,15 @@ namespace WpfAppCommon.Model {
         public string Cancel { get; } = "キャンセル";
         // 閉じる
         public string Close { get; } = "閉じる";
-        // エクスポート
-        public string Export { get; } = "エクスポート";
-        // インポート
-        public string Import { get; } = "インポート";
+
+        // バックアップ/リストア
+        public string BackupRestore { get; } = "バックアップ/リストア";
+
+        // アイテムのバックアップ
+        public string BackupItem { get; } = "アイテムのバックアップ";
+        // アイテムのリストア
+        public string RestoreItem { get; } = "アイテムのリストア";
+
         // 自動処理ルール一覧
         public string ListAutoProcessRule { get; } = "自動処理ルール一覧";
         // Pythonスクリプト一覧

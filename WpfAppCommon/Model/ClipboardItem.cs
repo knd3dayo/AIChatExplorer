@@ -304,6 +304,8 @@ namespace WpfAppCommon.Model {
             var options = jsonSerializerOptions;
             return System.Text.Json.JsonSerializer.Serialize(item, options);
         }
+
+
         // JSON文字列をClipboardItemに変換する
         public static ClipboardItem? FromJson(string json, Action<ActionMessage> action) {
             JsonSerializerOptions jsonSerializerOptions = new() {
