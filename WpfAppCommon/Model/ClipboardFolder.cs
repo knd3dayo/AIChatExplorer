@@ -600,13 +600,13 @@ namespace WpfAppCommon.Model {
                 });
                 try {
                     // Apply automatic processing
-                    ClipboardItem? updatedItem = ApplyAutoAction(item);
-                    if (updatedItem == null) {
+                    Task<ClipboardItem?> updatedItemTask = ApplyAutoAction(item);
+                    if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;
                     }
                     // Notify the completion of processing
-                    _afterClipboardChanged(updatedItem);
+                    _afterClipboardChanged(updatedItemTask.Result);
 
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
@@ -681,7 +681,7 @@ namespace WpfAppCommon.Model {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        private static ClipboardItem? ApplyAutoAction(ClipboardItem item) {
+        private static async Task<ClipboardItem?> ApplyAutoAction(ClipboardItem item) {
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
@@ -721,33 +721,42 @@ namespace WpfAppCommon.Model {
                 ClipboardItem.ExtractImageWithOpenAI(item);
             }
 
-
             // ★TODO Implement processing based on automatic processing rules.
-            // If AUTO_TAG is set, automatically set the tags
-            if (ClipboardAppConfig.AutoTag) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
-                ClipboardItem.CreateAutoTags(item);
-            }
-            // If AUTO_DESCRIPTION is set, automatically set the Description
-            if (ClipboardAppConfig.AutoDescription) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                ClipboardItem.CreateAutoTitle(item);
+            var task1 = Task.Run(() => {
+                // If AUTO_TAG is set, automatically set the tags
+                if (ClipboardAppConfig.AutoTag) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
+                    ClipboardItem.CreateAutoTags(item);
+                }
+            });
+            var task2 = Task.Run(() => {
+                // If AUTO_DESCRIPTION is set, automatically set the Description
+                if (ClipboardAppConfig.AutoDescription) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitle(item);
 
-            } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
+                } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                ClipboardItem.CreateAutoTitleWithOpenAI(item);
-            }
-            // 背景情報
-            if (ClipboardAppConfig.AutoBackgroundInfo) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
-                ClipboardItem.CreateAutoBackgroundInfo(item);
-            }
-            // サマリー
-            if (ClipboardAppConfig.AutoSummary) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                ClipboardItem.CreateAutoSummary(item);
-            }
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
+                }
+            });
+            var task3 = Task.Run(() => {
+                // 背景情報
+                if (ClipboardAppConfig.AutoBackgroundInfo) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
+                    ClipboardItem.CreateAutoBackgroundInfo(item);
+                }
+            });
+            var task4 = Task.Run(() => {
+                // サマリー
+                if (ClipboardAppConfig.AutoSummary) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
+                    ClipboardItem.CreateAutoSummary(item);
+                }
+            });
+            await Task.WhenAll(task1, task2, task3, task4);
+
             return item;
         }
         #endregion
