@@ -383,6 +383,18 @@ namespace ClipboardApp.ViewModel {
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, true);
         });
 
+        // タイトルを生成するコマンド
+        public SimpleDelegateCommand<object> GenerateTitleCommand => new(async (obj) => {
+            LogWrapper.Info(StringResources.GenerateTitleInformation);
+            await Task.Run(() => {
+                ClipboardItem.CreateAutoTitleWithOpenAI(ClipboardItem);
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info(StringResources.GeneratedTitleInformation);
+
+        });
+
         // 背景情報を生成するコマンド
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateBackgroundInformation);
