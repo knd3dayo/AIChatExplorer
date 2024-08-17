@@ -22,6 +22,12 @@ namespace PythonAILib.PythonIF {
 
         public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem);
 
+        // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
+        public void ExportToExcel(string filePath, CommonDataTable data);
+
+        // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
+        public CommonDataTable ImportFromExcel(string filePath);
+
         //テスト用
         public string HelloWorld();
     }

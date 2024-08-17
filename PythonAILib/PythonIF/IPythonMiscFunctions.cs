@@ -17,8 +17,5 @@ namespace PythonAILib.PythonIF {
         // 引数として渡した文字列をSpacyで処理してEntityを抽出する
         public HashSet<string> ExtractEntity(string SpacyModel, string text);
 
-
-
-
     }
 }

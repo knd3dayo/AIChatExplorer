@@ -9,7 +9,7 @@ from openai_client import OpenAIClient
 import langchain_util
 import langchain_object_processor
 
-
+import excel_util
 import openai_client
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
@@ -256,7 +256,54 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
+# export_to_excelを実行する
+def export_to_excel(filePath, dataJson):
+    # export_to_excelを実行する関数を定義
+    def func() -> dict:
+        # dataJsonをdictに変換
+        data = json.loads(dataJson)
+        # export_to_excelを実行
+        print(data)
+        excel_util.export_to_excel(filePath, data.get("rows",[]))
+        # 結果用のdictを生成
+        result = {}
+        return result
     
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return
+
+# import_to_excelを実行する
+def import_from_excel(filePath):
+    # import_to_excelを実行する関数を定義
+    def func() -> dict:
+        # import_to_excelを実行
+        data = excel_util.import_from_excel(filePath)
+        # 結果用のdictを生成
+        result = {}
+        result["rows"] = data
+        return result
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
 # テスト用
 def hello_world():
     return "Hello World"

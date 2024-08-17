@@ -204,6 +204,18 @@ namespace PythonAILib.Model {
         // ベクトル検索リクエスト
         public string VectorSearchRequest { get; } = "ベクトル検索リクエスト";
 
+        // Excelへのエクスポートを実行します
+        public string ExportToExcelExecute { get; } = "Excelへのエクスポートを実行します";
+        // Excelへのエクスポートが失敗しました
+        public string ExportToExcelFailed { get; } = "Excelへのエクスポートが失敗しました";
+        // Excelへのエクスポートが成功しました
+        public string ExportToExcelSuccess { get; } = "Excelへのエクスポートが成功しました";
+
+        // ファイルパス
+        public string FilePath { get; } = "ファイルパス";
+        // データ
+        public string Data { get; } = "データ";
+
     }
 }
     

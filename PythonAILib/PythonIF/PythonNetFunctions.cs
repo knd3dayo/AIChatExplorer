@@ -450,7 +450,60 @@ namespace PythonAILib.PythonIF {
                 string resultString = function_object(propsJson, vectorSearchRequestJson);
                 return resultString;
             });
-        }   
+        }
+
+        // ExportToExcelを実行する
+        public void ExportToExcel(string filePath, CommonDataTable data) {
+            // dataをJSON文字列に変換
+            string dataJson = CommonDataTable.ToJson(data);
+            LogWrapper.Info(PythonAILibStringResources.Instance.ExportToExcelExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.FilePath}:{filePath}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Data}:{dataJson}");
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "export_to_excel");
+                // export_to_excel関数を呼び出す
+                function_object(filePath, dataJson);
+            });
+        }
+
+        // ImportFromExcelを実行する
+        public CommonDataTable ImportFromExcel(string filePath) {
+            // ResultContainerを作成
+            CommonDataTable  result = new([]);
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "import_from_excel");
+                // import_from_excel関数を呼び出す
+                string resultString = function_object(filePath);
+
+                // resultStringをログに出力
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                var op = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                if (resultDict == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+                // documents を取得
+                JsonElement? documentsObject = (JsonElement)resultDict["rows"];
+                if (documentsObject == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+
+                // JSON文字列からList<List<string>>に変換する。
+                if (string.IsNullOrEmpty(resultString) == false) {
+                    result = CommonDataTable.FromJson(documentsObject.ToString() ?? "[]");
+                }
+            });
+            return result;
+        }
 
     }
 }

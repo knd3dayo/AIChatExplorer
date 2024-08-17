@@ -37,6 +37,16 @@ namespace PythonAILib.PythonIF {
         public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
+        // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
+        public void ExportToExcel(string filePath, CommonDataTable data) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
+
+        // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
+        public CommonDataTable ImportFromExcel(string filePath) {
+            throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
+        }
+
         public string HelloWorld() {
             throw new NotImplementedException(StringResources.PythonNotEnabledMessage);
         }
