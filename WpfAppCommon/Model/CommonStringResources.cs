@@ -10,6 +10,95 @@ namespace WpfAppCommon.Model {
                 return _instance;
             }
         }
+        // -- SettingsUserControl.xaml --
+        // 基本設定
+        public string BasicSettings { get; } = "基本設定";
+        // Pythonインストール先のpython3**.dllを指定
+        public string SpecifyPython3Dll { get; } = "Pythonインストール先のpython3**.dllを指定";
+
+        // PythonDLLのパス
+        public string PythonDLLPath { get; } = "PythonDLLのパス";
+
+        // Python仮想環境の場所
+        public string PythonVenvPath { get; } = "Python仮想環境の場所";
+
+        // Python venvを使用する場合はvenvの場所を設定
+        public string SpecifyVenvPath { get; } = "Python venvを使用する場合はvenvの場所を設定";
+
+        // クリップボードDBのバックアップ世代数
+        public string ClipboardDBBackupGenerations { get; } = "クリップボードDBのバックアップ世代数";
+
+        // clipbord.db,clipboard-log.dbのバックアップ世代数
+        public string ClipboardDBBackupGenerationsDescription { get; } = "clipbord.db,clipboard-log.dbのバックアップ世代数";
+
+        // OpenAI設定
+        public string OpenAISettings { get; } = "OpenAI設定";
+
+        // OpenAIのAPI Key
+        public string OpenAIKey { get; } = "OpenAIのAPI Key";
+
+        // OpenAIまたはAzure OpenAIのAPIキーを設定
+        public string SetOpenAIKey { get; } = "OpenAIまたはAzure OpenAIのAPIキーを設定";
+
+        // Azure OpenAIを使用する
+        public string UseAzureOpenAI { get; } = "Azure OpenAIを使用する";
+
+        // OpenAIの代わりにAzure OpenAIを使用します
+        public string UseAzureOpenAIInsteadOfOpenAI { get; } = "OpenAIの代わりにAzure OpenAIを使用します";
+
+        // Azure OpenAIのエンドポイント
+        public string AzureOpenAIEndpoint { get; } = "Azure OpenAIのエンドポイント";
+
+        // Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する
+        public string SetAzureOpenAIEndpoint { get; } = "Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する";
+
+        // OpenAIのチャットで使用するモデル
+        public string OpenAIModel { get; } = "OpenAIのチャットで使用するモデル";
+
+        // OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど
+        public string SetOpenAIModel { get; } = "OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど";
+
+        // OpenAIのEmbeddingで使用するモデル
+        public string OpenAIEmbeddingModel { get; } = "OpenAIのEmbeddingで使用するモデル";
+
+        // OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど
+        public string SetOpenAIEmbeddingModel { get; } = "OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど";
+
+        // OpenAIのチャットモデルのBaseUR
+        public string OpenAIChatBaseURL { get; } = "OpenAIのチャットモデルのBaseUR";
+
+        // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
+        public string SetOpenAIChatBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
+
+        // OpenAIのEmbeddingモデルのBaseURL
+        public string OpenAIEmbeddingBaseURL { get; } = "OpenAIのEmbeddingモデルのBaseURL";
+
+        // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
+        public string SetOpenAIEmbeddingBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
+
+        // Python Spacy設定
+        public string PythonSpacySettings { get; } = "Python Spacy設定";
+
+        // Spacyのモデル名
+        public string SpacyModelName { get; } = "Spacyのモデル名";
+
+        // インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど
+        public string SetSpacyModelName { get; } = "インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど";
+
+        // Python OCR設定
+        public string PythonOCRSettings { get; } = "Python OCR設定";
+
+        // Tesseractのパス
+        public string TesseractPath { get; } = "Tesseractのパス";
+
+        // その他
+        public string Other { get; } = "その他";
+
+        // 開発中機能を有効にする
+        public string EnableDevelopmentFeatures { get; } = "開発中機能を有効にする";
+
+        // 設定のチェック
+        public string CheckSettings { get; } = "設定のチェック";
 
         public string AppName { get; } = "コピペアプリ";
         // ファイル
