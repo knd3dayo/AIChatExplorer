@@ -56,51 +56,6 @@ namespace ClipboardApp.ViewModel {
 
             }
         }
-        // Itemのコンテキストメニュー
-        public override ObservableCollection<MenuItem> CreateItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
-            // MenuItemのリストを作成
-            ObservableCollection<MenuItem> menuItems = [];
-            if (MainWindowViewModel.ActiveInstance == null) {
-                return menuItems;
-            }
-            // 開く
-            MenuItem createMenuItem = new() {
-                Header = StringResources.Open,
-                Command = OpenItemCommand,
-                CommandParameter = itemViewModel,
-                InputGestureText = "Ctrl+O"
-            };
-            menuItems.Add(createMenuItem);
-
-            // ピン留め
-            MenuItem pinnedStateChangeMenuItem = new() {
-                Header = StringResources.Pin,
-                Command = itemViewModel.ChangePinCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(pinnedStateChangeMenuItem);
-
-            // コピー
-            MenuItem copyMenuItem = new() {
-                Header = StringResources.Copy,
-                Command = MainWindowViewModel.ActiveInstance.CopyItemCommand,
-                CommandParameter = this,
-                InputGestureText = "Ctrl+C"
-            };
-            menuItems.Add(copyMenuItem);
-
-            // 削除
-            MenuItem deleteMnuItem = new() {
-                Header = StringResources.Delete,
-                Command = itemViewModel.DeleteItemCommand,
-                CommandParameter = itemViewModel,
-                InputGestureText = "Delete"
-            };
-            menuItems.Add(deleteMnuItem);
-
-            return menuItems;
-
-        }
 
         // LoadChildren
         public override void LoadChildren() {

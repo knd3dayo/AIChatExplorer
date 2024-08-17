@@ -11,6 +11,7 @@
     <None Remove="python\ai_app.py" />
     <None Remove="python\ai_app_pyocr.py" />
     <None Remove="python\ai_app_spacy.py" />
+    <None Remove="python\excel_util.py" />
     <None Remove="python\file_extractor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_client.py" />
@@ -30,6 +31,12 @@
     <None Remove="python\test_langchain_vector_db_chroma.py" />
     <None Remove="python\test_openai_client.py" />
     <None Remove="python\tools.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="python\excel_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
