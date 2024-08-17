@@ -1,23 +1,21 @@
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
+using ClipboardApp.ViewModel;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
-using QAChat.ViewModel;
-using ClipboardApp.ViewModel;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel {
 
 
@@ -47,7 +45,7 @@ namespace ClipboardApp
                         RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, clipboardItem));
                     });
 
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run(() => {
                         SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
@@ -71,7 +69,7 @@ namespace ClipboardApp
                 WindowsNotificationController.Start(RootFolderViewModel.ClipboardItemFolder, (item) => {
                     // クリップボードアイテムが追加された時の処理
                     RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, item));
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run(() => {
                         SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
@@ -136,7 +134,7 @@ namespace ClipboardApp
             dummyItem.OpenOpenAIChatWindowCommand.Execute();
         }
         // 画像エビデンスチェッカーを開くコマンド
-        public  void OpenScreenshotCheckerWindowExecute() {
+        public void OpenScreenshotCheckerWindowExecute() {
             ImageChat.MainWindow.OpenMainWindow(null, false, () => {
                 SelectedFolder?.LoadFolderCommand.Execute();
             });
@@ -162,9 +160,9 @@ namespace ClipboardApp
             if (folderViewModel != null && folderViewModel.ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folderViewModel.ClipboardItemFolder);
                 searchConditionRule ??= new() {
-                        Type = SearchRule.SearchType.SearchFolder,
-                        SearchFolder = folderViewModel.ClipboardItemFolder
-                    };
+                    Type = SearchRule.SearchType.SearchFolder,
+                    SearchFolder = folderViewModel.ClipboardItemFolder
+                };
             } else {
                 searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             }
@@ -332,14 +330,14 @@ namespace ClipboardApp
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
-                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem( ClipboardController.LastClipboardChangedEventArgs,
+                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
                             SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                         });
 
-                        Application.Current.Dispatcher.Invoke(() => {
+                        MainUITask.Run(() => {
                             windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                         });
                     });
@@ -588,6 +586,6 @@ namespace ClipboardApp
             VersionWindow.OpenVersionWindow();
         });
 
-        
+
     }
 }
