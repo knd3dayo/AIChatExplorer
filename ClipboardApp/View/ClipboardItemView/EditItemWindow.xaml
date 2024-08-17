@@ -191,7 +191,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="背景情報"
+                    Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
                     <TextBox
                         xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
@@ -224,7 +224,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="サマリー"
+                    Header="{Binding StringResources.Summary, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.SummaryVisibility}">
                     <TextBox
                         xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
@@ -257,7 +257,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="ファイル"
+                    Header="{Binding StringResources.File, Mode=OneTime}"
                     Visibility="{Binding FileTabVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
