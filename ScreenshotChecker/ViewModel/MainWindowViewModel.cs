@@ -147,7 +147,7 @@ namespace ImageChat.ViewModel {
                 IsIndeterminate = true;
 
                 // Python処理機能の初期化
-                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信

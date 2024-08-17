@@ -20,7 +20,7 @@ namespace WpfAppCommon.Control.QAChat {
                 IsIndeterminate = true;
 
                 // Python処理機能の初期化
-                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
                 await Task.Run(() => {
 

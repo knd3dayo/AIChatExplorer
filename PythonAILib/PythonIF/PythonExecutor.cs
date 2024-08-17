@@ -1,5 +1,7 @@
 using System.IO;
+using Python.Runtime;
 using PythonAILib.Model;
+using PythonAILib.Utils;
 
 namespace PythonAILib.PythonIF {
     public class PythonExecutor {
@@ -16,14 +18,111 @@ namespace PythonAILib.PythonIF {
         public static string WpfAppCommonMiscScript { get; } = StringResources.WpfAppCommonMiscScript;
 
 
-        public static IPythonAIFunctions PythonAIFunctions { get; set; } = new EmptyPythonAIFunctions();
+        public static string? PythonPath { get; set; }
 
-        public static IPythonMiscFunctions PythonMiscFunctions { get; set; } = new EmptyPythonMiscFunctions();
+        private static string PathToVirtualEnv { get; set; } = "";
+
+        private static IPythonAIFunctions? _pythonAIFunctions;
+        public static IPythonAIFunctions PythonAIFunctions {
+            get {
+                if (string.IsNullOrEmpty(PythonPath)) {
+                    throw new Exception(StringResources.PythonDLLNotFound);
+                }
+                if (_pythonAIFunctions == null) {
+                    InitPythonNet(PythonPath, PathToVirtualEnv);
+                    _pythonAIFunctions = new PythonNetFunctions();
+                }
+                return _pythonAIFunctions;
+            }
+        }
+
+        private static IPythonMiscFunctions? _pythonMiscFunctions;
+        public static IPythonMiscFunctions PythonMiscFunctions {
+            get {
+                if (string.IsNullOrEmpty(PythonPath)) {
+                    throw new Exception(StringResources.PythonDLLNotFound);
+
+                }
+                if (_pythonMiscFunctions == null) {
+                    _pythonMiscFunctions = new PythonMiscFunctions();
+
+                }
+                return _pythonMiscFunctions;
+            }
+        }
         // Initialize Python functions
-        public static void Init(string pythonPath) {
+        public static void Init(string pythonPath, string pathToVirtualEnv = "") {
 
-            PythonAIFunctions = new PythonNetFunctions(pythonPath);
-            PythonMiscFunctions = new PythonMiscFunctions(pythonPath);
+            PythonPath = pythonPath;
+            PathToVirtualEnv = pathToVirtualEnv;
+        }
+
+
+        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv = "") {
+            // Pythonスクリプトを実行するための準備
+
+            // 既に初期化されている場合は初期化しない
+            if (PythonEngine.IsInitialized) {
+                return;
+            }
+
+            // PythonDLLのパスを設定
+            Runtime.PythonDLL = pythonDLLPath;
+
+            // Runtime.PythonDLLのファイルが存在するかチェック
+            if (!File.Exists(Runtime.PythonDLL)) {
+                string message = StringResources.PythonDLLNotFound;
+                throw new Exception(message + Runtime.PythonDLL);
+                
+            }
+            // Venv環境が存在するかチェック
+            if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {
+                string message = StringResources.PythonVenvNotFound;
+                throw new Exception(message + pathToVirtualEnv);
+            }
+
+            try {
+                // venvを使用する場合の設定
+                // 公式ドキュメントの設定ではPythonEngine.Initialize()時にクラッシュするため、
+                // 以下を参考にして設定を行う
+                // https://github.com/pythonnet/pythonnet/issues/1478#issuecomment-897933730
+
+                if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                    // PythonEngineにアクセスするためのダミー処理
+                    string version = PythonEngine.Version;
+                    LogWrapper.Info($"Python Version: {version}");
+                    // 実行中の Python のユーザー site-packages へのパスを無効にする
+                    PythonEngine.SetNoSiteFlag();
+                }
+
+                PythonEngine.Initialize();
+                PythonEngine.BeginAllowThreads();
+
+                if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+
+                    // sys.prefix、sys.exec_prefixを venvのパスに変更
+
+                    using (Py.GIL()) {
+                        // fix the prefixes to point to our venv
+                        // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
+                        dynamic sys = Py.Import("sys");
+                        sys.prefix = pathToVirtualEnv;
+                        sys.exec_prefix = pathToVirtualEnv;
+
+                        dynamic site = Py.Import("site");
+                        // This has to be overwritten because site module may already have 
+                        // been loaded by the interpreter (but not run yet)
+                        site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
+                        // Run site path modification with tweaked prefixes
+                        site.main();
+
+                    }
+                }
+
+            } catch (TypeInitializationException e) {
+                string message = StringResources.PythonInitFailed + e.Message;
+                LogWrapper.Error(message);
+            }
         }
 
         // Load Python script

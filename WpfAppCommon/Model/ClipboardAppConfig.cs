@@ -62,6 +62,20 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
             }
         }
+        // PythonVenvPath
+        private static string? _pythonVenvPath;
+        public static string PythonVenvPath {
+            get {
+                if (_pythonVenvPath == null) {
+                    _pythonVenvPath = WpfAppCommon.Properties.Settings.Default.PythonVenvPath;
+                }
+                return _pythonVenvPath;
+            }
+            set {
+                _pythonVenvPath = value;
+                WpfAppCommon.Properties.Settings.Default.PythonVenvPath = value;
+            }
+        }
 
         // AzureOpenAI
         private static Boolean? _azureOpenAI;

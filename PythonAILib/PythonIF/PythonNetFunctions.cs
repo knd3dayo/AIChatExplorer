@@ -37,38 +37,6 @@ namespace PythonAILib.PythonIF {
             return pyModule;
         }
 
-        protected void InitPythonNet(string pythonDLLPath) {
-            // Pythonスクリプトを実行するための準備
-
-            // 既に初期化されている場合は初期化しない
-            if (PythonEngine.IsInitialized) {
-                return;
-            }
-
-            // PythonDLLのパスを設定
-            Runtime.PythonDLL = pythonDLLPath;
-
-            // Runtime.PythonDLLのファイルが存在するかチェック
-            if (!File.Exists(Runtime.PythonDLL)) {
-                string message = StringResources.PythonDLLNotFound;
-                LogWrapper.Error(message + Runtime.PythonDLL);
-                return;
-            }
-
-            try {
-                PythonEngine.Initialize();
-                PythonEngine.BeginAllowThreads();
-
-            } catch (TypeInitializationException e) {
-                string message = StringResources.PythonInitFailed + e.Message;
-                LogWrapper.Error(message);
-            }
-        }
-
-        public PythonNetFunctions(string pythonDLLPath) {
-            InitPythonNet(pythonDLLPath);
-        }
-
         public void ExecPythonScript(string scriptPath, Action<PyModule> action) {
             // Pythonスクリプトを実行する
             using (Py.GIL()) {

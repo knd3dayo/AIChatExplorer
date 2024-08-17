@@ -32,7 +32,7 @@ namespace WpfAppCommon.Model {
                 return;
             }
             // Python処理機能の初期化
-            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
             while (true) {
                 // _EnabledがFalseの場合は終了

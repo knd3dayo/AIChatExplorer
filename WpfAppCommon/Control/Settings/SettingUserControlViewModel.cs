@@ -38,6 +38,18 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // PythonVenvPath
+        public string PythonVenvPath {
+            get {
+                return ClipboardAppConfig.PythonVenvPath;
+            }
+            set {
+                ClipboardAppConfig.PythonVenvPath = value;
+                OnPropertyChanged(nameof(PythonVenvPath));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         // Azure OpenAIを使用するかどうか
         public bool AzureOpenAI {
@@ -436,7 +448,7 @@ namespace WpfAppCommon.Control.Settings {
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.PythonVenvPath);
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -455,7 +467,7 @@ namespace WpfAppCommon.Control.Settings {
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.PythonVenvPath);
             try {
                 // ChatControllerを作成
                 ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());

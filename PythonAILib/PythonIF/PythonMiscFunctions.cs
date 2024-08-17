@@ -26,8 +26,7 @@ namespace PythonAILib.PythonIF {
 
     public class PythonMiscFunctions : PythonNetFunctions , IPythonMiscFunctions{
 
-        public PythonMiscFunctions(string pythonPath) : base(pythonPath) { }
-
+        
         private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
         // IPythonFunctionsのメソッドを実装

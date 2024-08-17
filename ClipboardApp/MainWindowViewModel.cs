@@ -33,7 +33,7 @@ namespace ClipboardApp
             InitClipboardFolders();
 
             // Python処理機能の初期化
-            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();

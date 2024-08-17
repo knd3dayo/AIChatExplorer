@@ -137,7 +137,7 @@ namespace WpfAppCommon.Control.Settings {
         #endregion
         private TestResult TestSpacy() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath);
+            PythonExecutor.Init(PythonDllPath, PythonVenvPath);
             StringBuilder stringBuilder = new();
             stringBuilder.AppendLine("def execute(input_str):");
             stringBuilder.AppendLine("    import spacy");

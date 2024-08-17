@@ -418,5 +418,17 @@ namespace WpfAppCommon.Properties {
                 this["EmbeddingWhenExtractingTextFromImage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PythonVenvPath {
+            get {
+                return ((string)(this["PythonVenvPath"]));
+            }
+            set {
+                this["PythonVenvPath"] = value;
+            }
+        }
     }
 }

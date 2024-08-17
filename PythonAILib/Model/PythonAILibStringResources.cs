@@ -1,17 +1,18 @@
 namespace PythonAILib.Model {
     public class PythonAILibStringResources {
 
-        private static PythonAILibStringResources?  _Instance;
+        private static PythonAILibStringResources? _Instance;
         public static PythonAILibStringResources Instance {
             get {
                 if (_Instance == null) {
                     _Instance = new PythonAILibStringResources();
-    }
+                }
                 return _Instance;
             }
         }
 
         // --- namespace WpfAppCommon.PythonIF ---
+        
 
         // クリップボードの内容が変更されました
         public string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
@@ -64,6 +65,9 @@ namespace PythonAILib.Model {
         // --- PythonNetFunctions.cs ---
         // "PythonDLLが見つかりません。PythonDLLのパスを確認してください:"
         public string PythonDLLNotFound { get; } = "PythonDLLが見つかりません。PythonDLLのパスを確認してください:";
+
+        // Python venv環境が見つかりません。Python venvのパスを確認してください:
+        public string PythonVenvNotFound { get; } = "Python venv環境が見つかりません。Python venvのパスを確認してください:";
         //  "Pythonの初期化に失敗しました。"
         public string PythonInitFailed { get; } = "Pythonの初期化に失敗しました。";
 
@@ -218,4 +222,3 @@ namespace PythonAILib.Model {
 
     }
 }
-    
