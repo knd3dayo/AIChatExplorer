@@ -20,14 +20,14 @@ namespace WpfAppCommon.Utils {
         public new void Info(string message) {
             // 親クラスのメソッドを呼び出す
             base.Info(message);
-            Application.Current.Dispatcher.Invoke(() => {
+            MainUITask.Run(() => {
                 if (StatusText != null) {
                     StatusText.Text = message;
                 }
             });
         }
         public new void Warn(string message) {
-            Application.Current.Dispatcher.Invoke(() => {
+            MainUITask.Run(() => {
                 base.Warn(message);
                 if (StatusText != null) {
                     StatusText.Text = message;
@@ -38,7 +38,7 @@ namespace WpfAppCommon.Utils {
         }
 
         public new void Error(string message) {
-            Application.Current.Dispatcher.Invoke(() => {
+            MainUITask.Run(() => {
                 base.Error(message);
                 if (StatusText != null) {
                     StatusText.Text = message;

@@ -207,7 +207,8 @@ namespace ImageChat.ViewModel {
                     new CommonFileDialogFilter(StringResources.AllFiles, "*.*"),
                 }
             };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+            var currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            if (dialog.ShowDialog(currentWindow) != CommonFileDialogResult.Ok) {
                 return;
             } else {
                 foreach (string filePath in dialog.FileNames) {
