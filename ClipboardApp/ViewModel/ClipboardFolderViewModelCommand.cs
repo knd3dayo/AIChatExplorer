@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using ClipboardApp.View.ExportImportView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -54,7 +55,7 @@ namespace ClipboardApp.ViewModel {
         // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
         public static SimpleDelegateCommand<object> FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
 
-        // フォルダ内のアイテムをJSON形式でエクスポートする処理
+        // フォルダ内のアイテムをJSON形式でバックアップする処理
         public SimpleDelegateCommand<object> BackupItemsFromFolderCommand => new((parameter) => {
             DirectoryInfo directoryInfo = new("export");
             // exportフォルダが存在しない場合は作成
@@ -70,7 +71,8 @@ namespace ClipboardApp.ViewModel {
                 // デフォルトのファイル名を設定
                 DefaultFileName = fileName,
             };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
                 return;
             } else {
                 string resultFilePath = dialog.FileName;
@@ -80,14 +82,15 @@ namespace ClipboardApp.ViewModel {
             }
         });
 
-        // フォルダ内のアイテムをJSON形式でインポートする処理
+        // フォルダ内のアイテムをJSON形式でリストアする処理
         public SimpleDelegateCommand<object> RestoreItemsToFolderCommand => new((parameter) => {
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
                 Title = CommonStringResources.Instance.SelectFolderPlease,
                 InitialDirectory = @".",
             };
-            if (dialog.ShowDialog() != CommonFileDialogResult.Ok) {
+            var window = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
+            if (dialog.ShowDialog(window) != CommonFileDialogResult.Ok) {
                 return;
             } else {
                 string filaPath = dialog.FileName;
@@ -106,7 +109,11 @@ namespace ClipboardApp.ViewModel {
             }
         });
 
-
+        // ExportImportFolderCommand
+        SimpleDelegateCommand<ClipboardFolderViewModel> ExportImportFolderCommand => new((folderViewModel) => {
+            // ExportImportFolderWindowを開く
+            ExportImportWindow.OpenExportImportFolderWindow(folderViewModel);
+        });
 
         //フォルダを再読み込みする処理
         public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
@@ -114,11 +121,9 @@ namespace ClipboardApp.ViewModel {
             LogWrapper.Info(CommonStringResources.Instance.Reloaded);
         }
 
-
         // --------------------------------------------------------------
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み
         // --------------------------------------------------------------
-
 
         public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
             MainWindowViewModel.IsIndeterminate = true;

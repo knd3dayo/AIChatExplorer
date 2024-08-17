@@ -36,9 +36,19 @@ namespace ClipboardApp.ViewModel {
                 deleteMenuItem.CommandParameter = this;
                 menuItems.Add(deleteMenuItem);
 
+                // エクスポート/インポート
+                MenuItem exportImportMenuItem = new() {
+                    Header = StringResources.ExportImport,
+                    Command = ExportImportFolderCommand,
+                    CommandParameter = this
+                };
+                menuItems.Add(exportImportMenuItem);
+
+
                 // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new();
-                backupRestoreMenuItem.Header = StringResources.BackupRestore;
+                MenuItem backupRestoreMenuItem = new() {
+                    Header = StringResources.BackupRestore
+                };
 
                 // バックアップ
                 MenuItem backupMenuItem = new() {
@@ -62,14 +72,12 @@ namespace ClipboardApp.ViewModel {
 
             }
         }
-
-        // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> CreateItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
-                // MenuItemのリストを作成
-                ObservableCollection<MenuItem> menuItems = [];
-                if (MainWindowViewModel.ActiveInstance == null) {
-                    return menuItems;
-                }
+        public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+            // MenuItemのリストを作成
+            ObservableCollection<MenuItem> menuItems = [];
+            if (MainWindowViewModel.ActiveInstance == null) {
+                return menuItems;
+            }
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
@@ -87,6 +95,14 @@ namespace ClipboardApp.ViewModel {
                 InputGestureText = "Ctrl+Shit+O"
             };
             menuItems.Add(openContentAsFileMenuItem);
+
+            // タイトルを生成
+            MenuItem generateTitleMenuItem = new() {
+                Header = StringResources.GenerateTitle,
+                Command = itemViewModel.GenerateTitleCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateTitleMenuItem);
 
             // 背景情報生成
             MenuItem generateBackgroundInfoMenuItem = new() {
@@ -111,7 +127,6 @@ namespace ClipboardApp.ViewModel {
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateVectorMenuItem);
-
 
             // ベクトル検索
             MenuItem vectorSearchMenuItem = new() {
@@ -147,8 +162,11 @@ namespace ClipboardApp.ViewModel {
             };
             menuItems.Add(deleteMnuItem);
 
-                return menuItems;
-
+            return menuItems;
+        }
+        // Itemのコンテキストメニュー
+        public virtual ObservableCollection<MenuItem> CreateItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+            return CreateBasicItemContextMenuItems(itemViewModel);
         }
 
 

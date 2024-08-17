@@ -23,6 +23,9 @@ namespace WpfAppCommon.Model {
         // 編集
         public string Edit { get; } = "編集";
 
+        // タイトルを生成
+        public string GenerateTitle { get; } = "タイトルを生成";
+
         // 背景情報を生成
         public string GenerateBackgroundInfo { get; } = "背景情報を生成";
 
@@ -108,6 +111,15 @@ namespace WpfAppCommon.Model {
         public string Cancel { get; } = "キャンセル";
         // 閉じる
         public string Close { get; } = "閉じる";
+
+        // ExportImport
+        public string ExportImport { get; } = "エクスポート/インポート";
+
+        // Export
+        public string Export { get; } = "エクスポート";
+        // Import
+        public string Import { get; } = "インポート";
+
 
         // バックアップ/リストア
         public string BackupRestore { get; } = "バックアップ/リストア";
@@ -571,6 +583,9 @@ namespace WpfAppCommon.Model {
         // フォルダ選択
         public string SelectFolder { get; } = "フォルダ選択";
 
+        // ファイル選択
+        public string SelectFile { get; } = "ファイル選択";
+
         // -- EditItemWindow --
         // テキストをファイルとして開く
         public string OpenTextAsFile { get; } = "テキストをファイルとして開く";
@@ -765,6 +780,9 @@ namespace WpfAppCommon.Model {
         // リロードしました
         public string Reloaded { get; } = "リロードしました";
 
+        // ファイルを選択してください
+        public string SelectFilePlease { get; } = "ファイルを選択してください";
+
         // フォルダを選択してください
         public string SelectFolderPlease { get; } = "フォルダを選択してください";
 
@@ -829,6 +847,10 @@ namespace WpfAppCommon.Model {
         // "MainWindowViewModelがNullです"
         public string MainWindowViewModelIsNull { get; } = "MainWindowViewModelがNullです";
 
+        // タイトルを生成します
+        public string GenerateTitleInformation { get; } = "タイトルを生成します";
+        // "タイトルを生成しました"
+        public string GeneratedTitleInformation { get; } = "タイトルを生成しました";
         // 背景情報を生成します
         public string GenerateBackgroundInformation { get; } = "背景情報を生成します";
 
@@ -1370,6 +1392,9 @@ namespace WpfAppCommon.Model {
         // 背景情報
         public string BackgroundInformation { get; } = "背景情報";
 
+        // サマリー
+        public string Summary { get; } = "サマリー";
+
         // "Embeddingを保存します
         public string SaveEmbedding { get; } = "Embeddingを保存します";
 
@@ -1505,6 +1530,11 @@ namespace WpfAppCommon.Model {
         // --- EditChatItemWindow ---
         // チャットアイテム
         public string ChatItem { get; } = "チャットアイテム";
+
+        // --- ExportImportWindow ---
+        // 以下の項目をエクスポートします
+        public string ExportTheFollowingItems { get; } = "以下の項目をエクスポートします";
+
 
     }
 }

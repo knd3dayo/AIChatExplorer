@@ -451,10 +451,61 @@ namespace WpfAppCommon.Model {
             DeleteItem(mergeToItem);
 
         }
+        // --- Export/Import
+        public void ExportToExcel(string fileName, bool exportTitle, bool exportText, bool exportBackgroundInfo, bool exportSummary) {
+            // PythonNetの処理を呼び出す。
+            List<List<string>> data = [];
+            // ClipboardItemのリスト要素毎に処理を行う
+            foreach (var item in Items) {
+                List<string> row = [];
+                if (exportTitle) {
+                    row.Add(item.Description);
+                }
+                if (exportText) {
+                    row.Add(item.Content);
+                }
+                if (exportBackgroundInfo) {
+                    row.Add(item.BackgroundInfo);
+                }
+                if (exportSummary) {
+                    row.Add(item.Summary);
+                }
+                data.Add(row);
+            }
+            CommonDataTable dataTable = new(data);
 
+            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+
+        }
+
+        public void ImportFromExcel(string fileName, bool importTitle, bool importText) {
+            // importTitle, importTextがFalseの場合は何もしない
+            if (importTitle == false && importText == false) {
+                return;
+            }
+
+            // PythonNetの処理を呼び出す。
+            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            if (data == null) {
+                return;
+            }
+
+            foreach (var row in data.Rows) {
+                ClipboardItem item = new(Id);
+                // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
+                if (importTitle && importText) {
+                    item.Description = row.Count > 0? row[0] : "";
+                    item.Content = row.Count > 1 ? row[1] : "";
+                } else if (importTitle) {
+                    item.Description = row.Count > 0 ? row[0] : "";
+                } else if (importText) {
+                    item.Content = row.Count > 0 ? row[0] : "";
+                }
+                item.Save();
+            }
+        }
 
         //------------
-
         // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
         private string ConcatenateFileSystemPath(string parentPath, string childPath) {
             if (string.IsNullOrEmpty(parentPath))
@@ -544,7 +595,7 @@ namespace WpfAppCommon.Model {
             // Execute in a separate thread
             Task.Run(() => {
                 string oldReadyText = Tools.StatusText.ReadyText;
-                Application.Current.Dispatcher.Invoke(() => {
+                MainUITask.Run(() => {
                     Tools.StatusText.ReadyText = CommonStringResources.Instance.AutoProcessing;
                 });
                 try {
@@ -560,7 +611,7 @@ namespace WpfAppCommon.Model {
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
                 } finally {
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run( () => { 
                         Tools.StatusText.ReadyText = oldReadyText;
                     });
                 }
