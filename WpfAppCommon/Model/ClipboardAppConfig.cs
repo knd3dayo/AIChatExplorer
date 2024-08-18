@@ -20,6 +20,25 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // 言語
+        private static string? _lang;
+        public static string Lang {
+            get {
+                if (_lang == null) {
+                    _lang = Properties.Settings.Default.Lang;
+                    // _langが空文字列の場合はシステムの言語を取得
+                    if (string.IsNullOrEmpty(_lang)) {
+                        _lang = System.Globalization.CultureInfo.CurrentUICulture.Name;
+                    }
+                }
+                return _lang;
+            }
+            set {
+                _lang = value;
+                Properties.Settings.Default.Lang = value;
+            }
+        }
+
         // このアプリケーションのデータ用のフォルダを取得
         public static string AppDataFolder {
             get {
