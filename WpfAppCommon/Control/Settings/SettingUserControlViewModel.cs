@@ -12,6 +12,49 @@ namespace WpfAppCommon.Control.Settings {
     public partial class SettingUserControlViewModel : MyWindowViewModel {
         // プロパティが変更されたか否か
         private bool isPropertyChanged = false;
+        // Lang
+
+        public string Lang {
+            get {
+                return ClipboardAppConfig.Lang;
+            }
+            set {
+                ClipboardAppConfig.Lang = value;
+                OnPropertyChanged(nameof(Lang));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+        // SelectedLanguage
+        public int SelectedLanguage {
+            get {
+                if (string.IsNullOrEmpty(ClipboardAppConfig.Lang)) {
+                    return 0;
+                } else if (ClipboardAppConfig.Lang == "ja-JP") {
+                    return 1;
+                } else if (ClipboardAppConfig.Lang == "en-US") {
+                    return 2;
+                } else {
+                    return 0;
+                }
+            }
+            set {
+                switch (value) {
+                    case 0:
+                        ClipboardAppConfig.Lang = "";
+                        break;
+                    case 1:
+                        ClipboardAppConfig.Lang = "ja-JP";
+                        break;
+                    case 2:
+                        ClipboardAppConfig.Lang = "en-US";
+                        break;
+                }
+                isPropertyChanged = true;
+                OnPropertyChanged(nameof(SelectedLanguage));
+            }
+        }
+
         // MonitorTargetAppNames
 
         public string MonitorTargetAppNames {
@@ -557,6 +600,14 @@ namespace WpfAppCommon.Control.Settings {
             if (isPropertyChanged) {
                 ClipboardAppConfig.Save();
 
+                if (CommonStringResources.Lang != ClipboardAppConfig.ActualLang) {
+                    CommonStringResources.Lang = ClipboardAppConfig.ActualLang;
+                    // PythonAILibの言語を変更
+                    PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
+                    // 言語を変更
+                    ClipboardFolder.ChangeRootFolderNames(CommonStringResources.Instance);
+                }
+
                 isPropertyChanged = false;
                 return true;
             }
@@ -568,6 +619,9 @@ namespace WpfAppCommon.Control.Settings {
 
             if (Save()) {
                 LogWrapper.Info(StringResources.SettingsSaved);
+                // アプリケーションの再起動を促すメッセージを表示
+                MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);
+
             }
             // Windowを閉じる
             window.Close();

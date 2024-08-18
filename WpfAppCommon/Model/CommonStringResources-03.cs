@@ -98,7 +98,7 @@ namespace WpfAppCommon.Model {
         // 貼り付け
         public virtual string Paste { get; } = "貼り付け";
 
-        // -- ImageChat.MainWindow --
+        // -- ImageCheck.MainWindow --
         // 画像ファイル選択
         public virtual string SelectImageFile { get; } = "画像ファイル選択";
 

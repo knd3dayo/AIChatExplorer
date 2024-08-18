@@ -2,6 +2,9 @@ namespace WpfAppCommon.Model {
     public partial class CommonStringResourcesEn : CommonStringResources {
 
         // -- SettingsUserControl.xaml --
+        // Restart the application to apply the changes.
+        public override string RestartAppToApplyChanges { get; } = "Restart the application to apply the changes.";
+
         // Basic Settings
         public override string BasicSettings { get; } = "Basic Settings";
         // Specify the python3**.dll location for Python installation

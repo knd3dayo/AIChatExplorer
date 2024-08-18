@@ -32,6 +32,9 @@ namespace WpfAppCommon.Model {
         }
 
         // -- SettingsUserControl.xaml --
+        // -- 設定を反映させるためにアプリケーションの再起動を行ってください。
+        public virtual string RestartAppToApplyChanges { get; } = "設定を反映させるためにアプリケーションの再起動を行ってください。";
+
         // 基本設定
         public virtual string BasicSettings { get; } = "基本設定";
         // Pythonインストール先のpython3**.dllを指定

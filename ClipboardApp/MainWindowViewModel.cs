@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel;
+using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
@@ -16,6 +17,9 @@ namespace ClipboardApp
     public partial class MainWindowViewModel : MyWindowViewModel {
 
         public MainWindowViewModel() {
+            // 旧バージョンのRootFolderの移行
+            ClipboardFolder.MigrateRootFolder();
+
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
 
@@ -29,8 +33,13 @@ namespace ClipboardApp
                 IsIndeterminate = visible;
             };
 
+            PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
+
+            
             // フォルダの初期化
             InitClipboardFolders();
+
+
 
             // Python処理機能の初期化
             PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
@@ -47,6 +56,7 @@ namespace ClipboardApp
         }
 
         private void InitClipboardFolders() {
+
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));

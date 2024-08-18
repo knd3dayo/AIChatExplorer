@@ -81,6 +81,7 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <TextBlock
                         Grid.Row="0"
@@ -88,45 +89,61 @@
                         Margin="10,10,10,0"
                         Text="{Binding StringResources.BasicSettings, Mode=OneTime}" />
 
-                    <!--  PythonDLLPath  -->
+                    <!--  Language  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
+                        Text="Language" />
+                    <ComboBox
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        SelectedIndex="{Binding SelectedLanguage}">
+                        <ComboBoxItem Content="Default (The default value is Japanese if the system language is Japanese, otherwise English)" />
+                        <ComboBoxItem Content="Japanese" />
+                        <ComboBoxItem Content="English" />
+                    </ComboBox>
+                    <!--  Backup Generation  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
+                        Visibility="Collapsed" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
+                        Text="{Binding BackupGeneration}"
+                        Visibility="Collapsed" />
+
+                    <!--  PythonDLLPath  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
                         Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
                     <TextBox
-                        Grid.Row="0"
+                        Grid.Row="2"
                         Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
                         Text="{Binding PythonDllPath}" />
                     <!--  PythonVenvPth  -->
                     <TextBlock
-                        Grid.Row="1"
+                        Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
                     <TextBox
-                        Grid.Row="1"
+                        Grid.Row="3"
                         Grid.Column="2"
                         Margin="10,10,10,0"
                         materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"
                         Text="{Binding PythonVenvPath}" />
 
-                    <!--  Backup Generation  -->
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
-                        Visibility="Collapsed" />
-                    <TextBox
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
-                        Text="{Binding BackupGeneration}"
-                        Visibility="Collapsed" />
                 </Grid>
                 <!--  OpenAI設定  -->
                 <Grid Grid.Row="1">

@@ -26,16 +26,20 @@ namespace WpfAppCommon.Model {
             get {
                 if (_lang == null) {
                     _lang = Properties.Settings.Default.Lang;
-                    // _langが空文字列の場合はシステムの言語を取得
-                    if (string.IsNullOrEmpty(_lang)) {
-                        _lang = System.Globalization.CultureInfo.CurrentUICulture.Name;
-                    }
                 }
                 return _lang;
             }
             set {
                 _lang = value;
                 Properties.Settings.Default.Lang = value;
+            }
+        }
+        public static string ActualLang {
+            get {
+                if (string.IsNullOrEmpty(Lang)) {
+                    return  System.Globalization.CultureInfo.CurrentUICulture.Name;
+                }
+                return Lang;
             }
         }
 

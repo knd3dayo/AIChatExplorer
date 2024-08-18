@@ -29,12 +29,14 @@ namespace WpfAppCommon.Factory {
         
         public ClipboardFolder? GetFolder(ObjectId? objectId);
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId);
-        public ClipboardFolder? GetRootFolder(string collectionName);
+
         
+        public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType);
+
         public void DeleteFolder(ClipboardFolder folder);
         public void UpsertFolder(ClipboardFolder folder);
 
-
+        
         // public void DeleteItems(List<ClipboardItem> items);
 
         // -- SearchRule

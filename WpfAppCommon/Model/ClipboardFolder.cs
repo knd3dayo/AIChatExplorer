@@ -10,6 +10,7 @@ using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
+using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -29,6 +30,8 @@ namespace WpfAppCommon.Model {
             public LiteDB.ObjectId Id { get; set; } = ObjectId.Empty;
 
             public LiteDB.ObjectId FolderId { get; set; } = ObjectId.Empty;
+
+            public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
         }
 
@@ -53,6 +56,56 @@ namespace WpfAppCommon.Model {
             IsAutoProcessEnabled = parent?.IsAutoProcessEnabled ?? true;
 
         }
+        // 言語変更時にルートフォルダ名を変更する
+        public static void ChangeRootFolderNames(CommonStringResources toRes) {
+            // ClipboardRootFolder
+            ClipboardFolder? clipboardRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
+            if (clipboardRootFolder != null) {
+                clipboardRootFolder.FolderName = toRes.Clipboard;
+                clipboardRootFolder.Save();
+            }
+            // SearchRootFolder
+            ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
+            if (searchRootFolder != null) {
+                searchRootFolder.FolderName = toRes.SearchFolder;
+                searchRootFolder.Save();
+            }
+            // ChatRootFolder
+            ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
+            if (chatRootFolder != null) {
+                chatRootFolder.FolderName = toRes.ChatHistory;
+                chatRootFolder.Save();
+            }
+            // ImageCheckRootFolder
+            ClipboardFolder? imageCheckRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
+            if (imageCheckRootFolder != null) {
+                imageCheckRootFolder.FolderName = toRes.ImageChat;
+                imageCheckRootFolder.Save();
+            }
+
+        }
+        // 旧バージョンのアプリで既に作成済みのRootFolderを新バージョンアプリ用にマイグレーションする。
+        public static void MigrateRootFolder() {
+
+            var rootFolderInfoCollection = DefaultClipboardDBController.GetClipboardDatabase()
+                .GetCollection<ClipboardFolder.RootFolderInfo>(DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
+
+            List<RootFolderInfo> rootFolders = rootFolderInfoCollection.FindAll().ToList();
+            foreach (var rootFolderInfo in rootFolders) {
+                if (rootFolderInfo.FolderName == CommonStringResources.Instance.Clipboard) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Normal;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.SearchFolder) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Search;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ChatHistory) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Chat;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ImageChat) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.ImageCheck;
+                }   
+            }
+            // 保存
+            rootFolderInfoCollection.Update(rootFolders);
+
+        }
 
         // アプリ共通の検索条件
         public static SearchRule GlobalSearchCondition { get; set; } = new();
@@ -60,12 +113,13 @@ namespace WpfAppCommon.Model {
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
             get {
-                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CLIPBOARD_ROOT_FOLDER_NAME);
+                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
                 if (rootFolder == null) {
                     rootFolder = new() {
                         FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                         IsRootFolder = true,
-                        IsAutoProcessEnabled = true
+                        IsAutoProcessEnabled = true,
+                        FolderType = FolderTypeEnum.Normal
                     };
                     rootFolder.Save();
                 }
@@ -77,7 +131,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder SearchRootFolder {
             get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(SEARCH_ROOT_FOLDER_NAME);
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = SEARCH_ROOT_FOLDER_NAME,
@@ -98,7 +152,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder ImageCheckRootFolder {
             get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(IMAGECHECK_ROOT_FOLDER_NAME);
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
@@ -118,7 +172,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder ChatRootFolder {
             get {
-                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CHAT_ROOT_FOLDER_NAME);
+                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
                 if (chatRootFolder == null) {
                     chatRootFolder = new ClipboardFolder {
                         FolderName = CHAT_ROOT_FOLDER_NAME,
@@ -521,14 +575,12 @@ namespace WpfAppCommon.Model {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
         }
 
+
         // 指定したFilePath名のフォルダを取得する。
-        public static ClipboardFolder? GetRFolder(string filePath, bool create = false) {
+        public static ClipboardFolder? GetAnotherTreeFolderRecursive(ClipboardFolder rootFolder , string filePath, bool create = false) {
+
             string[] pathList = filePath.Split(Path.DirectorySeparatorChar);
-            ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(pathList[0]);
-            // rootFolderがnullの場合は、Nullを返す
-            if (rootFolder == null) {
-                return null;
-            }
+
             // pathListの1から最後までを取得
             for (int i = 1; i < pathList.Length; i++) {
                 string folderName = pathList[i];
@@ -550,18 +602,14 @@ namespace WpfAppCommon.Model {
             return rootFolder;
         }
 
-        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder folder, string anotherTreeRoot, bool create = false) {
-            string path = folder.FolderPath;
-            // path先頭を取得
-            string rootPath = path.Split(Path.DirectorySeparatorChar)[0];
-            // pathの先頭を正規表現でAnotherTreeRootに置換.
-            string replacedPath = Regex.Replace(path, "^" + rootPath, anotherTreeRoot);
-            ClipboardFolder? chatFolder = GetRFolder(replacedPath, create);
+        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder fromFolder, ClipboardFolder toRootFolder,  bool create = false) {
+            
+            ClipboardFolder? toFolder = GetAnotherTreeFolderRecursive(toRootFolder, fromFolder.FolderPath, create);
             // chatFolderがnullの場合は、ChatRootFolderを返す
-            if (chatFolder == null) {
-                return ChatRootFolder;
+            if (toFolder == null) {
+                return toRootFolder;
             }
-            return chatFolder;
+            return toFolder;
 
         }
 

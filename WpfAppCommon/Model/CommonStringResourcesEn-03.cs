@@ -45,7 +45,7 @@ namespace WpfAppCommon.Model {
         public override string CheckType { get; } = "Check type";
         public override string Paste { get; } = "Paste";
 
-        // -- ImageChat.MainWindow --
+        // -- ImageCheck.MainWindow --
         public override string SelectImageFile { get; } = "Select image file";
         public override string EditImageEvidenceCheckItem { get; } = "Edit image evidence check item";
         public override string Open { get; } = "Open";
