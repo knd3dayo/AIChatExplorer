@@ -4,10 +4,8 @@ using QAChat.View.RAGWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
-{
-    internal class UpdateRAGIndexWindowViewModel : MyWindowViewModel
-    {
+namespace QAChat.ViewModel {
+    internal class UpdateRAGIndexWindowViewModel : MyWindowViewModel {
 
         private RAGSourceItemViewModel? itemViewModel;
         private Action<RAGSourceItemViewModel> afterUpdate = (parameter) => { };
@@ -16,17 +14,14 @@ namespace QAChat.ViewModel
         private CancellationTokenSource tokenSource = new();
 
         // LastProcessedCommit
-        public string LastIndexCommitHash
-        {
+        public string LastIndexCommitHash {
             get => itemViewModel?.Item.LastIndexCommitHash ?? "";
         }
         // IsAllCommit
         private bool isAllCommit;
-        public bool IsAllCommit
-        {
+        public bool IsAllCommit {
             get => isAllCommit;
-            set
-            {
+            set {
                 isAllCommit = value;
                 OnPropertyChanged(nameof(IsAllCommit));
                 // Modeを0に戻す
@@ -35,11 +30,9 @@ namespace QAChat.ViewModel
         }
         // IsAfterLastIndexedCommit
         private bool isAfterLastIndexedCommit = true;
-        public bool IsAfterLastIndexedCommit
-        {
+        public bool IsAfterLastIndexedCommit {
             get => isAfterLastIndexedCommit;
-            set
-            {
+            set {
                 isAfterLastIndexedCommit = value;
                 OnPropertyChanged(nameof(IsAfterLastIndexedCommit));
                 // Modeを0に戻す
@@ -48,11 +41,9 @@ namespace QAChat.ViewModel
         }
         // IsRange
         private bool isRange;
-        public bool IsRange
-        {
+        public bool IsRange {
             get => isRange;
-            set
-            {
+            set {
                 isRange = value;
                 OnPropertyChanged(nameof(IsRange));
                 // Modeを0に戻す
@@ -61,31 +52,25 @@ namespace QAChat.ViewModel
         }
         // RangeStart
         private string rangeStart = "";
-        public string RangeStart
-        {
+        public string RangeStart {
             get => rangeStart;
-            set
-            {
+            set {
                 rangeStart = value;
                 OnPropertyChanged(nameof(RangeStart));
             }
         }
         private string indexingStatusSummaryText = "";
-        public string IndexingStatusSummaryText
-        {
+        public string IndexingStatusSummaryText {
             get => indexingStatusSummaryText;
-            set
-            {
+            set {
                 indexingStatusSummaryText = value;
                 OnPropertyChanged(nameof(IndexingStatusSummaryText));
             }
         }
         private string indexingStatusText = "";
-        public string IndexingStatusText
-        {
+        public string IndexingStatusText {
             get => indexingStatusText;
-            set
-            {
+            set {
                 indexingStatusText = value;
                 OnPropertyChanged(nameof(IndexingStatusText));
             }
@@ -95,11 +80,9 @@ namespace QAChat.ViewModel
         private int modifiedFilesCount = 0;
         private int deletedFilesCount = 0;
 
-        public string TargetFilesInfo
-        {
-            get
-            {
-                return $"インデックス化対象ファイル:{addedFilesCount}ファイル追加 {modifiedFilesCount}ファイル更新 {deletedFilesCount}ファイル削除";
+        public string TargetFilesInfo {
+            get {
+                return $"{StringResources.IndexingTargetFile}:{addedFilesCount} {StringResources.AddFile} {modifiedFilesCount} {StringResources.UpdateFile} {deletedFilesCount} {StringResources.DeleteFile}";
             }
         }
         // インデックス化対象ファイルのリスト
@@ -110,61 +93,48 @@ namespace QAChat.ViewModel
         private int Mode = 0;
         // OKボタンのテキスト 初期表示は"対象ファイル取得" 、インデックス作成準備モードの場合は"インデックス作成"
         // インデックス作成中および完了時の場合はボタン自体を非表示にする
-        public string OkButtonText
-        {
-            get
-            {
-                return Mode == 0 ? "対象ファイル取得" : "インデックス作成";
+        public string OkButtonText {
+            get {
+                return Mode == 0 ? StringResources.GetTargetFile : StringResources.CreateIndex;
             }
         }
         // キャンセルボタンのテキスト　初期表示は"閉じる"、インデックス作成準備モードの場合は戻る、インデックス作成中の場合は"停止"
         // インデックス作成管理時は初期状態に戻す
-        public string CancelButtonText
-        {
-            get
-            {
-                return Mode == 0 ? "閉じる" : Mode == 1 ? "戻る" : Mode == 2 ? "停止" : "閉じる";
+        public string CancelButtonText {
+            get {
+                return Mode == 0 ?StringResources.Close : Mode == 1 ? StringResources.Back : Mode == 2 ? StringResources.Stop : StringResources.Close;
             }
         }
         // 対象ファイル一覧のVisibility
-        public Visibility TargetFilesVisibility
-        {
-            get
-            {
+        public Visibility TargetFilesVisibility {
+            get {
                 return Mode == 1 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // インデックス化処理の状態のVisibility
-        public Visibility IndexingStatusVisibility
-        {
-            get
-            {
+        public Visibility IndexingStatusVisibility {
+            get {
                 return Mode != 1 ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // OKボタンのVisibility インデックス作成中および完了時の場合は非表示
-        public Visibility OkButtonVisibility
-        {
-            get
-            {
+        public Visibility OkButtonVisibility {
+            get {
                 return Mode == 2 || Mode == 3 ? Visibility.Collapsed : Visibility.Visible;
             }
         }
         // プログレスインジケーターを表示するかどうか
         private bool isIndeterminate = false;
-        public bool IsIndeterminate
-        {
+        public bool IsIndeterminate {
             get => isIndeterminate;
-            set
-            {
+            set {
                 isIndeterminate = value;
                 OnPropertyChanged(nameof(IsIndeterminate));
             }
         }
 
 
-        public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action)
-        {
+        public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action) {
 
             this.itemViewModel = itemViewModel;
             afterUpdate = action;
@@ -172,40 +142,33 @@ namespace QAChat.ViewModel
 
         }
         // SelectRangeStartCommand
-        public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) =>
-        {
-            if (itemViewModel == null)
-            {
-                LogWrapper.Error("RAGSourceItemViewModelが設定されていません");
+        public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) => {
+            if (itemViewModel == null) {
+                LogWrapper.Error(StringResources.RAGSourceItemViewModelNotSet);
                 return;
             }
             // ラジオボタンの選択をIsRangeに変更
             IsRange = true;
 
-            SelectCommitWindow.OpenSelectCommitWindow(itemViewModel, (hash) =>
-            {
+            SelectCommitWindow.OpenSelectCommitWindow(itemViewModel, (hash) => {
                 RangeStart = hash;
             });
 
         });
 
-        private void ClearIndexingStatus()
-        {
+        private void ClearIndexingStatus() {
             IndexingStatusText = "";
             IndexingStatusSummaryText = "";
         }
-        private void ClearTargetFiles()
-        {
+        private void ClearTargetFiles() {
             TargetFiles.Clear();
             addedFilesCount = 0;
             modifiedFilesCount = 0;
             deletedFilesCount = 0;
             OnPropertyChanged(nameof(TargetFilesInfo));
         }
-        private void UpdateTargetFiles()
-        {
-            if (itemViewModel == null)
-            {
+        private void UpdateTargetFiles() {
+            if (itemViewModel == null) {
                 return;
             }
             // カウント初期化
@@ -213,35 +176,24 @@ namespace QAChat.ViewModel
 
             // 更新対象のファイルを取得
             List<FileStatus> files = [];
-            if (IsAllCommit)
-            {
+            if (IsAllCommit) {
                 files = itemViewModel.Item.GetFileStatusList();
-            }
-            else if (IsAfterLastIndexedCommit)
-            {
+            } else if (IsAfterLastIndexedCommit) {
                 files = itemViewModel.Item.GetAfterIndexedCommitFileStatusList();
-            }
-            else if (IsRange)
-            {
+            } else if (IsRange) {
                 files = itemViewModel.Item.GetFileStatusList(RangeStart);
             }
 
-            foreach (var file in files)
-            {
-                if (file.Status == FileStatusEnum.Added)
-                {
+            foreach (var file in files) {
+                if (file.Status == FileStatusEnum.Added) {
                     // カウント更新
                     addedFilesCount++;
                     TargetFiles.Add(file);
-                }
-                else if (file.Status == FileStatusEnum.Modified)
-                {
+                } else if (file.Status == FileStatusEnum.Modified) {
                     // カウント更新
                     modifiedFilesCount++;
                     TargetFiles.Add(file);
-                }
-                else if (file.Status == FileStatusEnum.Deleted)
-                {
+                } else if (file.Status == FileStatusEnum.Deleted) {
                     // カウント更新
                     deletedFilesCount++;
                     TargetFiles.Add(file);
@@ -250,36 +202,30 @@ namespace QAChat.ViewModel
             // 通知処理
             OnPropertyChanged(nameof(TargetFilesInfo));
         }
-        private void SetMode(int mode)
-        {
+        private void SetMode(int mode) {
             Mode = mode;
-            if (mode == 0)
-            {
+            if (mode == 0) {
                 // モードが0の場合はTargetFilesとIndexingStatusをクリア
                 ClearTargetFiles();
                 ClearIndexingStatus();
             }
-            if (mode == 1)
-            {
+            if (mode == 1) {
                 // モードが1の場合はTargetFilesを更新 
                 UpdateTargetFiles();
             }
-            if (mode == 2)
-            {
+            if (mode == 2) {
                 // モードが2の場合はインデックス作成処理を開始
                 ClearIndexingStatus();
                 // Taskのキャンセル用のトークンを初期化
                 tokenSource = new CancellationTokenSource();
             }
-            if (mode == 3)
-            {
+            if (mode == 3) {
                 // モードが3の場合はTargetFilesをクリア
                 ClearTargetFiles();
             }
             UpdateVisibility();
         }
-        private void UpdateVisibility()
-        {
+        private void UpdateVisibility() {
             OnPropertyChanged(nameof(OkButtonText));
             OnPropertyChanged(nameof(CancelButtonText));
             OnPropertyChanged(nameof(TargetFilesVisibility));
@@ -288,63 +234,49 @@ namespace QAChat.ViewModel
         }
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand<object> OkButtonCommand => new(async (parameter) =>
-        {
-            if (itemViewModel == null)
-            {
-                LogWrapper.Error("RAGSourceItemViewModelが設定されていません");
+        public SimpleDelegateCommand<object> OkButtonCommand => new(async (parameter) => {
+            if (itemViewModel == null) {
+                LogWrapper.Error(StringResources.RAGSourceItemViewModelNotSet);
                 return;
             }
-            if (IsRange)
-            {
-                if (string.IsNullOrEmpty(RangeStart))
-                {
-                    LogWrapper.Error("開始コミットを指定してください");
+            if (IsRange) {
+                if (string.IsNullOrEmpty(RangeStart)) {
+                    LogWrapper.Error(StringResources.SpecifyStartCommit);
                     return;
                 }
-            }
-            else if (IsAllCommit == false && IsAfterLastIndexedCommit == false)
-            {
-                LogWrapper.Error("対象を選択してください");
+            } else if (IsAllCommit == false && IsAfterLastIndexedCommit == false) {
+                LogWrapper.Error(StringResources.SelectTarget);
                 return;
             }
-            if (Mode == 0)
-            {
+            if (Mode == 0) {
                 SetMode(1);
                 // 通知処理
                 OnPropertyChanged(nameof(TargetFilesInfo));
                 return;
             }
             // 更新処理
-            if (Mode == 1)
-            {
+            if (Mode == 1) {
                 SetMode(2);
-                try
-                {
+                try {
                     IndexingStatusText = "";
                     int fileCount = TargetFiles.Count;
                     IsIndeterminate = true;
                     int totalTokenCount = 0;
-                    for (int i = 0; i < fileCount; i++)
-                    {
+                    for (int i = 0; i < fileCount; i++) {
                         var file = TargetFiles[i];
                         // LangChainでは現在、Embeddingのトークンが取得できない.(https://github.com/langchain-ai/langchain/issues/20799)
                         // IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}] トークン数:[{totalTokenCount}]";
-                        IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}]";
+                        IndexingStatusSummaryText = $"{StringResources.ProcessedFileCount}:[{i + 1}/{fileCount}]";
 
                         // 更新処理を開始
                         UpdateIndexResult result = new();
-                        IndexingStatusText += $"[{i + 1}/{fileCount}] {file.Path} インデックス作成中...";
-                        Task task = new(() =>
-                        {
+                        IndexingStatusText += $"[{i + 1}/{fileCount}] {file.Path} {StringResources.CreatingIndex}...";
+                        Task task = new(() => {
                             // キャンセル用タスクの実行
-                            Task.Run(() =>
-                            {
-                                while (IsIndeterminate)
-                                {
+                            Task.Run(() => {
+                                while (IsIndeterminate) {
 
-                                    if (tokenSource.Token.IsCancellationRequested)
-                                    {
+                                    if (tokenSource.Token.IsCancellationRequested) {
                                         tokenSource.Token.ThrowIfCancellationRequested();
                                     }
                                     Thread.Sleep(1000);
@@ -357,21 +289,16 @@ namespace QAChat.ViewModel
                         await task.WaitAsync(tokenSource.Token);
 
                         // resultがSuccessの場合
-                        if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Success)
-                        {
-                            IndexingStatusText += "完了\n";
-                        }
-                        else if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType)
-                        {
-                            IndexingStatusText += "未対応ファイルタイプのためスキップ";
-                        }
-                        else
-                        {
-                            IndexingStatusText += $"失敗:{result.Message}\n";
+                        if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Success) {
+                            IndexingStatusText += $"{StringResources.Completed}\n";
+                        } else if (result.Result == UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType) {
+                            IndexingStatusText += StringResources.SkipUnsupportedFileType;
+                        } else {
+                            IndexingStatusText += $"{StringResources.Failed}:{result.Message}\n";
                         }
 
                         // IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}] トークン数:[{totalTokenCount}]";
-                        IndexingStatusSummaryText = $"処理ファイル数:[{i + 1}/{fileCount}]";
+                        IndexingStatusSummaryText = $"{StringResources.ProcessedFileCount}:[{i + 1}/{fileCount}]";
 
                     }
                     IsIndeterminate = false;
@@ -383,26 +310,19 @@ namespace QAChat.ViewModel
                     itemViewModel.Item.Save();
 
                     // 完了通知のメッセージボックス
-                    MessageBox.Show("インデックス作成が完了しました", "完了", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show(StringResources.IndexCreationCompleted, StringResources.Completed, MessageBoxButton.OK, MessageBoxImage.Information);
                     afterUpdate(itemViewModel);
-                    if (parameter is not Window window)
-                    {
+                    if (parameter is not Window window) {
                         return;
                     }
-                }
-                catch (OperationCanceledException)
-                {
-                    LogWrapper.Info("インデックス作成処理を中断しました");
+                } catch (OperationCanceledException) {
+                    LogWrapper.Info(StringResources.IndexCreationInterrupted);
                     SetMode(1);
-                }
-                catch (Exception e)
-                {
-                    LogWrapper.Error($"エラーが発生しました\n[メッセージ]\n{e.Message}\n[スタックトレース]\n{e.StackTrace}");
+                } catch (Exception e) {
+                    LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage} {e.Message}\n[{StringResources.StackTrace}]\n{e.StackTrace}");
                     SetMode(1);
 
-                }
-                finally
-                {
+                } finally {
                     IsIndeterminate = false;
                 }
             }
@@ -410,36 +330,29 @@ namespace QAChat.ViewModel
 
         // キャンセルボタンのコマンド
         public SimpleDelegateCommand<object> CancelButtonCommand => new(CancelButtonCommandExecute);
-        private void CancelButtonCommandExecute(object parameter)
-        {
+        private void CancelButtonCommandExecute(object parameter) {
             // Modeが0の場合はウィンドウを閉じる
-            if (Mode == 0)
-            {
-                if (parameter is not Window window)
-                {
+            if (Mode == 0) {
+                if (parameter is not Window window) {
                     return;
                 }
                 window.Close();
                 return;
             }
             // Modeが1の場合はModeを0に戻す TargetFilesをクリア
-            if (Mode == 1)
-            {
+            if (Mode == 1) {
                 SetMode(0);
             }
             // Modeが2の場合はキャンセル処理を実行
-            if (Mode == 2)
-            {
+            if (Mode == 2) {
                 // 更新処理を停止
                 // Taskのキャンセル
                 tokenSource?.Cancel();
                 return;
             }
             // Modeが3の場合はWindowを閉じる
-            if (Mode == 3)
-            {
-                if (parameter is not Window window)
-                {
+            if (Mode == 3) {
+                if (parameter is not Window window) {
                     return;
                 }
                 window.Close();

@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel;
+using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
-using WpfAppCommon.PythonIF;
 using WpfAppCommon.Utils;
 
 
@@ -17,6 +17,9 @@ namespace ClipboardApp
     public partial class MainWindowViewModel : MyWindowViewModel {
 
         public MainWindowViewModel() {
+            // 旧バージョンのRootFolderの移行
+            ClipboardFolder.MigrateRootFolder();
+
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
 
@@ -30,11 +33,16 @@ namespace ClipboardApp
                 IsIndeterminate = visible;
             };
 
+            PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
+
+            
             // フォルダの初期化
             InitClipboardFolders();
 
+
+
             // Python処理機能の初期化
-            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath);
+            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
@@ -48,6 +56,7 @@ namespace ClipboardApp
         }
 
         private void InitClipboardFolders() {
+
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
@@ -236,7 +245,7 @@ namespace ClipboardApp
                 OnPropertyChanged(nameof(PreviewMode));
                 OnPropertyChanged(nameof(PreviewModeVisibility));
                 // アプリケーション再起動後に反映されるようにメッセージを表示
-                MessageBox.Show("アプリケーションを再起動すると、表示モードが変更されます。", "情報", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(StringResources.DisplayModeWillChangeWhenYouRestartTheApplication, StringResources.Information, MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

@@ -1,10 +1,7 @@
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -39,103 +36,137 @@ namespace ClipboardApp.ViewModel {
                 deleteMenuItem.CommandParameter = this;
                 menuItems.Add(deleteMenuItem);
 
-                // インポート    
-                MenuItem importMenuItem = new();
-                importMenuItem.Header = StringResources.Import;
-                importMenuItem.Command = ImportItemsToFolderCommand;
-                importMenuItem.CommandParameter = this;
-                menuItems.Add(importMenuItem);
+                // エクスポート/インポート
+                MenuItem exportImportMenuItem = new() {
+                    Header = StringResources.ExportImport,
+                    Command = ExportImportFolderCommand,
+                    CommandParameter = this
+                };
+                menuItems.Add(exportImportMenuItem);
 
-                // エクスポート
-                MenuItem exportMenuItem = new();
-                exportMenuItem.Header = StringResources.Export;
-                exportMenuItem.Command = ExportItemsFromFolderCommand;
-                exportMenuItem.CommandParameter = this;
-                menuItems.Add(exportMenuItem);
+
+                // アイテムのバックアップ/リストア
+                MenuItem backupRestoreMenuItem = new() {
+                    Header = StringResources.BackupRestore
+                };
+
+                // バックアップ
+                MenuItem backupMenuItem = new() {
+                    Header = StringResources.BackupItem,
+                    Command = BackupItemsFromFolderCommand,
+                    CommandParameter = this
+                };
+                backupRestoreMenuItem.Items.Add(backupMenuItem);
+
+
+                // リストア
+                MenuItem restoreMenuItem = new();
+                restoreMenuItem.Header = StringResources.RestoreItem;
+                restoreMenuItem.Command = RestoreItemsToFolderCommand;
+                restoreMenuItem.CommandParameter = this;
+                backupRestoreMenuItem.Items.Add(restoreMenuItem);
+
+                menuItems.Add(backupRestoreMenuItem);
 
                 return menuItems;
 
             }
         }
-
-        // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ItemContextMenuItems {
-            get {
-                // MenuItemのリストを作成
-                ObservableCollection<MenuItem> menuItems = [];
-                if (MainWindowViewModel.ActiveInstance == null) {
-                    return menuItems;
-                }
-                // 開く
-                MenuItem createMenuItem = new();
-                createMenuItem.Header = "開く";
-                createMenuItem.Command = MainWindowViewModel.ActiveInstance.OpenSelectedItemCommand;
-                createMenuItem.CommandParameter = this;
-                createMenuItem.InputGestureText = "Ctrl+O";
-                menuItems.Add(createMenuItem);
-
-                // ファイルとして開く
-                MenuItem openContentAsFileMenuItem = new();
-                openContentAsFileMenuItem.Header = "ファイルとして開く";
-                openContentAsFileMenuItem.Command = MainWindowViewModel.ActiveInstance.OpenContentAsFileCommand;
-                openContentAsFileMenuItem.CommandParameter = this;
-                openContentAsFileMenuItem.InputGestureText = "Ctrl+Shit+O";
-
-                // 背景情報生成
-                MenuItem generateBackgroundInfoMenuItem = new();
-                generateBackgroundInfoMenuItem.Header = StringResources.GenerateBackgroundInfo;
-                generateBackgroundInfoMenuItem.Command = MainWindowViewModel.ActiveInstance.GenerateBackgroundInfoCommand;
-                generateBackgroundInfoMenuItem.CommandParameter = this;
-                menuItems.Add(generateBackgroundInfoMenuItem);
-
-                // サマリーを生成
-                MenuItem generateSummaryMenuItem = new();
-                generateSummaryMenuItem.Header = StringResources.GenerateSummary;
-                generateSummaryMenuItem.Command = MainWindowViewModel.ActiveInstance.GenerateSummaryCommand;
-                generateSummaryMenuItem.CommandParameter = this;
-                menuItems.Add(generateSummaryMenuItem);
-
-                // ベクトル生成
-                MenuItem generateVectorMenuItem = new();
-                generateVectorMenuItem.Header = StringResources.GenerateVector;
-                generateVectorMenuItem.Command = MainWindowViewModel.ActiveInstance.GenerateVectorCommand;
-                generateVectorMenuItem.CommandParameter = this;
-                menuItems.Add(generateVectorMenuItem);
-
-
-                // ベクトル検索
-                MenuItem vectorSearchMenuItem = new();
-                vectorSearchMenuItem.Header = StringResources.VectorSearch;
-                vectorSearchMenuItem.Command = MainWindowViewModel.ActiveInstance.VectorSearchCommand;
-                vectorSearchMenuItem.CommandParameter = this;
-                menuItems.Add(vectorSearchMenuItem);
-
-                // ピン留め
-                MenuItem pinnedStateChangeMenuItem = new();
-                pinnedStateChangeMenuItem.Header = "ピン留め";
-                pinnedStateChangeMenuItem.Command = MainWindowViewModel.ActiveInstance.ChangePinCommand;
-                pinnedStateChangeMenuItem.CommandParameter = this;
-                menuItems.Add(pinnedStateChangeMenuItem);
-
-                // コピー
-                MenuItem copyMenuItem = new();
-                copyMenuItem.Header = "コピー";
-                copyMenuItem.Command = MainWindowViewModel.ActiveInstance.CopyItemCommand;
-                copyMenuItem.CommandParameter = this;
-                copyMenuItem.InputGestureText = "Ctrl+C";
-                menuItems.Add(copyMenuItem);
-
-                // 削除
-                MenuItem deleteMnuItem = new();
-                deleteMnuItem.Header = "削除";
-                deleteMnuItem.Command = MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand;
-                deleteMnuItem.CommandParameter = this;
-                deleteMnuItem.InputGestureText = "Delete";
-                menuItems.Add(deleteMnuItem);
-
+        public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+            // MenuItemのリストを作成
+            ObservableCollection<MenuItem> menuItems = [];
+            if (MainWindowViewModel.ActiveInstance == null) {
                 return menuItems;
-
             }
+            // 開く
+            MenuItem createMenuItem = new() {
+                Header = StringResources.Open,
+                Command = OpenItemCommand,
+                CommandParameter = itemViewModel,
+                InputGestureText = "Ctrl+O"
+            };
+            menuItems.Add(createMenuItem);
+
+            // テキストをファイルとして開く
+            MenuItem openContentAsFileMenuItem = new() {
+                Header = StringResources.OpenTextAsFile,
+                Command = itemViewModel.OpenContentAsFileCommand,
+                CommandParameter = itemViewModel,
+                InputGestureText = "Ctrl+Shit+O"
+            };
+            menuItems.Add(openContentAsFileMenuItem);
+
+            // タイトルを生成
+            MenuItem generateTitleMenuItem = new() {
+                Header = StringResources.GenerateTitle,
+                Command = itemViewModel.GenerateTitleCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateTitleMenuItem);
+
+            // 背景情報生成
+            MenuItem generateBackgroundInfoMenuItem = new() {
+                Header = StringResources.GenerateBackgroundInfo,
+                Command = itemViewModel.GenerateBackgroundInfoCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateBackgroundInfoMenuItem);
+
+            // サマリーを生成
+            MenuItem generateSummaryMenuItem = new() {
+                Header = StringResources.GenerateSummary,
+                Command = itemViewModel.GenerateSummaryCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateSummaryMenuItem);
+
+            // ベクトル生成
+            MenuItem generateVectorMenuItem = new() {
+                Header = StringResources.GenerateVector,
+                Command = itemViewModel.GenerateVectorCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateVectorMenuItem);
+
+            // ベクトル検索
+            MenuItem vectorSearchMenuItem = new() {
+                Header = StringResources.VectorSearch,
+                Command = itemViewModel.VectorSearchCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(vectorSearchMenuItem);
+
+            // ピン留め
+            MenuItem pinnedStateChangeMenuItem = new() {
+                Header = StringResources.Pin,
+                Command = itemViewModel.ChangePinCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(pinnedStateChangeMenuItem);
+
+            // コピー
+            MenuItem copyMenuItem = new() {
+                Header = StringResources.Copy,
+                Command = MainWindowViewModel.ActiveInstance.CopyItemCommand,
+                CommandParameter = this,
+                InputGestureText = "Ctrl+C"
+            };
+            menuItems.Add(copyMenuItem);
+
+            // 削除
+            MenuItem deleteMnuItem = new() {
+                Header = StringResources.Delete,
+                Command = itemViewModel.DeleteItemCommand,
+                CommandParameter = itemViewModel,
+                InputGestureText = "Delete"
+            };
+            menuItems.Add(deleteMnuItem);
+
+            return menuItems;
+        }
+        // Itemのコンテキストメニュー
+        public virtual ObservableCollection<MenuItem> CreateItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+            return CreateBasicItemContextMenuItems(itemViewModel);
         }
 
 
@@ -186,14 +217,14 @@ namespace ClipboardApp.ViewModel {
             EditItemWindow.OpenEditItemWindow(this, null, () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
-                LogWrapper.Info("追加しました");
+                LogWrapper.Info(StringResources.Added);
             });
         }
         public virtual void OpenItemCommandExecute(ClipboardItemViewModel item) {
             EditItemWindow.OpenEditItemWindow(this, item, () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
-                LogWrapper.Info("編集しました");
+                LogWrapper.Info(StringResources.Edited);
             });
         }
 
@@ -222,19 +253,19 @@ namespace ClipboardApp.ViewModel {
             }
             // フォルダ内のアイテムを再読み込み
             toFolder.LoadFolderCommand.Execute();
-            LogWrapper.Info("貼り付けました");
+            LogWrapper.Info(StringResources.Pasted);
         }
 
         public virtual void MergeItemCommandExecute(
             ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
 
             if (selectedItems.Count < 2) {
-                LogWrapper.Error("マージするアイテムを2つ選択してください");
+                LogWrapper.Error(StringResources.SelectTwoItemsToMerge);
                 return;
             }
             // マージ先のアイテム。SelectedItems[0]がマージ先
             if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
-                LogWrapper.Error("マージ先のアイテムが選択されていません");
+                LogWrapper.Error(StringResources.MergeTargetNotSelected);
                 return;
             }
             List<ClipboardItemViewModel> fromItemsViewModel = [];
@@ -242,7 +273,7 @@ namespace ClipboardApp.ViewModel {
                 // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
                 for (int i = 1; i < selectedItems.Count; i++) {
                     if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
-                        LogWrapper.Error("マージ元のアイテムが選択されていません");
+                        LogWrapper.Error(StringResources.MergeSourceNotSelected);
                         return;
                     }
                     fromItemsViewModel.Add(fromItemModelView);
@@ -253,20 +284,17 @@ namespace ClipboardApp.ViewModel {
                 toItemViewModel.SaveClipboardItemCommand.Execute(true);
                 // コピー元のアイテムを削除
                 foreach (var fromItem in fromItemsViewModel) {
-                    fromItem.DeleteClipboardItemCommand.Execute();
+                    fromItem.DeleteItemCommand.Execute();
                 }
 
                 // フォルダ内のアイテムを再読み込み
                 folderViewModel.LoadFolderCommand.Execute();
-                LogWrapper.Info("マージしました");
+                LogWrapper.Info(StringResources.Merged);
 
             } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+                string message = $"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
-
         }
-
-
     }
 }

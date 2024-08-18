@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:WpfAppCommon.View.QAChat"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="チャットアイテム"
+    Title="{Binding StringResources.ChatItem, Mode=OneTime}"
     Width="800"
     Height="450"
     Style="{StaticResource MaterialDesignWindow}"
@@ -19,7 +19,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -27,16 +27,16 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
-            Command="{Binding CancelButtonCommand}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>
@@ -81,13 +81,13 @@
             <TextBox.InputBindings>
                 <KeyBinding
                     Key="A"
-                    Command="{Binding SelectTextCommand}"
+                    Command="{Binding SelectTextCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                     Modifiers="Ctrl" />
                 <!--  選択したテキストをプロセスとして実行  -->
                 <KeyBinding
                     Key="O"
-                    Command="{Binding ExecuteSelectedTextCommand}"
+                    Command="{Binding ExecuteSelectedTextCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
                     Modifiers="Ctrl" />
             </TextBox.InputBindings>
@@ -97,9 +97,9 @@
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
-                    Command="{Binding CancelButtonCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

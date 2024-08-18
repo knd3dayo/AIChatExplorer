@@ -11,6 +11,7 @@
     <None Remove="python\ai_app.py" />
     <None Remove="python\ai_app_pyocr.py" />
     <None Remove="python\ai_app_spacy.py" />
+    <None Remove="python\excel_util.py" />
     <None Remove="python\file_extractor.py" />
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_client.py" />
@@ -33,19 +34,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="python\excel_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="python\ai_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\ai_app_pyocr.py">
+    <EmbeddedResource Include="python\dev\misc_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python\ai_app_spacy.py">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\file_extractor.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\flask_app.py">
+    <EmbeddedResource Include="python\dev\flask_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_client.py">
@@ -69,13 +73,13 @@
     <EmbeddedResource Include="python\langchain_vector_db_faiss.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_client.py">
+    <EmbeddedResource Include="python\dev\llamaindex_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_vector_db.py">
+    <EmbeddedResource Include="python\dev\llamaindex_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\llamaindex_vector_db_chroma.py">
+    <EmbeddedResource Include="python\dev\llamaindex_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\openai_client.py">
@@ -84,7 +88,7 @@
     <EmbeddedResource Include="python\openai_props.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\script_template.py">
+    <EmbeddedResource Include="python\dev\script_template.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\test_langchain_vector_db_chroma.py">

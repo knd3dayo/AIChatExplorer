@@ -406,5 +406,41 @@ namespace WpfAppCommon.Properties {
                 this["EnableDevFeatures"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EmbeddingWhenExtractingTextFromImage {
+            get {
+                return ((bool)(this["EmbeddingWhenExtractingTextFromImage"]));
+            }
+            set {
+                this["EmbeddingWhenExtractingTextFromImage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PythonVenvPath {
+            get {
+                return ((string)(this["PythonVenvPath"]));
+            }
+            set {
+                this["PythonVenvPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Lang {
+            get {
+                return ((string)(this["Lang"]));
+            }
+            set {
+                this["Lang"] = value;
+            }
+        }
     }
 }

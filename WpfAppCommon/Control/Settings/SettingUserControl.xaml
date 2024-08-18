@@ -14,7 +14,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </UserControl.Resources>
     <UserControl.DataContext>
@@ -22,10 +22,10 @@
     </UserControl.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
@@ -87,35 +87,63 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="基本設定" />
+                        Text="{Binding StringResources.BasicSettings, Mode=OneTime}" />
 
-                    <!--  PythonDLLPath  -->
+                    <!--  Language  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="PythonDLLのパス" />
-                    <TextBox
+                        Text="Language" />
+                    <ComboBox
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="Pythonインストール先のpython3**.dllを指定。例"
-                        Text="{Binding PythonDllPath}" />
-
+                        SelectedIndex="{Binding SelectedLanguage}">
+                        <ComboBoxItem Content="Default (The default value is Japanese if the system language is Japanese, otherwise English)" />
+                        <ComboBoxItem Content="Japanese" />
+                        <ComboBoxItem Content="English" />
+                    </ComboBox>
                     <!--  Backup Generation  -->
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="クリップボードDBのバックアップ世代数"
+                        Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
                         Visibility="Collapsed" />
                     <TextBox
                         Grid.Row="1"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="clipbord.db,clipboard-log.dbのバックアップ世代数"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
                         Text="{Binding BackupGeneration}"
                         Visibility="Collapsed" />
+
+                    <!--  PythonDLLPath  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
+                        Text="{Binding PythonDllPath}" />
+                    <!--  PythonVenvPth  -->
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Margin="10,10,10,0"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"
+                        Text="{Binding PythonVenvPath}" />
+
                 </Grid>
                 <!--  OpenAI設定  -->
                 <Grid Grid.Row="1">
@@ -139,18 +167,18 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="OpenAI設定" />
+                        Text="{Binding StringResources.OpenAISettings, Mode=OneTime}" />
                     <!--  OpenAI  API Key  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="OpenAIのAPI Key" />
+                        Text="{Binding StringResources.OpenAIKey, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのAPIキーを設定。"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIKey, Mode=OneTime}"
                         Text="{Binding OpenAIKey}" />
 
                     <!--  Azure OpenAI  -->
@@ -158,13 +186,13 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Azure OpenAIを使用する"
+                        Text="{Binding StringResources.UseAzureOpenAI, Mode=OneTime}"
                         TextWrapping="Wrap" />
                     <CheckBox
                         Grid.Row="1"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        Content="OpenAIの代わりにAzure OpenAIを使用します"
+                        Content="{Binding StringResources.UseAzureOpenAIInsteadOfOpenAI, Mode=OneTime}"
                         IsChecked="{Binding AzureOpenAI}" />
 
                     <!--  Azure OpenAI Endpoint  -->
@@ -172,12 +200,12 @@
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Azure OpenAIのエンドポイント" />
+                        Text="{Binding StringResources.AzureOpenAIEndpoint, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="2"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する。"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetAzureOpenAIEndpoint, Mode=OneTime}"
                         Text="{Binding AzureOpenAIEndpoint}" />
 
                     <!--  OpenAI Completion Model  -->
@@ -185,12 +213,12 @@
                         Grid.Row="3"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="OpenAIのチャットで使用するモデル" />
+                        Text="{Binding StringResources.OpenAIModel, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="3"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIModel, Mode=OneTime}"
                         Text="{Binding OpenAICompletionModel}" />
 
                     <!--  OpenAI Embedding Model  -->
@@ -198,24 +226,24 @@
                         Grid.Row="4"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="OpenAIのEmbeddingで使用するモデル" />
+                        Text="{Binding StringResources.OpenAIEmbeddingModel, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="4"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingModel, Mode=OneTime}"
                         Text="{Binding OpenAIEmbeddingModel}" />
                     <!--  OpenAI Complition Base URL  -->
                     <TextBlock
                         Grid.Row="5"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="OpenAIのチャットモデルのBaseURL" />
+                        Text="{Binding StringResources.OpenAIChatBaseURL, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="5"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIChatBaseURL, Mode=OneTime}"
                         Text="{Binding OpenAICompletionBaseURL}" />
 
                     <!--  OpenAI Embedding Base URL  -->
@@ -223,12 +251,12 @@
                         Grid.Row="6"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="OpenAIのEmbeddingモデルのBaseURL" />
+                        Text="{Binding StringResources.OpenAIEmbeddingBaseURL, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="6"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingBaseURL, Mode=OneTime}"
                         Text="{Binding OpenAIEmbeddingBaseURL}" />
                 </Grid>
 
@@ -246,18 +274,18 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="Python Spacy設定" />
+                        Text="{Binding StringResources.PythonSpacySettings, Mode=OneTime}" />
                     <!--  SpacyModel  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Spacyのモデル名" />
+                        Text="{Binding StringResources.SpacyModelName, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="1"
                         Grid.Column="2"
                         Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.SetSpacyModelName, Mode=OneTime}"
                         Text="{Binding SpacyModel}" />
                 </Grid>
                 <!--  Python OCR設定  -->
@@ -274,13 +302,13 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="Python OCR設定" />
+                        Text="{Binding StringResources.PythonOCRSettings, Mode=OneTime}" />
                     <!--  TesseractExePath  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="Tesseractのパス" />
+                        Text="{Binding StringResources.TesseractPath, Mode=OneTime}" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="2"
@@ -301,14 +329,14 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="10,10,10,0"
-                        Text="その他" />
+                        Text="{Binding StringResources.Other, Mode=OneTime}" />
 
                     <!--  開発中機能を有効にする  -->
                     <TextBlock
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,0"
-                        Text="開発中機能を有効にする" />
+                        Text="{Binding StringResources.EnableDevelopmentFeatures, Mode=OneTime}" />
                     <CheckBox
                         Grid.Row="0"
                         Grid.Column="2"
@@ -327,7 +355,7 @@
                     Width="180"
                     Margin="10,0,10,0"
                     Command="{Binding CheckCommand}"
-                    Content="設定のチェック"
+                    Content="{Binding StringResources.CheckSettings, Mode=OneTime}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
@@ -339,13 +367,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding SaveCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="150"
                     Margin="10,0,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

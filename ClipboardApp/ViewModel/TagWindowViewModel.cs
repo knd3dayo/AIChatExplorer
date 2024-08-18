@@ -41,13 +41,13 @@ namespace ClipboardApp.ViewModel
         // タグを追加したときの処理
         public SimpleDelegateCommand<string> AddTagCommand => new((tag) => {
             if (string.IsNullOrEmpty(tag)) {
-                LogWrapper.Error("タグが空です");
+                LogWrapper.Error(StringResources.TagIsEmpty);
                 return;
             }
             //tagが既に存在するかチェック
             foreach (var item in TagList) {
                 if (item.Tag == tag) {
-                    LogWrapper.Error("タグが既に存在します");
+                    LogWrapper.Error(StringResources.TagAlreadyExists);
                     return;
                 }
             }
@@ -123,12 +123,6 @@ namespace ClipboardApp.ViewModel
             // ウィンドウを閉じる
             window.Close();
 
-        });
-
-        // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-
-            window.Close();
         });
 
         // 検索ウィンドウを開く

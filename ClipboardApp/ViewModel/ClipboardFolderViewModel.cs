@@ -36,7 +36,6 @@ namespace ClipboardApp.ViewModel {
                 OnPropertyChanged(nameof(FolderName));
             }
         }
-
         public string FolderPath {
             get {
                 return ClipboardItemFolder.FolderPath;
@@ -60,11 +59,11 @@ namespace ClipboardApp.ViewModel {
 
 
         private void UpdateStatusText() {
-            string message = $"フォルダ[{FolderName}]";
+            string message = $"{StringResources.Folder}[{FolderName}]";
             // AutoProcessRuleが設定されている場合
             var rules = AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
             if (rules.Count > 0) {
-                message += " 自動処理が設定されています[";
+                message += $" {StringResources.AutoProcessingIsSet}[";
                 foreach (AutoProcessRule item in rules) {
                     message += item.RuleName + " ";
                 }
@@ -79,7 +78,7 @@ namespace ClipboardApp.ViewModel {
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
             // SearchConditionがNullでなく、 Emptyでもない場合
             if (searchCondition != null && !searchCondition.IsEmpty()) {
-                message += " 検索条件[";
+                message += $" {StringResources.SearchCondition}[";
                 message += searchCondition.ToStringSearchCondition();
                 message += "]";
             }

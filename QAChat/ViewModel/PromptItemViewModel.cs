@@ -11,7 +11,6 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(Content));
             }
         }
-
         public string Description {
             get => PromptItem.Description;
             set {

@@ -45,11 +45,10 @@ namespace ClipboardApp.ViewModel {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"フォルダ名:[{FolderViewModel.FolderName}]";
+            Tools.StatusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
             // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"フォルダ名:[{FolderViewModel.FolderName}]";
+            Tools.StatusText.Text = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
         }
-
 
         private string title = "";
         public string Title {
@@ -65,7 +64,6 @@ namespace ClipboardApp.ViewModel {
 
             }
         }
-
 
         //Tagを文字列に変換したもの
         private string _tagsString = "";
@@ -225,12 +223,6 @@ namespace ClipboardApp.ViewModel {
 
             // SaveCommandを実行
             SaveCommand.Execute(null);
-            // ウィンドウを閉じる
-            window.Close();
-        });
-
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
         });

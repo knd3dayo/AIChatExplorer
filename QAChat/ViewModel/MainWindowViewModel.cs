@@ -9,16 +9,15 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel {
     public partial class MainWindowViewModel : MyWindowViewModel {
 
-
         // OnActivatedAction
         public override void OnActivatedAction() {
             if (ClipboardFolder == null) {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"フォルダ名:[{ClipboardFolder?.FolderName}]";
+            Tools.StatusText.ReadyText = $"{StringResources.Folder}:[{ClipboardFolder?.FolderName}]";
             // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"フォルダ名:[{ClipboardFolder?.FolderName}]";
+            Tools.StatusText.Text = $"{StringResources.Folder}:[{ClipboardFolder?.FolderName}]";
         }
         private ClipboardFolder? _ClipboardFolder;
         public ClipboardFolder? ClipboardFolder {
@@ -38,7 +37,6 @@ namespace QAChat.ViewModel {
             QAChatControlViewModel.Initialize(props, PromptTemplateCommandExecute);
         }
 
-
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems {
             get {
@@ -49,7 +47,6 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(ClipboardItems));
             }
         }
-
 
         // QAChatControlのViewModel
         public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
@@ -65,16 +62,11 @@ namespace QAChat.ViewModel {
                 Content = settingsControl
             };
             window.ShowDialog();
-        }
-
-        );
-
+        });
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
-
             });
         }
-
     }
 }

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ClipboardApp.ViewModel;
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.Control
 {
@@ -13,6 +14,7 @@ namespace ClipboardApp.Control
         public MainWindowGridView1() {
             InitializeComponent();
         }
+
         // PreviewModeVisibility
         public Visibility PreviewModeVisibility {
             get { return (Visibility)GetValue(PreviewModeVisibilityProperty); }
@@ -29,6 +31,7 @@ namespace ClipboardApp.Control
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(nameof(SelectedItem), typeof(ClipboardItemViewModel), typeof(MainWindowGridView1));
 
+        // ItemsSource
         public ObservableCollection<ClipboardItemViewModel> ItemsSource {
             get { return (ObservableCollection<ClipboardItemViewModel>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
@@ -36,6 +39,8 @@ namespace ClipboardApp.Control
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(nameof(ItemsSource), typeof(ObservableCollection<ClipboardItemViewModel>), typeof(MainWindowGridView1));
 
+
+        // ClipboardItemSelectionChangedCommand
         public ICommand ClipboardItemSelectionChangedCommand {
             get { return (ICommand)GetValue(ClipboardItemSelectionChangedCommandProperty); }
             set { SetValue(ClipboardItemSelectionChangedCommandProperty, value); }
@@ -43,6 +48,7 @@ namespace ClipboardApp.Control
         public static readonly DependencyProperty ClipboardItemSelectionChangedCommandProperty =
             DependencyProperty.Register(nameof(ClipboardItemSelectionChangedCommand), typeof(ICommand), typeof(MainWindowGridView1));
 
+        // OpenSelectedItemCommand
         public ICommand OpenSelectedItemCommand {
             get { return (ICommand)GetValue(OpenSelectedItemCommandProperty); }
             set { SetValue(OpenSelectedItemCommandProperty, value); }

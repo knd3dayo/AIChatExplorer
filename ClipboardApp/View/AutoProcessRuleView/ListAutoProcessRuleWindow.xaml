@@ -9,17 +9,17 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:ClipboardApp.ViewModel"
-    Title="{Binding StringResources.ListAutoProcessRuleWindowTitle}"
+    Title="{Binding StringResources.ListAutoProcessRuleWindowTitle, Mode=OneTime}"
     Width="850"
-    Height="680"
     MinHeight="580"
+    SizeToContent="Height"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -27,13 +27,18 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="18" />
@@ -74,7 +79,7 @@
                 Margin="10,3,10,0"
                 Padding="0"
                 FontSize="10"
-                Header="フォルダ単位">
+                Header="{Binding StringResources.FolderUnit, Mode=OneTime}">
                 <!--  ルール一覧のListBox  -->
                 <ListView
                     MinHeight="300"
@@ -83,7 +88,7 @@
                     SelectedItem="{Binding SelectedAutoProcessRule}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Width="100" Header="有効">
+                            <GridViewColumn Width="100" Header="{Binding StringResources.Enable, Mode=OneTime}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -94,31 +99,31 @@
                             <GridViewColumn
                                 Width="350"
                                 DisplayMemberBinding="{Binding RuleName}"
-                                Header="ルール名" />
+                                Header="{Binding StringResources.RuleName, Mode=OneTime}" />
                             <GridViewColumn
                                 Width="200"
                                 DisplayMemberBinding="{Binding TargetFolder.FolderPath}"
-                                Header="適用対象フォルダ(パス)" />
+                                Header="{Binding StringResources.TargetFolderFullPath, Mode=OneTime}" />
                         </GridView>
                     </ListView.View>
                     <!--  コンテキストメニュー  -->
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem
-                                Command="{Binding ChangePriorityCommand}"
+                                Command="{Binding ChangePriorityCommand, Mode=OneTime}"
                                 CommandParameter="up"
-                                Header="上へ" />
+                                Header="{Binding StringResources.Up, Mode=OneTime}" />
                             <MenuItem
-                                Command="{Binding ChangePriorityCommand}"
+                                Command="{Binding ChangePriorityCommand, Mode=OneTime}"
                                 CommandParameter="down"
-                                Header="下へ" />
-                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="編集" />
-                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="削除" />
+                                Header="{Binding StringResources.Down, Mode=OneTime}" />
+                            <MenuItem Command="{Binding EditAutoProcessRuleCommand}" Header="{Binding StringResources.Edit, Mode=OneTime}" />
+                            <MenuItem Command="{Binding DeleteAutoProcessRuleCommand}" Header="{Binding StringResources.Delete, Mode=OneTime}" />
                         </ContextMenu>
                     </ListView.ContextMenu>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding EditAutoProcessRuleCommand}" />
+                            <i:InvokeCommandAction Command="{Binding EditAutoProcessRuleCommand, Mode=OneTime}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </ListView>
@@ -160,6 +165,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <!--  MonitorTargetAppNames  -->
                             <TextBlock
@@ -167,21 +173,21 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                Text="クリップボード監視対象のソースアプリ名" />
+                                Text="{Binding StringResources.SourceApp, Mode=OneTime}" />
 
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                materialDesign:HintAssist.Hint="監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SourceAppExample, Mode=OneTime}"
                                 Text="{Binding SettingUserControlViewModel.MonitorTargetAppNames}" />
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
-                                Content="指定した行数以下のテキストアイテムを無視"
+                                Content="{Binding StringResources.IgnoreTextLessOrEqualToSpecifiedLines, Mode=OneTime}"
                                 IsChecked="{Binding IgnoreLineCountChecked}" />
 
                             <DockPanel
@@ -196,141 +202,153 @@
                                 <TextBlock
                                     Margin="10,0,0,0"
                                     VerticalAlignment="Center"
-                                    Text="行以下" />
+                                    Text="{Binding StringResources.LineOrLess, Mode=OneTime}" />
                             </DockPanel>
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動タイトル生成" />
+                                Text="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}" />
                             <RadioButton
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="しない"
+                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
                                 GroupName="AutoDescription"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="自動的にタイトルを生成する"
+                                Content="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}"
                                 GroupName="AutoDescription"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoDescription}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoDescription}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <RadioButton
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIを使用して自動的にタイトルを生成する"
+                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI, Mode=OneTime}"
                                 GroupName="AutoDescription"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}"
-                                Visibility="{Binding SettingUserControlViewModel.UseOpenAIVisibility}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoDescriptionWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でタグ生成する"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Text="{Binding StringResources.AutomaticallyGenerateTags, Mode=OneTime}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードの内容から自動的にタグを生成します"
+                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoTag}"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でマージ" />
+                                Text="{Binding StringResources.AutomaticallyMerge, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします"
+                                Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoMergeItemsBySourceApplicationTitle}" />
                             <TextBlock
                                 Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動でEmbedding" />
+                                Text="{Binding StringResources.AutomaticallyEmbedding, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテム保存時に自動でEmbeddingを行います"
+                                Content="{Binding StringResources.AutomaticallyEmbeddingWhenSavingClipboardItems, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
                             <TextBlock
                                 Grid.Row="8"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="ファイルから自動でテキスト抽出" />
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromFile, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="8"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います"
+                                Content="{Binding StringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock
                                 Grid.Row="9"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="画像から自動でテキスト抽出" />
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromImage, Mode=OneTime}" />
                             <RadioButton
                                 Grid.Row="9"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="しない"
+                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="10"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="PyOCRを使用してテキスト抽出します"
+                                Content="{Binding StringResources.ExtractTextUsingPyOCR, Mode=OneTime}"
                                 GroupName="AutoExtractImage"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithPyOCR}" />
+                                IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithPyOCR}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <RadioButton
                                 Grid.Row="11"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIを使用してテキスト抽出します"
+                                Content="{Binding StringResources.ExtractTextUsingOpenAI, Mode=OneTime}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoExtractImageWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="12"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動背景情報追加" />
+                                Text="{Binding StringResources.EmbeddingWhenExtractingTextFromImage, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="12"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="同じフォルダにあるアイテムから背景情報を生成します。"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
+                                Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.EmbeddingWhenExtractingTextFromImage}" />
                             <TextBlock
                                 Grid.Row="13"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="Embeddingに背景情報を含める" />
+                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="13"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="Embedding対象テキストに背景情報を含めます。"
+                                Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
+                            <TextBlock
+                                Grid.Row="14"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="14"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
-                                Grid.Row="14"
+                                Grid.Row="15"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="自動サマリー生成" />
+                                Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="14"
+                                Grid.Row="15"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="コンテンツからサマリーテキストを生成します。"
+                                Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoSummary}" />
                         </Grid>
                         <!--  その他の設定  -->
@@ -349,12 +367,12 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="クリップボードアイテムをOS上のフォルダと同期させる" />
+                                Text="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOS, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードアイテムをOS上のフォルダと同期させます。"
+                                Content="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOSDescription, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolder}" />
                             <!--  同期先のフォルダ名  -->
                             <DockPanel
@@ -365,12 +383,12 @@
                                 <Label
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
-                                    Content="同期先のフォルダ名"
+                                    Content="{Binding StringResources.SyncTargetFolderName, Mode=OneTime}"
                                     Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                                 <TextBox
                                     Margin="10,0,10,0"
                                     VerticalAlignment="Center"
-                                    materialDesign:HintAssist.Hint="クリップボードアイテムを同期するOS上のフォルダ名を指定。"
+                                    materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems, Mode=OneTime}"
                                     Text="{Binding SettingUserControlViewModel.SyncFolderName}"
                                     Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                             </DockPanel>
@@ -379,7 +397,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。"
+                                Content="{Binding StringResources.IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoCommit}"
                                 Visibility="{Binding SettingUserControlViewModel.SyncClipboardItemAndOSFolderVisibility}" />
                         </Grid>
@@ -398,23 +416,23 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="エンティティ抽出/データマスキング"
-                                Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                                Text="{Binding StringResources.EntityExtractionDataMasking, Mode=OneTime}"
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います"
+                                Content="{Binding StringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.UseSpacy}"
-                                Visibility="{Binding SettingUserControlViewModel.UsePythonVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
 
                             <CheckBox
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="OpenAIに送信するデータ内の個人情報などをマスキングします。"
+                                Content="{Binding StringResources.MaskPersonalInformationInDataSentToOpenAI, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.UserMaskedDataInOpenAI}"
-                                Visibility="{Binding SettingUserControlViewModel.UseSpacyVisibility}" />
+                                Visibility="{Binding SettingUserControlViewModel.EnableDevFeaturesVisibility}" />
                         </Grid>
                     </Grid>
                 </ScrollViewer>
@@ -437,12 +455,12 @@
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding AddAutoProcessRuleCommand}"
-                    Content="新規自動処理ルール" />
+                    Content="{Binding StringResources.NewAutoProcessRule, Mode=OneTime}" />
                 <Button
                     Width="150"
                     Margin="10,0,0,0"
                     Command="{Binding EditAutoProcessRuleCommand}"
-                    Content="自動処理ルール編集" />
+                    Content="{Binding StringResources.EditAutoProcessRule, Mode=OneTime}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -451,15 +469,15 @@
                 <Button
                     Width="150"
                     Margin="10,0,0,0"
-                    Command="{Binding SaveSystemCommonSettingCommand}"
-                    Content="システム共通設定を保存"
+                    Command="{Binding SaveSystemCommonSettingCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.SaveSystemCommonSettings, Mode=OneTime}"
                     Visibility="{Binding SaveSystemCommonSettingButtonVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

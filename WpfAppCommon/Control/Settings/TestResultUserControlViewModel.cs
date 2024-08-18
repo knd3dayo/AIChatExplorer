@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.Settings {
@@ -19,14 +20,14 @@ namespace WpfAppCommon.Control.Settings {
             }
             set {
                 logText = value;
-                OnPropertyChanged("LogText");
+                OnPropertyChanged(nameof(LogText));
             }
         }
 
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
             WpfAppCommon.Properties.Settings.Default.Reload();
-            LogWrapper.Info("設定をキャンセルしました");
+            LogWrapper.Info(CommonStringResources.Instance.Canceled);
             // Windowを閉じる
             window.Close();
         });

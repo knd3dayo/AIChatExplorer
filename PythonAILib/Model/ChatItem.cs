@@ -36,7 +36,7 @@ namespace PythonAILib.Model {
                 }
                 // sourceDocumentURLが空の場合は<参照元ドキュメントルート>とする。
                 if (string.IsNullOrEmpty(SourceDocumentURL)) {
-                    SourceDocumentURL = "<参照元ドキュメントルート>";
+                    SourceDocumentURL = PythonAILibStringResources.Instance.SourceDocumentRoot;
                 }
                 // Sourcesの各要素にSourceDocumentURLを付加する。
                 List<string> SourcesWithLink = Sources.ConvertAll(x => SourceDocumentURL + x);

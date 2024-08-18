@@ -2,6 +2,7 @@ using LiteDB;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
+    // TODO 多言語化
     public partial class SystemAutoProcessItem {
         public enum TypeEnum {
             Ignore,
@@ -16,13 +17,9 @@ namespace WpfAppCommon.Model {
         }
         public ObjectId? Id { get; set; } = LiteDB.ObjectId.Empty;
         public string Name { get; set; } = "";
-
         public string DisplayName { get; set; } = "";
-
         public string Description { get; set; } = "";
-
         public TypeEnum Type { get; set; } = TypeEnum.CopyToFolder;
-
         public SystemAutoProcessItem() {
         }
 
@@ -45,12 +42,12 @@ namespace WpfAppCommon.Model {
                     return item;
                 }
             }
-            throw new ThisApplicationException("AutoProcessItemが見つかりません");
+            throw new Exception(CommonStringResources.Instance.AutoProcessItemNotFound);
         }
 
         public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
 
-            Func<AutoProcessItemArgs, ClipboardItem?> action = SystemAutoProcessItem.GetAction(this.Name);
+            Func<AutoProcessItemArgs, ClipboardItem?> action = GetAction(this.Name);
             ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
             return result;
         }
@@ -60,28 +57,30 @@ namespace WpfAppCommon.Model {
                 List<SystemAutoProcessItem> items =
                 [
                     // 無視するコマンドを追加
-                    new SystemAutoProcessItem("Ignore", "無視", "何もしません"),
+                    new SystemAutoProcessItem("Ignore", CommonStringResources.Instance.Ignore, CommonStringResources.Instance.DoNothing),
                     // itemにフォルダにコピーするコマンドを追加
-                    new SystemAutoProcessItem("CopyToFolder", "フォルダにコピー", "クリップボードの内容を指定されたフォルダにコピーします"),
+                    new SystemAutoProcessItem("CopyToFolder", CommonStringResources.Instance.CopyToFolder, CommonStringResources.Instance.CopyClipboardContentToSpecifiedFolder),
                     // itemにフォルダに移動するコマンドを追加
-                    new SystemAutoProcessItem("MoveToFolder", "フォルダに移動", "クリップボードの内容を指定されたフォルダに移動します"),
+                    new SystemAutoProcessItem("MoveToFolder",  CommonStringResources.Instance.MoveToFolder, CommonStringResources.Instance.MoveClipboardContentToSpecifiedFolder),
                     // itemにテキスト抽出コマンドを追加
-                    new SystemAutoProcessItem("ExtractText", "テキスト抽出", "クリップボードのテキストを抽出します"),
+                    new SystemAutoProcessItem("ExtractText", CommonStringResources.Instance.ExtractText, CommonStringResources.Instance.ExtractClipboardText),
                 ];
                 // itemにデータマスキングコマンドを追加
                 // UseSpacyがTrueの場合のみ追加
                 if (ClipboardAppConfig.UseSpacy) {
                     items.Add(
-                        new SystemAutoProcessItem("MaskData", "データマスキング", "クリップボードのテキストをマスキングします")
+                        new SystemAutoProcessItem("MaskData", CommonStringResources.Instance.DataMasking, CommonStringResources.Instance.MaskClipboardText)
                         );
                 }
                 // フォルダ内のアイテムを自動的にマージするコマンドを追加
                 items.Add(
-                    new SystemAutoProcessItem("MergeAllItems", "フォルダ内のアイテムをマージ", "フォルダ内のアイテムをマージします")
+                    new SystemAutoProcessItem("MergeAllItems", CommonStringResources.Instance.MergeItemsInFolder, CommonStringResources.Instance.MergeItemsInFolderDescription)
                     );
                 // 同じSourceApplicationTitleを持つアイテムをマージするコマンドを追加
                 items.Add(
-                    new SystemAutoProcessItem("MergeItemsWithSameSourceApplicationTitle", "同じSourceApplicationTitleを持つアイテムをマージ", "同じSourceApplicationTitleを持つアイテムをマージします")
+                    new SystemAutoProcessItem("MergeItemsWithSameSourceApplicationTitle", 
+                        CommonStringResources.Instance.MergeItemsWithTheSameSourceApplicationTitle, 
+                        CommonStringResources.Instance.MergeItemsWithTheSameSourceApplicationTitleDescription)
                     );
                 return items;
             }
@@ -96,11 +95,11 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.CopyToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
-                        LogWrapper.Warn("フォルダが選択されていません");
+                        LogWrapper.Warn(CommonStringResources.Instance.NoFolderSelected);
                         return args.ClipboardItem;
                     }
 
-                    LogWrapper.Info($"フォルダにコピーします{args.DestinationFolder.FolderPath}");
+                    LogWrapper.Info($"{CommonStringResources.Instance.CopyToFolderDescription}:{args.DestinationFolder.FolderPath}");
                     ClipboardItem newItem = args.ClipboardItem.Copy();
 
                     // Folderに追加
@@ -113,14 +112,14 @@ namespace WpfAppCommon.Model {
             if (name == TypeEnum.MoveToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
-                        LogWrapper.Warn("フォルダが選択されていません");
+                        LogWrapper.Warn(CommonStringResources.Instance.NoFolderSelected);
                         return args.ClipboardItem;
                     }
                     // Folderに追加
                     ClipboardItem newItem = args.ClipboardItem.Copy();
                     ClipboardItem result = args.DestinationFolder.AddItem(newItem);
                     // 元のフォルダから削除
-                    LogWrapper.Info($"{args.ClipboardItem.FolderPath}から削除します");
+                    LogWrapper.Info($"{CommonStringResources.Instance.Delete}:{args.ClipboardItem.FolderPath}");
 
                     args.ClipboardItem.Delete();
 
@@ -140,7 +139,7 @@ namespace WpfAppCommon.Model {
             }
             if (name == TypeEnum.MergeAllItems.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
 
                     folder.MergeItems(args.ClipboardItem);
                     return args.ClipboardItem;
@@ -148,7 +147,7 @@ namespace WpfAppCommon.Model {
             }
             if (name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new ThisApplicationException("フォルダが選択されていません");
+                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
 
                     folder.MergeItemsBySourceApplicationTitleCommandExecute(args.ClipboardItem);
                     return args.ClipboardItem;

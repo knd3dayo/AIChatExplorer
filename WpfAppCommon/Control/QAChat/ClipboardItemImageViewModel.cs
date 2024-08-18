@@ -42,7 +42,7 @@ namespace WpfAppCommon.Control.QAChat {
             if (File.Exists(this.ScreenShotImage.ImagePath)) {
                 ProcessUtil.OpenFile(this.ScreenShotImage.ImagePath);
             } else {
-                LogWrapper.Error("ファイルが存在しません。");
+                LogWrapper.Error(CommonStringResources.Instance.FileDoesNotExist);
             }
         });
 

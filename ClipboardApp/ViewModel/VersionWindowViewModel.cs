@@ -1,8 +1,8 @@
-using System.Windows;
-using WpfAppCommon.Utils;
+
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.ViewModel {
-    public class VersionWindowViewModel {
+    public class VersionWindowViewModel: MyWindowViewModel {
 
         public string Version { get; set; }
 
@@ -10,7 +10,7 @@ namespace ClipboardApp.ViewModel {
 
         public string Url { get; set; }
 
-        public string Title { get; set; } = "バージョン情報";
+        public string Title { get; set; } = CommonStringResources.Instance.VersionInformation;
         public VersionWindowViewModel() {
             Version = "0.1.0";
             CopyRight = "© 2024 by knd3dayo";
@@ -23,10 +23,6 @@ namespace ClipboardApp.ViewModel {
                 return $"{Title}\nVersion: {Version}\nCopyRight: {CopyRight}\nUrl: {Url}";
             }
         }
-
-        // CloseCommand
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            window.Close();
-        });
+        
     }
 }

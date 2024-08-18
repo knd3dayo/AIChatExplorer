@@ -4,12 +4,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
-using PythonAILib.PythonIF;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
 using WpfAppCommon;
@@ -17,9 +15,8 @@ using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
-    public class ClipboardItemViewModel : ObservableObject {
+namespace ClipboardApp.ViewModel {
+    public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
         public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) {
@@ -32,6 +29,9 @@ namespace ClipboardApp.ViewModel
             OnPropertyChanged(nameof(ThumbnailImages));
 
         }
+        // StringResources
+        public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
+
         // ClipboardItem
         public ClipboardItem ClipboardItem { get; }
         // FolderViewModel
@@ -41,7 +41,7 @@ namespace ClipboardApp.ViewModel
 
         public ObservableCollection<MenuItem> MenuItems {
             get {
-                return FolderViewModel.ItemContextMenuItems;
+                return FolderViewModel.CreateItemContextMenuItems(this);
             }
         }
 
@@ -289,23 +289,24 @@ namespace ClipboardApp.ViewModel
         public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItem.Save);
 
         // Delete
-        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteClipboardItemCommand => new((obj) => {
+        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((obj) => {
             ClipboardItem.Delete();
         });
 
         public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             // ContentTypeがFileの場合のみフォルダを開く
             if (ContentType != ClipboardContentTypes.Files) {
-                LogWrapper.Error("ファイル以外のコンテンツはフォルダを開けません");
+                LogWrapper.Error(StringResources.CannotOpenFolderForNonFileContent);
                 return;
             }
             // Process.Startでフォルダを開く
             foreach (var item in ClipboardItem.ClipboardItemFiles) {
                 string? folderPath = item.FolderName;
                 if (folderPath != null) {
-                    var p = new Process();
-                    p.StartInfo = new ProcessStartInfo(folderPath) {
-                        UseShellExecute = true
+                    var p = new Process {
+                        StartInfo = new ProcessStartInfo(folderPath) {
+                            UseShellExecute = true
+                        }
                     };
                     p.Start();
                 }
@@ -315,38 +316,13 @@ namespace ClipboardApp.ViewModel
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
             if (ContentType != ClipboardContentTypes.Files) {
-                LogWrapper.Error("ファイル以外のコンテンツはテキストを抽出できません");
+                LogWrapper.Error(StringResources.CannotExtractTextForNonFileContent);
                 return;
             }
             ClipboardItem.ExtractTextCommandExecute(ClipboardItem);
             // 保存
             SaveClipboardItemCommand.Execute(true);
         });
-
-        // メニューの「Pythonスクリプトを実行」をクリックしたときの処理
-        public SimpleDelegateCommand<ScriptItem> MenuItemRunPythonScriptCommandExecute => new(async (scriptItem) => {
-            try {
-                MainWindowViewModel.UpdateProgressCircleVisibility(true);
-                // clipboardItemをJsonに変換
-                string input_str = Content;
-                // Pythonスクリプトを実行
-                string result = input_str;
-                await Task.Run(() => {
-                    string result = PythonExecutor.PythonFunctions.RunScript(scriptItem.Content, input_str);
-                    // 結果をClipboardItemに設定
-                    Content = result;
-                    // 保存
-                    SaveClipboardItemCommand.Execute(true);
-                });
-
-            } catch (ClipboardAppException e) {
-                LogWrapper.Error(e.Message);
-            } finally {
-                MainWindowViewModel.UpdateProgressCircleVisibility(false);
-            }
-
-        });
-
         // OpenAI Chatを開くコマンド
         public SimpleDelegateCommand<object> OpenOpenAIChatWindowCommand => new((parameter) => {
 
@@ -368,7 +344,7 @@ namespace ClipboardApp.ViewModel
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
                     if (MainWindowViewModel.ActiveInstance == null) {
-                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
                         return;
                     }
                     FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
@@ -407,37 +383,49 @@ namespace ClipboardApp.ViewModel
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, true);
         });
 
+        // タイトルを生成するコマンド
+        public SimpleDelegateCommand<object> GenerateTitleCommand => new(async (obj) => {
+            LogWrapper.Info(StringResources.GenerateTitleInformation);
+            await Task.Run(() => {
+                ClipboardItem.CreateAutoTitleWithOpenAI(ClipboardItem);
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info(StringResources.GeneratedTitleInformation);
+
+        });
+
         // 背景情報を生成するコマンド
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
-            LogWrapper.Info("背景情報を生成します");
+            LogWrapper.Info(StringResources.GenerateBackgroundInformation);
             await Task.Run(() => {
                 ClipboardItem.CreateAutoBackgroundInfo(this.ClipboardItem);
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("背景情報を生成しました");
+            LogWrapper.Info(StringResources.GeneratedBackgroundInformation);
 
         });
         // サマリーを生成するコマンド
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
-            LogWrapper.Info("サマリーを生成します");
+            LogWrapper.Info(StringResources.GenerateSummary2);
             await Task.Run(() => {
                 ClipboardItem.CreateAutoSummary(this.ClipboardItem);
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("サマリーを生成しました");
+            LogWrapper.Info(StringResources.GeneratedSummary);
 
         });
         // ベクトルを生成するコマンド
         public SimpleDelegateCommand<object> GenerateVectorCommand => new(async (obj) => {
-            LogWrapper.Info("ベクトルを生成します");
+            LogWrapper.Info(StringResources.GenerateVector2);
             await Task.Run(() => {
                 ClipboardItem.UpdateEmbedding();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
-            LogWrapper.Info("ベクトルを生成しました");
+            LogWrapper.Info(StringResources.GeneratedVector);
 
         });
         // ベクトル検索を実行するコマンド
@@ -460,46 +448,30 @@ namespace ClipboardApp.ViewModel
             ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemImage(ClipboardItem);
         });
 
-        // 画像からテキストを抽出するコマンド
-        public SimpleDelegateCommand<object> MenuItemExtractTextFromImageCommand => new((parameter) => {
-            // 画像以外の場合はエラー
-            if (ContentType != ClipboardContentTypes.Image) {
-                // 対話処理のため、エラー時はダイアログを表示
-                LogWrapper.Error("画像以外のコンテンツはテキストを抽出できません");
-                return;
-            }
-            // OCRが使用不可の場合はエラー
-            if (!ClipboardAppConfig.AutoExtractImageWithPyOCR) {
-                LogWrapper.Error("PyOCRが使用できません。設定画面でPyOCRを有効にしてください");
-                return;
-            }
-            try {
-                ClipboardItem.ExtractTextFromImageCommandExecute(ClipboardItem);
-                // 保存
-                ClipboardItem.Save();
-            } catch (Exception ex) {
-                LogWrapper.Error($"OCR処理が失敗しました。\n{ex.Message}");
-            }
-        });
-
-        // コンテキストメニューの「データをマスキング」の実行用コマンド
-        public SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
-
-            ClipboardItem.MaskDataCommandExecute();
-            // 保存
-            SaveClipboardItemCommand.Execute(true);
-
-        });
-
-
         // テキストをファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
             try {
                 // 選択中のアイテムを開く
                 ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(ClipboardItem);
-            } catch (ClipboardAppException e) {
+            } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }
+        });
+
+        // 画像からテキストを抽出するコマンド
+        public SimpleDelegateCommand<object> ExtractTextFromImageWithOpenAICommand => new((obj) => {
+            if (ClipboardItem.ContentType != ClipboardContentTypes.Image) {
+                throw new Exception(StringResources.CannotExtractTextForNonImageContent);
+            }
+            string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
+            // 結果をContentに設定
+
+        });
+        // ピン留めの切り替えコマンド
+        public SimpleDelegateCommand<object> ChangePinCommand => new((obj) => {
+            IsPinned = !IsPinned;
+            // ピン留めの時は更新日時を変更しない
+            SaveClipboardItemCommand.Execute(false);
         });
     }
 }

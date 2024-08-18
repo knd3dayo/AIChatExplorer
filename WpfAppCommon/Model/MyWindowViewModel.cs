@@ -7,7 +7,13 @@ namespace WpfAppCommon.Model {
     public class MyWindowViewModel : ObservableObject{
 
         // CommonStringResources
-        public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
+        public CommonStringResources StringResources {
+            get {
+                // 文字列リソースの言語設定
+                CommonStringResources.Lang = ClipboardAppConfig.ActualLang;
+                return CommonStringResources.Instance;
+            }
+        }
 
         public virtual void OnLoadAction() { }
 
@@ -41,6 +47,13 @@ namespace WpfAppCommon.Model {
             if (window != null) {
                 Tools.ActiveWindow = window;
                 OnActivatedAction();
+            }
+        });
+
+        // CloseButtonを押した時の処理
+        public SimpleDelegateCommand<Window?> CloseCommand => new((window) => {
+            if (window != null) {
+                window.Close();
             }
         });
 

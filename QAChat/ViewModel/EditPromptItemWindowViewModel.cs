@@ -49,12 +49,6 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(Prompt));
             }
         }
-        // Windowのタイトル　ItemViewModelがnullの場合は新規作成、それ以外は編集
-        public string WindowTitle {
-            get {
-                return itemViewModel == null ? "新規作成" : "編集"; ;
-            }
-        }
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
         // 初期化
@@ -64,8 +58,7 @@ namespace QAChat.ViewModel {
                 Name = ItemViewModel.PromptItem.Name ?? "";
                 Description = ItemViewModel.Description ?? "";
                 Prompt = ItemViewModel.Content ?? "";
-                // Windowのタイトルを更新
-                OnPropertyChanged(nameof(WindowTitle));
+
             } else {
                 ItemViewModel = new PromptItemViewModel(new PromptItem());
 
@@ -87,7 +80,7 @@ namespace QAChat.ViewModel {
             promptItem.Name = Name;
             // Nameが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Name)) {
-                MessageBox.Show("名前を入力してください。");
+                LogWrapper.Error(StringResources.EnterName);
                 return;
             }
             // ClipboardItemを更新
@@ -95,11 +88,6 @@ namespace QAChat.ViewModel {
 
             AfterUpdate(ItemViewModel);
 
-            // ウィンドウを閉じる
-            window.Close();
-        });
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
         });

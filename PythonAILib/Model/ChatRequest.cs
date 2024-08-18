@@ -19,7 +19,6 @@ namespace PythonAILib.Model {
 
         public List<ChatItem> ChatHistory { get; set; } = [];
 
-
         public ChatItem? LastSendItem {
             get {
                 // ChatItemsのうち、ユーザー発言の最後のものを取得
@@ -59,14 +58,14 @@ namespace PythonAILib.Model {
 
             // PromptTemplateTextが空でない場合は、PromptTemplateTextを追加
             if (string.IsNullOrEmpty(PromptTemplateText) == false) {
-                promptText = PromptTemplateText + "\n---------以下は本文です------\n";
+                promptText = PromptTemplateText + PythonAILibStringResources.Instance.ContentHeader;
             }
             // ContentTextを追加
             promptText += ContentText;
 
             // ContextItemsが空でない場合は、ContextItemsのContentを追加
             if (AdditionalTextItems.Any()) {
-                promptText += "\n---------以下は関連情報です------\n";
+                promptText += PythonAILibStringResources.Instance.SourcesHeader;
                 // ContextItemsのContentを追加
                 foreach (var item in AdditionalTextItems) {
                     promptText += item + "\n";
@@ -105,14 +104,13 @@ namespace PythonAILib.Model {
                 formatText = "jpeg";
             } else {
                 // エラー
-                throw new Exception("画像のフォーマットが不明です。");
+                throw new Exception(PythonAILibStringResources.Instance.UnknownImageFormat);
             }
 
             // Base64文字列から画像のURLを作成
             string result = $"data:image/{formatText};base64,{base64String}";
             return result;
         }
-
 
         public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
 
@@ -157,9 +155,7 @@ namespace PythonAILib.Model {
                 ["content"] = CreateOpenAIContentList(CreatePromptText(), imageUrls)
             };
             messages.Add(dc);
-
             return messages;
-
         }
 
         public string CreateOpenAIRequestJSON() {
@@ -220,7 +216,7 @@ namespace PythonAILib.Model {
         }
         private ChatResult? ExecuteChatLangChain() {
             OpenAIProperties.VectorDBItems.AddRange(VectorDBItems);
-            ChatResult? result = PythonExecutor.PythonFunctions?.LangChainChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(this);
             if (result == null) {
                 return null;
             }
@@ -228,12 +224,12 @@ namespace PythonAILib.Model {
             ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
             ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
             return result;
+
         }
 
         private ChatResult? ExecuteChatNormal() {
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(this);
             // リクエストをChatItemsに追加
             if (result == null) {
                 return null;
@@ -247,12 +243,23 @@ namespace PythonAILib.Model {
         private ChatResult? ExecuteChatOpenAIRAG() {
             // ContentTextの内容をベクトル検索する。
             StringBuilder sb = new();
-            sb.AppendLine("上記の文章の不明点については、以下の関連情報を参考にしてください");
+            sb.AppendLine(PythonAILibStringResources.Instance.UnknownContent);
             sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
+            // VectorSearchRequestを作成. テスト用にFilterを設定
+            VectorSearchRequest request = new() {
+                Query = ContentText,
+                SearchKWArgs = new Dictionary<string, object> {
+                    ["k"] = 10,
+                    // filter
+                    ["filter"] = new Dictionary<string, object> {
+                        ["content_type"] = "text"
+                    }
+                }
+            };
             foreach (var vectorDBItem in VectorDBItems) {
-                List<VectorSearchResult> results = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, ContentText) ?? [];
+                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, request) ?? [];
                 foreach (var vectorSearchResult in results) {
                     sb.AppendLine(vectorSearchResult.Content);
                     hasVectorSearch = true;
@@ -263,7 +270,7 @@ namespace PythonAILib.Model {
                 ContentText += "\n" + sb.ToString();
             }
 
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(this);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(this);
             // リクエストをChatItemsに追加
             if (result == null) {
                 return null;
@@ -279,10 +286,7 @@ namespace PythonAILib.Model {
             // 実験的機能1(文章解析+辞書生成+RAG)
             // 新規のChatRequestを作成.ContentTextにはこのChatRequestのContentTextを設定する.
             // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
-            string newRequestPrompt = "以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
-                "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
-                "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
-                "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}";
+            string newRequestPrompt = PythonAILibStringResources.Instance.AnalyzeAndDictionarizeRequest;
 
             ChatRequest newRequest = new(OpenAIProperties) {
                 ContentText = ContentText,
@@ -290,20 +294,20 @@ namespace PythonAILib.Model {
                 JsonMode = true,
             };
 
-            ChatResult? result = PythonExecutor.PythonFunctions?.OpenAIChat(newRequest);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(newRequest);
             // リクエストをChatItemsに追加
             if (result == null) {
-                throw new Exception("ChatResultがnullです。");
+                throw new Exception(PythonAILibStringResources.Instance.ChatResultNull);
             }
             // レスポンスからJsonSerializerでDictionary<string,List<Dictionary<string, object>>>を取得
             Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(result.Response);
             if (resultDict == null) {
-                throw new Exception("ChatResultのResponseが不正です。");
+                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseInvalid);
             }
             // documents を取得
             JsonElement? documentsObject = (JsonElement)resultDict["result"];
             if (documentsObject == null) {
-                throw new Exception("ChatResultのResponseにResultが含まれていません。");
+                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseResultNotFound);
             }
             string documents = documentsObject.ToString() ?? "[]";
             // documentsをList<Dictionary<string, object>>に変換
@@ -312,7 +316,7 @@ namespace PythonAILib.Model {
             // リストの要素毎にVectorSearchを実行
             // 結果用のStringBuilderを作成
             StringBuilder sb = new();
-            sb.AppendLine("定義が不明な文章については、以下の説明を参考にしてください");
+            sb.AppendLine(PythonAILibStringResources.Instance.UnknownContentDescription);
             sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -322,9 +326,20 @@ namespace PythonAILib.Model {
                     continue;
                 }
                 sb.AppendLine($"### {sentence} ###");
+                // VectorSearchRequestを作成. テスト用にFilterを設定
+                VectorSearchRequest request = new() {
+                    Query = sentence,
+                    SearchKWArgs = new Dictionary<string, object> {
+                        ["k"] = 10,
+                        // filter
+                        ["filter"] = new Dictionary<string, object> {
+                            ["content_type"] = "text"
+                        }
+                    }
+                };
                 // VectorSearchを実行
                 foreach (var vectorDBItem in VectorDBItems) {
-                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, sentence) ?? [];
+                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(OpenAIProperties, vectorDBItem, request) ?? [];
                     foreach (var vectorSearchResult in vectorSearchResults) {
                         sb.AppendLine($"{vectorSearchResult.Content}");
                         hasVectorSearch = true;
@@ -344,7 +359,7 @@ namespace PythonAILib.Model {
             ChatRequest chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = "以下の文章から100～200文字程度のサマリーを生成してください。\n"; ;
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.SummarizeRequest;
             chatController.ContentText = content;
 
             ChatResult? result = chatController.ExecuteChat();
@@ -359,7 +374,7 @@ namespace PythonAILib.Model {
             ChatRequest chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
-            chatController.PromptTemplateText = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.BackgroundInfoRequest;
             chatController.ContentText = content;
 
             chatController.VectorDBItems = vectorDBItems;
@@ -376,7 +391,7 @@ namespace PythonAILib.Model {
             ChatRequest chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = "以下の文章からタイトルを生成してください。\n";
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.TitleRequest;
             chatController.ContentText = content;
 
             ChatResult? result = chatController.ExecuteChat();
@@ -390,9 +405,12 @@ namespace PythonAILib.Model {
             ChatRequest chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = "この画像のテキストを抽出してください。\n";
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.ExtractTextRequest;
             chatController.ContentText = "";
-            chatController.ImageURLs = ImageBase64List.Select(image => ChatRequest.CreateImageURL(image)).ToList();
+            chatController.ImageURLs = ImageBase64List.Select(ChatRequest.CreateImageURL).ToList();
+            if (chatController.ImageURLs.Count == 0) {
+                return "";
+            }
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {

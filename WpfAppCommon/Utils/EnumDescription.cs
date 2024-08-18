@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Reflection;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class EnumDescription {
@@ -37,7 +38,7 @@ namespace WpfAppCommon.Utils {
         public static T? GetEnumValue<T>(string description) {
             var type = typeof(T);
             if (!type.IsEnum)
-                throw new ArgumentException("Enum型ではありません");
+                throw new ArgumentException(CommonStringResources.Instance.NotEnumType);
             FieldInfo[] fields = type.GetFields();
             foreach (var field in fields) {
                 if (field == null) {

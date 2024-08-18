@@ -3,11 +3,10 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class PythonCommands {
         public static void CreateScriptCommandExecute(object obj) {
-            EditPythonScriptWindow editScriptWindow = new EditPythonScriptWindow();
+            EditPythonScriptWindow editScriptWindow = new();
             EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
             editScriptWindowViewModel.ScriptItem = new ScriptItem("", "", PythonExecutor.LoadPythonScript(PythonExecutor.TemplateScript), ScriptType.Python);
             editScriptWindow.ShowDialog();
@@ -15,10 +14,10 @@ namespace ClipboardApp.ViewModel
 
         public static void EditScriptItemCommandExecute(object obj) {
             if (obj is not ScriptItem scriptItem) {
-                LogWrapper.Error("スクリプトを選択してください");
+                LogWrapper.Error(CommonStringResources.Instance.SelectScript);
                 return;
             }
-            EditPythonScriptWindow editScriptWindow = new EditPythonScriptWindow();
+            EditPythonScriptWindow editScriptWindow = new();
             EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
             editScriptWindowViewModel.ScriptItem = scriptItem;
             editScriptWindow.ShowDialog();
@@ -26,7 +25,7 @@ namespace ClipboardApp.ViewModel
 
         // スクリプト一覧画面を編集モードで開くコマンド
         public static void OpenListPythonScriptWindowCommandExecute(object obj) {
-            ListPythonScriptWindow SelectScriptWindow = new ListPythonScriptWindow();
+            ListPythonScriptWindow SelectScriptWindow = new();
             ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
             SelectScriptWindowViewModel.Initialize(ListPythonScriptWindowViewModel.ActionModeEnum.Edit, (scriptItem) => { });
             SelectScriptWindow.ShowDialog();

@@ -17,7 +17,7 @@ namespace PythonAILib.Model {
         public string Name { get; set; } = "";
         // 説明
         [JsonPropertyName("VectorDBDescription")]
-        public string Description { get; set; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+        public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
 
         [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";
@@ -29,7 +29,7 @@ namespace PythonAILib.Model {
         public string DocStoreURL { get; set; } = "";
 
         [JsonIgnore]
-        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Faiss;
+        public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
         // VectorDBTypeString
         [JsonPropertyName("VectorDBTypeString")]
@@ -73,8 +73,12 @@ namespace PythonAILib.Model {
 
         // Delete
         public abstract void Delete();
-        public abstract void UpdateIndex(IPythonFunctions.ContentInfo clipboard);
-        public abstract void DeleteIndex(IPythonFunctions.ContentInfo clipboard);
+        public abstract void UpdateIndex(ContentInfo clipboard);
+        public abstract void DeleteIndex(ContentInfo clipboard);
+
+        public abstract void UpdateIndex(ImageInfo imageInfo);
+
+        public abstract void DeleteIndex(ImageInfo imageInfo);
 
     }
 }

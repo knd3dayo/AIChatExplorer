@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media.Imaging;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class ProcessUtil {
@@ -70,7 +71,7 @@ namespace WpfAppCommon.Utils {
             if (openAsNew) {
                 // item.Contentがディレクトリの場合はメッセージを表示して終了
                 if (Directory.Exists(contentFilePath)) {
-                    throw new Exception("ディレクトリは新規として開けません");
+                    throw new Exception(CommonStringResources.Instance.CannotOpenDirectoryAsNewFile);
                 }
                 // item.Contentのファイル名を取得
                 string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(contentFilePath));

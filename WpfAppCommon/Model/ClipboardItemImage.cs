@@ -1,8 +1,9 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
-using LibGit2Sharp;
 using LiteDB;
+using PythonAILib.Model;
+using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
@@ -12,16 +13,13 @@ namespace WpfAppCommon.Model {
 
         public ClipboardItem? ClipboardItem { get; set; }
 
-        public ClipboardItemImage() {
-
-        }
         public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
-            ClipboardItemImage itemImage = new();
-            itemImage.ClipboardItem = clipboardItem;
-            itemImage.Image = image;
+            ClipboardItemImage itemImage = new() {
+                ClipboardItem = clipboardItem,
+                Image = image
+            };
             return itemImage;
         }
-
 
         // 画像イメージのBase64文字列
         public string ImageBase64 { get; set; } = String.Empty;
@@ -89,36 +87,38 @@ namespace WpfAppCommon.Model {
 
         // 削除
         public void Delete() {
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemImage(this);
-            // クリップボードアイテムとファイルを同期する
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
-                // SyncFolderName/フォルダ名/ファイル名を削除する
-                string syncFolderName = ClipboardAppConfig.SyncFolderName;
-                if (ClipboardItem == null) {
-                    throw new Exception("FilePath is null");
-                }
-                string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem.FolderPath);
-                string syncFilePath = System.IO.Path.Combine(syncFolder, Id.ToString());
-                if (System.IO.File.Exists(syncFilePath)) {
-                    System.IO.File.Delete(syncFilePath);
-                }
-                // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
-                    try {
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
+            string idString = Id.ToString();
+
+            Task.Run(() => {
+                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                    // SyncFolderName/フォルダ名/ファイル名を削除する
+                    string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                    if (ClipboardItem == null) {
+                        throw new Exception("FilePath is null");
+                    }
+                    string syncFolder = Path.Combine(syncFolderName, ClipboardItem.FolderPath);
+                    string syncFilePath = Path.Combine(syncFolder, idString);
+                    if (File.Exists(syncFilePath)) {
+                        File.Delete(syncFilePath);
+                    }
+                    // 自動コミットが有効の場合はGitにコミット
+                    if (ClipboardAppConfig.AutoCommit) {
+                        ClipboardItem.GitCommit(syncFilePath);
                     }
                 }
+            });
+            // Embeddingを削除
+            if (ClipboardItem != null) {
+                LogWrapper.Info(CommonStringResources.Instance.DeleteTextEmbeddingFromImage);
+                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
+                // ImageInfoを作成
+                ImageInfo imageInfo = new(VectorDBUpdateMode.delete, idString);
+                folderVectorDBItem.DeleteIndex(imageInfo);
+                LogWrapper.Info(CommonStringResources.Instance.DeletedTextEmbeddingFromImage);
             }
+
+            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemImage(this);
+
         }
         // 保存
         public void Save() {
@@ -142,21 +142,26 @@ namespace WpfAppCommon.Model {
 
                 // 自動コミットが有効の場合はGitにコミット
                 if (ClipboardAppConfig.AutoCommit) {
-                    try {
-                        using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
-                            Commands.Stage(repo, syncFilePath);
-                            Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                            Signature committer = author;
-                            repo.Commit("Auto commit", author, committer);
-                            LogWrapper.Info($"Gitにコミットしました:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
-                        }
-                    } catch (RepositoryNotFoundException e) {
-                        LogWrapper.Info($"リポジトリが見つかりませんでした:{ClipboardAppConfig.SyncFolderName} {e.Message}");
-                    } catch (EmptyCommitException e) {
-                        LogWrapper.Info($"コミットが空です:{syncFilePath} {e.Message}");
-                    }
+                    ClipboardItem.GitCommit(syncFilePath);
                 }
             }
+        }
+
+        // Embeddingを生成
+        // Embeddingを更新する
+        public void UpdateEmbedding() {
+            if (ClipboardItem == null) {
+                throw new Exception("ClipboardItem is null");
+            }
+            LogWrapper.Info(CommonStringResources.Instance.SaveTextEmbeddingFromImage);
+
+            ImageInfo imageInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), ImageBase64);
+
+            // VectorDBItemを取得
+            VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
+            // Embeddingを保存
+            folderVectorDBItem.UpdateIndex(imageInfo);
+            LogWrapper.Info(CommonStringResources.Instance.SavedTextEmbeddingFromImage);
         }
 
         // 取得

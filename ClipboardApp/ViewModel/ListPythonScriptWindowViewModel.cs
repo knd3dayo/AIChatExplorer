@@ -29,12 +29,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        public string Title {
-            get {
-                return ActionMode == ActionModeEnum.Exec ? "Pythonスクリプトを選択" : "Pythonスクリプト一覧";
-            }
-        }
-
         private Action<ScriptItem> afterSelect = (scriptItem) => { };
 
         // ExecモードまたはSelectモード時は、実行ボタンを表示する。
@@ -46,7 +40,7 @@ namespace ClipboardApp.ViewModel {
         // Selectボタンのテキスト Selectモード時は「選択」、Execモード時は「実行」
         public string SelectButtonText {
             get {
-                return ActionMode == ActionModeEnum.Exec ? "実行" : "選択";
+                return ActionMode == ActionModeEnum.Exec ? StringResources.Execute : StringResources.Select;
             }
         }
 
@@ -70,7 +64,7 @@ namespace ClipboardApp.ViewModel {
         // Scriptを編集するときの処理
         public SimpleDelegateCommand<object> EditScriptItemCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
-                LogWrapper.Error("スクリプトを選択してください");
+                LogWrapper.Error(StringResources.SelectScript);
                 return;
             }
             PythonCommands.EditScriptItemCommandExecute(SelectedScriptItem);
@@ -78,7 +72,7 @@ namespace ClipboardApp.ViewModel {
         // Scriptを削除したときの処理
         public SimpleDelegateCommand<object> DeleteScriptCommand => new((parameter) => {
             if (SelectedScriptItem == null) {
-                LogWrapper.Error("スクリプトを選択してください");
+                LogWrapper.Error(StringResources.SelectScript);
                 return;
             }
             ScriptItem.DeleteScriptItem(SelectedScriptItem);
@@ -89,7 +83,7 @@ namespace ClipboardApp.ViewModel {
         // 選択ボタンを押したときの処理
         public SimpleDelegateCommand<object> SelectScriptItemCommand => new((parameter) => {
             if (_selectedScriptItem == null) {
-                LogWrapper.Error("スクリプトを選択してください");
+                LogWrapper.Error(StringResources.SelectScript);
                 return;
             }
             // Actionを実行
@@ -99,12 +93,6 @@ namespace ClipboardApp.ViewModel {
                 selectScriptWindow.Close();
 
             }
-        });
-        // キャンセルボタンを押したときの処理
-        public SimpleDelegateCommand<ListPythonScriptWindow> CloseCommand => new((selectScriptWindow) => {
-            // ウィンドウを閉じる
-            selectScriptWindow.Close();
-
         });
 
     }

@@ -27,7 +27,7 @@ namespace WpfAppCommon.Model {
                     item = new ClipboardAppVectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
                         Name = SystemCommonVectorDBName,
-                        Description = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。",
+                        Description = CommonStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
                         Type = VectorDBTypeEnum.Chroma,
                         VectorDBURL = vectorDBPath,
                         DocStoreURL = $"sqlite:///{docDBPath}",
@@ -104,36 +104,24 @@ namespace WpfAppCommon.Model {
             return GetItems(true).FirstOrDefault(item => item.Id == id);
         }
 
-
-
-        public override void UpdateIndex(IPythonFunctions.ContentInfo clipboard) {
+        public override void UpdateIndex(ContentInfo contentInfo) {
             // CollectionNameの設定
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
         }
 
-        public override void DeleteIndex(IPythonFunctions.ContentInfo clipboard) {
+        public override void DeleteIndex(ContentInfo contentInfo) {
 
-            PythonExecutor.PythonFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), clipboard, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
         }
 
-        // TestLangChain
-        public void TestLangChain() {
-            try {
-                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-                List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "こんにちは")];
-                chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
-                ChatResult? result = chatController.ExecuteChat();
-                if (string.IsNullOrEmpty(result?.Response)) {
-                    LogWrapper.Error("[NG]:LangChainの実行に失敗しました。");
-                } else {
-                    string Message = "[OK]:LangChainの実行が可能です。";
-                    LogWrapper.Info(Message);
-                }
-            } catch (Exception ex) {
-                string Message = "[NG]:LangChainの実行に失敗しました。\n[メッセージ]" + ex.Message + "\n[スタックトレース]" + ex.StackTrace;
-                LogWrapper.Error(Message);
-            }
+        public override void UpdateIndex(ImageInfo imageInfo) {
+            // CollectionNameの設定
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
+        }
+
+        public override void DeleteIndex(ImageInfo imageInfo) {
+
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
         }
 
     }

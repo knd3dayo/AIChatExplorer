@@ -19,7 +19,7 @@
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -33,15 +33,10 @@
             <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-
     <Window.InputBindings>
         <KeyBinding
-            Key="Enter"
-            Command="{Binding OKButtonCommand, Mode=OneTime}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-        <KeyBinding
             Key="Escape"
-            Command="{Binding CancelButtonCommand, Mode=OneTime}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <!--  Ctrl + Sで保存  -->
         <KeyBinding
@@ -75,22 +70,29 @@
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="ファイル">
+                        <MenuItem
+                            Command="{Binding ItemViewModel.OpenContentAsFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{Binding StringResources.OpenTextAsFile, Mode=OneTime}" />
                         <!--  ファイルを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileCommand}" Header="ファイルを開く" />
+                        <MenuItem Command="{Binding ItemViewModel.OpenFileCommand}" Header="{Binding StringResources.OpenFile, Mode=OneTime}" />
                         <!--  新規ファイルとして開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" Header="新規ファイルとして開く" />
+                        <MenuItem Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" Header="{Binding StringResources.OpenAsNewFile, Mode=OneTime}" />
                         <!--  フォルダを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="フォルダを開く" />
+                        <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
                         <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="テキストを抽出" />
+                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
-                        <MenuItem Command="{Binding ItemViewModel.OpenContentAsFileCommand}" Header="テキストをファイルとして開く" />
 
-                        <MenuItem Command="{Binding ItemViewModel.MaskDataCommand}" Header="データをマスキング" />
                         <!--  画像を開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="画像を開く" />
+                        <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="{Binding StringResources.OpenImage, Mode=OneTime}" />
                         <!--  画像からテキストを抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.MenuItemExtractTextFromImageCommand}" Header="画像からテキストを抽出" />
+                        <MenuItem Command="{Binding ItemViewModel.ExtractTextFromImageWithOpenAICommand}" Header="{Binding StringResources.ExtractTextFromImage, Mode=OneTime}" />
+
+                        <MenuItem
+                            Command="{Binding ItemViewModel.MaskDataCommand}"
+                            Header="{Binding StringResources.MaskData, Mode=OneTime}"
+                            Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
                     </MenuItem>
                 </Menu>
 
@@ -117,7 +119,7 @@
                     Width="100"
                     Margin="10,10,10,0"
                     HorizontalContentAlignment="Center"
-                    Content="タイトル" />
+                    Content="{Binding StringResources.Title, Mode=OneTime}" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -135,7 +137,7 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="ここをクリックするとタグ編集画面が開きます"
+                    materialDesign:HintAssist.Hint="{Binding StringResources.ClickHereToOpenTheTagEditScreen, Mode=OneTime}"
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
                     <TextBox.InputBindings>
@@ -153,7 +155,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="テキスト">
+                    Header="{Binding StringResources.Text, Mode=OneTime}">
                     <TextBox
                         Name="Editor"
                         Margin="10,3,10,3"
@@ -166,12 +168,8 @@
                         VerticalScrollBarVisibility="Auto">
                         <TextBox.InputBindings>
                             <KeyBinding
-                                Key="Enter"
-                                Command="{Binding OKButtonCommand, Mode=OneTime}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-                            <KeyBinding
                                 Key="Escape"
-                                Command="{Binding CancelButtonCommand, Mode=OneTime}"
+                                Command="{Binding CloseCommand, Mode=OneTime}"
                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
                             <KeyBinding
                                 Key="A"
@@ -193,7 +191,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="背景情報"
+                    Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
                     <TextBox
                         xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
@@ -226,7 +224,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="サマリー"
+                    Header="{Binding StringResources.Summary, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.SummaryVisibility}">
                     <TextBox
                         xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
@@ -259,7 +257,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="ファイル"
+                    Header="{Binding StringResources.File, Mode=OneTime}"
                     Visibility="{Binding FileTabVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
@@ -304,7 +302,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="ファイルパス" />
+                                Text="{Binding StringResources.FilePath, Mode=OneTime}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -330,7 +328,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="フォルダ" />
+                                Text="{Binding StringResources.Folder, Mode=OneTime}" />
 
                             <TextBox
                                 Grid.Row="1"
@@ -356,7 +354,7 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="ファイル名" />
+                                Text="{Binding StringResources.FileName, Mode=OneTime}" />
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="1"
@@ -381,7 +379,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
-                                Text="フォルダ名とファイル名" />
+                                Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="1"
@@ -411,7 +409,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="イメージ"
+                    Header="{Binding StringResources.Image, Mode=OneTime}"
                     Visibility="{Binding ImageTabVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
@@ -430,7 +428,7 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="画像" />
+                                                <TextBlock Text="{Binding StringResources.Image, Mode=OneTime}" />
                                                 <ContentControl>
                                                     <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
                                                 </ContentControl>
@@ -462,7 +460,6 @@
             <DockPanel HorizontalAlignment="Left">
                 <ToggleButton
                     x:Name="MenuToggleButton"
-                    Height="30"
                     Margin="10,10,10,10"
                     AutomationProperties.Name="HamburgerToggleButton"
                     DockPanel.Dock="Left"
@@ -480,29 +477,26 @@
                     <Button
                         Grid.Column="0"
                         Width="120"
-                        Height="30"
                         Margin="10,10,10,10"
                         Command="{Binding QAChatButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="QpenAIチャット"
+                        Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                     <Button
                         Grid.Column="1"
                         Width="100"
-                        Height="30"
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="OK"
+                        Content="{Binding StringResources.OK, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                     <Button
                         Grid.Column="2"
                         Width="100"
-                        Height="30"
                         Margin="10,10,10,10"
-                        Command="{Binding CancelButtonCommand, Mode=OneTime}"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="キャンセル"
+                        Content="{Binding StringResources.Cancel, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                 </Grid>
             </DockPanel>

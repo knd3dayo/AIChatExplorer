@@ -9,20 +9,8 @@ from openai_client import OpenAIClient
 import langchain_util
 import langchain_object_processor
 
-# sys.stdout、sys.stderrが存在しない場合にエラーになるのを回避するために、ダミーのsys.stdout、sys.stderrを設定する
-# see: https://github.com/huggingface/transformers/issues/24047
-if sys.stdout is None:
-    sys.stdout = open(os.devnull, "w", encoding="utf-8")
-if sys.stderr is None:
-    sys.stderr = open(os.devnull, "w", encoding="utf-8")
-
-# FaissのIndex更新後にretrieveを行うと
-# OMP: Error #15: Initializing libomp140.x86_64.dll, but found libiomp5md.dll already initialized.
-# が出力されることへの対応。
-# see: https://stackoverflow.com/questions/64209238/error-15-initializing-libiomp5md-dll-but-found-libiomp5md-dll-already-initial
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-
-import openai_client, ai_app_spacy, ai_app_pyocr
+import excel_util
+import openai_client
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -48,16 +36,11 @@ def capture_stdout_stderr(func):
         return result, log
     return wrapper
 
+# ファイルからテキストを抽出する
 def extract_text(filename):
     import file_extractor
     return file_extractor.extract_text(filename)
 
-# spacy関連
-def mask_data(textList: list, props = {}):
-    return ai_app_spacy.mask_data(textList, props)
-
-def extract_entity(text, props = {}):
-    return ai_app_spacy.extract_entity(text, props)
 
 ########################
 # openai関連
@@ -110,10 +93,10 @@ def list_openai_models(props_json: str):
 # langchain関連
 ########################
 
-def run_vector_search(props_json: str, prompt: str):
+def run_vector_search(props_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        result = langchain_util.run_vector_search(props_json, prompt)
+        result = langchain_util.run_vector_search(props_json, request_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -128,11 +111,14 @@ def run_vector_search(props_json: str, prompt: str):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-def run_langchain_chat( props_json: str, prompt: str, request_json: str):
+def run_langchain_chat( props_json: str, request_prompt: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
 
-        result = langchain_util.run_langchain_chat(props_json, prompt, request_json)
+        # process_langchain_chat_parameterを実行
+        openai_props, vector_db_props, prompt, chat_history_json, search_kwarg  = langchain_util.process_langchain_chat_parameter(props_json, request_prompt, request_json)
+        # langchan_chatを実行
+        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json, search_kwarg)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -239,7 +225,7 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, image_url, description = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
+        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
         # LangChainObjectProcessorオブジェクトを生成
         processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
         
@@ -252,7 +238,7 @@ def __update_or_delete_image_index(props_json, request_json, mode):
              processor.delete_image_index(source)
         if mode == "update":
             # update_image_indexを実行
-            processor.update_image_index(text, image_url, source, description=description)
+            processor.update_image_index(text,  source, source_url, description=description, image_url=image_url)
             
         # 結果用のdictを生成
         result = {}
@@ -270,27 +256,54 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return result_json
 
-# pyocr関連
-def extract_text_from_image(byte_data,tessercat_exe_path) -> dict:
-    # strout,stderrorをStringIOでキャプチャする
-    buffer = StringIO()
-    sys.stdout = buffer
-    sys.stderr = buffer
+# export_to_excelを実行する
+def export_to_excel(filePath, dataJson):
+    # export_to_excelを実行する関数を定義
+    def func() -> dict:
+        # dataJsonをdictに変換
+        data = json.loads(dataJson)
+        # export_to_excelを実行
+        print(data)
+        excel_util.export_to_excel(filePath, data.get("rows",[]))
+        # 結果用のdictを生成
+        result = {}
+        return result
     
-    result: str =  ai_app_pyocr.extract_text_from_image(byte_data, tessercat_exe_path)
-    # strout,stderrorを元に戻す
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
     
-    result_dict = {"text": result, "log": buffer.getvalue()}
-    return result_dict
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return
 
-# run_script関数
-def run_script(script, input_str):
-    exec(script, globals())
-    result = execute(input_str)
-    return result
+# import_to_excelを実行する
+def import_from_excel(filePath):
+    # import_to_excelを実行する関数を定義
+    def func() -> dict:
+        # import_to_excelを実行
+        data = excel_util.import_from_excel(filePath)
+        # 結果用のdictを生成
+        result = {}
+        result["rows"] = data
+        return result
     
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行
+    result, log = wrapper()
+    
+    # resultにlogを追加
+    result["log"] = log
+    
+    # resultをJSONに変換して返す
+    result_json = json.dumps(result, ensure_ascii=False, indent=4)
+    return result_json
+
 # テスト用
 def hello_world():
     return "Hello World"

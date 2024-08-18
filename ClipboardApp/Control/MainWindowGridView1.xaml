@@ -5,12 +5,13 @@
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp.Control"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel"
     x:Name="Root"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <commonModel:CommonStringResources x:Key="StringResources" />
         <ContextMenu
             x:Key="GridRowContextMenu"
             FontSize="12"
@@ -22,7 +23,7 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <!--  上はDataGrid、中間にはGridSplitter、下はプレビュー画面  -->
+        <!--  DataGrid, GridSplitter, Preview  -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="5" />
@@ -53,57 +54,50 @@
             </i:Interaction.Triggers>
             <DataGrid.InputBindings>
                 <!--  Open selected item window by double-clicking  -->
-                <MouseBinding
-                    Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
-                    CommandParameter="{Binding}"
-                    MouseAction="LeftDoubleClick" />
+                <MouseBinding Command="{Binding OpenSelectedItemCommand, ElementName=Root}" MouseAction="LeftDoubleClick" />
                 <KeyBinding
                     Key="C"
                     Command="{Binding CopyItemCommand, ElementName=Root}"
-                    CommandParameter="{Binding SelectedItem}"
                     Modifiers="Ctrl" />
-                <KeyBinding
-                    Key="Delete"
-                    Command="{Binding DeleteItemCommand, ElementName=Root}"
-                    CommandParameter="{Binding SelectedItem}" />
+                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, ElementName=Root}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <!--  ContentType  -->
                 <DataGridCheckBoxColumn
                     Width="100"
                     Binding="{Binding IsPinned}"
-                    Header="ピン留め" />
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Pin}" />
                 <DataGridTextColumn
                     Width="150"
                     MaxWidth="300"
                     Binding="{Binding UpdatedAtString}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="更新日"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.UpdateDate}"
                     IsReadOnly="True" />
                 <!--  ContentType  -->
                 <DataGridTextColumn
                     Width="100"
                     Binding="{Binding ContentTypeString}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="種別"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Type}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="100"
                     Binding="{Binding TagsText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="タグ"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Tag}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding DescriptionText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="タイトル"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Title}"
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding SourceApplicationTitleText}"
                     ElementStyle="{StaticResource SingleLineTextBlock}"
-                    Header="ソースタイトル"
+                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.SourceTitle}"
                     IsReadOnly="True" />
             </DataGrid.Columns>
             <DataGrid.RowStyle>
@@ -141,14 +135,14 @@
                     VerticalAlignment="Top"
                     FontSize="10pt"
                     IsReadOnly="True"
-                    Text="{Binding Path=SelectedItem.DescriptionText, Mode=OneWay}" />
+                    Text="{Binding SelectedItem.DescriptionText, ElementName=Root, Mode=OneWay}" />
                 <ListBox
                     Grid.Row="1"
                     MinHeight="0"
                     MaxHeight="100"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
-                    ItemsSource="{Binding SelectedItem.Images}">
+                    ItemsSource="{Binding SelectedItem.Images, ElementName=Root}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Image
@@ -174,7 +168,7 @@
                         BorderThickness="0"
                         FontSize="10pt"
                         IsReadOnly="True"
-                        Text="{Binding Path=SelectedItem.Content, Mode=OneWay}">
+                        Text="{Binding Path=SelectedItem.Content, ElementName=Root, Mode=OneWay}">
                         <TextBox.InputBindings>
                             <KeyBinding
                                 Key="A"

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiteDB;
 
 namespace WpfAppCommon.Model {
@@ -13,7 +8,6 @@ namespace WpfAppCommon.Model {
     // IsGlobalSearchがFalseの場合は検索フォルダのみ検索を行う
     // このクラスのオブジェクトはLiteDBに保存される
     public class SearchRule {
-
         public enum SearchType {
             // 標準 or 検索フォルダ
             Normal,
@@ -43,14 +37,14 @@ namespace WpfAppCommon.Model {
         // 保存
         public void Save() {
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertSearchRule(this);
-        }   
+        }
 
         public List<ClipboardItem> SearchItems() {
             List<ClipboardItem> result = [];
             if (TargetFolder == null) {
                 return result;
             }
-            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder , SearchCondition).ToList();
+            return ClipboardAppFactory.Instance.GetClipboardDBController().SearchItems(TargetFolder, SearchCondition).ToList();
         }
 
         public SearchRule Copy() {

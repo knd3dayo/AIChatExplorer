@@ -36,11 +36,6 @@ namespace ClipboardApp.ViewModel {
             TagName = "";
             ExcludeTag = false;
         });
-        // 閉じるボタンの処理
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-        });
 
         // 検索ボタンの処理
         public SimpleDelegateCommand<Window> SearchCommand => new((window) => {

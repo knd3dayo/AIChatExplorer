@@ -11,7 +11,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="window1"
-    Title="{Binding StringResources.AppName}"
+    Title="{Binding StringResources.AppName, Mode=OneTime}"
     Width="800"
     Height="450"
     Style="{StaticResource MaterialDesignWindow}"
@@ -320,7 +320,8 @@
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
                     PreviewModeVisibility="{Binding PreviewModeVisibility}"
-                    SelectTextCommand="{Binding SelectTextCommand}" />
+                    SelectTextCommand="{Binding SelectTextCommand}"
+                    SelectedItem="{Binding SelectedItem}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar

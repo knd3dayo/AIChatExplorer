@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class TextSelector {
@@ -92,7 +93,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                LogWrapper.Info("ファイルを実行できませんでした。テキストファイルとして開きます。" + ex.Message);
+                LogWrapper.Info($"{CommonStringResources.Instance.FailedToRunFile} {CommonStringResources.Instance.OpenAsTextFile}" + ex.Message);
                 OpenTextFile(selectedText);
             }
         }
@@ -107,7 +108,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                LogWrapper.Error("ファイルを実行できませんでした:" + ex.Message);
+                LogWrapper.Error($"{CommonStringResources.Instance.FailedToRunFile}: {ex.Message}");
             }
         }
     }

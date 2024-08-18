@@ -15,8 +15,6 @@ namespace WpfAppCommon.Model {
             }
         }
 
-
-
         // 画像
         [BsonIgnore]
         public Image? Image {
@@ -48,15 +46,12 @@ namespace WpfAppCommon.Model {
             }
         }
 
-
         // 画像のサムネイル
         [BsonIgnore]
         public Image? Thumbnail {
             get {
                 return Image?.GetThumbnailImage(100, 100, () => false, IntPtr.Zero);
-
             }
-
         }
         // 画像のサムネイルのBitmapImage
         [BsonIgnore]
@@ -74,6 +69,5 @@ namespace WpfAppCommon.Model {
                 return bi;
             }
         }
-
     }
 }

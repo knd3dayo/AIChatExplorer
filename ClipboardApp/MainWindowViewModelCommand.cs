@@ -1,23 +1,21 @@
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
+using ClipboardApp.ViewModel;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
-using QAChat.ViewModel;
-using ClipboardApp.ViewModel;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel {
 
 
@@ -29,7 +27,7 @@ namespace ClipboardApp
 
         public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
             // 終了確認ダイアログを表示。Yesならアプリケーションを終了
-            MessageBoxResult result = MessageBox.Show("終了しますか?", "Confirmation", MessageBoxButton.YesNo);
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 Application.Current.Shutdown();
             }
@@ -47,7 +45,7 @@ namespace ClipboardApp
                         RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, clipboardItem));
                     });
 
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run(() => {
                         SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
@@ -71,7 +69,7 @@ namespace ClipboardApp
                 WindowsNotificationController.Start(RootFolderViewModel.ClipboardItemFolder, (item) => {
                     // クリップボードアイテムが追加された時の処理
                     RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(RootFolderViewModel, item));
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run(() => {
                         SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
@@ -136,7 +134,7 @@ namespace ClipboardApp
             dummyItem.OpenOpenAIChatWindowCommand.Execute();
         }
         // 画像エビデンスチェッカーを開くコマンド
-        public  void OpenScreenshotCheckerWindowExecute() {
+        public void OpenScreenshotCheckerWindowExecute() {
             ImageChat.MainWindow.OpenMainWindow(null, false, () => {
                 SelectedFolder?.LoadFolderCommand.Execute();
             });
@@ -162,9 +160,9 @@ namespace ClipboardApp
             if (folderViewModel != null && folderViewModel.ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folderViewModel.ClipboardItemFolder);
                 searchConditionRule ??= new() {
-                        Type = SearchRule.SearchType.SearchFolder,
-                        SearchFolder = folderViewModel.ClipboardItemFolder
-                    };
+                    Type = SearchRule.SearchType.SearchFolder,
+                    SearchFolder = folderViewModel.ClipboardItemFolder
+                };
             } else {
                 searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             }
@@ -192,25 +190,10 @@ namespace ClipboardApp
         public static void DeleteDisplayedItemCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             if (SelectedFolder == null) {
-                LogWrapper.Error("フォルダが選択されていません");
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             ClipboardFolderViewModel.DeleteDisplayedItemCommandExecute(SelectedFolder);
-        }
-
-        // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public static void DeleteSelectedItemCommandExecute(MainWindowViewModel windowViewModel) {
-            // 選択中のアイテムがない場合は処理をしない
-            if (windowViewModel.SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
-                return;
-            }
-            if (windowViewModel.SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
-                return;
-            }
-
-            DeleteSelectedItemCommandExecute(windowViewModel.SelectedFolder, windowViewModel.SelectedItems);
         }
 
         // メニューの「設定」をクリックしたときの処理
@@ -231,19 +214,17 @@ namespace ClipboardApp
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
+                LogWrapper.Error(StringResources.NoItemSelected);
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
+                LogWrapper.Error(StringResources.FolderNotSelected);
                 return;
             }
 
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
-                clipboardItemViewModel.IsPinned = !clipboardItemViewModel.IsPinned;
-                // ピン留めの時は更新日時を変更しない
-                clipboardItemViewModel.SaveClipboardItemCommand.Execute(false);
+                clipboardItemViewModel.ChangePinCommand.Execute();
             }
 
             // フォルダ内のアイテムを再読み込み
@@ -258,13 +239,13 @@ namespace ClipboardApp
             ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
 
             // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             // Cut Flagを立てる
@@ -276,7 +257,7 @@ namespace ClipboardApp
             }
             windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
 
-            LogWrapper.Info("切り取りしました");
+            LogWrapper.Info(CommonStringResources.Instance.Cut);
 
         }
         // Ctrl + C が押された時の処理
@@ -286,16 +267,16 @@ namespace ClipboardApp
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItem == null) {
-                LogWrapper.Error("選択中のアイテムがない");
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             if (SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
 
@@ -310,10 +291,10 @@ namespace ClipboardApp
 
             try {
                 ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
-                LogWrapper.Info("コピーしました");
+                LogWrapper.Info(CommonStringResources.Instance.Copied);
 
             } catch (Exception e) {
-                string message = $"エラーが発生しました。\nメッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+                string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
 
@@ -326,7 +307,7 @@ namespace ClipboardApp
 
             // 貼り付け先のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("貼り付け先のフォルダがない");
+                LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
 
@@ -334,7 +315,7 @@ namespace ClipboardApp
             if (CopiedItems.Count > 0) {
                 // コピー元のフォルダがない場合は処理をしない
                 if (CopiedItemFolder == null) {
-                    LogWrapper.Error("コピー元のフォルダがない");
+                    LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
                     return;
                 }
                 SelectedFolder.PasteClipboardItemCommandExecute(
@@ -349,14 +330,14 @@ namespace ClipboardApp
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
-                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem( ClipboardController.LastClipboardChangedEventArgs,
+                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
                             SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                         });
 
-                        Application.Current.Dispatcher.Invoke(() => {
+                        MainUITask.Run(() => {
                             windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                         });
                     });
@@ -369,15 +350,16 @@ namespace ClipboardApp
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
 
             // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
+
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
@@ -390,15 +372,16 @@ namespace ClipboardApp
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
 
             // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems.Count == 0) {
-                LogWrapper.Error("選択中のアイテムがない");
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // 選択中のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
-                LogWrapper.Error("選択中のフォルダがない");
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
+
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems,
@@ -442,36 +425,13 @@ namespace ClipboardApp
 
         }
 
-
-        /// <summary>
-        /// 選択中のアイテムを削除する処理
-        /// 削除後にフォルダ内のアイテムを再読み込む
-        /// </summary>
-        /// <param name="obj"></param>        
-        public static void DeleteSelectedItemCommandExecute(
-            ClipboardFolderViewModel clipboardItemFolder, IEnumerable<ClipboardItemViewModel> itemViewModels) {
-
-            //　削除確認ボタン
-            MessageBoxResult result = MessageBox.Show("選択中のアイテムを削除しますか?", "Confirmation", MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                // 選択中のアイテムを削除
-                foreach (var item in itemViewModels) {
-                    if (item is null) {
-                        continue;
-                    }
-                    item.ClipboardItem.Delete();
-                }
-                // フォルダ内のアイテムを再読み込む
-                clipboardItemFolder.LoadFolderCommand.Execute();
-                LogWrapper.Info("削除しました");
-            }
-        }
         // クリップボードアイテムを作成する。
         // Ctrl + N が押された時の処理
         // メニューの「アイテム作成」をクリックしたときの処理
         public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
-            if (this.SelectedFolder == null) {
-                LogWrapper.Error("フォルダが選択されていません。");
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             this.SelectedFolder.CreateItemCommandExecute();
@@ -513,7 +473,27 @@ namespace ClipboardApp
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
         public SimpleDelegateCommand<object> DeleteSelectedItemCommand => new((parameter) => {
-            DeleteSelectedItemCommandExecute(this);
+            // 選択中のアイテムがない場合は処理をしない
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                return;
+            }
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            //　削除確認ボタン
+            MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedItems, StringResources.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                // 選択中のアイテムを削除
+                foreach (var item in SelectedItems) {
+                    item.DeleteItemCommand.Execute();
+                }
+                // フォルダ内のアイテムを再読み込む
+                SelectedFolder.LoadFolderCommand.Execute();
+                LogWrapper.Info(StringResources.Deleted);
+            }
         });
 
 
@@ -606,6 +586,6 @@ namespace ClipboardApp
             VersionWindow.OpenVersionWindow();
         });
 
-        
+
     }
 }

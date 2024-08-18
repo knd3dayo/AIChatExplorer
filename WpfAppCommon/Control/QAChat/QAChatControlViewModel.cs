@@ -25,7 +25,7 @@ namespace WpfAppCommon.Control.QAChat {
                 ClipboardFolder = ClipboardItem.GetFolder();
                 // チャット履歴用のItemの設定
                 // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
-                ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(ClipboardFolder, ClipboardFolder.CHAT_ROOT_FOLDER_NAME, true);
+                ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(ClipboardFolder, ClipboardFolder.ChatRootFolder, true);
                 ChatHistoryItem = new(chatFolder.Id);
 
                 // ClipboardItemImages を ImageItems に設定
@@ -50,6 +50,8 @@ namespace WpfAppCommon.Control.QAChat {
             }
 
         }
+
+        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public QAChatStartupProps? QAChatStartupProps { get; set; }
 

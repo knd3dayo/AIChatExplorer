@@ -9,40 +9,37 @@
     xmlns:local="clr-namespace:ImageChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="MainWindow"
+    Title="{Binding StringResources.ImageChat, Mode=OneTime}"
     Width="800"
     Height="450"
     WindowState="Maximized"
     mc:Ignorable="d">
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
     <Window.Resources>
+        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
             <Setter Property="FontSize" Value="12" />
-            <Setter Property="Height" Value="Auto" />
+            <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:MainWindowViewModel />
-    </Window.DataContext>
-    <Window.InputBindings>
-        <KeyBinding
-            Key="Enter"
-            Command="{Binding SendChatCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-        <KeyBinding
-            Key="Escape"
-            Command="{Binding CloseCommand}"
-            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-    </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -72,25 +69,25 @@
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.File}">
+                        Header="{Binding StringResources.File, Mode=OneTime}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SelectImageFileCommand}"
+                            Command="{Binding SelectImageFileComman, Mode=OneTime}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="画像ファイル選択" />
+                            Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Edit}">
+                        Header="{Binding StringResources.Edit, Mode=OneTime}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ScreenShotCheckPromptCommand}"
+                            Command="{Binding ScreenShotCheckPromptCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="画像エビデンスチェック項目編集" />
+                            Header="{Binding StringResources.EditImageEvidenceCheckItem, Mode=OneTime}" />
                     </MenuItem>
                 </Menu>
                 <Menu
@@ -103,9 +100,9 @@
                     <MenuItem
                         Height="Auto"
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding SettingCommand}"
+                        Command="{Binding SettingCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="設定"
+                        Header="{Binding StringResources.Setting, Mode=OneTime}"
                         IsEnabled="{Binding IsStartFromInternalApp}" />
                 </Menu>
 
@@ -125,7 +122,7 @@
                 Margin="10,0,10,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Text="タイトル" />
+                Text="{Binding StringResources.Title, Mode=OneTime}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -168,20 +165,20 @@
                                 Text="{Binding FileName}" />
                             <Grid.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                     CommandParameter="{Binding}"
                                     Gesture="LeftDoubleClick" />
                             </Grid.InputBindings>
                             <Grid.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem
-                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
-                                        Header="開く" />
+                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
                                     <MenuItem
-                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
-                                        Header="削除" />
+                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
                                 </ContextMenu>
                             </Grid.ContextMenu>
                         </Grid>
@@ -208,7 +205,7 @@
                     <TextBox
                         MinHeight="50"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="ここに回答が表示されます"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.TheAnswerWillBeDisplayedHere, Mode=OneTime}"
                         AcceptsReturn="True"
                         FontSize="12"
                         IsReadOnly="True"
@@ -228,14 +225,13 @@
                     <TextBox
                         MinHeight="50"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="ここに質問を入力"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
                         AcceptsReturn="True"
                         FontSize="12"
                         Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Enter" Command="{Binding SendChatCommand}" />
-                            <KeyBinding Key="Escape" Command="{Binding CloseCommand}" />
+                            <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
                         </TextBox.InputBindings>
                     </TextBox>
                 </ScrollViewer>
@@ -257,25 +253,25 @@
                 Margin="10,10,10,10"
                 Command="{Binding SaveCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="保存" />
+                Content="{Binding StringResources.Save}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding SendChatCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="送信" />
+                Content="{Binding StringResources.Send}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding ClearChatCommand}"
-                Content="クリア" />
+                Content="{Binding StringResources.Clear}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding CloseCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="閉じる" />
+                Content="{Binding StringResources.Close}" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
         <ProgressBar
-            Grid.Row="1"
+            Grid.Row="2"
             IsIndeterminate="{Binding IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />

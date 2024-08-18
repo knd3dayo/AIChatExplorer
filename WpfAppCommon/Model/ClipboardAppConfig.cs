@@ -20,6 +20,29 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // 言語
+        private static string? _lang;
+        public static string Lang {
+            get {
+                if (_lang == null) {
+                    _lang = Properties.Settings.Default.Lang;
+                }
+                return _lang;
+            }
+            set {
+                _lang = value;
+                Properties.Settings.Default.Lang = value;
+            }
+        }
+        public static string ActualLang {
+            get {
+                if (string.IsNullOrEmpty(Lang)) {
+                    return  System.Globalization.CultureInfo.CurrentUICulture.Name;
+                }
+                return Lang;
+            }
+        }
+
         // このアプリケーションのデータ用のフォルダを取得
         public static string AppDataFolder {
             get {
@@ -60,6 +83,20 @@ namespace WpfAppCommon.Model {
             set {
                 _pythonDllPath = value;
                 WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
+            }
+        }
+        // PythonVenvPath
+        private static string? _pythonVenvPath;
+        public static string PythonVenvPath {
+            get {
+                if (_pythonVenvPath == null) {
+                    _pythonVenvPath = WpfAppCommon.Properties.Settings.Default.PythonVenvPath;
+                }
+                return _pythonVenvPath;
+            }
+            set {
+                _pythonVenvPath = value;
+                WpfAppCommon.Properties.Settings.Default.PythonVenvPath = value;
             }
         }
 
@@ -175,6 +212,21 @@ namespace WpfAppCommon.Model {
             set {
                 _autoExtractImageWithPyOCR = value;
                 WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithPyOCR = value;
+            }
+        }
+
+        // EmbeddingWhenExtractingTextFromImage
+        private static Boolean? _embeddingWhenExtractingTextFromImage;
+        public static bool EmbeddingWhenExtractingTextFromImage {
+            get {
+                if (_embeddingWhenExtractingTextFromImage == null) {
+                    _embeddingWhenExtractingTextFromImage = WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage;
+                }
+                return _embeddingWhenExtractingTextFromImage.Value;
+            }
+            set {
+                _embeddingWhenExtractingTextFromImage = value;
+                WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage = value;
             }
         }
 

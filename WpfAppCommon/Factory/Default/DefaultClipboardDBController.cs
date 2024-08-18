@@ -89,17 +89,17 @@ namespace WpfAppCommon.Factory.Default {
             }
             return result;
         }
-        public ClipboardFolder? GetRootFolder(string folderName) {
+        
+        public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
             // Debug FolderName = folderNameのアイテムが複数ある時はエラー
-            var items = collection.FindAll().Where(x => x.FolderName == folderName);
+            var items = collection.FindAll().Where(x => x.FolderType == folderType);
             if (items.Count() > 1) {
                 throw new Exception("RootFolderInfoに同じFolderNameが複数存在します。");
             }
-
-            ClipboardFolder.RootFolderInfo? item = collection.FindOne(x => x.FolderName == folderName);
+            // itemsの最初の要素を取得
+            var item = items.FirstOrDefault();
             return GetFolder(item?.FolderId);
-
         }
 
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId) {
@@ -136,20 +136,22 @@ namespace WpfAppCommon.Factory.Default {
             }
             return result;
         }
-
+        
         // ClipboardItemFolderをLiteDBに追加または更新する
         public void UpsertFolder(ClipboardFolder folder) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
             // フォルダの親フォルダのIdをチェック
             if (folder.ParentId == null || folder.ParentId == ObjectId.Empty) {
                 // 親フォルダのIDが存在しない場合は、ルートフォルダか否かをチェックする。GetRootFolderを呼び出す
-                var rootFolder = GetRootFolder(folder.FolderName);
+                var rootFolder = GetRootFolderByType(folder.FolderType);
                 // ルートフォルダが存在しない場合は、新規作成
                 if (rootFolder == null) {
                     var rootFolderInfoCollection = GetClipboardDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
-                    var rootFolderInfo = new ClipboardFolder.RootFolderInfo();
-                    rootFolderInfo.FolderName = folder.FolderName;
-                    rootFolderInfo.Id = ObjectId.NewObjectId();
+                    var rootFolderInfo = new ClipboardFolder.RootFolderInfo {
+                        FolderName = folder.FolderName,
+                        Id = ObjectId.NewObjectId(),
+                        FolderType = folder.FolderType
+                    };
                     rootFolderInfo.FolderId = rootFolderInfo.Id;
                     rootFolderInfoCollection.Upsert(rootFolderInfo);
 

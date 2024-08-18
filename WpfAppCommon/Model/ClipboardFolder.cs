@@ -1,12 +1,16 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Windows;
 using LiteDB;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
+using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -27,12 +31,14 @@ namespace WpfAppCommon.Model {
 
             public LiteDB.ObjectId FolderId { get; set; } = ObjectId.Empty;
 
+            public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
+
         }
 
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = "クリップボード";
-        public static readonly string SEARCH_ROOT_FOLDER_NAME = "検索フォルダ";
-        public static readonly string CHAT_ROOT_FOLDER_NAME = "チャット履歴";
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = "画像チェック";
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
+        public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
 
 
         //--------------------------------------------------------------------------------
@@ -50,6 +56,56 @@ namespace WpfAppCommon.Model {
             IsAutoProcessEnabled = parent?.IsAutoProcessEnabled ?? true;
 
         }
+        // 言語変更時にルートフォルダ名を変更する
+        public static void ChangeRootFolderNames(CommonStringResources toRes) {
+            // ClipboardRootFolder
+            ClipboardFolder? clipboardRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
+            if (clipboardRootFolder != null) {
+                clipboardRootFolder.FolderName = toRes.Clipboard;
+                clipboardRootFolder.Save();
+            }
+            // SearchRootFolder
+            ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
+            if (searchRootFolder != null) {
+                searchRootFolder.FolderName = toRes.SearchFolder;
+                searchRootFolder.Save();
+            }
+            // ChatRootFolder
+            ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
+            if (chatRootFolder != null) {
+                chatRootFolder.FolderName = toRes.ChatHistory;
+                chatRootFolder.Save();
+            }
+            // ImageCheckRootFolder
+            ClipboardFolder? imageCheckRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
+            if (imageCheckRootFolder != null) {
+                imageCheckRootFolder.FolderName = toRes.ImageChat;
+                imageCheckRootFolder.Save();
+            }
+
+        }
+        // 旧バージョンのアプリで既に作成済みのRootFolderを新バージョンアプリ用にマイグレーションする。
+        public static void MigrateRootFolder() {
+
+            var rootFolderInfoCollection = DefaultClipboardDBController.GetClipboardDatabase()
+                .GetCollection<ClipboardFolder.RootFolderInfo>(DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
+
+            List<RootFolderInfo> rootFolders = rootFolderInfoCollection.FindAll().ToList();
+            foreach (var rootFolderInfo in rootFolders) {
+                if (rootFolderInfo.FolderName == CommonStringResources.Instance.Clipboard) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Normal;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.SearchFolder) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Search;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ChatHistory) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.Chat;
+                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ImageChat) {
+                    rootFolderInfo.FolderType = FolderTypeEnum.ImageCheck;
+                }   
+            }
+            // 保存
+            rootFolderInfoCollection.Update(rootFolders);
+
+        }
 
         // アプリ共通の検索条件
         public static SearchRule GlobalSearchCondition { get; set; } = new();
@@ -57,12 +113,13 @@ namespace WpfAppCommon.Model {
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
             get {
-                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CLIPBOARD_ROOT_FOLDER_NAME);
+                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
                 if (rootFolder == null) {
                     rootFolder = new() {
                         FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                         IsRootFolder = true,
-                        IsAutoProcessEnabled = true
+                        IsAutoProcessEnabled = true,
+                        FolderType = FolderTypeEnum.Normal
                     };
                     rootFolder.Save();
                 }
@@ -74,7 +131,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder SearchRootFolder {
             get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(SEARCH_ROOT_FOLDER_NAME);
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = SEARCH_ROOT_FOLDER_NAME,
@@ -95,7 +152,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder ImageCheckRootFolder {
             get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(IMAGECHECK_ROOT_FOLDER_NAME);
+                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
@@ -115,7 +172,7 @@ namespace WpfAppCommon.Model {
 
         public static ClipboardFolder ChatRootFolder {
             get {
-                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(CHAT_ROOT_FOLDER_NAME);
+                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
                 if (chatRootFolder == null) {
                     chatRootFolder = new ClipboardFolder {
                         FolderName = CHAT_ROOT_FOLDER_NAME,
@@ -264,7 +321,7 @@ namespace WpfAppCommon.Model {
 
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
-                LogWrapper.Info("自動処理でアイテムが削除または移動されました");
+                LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
                 return item;
             }
             // 保存
@@ -272,7 +329,7 @@ namespace WpfAppCommon.Model {
             // Itemsに追加
             Items.Add(result);
             // 通知
-            LogWrapper.Info("アイテムを追加しました");
+            LogWrapper.Info(CommonStringResources.Instance.AddedItems);
             return item;
         }
 
@@ -298,11 +355,11 @@ namespace WpfAppCommon.Model {
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
             foreach (var rule in AutoProcessRules) {
-                LogWrapper.Info("自動処理を適用します " + rule.GetDescriptionString());
+                LogWrapper.Info($"{CommonStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 result = rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
-                    LogWrapper.Info("自動処理でアイテムが削除されました");
+                    LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedByAutoProcessing);
                     return null;
                 }
             }
@@ -310,15 +367,15 @@ namespace WpfAppCommon.Model {
         }
 
         // フォルダ内のアイテムをJSON形式でExport
-        public void ExportItemsToJson(string directoryPath) {
-            JsonArray jsonArray = [];
-            foreach (ClipboardItem item in Items) {
-                jsonArray.Add(ClipboardItem.ToJson(item));
-            }
-            string jsonString = jsonArray.ToString();
-            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.Id.ToString() + ".json";
+        public void ExportItemsToJson(string fileName) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            string jsonString =  System.Text.Json.JsonSerializer.Serialize(Items, options);
 
-            File.WriteAllText(Path.Combine(directoryPath, fileName), jsonString);
+            File.WriteAllText(fileName, jsonString);
 
         }
 
@@ -326,27 +383,29 @@ namespace WpfAppCommon.Model {
         public void ImportItemsFromJson(string json, Action<ActionMessage> action) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
                 return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                action(ActionMessage.Error("JSON文字列をパースできませんでした"));
+                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
                 return;
             }
 
             // Itemsをクリア
             Items.Clear();
 
-            foreach (JsonValue? jsonValue in jsonArray.Cast<JsonValue?>()) {
+            foreach (JsonObject? jsonValue in jsonArray.Cast<JsonObject?>()) {
                 if (jsonValue == null) {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
                 ClipboardItem? item = ClipboardItem.FromJson(jsonString, action);
+
                 if (item == null) {
                     continue;
                 }
+                item.FolderObjectId = Id;
                 // Itemsに追加
                 Items.Add(item);
                 //保存
@@ -446,10 +505,61 @@ namespace WpfAppCommon.Model {
             DeleteItem(mergeToItem);
 
         }
+        // --- Export/Import
+        public void ExportToExcel(string fileName, bool exportTitle, bool exportText, bool exportBackgroundInfo, bool exportSummary) {
+            // PythonNetの処理を呼び出す。
+            List<List<string>> data = [];
+            // ClipboardItemのリスト要素毎に処理を行う
+            foreach (var item in Items) {
+                List<string> row = [];
+                if (exportTitle) {
+                    row.Add(item.Description);
+                }
+                if (exportText) {
+                    row.Add(item.Content);
+                }
+                if (exportBackgroundInfo) {
+                    row.Add(item.BackgroundInfo);
+                }
+                if (exportSummary) {
+                    row.Add(item.Summary);
+                }
+                data.Add(row);
+            }
+            CommonDataTable dataTable = new(data);
 
+            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+
+        }
+
+        public void ImportFromExcel(string fileName, bool importTitle, bool importText) {
+            // importTitle, importTextがFalseの場合は何もしない
+            if (importTitle == false && importText == false) {
+                return;
+            }
+
+            // PythonNetの処理を呼び出す。
+            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            if (data == null) {
+                return;
+            }
+
+            foreach (var row in data.Rows) {
+                ClipboardItem item = new(Id);
+                // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
+                if (importTitle && importText) {
+                    item.Description = row.Count > 0? row[0] : "";
+                    item.Content = row.Count > 1 ? row[1] : "";
+                } else if (importTitle) {
+                    item.Description = row.Count > 0 ? row[0] : "";
+                } else if (importText) {
+                    item.Content = row.Count > 0 ? row[0] : "";
+                }
+                item.Save();
+            }
+        }
 
         //------------
-
         // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
         private string ConcatenateFileSystemPath(string parentPath, string childPath) {
             if (string.IsNullOrEmpty(parentPath))
@@ -465,14 +575,12 @@ namespace WpfAppCommon.Model {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
         }
 
+
         // 指定したFilePath名のフォルダを取得する。
-        public static ClipboardFolder? GetRFolder(string filePath, bool create = false) {
+        public static ClipboardFolder? GetAnotherTreeFolderRecursive(ClipboardFolder rootFolder , string filePath, bool create = false) {
+
             string[] pathList = filePath.Split(Path.DirectorySeparatorChar);
-            ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolder(pathList[0]);
-            // rootFolderがnullの場合は、Nullを返す
-            if (rootFolder == null) {
-                return null;
-            }
+
             // pathListの1から最後までを取得
             for (int i = 1; i < pathList.Length; i++) {
                 string folderName = pathList[i];
@@ -494,18 +602,14 @@ namespace WpfAppCommon.Model {
             return rootFolder;
         }
 
-        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder folder, string anotherTreeRoot, bool create = false) {
-            string path = folder.FolderPath;
-            // path先頭を取得
-            string rootPath = path.Split(Path.DirectorySeparatorChar)[0];
-            // pathの先頭を正規表現でAnotherTreeRootに置換.
-            string replacedPath = Regex.Replace(path, "^" + rootPath, anotherTreeRoot);
-            ClipboardFolder? chatFolder = GetRFolder(replacedPath, create);
+        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder fromFolder, ClipboardFolder toRootFolder,  bool create = false) {
+            
+            ClipboardFolder? toFolder = GetAnotherTreeFolderRecursive(toRootFolder, fromFolder.FolderPath, create);
             // chatFolderがnullの場合は、ChatRootFolderを返す
-            if (chatFolder == null) {
-                return ChatRootFolder;
+            if (toFolder == null) {
+                return toRootFolder;
             }
-            return chatFolder;
+            return toFolder;
 
         }
 
@@ -539,23 +643,23 @@ namespace WpfAppCommon.Model {
             // Execute in a separate thread
             Task.Run(() => {
                 string oldReadyText = Tools.StatusText.ReadyText;
-                Application.Current.Dispatcher.Invoke(() => {
+                MainUITask.Run(() => {
                     Tools.StatusText.ReadyText = CommonStringResources.Instance.AutoProcessing;
                 });
                 try {
                     // Apply automatic processing
-                    ClipboardItem? updatedItem = ApplyAutoAction(item);
-                    if (updatedItem == null) {
+                    Task<ClipboardItem?> updatedItemTask = ApplyAutoAction(item);
+                    if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;
                     }
                     // Notify the completion of processing
-                    _afterClipboardChanged(updatedItem);
+                    _afterClipboardChanged(updatedItemTask.Result);
 
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
                 } finally {
-                    Application.Current.Dispatcher.Invoke(() => {
+                    MainUITask.Run( () => { 
                         Tools.StatusText.ReadyText = oldReadyText;
                     });
                 }
@@ -625,7 +729,7 @@ namespace WpfAppCommon.Model {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        private static ClipboardItem? ApplyAutoAction(ClipboardItem item) {
+        private static async Task<ClipboardItem?> ApplyAutoAction(ClipboardItem item) {
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
@@ -643,7 +747,7 @@ namespace WpfAppCommon.Model {
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
-                    string text = PythonExecutor.PythonFunctions.ExtractText(fileItem.FilePath);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractText(fileItem.FilePath);
                     item.Content += "\n" + text;
                 }
             }
@@ -654,7 +758,7 @@ namespace WpfAppCommon.Model {
                     if (imageItem.Image == null) {
                         continue;
                     }
-                    string extractImageText = PythonExecutor.PythonFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
+                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
                     item.Content += "\n" + extractImageText;
                 }
                 LogWrapper.Info(CommonStringResources.Instance.OCR);
@@ -665,40 +769,45 @@ namespace WpfAppCommon.Model {
                 ClipboardItem.ExtractImageWithOpenAI(item);
             }
 
-
             // ★TODO Implement processing based on automatic processing rules.
-            // If AUTO_TAG is set, automatically set the tags
-            if (ClipboardAppConfig.AutoTag) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
-                ClipboardItem.CreateAutoTags(item);
-            }
-            // If AUTO_DESCRIPTION is set, automatically set the Description
-            if (ClipboardAppConfig.AutoDescription) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                ClipboardItem.CreateAutoTitle(item);
+            var task1 = Task.Run(() => {
+                // If AUTO_TAG is set, automatically set the tags
+                if (ClipboardAppConfig.AutoTag) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
+                    ClipboardItem.CreateAutoTags(item);
+                }
+            });
+            var task2 = Task.Run(() => {
+                // If AUTO_DESCRIPTION is set, automatically set the Description
+                if (ClipboardAppConfig.AutoDescription) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitle(item);
 
-            } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
+                } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                ClipboardItem.CreateAutoTitleWithOpenAI(item);
-            }
-            // 背景情報
-            if (ClipboardAppConfig.AutoBackgroundInfo) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
-                ClipboardItem.CreateAutoBackgroundInfo(item);
-            }
-            // サマリー
-            if (ClipboardAppConfig.AutoSummary) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                ClipboardItem.CreateAutoSummary(item);
-            }
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
+                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
+                }
+            });
+            var task3 = Task.Run(() => {
+                // 背景情報
+                if (ClipboardAppConfig.AutoBackgroundInfo) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
+                    ClipboardItem.CreateAutoBackgroundInfo(item);
+                }
+            });
+            var task4 = Task.Run(() => {
+                // サマリー
+                if (ClipboardAppConfig.AutoSummary) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
+                    ClipboardItem.CreateAutoSummary(item);
+                }
+            });
+            await Task.WhenAll(task1, task2, task3, task4);
 
             return item;
         }
-
         #endregion
-
-
     }
 }
 

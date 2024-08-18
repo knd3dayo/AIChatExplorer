@@ -50,9 +50,9 @@ namespace ClipboardApp.ViewModel
         public string SearchTypeText {
             get {
                 if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
-                    return "検索フォルダ";
+                    return StringResources.SearchFolder;
                 }
-                return "標準";
+                return StringResources.Standard;
             }
         }
 
@@ -89,7 +89,7 @@ namespace ClipboardApp.ViewModel
             }
             set {
                 if (SearchConditionRule == null) {
-                    LogWrapper.Error("SearchConditionRuleがNullです");
+                    LogWrapper.Error(StringResources.SearchConditionRuleIsNull);
                     return;
                 }
                 SearchConditionRule.Name = value;
@@ -127,14 +127,10 @@ namespace ClipboardApp.ViewModel
             SearchConditionRule?.SearchCondition?.Clear();
         });
 
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-
-            window.Close();
-        });
 
         public SimpleDelegateCommand<Window> ApplyCommand => new((window) => {
             if (SearchConditionRule == null) {
-                LogWrapper.Error("検索条件がNullです");
+                LogWrapper.Error(StringResources.NoSearchConditions);
                 return;
             }
             if (_isSearchFolder && SearchFolderViewModel != null) {
@@ -157,12 +153,12 @@ namespace ClipboardApp.ViewModel
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            if (SearchConditionRule == null) {
-                LogWrapper.Error("検索条件がNullです");
+            if (MainWindowViewModel.ActiveInstance == null) {
+                LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
                 return;
             }
-            if (MainWindowViewModel.ActiveInstance == null) {
-                LogWrapper.Error("MainWindowViewModelがNullです");
+            if (SearchConditionRule == null) {
+                LogWrapper.Error(StringResources.NoSearchConditions);
                 return;
             }
 
@@ -180,11 +176,11 @@ namespace ClipboardApp.ViewModel
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             if (MainWindowViewModel.ActiveInstance == null) {
-                LogWrapper.Error("MainWindowViewModelがNullです");
+                LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
                 return;
             }
             if (SearchConditionRule == null) {
-                LogWrapper.Error("検索条件がNullです");
+                LogWrapper.Error(StringResources.NoSearchConditions);
                 return;
             }
 

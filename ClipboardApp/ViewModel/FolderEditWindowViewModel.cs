@@ -6,7 +6,6 @@ namespace ClipboardApp.ViewModel
 {
     public class FolderEditWindowViewModel : MyWindowViewModel {
 
-
         private ClipboardFolderViewModel? _FolderViewModel = null;
         public ClipboardFolderViewModel? FolderViewModel {
             get {
@@ -40,13 +39,13 @@ namespace ClipboardApp.ViewModel
         }
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             if (FolderViewModel == null) {
-                LogWrapper.Error("フォルダが指定されていません");
+                LogWrapper.Error(StringResources.FolderNotSpecified);
                 return;
             }
 
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
-                LogWrapper.Error("フォルダ名を入力してください");
+                LogWrapper.Error(StringResources.EnterFolderName);
                 return;
             }
 
@@ -57,12 +56,6 @@ namespace ClipboardApp.ViewModel
             window.Close();
         });
 
-
-        public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-
-        });
     }
 
 }

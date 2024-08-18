@@ -6,28 +6,8 @@ using System.Text.Unicode;
 using Python.Runtime;
 using PythonAILib.Model;
 using PythonAILib.Utils;
-using WpfAppCommon.PythonIF;
 
 namespace WpfAppCommon.PythonIF {
-    public enum SpacyEntityNames {
-
-        PERSON,
-        ORG,
-        GPE,
-        LOC,
-        PRODUCT,
-        EVENT,
-        WORK_OF_ART,
-        LAW,
-        LANGUAGE,
-        DATE,
-        TIME,
-        PERCENT,
-        MONEY,
-        QUANTITY,
-        ORDINAL,
-        CARDINAL
-    }
 }
 
 namespace PythonAILib.PythonIF {
@@ -36,7 +16,7 @@ namespace PythonAILib.PythonIF {
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
 
     }
-    public class PythonNetFunctions : IPythonFunctions {
+    public class PythonNetFunctions : IPythonAIFunctions {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
 
@@ -55,38 +35,6 @@ namespace PythonAILib.PythonIF {
             PythonModules[scriptPath] = pyModule;
 
             return pyModule;
-        }
-
-        private void InitPythonNet(string pythonDLLPath) {
-            // Pythonスクリプトを実行するための準備
-
-            // 既に初期化されている場合は初期化しない
-            if (PythonEngine.IsInitialized) {
-                return;
-            }
-
-            // PythonDLLのパスを設定
-            Runtime.PythonDLL = pythonDLLPath;
-
-            // Runtime.PythonDLLのファイルが存在するかチェック
-            if (!File.Exists(Runtime.PythonDLL)) {
-                string message = StringResources.PythonDLLNotFound;
-                LogWrapper.Error(message + Runtime.PythonDLL);
-                return;
-            }
-
-            try {
-                PythonEngine.Initialize();
-                PythonEngine.BeginAllowThreads();
-
-            } catch (TypeInitializationException e) {
-                string message = StringResources.PythonInitFailed + e.Message;
-                LogWrapper.Error(message);
-            }
-        }
-
-        public PythonNetFunctions(string pythonDLLPath) {
-            InitPythonNet(pythonDLLPath);
         }
 
         public void ExecPythonScript(string scriptPath, Action<PyModule> action) {
@@ -121,7 +69,7 @@ namespace PythonAILib.PythonIF {
             // ResultContainerを作成
             string result = "";
 
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -139,242 +87,18 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
-        // IPythonFunctionsのメソッドを実装
-        // データをマスキングする
-        public string GetMaskedString(string SpacyModel, string text) {
-            List<string> beforeTextList = [text];
-            MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
-            string result = maskedData.AfterTextList[0];
-            return result;
-        }
-
-        // IPythonFunctionsのメソッドを実装
-        // マスキングされたデータを元に戻す
-        public string GetUnmaskedString(string SpacyModel, string maskedText) {
-            List<string> beforeTextList = [maskedText];
-            MaskedData maskedData = GetMaskedData(SpacyModel, beforeTextList);
-            string result = maskedData.AfterTextList[0];
-            return result;
-        }
-
-        public MaskedData GetMaskedData(string SpacyModel, List<string> beforeTextList) {
-
-            // SPACY_MODEL_NAMEが空の場合は例外をスロー
-            if (string.IsNullOrEmpty(SpacyModel)) {
-                throw new Exception(StringResources.SpacyModelNameNotSet);
-            }
-            // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
-            Dictionary<string, string> dict = new() {
-                            { "SpacyModel", SpacyModel }
-                        };
-
-            MaskedData actionResult = new(beforeTextList);
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "mask_data";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // 結果用のDictionaryを作成
-                PyDict resultDict = new();
-                resultDict = function_object(beforeTextList, dict);
-                // resultDictが空の場合は例外をスロー
-                if (resultDict == null || resultDict.Any() == false) {
-                    throw new Exception(StringResources.MaskingResultNotFound);
-                }
-                PyObject? textDictObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.MaskingResultFailed);
-
-                PyDict textDict = textDictObject.As<PyDict>();
-                PyList? afterList = textDict.GetItem("AFTER").As<PyList>();
-                foreach (PyObject item in afterList) {
-                    string? text = item.ToString();
-                    if (text == null) {
-                        continue;
-                    }
-                    actionResult.AfterTextList.Add(text);
-                }
-                // SpacyEntitiesNames毎に処理
-                foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
-                    string entityNameString = entityName.ToString();
-                    PyObject? entities;
-                    try {
-                        entities = resultDict.GetItem(entityNameString);
-                    } catch (PythonException) {
-                        entities = null;
-                        return;
-                    }
-                    PyDict entityDict = entities.As<PyDict>();
-                    List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
-                    actionResult.Entities.UnionWith(maskedEntities);
-                }
-
-            });
-            return actionResult;
-        }
-
-        // GetUnMaskedDataの実装
-        public MaskedData GetUnMaskedData(string SpacyModel, List<string> maskedTextList) {
-
-            // mask_data関数を呼び出す. 引数としてTextとSPACY_MODEL_NAMEを渡す
-            Dictionary<string, string> dict = new() {
-                            { "SpacyModel", SpacyModel }
-                        };
-            MaskedData actionResult = new(maskedTextList);
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "unmask_data";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // 結果用のDictionaryを作成
-                PyDict resultDict = new();
-                resultDict = function_object(actionResult, dict);
-                // resultDictが空の場合は例外をスロー
-                if (resultDict == null || resultDict.Any() == false) {
-                    throw new Exception(StringResources.UnmaskingResultNotFound);
-                }
-
-                PyObject? textListObject = resultDict.GetItem("TEXT") ?? throw new Exception(StringResources.UnmaskingResultFailed);
-                PyList textList = textListObject.As<PyList>();
-                foreach (PyObject item in textList) {
-                    PyObject afterTextObject = item.GetItem("AFTER");
-                    string? text = afterTextObject.ToString();
-                    if (text == null) {
-                        continue;
-                    }
-                    actionResult.AfterTextList.Add(text);
-                }
-                // SpacyEntitiesNames毎に処理
-                foreach (SpacyEntityNames entityName in Enum.GetValues(typeof(SpacyEntityNames))) {
-                    string entityNameString = entityName.ToString();
-                    PyObject? entities = resultDict.GetItem(entityNameString);
-                    if (entities == null) {
-                        continue;
-                    }
-                    PyDict entityDict = entities.As<PyDict>();
-                    List<MaskedEntity> maskedEntities = GetMaskedEntities(entityNameString, entityDict);
-                    actionResult.Entities.UnionWith(maskedEntities);
-                }
-
-            });
-            return actionResult;
-        }
-        public string ExtractTextFromImage(Image image, string tesseractExePath) {
-            // Pythonスクリプトを実行する
-            string result = "";
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_text_from_image";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                ImageConverter imageConverter = new();
-                object? bytesObject = imageConverter.ConvertTo(image, typeof(byte[]))
-                ?? throw new Exception(StringResources.ImageByteFailed);
-                byte[] bytes = (byte[])bytesObject;
-                // extract_text_from_image関数を呼び出す。戻り値は{ "text": "抽出したテキスト" , "log": "ログ" }の形式
-                Dictionary<string, string> dict = new();
-                PyDict? pyDict = function_object(bytes, tesseractExePath);
-                if (pyDict == null) {
-                    throw new Exception("pyDict is null");
-                }
-                // textを取得
-                PyObject? textObject = pyDict.GetItem("text");
-                if (textObject == null) {
-                    throw new Exception("textObject is null");
-                }
-                result = textObject.ToString() ?? "";
-                // logを取得
-                PyObject? logObject = pyDict.GetItem("log");
-                if (logObject != null) {
-                    string log = logObject.ToString() ?? "";
-                    LogWrapper.Info($"log:{log}");
-                }
-
-            });
-            return result;
-        }
-
-        private List<MaskedEntity> GetMaskedEntities(string label, PyDict pyDict) {
-
-            List<MaskedEntity> result = [];
-            foreach (var key in pyDict.Keys()) {
-                PyObject? entity = pyDict.GetItem(key);
-                if (entity == null) {
-                    continue;
-                }
-                string? keyString = key.ToString();
-                if (keyString == null) {
-                    continue;
-                }
-                string? entityString = entity.ToString();
-                if (entityString == null) {
-                    continue;
-                }
-                MaskedEntity maskedEntity = new() {
-                    Label = label,
-                    Before = keyString,
-                    After = entityString
-                };
-                result.Add(maskedEntity);
-            }
-            return result;
-        }
-
-
-        // IPythonFunctionsのメソッドを実装
-        // スクリプトの内容とJSON文字列を引数に取り、結果となるJSON文字列を返す
-        public string RunScript(string script, string input) {
-            string resultString = "";
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "run_script";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // run_script関数を呼び出す
-                resultString = function_object(script, input);
-            });
-            return resultString;
-
-        }
-
-        // IPythonFunctionsのメソッドを実装
-        public HashSet<string> ExtractEntity(string SpacyModel, string text) {
-
-            HashSet<string> actionResult = [];
-            // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
-
-                // SPACY_MODEL_NAMEが空の場合は例外をスロー
-                if (string.IsNullOrEmpty(SpacyModel)) {
-                    throw new Exception(StringResources.SpacyModelNameNotSet);
-                }
-
-                Dictionary<string, string> dict = new() {
-                            { "SpacyModel", SpacyModel }
-                        };
-                // 結果用のDictionaryを作成
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_entity";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                PyIterable pyIterable = function_object(text, dict);
-                // PythonのリストをC#のHashSetに変換
-                foreach (PyObject item in pyIterable) {
-                    string? entity = item.ToString();
-                    if (entity != null) {
-                        actionResult.Add(entity);
-                    }
-                }
-            });
-            return actionResult;
-        }
 
         public void OpenAIEmbedding(OpenAIProperties props, string text) {
 
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_embedding";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 string propsJson = props.ToJson();
 
-                LogWrapper.Info("Embedding実行");
-                LogWrapper.Info($"プロパティ情報 {propsJson}");
-                LogWrapper.Info($"テキスト:{text}");
+                LogWrapper.Info(PythonAILibStringResources.Instance.EmbeddingExecute);
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Text}:{text}");
 
                 // open_ai_chat関数を呼び出す
                 function_object(text, propsJson);
@@ -386,7 +110,7 @@ namespace PythonAILib.PythonIF {
             // ChatResultを作成
             ChatResult chatResult = new();
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
@@ -394,7 +118,7 @@ namespace PythonAILib.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -426,9 +150,9 @@ namespace PythonAILib.PythonIF {
             OpenAIProperties props = chatRequest.OpenAIProperties;
             string propsJson = props.ToJson();
 
-            LogWrapper.Info("OpenAI実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"チャット履歴:{chat_history_json}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_history_json}");
 
             //OpenAIChatExecuteを呼び出す
             return OpenAIChatExecute("run_openai_chat", (function_object) => {
@@ -440,7 +164,7 @@ namespace PythonAILib.PythonIF {
         public string HelloWorld() {
             string result = "";
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "hello_world";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -452,7 +176,7 @@ namespace PythonAILib.PythonIF {
         }
         private void UpdateVectorDBIndexExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -473,14 +197,14 @@ namespace PythonAILib.PythonIF {
             });
         }
                     
-        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ContentInfo contentInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
-            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
+            if (contentInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
                 return;
             }
             // modeがDeleteで、Item.Idが空の場合は何もしない
-            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete && string.IsNullOrEmpty(contentInfo.Id)) {
+            if (contentInfo.Mode == VectorDBUpdateMode.delete && string.IsNullOrEmpty(contentInfo.Id)) {
                 return;
             }
             // propsにVectorDBURLを追加
@@ -489,16 +213,16 @@ namespace PythonAILib.PythonIF {
             // ContentInfoをJSON文字列に変換
             string contentInfoJson = contentInfo.ToJson();
 
-            LogWrapper.Info("UpdateVectorDBIndex実行");
-            LogWrapper.Info($"プロパティ情報 {propJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
             string function_name = "";
 
-            if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+            if (contentInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
-            } else if (contentInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+            } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_content_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute(function_name, (function_object) => {
@@ -507,14 +231,14 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.ImageInfo imageInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
-            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update && string.IsNullOrEmpty(imageInfo.ImageURL)) {
+            if (imageInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(imageInfo.ImageURL)) {
                 return;
             }
             // modeがDeleteで、Item.Idが空の場合は何もしない
-            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete && string.IsNullOrEmpty(imageInfo.Id)) {
+            if (imageInfo.Mode == VectorDBUpdateMode.delete && string.IsNullOrEmpty(imageInfo.Id)) {
                 return;
             }
             // propsにVectorDBURLを追加
@@ -523,16 +247,16 @@ namespace PythonAILib.PythonIF {
             // ContentInfoをJSON文字列に変換
             string contentInfoJson = imageInfo.ToJson();
 
-            LogWrapper.Info("UpdateVectorDBIndex実行");
-            LogWrapper.Info($"プロパティ情報 {propJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndex);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
 
             string function_name = "";
-            if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+            if (imageInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_image_index";
-            } else if (imageInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+            } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_image_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
             // UpdateVectorDBIndexExecuteを呼び出す
             UpdateVectorDBIndexExecute(function_name, (function_object) => {
@@ -541,7 +265,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, IPythonFunctions.GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
             if (!File.Exists(gitFileInfo.AbsolutePath)) {
@@ -555,12 +279,12 @@ namespace PythonAILib.PythonIF {
             string gitFileInfoJson = gitFileInfo.ToJson();
 
             string function_name = "";
-            if (gitFileInfo.Mode == IPythonFunctions.VectorDBUpdateMode.update) {
+            if (gitFileInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_file_index";
-            } else if (gitFileInfo.Mode == IPythonFunctions.VectorDBUpdateMode.delete) {
+            } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
                 function_name = "delete_file_index";
             } else {
-                throw new Exception("modeが不正です");
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
 
             // UpdateVectorDBIndexExecuteを呼び出す
@@ -572,14 +296,14 @@ namespace PythonAILib.PythonIF {
         private ChatResult LangChainChatExecute(string functionName, Func<dynamic, string> pythonFunction) {
             ChatResult chatResult = new();
 
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 string function_name = functionName;
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
                 var op = new JsonSerializerOptions {
@@ -629,10 +353,10 @@ namespace PythonAILib.PythonIF {
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
 
-            LogWrapper.Info("LangChain実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"プロンプト:{prompt}");
-            LogWrapper.Info($"チャット履歴:{chatHistoryJson}");
+            LogWrapper.Info(PythonAILibStringResources.Instance.LangChainExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Prompt}:{prompt}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatHistoryJson}");
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
@@ -648,7 +372,7 @@ namespace PythonAILib.PythonIF {
             List<VectorSearchResult> vectorSearchResults = new();
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonUtilsScript, (ps) => {
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
@@ -656,7 +380,7 @@ namespace PythonAILib.PythonIF {
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
-                LogWrapper.Info($"レスポンス:{resultString}");
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
                 var op = new JsonSerializerOptions {
                     Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
@@ -678,21 +402,76 @@ namespace PythonAILib.PythonIF {
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, string content) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, VectorSearchRequest vectorSearchRequest) {
             // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
             openAIProperties.VectorDBItems = [vectorDBItem];
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
-            LogWrapper.Info("VectorSearch実行");
-            LogWrapper.Info($"プロパティ情報 {propsJson}");
-            LogWrapper.Info($"コンテンツ:{content}");
+            // vectorSearchRequestをJSON文字列に変換
+            string vectorSearchRequestJson = vectorSearchRequest.ToJson();
+            LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("run_vector_search", (function_object) => {
-                string resultString = function_object(propsJson, content);
+                string resultString = function_object(propsJson, vectorSearchRequestJson);
                 return resultString;
             });
-        }   
+        }
+
+        // ExportToExcelを実行する
+        public void ExportToExcel(string filePath, CommonDataTable data) {
+            // dataをJSON文字列に変換
+            string dataJson = CommonDataTable.ToJson(data);
+            LogWrapper.Info(PythonAILibStringResources.Instance.ExportToExcelExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.FilePath}:{filePath}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.Data}:{dataJson}");
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "export_to_excel");
+                // export_to_excel関数を呼び出す
+                function_object(filePath, dataJson);
+            });
+        }
+
+        // ImportFromExcelを実行する
+        public CommonDataTable ImportFromExcel(string filePath) {
+            // ResultContainerを作成
+            CommonDataTable  result = new([]);
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "import_from_excel");
+                // import_from_excel関数を呼び出す
+                string resultString = function_object(filePath);
+
+                // resultStringをログに出力
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                var op = new JsonSerializerOptions {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                    WriteIndented = true
+                };
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                if (resultDict == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+                // documents を取得
+                JsonElement? documentsObject = (JsonElement)resultDict["rows"];
+                if (documentsObject == null) {
+                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                }
+
+                // JSON文字列からList<List<string>>に変換する。
+                if (string.IsNullOrEmpty(resultString) == false) {
+                    result = CommonDataTable.FromJson(documentsObject.ToString() ?? "[]");
+                }
+            });
+            return result;
+        }
 
     }
 }

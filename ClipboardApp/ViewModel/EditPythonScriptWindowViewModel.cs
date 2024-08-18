@@ -23,19 +23,13 @@ namespace ClipboardApp.ViewModel {
             }
             //　descriptionのチェック
             if (string.IsNullOrEmpty(ScriptItem.Description)) {
-                LogWrapper.Error("説明を入力してください");
+                LogWrapper.Error(StringResources.EnterDescription);
                 return;
 
             }
             // Scriptの保存
             ScriptItem.SaveScriptItem(ScriptItem);
 
-            // ウィンドウを閉じる
-            editScriptWindow.Close();
-        });
-
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<EditPythonScriptWindow> CancelButtonCommand => new((editScriptWindow) => {
             // ウィンドウを閉じる
             editScriptWindow.Close();
         });
