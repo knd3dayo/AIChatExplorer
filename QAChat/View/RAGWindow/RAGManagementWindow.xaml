@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListGitRagSourceWindowTitle}"
+    Title="{Binding StringResources.ListGitRagSourceWindowTitle, Mode=OneTime}"
     Width="800"
     Height="450"
     mc:Ignorable="d">
@@ -25,10 +25,10 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
@@ -63,27 +63,32 @@
             Grid.Row="1"
             ItemsSource="{Binding RagSourceItems}"
             SelectedItem="{Binding SelectedRagSourceItem}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding EditRagSourceCommand, Mode=OneTime}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding WorkingDirectory}"
-                        Header="作業ディレクトリ" />
+                        Header="{Binding StringResources.WorkingDirectory, Mode=OneTime}" />
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding SourceURL}"
-                        Header="リポジトリURL" />
+                        Header="{Binding StringResources.RepositoryURL, Mode=OneTime}" />
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding LastIndexedCommitInfo}"
-                        Header="最後にインデックス化したコミット" />
+                        Header="{Binding StringResources.LastIndexedCommit, Mode=OneTime}" />
                 </GridView>
             </ListView.View>
             <!--  コンテキストメニュー  -->
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding EditRagSourceCommand}" Header="編集" />
-                    <MenuItem Command="{Binding DeleteRAGSourceCommand}" Header="削除" />
+                    <MenuItem Command="{Binding EditRagSourceCommand}" Header="{Binding StringResources.Edit, Mode=OneTime}" />
+                    <MenuItem Command="{Binding DeleteRAGSourceCommand}" Header="{Binding StringResources.Delete, Mode=OneTime}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -99,13 +104,13 @@
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
-                    Command="{Binding AddRagSourceCommand}"
-                    Content="新規RAGソース" />
+                    Command="{Binding AddRagSourceCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.NewRAGSource, Mode=OneTime}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
-                    Command="{Binding EditRagSourceCommand}"
-                    Content="RAGソース編集" />
+                    Command="{Binding EditRagSourceCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.EditRAGSource, Mode=OneTime}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -114,9 +119,9 @@
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

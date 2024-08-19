@@ -340,6 +340,13 @@ namespace WpfAppCommon.Model {
         // 以下の項目をエクスポートします
         public virtual string ExportTheFollowingItems { get; } = "以下の項目をエクスポートします";
 
-
+        // 作業ディレクトリ
+        public virtual string WorkingDirectory { get; } = "作業ディレクトリ";
+        // リポジトリURL
+        public virtual string RepositoryURL { get; } = "リポジトリURL";
+        // 最後にインデックス化したコミット
+        public virtual string LastIndexedCommit { get; } = "最後にインデックス化したコミット";
+        // 新規RAGソース
+        public virtual string NewRAGSource { get; } = "新規RAGソース";
     }
 }

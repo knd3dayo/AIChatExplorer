@@ -140,5 +140,11 @@ namespace WpfAppCommon.Model {
         public override string SettingValueIsChecked(string SettingItem, string SettingValue) {
             return "Setting Value of " + SettingItem + " is Checked " + SettingValue;
         }
+
+        public override string WorkingDirectory { get; } = "Working Directory";
+        public override string RepositoryURL { get; } = "Repository URL";
+        public override string LastIndexedCommit { get; } = "Last Indexed Commit";
+        public override string NewRAGSource { get; } = "New RAG Source";
+
     }
 }
