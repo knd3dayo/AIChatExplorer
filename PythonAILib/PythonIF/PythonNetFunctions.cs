@@ -7,8 +7,6 @@ using Python.Runtime;
 using PythonAILib.Model;
 using PythonAILib.Utils;
 
-namespace WpfAppCommon.PythonIF {
-}
 
 namespace PythonAILib.PythonIF {
     public class PythonTask(Action action) : Task(action) {
