@@ -390,6 +390,11 @@ namespace ClipboardApp.ViewModel {
                 ClipboardItem.CreateAutoTitleWithOpenAI(ClipboardItem);
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
+                // objectがActionの場合は実行
+                if (obj is Action action) {
+                    action();
+                }
+
             });
             LogWrapper.Info(StringResources.GeneratedTitleInformation);
 

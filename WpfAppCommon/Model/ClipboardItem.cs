@@ -506,14 +506,17 @@ namespace WpfAppCommon.Model {
         }
         // OpenAIを使用してタイトルを生成する
         public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
-
+            // Contentがない場合は処理しない
+            if (string.IsNullOrEmpty(item.Content)) {
+                return;
+            }
             // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
             string contentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
             // ChatRequest.CreateTitleを実行
             string result = ChatRequest.CreateTitle(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
 
             if (string.IsNullOrEmpty(result) == false) {
-                item.Description += result;
+                item.Description = result;
             }
         }
         // OpenAIを使用してイメージからテキスト抽出する。

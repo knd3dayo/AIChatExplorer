@@ -14,18 +14,20 @@ namespace ClipboardApp.ViewModel {
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
                 // 新規作成
-                MenuItem createMenuItem = new();
-                createMenuItem.Header = StringResources.Create;
-                createMenuItem.Command = CreateFolderCommand;
-                createMenuItem.CommandParameter = this;
+                MenuItem createMenuItem = new() {
+                    Header = StringResources.Create,
+                    Command = CreateFolderCommand,
+                    CommandParameter = this
+                };
                 menuItems.Add(createMenuItem);
 
                 // 編集
-                MenuItem editMenuItem = new();
-                editMenuItem.Header = StringResources.Edit;
-                editMenuItem.Command = EditFolderCommand;
-                editMenuItem.IsEnabled = IsEditVisible;
-                editMenuItem.CommandParameter = this;
+                MenuItem editMenuItem = new() {
+                    Header = StringResources.Edit,
+                    Command = EditFolderCommand,
+                    IsEnabled = IsEditVisible,
+                    CommandParameter = this
+                };
                 menuItems.Add(editMenuItem);
 
                 // 削除
@@ -60,10 +62,11 @@ namespace ClipboardApp.ViewModel {
 
 
                 // リストア
-                MenuItem restoreMenuItem = new();
-                restoreMenuItem.Header = StringResources.RestoreItem;
-                restoreMenuItem.Command = RestoreItemsToFolderCommand;
-                restoreMenuItem.CommandParameter = this;
+                MenuItem restoreMenuItem = new() {
+                    Header = StringResources.RestoreItem,
+                    Command = RestoreItemsToFolderCommand,
+                    CommandParameter = this
+                };
                 backupRestoreMenuItem.Items.Add(restoreMenuItem);
 
                 menuItems.Add(backupRestoreMenuItem);
@@ -99,7 +102,8 @@ namespace ClipboardApp.ViewModel {
             // タイトルを生成
             MenuItem generateTitleMenuItem = new() {
                 Header = StringResources.GenerateTitle,
-                Command = itemViewModel.GenerateTitleCommand,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateTitleCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateTitleMenuItem);
@@ -107,7 +111,8 @@ namespace ClipboardApp.ViewModel {
             // 背景情報生成
             MenuItem generateBackgroundInfoMenuItem = new() {
                 Header = StringResources.GenerateBackgroundInfo,
-                Command = itemViewModel.GenerateBackgroundInfoCommand,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateBackgroundInfoCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateBackgroundInfoMenuItem);
@@ -115,7 +120,8 @@ namespace ClipboardApp.ViewModel {
             // サマリーを生成
             MenuItem generateSummaryMenuItem = new() {
                 Header = StringResources.GenerateSummary,
-                Command = itemViewModel.GenerateSummaryCommand,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateSummaryCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateSummaryMenuItem);
@@ -123,7 +129,8 @@ namespace ClipboardApp.ViewModel {
             // ベクトル生成
             MenuItem generateVectorMenuItem = new() {
                 Header = StringResources.GenerateVector,
-                Command = itemViewModel.GenerateVectorCommand,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateVectorCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateVectorMenuItem);
@@ -131,7 +138,8 @@ namespace ClipboardApp.ViewModel {
             // ベクトル検索
             MenuItem vectorSearchMenuItem = new() {
                 Header = StringResources.VectorSearch,
-                Command = itemViewModel.VectorSearchCommand,
+                // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.VectorSearchCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(vectorSearchMenuItem);
@@ -147,6 +155,7 @@ namespace ClipboardApp.ViewModel {
             // コピー
             MenuItem copyMenuItem = new() {
                 Header = StringResources.Copy,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = MainWindowViewModel.ActiveInstance.CopyItemCommand,
                 CommandParameter = this,
                 InputGestureText = "Ctrl+C"
@@ -156,7 +165,8 @@ namespace ClipboardApp.ViewModel {
             // 削除
             MenuItem deleteMnuItem = new() {
                 Header = StringResources.Delete,
-                Command = itemViewModel.DeleteItemCommand,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Delete"
             };
