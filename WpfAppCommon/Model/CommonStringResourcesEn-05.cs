@@ -146,5 +146,8 @@ namespace WpfAppCommon.Model {
         public override string LastIndexedCommit { get; } = "Last Indexed Commit";
         public override string NewRAGSource { get; } = "New RAG Source";
 
+        public override string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";
+
+
     }
 }

@@ -532,7 +532,7 @@ namespace WpfAppCommon.Model {
 
         }
 
-        public void ImportFromExcel(string fileName, bool importTitle, bool importText) {
+        public void ImportFromExcel(string fileName, bool executeAutoProcess, bool importTitle, bool importText) {
             // importTitle, importTextがFalseの場合は何もしない
             if (importTitle == false && importText == false) {
                 return;
@@ -556,6 +556,13 @@ namespace WpfAppCommon.Model {
                     item.Content = row.Count > 0 ? row[0] : "";
                 }
                 item.Save();
+                if (executeAutoProcess) {
+                    // システム共通自動処理を適用
+                    ProcessClipboardItem(item, (processedItem) => {
+                        // 自動処理後のアイテムを保存
+                        item.Save();
+                    });
+                } 
             }
         }
 

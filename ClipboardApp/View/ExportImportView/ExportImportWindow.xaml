@@ -168,9 +168,18 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    <!--  インポート時に自動処理を実行します  -->
+                    <CheckBox
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.ExecuteAutoProcessingOnImport, Mode=OneTime}"
+                        IsChecked="{Binding IsAutoProcessEnabled}" />
+
                     <!--  以下の項目をインポートします  -->
                     <TextBlock
-                        Grid.Row="0"
+                        Grid.Row="1"
                         Margin="10,10,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
@@ -178,7 +187,7 @@
                         TextWrapping="Wrap" />
                     <!--  タイトル  -->
                     <CheckBox
-                        Grid.Row="1"
+                        Grid.Row="2"
                         Margin="10,10,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
@@ -186,14 +195,14 @@
                         IsChecked="{Binding IsTitleChecked}" />
                     <!--  テキスト  -->
                     <CheckBox
-                        Grid.Row="2"
+                        Grid.Row="3"
                         Margin="10,10,10,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Content="{Binding StringResources.Text, Mode=OneTime}"
                         IsChecked="{Binding IsTextChecked}" />
                     <Button
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="0"
                         Width="100"
                         Margin="10,10,10,0"
@@ -201,7 +210,7 @@
                         Command="{Binding SelectImportFileCommand, Mode=OneTime}"
                         Content="{Binding StringResources.SelectFile, Mode=OneTime}" />
                     <TextBox
-                        Grid.Row="3"
+                        Grid.Row="4"
                         Grid.Column="1"
                         Margin="10,10,10,0"
                         HorizontalAlignment="Left"

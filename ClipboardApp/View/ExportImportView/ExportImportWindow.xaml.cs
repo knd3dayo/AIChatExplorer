@@ -22,10 +22,10 @@ namespace ClipboardApp.View.ExportImportView {
             InitializeComponent();
         }
 
-        public static void OpenExportImportFolderWindow(ClipboardFolderViewModel clibpboardFolderViewModel) {
+        public static void OpenExportImportFolderWindow(ClipboardFolderViewModel clibpboardFolderViewModel, Action afterUpdate) {
 
             ExportImportWindow exportImportWindow = new() {
-                DataContext = new ExportImportWindowViewModel(clibpboardFolderViewModel)
+                DataContext = new ExportImportWindowViewModel(clibpboardFolderViewModel, afterUpdate)
             };
             exportImportWindow.ShowDialog();
         }

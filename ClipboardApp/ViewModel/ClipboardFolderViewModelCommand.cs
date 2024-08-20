@@ -112,7 +112,10 @@ namespace ClipboardApp.ViewModel {
         // ExportImportFolderCommand
         SimpleDelegateCommand<ClipboardFolderViewModel> ExportImportFolderCommand => new((folderViewModel) => {
             // ExportImportFolderWindowを開く
-            ExportImportWindow.OpenExportImportFolderWindow(folderViewModel);
+            ExportImportWindow.OpenExportImportFolderWindow(folderViewModel, () => {
+                // ファイルを再読み込み
+                ReloadCommandExecute(folderViewModel);
+            });
         });
 
         //フォルダを再読み込みする処理

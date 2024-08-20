@@ -348,5 +348,8 @@ namespace WpfAppCommon.Model {
         public virtual string LastIndexedCommit { get; } = "最後にインデックス化したコミット";
         // 新規RAGソース
         public virtual string NewRAGSource { get; } = "新規RAGソース";
+
+        // インポート時に自動処理を実行します
+        public virtual string ExecuteAutoProcessingOnImport { get; } = "インポート時に自動処理を実行します";
     }
 }

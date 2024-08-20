@@ -4,7 +4,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
-    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel) : MyWindowViewModel {
+    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel, Action AfterUpdate) : MyWindowViewModel {
 
 
         public int SelectedIndex { get; set; }
@@ -23,6 +23,9 @@ namespace ClipboardApp.ViewModel {
 
         // 選択したファイル名
         public string SelectedFileName { get; set; } = "";
+
+        // インポート時に自動処理を実行
+        public bool IsAutoProcessEnabled { get; set; } = false;
 
         // プログレスインジケーター
         private bool _isIndeterminate = false;
@@ -48,7 +51,7 @@ namespace ClipboardApp.ViewModel {
                     case 1:
                         // インポート処理
                         IsIndeterminate = true;
-                        ClipboardolderViewModel.ClipboardItemFolder.ImportFromExcel(SelectedFileName, IsTitleChecked, IsTextChecked);
+                        ClipboardolderViewModel.ClipboardItemFolder.ImportFromExcel(SelectedFileName, IsAutoProcessEnabled, IsTitleChecked, IsTextChecked);
                         IsIndeterminate = false;
                         break;
                     default:
@@ -56,6 +59,7 @@ namespace ClipboardApp.ViewModel {
                 }
                 MainUITask.Run(() => {
                     IsIndeterminate = false;
+                    AfterUpdate();
                     window.Close();
                 });
             });
