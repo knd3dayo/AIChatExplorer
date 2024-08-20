@@ -1,4 +1,5 @@
 using System.IO;
+using System.Runtime.CompilerServices;
 using Python.Runtime;
 using PythonAILib.Model;
 using PythonAILib.Utils;
@@ -24,6 +25,7 @@ namespace PythonAILib.PythonIF {
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
+            [MethodImpl(MethodImplOptions.Synchronized)]
             get {
                 if (string.IsNullOrEmpty(PythonPath)) {
                     throw new Exception(StringResources.PythonDLLNotFound);
@@ -38,6 +40,7 @@ namespace PythonAILib.PythonIF {
 
         private static IPythonMiscFunctions? _pythonMiscFunctions;
         public static IPythonMiscFunctions PythonMiscFunctions {
+            [MethodImpl(MethodImplOptions.Synchronized)]
             get {
                 if (string.IsNullOrEmpty(PythonPath)) {
                     throw new Exception(StringResources.PythonDLLNotFound);
@@ -87,9 +90,10 @@ namespace PythonAILib.PythonIF {
                 // 以下を参考にして設定を行う
                 // https://github.com/pythonnet/pythonnet/issues/1478#issuecomment-897933730
 
+                // PythonEngineにアクセスするためのダミー処理
+                string version = PythonEngine.Version;
+
                 if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
-                    // PythonEngineにアクセスするためのダミー処理
-                    string version = PythonEngine.Version;
                     LogWrapper.Info($"Python Version: {version}");
                     // 実行中の Python のユーザー site-packages へのパスを無効にする
                     PythonEngine.SetNoSiteFlag();
