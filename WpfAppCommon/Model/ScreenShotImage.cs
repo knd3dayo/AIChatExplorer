@@ -69,5 +69,7 @@ namespace WpfAppCommon.Model {
                 return bi;
             }
         }
+
+
     }
 }

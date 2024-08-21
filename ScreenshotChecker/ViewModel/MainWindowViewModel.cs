@@ -97,12 +97,16 @@ namespace ImageChat.ViewModel {
 
 
         // 画像ファイル
-        public ObservableCollection<ScreenShotImage> ImageFiles {
+        public ObservableCollection<ScreenShotImageViewModel> ImageFiles {
             get {
-                return [.. ClipboardItem.ScreenShotCheckItem.ScreenShotImages];
+                ObservableCollection<ScreenShotImageViewModel> result = new();
+                foreach (ScreenShotImage image in ClipboardItem.ScreenShotCheckItem.ScreenShotImages) {
+                    result.Add(new(this, image));
+                }
+                return result;
             }
             set {
-                ClipboardItem.ScreenShotCheckItem.ScreenShotImages = [.. value];
+                ClipboardItem.ScreenShotCheckItem.ScreenShotImages = new(value.Select(image => image.ScreenShotImage));
                 OnPropertyChanged(nameof(ImageFiles));
             }
         }
@@ -156,7 +160,7 @@ namespace ImageChat.ViewModel {
                     string prompt = InputText;
 
                     // ScreenShotImageのリストからファイル名のリストを取得
-                    List<string> imageFileNames = ImageFiles.Select(image => image.ImagePath).ToList();
+                    List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.ImagePath).ToList();
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatRequest.CreateImageURLFromFilePath(imageFileName)).ToList();
                     // ChatRequestを生成
@@ -250,10 +254,10 @@ namespace ImageChat.ViewModel {
         });
 
         // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド
-        public SimpleDelegateCommand<ScreenShotImage> OpenSelectedImageFileCommand => new((image) => {
-            if (File.Exists(image.ImagePath)) {
+        public SimpleDelegateCommand<ScreenShotImageViewModel> OpenSelectedImageFileCommand => new((image) => {
+            if (File.Exists(image.ScreenShotImage.ImagePath)) {
                 ProcessStartInfo psi = new() {
-                    FileName = image.ImagePath,
+                    FileName = image.ScreenShotImage.ImagePath,
                     UseShellExecute = true
                 };
                 Process.Start(psi);
@@ -263,8 +267,8 @@ namespace ImageChat.ViewModel {
         });
 
         // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
-        public SimpleDelegateCommand<ScreenShotImage> RemoveSelectedImageFileCommand => new((image) => {
-            ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Remove(image);
+        public SimpleDelegateCommand<ScreenShotImageViewModel> RemoveSelectedImageFileCommand => new((image) => {
+            ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Remove(image.ScreenShotImage);
             OnPropertyChanged(nameof(ImageFiles));
         });
 
