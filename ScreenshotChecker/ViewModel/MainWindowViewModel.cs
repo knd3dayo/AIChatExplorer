@@ -160,7 +160,8 @@ namespace ImageChat.ViewModel {
                     string prompt = InputText;
 
                     // ScreenShotImageのリストからファイル名のリストを取得
-                    List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.ImagePath).ToList();
+                    List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
+                    ImagePath).ToList();
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatRequest.CreateImageURLFromFilePath(imageFileName)).ToList();
                     // ChatRequestを生成
