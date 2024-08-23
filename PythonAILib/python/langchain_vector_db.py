@@ -262,6 +262,10 @@ def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
     if vector_db_props.VectorDBTypeString == "Chroma":
         from langchain_vector_db_chroma import LangChainVectorDBChroma
         return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
+    # ベクトルDBのタイプがPostgresの場合
+    elif vector_db_props.VectorDBTypeString == "Postgres":
+        from langchain_vector_db_postgres import LangChainVectorDBPostgres
+        return LangChainVectorDBPostgres(langchain_openai_client, vector_db_props)
     else:
         # それ以外の場合は例外
         raise ValueError("VectorDBType is invalid")
