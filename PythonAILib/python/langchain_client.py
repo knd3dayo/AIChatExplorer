@@ -1,5 +1,3 @@
-import os, sys
-
 from langchain_openai import AzureOpenAIEmbeddings
 from langchain_openai import AzureChatOpenAI
 from langchain_openai import OpenAIEmbeddings

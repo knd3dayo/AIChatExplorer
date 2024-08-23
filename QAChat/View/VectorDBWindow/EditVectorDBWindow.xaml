@@ -9,7 +9,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="ベクトルDB編集"
-    Width="800"
+    Width="850"
     SizeToContent="Height"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
@@ -75,9 +75,13 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="280" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <CheckBox
@@ -144,8 +148,34 @@
                     IsEnabled="True"
                     ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
                     SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
-                <CheckBox
+                <TextBlock
                     Grid.Row="5"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="ドキュメントのチャンクサイズ" />
+                <TextBox
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.ChunkSize}" />
+                <TextBlock
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="ベクトル検索結果の上限値" />
+                <TextBox
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.MaxSearchResults}" />
+                <CheckBox
+                    Grid.Row="8"
                     Grid.Column="0"
                     Grid.ColumnSpan="2"
                     Margin="10,0,10,10"
@@ -154,7 +184,7 @@
                     IsChecked="{Binding ItemViewModel.IsUseMultiVectorRetriever}"
                     Style="{StaticResource MaterialDesignLightCheckBox}" />
                 <TextBlock
-                    Grid.Row="6"
+                    Grid.Row="9"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
@@ -162,12 +192,28 @@
                     Text="DocStore用のSQLite3の場所"
                     Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
                 <TextBox
-                    Grid.Row="6"
+                    Grid.Row="9"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     materialDesign:HintAssist.Hint="例：sqlite:///C:\Users\Username\sqlite3.db"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.DocStoreURL}"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <!--  マルチベクターリトリーバのドキュメントのチャンクサイズ  -->
+                <TextBlock
+                    Grid.Row="10"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="マルチベクターリトリーバのドキュメントのチャンクサイズ"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <TextBox
+                    Grid.Row="10"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.MultiVectorDocChunkSize}"
                     Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
             </Grid>
         </ScrollViewer>

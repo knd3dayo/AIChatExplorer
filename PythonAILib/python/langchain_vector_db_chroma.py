@@ -17,7 +17,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         super().__init__(langchain_openai_client, vector_db_props)
 
 
-    def load(self):
+    def _load(self):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
         if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成

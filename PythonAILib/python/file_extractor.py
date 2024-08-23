@@ -1,5 +1,3 @@
-import os
-import tempfile
 from magika import Magika
 import datetime
 import chardet

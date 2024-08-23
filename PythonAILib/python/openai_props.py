@@ -105,14 +105,23 @@ class VectorDBProps:
         if self.VectorDBDescription == None:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
         
+        # チャンクサイズ
+        self.ChunkSize = props_dict.get("ChunkSize", 500)
+        # ベクトル検索時の検索結果上限数
+        self.MaxSearchResults = props_dict.get("MaxSearchResults", 10)
+
         # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
         if props_dict.get("IsUseMultiVectorRetriever", False) == True:
             self.IsUseMultiVectorRetriever = True
             # DocStoreの設定
             self.DocStoreURL = props_dict.get("DocStoreURL", None)
+            # MultiVectorDocChunkSize
+            self.MultiVectorDocChunkSize = props_dict.get("MultiVectorDocChunkSize", 10000)
+
         else:
             self.IsUseMultiVectorRetriever = False
             self.DocStoreURL = None    
+            self.MultiVectorDocChunkSize = -1
             
 
         # Collectionの設定
@@ -152,7 +161,14 @@ def get_vector_db_settings() -> VectorDBProps:
         "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
         "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER").upper() == "TRUE",
         "DocStoreURL": os.getenv("DOC_STORE_URL"),
-        "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME")
+        "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
+        # チャンクサイズ
+        "ChunkSize": os.getenv("ChunkSize", 500),
+        # マルチベクトルリトリーバーの場合のドキュメントチャンクサイズ
+        "MultiVectorDocChunkSize": os.getenv("MultiVectorDocChunkSize", 500),
+        # ベクトル検索時の検索結果上限数
+        "MaxSearchResults": os.getenv("MaxSearchResults", 10)
+        
     }
     vectorDBProps = VectorDBProps(props)
     return vectorDBProps

@@ -58,9 +58,6 @@
     <EmbeddedResource Include="python\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_object_processor.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

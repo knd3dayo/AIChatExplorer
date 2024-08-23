@@ -19,28 +19,45 @@ namespace PythonAILib.Model {
         [JsonPropertyName("VectorDBDescription")]
         public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
 
+        // ベクトルDBのURL
         [JsonPropertyName("VectorDBURL")]
         public string VectorDBURL { get; set; } = "";
 
+        // マルチベクトルリトリーバを使うかどうか
         [JsonPropertyName("IsUseMultiVectorRetriever")]
         public bool IsUseMultiVectorRetriever { get; set; } = false;
 
+        // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
         [JsonPropertyName("DocStoreURL")]
         public string DocStoreURL { get; set; } = "";
 
+        // ベクトルDBの種類を表す列挙型
         [JsonIgnore]
         public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
-        // VectorDBTypeString
+        // ベクトルDBの種類を表す文字列
         [JsonPropertyName("VectorDBTypeString")]
         public string VectorDBTypeString {
             get {
                 return Type.ToString();
             }
         }
-        // CollectionName
+
+        // コレクション名
         [JsonPropertyName("CollectionName")]
         public string? CollectionName { get; set; } = null;
+
+        // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
+        [JsonPropertyName("ChunkSize")]
+        public int ChunkSize { get; set; } = 500;
+
+        // マルチベクトルリトリーバを使う場合のドキュメントのチャンクサイズ
+        [JsonPropertyName("MultiVectorDocChunkSize")]
+        public int MultiVectorDocChunkSize { get; set; } = 10000;
+
+        // ベクトル検索時の検索結果上限
+        [JsonPropertyName("MaxSearchResults")]
+        public int MaxSearchResults { get; set; } = 10;
 
         // 有効かどうか
         [JsonIgnore]
