@@ -147,10 +147,7 @@ namespace WpfAppCommon.Model {
         public override string NewRAGSource { get; } = "New RAG Source";
 
         public override string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";
-        public override string EditVectorDB { get; } = "Edit Vector DB";
         public override string ExampleGeneralVectorDB { get; } = "Example: General Vector DB for Searching Past Documents Based on User Questions";
-        public override string VectorDBLocation { get; } = "Vector DB Location";
-        public override string VectorDBType { get; } = "Vector DB Type";
         public override string DocumentChunkSize { get; } = "Document Chunk Size";
         public override string VectorSearchResultLimit { get; } = "Vector Search Result Limit";
         public override string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";

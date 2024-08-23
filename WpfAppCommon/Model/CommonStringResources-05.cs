@@ -352,17 +352,10 @@ namespace WpfAppCommon.Model {
         // インポート時に自動処理を実行します
         public virtual string ExecuteAutoProcessingOnImport { get; } = "インポート時に自動処理を実行します";
 
-        // ベクトルDB編集
-        public virtual string EditVectorDB { get; } = "ベクトルDB編集";
 
         // 例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。
         public virtual string ExampleGeneralVectorDB { get; } = "例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
-        // ベクトルDBの場所
-        public virtual string VectorDBLocation { get; } = "ベクトルDBの場所";
-
-        // ベクトルDBのタイプ
-        public virtual string VectorDBType { get; } = "ベクトルDBのタイプ";
 
         // ドキュメントのチャンクサイズ
         public virtual string DocumentChunkSize { get; } = "ドキュメントのチャンクサイズ";
