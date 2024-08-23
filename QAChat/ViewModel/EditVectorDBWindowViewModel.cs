@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -46,6 +47,22 @@ namespace QAChat.ViewModel {
                 return Visibility.Collapsed;
             }
         }
+        // VectorDBURLのヒントテキスト
+        public string VectorDBURLHintText {
+            get {
+                if (ItemViewModel == null) {
+                    return "";
+                }
+                if (ItemViewModel.SelectedVectorDBType == VectorDBTypeEnum.Chroma) {
+                    return StringResources.ExampleVectorDBLocationChroma;
+                }
+                if (ItemViewModel.SelectedVectorDBType == VectorDBTypeEnum.PGVector) {
+                    return StringResources.ExampleVectorDBLocationPostgres;
+                }
+                return "";
+            }
+        }
+
 
         private Action<VectorDBItemViewModel> AfterUpdate { get; set; } = (promptItem) => { };
         // 初期化
@@ -70,25 +87,31 @@ namespace QAChat.ViewModel {
             window.Close();
         });
 
-        // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
-            // ウィンドウを閉じる
-            window.Close();
-        });
-
         // VectorDBTypeSelectionChangedCommand
-        public SimpleDelegateCommand<VectorDBTypeEnum> VectorDBTypeSelectionChangedCommand => new((selectedVectorDBType) => {
-
+        public SimpleDelegateCommand<RoutedEventArgs> VectorDBTypeSelectionChangedCommand => new((routedEventArgs) => {
             if (ItemViewModel == null) {
                 return;
             }
-            // 現在はChroma(インメモリ)のみ
-            if (selectedVectorDBType != VectorDBTypeEnum.Chroma) {
-                LogWrapper.Error(StringResources.OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported);
+
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択中のアイテムを取得
+            VectorDBTypeEnum selectedItem = (VectorDBTypeEnum)comboBox.SelectedItem;
+            // 現在はChroma(インメモリ)とPGVectorのみ対応
+            if (selectedItem == VectorDBTypeEnum.Chroma) {
+                ItemViewModel.VectorDBURL = "";
+                OnPropertyChanged(nameof(VectorDBURLHintText));
+                OnPropertyChanged(nameof(ItemViewModel));
+                return;
+            }
+            if (selectedItem == VectorDBTypeEnum.PGVector) {
+                ItemViewModel.VectorDBURL = "";
+                OnPropertyChanged(nameof(VectorDBURLHintText));
+                OnPropertyChanged(nameof(ItemViewModel));
                 return;
             }
 
-            ItemViewModel.SelectedVectorDBType = selectedVectorDBType;
+            LogWrapper.Error(StringResources.OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported);
+
         });
 
     }

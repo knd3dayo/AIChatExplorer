@@ -15,3 +15,5 @@ markdown
 pdfminer.six
 chardet
 SQLAlchemy
+langchain_postgres
+psycopg-binary

@@ -17,18 +17,7 @@ import langchain
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from openai_props import OpenAIProps, VectorDBProps
-
-# DB取得用の関数
-def get_vector_db(client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
-    db_type = vector_db_props.VectorDBTypeString
-    if db_type == "Faiss":
-        from langchain_vector_db_faiss import LangChainVectorDBFaiss
-        return LangChainVectorDBFaiss(client, vector_db_props)
-    elif db_type == "Chroma":
-        from langchain_vector_db_chroma import LangChainVectorDBChroma
-        return LangChainVectorDBChroma(client, vector_db_props)
-    else:
-        raise Exception("Unsupported vector_db_type_string: " + db_type)
+from langchain_vector_db import get_vector_db
 
 class RetrieverUtil:
     
@@ -48,7 +37,7 @@ class RetrieverUtil:
         if vector_db_props.IsUseMultiVectorRetriever:
             print("Creating MultiVectorRetriever")
             
-            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
             retriever = MultiVectorRetriever(
                 vectorstore=langChainVectorDB.db,
                 docstore=langChainVectorDB.doc_store,
@@ -58,7 +47,7 @@ class RetrieverUtil:
 
         else:
             print("Creating a regular Retriever")
-            langChainVectorDB = get_vector_db(self.client, vector_db_props)
+            langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
             retriever = langChainVectorDB.db.as_retriever(
                 # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
                 search_kwargs=search_kwargs

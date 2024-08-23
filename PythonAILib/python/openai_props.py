@@ -163,11 +163,11 @@ def get_vector_db_settings() -> VectorDBProps:
         "DocStoreURL": os.getenv("DOC_STORE_URL"),
         "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
         # チャンクサイズ
-        "ChunkSize": os.getenv("ChunkSize", 500),
+        "ChunkSize": int(os.getenv("ChunkSize", 500)),
         # マルチベクトルリトリーバーの場合のドキュメントチャンクサイズ
-        "MultiVectorDocChunkSize": os.getenv("MultiVectorDocChunkSize", 500),
+        "MultiVectorDocChunkSize": int(os.getenv("MultiVectorDocChunkSize", 500)),
         # ベクトル検索時の検索結果上限数
-        "MaxSearchResults": os.getenv("MaxSearchResults", 10)
+        "MaxSearchResults": int(os.getenv("MaxSearchResults", 10))
         
     }
     vectorDBProps = VectorDBProps(props)

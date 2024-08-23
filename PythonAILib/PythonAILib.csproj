@@ -23,7 +23,7 @@
     <None Remove="python\langchain_vector_db.py" />
     <None Remove="python\langchain_vector_db_chroma.py" />
     <None Remove="python\langchain_vector_db_faiss.py" />
-    <None Remove="python\langchain_vector_db_postgres.py" />
+    <None Remove="python\langchain_vector_db_pgvector.py" />
     <None Remove="python\llamaindex_client.py" />
     <None Remove="python\llamaindex_vector_db.py" />
     <None Remove="python\llamaindex_vector_db_chroma.py" />
@@ -31,6 +31,7 @@
     <None Remove="python\openai_props.py" />
     <None Remove="python\script_template.py" />
     <None Remove="python\test_langchain_vector_db_chroma.py" />
+    <None Remove="python\test_langchain_vector_db_postgres.py" />
     <None Remove="python\test_openai_client.py" />
     <None Remove="python\tools.json" />
   </ItemGroup>
@@ -69,7 +70,7 @@
     <EmbeddedResource Include="python\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db_postgres.py">
+    <EmbeddedResource Include="python\langchain_vector_db_pgvector.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
@@ -94,6 +95,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\dev\script_template.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\test_langchain_vector_db_postgres.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\test_langchain_vector_db_chroma.py">

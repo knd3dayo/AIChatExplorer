@@ -131,7 +131,7 @@
                     Grid.Row="3"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="例：C:\Users\Username\vector.db"
+                    materialDesign:HintAssist.Hint="{Binding VectorDBURLHintText}"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.VectorDBURL}" />
                 <TextBlock
@@ -147,7 +147,13 @@
                     Margin="10,0,10,10"
                     IsEnabled="True"
                     ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
-                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
+                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding VectorDBTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
                 <TextBlock
                     Grid.Row="5"
                     Grid.Column="0"
@@ -227,13 +233,13 @@
                     Margin="10,10,10,0"
                     Command="{Binding OKButtonCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,0"
-                    Command="{Binding CancelButtonCommand, Mode=OneTime}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

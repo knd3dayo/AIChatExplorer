@@ -374,6 +374,12 @@ namespace WpfAppCommon.Model {
 
         // マルチベクターリトリーバのドキュメントのチャンクサイズ
         public virtual string DocumentChunkSizeForMultiVectorRetriever { get; } = "マルチベクターリトリーバのドキュメントのチャンクサイズ";
+        
+        // 例：C:\Users\Username\vector.db
+        public virtual string ExampleVectorDBLocationChroma { get; } = "例：C:\\Users\\Username\\vector.db";
+
+        // 例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain
+        public virtual string ExampleVectorDBLocationPostgres { get; } = "例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
 
     }
 }

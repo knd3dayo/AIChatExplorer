@@ -51,8 +51,10 @@ class LangChainVectorDB:
         if doc_id is None:
             raise ValueError("doc_id is None")
 
-        # source_documentを分割
-        tmp_sub_docs = text_splitter.split_documents([source_document])
+        tmp_sub_docs = [source_document]
+        # content_type = "text"の場合はsource_documentを分割
+        if source_document.metadata.get("content_type", "text") == "text":
+            tmp_sub_docs = text_splitter.split_documents([source_document])
 
         for tmp_sub_doc in tmp_sub_docs:
             tmp_sub_doc.metadata["doc_id"] = doc_id
@@ -174,6 +176,8 @@ class LangChainVectorDB:
         # MultiVectorRetrieverの場合はchunk_size=MultiVectorRetrieverのChunkSize
         if self.vector_db_props.IsUseMultiVectorRetriever:
             chunk_size = self.vector_db_props.MultiVectorDocChunkSize
+        else:
+            chunk_size = self.vector_db_props.ChunkSize
             
         if content_type == "text":
             # テキストの場合は入力テキストを分割してDocumentのリストを返す
@@ -187,6 +191,7 @@ class LangChainVectorDB:
             # 画像の場合はそのままDocumentのリストを返す
             document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type, "image_url": image_url})
             document_list.append(document)
+
         else:
             # 例外処理
             raise ValueError("content_type is invalid")
@@ -263,9 +268,9 @@ def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
         from langchain_vector_db_chroma import LangChainVectorDBChroma
         return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
     # ベクトルDBのタイプがPostgresの場合
-    elif vector_db_props.VectorDBTypeString == "Postgres":
-        from langchain_vector_db_postgres import LangChainVectorDBPostgres
-        return LangChainVectorDBPostgres(langchain_openai_client, vector_db_props)
+    elif vector_db_props.VectorDBTypeString == "PGVector":
+        from langchain_vector_db_pgvector import LangChainVectorDBPGVector
+        return LangChainVectorDBPGVector(langchain_openai_client, vector_db_props)
     else:
         # それ以外の場合は例外
         raise ValueError("VectorDBType is invalid")

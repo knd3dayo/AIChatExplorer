@@ -14,12 +14,12 @@ from openai_props import VectorDBProps
 class LangChainVectorDBChroma(LangChainVectorDB):
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
-        # VectorDBTypeStringが"Chroma"でない場合は例外をスロー
-        if self.vector_db_props.VectorDBTypeString != "Chroma":
-            raise ValueError("VectorDBTypeString must be 'Chroma'")
         super().__init__(langchain_openai_client, vector_db_props)
 
     def _load(self):
+        # VectorDBTypeStringが"Chroma"でない場合は例外をスロー
+        if self.vector_db_props.VectorDBTypeString != "Chroma":
+            raise ValueError("VectorDBTypeString must be 'Chroma'")
         # ベクトルDB用のディレクトリが存在しない、または空の場合
         if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
