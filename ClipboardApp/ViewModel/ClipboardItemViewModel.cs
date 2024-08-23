@@ -273,6 +273,8 @@ namespace ClipboardApp.ViewModel {
         }
 
         public void UpdateTagList(ObservableCollection<TagItemViewModel> tagList) {
+            // Tagsをクリア
+            Tags.Clear();
             // TagListのチェックを反映
             foreach (var item in tagList) {
                 if (item.IsChecked) {
