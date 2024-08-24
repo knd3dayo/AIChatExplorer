@@ -81,15 +81,24 @@ namespace WpfAppCommon.Control.QAChat {
 
         });
 
-        // クリアコマンド
-        public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
+        // チャット履歴をクリアコマンド
+        public SimpleDelegateCommand<object> ClearChatHistoryCommand => new((parameter) => {
             ChatHistory = [];
-            InputText = "";
             // ClipboardItemがある場合は、ChatItemsをクリア
             if (ClipboardItem != null) {
                 ClipboardItem.ChatItems = [];
             }
             OnPropertyChanged(nameof(ChatHistory));
+        });
+
+        // 本文をクリアコマンド
+        public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
+            InputText = "";
+            OnPropertyChanged(nameof(InputText));
+
+            PromptText = "";
+            OnPropertyChanged(nameof(PromptText));
+
         });
 
         // モードが変更されたときの処理

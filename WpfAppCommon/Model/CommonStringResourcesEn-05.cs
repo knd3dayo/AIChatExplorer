@@ -156,6 +156,9 @@ namespace WpfAppCommon.Model {
         public override string DocumentChunkSizeForMultiVectorRetriever { get; } = "Document Chunk Size for MultiVectorRetriever";
         public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
+        public override string ClearChatHistory { get; } = "Clear Chat History";
+        // Clear Content
+        public override string ClearContent { get; } = "Clear Content";
 
     }
 }
