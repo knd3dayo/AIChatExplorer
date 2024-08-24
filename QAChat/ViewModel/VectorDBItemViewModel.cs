@@ -14,7 +14,8 @@ namespace QAChat.ViewModel {
                 return item;
             }
         }
-        // VectorDBTypeEnum
+
+        // ベクトルDBの種類を表す列挙型
         public VectorDBTypeEnum VectorDBType {
             get => Item.Type;
             set {
@@ -69,7 +70,6 @@ namespace QAChat.ViewModel {
         public string VectorDBTypeString {
             get {
                 return Item.VectorDBTypeString;
-
             }
         }
         // VectorDBType
@@ -98,6 +98,34 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(DocStoreURLVisibility));
             }
         }
+        // ChunkSize
+        public int ChunkSize {
+            get => Item.ChunkSize;
+            set {
+                Item.ChunkSize = value;
+                OnPropertyChanged(nameof(ChunkSize));
+            }
+        }
+        // MultiVectorDocChunkSize
+        public int MultiVectorDocChunkSize {
+            get => Item.MultiVectorDocChunkSize;
+            set {
+                Item.MultiVectorDocChunkSize = value;
+                OnPropertyChanged(nameof(MultiVectorDocChunkSize));
+            }
+        }
+
+        // MaxSearchResults
+        public int MaxSearchResults {
+            get => Item.MaxSearchResults;
+            set {
+                Item.MaxSearchResults = value;
+                OnPropertyChanged(nameof(MaxSearchResults));
+            }
+        }
+
+
+
         // DocStoreURLを表示するか否かのVisibility
         public Visibility DocStoreURLVisibility {
             get {

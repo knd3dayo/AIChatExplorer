@@ -8,8 +8,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="ベクトルDB編集"
-    Width="800"
+    Title="{Binding StringResources.EditVectorDB, Mode=OneTime}"
+    Width="850"
     SizeToContent="Height"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
@@ -26,10 +26,10 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
@@ -75,9 +75,13 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="180" />
+                    <ColumnDefinition Width="280" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <CheckBox
@@ -113,7 +117,7 @@
                     Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,10,10,10"
-                    materialDesign:HintAssist.Hint="例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+                    materialDesign:HintAssist.Hint="{Binding StringResources.ExampleGeneralVectorDB, Mode=OneTime}"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.Description}" />
                 <TextBlock
@@ -122,12 +126,12 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="ベクトルDBの場所" />
+                    Text="{Binding StringResources.VectorDBLocation, Mode=OneTime}" />
                 <TextBox
                     Grid.Row="3"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="例：C:\Users\Username\vector.db"
+                    materialDesign:HintAssist.Hint="{Binding VectorDBURLHintText}"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.VectorDBURL}" />
                 <TextBlock
@@ -136,38 +140,86 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="ベクトルDBのタイプ" />
+                    Text="{Binding StringResources.VectorDBType, Mode=OneTime}" />
                 <ComboBox
                     Grid.Row="4"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
                     ItemsSource="{Binding ItemViewModel.VectorDBTypeList}"
-                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}" />
-                <CheckBox
+                    SelectedItem="{Binding ItemViewModel.SelectedVectorDBType}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding VectorDBTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <TextBlock
                     Grid.Row="5"
                     Grid.Column="0"
-                    Grid.ColumnSpan="2"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
-                    Content="MultiVectorRetriverを使用"
-                    IsChecked="{Binding ItemViewModel.IsUseMultiVectorRetriever}"
-                    Style="{StaticResource MaterialDesignLightCheckBox}" />
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="{Binding StringResources.DocumentChunkSize, Mode=OneTime}" />
+                <TextBox
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.ChunkSize}" />
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="0"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="DocStore用のSQLite3の場所"
-                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                    Text="{Binding StringResources.VectorSearchResultLimit, Mode=OneTime}" />
                 <TextBox
                     Grid.Row="6"
                     Grid.Column="1"
                     Margin="10,0,10,10"
-                    materialDesign:HintAssist.Hint="例：sqlite:///C:\Users\Username\sqlite3.db"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.MaxSearchResults}" />
+                <CheckBox
+                    Grid.Row="8"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Content="{Binding StringResources.UseMultiVectorRetriever, Mode=OneTime}"
+                    IsChecked="{Binding ItemViewModel.IsUseMultiVectorRetriever}"
+                    Style="{StaticResource MaterialDesignLightCheckBox}" />
+                <TextBlock
+                    Grid.Row="9"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="{Binding StringResources.SQLite3LocationForDocStore, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <TextBox
+                    Grid.Row="9"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    materialDesign:HintAssist.Hint="{Binding StringResources.ExampleSQLite3Location, Mode=OneTime}"
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.DocStoreURL}"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <!--  マルチベクターリトリーバのドキュメントのチャンクサイズ  -->
+                <TextBlock
+                    Grid.Row="10"
+                    Grid.Column="0"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                    Text="{Binding StringResources.DocumentChunkSizeForMultiVectorRetriever, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
+                <TextBox
+                    Grid.Row="10"
+                    Grid.Column="1"
+                    Margin="10,0,10,10"
+                    IsEnabled="True"
+                    Text="{Binding ItemViewModel.MultiVectorDocChunkSize}"
                     Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
             </Grid>
         </ScrollViewer>
@@ -179,15 +231,15 @@
                 <Button
                     Width="100"
                     Margin="10,10,10,0"
-                    Command="{Binding OKButtonCommand}"
+                    Command="{Binding OKButtonCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="OK" />
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,0"
-                    Command="{Binding CancelButtonCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="キャンセル"
+                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

@@ -16,12 +16,14 @@
     <None Remove="python\flask_app.py" />
     <None Remove="python\langchain_client.py" />
     <None Remove="python\langchain_doc_store.py" />
+    <None Remove="python\langchain_doc_store_postgres.py" />
     <None Remove="python\langchain_file_processor.py" />
     <None Remove="python\langchain_object_processor.py" />
     <None Remove="python\langchain_util.py" />
     <None Remove="python\langchain_vector_db.py" />
     <None Remove="python\langchain_vector_db_chroma.py" />
     <None Remove="python\langchain_vector_db_faiss.py" />
+    <None Remove="python\langchain_vector_db_pgvector.py" />
     <None Remove="python\llamaindex_client.py" />
     <None Remove="python\llamaindex_vector_db.py" />
     <None Remove="python\llamaindex_vector_db_chroma.py" />
@@ -29,6 +31,7 @@
     <None Remove="python\openai_props.py" />
     <None Remove="python\script_template.py" />
     <None Remove="python\test_langchain_vector_db_chroma.py" />
+    <None Remove="python\test_langchain_vector_db_postgres.py" />
     <None Remove="python\test_openai_client.py" />
     <None Remove="python\tools.json" />
   </ItemGroup>
@@ -55,16 +58,19 @@
     <EmbeddedResource Include="python\langchain_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_doc_store.py">
+    <EmbeddedResource Include="python\langchain_doc_store_postgres.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_object_processor.py">
+    <EmbeddedResource Include="python\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_vector_db.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\langchain_vector_db_pgvector.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
@@ -89,6 +95,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\dev\script_template.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python\test_langchain_vector_db_postgres.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\test_langchain_vector_db_chroma.py">

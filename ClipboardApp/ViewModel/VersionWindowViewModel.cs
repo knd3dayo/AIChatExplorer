@@ -12,7 +12,7 @@ namespace ClipboardApp.ViewModel {
 
         public string Title { get; set; } = CommonStringResources.Instance.VersionInformation;
         public VersionWindowViewModel() {
-            Version = "0.1.0";
+            Version = "0.1.1";
             CopyRight = "© 2024 by knd3dayo";
             Url = "https://github.com/knd3dayo/ClipboardApp";
         }

@@ -140,5 +140,22 @@ namespace WpfAppCommon.Model {
         public override string SettingValueIsChecked(string SettingItem, string SettingValue) {
             return "Setting Value of " + SettingItem + " is Checked " + SettingValue;
         }
+
+        public override string WorkingDirectory { get; } = "Working Directory";
+        public override string RepositoryURL { get; } = "Repository URL";
+        public override string LastIndexedCommit { get; } = "Last Indexed Commit";
+        public override string NewRAGSource { get; } = "New RAG Source";
+
+        public override string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";
+        public override string ExampleGeneralVectorDB { get; } = "Example: General Vector DB for Searching Past Documents Based on User Questions";
+        public override string DocumentChunkSize { get; } = "Document Chunk Size";
+        public override string VectorSearchResultLimit { get; } = "Vector Search Result Limit";
+        public override string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";
+        public override string SQLite3LocationForDocStore { get; } = "SQLite3 Location for DocStore";
+        public override string ExampleSQLite3Location { get; } = "Example: sqlite:///C:\\Users\\Username\\sqlite3.db";
+        public override string DocumentChunkSizeForMultiVectorRetriever { get; } = "Document Chunk Size for MultiVectorRetriever";
+        public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
+        public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
+
     }
 }

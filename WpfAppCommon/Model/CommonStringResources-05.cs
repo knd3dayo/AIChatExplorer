@@ -340,6 +340,46 @@ namespace WpfAppCommon.Model {
         // 以下の項目をエクスポートします
         public virtual string ExportTheFollowingItems { get; } = "以下の項目をエクスポートします";
 
+        // 作業ディレクトリ
+        public virtual string WorkingDirectory { get; } = "作業ディレクトリ";
+        // リポジトリURL
+        public virtual string RepositoryURL { get; } = "リポジトリURL";
+        // 最後にインデックス化したコミット
+        public virtual string LastIndexedCommit { get; } = "最後にインデックス化したコミット";
+        // 新規RAGソース
+        public virtual string NewRAGSource { get; } = "新規RAGソース";
+
+        // インポート時に自動処理を実行します
+        public virtual string ExecuteAutoProcessingOnImport { get; } = "インポート時に自動処理を実行します";
+
+
+        // 例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。
+        public virtual string ExampleGeneralVectorDB { get; } = "例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+
+
+        // ドキュメントのチャンクサイズ
+        public virtual string DocumentChunkSize { get; } = "ドキュメントのチャンクサイズ";
+
+        // ベクトル検索結果の上限値
+        public virtual string VectorSearchResultLimit { get; } = "ベクトル検索結果の上限値";
+
+        // MultiVectorRetrieverを使用
+        public virtual string UseMultiVectorRetriever { get; } = "MultiVectorRetrieverを使用";
+
+        // DocStore用のSQLite3の場所
+        public virtual string SQLite3LocationForDocStore { get; } = "DocStore用のSQLite3の場所";
+
+        // 例：sqlite:///C:\Users\Username\sqlite3.db
+        public virtual string ExampleSQLite3Location { get; } = "例：sqlite:///C:\\Users\\Username\\sqlite3.db";
+
+        // マルチベクターリトリーバのドキュメントのチャンクサイズ
+        public virtual string DocumentChunkSizeForMultiVectorRetriever { get; } = "マルチベクターリトリーバのドキュメントのチャンクサイズ";
+        
+        // 例：C:\Users\Username\vector.db
+        public virtual string ExampleVectorDBLocationChroma { get; } = "例：C:\\Users\\Username\\vector.db";
+
+        // 例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain
+        public virtual string ExampleVectorDBLocationPostgres { get; } = "例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
 
     }
 }

@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListVectorDBWindowTitle}"
+    Title="{Binding StringResources.ListVectorDBWindowTitle, Mode=OneTime}"
     Width="800"
     Height="450"
     mc:Ignorable="d">
@@ -25,10 +25,10 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
@@ -78,9 +78,14 @@
             Grid.Row="2"
             ItemsSource="{Binding VectorDBItems}"
             SelectedItem="{Binding SelectedVectorDBItem}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding EditVectorDBCommand, Mode=OneTime}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable}">
+                    <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable, Mode=OneTime}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -90,22 +95,22 @@
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="{Binding StringResources.Name}" />
+                        Header="{Binding StringResources.Name, Mode=OneTime}" />
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBURL}"
-                        Header="{Binding StringResources.VectorDBLocation}" />
+                        Header="{Binding StringResources.VectorDBLocation, Mode=OneTime}" />
                     <GridViewColumn
                         Width="Auto"
                         DisplayMemberBinding="{Binding VectorDBTypeString}"
-                        Header="{Binding StringResources.VectorDBType}" />
+                        Header="{Binding StringResources.VectorDBType, Mode=OneTime}" />
                 </GridView>
             </ListView.View>
             <!--  コンテキストメニュー  -->
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Command="{Binding EditVectorDBCommand}" Header="{Binding StringResources.Edit}" />
-                    <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="{Binding StringResources.Delete}" />
+                    <MenuItem Command="{Binding EditVectorDBCommand}" Header="{Binding StringResources.Edit, Mode=OneTime}" />
+                    <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="{Binding StringResources.Delete, Mode=OneTime}" />
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -121,13 +126,13 @@
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
-                    Command="{Binding AddVectorDBCommand}"
-                    Content="{Binding StringResources.NewVectorDBSetting}" />
+                    Command="{Binding AddVectorDBCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.NewVectorDBSetting, Mode=OneTime}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
-                    Command="{Binding EditVectorDBCommand}"
-                    Content="{Binding StringResources.EditVectorDBSetting}" />
+                    Command="{Binding EditVectorDBCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.EditVectorDBSetting, Mode=OneTime}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -136,16 +141,16 @@
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
-                    Command="{Binding SelectCommand}"
+                    Command="{Binding SelectCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Select}"
+                    Content="{Binding StringResources.Select, Mode=OneTime}"
                     Visibility="{Binding SelectModeVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close}"
+                    Content="{Binding StringResources.Close, Mode=OneTime}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

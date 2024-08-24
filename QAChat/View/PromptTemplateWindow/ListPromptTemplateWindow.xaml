@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="clr-namespace:QAChat.ViewModel"
     Title="{Binding StringResources.PromptTemplateList, Mode=OneTime}"
-    Width="700"
+    Width="800"
     Height="450"
     mc:Ignorable="d">
     <Window.Resources>
@@ -27,10 +27,10 @@
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
@@ -81,14 +81,19 @@
             Grid.Row="2"
             ItemsSource="{Binding PromptItems}"
             SelectedItem="{Binding SelectedPromptItem}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <i:InvokeCommandAction Command="{Binding EditPromptItemCommand, Mode=OneTime}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <ListView.View>
                 <GridView>
                     <GridViewColumn
-                        Width="160"
+                        Width="300"
                         DisplayMemberBinding="{Binding Name}"
                         Header="{Binding StringResources.Name}" />
                     <GridViewColumn
-                        Width="350"
+                        Width="400"
                         DisplayMemberBinding="{Binding Description}"
                         Header="{Binding StringResources.Description}" />
                 </GridView>

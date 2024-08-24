@@ -10,7 +10,7 @@ namespace PythonAILib.PythonIF {
         
         public ChatResult OpenAIChat(ChatRequest chatController);
 
-
+            
         public ChatResult LangChainChat(ChatRequest chatController);
 
         

@@ -7,10 +7,9 @@ sys.path.append("python")
 from openai_props import OpenAIProps, VectorDBProps
 from openai_client import OpenAIClient
 import langchain_util
-import langchain_object_processor
+import langchain_vector_db
 
 import excel_util
-import openai_client
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -146,17 +145,17 @@ def __update_or_delete_file_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, mode, workdir, relative_path, urlを取得
-        openai_props, vector_db_props, document_root, relative_path, url, description = langchain_object_processor.process_file_update_or_datele_request_params(props_json, request_json)
-        # LangChainFileProcessorオブジェクトを生成
-        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
+        openai_props, vector_db_props, document_root, relative_path, url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
+        # LangChainVectorDBを生成
+        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
 
         # modeに応じて処理を分岐
         if mode == "delete":
             # delete_file_indexを実行
-            processor.delete_file_index(document_root, relative_path, url)
+            vector_db.delete_file_index(document_root, relative_path, url)
         if mode == "update":
             # update_file_indexを実行
-            processor.update_file_index(document_root, relative_path, url, description=description)
+            vector_db.update_file_index(document_root, relative_path, url, description=description)
 
         # 結果用のdictを生成
         result = {}
@@ -186,16 +185,17 @@ def __update_or_delete_content_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description  = langchain_object_processor.process_content_update_or_datele_request_params(props_json, request_json)
-        # LangChainObjectProcessorオブジェクトを生成
-        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
+        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
+
+        # LangChainVectorDBを生成
+        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
         
         if mode == "delete":
             # delete_content_indexを実行
-            processor.delete_content_index(source)
+            vector_db.delete_content_index(source)
         if mode == "update":
             # update_content_indexを実行
-            processor.update_content_index(text, source, source_url, description=description)
+            vector_db.update_content_index(text, source, source_url, description=description)
             
         # 結果用のdictを生成
         result = {}
@@ -225,9 +225,9 @@ def __update_or_delete_image_index(props_json, request_json, mode):
     # update_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_object_processor.process_image_update_or_datele_request_params(props_json, request_json)
-        # LangChainObjectProcessorオブジェクトを生成
-        processor = langchain_object_processor.LangChainObjectProcessor(openai_props, vector_db_props)
+        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
+        # LangChainVectorDBを生成
+        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
         
         # 初期化
         update_count = 0
@@ -235,10 +235,10 @@ def __update_or_delete_image_index(props_json, request_json, mode):
         
         if mode == "delete":
             # delete_image_indexを実行
-             processor.delete_image_index(source)
+             vector_db.delete_image_index(source)
         if mode == "update":
             # update_image_indexを実行
-            processor.update_image_index(text,  source, source_url, description=description, image_url=image_url)
+            vector_db.update_image_index(text,  source, source_url, description=description, image_url=image_url)
             
         # 結果用のdictを生成
         result = {}
@@ -281,7 +281,7 @@ def export_to_excel(filePath, dataJson):
     result_json = json.dumps(result, ensure_ascii=False, indent=4)
     return
 
-# import_to_excelを実行する
+# import_from_excelを実行する
 def import_from_excel(filePath):
     # import_to_excelを実行する関数を定義
     def func() -> dict:

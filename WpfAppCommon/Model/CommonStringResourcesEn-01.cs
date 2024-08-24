@@ -94,7 +94,7 @@ namespace WpfAppCommon.Model {
         // Check settings
         public override string CheckSettings { get; } = "Check settings";
 
-        public override string AppName { get; } = "CopyPasteApp";
+        public override string AppName { get; } = "RAG Clipboard";
         // File
         public override string File { get; } = "File";
         // Create

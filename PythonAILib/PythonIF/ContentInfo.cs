@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using PythonAILib.PythonIF;
 
 namespace PythonAILib.PythonIF {
     public class ContentInfo(VectorDBUpdateMode mode, string id, string content) {

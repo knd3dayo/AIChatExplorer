@@ -73,7 +73,7 @@
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SelectImageFileComman, Mode=OneTime}"
+                            Command="{Binding SelectImageFileCommand, Mode=OneTime}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
@@ -157,26 +157,26 @@
                                 Grid.Row="0"
                                 Height="100"
                                 Margin="0,0,0,0"
-                                Source="{Binding BitmapImage}" />
+                                Source="{Binding ScreenShotImage.BitmapImage}" />
 
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="0,0,10,0"
-                                Text="{Binding FileName}" />
+                                Text="{Binding ScreenShotImage.FileName}" />
                             <Grid.InputBindings>
                                 <MouseBinding
-                                    Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    Command="{Binding OpenSelectedImageFileCommand, Mode=OneTime}"
                                     CommandParameter="{Binding}"
                                     Gesture="LeftDoubleClick" />
                             </Grid.InputBindings>
                             <Grid.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem
-                                        Command="{Binding DataContext.OpenSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding OpenSelectedImageFileCommand}"
                                         CommandParameter="{Binding}"
                                         Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
                                     <MenuItem
-                                        Command="{Binding DataContext.RemoveSelectedImageFileCommand, Mode=OneTime, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Command="{Binding RemoveSelectedImageFileCommand}"
                                         CommandParameter="{Binding}"
                                         Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
                                 </ContextMenu>

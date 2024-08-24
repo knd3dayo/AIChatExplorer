@@ -16,7 +16,7 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
         super().__init__(langchain_openai_client, vector_db_props)
 
-    def load(self, docs:list=[]):
+    def _load(self, docs:list=[]):
         # ベクトルDB用のディレクトリが存在しない、または空の場合
         if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
@@ -52,7 +52,7 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
         if not self.vector_db_props.VectorDBURL:
             return
         # 新しいDBを作成
-        new_db = self.load(docs=documents)
+        new_db = self._load(docs=documents)
         # 既存のDBにマージ
         self.db.merge_from(new_db)
             

@@ -124,7 +124,7 @@ namespace WpfAppCommon.Model {
         // 設定のチェック
         public virtual string CheckSettings { get; } = "設定のチェック";
 
-        public virtual string AppName { get; } = "コピペアプリ";
+        public virtual string AppName { get; } = "RAG Clipboard";
         // ファイル
         public virtual string File { get; } = "ファイル";
         // 作成
