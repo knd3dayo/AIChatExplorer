@@ -1,5 +1,7 @@
 
+from ast import Tuple
 from calendar import c
+from importlib import metadata
 import os, json, sys, uuid
 from pydoc import doc
 from telnetlib import DO
@@ -44,7 +46,7 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
             **params
             )
 
-    def __get_document_ids_by_source(self, source:str=None) -> list:
+    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
         engine = create_engine(self.vector_db_props.VectorDBURL)
         with Session(engine) as session:
             stmt = text("select uuid from langchain_pg_collection where name=:name")
@@ -54,32 +56,14 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
                 return []
             collection_id = rows[0]
             print(collection_id)
-            stmt = text("select id, cmetadata from langchain_pg_embedding where collection_id=:collection_id and cmetadata->>'source'=:source")
-            stmt = stmt.bindparams(collection_id=collection_id, source=source)
+            stmt = text("select id, cmetadata from langchain_pg_embedding where collection_id=:collection_id and cmetadata->>:name=:value")
+            stmt = stmt.bindparams(collection_id=collection_id, name=name, value=value)
             rows = session.execute(stmt).all()
             document_ids = [row[0] for row in rows]
             metadata_list = [row[1] for row in rows]
-
+            
             return document_ids, metadata_list
-        
 
-    def _get_metadata_by_source(self, sources:str=None) -> tuple[list, list]:
-        ids=[]
-        metadata = []
-        for source in sources:
-            document_ids, metadata_list = self.__get_document_ids_by_source(source)
-
-            # デバッグ用
-            print("_get_documents_by_source doc_dict:", document_ids)
-
-            # vector idを取得してidsに追加
-            ids.extend(document_ids)
-            # documentsを取得してdocumentsに追加
-            metadata.extend(metadata_list)
-
-
-        return ids, metadata
-    
     def _save(self, documents:list=[]):
         self.db.add_documents(documents)
         

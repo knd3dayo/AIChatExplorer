@@ -3,6 +3,7 @@ import sys
 sys.path.append("python")
 
 import uuid, json, os
+from ast import Tuple
 
 from langchain_client import LangChainOpenAIClient
 from langchain_doc_store import SQLDocStore
@@ -29,16 +30,18 @@ class LangChainVectorDB:
     def _load(self):
         pass
 
-    
-    # vector idのリストとmetadataのリストを返す
-    def _get_metadata_by_source(self, sources:list={}) -> tuple[list, list]:
-        pass
+    # document_idのリストとmetadataのリストを返す
+    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
+        # 未実装例外をスロー
+        raise NotImplementedError("Not implemented")
 
     def _save(self, documents:list=[]):
-        pass
+        # 未実装例外をスロー
+        raise NotImplementedError("Not implemented")
 
     def _delete(self, doc_ids:list=[]):
-        pass
+        # 未実装例外をスロー
+        raise NotImplementedError("Not implemented")
 
     def __add_multivector_document(self, source_document: Document):
         # チャンクサイズ
@@ -69,14 +72,16 @@ class LangChainVectorDB:
         param.append((doc_id, source_document))
         self.doc_store.mset(param)
 
-    def __delete_multivector_document(self, source_document: Document ) -> int:
+    def __delete_multivector_document(self, source: str ) -> int:
+        
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata = self._get_metadata_by_source([source_document])
+        vector_ids, metadata_list = self._get_document_ids_by_tag("source", source)
+
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
             return 0
         # documentのmetadataのdoc_idを取得
-        doc_ids = [data.get("doc_id", None) for data in metadata]
+        doc_ids = [data.get("doc_id", None) for data in metadata_list]
         # doc_idsが空ではない場合
         if len(doc_ids) > 0:
             # DocStoreから削除
@@ -92,7 +97,7 @@ class LangChainVectorDB:
 
     def __delete_document(self, source: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
-        vector_ids, metadata = self._get_metadata_by_source([source])
+        vector_ids, metadata = self._get_document_ids_by_tag("source", source)
         # vector_idsが空の場合は何もしない
         if len(vector_ids) == 0:
             return 0

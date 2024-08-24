@@ -1,12 +1,14 @@
 
 import os, json, sys, uuid
+sys.path.append("python")
+
+from ast import Tuple
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
 from langchain_community.callbacks import get_openai_callback
 import chromadb
 
-sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
 from openai_props import VectorDBProps
@@ -37,23 +39,20 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             **params
             )
 
-    def _get_metadata_by_source(self, sources:str=None) -> tuple[list, list]:
+    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
         ids=[]
-        metadata = []
-        for source in sources:
-            doc_dict = self.db.get(where={"source": source})
+        metadata_list = []
+        doc_dict = self.db.get(where={name: value})
 
-            # デバッグ用
-            print("_get_documents_by_source doc_dict:", doc_dict)
+        # デバッグ用
+        print("_get_document_ids_by_tag doc_dict:", doc_dict)
 
-            # vector idを取得してidsに追加
-            ids.extend(doc_dict.get("ids", []))
-            # documentsを取得してdocumentsに追加
-            metadata.extend(doc_dict.get("metadata", []))
+        # vector idを取得してidsに追加
+        ids.extend(doc_dict.get("ids", []))
+        metadata_list.extend(doc_dict.get("metadata", []))
 
+        return ids, metadata_list
 
-        return ids, metadata
-    
     def _save(self, documents:list=[]):
         self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
         
