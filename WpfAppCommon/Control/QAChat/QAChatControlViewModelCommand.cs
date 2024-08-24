@@ -142,11 +142,6 @@ namespace WpfAppCommon.Control.QAChat {
             PromptTemplateCommandExecute(parameter);
         });
 
-        // Closeコマンド
-        public SimpleDelegateCommand<Window?> CloseCommand => new((window) => {
-
-            window?.Close();
-        });
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {

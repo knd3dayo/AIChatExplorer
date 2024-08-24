@@ -543,11 +543,6 @@
                     Orientation="Horizontal">
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding SaveCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Save, Mode=OneTime}" />
-                    <Button
-                        Margin="10,0,10,5"
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{Binding StringResources.Send, Mode=OneTime}" />
@@ -559,6 +554,11 @@
                         Margin="10,0,10,5"
                         Command="{Binding ClearInputTextCommand, Mode=OneTime}"
                         Content="{Binding StringResources.ClearContent, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding SaveCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{Binding StringResources.Save, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"
