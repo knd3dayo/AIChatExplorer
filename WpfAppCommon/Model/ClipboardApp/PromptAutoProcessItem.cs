@@ -1,14 +1,13 @@
 using PythonAILib.Model;
-using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Model
+namespace WpfAppCommon.Model.ClipboardApp
 {
-    public  class PromptAutoProcessItem : SystemAutoProcessItem{
+    public class PromptAutoProcessItem : SystemAutoProcessItem {
         public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
         public PromptAutoProcessItem() {
         }
-        public PromptAutoProcessItem(PromptItem promptItem){
+        public PromptAutoProcessItem(PromptItem promptItem) {
 
             Name = promptItem.Name;
             DisplayName = promptItem.Name;
@@ -18,7 +17,7 @@ namespace WpfAppCommon.Model
 
         }
         public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
-            
+
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }

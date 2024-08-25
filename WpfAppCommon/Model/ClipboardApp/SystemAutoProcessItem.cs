@@ -1,7 +1,7 @@
 using LiteDB;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     // TODO 多言語化
     public partial class SystemAutoProcessItem {
         public enum TypeEnum {
@@ -15,7 +15,7 @@ namespace WpfAppCommon.Model {
             RunPythonScript,
             PromptTemplate,
         }
-        public ObjectId? Id { get; set; } = LiteDB.ObjectId.Empty;
+        public ObjectId? Id { get; set; } = ObjectId.Empty;
         public string Name { get; set; } = "";
         public string DisplayName { get; set; } = "";
         public string Description { get; set; } = "";
@@ -37,7 +37,7 @@ namespace WpfAppCommon.Model {
 
         public static SystemAutoProcessItem GetSystemAutoProcessItem(string name) {
             // システムデフォルトのAutoProcessItemを取得
-            foreach (var item in SystemAutoProcessItem.SystemAutoProcesses) {
+            foreach (var item in SystemAutoProcesses) {
                 if (item.Name == name) {
                     return item;
                 }
@@ -47,7 +47,7 @@ namespace WpfAppCommon.Model {
 
         public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
 
-            Func<AutoProcessItemArgs, ClipboardItem?> action = GetAction(this.Name);
+            Func<AutoProcessItemArgs, ClipboardItem?> action = GetAction(Name);
             ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
             return result;
         }
@@ -78,8 +78,8 @@ namespace WpfAppCommon.Model {
                     );
                 // 同じSourceApplicationTitleを持つアイテムをマージするコマンドを追加
                 items.Add(
-                    new SystemAutoProcessItem("MergeItemsWithSameSourceApplicationTitle", 
-                        CommonStringResources.Instance.MergeItemsWithTheSameSourceApplicationTitle, 
+                    new SystemAutoProcessItem("MergeItemsWithSameSourceApplicationTitle",
+                        CommonStringResources.Instance.MergeItemsWithTheSameSourceApplicationTitle,
                         CommonStringResources.Instance.MergeItemsWithTheSameSourceApplicationTitleDescription)
                     );
                 return items;

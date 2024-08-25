@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     public class SearchCondition : ObservableObject {
         private string _description = "";
         private string _content = "";

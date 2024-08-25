@@ -1,6 +1,7 @@
 using System.Windows;
 using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

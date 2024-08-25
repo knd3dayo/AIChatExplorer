@@ -11,10 +11,12 @@ using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model
+{
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {

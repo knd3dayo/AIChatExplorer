@@ -4,9 +4,11 @@ using System.Windows.Media.Imaging;
 using LiteDB;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model
+{
     public class ClipboardItemImage {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;

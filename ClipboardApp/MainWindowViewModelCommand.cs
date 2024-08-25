@@ -16,7 +16,8 @@ using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel {
 
 

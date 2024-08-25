@@ -12,12 +12,10 @@
     Title="{Binding StringResources.QAChatWindowTitle, Mode=OneTime}"
     Width="800"
     Height="550"
+    d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:MainWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
@@ -65,13 +63,7 @@
                     VerticalAlignment="Top"
                     materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
                     IsMainMenu="True">
-                    <MenuItem
-                        Height="Auto"
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding SettingCommand, Mode=OneTime}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="設定"
-                        IsEnabled="{Binding QAChatControlViewModel.QAChatStartupProps.IsStartFromInternalApp}" />
+                    <MenuItem />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>

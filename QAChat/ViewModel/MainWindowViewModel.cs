@@ -10,6 +10,18 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel {
     public partial class MainWindowViewModel : MyWindowViewModel {
 
+
+        //初期化
+        public MainWindowViewModel(QAChatStartupProps props) {
+            // PythonAILibのLogWrapperのログ出力設定
+            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            // QAChatControlViewModelを生成
+            QAChatControlViewModel = new(props, PromptTemplateCommandExecute);
+        }
+        // QAChatControlのViewModel
+        public QAChatControlViewModel QAChatControlViewModel { get; set; }
+
+
         // OnActivatedAction
         public override void OnActivatedAction() {
             if (ClipboardFolder == null) {
@@ -31,13 +43,6 @@ namespace QAChat.ViewModel {
             }
         }
 
-        //初期化
-        public void Initialize(QAChatStartupProps props) {
-            // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
-            QAChatControlViewModel.Initialize(props, PromptTemplateCommandExecute);
-        }
-
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems {
             get {
@@ -48,9 +53,6 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(ClipboardItems));
             }
         }
-
-        // QAChatControlのViewModel
-        public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
 
 
         // 設定画面を開くコマンド
@@ -69,11 +71,7 @@ namespace QAChat.ViewModel {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
             },
             // PromptItemBaseを生成する関数
-            () => {
-                return new PromptItem();
-            }
-
-            );
+            () => { return new PromptItem(); });
         }
     }
 }

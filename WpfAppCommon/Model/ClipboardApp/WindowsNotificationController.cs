@@ -4,8 +4,8 @@ using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model {
-    public  class WindowsNotificationController {
+namespace WpfAppCommon.Model.ClipboardApp {
+    public class WindowsNotificationController {
         private static bool _Enabled = false;
         public static void Start(ClipboardFolder clipboardFolder, Action<ClipboardItem> afterUpdate) {
 

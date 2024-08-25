@@ -240,6 +240,11 @@ namespace WpfAppCommon.Control.QAChat {
             }
         });
 
+        // Windowを閉じるコマンド
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+            window.Close();
+        });
+
 
     }
 

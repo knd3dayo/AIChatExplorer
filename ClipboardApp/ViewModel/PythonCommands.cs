@@ -1,9 +1,11 @@
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class PythonCommands {
         public static void CreateScriptCommandExecute(object obj) {
             EditPythonScriptWindow editScriptWindow = new();

@@ -3,13 +3,15 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Control.QAChat {
+namespace WpfAppCommon.Control.QAChat
+{
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
-        public void Initialize(QAChatStartupProps props, Action<object>? PromptTemplateCommandExecute) {
+        public QAChatControlViewModel(QAChatStartupProps props, Action<object>? PromptTemplateCommandExecute) {
 
             QAChatStartupProps = props;
 

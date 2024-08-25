@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
 
     public partial class ClipboardItemViewModel {
 

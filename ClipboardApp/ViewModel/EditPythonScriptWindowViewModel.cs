@@ -1,8 +1,10 @@
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using ClipboardApp.View.PythonScriptView;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     class EditPythonScriptWindowViewModel : MyWindowViewModel {
         private ScriptItem? scriptItem;
         public ScriptItem? ScriptItem {

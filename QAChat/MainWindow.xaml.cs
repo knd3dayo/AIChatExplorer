@@ -14,8 +14,8 @@ namespace QAChat
 
         public static void OpenOpenAIChatWindow(QAChatStartupProps props) {
             QAChat.MainWindow openAIChatWindow = new();
-            MainWindowViewModel mainWindowViewModel = (MainWindowViewModel)openAIChatWindow.DataContext;
-            mainWindowViewModel.Initialize(props);
+            MainWindowViewModel mainWindowViewModel = new (props);
+            openAIChatWindow.DataContext = mainWindowViewModel;
 
             openAIChatWindow.Show();
         }

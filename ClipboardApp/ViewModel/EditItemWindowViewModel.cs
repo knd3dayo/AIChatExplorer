@@ -93,9 +93,6 @@ namespace ClipboardApp.ViewModel {
         // 更新後の処理
         private Action _afterUpdate = () => { };
 
-        // QAChatControlのViewModel
-        public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
-
         // IsDrawerOpen
         private bool isDrawerOpen = false;
         public bool IsDrawerOpen {

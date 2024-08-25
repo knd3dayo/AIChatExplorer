@@ -1,6 +1,4 @@
-using System.Collections.ObjectModel;
-
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     // 自動処理の引数用のクラス
     public class AutoProcessItemArgs {
 

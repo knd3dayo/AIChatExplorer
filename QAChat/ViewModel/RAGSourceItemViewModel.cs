@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Model.QAChat;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class RAGSourceItemViewModel : MyWindowViewModel {
 
         public RAGSourceItemViewModel(RAGSourceItemBase item) {

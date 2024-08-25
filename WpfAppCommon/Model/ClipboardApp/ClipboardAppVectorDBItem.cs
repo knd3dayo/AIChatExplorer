@@ -3,7 +3,7 @@ using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Factory;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
 
     /// <summary>
     /// VectorDBのアイテム

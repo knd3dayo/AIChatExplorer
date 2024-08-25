@@ -1,9 +1,8 @@
 using System.Reflection;
 using WK.Libraries.SharpClipboardNS;
-using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -97,7 +96,7 @@ namespace WpfAppCommon.Model {
             if (_clipboard == null) {
                 return;
             }
-            ClipboardFolder.RootFolder.ProcessClipboardItem( e, _afterClipboardChanged);
+            ClipboardFolder.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
 
         }
 

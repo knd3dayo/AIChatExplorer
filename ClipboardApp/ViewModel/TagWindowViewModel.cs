@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using ClipboardApp.View.TagView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

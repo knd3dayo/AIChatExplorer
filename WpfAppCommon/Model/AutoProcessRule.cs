@@ -1,7 +1,9 @@
 using WpfAppCommon.Utils;
 using LiteDB;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model
+{
 
     // 自動処理ルールの条件
 

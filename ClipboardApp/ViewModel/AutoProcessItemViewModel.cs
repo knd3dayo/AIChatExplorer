@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class AutoProcessItemViewModel : MyWindowViewModel {
 
         private readonly SystemAutoProcessItem autoProcessItem;

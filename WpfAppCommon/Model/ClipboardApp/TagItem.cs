@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     public class TagItem : ObservableObject {
         public ObjectId? Id { get; set; }
 

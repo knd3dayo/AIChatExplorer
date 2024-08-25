@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using LiteDB;
 using WpfAppCommon.Factory.Default;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     public enum ScriptType {
         Python,
         PowerShell,

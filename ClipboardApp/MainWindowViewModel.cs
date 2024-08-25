@@ -8,6 +8,7 @@ using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 
