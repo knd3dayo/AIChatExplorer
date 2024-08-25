@@ -621,7 +621,7 @@ namespace WpfAppCommon.Model {
         }
 
         // SystemCommonVectorDBを取得する。
-        public VectorDBItem GetVectorDBItem() {
+        public VectorDBItemBase GetVectorDBItem() {
             return ClipboardAppVectorDBItem.GetFolderVectorDBItem(this);
         }
 

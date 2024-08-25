@@ -1,23 +1,19 @@
 using System.IO;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Factory;
-using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model {
 
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public class ClipboardAppVectorDBItem : VectorDBItem {
+    public class ClipboardAppVectorDBItem : VectorDBItemBase {
 
         // システム共通のベクトルDBの名前
         public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
         // システム共通のベクトルDB
-        public static VectorDBItem SystemCommonVectorDB {
+        public static VectorDBItemBase SystemCommonVectorDB {
             get {
                 // DBからベクトルDBを取得
                 var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
@@ -65,22 +61,22 @@ namespace WpfAppCommon.Model {
             dbController.DeleteVectorDBItem(this);
         }
         // Get
-        public static IEnumerable<VectorDBItem> GetItems(bool includeSystemVectorDB) {
+        public static IEnumerable<VectorDBItemBase> GetItems(bool includeSystemVectorDB) {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // GetItemsメソッドを呼び出して取得
-            IEnumerable<VectorDBItem> items = dbController.GetVectorDBItems();
+            IEnumerable<VectorDBItemBase> items = dbController.GetVectorDBItems();
             if (!includeSystemVectorDB) {
                 items = items.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName);
             }
 
             return items;
         }
-        public static IEnumerable<VectorDBItem> GetEnabledItems(bool includeSystemVectorDB) {
+        public static IEnumerable<VectorDBItemBase> GetEnabledItems(bool includeSystemVectorDB) {
             return GetItems(includeSystemVectorDB).Where(item => item.IsEnabled);
         }
 
-        public static VectorDBItem GetFolderVectorDBItem(ClipboardFolder folder) {
+        public static VectorDBItemBase GetFolderVectorDBItem(ClipboardFolder folder) {
             // SystemCommonVectorDBからコピーを作成
             ClipboardAppVectorDBItem item = new() {
                 Id = SystemCommonVectorDB.Id,
@@ -100,7 +96,7 @@ namespace WpfAppCommon.Model {
         }
 
         // GetItemById
-        public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {
+        public static VectorDBItemBase? GetItemById(LiteDB.ObjectId id) {
             return GetItems(true).FirstOrDefault(item => item.Id == id);
         }
 

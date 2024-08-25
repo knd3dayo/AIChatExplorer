@@ -435,7 +435,7 @@ namespace WpfAppCommon.Model {
             ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
 
             // VectorDBItemを取得
-            VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+            VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
             // Embeddingを保存
             folderVectorDBItem.UpdateIndex(clipboardInfo);
             LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
@@ -461,7 +461,7 @@ namespace WpfAppCommon.Model {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
 
                 // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+                VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
                 // Embeddingを削除
                 folderVectorDBItem.DeleteIndex(clipboardInfo);
                 LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
@@ -546,7 +546,7 @@ namespace WpfAppCommon.Model {
         // ベクトル検索を実行する
         public static List<VectorSearchResult> VectorSearchCommandExecute(ClipboardItem item) {
             // VectorDBItemを取得
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
             string contentText = item.Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
@@ -570,7 +570,7 @@ namespace WpfAppCommon.Model {
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             string contentText = item.Content;
             // ベクトルDBの設定
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
 
             string result = ChatRequest.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);

@@ -25,7 +25,7 @@ namespace WpfAppCommon.Control.QAChat {
                 await Task.Run(() => {
 
                     // LangChainChat用。VectorDBItemsを設定
-                    List<VectorDBItem> items = [.. SystemVectorDBItems, .. ExternalVectorDBItems];
+                    List<VectorDBItemBase> items = [.. SystemVectorDBItems, .. ExternalVectorDBItems];
                     ChatController.VectorDBItems = items;
 
                     // ImageFilesとImageItemsのImageをChatControllerに設定
@@ -110,7 +110,7 @@ namespace WpfAppCommon.Control.QAChat {
             // ModeがNormal以外の場合は、VectorDBItemを取得
             ExternalVectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItem? item = ClipboardFolder?.GetVectorDBItem();
+                VectorDBItemBase? item = ClipboardFolder?.GetVectorDBItem();
                 if (item != null) {
                     ExternalVectorDBItems.Add(item);
                 }

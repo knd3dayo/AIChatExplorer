@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
-using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;

@@ -125,8 +125,8 @@ namespace WpfAppCommon.Control.QAChat {
 
         }
 
-        private ObservableCollection<VectorDBItem> _externalVectorDBItems = [];
-        public ObservableCollection<VectorDBItem> ExternalVectorDBItems {
+        private ObservableCollection<VectorDBItemBase> _externalVectorDBItems = [];
+        public ObservableCollection<VectorDBItemBase> ExternalVectorDBItems {
             get {
                 return _externalVectorDBItems;
             }
@@ -137,8 +137,8 @@ namespace WpfAppCommon.Control.QAChat {
         }
 
         // SelectedExternalVectorDBItem
-        private VectorDBItem? _SelectedExternalVectorDBItem = null;
-        public VectorDBItem? SelectedExternalVectorDBItem {
+        private VectorDBItemBase? _SelectedExternalVectorDBItem = null;
+        public VectorDBItemBase? SelectedExternalVectorDBItem {
             get {
                 return _SelectedExternalVectorDBItem;
             }
@@ -149,8 +149,8 @@ namespace WpfAppCommon.Control.QAChat {
         }
 
         // ベクトルDB(フォルダ)
-        private ObservableCollection<VectorDBItem> _SystemVectorDBItems = [];
-        public ObservableCollection<VectorDBItem> SystemVectorDBItems {
+        private ObservableCollection<VectorDBItemBase> _SystemVectorDBItems = [];
+        public ObservableCollection<VectorDBItemBase> SystemVectorDBItems {
             get {
                 return _SystemVectorDBItems;
             }
@@ -160,8 +160,8 @@ namespace WpfAppCommon.Control.QAChat {
             }
         }
         // ベクトルDB(フォルダ)の選択中のアイテム
-        private VectorDBItem? _SelectedSystemVectorDBItem = null;
-        public VectorDBItem? SelectedSystemVectorDBItem {
+        private VectorDBItemBase? _SelectedSystemVectorDBItem = null;
+        public VectorDBItemBase? SelectedSystemVectorDBItem {
             get {
                 return _SelectedSystemVectorDBItem;
             }

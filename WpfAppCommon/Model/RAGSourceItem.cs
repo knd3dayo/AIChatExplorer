@@ -60,7 +60,7 @@ namespace WpfAppCommon.Model {
         private LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
 
         // VectorDBItemの取得
-        public VectorDBItem? VectorDBItem {
+        public VectorDBItemBase? VectorDBItem {
             get {
                 return ClipboardAppVectorDBItem.GetItemById(VectorDBItemId);
             }

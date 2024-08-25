@@ -32,7 +32,7 @@ namespace PythonAILib.Model {
         public string? OpenAIEmbeddingBaseURL { get; set; } = null;
 
         [JsonPropertyName("VectorDBItems")]
-        public List<VectorDBItem> VectorDBItems { get; set; } = [];
+        public List<VectorDBItemBase> VectorDBItems { get; set; } = [];
 
 
         public string ToJson() {

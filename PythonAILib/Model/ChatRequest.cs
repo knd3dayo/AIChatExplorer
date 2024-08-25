@@ -50,7 +50,7 @@ namespace PythonAILib.Model {
 
         public List<string> AdditionalImageURLs { get; set; } = [];
 
-        public List<VectorDBItem> VectorDBItems { get; set; } = [];
+        public List<VectorDBItemBase> VectorDBItems { get; set; } = [];
 
         public string CreatePromptText() {
             // PromptTextを作成
@@ -370,7 +370,7 @@ namespace PythonAILib.Model {
         }
 
         // 背景情報を作成する
-        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content) {
+        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
             ChatRequest chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;

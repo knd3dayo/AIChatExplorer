@@ -10,7 +10,7 @@ using System.Text.Unicode;
 using LiteDB;
 using WpfAppCommon;
 
-namespace QAChat.Model {
+namespace WpfAppCommon.Model {
     public class PromptItem {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;

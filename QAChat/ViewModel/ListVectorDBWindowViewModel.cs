@@ -45,9 +45,9 @@ namespace QAChat.ViewModel {
         }
 
         private ActionModeEnum mode;
-        Action<VectorDBItem>? callBackup;
+        Action<VectorDBItemBase>? callBackup;
 
-        public void Initialize(ActionModeEnum mode, Action<VectorDBItem> callBackup) {
+        public void Initialize(ActionModeEnum mode, Action<VectorDBItemBase> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;

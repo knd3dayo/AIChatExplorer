@@ -24,7 +24,7 @@ namespace QAChat.View.VectorDBWindow
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, Action<VectorDBItem> callBackup) {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, Action<VectorDBItemBase> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
             ListVectorDBWindowViewModel listVectorDBWindowViewModel = (ListVectorDBWindowViewModel)listVectorDBWindow.DataContext;
             listVectorDBWindowViewModel.Initialize(mode, callBackup);

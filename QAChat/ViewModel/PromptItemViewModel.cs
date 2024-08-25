@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Model;
+using WpfAppCommon.Model;
 
 namespace QAChat.ViewModel {
     public class PromptItemViewModel : ObservableObject {

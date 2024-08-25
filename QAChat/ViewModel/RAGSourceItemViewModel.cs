@@ -43,7 +43,7 @@ namespace QAChat.ViewModel {
         }
 
         // VectorDBItem
-        public VectorDBItem? VectorDBItem {
+        public VectorDBItemBase? VectorDBItem {
             get => Item.VectorDBItem;
             set {
                 Item.VectorDBItem = value;
@@ -51,12 +51,12 @@ namespace QAChat.ViewModel {
             }
         }
         // ComboBoxの選択肢
-        public ObservableCollection<VectorDBItem> VectorDBItems {
+        public ObservableCollection<VectorDBItemBase> VectorDBItems {
             get {
                 return [.. ClipboardAppVectorDBItem.GetItems(false)];
             }
         }
-        public VectorDBItem? SelectedVectorDBItem {
+        public VectorDBItemBase? SelectedVectorDBItem {
             get {
                 return Item.VectorDBItem;
             }

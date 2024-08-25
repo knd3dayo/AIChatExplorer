@@ -1,5 +1,4 @@
 using System.Windows;
-using QAChat.Model;
 using WpfAppCommon;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

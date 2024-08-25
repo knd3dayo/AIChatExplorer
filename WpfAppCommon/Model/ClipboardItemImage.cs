@@ -110,7 +110,7 @@ namespace WpfAppCommon.Model {
             // Embeddingを削除
             if (ClipboardItem != null) {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteTextEmbeddingFromImage);
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
+                VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
                 // ImageInfoを作成
                 ImageInfo imageInfo = new(VectorDBUpdateMode.delete, idString);
                 folderVectorDBItem.DeleteIndex(imageInfo);
@@ -158,7 +158,7 @@ namespace WpfAppCommon.Model {
             ImageInfo imageInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), ImageBase64);
 
             // VectorDBItemを取得
-            VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
+            VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
             // Embeddingを保存
             folderVectorDBItem.UpdateIndex(imageInfo);
             LogWrapper.Info(CommonStringResources.Instance.SavedTextEmbeddingFromImage);

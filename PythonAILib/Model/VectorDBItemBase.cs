@@ -8,7 +8,7 @@ namespace PythonAILib.Model {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public abstract class VectorDBItem {
+    public abstract class VectorDBItemBase {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
@@ -68,7 +68,7 @@ namespace PythonAILib.Model {
         public bool IsSystem { get; set; } = false;
 
         // Json文字列化する
-        public static string ToJson(IEnumerable<VectorDBItem> items) {
+        public static string ToJson(IEnumerable<VectorDBItemBase> items) {
             var options = new JsonSerializerOptions {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
@@ -76,7 +76,7 @@ namespace PythonAILib.Model {
             return System.Text.Json.JsonSerializer.Serialize(items, options);
         }
         // Json文字列化する
-        public static string ToJson(VectorDBItem item) {
+        public static string ToJson(VectorDBItemBase item) {
             var options = new JsonSerializerOptions {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true

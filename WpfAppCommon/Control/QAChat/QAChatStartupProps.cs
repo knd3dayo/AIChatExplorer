@@ -12,11 +12,11 @@ namespace WpfAppCommon.Control.QAChat {
         public ClipboardItem ClipboardItem { get; set; }
 
 
-        public Action<VectorDBItem> OpenVectorDBItemAction { get; set; } = (vectorDBItem) => { };
+        public Action<VectorDBItemBase> OpenVectorDBItemAction { get; set; } = (vectorDBItem) => { };
 
-        public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemsAction { get; set; } = (vectorDBItems) => { };
+        public Action<ObservableCollection<VectorDBItemBase>> SelectVectorDBItemsAction { get; set; } = (vectorDBItems) => { };
 
-        public Action<ObservableCollection<VectorDBItem>> SelectFolderAction { get; set; } = (folders) => { };
+        public Action<ObservableCollection<VectorDBItemBase>> SelectFolderAction { get; set; } = (folders) => { };
 
         public Func<List<ClipboardItemImage>> GetSelectedClipboardItemImageFunction { get; set; } = () => { return []; };
     }

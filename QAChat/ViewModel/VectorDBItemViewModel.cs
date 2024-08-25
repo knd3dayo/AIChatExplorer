@@ -5,11 +5,11 @@ using WpfAppCommon.Model;
 namespace QAChat.ViewModel {
     public class VectorDBItemViewModel : MyWindowViewModel {
 
-        private readonly VectorDBItem item;
-        public VectorDBItemViewModel(VectorDBItem item) {
+        private readonly VectorDBItemBase item;
+        public VectorDBItemViewModel(VectorDBItemBase item) {
             this.item = item;
         }
-        public VectorDBItem Item {
+        public VectorDBItemBase Item {
             get {
                 return item;
             }

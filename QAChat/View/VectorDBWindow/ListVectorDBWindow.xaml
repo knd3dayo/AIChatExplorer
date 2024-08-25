@@ -11,6 +11,7 @@
     Title="{Binding StringResources.ListVectorDBWindowTitle, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:ListVectorDBWindowViewModel}"
     mc:Ignorable="d">
     <Window.DataContext>
         <local:ListVectorDBWindowViewModel />

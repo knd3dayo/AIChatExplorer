@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model;
-using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
 using WpfAppCommon.Factory;

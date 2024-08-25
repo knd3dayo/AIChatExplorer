@@ -1,5 +1,4 @@
 using PythonAILib.Model;
-using QAChat.Model;
 
 namespace WpfAppCommon.Model {
     public  class PromptAutoProcessItem : SystemAutoProcessItem{

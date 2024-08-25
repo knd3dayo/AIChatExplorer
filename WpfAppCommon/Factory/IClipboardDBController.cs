@@ -1,6 +1,5 @@
 using LiteDB;
 using PythonAILib.Model;
-using QAChat.Model;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Factory {
@@ -88,11 +87,11 @@ namespace WpfAppCommon.Factory {
 
         //--- -  VectorDBItem
         // update
-        public void UpsertVectorDBItem(VectorDBItem item);
+        public void UpsertVectorDBItem(VectorDBItemBase item);
         // delete
-        public void DeleteVectorDBItem(VectorDBItem item);
+        public void DeleteVectorDBItem(VectorDBItemBase item);
         // get
-        public IEnumerable<VectorDBItem> GetVectorDBItems();
+        public IEnumerable<VectorDBItemBase> GetVectorDBItems();
 
     }
 

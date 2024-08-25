@@ -1,7 +1,6 @@
 using System.IO;
 using LiteDB;
 using PythonAILib.Model;
-using QAChat.Model;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Factory.Default {
@@ -509,7 +508,7 @@ namespace WpfAppCommon.Factory.Default {
         }
         //----  RAGSourceItem
         // update
-        public void UpsertVectorDBItem(VectorDBItem item) {
+        public void UpsertVectorDBItem(VectorDBItemBase item) {
             if (item is not ClipboardAppVectorDBItem clipboardAppVectorDB) {
                 return;
             }
@@ -519,13 +518,13 @@ namespace WpfAppCommon.Factory.Default {
 
         }
         // delete
-        public void DeleteVectorDBItem(VectorDBItem item) {
+        public void DeleteVectorDBItem(VectorDBItemBase item) {
             // VectorDBItemコレクションから、itemを削除
             var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             collection.Delete(item.Id);
         }
         // get
-        public IEnumerable<VectorDBItem> GetVectorDBItems() {
+        public IEnumerable<VectorDBItemBase> GetVectorDBItems() {
             // VectorDBItemコレクションから、すべてのアイテムを取得
             var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();

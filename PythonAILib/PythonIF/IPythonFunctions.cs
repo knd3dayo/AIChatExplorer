@@ -14,13 +14,13 @@ namespace PythonAILib.PythonIF {
         public ChatResult LangChainChat(ChatRequest chatController);
 
         
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, VectorSearchRequest request);
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItemBase vectorDBItem, VectorSearchRequest request);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItemBase vectorDBItem);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItemBase vectorDBItem);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItemBase vectorDBItem);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
         public void ExportToExcel(string filePath, CommonDataTable data);
