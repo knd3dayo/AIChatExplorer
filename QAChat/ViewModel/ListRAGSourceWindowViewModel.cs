@@ -8,7 +8,16 @@ namespace QAChat.ViewModel {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class RAGManagementWindowViewModel : MyWindowViewModel {
+    public class ListRAGSourceWindowViewModel : MyWindowViewModel {
+
+        public ListRAGSourceWindowViewModel() {
+            // RagSourceItemのリストを初期化
+            RagSourceItems.Clear();
+            foreach (var item in RAGSourceItem.GetItems()) {
+                RagSourceItems.Add(new RAGSourceItemViewModel(item));
+            }
+            OnPropertyChanged(nameof(RagSourceItems));
+        }
 
         // RagSourceItemのリスト
         public ObservableCollection<RAGSourceItemViewModel> RagSourceItems { get; set; } = [];
@@ -23,14 +32,6 @@ namespace QAChat.ViewModel {
                 selectedRagSourceItem = value;
                 OnPropertyChanged(nameof(SelectedRagSourceItem));
             }
-        }
-        public void Initialize() {
-            // RagSourceItemのリストを初期化
-            RagSourceItems.Clear();
-            foreach (var item in RAGSourceItem.GetItems()) {
-                RagSourceItems.Add(new RAGSourceItemViewModel(item));
-            }
-            OnPropertyChanged(nameof(RagSourceItems));
         }
 
         // RAG Sourceの追加

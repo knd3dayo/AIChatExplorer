@@ -8,11 +8,21 @@ namespace QAChat.ViewModel {
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
     public class SelectCommitWindowViewModel : MyWindowViewModel {
+        public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action) {
+            this.itemViewModel = itemViewModel;
+            // コミット情報を取得
+            CommitInfoList.Clear();
+            foreach (var commit in itemViewModel.Item.GetCommitList()) {
+                CommitInfoList.Add(commit);
+            }
+            afterUpdate = action;
+        }
+
 
         public ObservableCollection<CommitInfo> CommitInfoList { get; set; } = [];
 
         // RagSourceItemViewModel
-        private RAGSourceItemViewModel? itemViewModel;
+        private RAGSourceItemViewModel itemViewModel { get; set;}
 
         // 選択中のコミットハッシュ
         private CommitInfo? selectedCommitInfo;
@@ -26,16 +36,6 @@ namespace QAChat.ViewModel {
             }
         }
         private Action<string> afterUpdate = (hash) => { };
-
-        public void Initialize(RAGSourceItemViewModel itemViewModel, Action<string> action) {
-            this.itemViewModel = itemViewModel;
-            // コミット情報を取得
-            CommitInfoList.Clear();
-            foreach (var commit in itemViewModel.Item.GetCommitList()) {
-                CommitInfoList.Add(commit);
-            }
-            afterUpdate = action;
-        }
 
         // OKボタン
         public SimpleDelegateCommand<Window> OkCommand => new((window) => {

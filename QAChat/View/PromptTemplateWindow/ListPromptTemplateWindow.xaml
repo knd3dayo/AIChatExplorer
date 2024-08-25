@@ -12,6 +12,7 @@
     Title="{Binding StringResources.PromptTemplateList, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=view:ListPromptTemplateWindowViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
@@ -22,9 +23,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <view:ListPromptTemplateWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

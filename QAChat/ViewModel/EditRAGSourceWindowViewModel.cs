@@ -6,6 +6,18 @@ using WpfAppCommon.Utils;
 namespace QAChat.View.RAGWindow {
     public class EditRAGSourceWindowViewModel : MyWindowViewModel {
 
+        // 初期化
+        public EditRAGSourceWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
+            ItemViewModel = itemViewModel;
+
+            // test
+            if (ItemViewModel != null) {
+                ItemViewModel.SelectedVectorDBItem = itemViewModel?.SelectedVectorDBItem;
+            }
+
+            AfterUpdate = afterUpdate;
+        }
+
         private RAGSourceItemViewModel? itemViewModel;
         public RAGSourceItemViewModel? ItemViewModel {
             get {
@@ -19,17 +31,7 @@ namespace QAChat.View.RAGWindow {
 
 
         private Action<RAGSourceItemViewModel> AfterUpdate { get; set; } = (promptItem) => { };
-        // 初期化
-        public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
-            ItemViewModel = itemViewModel;
 
-            // test
-            if (ItemViewModel != null) {
-                ItemViewModel.SelectedVectorDBItem = itemViewModel?.SelectedVectorDBItem;
-            }
-
-            AfterUpdate = afterUpdate;
-        }
         // OKボタンのコマンド
         public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映

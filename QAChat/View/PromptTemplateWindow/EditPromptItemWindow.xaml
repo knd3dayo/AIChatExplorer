@@ -12,11 +12,9 @@
     Title="{Binding StringResources.EditPrompt}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:EditPromptItemWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:EditPromptItemWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

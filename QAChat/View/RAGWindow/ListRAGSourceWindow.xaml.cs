@@ -18,14 +18,14 @@ namespace QAChat.View.RAGWindow
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>
-    public partial class RagManagementWindow : Window {
-        public RagManagementWindow() {
+    public partial class ListRAGSourceWindow : Window {
+        public ListRAGSourceWindow() {
             InitializeComponent();
         }
         public static void OpenRagManagementWindow() {
-            RagManagementWindow ragManagementWindow = new();
-            RAGManagementWindowViewModel ragManagementWindowViewModel = (RAGManagementWindowViewModel)ragManagementWindow.DataContext;
-            ragManagementWindowViewModel.Initialize();
+            ListRAGSourceWindow ragManagementWindow = new();
+            ListRAGSourceWindowViewModel ragManagementWindowViewModel = new();
+            ragManagementWindow.DataContext = ragManagementWindowViewModel;
             ragManagementWindow.ShowDialog();
         }
     }

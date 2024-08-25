@@ -13,8 +13,8 @@ namespace QAChat.View.RAGWindow
 
         public static void OpenEditRAGSourceWindow(RAGSourceItemViewModel ragSourceItemViewModel, Action<RAGSourceItemViewModel> callback) {
             EditRAGSourceWindow editRAGSourceWindow = new();
-            EditRAGSourceWindowViewModel editRAGSourceWindowViewModel = (EditRAGSourceWindowViewModel)editRAGSourceWindow.DataContext;
-            editRAGSourceWindowViewModel.Initialize(ragSourceItemViewModel, callback);
+            EditRAGSourceWindowViewModel editRAGSourceWindowViewModel = new (ragSourceItemViewModel, callback);
+            editRAGSourceWindow.DataContext = editRAGSourceWindowViewModel;
             editRAGSourceWindow.ShowDialog();
         }
     }

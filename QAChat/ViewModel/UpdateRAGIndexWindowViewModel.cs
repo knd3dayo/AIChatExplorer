@@ -6,6 +6,13 @@ using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel {
     internal class UpdateRAGIndexWindowViewModel : MyWindowViewModel {
+        public UpdateRAGIndexWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action) {
+
+            this.itemViewModel = itemViewModel;
+            afterUpdate = action;
+            OnPropertyChanged(nameof(LastIndexCommitHash));
+
+        }
 
         private RAGSourceItemViewModel? itemViewModel;
         private Action<RAGSourceItemViewModel> afterUpdate = (parameter) => { };
@@ -133,14 +140,6 @@ namespace QAChat.ViewModel {
             }
         }
 
-
-        public void Initialize(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action) {
-
-            this.itemViewModel = itemViewModel;
-            afterUpdate = action;
-            OnPropertyChanged(nameof(LastIndexCommitHash));
-
-        }
         // SelectRangeStartCommand
         public SimpleDelegateCommand<object> SelectRangeStartCommand => new((parameter) => {
             if (itemViewModel == null) {

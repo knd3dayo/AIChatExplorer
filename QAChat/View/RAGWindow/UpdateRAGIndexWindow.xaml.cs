@@ -25,8 +25,8 @@ namespace QAChat.View.RAGWindow
 
         public static void OpenUpdateRAGIndexWindow(RAGSourceItemViewModel ItemViewModel, Action<RAGSourceItemViewModel> callback) {
             UpdateRAGIndexWindow updateRAGIndexWindow = new();
-            UpdateRAGIndexWindowViewModel updateRAGIndexWindowViewModel = (UpdateRAGIndexWindowViewModel)updateRAGIndexWindow.DataContext;
-            updateRAGIndexWindowViewModel.Initialize(ItemViewModel, callback);
+            UpdateRAGIndexWindowViewModel updateRAGIndexWindowViewModel = new (ItemViewModel, callback);
+            updateRAGIndexWindow.DataContext = updateRAGIndexWindowViewModel;
             updateRAGIndexWindow.ShowDialog();
         }
     }

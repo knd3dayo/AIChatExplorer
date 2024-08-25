@@ -144,7 +144,7 @@ namespace ClipboardApp {
         // OpenRAGManagementWindowCommandExecute メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenRAGManagementWindowCommandExecute() {
             // RARManagementWindowを開く
-            RagManagementWindow.OpenRagManagementWindow();
+            ListRAGSourceWindow.OpenRagManagementWindow();
         }
         // OpenVectorDBManagementWindowCommandExecute メニューの「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenVectorDBManagementWindowCommandExecute() {

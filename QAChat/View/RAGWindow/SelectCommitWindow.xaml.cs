@@ -25,8 +25,8 @@ namespace QAChat.View.RAGWindow
 
         public static void OpenSelectCommitWindow(RAGSourceItemViewModel itemViewModel, Action<string> callback) {
             SelectCommitWindow selectCommitWindow = new();
-            SelectCommitWindowViewModel selectCommitWindowViewModel = (SelectCommitWindowViewModel)selectCommitWindow.DataContext;
-            selectCommitWindowViewModel.Initialize(itemViewModel, callback);
+            SelectCommitWindowViewModel selectCommitWindowViewModel = new (itemViewModel, callback);
+            selectCommitWindow.DataContext = selectCommitWindowViewModel;
             selectCommitWindow.ShowDialog();
         }
     }
