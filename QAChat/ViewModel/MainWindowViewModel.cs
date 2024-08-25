@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
-using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel {
-    public partial class MainWindowViewModel : MyWindowViewModel {
+    public  class MainWindowViewModel : MyWindowViewModel {
 
 
         //初期化

@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:qc="clr-namespace:WpfAppCommon.Control.QAChat;assembly=WpfAppCommon"
+    xmlns:qc="clr-namespace:QAChat.Control"
     Title="{Binding StringResources.QAChatWindowTitle, Mode=OneTime}"
     Width="800"
     Height="550"
@@ -67,10 +67,7 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <qc:QAChatControl
-            Name="QAChatControl"
-            Grid.Row="1"
-            DataContext="{Binding QAChatControlViewModel}" />
+        <qc:QAChatControl Grid.Row="1" DataContext="{Binding QAChatControlViewModel}" />
         <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

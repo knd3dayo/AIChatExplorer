@@ -3,7 +3,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ClipboardApp.View.TagView;
 using WpfAppCommon;
-using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;

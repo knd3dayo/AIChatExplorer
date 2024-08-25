@@ -1,15 +1,15 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
+using QAChat.Control;
+using QAChat.View.EditChatItemWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using WpfAppCommon.View.QAChat;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.IO;
 
-namespace WpfAppCommon.Control.QAChat
-{
+namespace QAChat.ViewModel {
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド
@@ -125,7 +125,7 @@ namespace WpfAppCommon.Control.QAChat
                 if (tabControl.SelectedIndex == 1) {
                     // プレビュータブが選択された場合、プレビューテキストを更新
                     OnPropertyChanged(nameof(PreviewText));
-                } 
+                }
                 if (tabControl.SelectedIndex == 2) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
                     OnPropertyChanged(nameof(PreviewJson));
@@ -136,7 +136,7 @@ namespace WpfAppCommon.Control.QAChat
         });
 
         // プロンプトテンプレート画面を開くコマンド
-        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => { 
+        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
 
             PromptTemplateCommandExecute(parameter);
         });
@@ -158,7 +158,7 @@ namespace WpfAppCommon.Control.QAChat
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatItem>  OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatItem> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 

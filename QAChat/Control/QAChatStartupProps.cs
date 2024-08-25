@@ -3,8 +3,7 @@ using PythonAILib.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Control.QAChat
-{
+namespace QAChat.Control {
     public class QAChatStartupProps {
         public QAChatStartupProps(ClipboardFolder clipboardFolder, ClipboardItem clipboardItem) {
             ClipboardFolder = clipboardFolder;

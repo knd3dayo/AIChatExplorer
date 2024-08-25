@@ -1,6 +1,6 @@
 using System.Windows;
+using QAChat.Control;
 using QAChat.ViewModel;
-using WpfAppCommon.Control.QAChat;
 
 namespace QAChat
 {
