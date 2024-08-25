@@ -96,13 +96,7 @@ namespace ClipboardApp.ViewModel {
                 string filaPath = dialog.FileName;
                 // ファイルを読み込む
                 string jsonString = File.ReadAllText(filaPath);
-                this.ClipboardItemFolder.ImportItemsFromJson(jsonString, (actionMessage) => {
-                    if (actionMessage.MessageType == ActionMessage.MessageTypes.Error) {
-                        LogWrapper.Error(actionMessage.Message);
-                    } else {
-                        LogWrapper.Info(actionMessage.Message);
-                    }
-                });
+                this.ClipboardItemFolder.ImportItemsFromJson(jsonString);
                 // フォルダ内のアイテムを読み込む
                 this.LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.FolderImported);

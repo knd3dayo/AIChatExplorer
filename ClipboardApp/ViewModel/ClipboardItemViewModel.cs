@@ -258,12 +258,12 @@ namespace ClipboardApp.ViewModel {
         }
 
         // MergeItems
-        public void MergeItems(List<ClipboardItemViewModel> itemViewModels, bool mergeWithHeader, Action<ActionMessage>? action) {
+        public void MergeItems(List<ClipboardItemViewModel> itemViewModels, bool mergeWithHeader) {
             List<ClipboardItem> items = [];
             foreach (var itemViewModel in itemViewModels) {
                 items.Add(itemViewModel.ClipboardItem);
             }
-            ClipboardItem.MergeItems(items, mergeWithHeader, action);
+            ClipboardItem.MergeItems(items, mergeWithHeader);
         }
 
 
@@ -330,7 +330,7 @@ namespace ClipboardApp.ViewModel {
 
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
-            QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, ClipboardItem, false) {
+            QAChatStartupProps qAChatStartupProps = new(FolderViewModel.ClipboardItemFolder, ClipboardItem) {
 
                 // ベクトルDBアイテムを開くアクション
                 OpenVectorDBItemAction = (vectorDBItem) => {

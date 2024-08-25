@@ -60,20 +60,6 @@ namespace WpfAppCommon.Utils {
             return null;
         }
 
-        public static Action<ActionMessage> DefaultAction {
-            get {
-                return (action) => {
-                    if (action.MessageType == ActionMessage.MessageTypes.Error) {
-                        LogWrapper.Error(action.Message);
-
-                    } else {
-                        LogWrapper.Info(action.Message);
-                    }
-
-                };
-            }
-        }
-
         [GeneratedRegex(@"<[^>]+>")]
         private static partial Regex MyRegex();
         [GeneratedRegex(@"(https?|ftp|file)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#ぁ-んァ-ヴー一-龠]+)")]

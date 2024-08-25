@@ -380,15 +380,15 @@ namespace WpfAppCommon.Model {
         }
 
         //exportしたJSONファイルをインポート
-        public void ImportItemsFromJson(string json, Action<ActionMessage> action) {
+        public void ImportItemsFromJson(string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
-                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
+                LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
                 return;
             }
             JsonArray? jsonArray = node as JsonArray;
             if (jsonArray == null) {
-                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
+                LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
                 return;
             }
 
@@ -400,7 +400,7 @@ namespace WpfAppCommon.Model {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ClipboardItem? item = ClipboardItem.FromJson(jsonString, action);
+                ClipboardItem? item = ClipboardItem.FromJson(jsonString);
 
                 if (item == null) {
                     continue;
@@ -456,7 +456,7 @@ namespace WpfAppCommon.Model {
             sameTitleItems.Insert(0, newItem);
             // マージ元のアイテムをマージ先のアイテムにマージ
 
-            mergeToItem.MergeItems(sameTitleItems, false, Tools.DefaultAction);
+            mergeToItem.MergeItems(sameTitleItems, false);
             // newItemにマージしたアイテムをコピー
             mergeToItem.CopyTo(newItem);
             // マージしたアイテムを削除
@@ -492,7 +492,7 @@ namespace WpfAppCommon.Model {
             mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
 
             // マージ元のアイテムをマージ先のアイテムにマージ
-            mergeToItem.MergeItems(mergedFromItems, false, Tools.DefaultAction);
+            mergeToItem.MergeItems(mergedFromItems, false);
 
             // マージ先アイテムを、newItemにコピー
             mergeToItem.CopyTo(item);

@@ -288,7 +288,7 @@ namespace ClipboardApp.ViewModel {
                     }
                     fromItemsViewModel.Add(fromItemModelView);
                 }
-                toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader, Tools.DefaultAction);
+                toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader);
 
                 // ClipboardItemをLiteDBに保存
                 toItemViewModel.SaveClipboardItemCommand.Execute(true);

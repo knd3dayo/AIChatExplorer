@@ -192,9 +192,9 @@ namespace WpfAppCommon.Model {
 
         }
 
-        public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader, Action<ActionMessage>? action) {
+        public void MergeItems(List<ClipboardItem> items, bool mergeWithHeader) {
             if (ContentType != ClipboardContentTypes.Text) {
-                action?.Invoke(ActionMessage.Error(CommonStringResources.Instance.CannotMergeToNonTextItems));
+                LogWrapper.Error(CommonStringResources.Instance.CannotMergeToNonTextItems);
                 return;
             }
             string mergeText = "\n";
@@ -205,7 +205,7 @@ namespace WpfAppCommon.Model {
 
                 // Itemの種別がText以外が含まれている場合はマージしない
                 if (item.ContentType != ClipboardContentTypes.Text) {
-                    action?.Invoke(ActionMessage.Error(CommonStringResources.Instance.CannotMergeItemsContainingNonTextItems));
+                    LogWrapper.Error(CommonStringResources.Instance.CannotMergeItemsContainingNonTextItems);
                     return;
                 }
             }
@@ -307,7 +307,7 @@ namespace WpfAppCommon.Model {
 
 
         // JSON文字列をClipboardItemに変換する
-        public static ClipboardItem? FromJson(string json, Action<ActionMessage> action) {
+        public static ClipboardItem? FromJson(string json) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
@@ -315,7 +315,7 @@ namespace WpfAppCommon.Model {
             var options = jsonSerializerOptions;
             ClipboardItem? item = System.Text.Json.JsonSerializer.Deserialize<ClipboardItem>(json, options);
             if (item == null) {
-                action(ActionMessage.Error(CommonStringResources.Instance.FailedToParseJSONString));
+                LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
                 return null;
             }
             return item;

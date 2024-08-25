@@ -85,7 +85,7 @@ namespace ClipboardApp.ViewModel {
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
-            QAChatStartupProps props = new(ClipboardItemFolder, itemViewModel.ClipboardItem, false) {
+            QAChatStartupProps props = new(ClipboardItemFolder, itemViewModel.ClipboardItem) {
                 // ベクトルDBアイテムを開くアクション
                 OpenVectorDBItemAction = (vectorDBItem) => {
                     VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);

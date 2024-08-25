@@ -49,10 +49,7 @@ namespace WpfAppCommon.Model {
             string inputJson = ClipboardItem.ToJson(clipboardItem);
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);
-            ClipboardItem? resultItem = ClipboardItem.FromJson(result, (message) => {
-                LogWrapper.Info(CommonStringResources.Instance.ExecutedPythonScript);
-
-            });
+            ClipboardItem? resultItem = ClipboardItem.FromJson(result);
             resultItem?.CopyTo(clipboardItem);
 
         }
