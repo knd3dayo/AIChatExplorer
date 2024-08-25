@@ -1,9 +1,7 @@
-using WpfAppCommon.Utils;
 using LiteDB;
-using WpfAppCommon.Model.ClipboardApp;
+using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model
-{
+namespace WpfAppCommon.Model.ClipboardApp {
 
     // 自動処理ルールの条件
 
@@ -46,7 +44,7 @@ namespace WpfAppCommon.Model
         public int MaxLineCount { get; set; } = -1;
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public  bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
             if (clipboardItem.Description == null) {
                 return false;
@@ -59,7 +57,7 @@ namespace WpfAppCommon.Model
 
         }
         //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public  bool IsContentContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsContentContains(ClipboardItem clipboardItem, string keyword) {
             // ContentがNullの場合はFalseを返す
             if (clipboardItem.Content == null) {
                 return false;
@@ -67,7 +65,7 @@ namespace WpfAppCommon.Model
             return clipboardItem.Content.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public  bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationNameがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationName == null) {
                 return false;
@@ -75,7 +73,7 @@ namespace WpfAppCommon.Model
             return clipboardItem.SourceApplicationName.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public  bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationTitleがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationTitle == null) {
                 return false;
@@ -83,7 +81,7 @@ namespace WpfAppCommon.Model
             return clipboardItem.SourceApplicationTitle.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public  bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword) {
             // SourceApplicationPathがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationPath == null) {
                 return false;
@@ -92,7 +90,7 @@ namespace WpfAppCommon.Model
         }
 
         // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public  bool IsContentLineCountOver(ClipboardItem clipboardItem) {
+        public bool IsContentLineCountOver(ClipboardItem clipboardItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
@@ -185,7 +183,7 @@ namespace WpfAppCommon.Model
         public void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteAutoProcessRule(this);
             // 削除後はIdをNullにする
-            Id = LiteDB.ObjectId.Empty;
+            Id = ObjectId.Empty;
         }
         // 取得
         public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
@@ -235,7 +233,7 @@ namespace WpfAppCommon.Model
                 // ConditionTypeごとに処理
                 switch (condition.Type) {
                     case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
-                        result += CommonStringResources.Instance.DescriptionContains( condition.Keyword ) +"\n";
+                        result += CommonStringResources.Instance.DescriptionContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
                         result += CommonStringResources.Instance.ContentContains(condition.Keyword) + "\n";

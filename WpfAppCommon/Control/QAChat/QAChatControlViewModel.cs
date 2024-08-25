@@ -3,11 +3,9 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Control.QAChat
-{
+namespace WpfAppCommon.Control.QAChat {
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
@@ -15,36 +13,20 @@ namespace WpfAppCommon.Control.QAChat
 
             QAChatStartupProps = props;
 
-            if (props.ClipboardItem == null) {
-                // ClipboardItemが存在しない場合はチャット履歴フォルダに保存
-                ClipboardItem = new(ClipboardFolder.ChatRootFolder.Id);
-                ClipboardFolder = ClipboardFolder.ChatRootFolder;
+            // ClipboardItemImages を ImageItems に設定
+            ImageItems = [.. props.ClipboardItem.ClipboardItemImages.Select((item) => new ImageItemViewModel(this, item))];
 
-            } else {
-                // クリップボードアイテムを設定
-                ClipboardItem = props.ClipboardItem;
-                // クリップボードフォルダを設定
-                ClipboardFolder = ClipboardItem.GetFolder();
-                // チャット履歴用のItemの設定
-                // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
-                ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(ClipboardFolder, ClipboardFolder.ChatRootFolder, true);
-                ChatHistoryItem = new(chatFolder.Id);
-
-                // ClipboardItemImages を ImageItems に設定
-                ImageItems = [.. ClipboardItem.ClipboardItemImages.Select((item) => new ClipboardItemImageViewModel(this, item))];
-            }
             // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            SystemVectorDBItems.Add(ClipboardFolder.GetVectorDBItem());
+            SystemVectorDBItems.Add(props.ClipboardItem.GetFolder().GetVectorDBItem());
+
             // ExternalVectorDBItemsを設定 ClipboardVectorDBItemのEnabledがTrueのものを取得
-            ExternalVectorDBItems = [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
-
-
+            ExternalVectorDBItems = [.. QAChatStartupProps.ExternalVectorDBItems];
 
             // InputTextを設定
-            InputText = ClipboardItem?.Content ?? "";
+            InputText = QAChatStartupProps.ClipboardItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
-            if (ClipboardItem != null) {
-                ChatHistory = [.. ClipboardItem.ChatItems];
+            if (QAChatStartupProps.ClipboardItem != null) {
+                ChatHistory = [.. QAChatStartupProps.ClipboardItem.ChatItems];
             }
             // PromptTemplateCommandExecuteを設定
             if (PromptTemplateCommandExecute != null) {
@@ -55,13 +37,11 @@ namespace WpfAppCommon.Control.QAChat
 
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
-        public QAChatStartupProps? QAChatStartupProps { get; set; }
+        public QAChatStartupProps QAChatStartupProps { get; set; }
 
         // 最後に画僧を選択したフォルダ
         private string? lastSelectedImageFolder = null;
 
-        // チャット履歴用のItem
-        public ClipboardItem? ChatHistoryItem { get; set; }
 
         // CollectionName
         private string? _CollectionName = null;
@@ -80,14 +60,10 @@ namespace WpfAppCommon.Control.QAChat
         // ClipboardItemを選択するアクション
         public Action<Action<List<ClipboardItem>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
 
-        
+
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
 
-
-        public ClipboardItem? ClipboardItem { get; set; }
-
-        public ClipboardFolder? ClipboardFolder { get; set; }
 
         public ChatRequest ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
@@ -174,8 +150,8 @@ namespace WpfAppCommon.Control.QAChat
         }
 
         // 画像アイテムのリスト
-        private ObservableCollection<ClipboardItemImageViewModel> _ImageItems = new();
-        public ObservableCollection<ClipboardItemImageViewModel> ImageItems {
+        private ObservableCollection<ImageItemViewModel> _ImageItems = new();
+        public ObservableCollection<ImageItemViewModel> ImageItems {
             get {
                 return _ImageItems;
             }

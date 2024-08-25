@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Control.QAChat {
+namespace WpfAppCommon.Control.QAChat
+{
     public class QAChatStartupProps {
         public QAChatStartupProps(ClipboardFolder clipboardFolder, ClipboardItem clipboardItem) {
             ClipboardFolder = clipboardFolder;
@@ -18,7 +20,13 @@ namespace WpfAppCommon.Control.QAChat {
 
         public Action<ObservableCollection<VectorDBItemBase>> SelectFolderAction { get; set; } = (folders) => { };
 
-        public Func<List<ClipboardItemImage>> GetSelectedClipboardItemImageFunction { get; set; } = () => { return []; };
+        public Func<List<ImageItemBase>> GetSelectedClipboardItemImageFunction { get; set; } = () => { return []; };
+
+        public List<VectorDBItemBase> ExternalVectorDBItems {
+            get {
+                return [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
+            }
+        }
     }
 
 }

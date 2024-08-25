@@ -1,8 +1,6 @@
-using LibGit2Sharp;
 using LiteDB;
-using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model.ClipboardApp {
     public class ClipboardItemFile {
 
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {

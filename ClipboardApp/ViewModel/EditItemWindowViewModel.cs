@@ -5,9 +5,11 @@ using ClipboardApp.View.TagView;
 using WpfAppCommon;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>

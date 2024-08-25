@@ -1,8 +1,10 @@
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using System.Drawing;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model
+{
     internal class DevelopmentFeatures {
     }
 

@@ -5,17 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfAppCommon.Model {
-    public class AutoProcessRuleController {
+namespace WpfAppCommon.Model.ClipboardApp
+{
+    public class AutoProcessRuleController
+    {
 
         // DBから自動処理ルールのコレクションを取得する
-        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ClipboardFolder targetFolder) {
+        public static ObservableCollection<AutoProcessRule> GetAutoProcessRules(ClipboardFolder targetFolder)
+        {
             ObservableCollection<AutoProcessRule> rules = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRules(targetFolder)];
             return rules;
 
         }
         // TypeがCopyTo または MoveToのルールをLiteDBから取得する。
-        public static IEnumerable<AutoProcessRule> GetCopyToMoveToRules() {
+        public static IEnumerable<AutoProcessRule> GetCopyToMoveToRules()
+        {
             return ClipboardAppFactory.Instance.GetClipboardDBController().GetCopyToMoveToRules();
         }
 

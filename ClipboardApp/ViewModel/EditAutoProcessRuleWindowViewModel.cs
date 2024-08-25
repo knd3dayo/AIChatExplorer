@@ -273,7 +273,7 @@ namespace ClipboardApp.ViewModel
         // 自動処理を更新したあとの処理
         private Action<AutoProcessRule>? _AfterUpdate;
 
-        // MainWindowViewModel
+        // ImageChatMainWindowViewModel
         public MainWindowViewModel? MainWindowViewModel { get; set; }
         // 
         // 初期化

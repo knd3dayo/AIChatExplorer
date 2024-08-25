@@ -3,9 +3,11 @@ using System.Windows;
 using ClipboardApp.View.AutoProcessRuleView;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
 
 

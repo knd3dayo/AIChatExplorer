@@ -7,13 +7,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ImageChat.ViewModel {
+namespace QAChat.ViewModel.ImageChat {
     public class ScreenShotImageViewModel :ObservableObject{
 
-        public MainWindowViewModel MainWindowViewModel { get; set; }
+        public ImageChatMainWindowViewModel MainWindowViewModel { get; set; }
         public ScreenShotImage ScreenShotImage { get; set; }
 
-        public ScreenShotImageViewModel(MainWindowViewModel mainWindowViewModel, ScreenShotImage screenShotImage) {
+        public ScreenShotImageViewModel(ImageChatMainWindowViewModel mainWindowViewModel, ScreenShotImage screenShotImage) {
             MainWindowViewModel = mainWindowViewModel;
             ScreenShotImage = screenShotImage;
         }

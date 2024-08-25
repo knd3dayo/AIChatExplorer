@@ -1,21 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using ImageChat.ViewModel;
 using WpfAppCommon.Model;
+using QAChat.ViewModel.ImageChat;
 
-namespace ImageChat.View
-{
+namespace QAChat.View.ImageChat {
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>

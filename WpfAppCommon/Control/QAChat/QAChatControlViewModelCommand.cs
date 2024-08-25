@@ -8,7 +8,8 @@ using WpfAppCommon.View.QAChat;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
 
-namespace WpfAppCommon.Control.QAChat {
+namespace WpfAppCommon.Control.QAChat
+{
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド
@@ -46,10 +47,7 @@ namespace WpfAppCommon.Control.QAChat {
                     return;
                 }
                 // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-                if (ClipboardItem != null) {
-                    ClipboardItem.ChatItems = [.. ChatHistory];
-
-                }
+                QAChatStartupProps.ClipboardItem.ChatItems = [.. ChatHistory];
                 // inputTextをクリア
                 InputText = "";
                 OnPropertyChanged(nameof(ChatHistory));
@@ -66,18 +64,21 @@ namespace WpfAppCommon.Control.QAChat {
         // Saveコマンド
         public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
             // ChatHistoryをClipboardItemに設定
-            if (ClipboardItem == null) {
+            if (QAChatStartupProps.ClipboardItem == null) {
                 return;
             }
-            ClipboardItem.ChatItems = [.. ChatHistory];
+            QAChatStartupProps.ClipboardItem.ChatItems = [.. ChatHistory];
             // ClipboardItemを保存
-            ClipboardItem.Save();
+            QAChatStartupProps.ClipboardItem.Save();
 
             //ChatHistoryItemがある場合は保存
-            if (ChatHistoryItem != null) {
-                ClipboardItem.CopyTo(ChatHistoryItem);
-                ChatHistoryItem.Save();
-            }
+            // チャット履歴用のItemの設定
+            // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
+            ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(QAChatStartupProps.ClipboardItem.GetFolder(), ClipboardFolder.ChatRootFolder, true);
+            ClipboardItem chatHistoryItem = new(chatFolder.Id);
+
+            QAChatStartupProps.ClipboardItem.CopyTo(chatHistoryItem);
+            chatHistoryItem.Save();
 
         });
 
@@ -85,9 +86,7 @@ namespace WpfAppCommon.Control.QAChat {
         public SimpleDelegateCommand<object> ClearChatHistoryCommand => new((parameter) => {
             ChatHistory = [];
             // ClipboardItemがある場合は、ChatItemsをクリア
-            if (ClipboardItem != null) {
-                ClipboardItem.ChatItems = [];
-            }
+            QAChatStartupProps.ClipboardItem.ChatItems = [];
             OnPropertyChanged(nameof(ChatHistory));
         });
 
@@ -110,7 +109,7 @@ namespace WpfAppCommon.Control.QAChat {
             // ModeがNormal以外の場合は、VectorDBItemを取得
             ExternalVectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItemBase? item = ClipboardFolder?.GetVectorDBItem();
+                VectorDBItemBase? item = QAChatStartupProps.ClipboardItem.GetFolder().GetVectorDBItem();
                 if (item != null) {
                     ExternalVectorDBItems.Add(item);
                 }
@@ -231,12 +230,12 @@ namespace WpfAppCommon.Control.QAChat {
         // クリップボードの画像アイテムを追加
         public SimpleDelegateCommand<Window> PasteImageItemCommand => new((window) => {
             // 選択中のClipboardItemを取得
-            List<ClipboardItemImage>? images = QAChatStartupProps?.GetSelectedClipboardItemImageFunction();
+            List<ImageItemBase>? images = QAChatStartupProps?.GetSelectedClipboardItemImageFunction();
             if (images == null) {
                 return;
             }
-            foreach (ClipboardItemImage image in images) {
-                ImageItems.Add(new ClipboardItemImageViewModel(this, image));
+            foreach (ImageItemBase image in images) {
+                ImageItems.Add(new ImageItemViewModel(this, image));
             }
         });
 

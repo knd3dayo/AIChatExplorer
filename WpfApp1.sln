@@ -11,9 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppCommon", "WpfAppCommo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{B731EF66-0D96-487E-BE6E-31E477E09715}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageChat", "ScreenshotChecker\ImageChat.csproj", "{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonAILib", "PythonAILib\PythonAILib.csproj", "{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonAILib", "PythonAILib\PythonAILib.csproj", "{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1307459-BE7E-43A3-8EBB-8B4B0CF42F0E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D0B47FD-DC5F-41DB-83C5-91A9FEFC704F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED1C04C1-C3D2-449E-9B41-496B8BE9C803}.Release|Any CPU.ActiveCfg = Release|Any CPU

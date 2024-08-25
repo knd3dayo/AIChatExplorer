@@ -28,7 +28,6 @@ namespace ClipboardApp.ViewModel
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Images));
             OnPropertyChanged(nameof(Files));
-            OnPropertyChanged(nameof(ThumbnailImages));
 
         }
         // StringResources
@@ -95,20 +94,6 @@ namespace ClipboardApp.ViewModel
         public ObservableCollection<ClipboardItemFile> Files {
             get {
                 return [.. ClipboardItem.ClipboardItemFiles];
-            }
-        }
-
-        // ThumbnailImage
-        public ObservableCollection<ImageSource> ThumbnailImages {
-            get {
-                ObservableCollection<ImageSource> imageSources = new();
-                foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
-                    BitmapImage? bitmapImage = clipboardItemImage.ThumbnailBitmapImage;
-                    if (bitmapImage != null) {
-                        imageSources.Add(bitmapImage);
-                    }
-                }
-                return imageSources;
             }
         }
 
@@ -357,7 +342,7 @@ namespace ClipboardApp.ViewModel
                 },
                 // 選択中のクリップボードアイテムを取得するアクション
                 GetSelectedClipboardItemImageFunction = () => {
-                    List<ClipboardItemImage> images = [];
+                    List<ImageItemBase> images = [];
                     var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
                     if (selectedItems == null) {
                         return images;
@@ -371,7 +356,7 @@ namespace ClipboardApp.ViewModel
                 }
 
             };
-            QAChat.MainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
+            QAChat.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
 
         });
 

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ImageChat.ViewModel {
+namespace QAChat.ViewModel.ImageChat {
 
     public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
 

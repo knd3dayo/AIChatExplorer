@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
+using PythonAILib.Model;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Control.QAChat;
@@ -112,7 +113,7 @@ namespace ClipboardApp.ViewModel
                 },
                 // 選択中のクリップボードアイテムを取得するアクション
                 GetSelectedClipboardItemImageFunction = () => {
-                    List<ClipboardItemImage> images = [];
+                    List<ImageItemBase> images = [];
                     var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
                     if (selectedItems == null) {
                         return images;
@@ -127,7 +128,7 @@ namespace ClipboardApp.ViewModel
 
             };
 
-            QAChat.MainWindow.OpenOpenAIChatWindow(props);
+            QAChat.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {

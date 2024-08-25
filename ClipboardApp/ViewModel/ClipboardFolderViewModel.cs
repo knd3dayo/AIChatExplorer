@@ -9,7 +9,7 @@ namespace ClipboardApp.ViewModel
 
         // ClipboardFolder
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
-        // MainWindowViewModel
+        // ImageChatMainWindowViewModel
         protected MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
 
         // Description

@@ -1,14 +1,16 @@
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.QAChat {
-    public class ClipboardItemImageViewModel : ObservableObject {
-        public ClipboardItemImage ClipboardItemImage { get; set; }
+    public class ImageItemViewModel : ObservableObject {
+        public ImageItemBase ClipboardItemImage { get; set; }
         public QAChatControlViewModel QAChatControlViewModel { get; set; }
 
-        public ClipboardItemImageViewModel(QAChatControlViewModel qAChatControlViewModel, ClipboardItemImage clipboardItemImage) {
+        public ImageItemViewModel(QAChatControlViewModel qAChatControlViewModel, ImageItemBase clipboardItemImage) {
             QAChatControlViewModel = qAChatControlViewModel;
             ClipboardItemImage = clipboardItemImage;
         }

@@ -29,6 +29,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="View\ImageChat\ScreenShotCheckPromptWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\PromptTemplateWindow\EditPromptItemWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

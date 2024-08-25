@@ -6,6 +6,7 @@ using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using ClipboardApp.ViewModel;
+using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
@@ -137,7 +138,7 @@ namespace ClipboardApp
         }
         // 画像エビデンスチェッカーを開くコマンド
         public void OpenScreenshotCheckerWindowExecute() {
-            ImageChat.MainWindow.OpenMainWindow(null, false, () => {
+            ImageChatMainWindow.OpenMainWindow(null, false, () => {
                 SelectedFolder?.LoadFolderCommand.Execute();
             });
         }

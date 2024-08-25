@@ -38,7 +38,7 @@ namespace PythonAILib.Model {
         public string PromptTemplateText { get; set; } = "";
         public string ContentText { get; set; } = "";
 
-        public List<string> ImageURLs = [];
+        public List<string> ImageURLs { get; set; } = [];
 
         // リクエスト時の調整用のパラメーター
         public double Temperature { get; set; } = 0.5;

@@ -3,18 +3,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows;
-using ImageChat.View;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
+using QAChat.View.ImageChat;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ImageChat.ViewModel {
-    public class MainWindowViewModel : MyWindowViewModel {
+namespace QAChat.ViewModel.ImageChat {
+    public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
-        public MainWindowViewModel() {
+        public ImageChatMainWindowViewModel() {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
 

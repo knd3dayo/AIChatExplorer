@@ -7,13 +7,13 @@ namespace QAChat
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
-        public MainWindow() {
+    public partial class QAChatMainWindow : Window {
+        public QAChatMainWindow() {
             InitializeComponent();
         }
 
         public static void OpenOpenAIChatWindow(QAChatStartupProps props) {
-            QAChat.MainWindow openAIChatWindow = new();
+            QAChat.QAChatMainWindow openAIChatWindow = new();
             MainWindowViewModel mainWindowViewModel = new (props);
             openAIChatWindow.DataContext = mainWindowViewModel;
 
