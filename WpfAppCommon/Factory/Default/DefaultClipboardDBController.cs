@@ -2,8 +2,10 @@ using System.IO;
 using LiteDB;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Factory.Default {
+namespace WpfAppCommon.Factory.Default
+{
     public class DefaultClipboardDBController : IClipboardDBController {
         public static readonly string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public static readonly string CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME = "root_folders";

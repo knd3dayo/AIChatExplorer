@@ -1,8 +1,10 @@
 using LiteDB;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Factory {
+namespace WpfAppCommon.Factory
+{
     public interface IClipboardDBController {
 
 

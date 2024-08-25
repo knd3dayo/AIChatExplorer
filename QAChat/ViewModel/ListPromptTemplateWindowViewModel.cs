@@ -5,10 +5,33 @@ using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class ListPromptTemplateWindowViewModel : MyWindowViewModel {
+
+        // 初期化
+        public ListPromptTemplateWindowViewModel(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate, Func<PromptItemBase> createPromptItemFunction) {
+            // PromptItemsを更新
+            ReloadCommand.Execute();
+            AfterSelect = afterUpdate;
+            // ActionModeを設定
+            ActionMode = actionMode;
+            // CreatePromptItemFunctionを設定
+            CreatePromptItemFunction = createPromptItemFunction;
+
+            // SelectButtonTextを更新
+            OnPropertyChanged(nameof(SelectButtonText));
+            // 実行モードの場合は、実行/選択ボタンを表示する
+            OnPropertyChanged(nameof(ExecButtonVisibility));
+            // 実行モードの場合は、Modeを表示する
+            OnPropertyChanged(nameof(ModeVisibility));
+
+        }
+        // PromptItemを作成する処理
+        public Func<PromptItemBase> CreatePromptItemFunction { get; set; } 
 
         // プロンプトテンプレートの一覧
         public ObservableCollection<PromptItemViewModel> PromptItems { get; set; } = new ObservableCollection<PromptItemViewModel>();
@@ -53,22 +76,6 @@ namespace QAChat.ViewModel {
             }
         }
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
-        // 初期化
-        public void Initialize(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
-            // PromptItemsを更新
-            ReloadCommand.Execute();
-            AfterSelect = afterUpdate;
-            // ActionModeを設定
-            ActionMode = actionMode;
-
-            // SelectButtonTextを更新
-            OnPropertyChanged(nameof(SelectButtonText));
-            // 実行モードの場合は、実行/選択ボタンを表示する
-            OnPropertyChanged(nameof(ExecButtonVisibility));
-            // 実行モードの場合は、Modeを表示する
-            OnPropertyChanged(nameof(ModeVisibility));
-
-        }
 
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
             // PromptItemsを更新
@@ -103,7 +110,8 @@ namespace QAChat.ViewModel {
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
-            PromptItemViewModel itemViewModel = new PromptItemViewModel(new PromptItem());
+            PromptItemBase item = CreatePromptItemFunction();
+            PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
                 // PromptItemsを更新
                 ReloadCommand.Execute();
@@ -133,7 +141,7 @@ namespace QAChat.ViewModel {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);
                 return;
             }
-            PromptItem? item = SelectedPromptItem?.PromptItem;
+            PromptItemBase? item = SelectedPromptItem?.PromptItem;
             if (item == null) {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);
                 return;
@@ -142,8 +150,9 @@ namespace QAChat.ViewModel {
                 return;
             }
             PromptItems.Remove(itemViewModel);
-            // LiteDBを更新
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeletePromptTemplate(item);
+            // PromptItemを保存
+            item.Save();
+
             OnPropertyChanged(nameof(PromptItems));
         }
     }

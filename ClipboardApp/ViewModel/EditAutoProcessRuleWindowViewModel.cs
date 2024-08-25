@@ -8,6 +8,7 @@ using PythonAILib.Model;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
@@ -521,7 +522,10 @@ namespace ClipboardApp.ViewModel {
                     LogWrapper.Error(StringResources.SelectPromptTemplate);
                     return;
                 }
-                PromptAutoProcessItem promptAutoProcessItem = new(SelectedPromptItem.PromptItem);
+                // キャスト
+                PromptItem promptItem = (PromptItem)SelectedPromptItem.PromptItem;
+                PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
+
                 // OpenAIExecutionModeEnumを設定
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
                 TargetAutoProcessRule.RuleAction = promptAutoProcessItem;
@@ -618,6 +622,10 @@ namespace ClipboardApp.ViewModel {
                 // PromptTemplateが選択されたら、PromptTemplateに設定
                 ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptItemViewModel, mode) => {
                     SelectedPromptItem = promptItemViewModel;
+                },
+                // PromptItemを作成
+                () => {
+                    return new PromptItem();
                 });
         });
 

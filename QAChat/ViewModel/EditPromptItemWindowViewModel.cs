@@ -1,6 +1,6 @@
 using System.Windows;
-using WpfAppCommon;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel {
@@ -51,17 +51,11 @@ namespace QAChat.ViewModel {
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
         // 初期化
-        public void Initialize(PromptItemViewModel? itemViewModel, Action<PromptItemViewModel> afterUpdate) {
-            if (itemViewModel != null) {
-                ItemViewModel = itemViewModel;
-                Name = ItemViewModel.PromptItem.Name ?? "";
-                Description = ItemViewModel.Description ?? "";
-                Prompt = ItemViewModel.Content ?? "";
-
-            } else {
-                ItemViewModel = new PromptItemViewModel(new PromptItem());
-
-            }
+        public EditPromptItemWindowViewModel(PromptItemViewModel itemViewModel, Action<PromptItemViewModel> afterUpdate) {
+            ItemViewModel = itemViewModel;
+            Name = ItemViewModel.PromptItem.Name ?? "";
+            Description = ItemViewModel.Description ?? "";
+            Prompt = ItemViewModel.Content ?? "";
             AfterUpdate = afterUpdate;
         }
         // OKボタンのコマンド
@@ -73,7 +67,7 @@ namespace QAChat.ViewModel {
             if (ItemViewModel.PromptItem == null) {
                 return;
             }
-            PromptItem promptItem = ItemViewModel.PromptItem;
+            PromptItemBase promptItem = ItemViewModel.PromptItem;
             promptItem.Description = Description;
             promptItem.Prompt = Prompt;
             promptItem.Name = Name;
@@ -82,8 +76,8 @@ namespace QAChat.ViewModel {
                 LogWrapper.Error(StringResources.EnterName);
                 return;
             }
-            // ClipboardItemを更新
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertPromptTemplate(promptItem);
+            // PromptItemBaseを更新
+            promptItem.Save();
 
             AfterUpdate(ItemViewModel);
 

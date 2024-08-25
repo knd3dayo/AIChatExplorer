@@ -26,8 +26,8 @@ namespace QAChat.View.PromptTemplateWindow
         }
         public static void OpenEditPromptItemWindow(PromptItemViewModel promptItemViewModel, Action<PromptItemViewModel> callback) {
             EditPromptItemWindow editPromptItemWindow = new();
-            EditPromptItemWindowViewModel editPromptItemWindowViewModel = (EditPromptItemWindowViewModel)editPromptItemWindow.DataContext;
-            editPromptItemWindowViewModel.Initialize(promptItemViewModel, callback);
+            EditPromptItemWindowViewModel editPromptItemWindowViewModel = new(promptItemViewModel, callback);
+            editPromptItemWindow.DataContext = editPromptItemWindowViewModel;
             editPromptItemWindow.ShowDialog();
         }
     }

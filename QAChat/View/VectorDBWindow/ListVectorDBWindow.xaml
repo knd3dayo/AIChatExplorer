@@ -13,9 +13,7 @@
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:ListVectorDBWindowViewModel}"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:ListVectorDBWindowViewModel />
-    </Window.DataContext>
+
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

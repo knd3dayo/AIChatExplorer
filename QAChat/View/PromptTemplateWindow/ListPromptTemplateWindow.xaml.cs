@@ -2,6 +2,7 @@ using System.Windows;
 using PythonAILib.Model;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 
 namespace QAChat.View.PromptTemplateWindow
 {
@@ -13,10 +14,11 @@ namespace QAChat.View.PromptTemplateWindow
             InitializeComponent();
         }
 
-        public static void OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback) {
+        public static void OpenListPromptTemplateWindow(
+            ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback, Func<PromptItemBase> createPromptItemFunction) {
             ListPromptTemplateWindow listPromptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)listPromptTemplateWindow.DataContext;
-            listPromptTemplateWindowViewModel.Initialize(actionModeEum, callback);
+            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = new (actionModeEum, callback, createPromptItemFunction);
+            listPromptTemplateWindow.DataContext = listPromptTemplateWindowViewModel;
             listPromptTemplateWindow.ShowDialog();
         }
     }

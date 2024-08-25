@@ -4,6 +4,7 @@ using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Control.QAChat;
 using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel {
@@ -66,7 +67,13 @@ namespace QAChat.ViewModel {
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
-            });
+            },
+            // PromptItemBaseを生成する関数
+            () => {
+                return new PromptItem();
+            }
+
+            );
         }
     }
 }

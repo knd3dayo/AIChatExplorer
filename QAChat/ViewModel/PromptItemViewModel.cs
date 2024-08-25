@@ -1,9 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class PromptItemViewModel : ObservableObject {
-        public PromptItem PromptItem { get; set; }
+        public PromptItemBase PromptItem { get; set; }
         public string Content {
             get => PromptItem.Prompt;
             set {
@@ -26,7 +27,7 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(Name));
             }
         }
-        public PromptItemViewModel(PromptItem promptItem) {
+        public PromptItemViewModel(PromptItemBase promptItem) {
             PromptItem = promptItem;
             if (promptItem != null) {
                 Content = promptItem.Prompt;

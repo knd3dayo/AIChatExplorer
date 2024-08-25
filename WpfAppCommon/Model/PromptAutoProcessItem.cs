@@ -1,6 +1,8 @@
 using PythonAILib.Model;
+using WpfAppCommon.Model.ClipboardApp;
 
-namespace WpfAppCommon.Model {
+namespace WpfAppCommon.Model
+{
     public  class PromptAutoProcessItem : SystemAutoProcessItem{
         public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
