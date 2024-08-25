@@ -3,64 +3,22 @@ using LiteDB;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Factory;
+using WpfAppCommon.Model.QAChat;
 
-namespace WpfAppCommon.Model {
-    public enum FileStatusEnum {
-        Untracked,
-        Modified,
-        Added,
-        Deleted,
-        Renamed,
-        Copied,
-        UpdatedButUnmerged,
-        Unmodified,
-        Ignored,
-        Conflicted,
-        Unknown
-    }
-
-    // Index更新処理結果を格納するクラス
-    public class UpdateIndexResult {
-        public enum UpdateIndexResultEnum {
-            Success,
-            Failed_FileNotFound,
-            Failed_InvalidFileType,
-            Failed_Other
-        }
-        public UpdateIndexResultEnum Result { get; set; } = UpdateIndexResultEnum.Failed_Other;
-
-        public string Message { get; set; } = "";
-
-        public int TokenCount { get; set; } = 0;
-    }
-    public class FileStatus {
-        public string Path { get; set; } = "";
-        public FileStatusEnum Status { get; set; } = FileStatusEnum.Unknown;
-    }
-    public class CommitInfo {
-        // コミットのハッシュ
-        public string Hash { get; set; } = "";
-        // コミットのメッセージ
-        public string Message { get; set; } = "";
-        // コミットの日時
-        public DateTimeOffset Date { get; set; } = DateTime.Now;
-    }
+namespace WpfAppCommon.Model.ClipboardApp
+{
     /// <summary>
     /// RAGのソースとなるドキュメントを格納したリポジトリを管理するためのクラス
     /// </summary>
-    public class RAGSourceItem {
+    public class RAGSourceItem : RAGSourceItemBase{
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
-        public string SourceURL { get; set; } = "";
-        public string WorkingDirectory { get; set; } = "";
-
-        public string LastIndexCommitHash { get; set; } = "";
 
         // ベクトルを格納するためのVectorDBItemのId
         private LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
 
         // VectorDBItemの取得
-        public VectorDBItemBase? VectorDBItem {
+        public override VectorDBItemBase? VectorDBItem {
             get {
                 return ClipboardAppVectorDBItem.GetItemById(VectorDBItemId);
             }
@@ -75,7 +33,7 @@ namespace WpfAppCommon.Model {
 
         // --- RAGSourceItem
         // Save
-        public void Save() {
+        public override void Save() {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // UpsertItemメソッドを呼び出して保存
@@ -84,7 +42,7 @@ namespace WpfAppCommon.Model {
         }
 
         // Delete
-        public void Delete() {
+        public override void Delete() {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // DeleteItemメソッドを呼び出して削除
@@ -98,26 +56,26 @@ namespace WpfAppCommon.Model {
             return dbController.GetRAGSourceItems();
         }
 
-        public string SeekSourceURL(string path) {
+        public override string SeekSourceURL(string path) {
             try {
                 // pathが存在するか確認
                 if (!System.IO.Directory.Exists(path)) {
                     return "";
                 }
-                LibGit2Sharp.Repository repo = new(path);
+                Repository repo = new(path);
                 // リモートリポジトリのURLを取得
-                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
+                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 return remoteURL.Value;
 
-            } catch (LibGit2Sharp.RepositoryNotFoundException) {
+            } catch (RepositoryNotFoundException) {
                 return "";
             }
         }
 
 
         // Git作業ディレクトリの確認を行う。
-        public bool CheckWorkingDirectory() {
+        public override bool CheckWorkingDirectory() {
             string path = WorkingDirectory;
             if (string.IsNullOrEmpty(path)) {
                 throw new Exception(CommonStringResources.Instance.NoWorkingDirectorySpecified);
@@ -126,20 +84,20 @@ namespace WpfAppCommon.Model {
                 throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryDoesNotExist);
             }
             try {
-                LibGit2Sharp.Repository repo = new(path);
+                Repository repo = new(path);
                 // リモートリポジトリのURLを取得
-                LibGit2Sharp.ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
+                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 SourceURL = remoteURL.Value;
 
-            } catch (LibGit2Sharp.RepositoryNotFoundException) {
+            } catch (RepositoryNotFoundException) {
                 throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryIsNotAGitRepository);
             }
             return true;
 
         }
 
-        public List<CommitInfo> GetCommitList() {
+        public override List<CommitInfo> GetCommitList() {
             List<CommitInfo> commitList = [];
 
             // リポジトリの取得
@@ -161,7 +119,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 指定したコミットハッシュのコミットを取得
-        public CommitInfo GetCommit(string hash) {
+        public override CommitInfo GetCommit(string hash) {
             CommitInfo commitInfo = new();
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
@@ -174,32 +132,32 @@ namespace WpfAppCommon.Model {
             return commitInfo;
         }
         // 最初のコミットから最後のコミットで処理されたファイルのリストを取得
-        public List<FileStatus> GetFileStatusList() {
+        public override List<QAChat.FileStatus> GetFileStatusList() {
             return GetFileStatusList(null, null);
         }
         // 指定したコミットの次のコミットで処理されたファイルのリストを取得
-        public List<FileStatus> GetAfterIndexedCommitFileStatusList() {
+        public override List<QAChat.FileStatus> GetAfterIndexedCommitFileStatusList() {
             string? startHash = LastIndexCommitHash;
             return GetFileStatusList(startHash, null);
         }
         // 指定したコミット以後に処理されたファイルのリストを取得
-        public List<FileStatus> GetFileStatusList(string startHash) {
+        public override List<QAChat.FileStatus> GetFileStatusList(string startHash) {
             return GetFileStatusList(startHash, "HEAD");
         }
         // HEADのコミットハッシュを取得
-        public string GetHeadCommitHash() {
+        public override string GetHeadCommitHash() {
             using var repository = new Repository(WorkingDirectory);
             return repository.Head.Tip.Sha;
         }
         // LastIndexCommitHashをHEADのコミットハッシュに設定
-        public void SetLastIndexCommitHash() {
+        public override void SetLastIndexCommitHash() {
             LastIndexCommitHash = GetHeadCommitHash();
         }
 
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        private List<FileStatus> GetFileStatusList(string? startHash, string? endHash) {
-            List<FileStatus> fileStatusList = [];
+        private List<QAChat.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
+            List<QAChat.FileStatus> fileStatusList = [];
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
                 // 現在のブランチのコミット一覧を取得
@@ -231,7 +189,7 @@ namespace WpfAppCommon.Model {
                 // コミットの差分を取得
                 var changes = repository.Diff.Compare<TreeChanges>(startTree, endTree);
                 foreach (var change in changes) {
-                    FileStatus fileStatus = new() {
+                    QAChat.FileStatus fileStatus = new() {
                         Path = change.Path,
                         Status = change.Status switch {
                             ChangeKind.Added => FileStatusEnum.Added,
@@ -252,7 +210,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 更新処理
-        public UpdateIndexResult UpdateIndex(FileStatus fileStatus, UpdateIndexResult result) {
+        public override UpdateIndexResult UpdateIndex(QAChat.FileStatus fileStatus, UpdateIndexResult result) {
 
             if (VectorDBItem == null) {
                 throw new Exception(CommonStringResources.Instance.NoVectorDBSet);

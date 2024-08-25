@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>

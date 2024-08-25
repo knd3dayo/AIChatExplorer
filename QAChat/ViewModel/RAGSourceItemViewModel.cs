@@ -1,19 +1,15 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
+using WpfAppCommon.Model.QAChat;
 
 namespace QAChat.ViewModel {
     public class RAGSourceItemViewModel : MyWindowViewModel {
 
-        private readonly RAGSourceItem item;
-        public RAGSourceItemViewModel(RAGSourceItem item) {
-            this.item = item;
+        public RAGSourceItemViewModel(RAGSourceItemBase item) {
+            this.Item = item;
         }
-        public RAGSourceItem Item {
-            get {
-                return item;
-            }
-        }
+        public RAGSourceItemBase Item { get; set; }
         // SourceURL
         public string SourceURL {
             get => Item.SourceURL;
