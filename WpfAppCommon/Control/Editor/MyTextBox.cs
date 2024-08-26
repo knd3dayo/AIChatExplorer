@@ -52,7 +52,6 @@ namespace WpfAppCommon.Control.Editor {
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
             // AcceptsReturnをTrueにする
             AcceptsReturn = true;
-
         }
 
         // InputBindingsの設定
@@ -62,6 +61,15 @@ namespace WpfAppCommon.Control.Editor {
             InputBindings.Add(new KeyBinding(SelectTextCommand, new KeyGesture(Key.A, ModifierKeys.Control)));
             // 選択中のテキストをプロセスとして実行
             InputBindings.Add(new KeyBinding(ExecuteSelectedTextCommand, new KeyGesture(Key.O, ModifierKeys.Control)));
+            // Ctrl + ;を押したら日付を挿入
+            InputBindings.Add(new KeyBinding(InsertDateCommand, new KeyGesture(Key.OemPlus, ModifierKeys.Control)));
+            // Ctrl + :を押したら時刻を挿入
+            InputBindings.Add(new KeyBinding(InsertTimeCommand, new KeyGesture(Key.OemSemicolon, ModifierKeys.Control)));
+
+            // Ctrl + Zを押したらUndo
+            InputBindings.Add(new KeyBinding(ApplicationCommands.Undo, new KeyGesture(Key.Z, ModifierKeys.Control)));
+            // Ctrl + Yを押したらRedo
+            InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, new KeyGesture(Key.Y, ModifierKeys.Control)));
         }
 
         // コンテキストメニューの設定
@@ -90,7 +98,20 @@ namespace WpfAppCommon.Control.Editor {
             TextSelector.ExecuteSelectedText(this);
 
         });
+        // 日付を挿入
+        public SimpleDelegateCommand<object> InsertDateCommand => new((parameter) => {
 
+            // 日付を挿入
+            TextSelector.InsertDate(this);
+
+        });
+        // 時刻を挿入
+        public SimpleDelegateCommand<object> InsertTimeCommand => new((parameter) => {
+
+            // 時刻を挿入
+            TextSelector.InsertTime(this);
+
+        });
 
 
     }

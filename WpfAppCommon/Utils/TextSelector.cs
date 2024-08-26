@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
 using WpfAppCommon.Model;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace WpfAppCommon.Utils {
     public class TextSelector {
@@ -86,9 +87,10 @@ namespace WpfAppCommon.Utils {
             if (string.IsNullOrEmpty(selectedText)) {
                 return;
             }
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(selectedText) {
-                UseShellExecute = true
+            var p = new Process {
+                StartInfo = new ProcessStartInfo(selectedText) {
+                    UseShellExecute = true
+                }
             };
             try {
                 p.Start();
@@ -97,6 +99,28 @@ namespace WpfAppCommon.Utils {
                 OpenTextFile(selectedText);
             }
         }
+        // 選択位置に日付を挿入
+        public void InsertDate(TextBox editor) {
+            int pos = editor.SelectionStart;
+            string date = DateTime.Now.ToString("yyyy/MM/dd");
+            // Undoスタックをクリアしないよう、新規テキスト作成、全選択 -> 挿入 -> 選択解除の順で処理
+            string newText = editor.Text.Insert(pos, date);
+            editor.SelectAll();
+            editor.SelectedText = newText;
+            editor.Select(pos + date.Length, 0);
+        }
+        // 選択位置に時刻を挿入
+        public void InsertTime(TextBox editor) {
+            int pos = editor.SelectionStart;
+            string time = DateTime.Now.ToString("HH:mm:ss");
+            // Undoスタックをクリアしないよう、新規テキスト作成、全選択 -> 挿入 -> 選択解除の順で処理
+            string newText = editor.Text.Insert(pos, time);
+            editor.SelectAll();
+            editor.SelectedText = newText;
+            editor.Select(pos + time.Length, 0);
+        }
+
+
         private void OpenTextFile(string text) {
             // テキストをテキストファイルに保存して、プロセスを実行
             string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
