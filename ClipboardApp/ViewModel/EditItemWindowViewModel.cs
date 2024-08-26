@@ -7,14 +7,12 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
     class EditItemWindowViewModel : MyWindowViewModel {
 
-        private readonly TextSelector TextSelector = new();
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -173,21 +171,6 @@ namespace ClipboardApp.ViewModel
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
-        });
-
-        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
-
-            // テキスト選択
-            TextSelector.SelectText(textBox);
-            return;
-        });
-        // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
-
-            // 選択中のテキストをプロセスとして実行
-            TextSelector.ExecuteSelectedText(textbox);
-
         });
 
         // QAChatButtonCommand

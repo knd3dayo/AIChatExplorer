@@ -5,6 +5,7 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -156,34 +157,22 @@
                     Padding="0"
                     FontSize="10"
                     Header="{Binding StringResources.Text, Mode=OneTime}">
-                    <TextBox
+                    <editorControl:MyTextBox
                         Name="Editor"
                         Margin="10,3,10,3"
-                        AcceptsReturn="True"
                         FontSize="10pt"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsEnabled="True"
                         Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="Escape"
-                                Command="{Binding CloseCommand, Mode=OneTime}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
-                            <KeyBinding
-                                Key="A"
-                                Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                            <!--  選択したテキストをプロセスとして実行  -->
-                            <KeyBinding
-                                Key="O"
-                                Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
+                        <editorControl:MyTextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="ApplicationCommands.Copy" />
+                                <MenuItem Command="ApplicationCommands.Cut" />
+                                <MenuItem Command="ApplicationCommands.Paste" />
+                                <MenuItem Command="ApplicationCommands.SelectAll" />
+                                <Separator />
+                            </ContextMenu>
+                        </editorControl:MyTextBox.ContextMenu>
+                    </editorControl:MyTextBox>
                 </TabItem>
                 <TabItem
                     Width="Auto"
@@ -193,30 +182,11 @@
                     FontSize="10"
                     Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
-                    <TextBox
-                        xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+                    <editorControl:MyTextBox
                         Name="BackgrondInfo"
                         Margin="10,3,10,3"
-                        AcceptsReturn="True"
                         FontSize="10pt"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsEnabled="True"
-                        Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="A"
-                                Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                            <!--  選択したテキストをプロセスとして実行  -->
-                            <KeyBinding
-                                Key="O"
-                                Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                        Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem>
                 <TabItem
                     Width="Auto"
@@ -226,30 +196,11 @@
                     FontSize="10"
                     Header="{Binding StringResources.Summary, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.SummaryVisibility}">
-                    <TextBox
-                        xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+                    <editorControl:MyTextBox
                         Name="Summary"
                         Margin="10,3,10,3"
-                        AcceptsReturn="True"
                         FontSize="10pt"
-                        HorizontalScrollBarVisibility="Auto"
-                        IsEnabled="True"
-                        Text="{Binding ItemViewModel.Summary, UpdateSourceTrigger=PropertyChanged}"
-                        VerticalScrollBarVisibility="Auto">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="A"
-                                Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                            <!--  選択したテキストをプロセスとして実行  -->
-                            <KeyBinding
-                                Key="O"
-                                Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                        Text="{Binding ItemViewModel.Summary, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem>
                 <TabItem
                     Width="Auto"
@@ -303,26 +254,12 @@
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
                                 Text="{Binding StringResources.FilePath, Mode=OneTime}" />
-                            <TextBox
+                            <editorControl:MyTextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,3,10,3"
                                 IsReadOnly="True"
-                                Text="{Binding SelectedFile.FilePath, Mode=OneWay}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding
-                                        Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                    <!--  選択したテキストをプロセスとして実行  -->
-                                    <KeyBinding
-                                        Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                </TextBox.InputBindings>
-                            </TextBox>
+                                Text="{Binding SelectedFile.FilePath, Mode=OneWay}" />
 
                             <TextBlock
                                 Grid.Row="1"
@@ -330,76 +267,34 @@
                                 Margin="10,3,10,3"
                                 Text="{Binding StringResources.Folder, Mode=OneTime}" />
 
-                            <TextBox
+                            <editorControl:MyTextBox
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,3,10,3"
                                 IsReadOnly="True"
-                                Text="{Binding SelectedFile.FolderName, Mode=OneWay}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding
-                                        Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                    <!--  選択したテキストをプロセスとして実行  -->
-                                    <KeyBinding
-                                        Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                </TextBox.InputBindings>
-                            </TextBox>
+                                Text="{Binding SelectedFile.FolderName, Mode=OneWay}" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
                                 Text="{Binding StringResources.FileName, Mode=OneTime}" />
-                            <TextBox
+                            <editorControl:MyTextBox
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,3,10,3"
                                 IsReadOnly="True"
-                                Text="{Binding SelectedFile.FileName, Mode=OneWay}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding
-                                        Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                    <!--  選択したテキストをプロセスとして実行  -->
-                                    <KeyBinding
-                                        Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                </TextBox.InputBindings>
-                            </TextBox>
+                                Text="{Binding SelectedFile.FileName, Mode=OneWay}" />
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
                                 Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
-                            <TextBox
+                            <editorControl:MyTextBox
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,3,10,3"
                                 IsReadOnly="True"
-                                Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}">
-                                <TextBox.InputBindings>
-                                    <KeyBinding
-                                        Key="A"
-                                        Command="{Binding DataContext.SelectTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                    <!--  選択したテキストをプロセスとして実行  -->
-                                    <KeyBinding
-                                        Key="O"
-                                        Command="{Binding DataContext.ExecuteSelectedTextCommand, Mode=OneTime, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                        Modifiers="Ctrl" />
-                                </TextBox.InputBindings>
-                            </TextBox>
+                                Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
                         </Grid>
                     </materialDesign:DrawerHost>
                 </TabItem>

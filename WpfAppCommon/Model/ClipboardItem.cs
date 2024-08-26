@@ -9,8 +9,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model
-{
+namespace WpfAppCommon.Model {
     public enum ClipboardContentTypes {
         Text,
         Files,
