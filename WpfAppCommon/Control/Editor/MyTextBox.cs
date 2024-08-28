@@ -70,6 +70,10 @@ namespace WpfAppCommon.Control.Editor {
             InputBindings.Add(new KeyBinding(ApplicationCommands.Undo, new KeyGesture(Key.Z, ModifierKeys.Control)));
             // Ctrl + Yを押したらRedo
             InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, new KeyGesture(Key.Y, ModifierKeys.Control)));
+            // TABを押したらインデント ★ Editorのテキストを直接編集するとUndoバッファが消えるので対策するまではコメントアウト
+            // InputBindings.Add(new KeyBinding(AddTabCommand, new KeyGesture(Key.Tab)));
+            // Shift + TABを押したらインデント解除
+            // InputBindings.Add(new KeyBinding(RemoveTabCommand, new KeyGesture(Key.Tab, ModifierKeys.Shift)));
         }
 
         // コンテキストメニューの設定
@@ -113,6 +117,20 @@ namespace WpfAppCommon.Control.Editor {
 
         });
 
+        // インデント
+        public SimpleDelegateCommand<object> AddTabCommand => new((parameter) => {
+
+            // インデント
+            TextSelector.AddTab(this);
+
+        });
+        // インデント解除
+        public SimpleDelegateCommand<object> RemoveTabCommand => new((parameter) => {
+
+            // インデント解除
+            TextSelector.RemoveTab(this);
+
+        });
 
     }
 }
