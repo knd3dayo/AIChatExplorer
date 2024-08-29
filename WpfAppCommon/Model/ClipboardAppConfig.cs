@@ -555,6 +555,20 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.AnalyzeJapaneseSentence = value;
             }
         }
+        // 自動的にQAを生成する
+        private static Boolean? _autoGenerateQA;
+        public static bool AutoGenerateQA {
+            get {
+                if (_autoGenerateQA == null) {
+                    _autoGenerateQA = WpfAppCommon.Properties.Settings.Default.AutoGenerateQA;
+                }
+                return _autoGenerateQA.Value;
+            }
+            set {
+                _autoGenerateQA = value;
+                WpfAppCommon.Properties.Settings.Default.AutoGenerateQA = value;
+            }
+        }
 
         #endregion
 

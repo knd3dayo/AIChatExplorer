@@ -454,5 +454,17 @@ namespace WpfAppCommon.Properties {
                 this["AnalyzeJapaneseSentence"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoGenerateQA {
+            get {
+                return ((bool)(this["AutoGenerateQA"]));
+            }
+            set {
+                this["AutoGenerateQA"] = value;
+            }
+        }
     }
 }

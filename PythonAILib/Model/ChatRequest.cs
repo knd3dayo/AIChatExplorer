@@ -388,12 +388,42 @@ namespace PythonAILib.Model {
         // 日本語文章を解析する
         public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
             ChatRequest chatController = new(openAIProperties);
-            // Normal Chatを実行
+            // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnalyzeJapaneseSentenceRequest;
             chatController.ContentText = content;
 
             ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
+        // 自動QAを生成する
+        public static string GenerateQA(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
+            ChatRequest chatController = new(openAIProperties);
+            // OpenAI+RAG Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.GenerateQuestionRequest;
+            chatController.ContentText = content;
+
+            chatController.VectorDBItems = vectorDBItems;
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result == null) {
+                return "";
+            }
+            // 生成した質問をAIに問い合わせる
+            string question = result.Response;
+            chatController = new ChatRequest(openAIProperties);
+            // OpenAI+RAG Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnswerRequest;
+            chatController.ContentText = question;
+
+            chatController.VectorDBItems = vectorDBItems;
+
+            result = chatController.ExecuteChat();
             if (result != null) {
                 return result.Response;
             }

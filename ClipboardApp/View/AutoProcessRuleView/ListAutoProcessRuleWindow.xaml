@@ -167,6 +167,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <!--  MonitorTargetAppNames  -->
                             <TextBlock
@@ -334,25 +335,31 @@
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AnalyzeJapaneseSentence}" />
-                            <TextBlock
+                            <CheckBox
                                 Grid.Row="15"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyAddAutoQAResultsToBackgroundInformation, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateQA}" />
+                            <TextBlock
+                                Grid.Row="16"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="15"
+                                Grid.Row="16"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
-                                Grid.Row="16"
+                                Grid.Row="17"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="16"
+                                Grid.Row="17"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"

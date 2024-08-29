@@ -349,6 +349,19 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AutoGenerateQA
+        public bool AutoGenerateQA {
+            get {
+                return ClipboardAppConfig.AutoGenerateQA;
+            }
+            set {
+                ClipboardAppConfig.AutoGenerateQA = value;
+                OnPropertyChanged(nameof(AutoGenerateQA));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         // EmbeddingWhenExtractingTextFromImage
         public bool EmbeddingWhenExtractingTextFromImage {

@@ -585,6 +585,13 @@ namespace WpfAppCommon.Model {
                     item.BackgroundInfo += "\n" + result;
                 }
             }
+            // 背景情報に自動QA生成が有効になっている場合
+            if (ClipboardAppConfig.AutoGenerateQA) {
+                result = ChatRequest.GenerateQA(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
+                if (string.IsNullOrEmpty(result) == false) {
+                    item.BackgroundInfo += "\n" + result;
+                }
+            }
         }
 
         // 自動でサマリーを付与するコマンド
