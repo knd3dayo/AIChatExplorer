@@ -442,5 +442,17 @@ namespace WpfAppCommon.Properties {
                 this["Lang"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AnalyzeJapaneseSentence {
+            get {
+                return ((bool)(this["AnalyzeJapaneseSentence"]));
+            }
+            set {
+                this["AnalyzeJapaneseSentence"] = value;
+            }
+        }
     }
 }

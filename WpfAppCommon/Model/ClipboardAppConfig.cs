@@ -540,6 +540,22 @@ namespace WpfAppCommon.Model {
                 WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
             }
         }
+
+        // AnalyzeJapaneseSentence 日本語文章の解析
+        private static Boolean? _analyzeJapaneseSentence;
+        public static bool AnalyzeJapaneseSentence {
+            get {
+                if (_analyzeJapaneseSentence == null) {
+                    _analyzeJapaneseSentence = WpfAppCommon.Properties.Settings.Default.AnalyzeJapaneseSentence;
+                }
+                return _analyzeJapaneseSentence.Value;
+            }
+            set {
+                _analyzeJapaneseSentence = value;
+                WpfAppCommon.Properties.Settings.Default.AnalyzeJapaneseSentence = value;
+            }
+        }
+
         #endregion
 
 

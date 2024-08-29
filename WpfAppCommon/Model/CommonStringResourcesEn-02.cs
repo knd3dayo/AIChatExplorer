@@ -168,7 +168,7 @@ namespace WpfAppCommon.Model {
         public override string AutomaticallyAddBackgroundInformation { get; } = "Automatically add background information";
 
         public override string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "Generate background information from items in the same folder";
-
+        public override string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(Experimental Feature) Automatically add Japanese sentence analysis results to background information";
         public override string IncludeBackgroundInformationInEmbedding { get; } = "Include background information in embedding";
 
         public override string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Include background information in embedding target text";

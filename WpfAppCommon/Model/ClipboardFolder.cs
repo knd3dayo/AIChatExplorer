@@ -804,6 +804,8 @@ namespace WpfAppCommon.Model
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
                     ClipboardItem.CreateAutoBackgroundInfo(item);
                 }
+
+
             });
             var task4 = Task.Run(() => {
                 // サマリー

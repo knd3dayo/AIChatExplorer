@@ -147,6 +147,32 @@ namespace PythonAILib.Model {
         // Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n
         public override string BackgroundInfoRequest { get; } = "Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n";
 
+        public override string AnalyzeJapaneseSentenceRequest { get; } = "* A proposition is a sentence that expresses that the subject (or topic) is something.\r\n" +
+            "* In general, Japanese has the following structure:\r\n " +
+            "Japanese structure = [Topic] is [something + particle] + predicate + [tense, modality, aspect]\r\n" +
+            "* In Japanese, parts that already have common recognition between the speaker and the listener may be omitted, and you can have a conversation with just the predicate.\r\n" +
+            "* \"Modality\" refers to the way the speaker expresses their judgment about the content of the sentence or how they convey it to the listener.\r\n" +
+            "* Modality can be broadly classified into four types:\r\n" +
+            "   - Modality that expresses communicative differentiation of the sentence: Expressive modality\r\n" +
+            "   - Modality that expresses the way of perceiving the situation: Evaluative modality, Recognitional modality\r\n" +
+            "   - Modality that expresses the association between the sentence and the preceding context: Explanatory modality\r\n" +
+            "   - Modality that expresses the way of conveying to the listener: Politeness modality, Attitudinal modality\r\n" +
+            "* \"Expressive modality\" represents the basic nature of the sentence, such as [narrative], [volition], [imperative], and [interrogative].\r\n" +
+            "  - [Narrative] Read the textbook.\r\n  - [Volition] Let's read the textbook.\r\n  - [Imperative] Read the textbook.\r\n  - [Interrogative] Will you read the textbook?\r\n" +
+            "* \"Evaluative modality\" represents the speaker's evaluative perception of the situation, such as necessary or unnecessary.\r\n" +
+            "  - In the library, you must be quiet.\r\n" +
+            "* \"Recognitional modality\" represents how the speaker perceives the content of the proposition.\r\n" +
+            "  - It will probably be sunny tomorrow.\r\n" +
+            "* \"Explanatory modality\" represents that the modality in the sentence is related to the preceding sentence.\r\n" +
+            "  - Is it snowing? No wonder it's cold.\r\n" +
+            "* \"Politeness modality\" refers to the style choice of whether to convey the sentence in [plain form] or [polite form] to the listener.\r\n" +
+            "  - [Plain form] I read this book today.\r\n  - [Polite form] I read this book today.\r\n" +
+            "* \"Attitudinal modality\" refers to fine adjustments when conveying to the listener or expressing the speaker's recognition state.\r\n" +
+            "  - Look at this.\r\n  - What a beautiful view.\r\n\r\n" +
+            "Please perform the following processing for the following sentence:\r\n" +
+            "- Complete the omitted parts and create a list of propositions in the format of the above \"Japanese structure\". Also, explain the modality of each proposition.\r\n" +
+            "  If there are multiple expected results, list up to 10 of the most likely ones.";
+        
         // Please generate a title from the following text.\n
         public override string TitleRequest { get; } = "Please generate a title from the following text.\n";
 

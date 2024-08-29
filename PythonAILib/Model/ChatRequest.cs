@@ -385,6 +385,20 @@ namespace PythonAILib.Model {
             }
             return "";
         }
+        // 日本語文章を解析する
+        public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
+            ChatRequest chatController = new(openAIProperties);
+            // Normal Chatを実行
+            chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
+            chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnalyzeJapaneseSentenceRequest;
+            chatController.ContentText = content;
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
 
         // タイトルを作成する
         public static string CreateTitle(OpenAIProperties openAIProperties, string content) {

@@ -336,6 +336,19 @@ namespace WpfAppCommon.Control.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AnalyzeJapaneseSentence
+        public bool AnalyzeJapaneseSentence {
+            get {
+                return ClipboardAppConfig.AnalyzeJapaneseSentence;
+            }
+            set {
+                ClipboardAppConfig.AnalyzeJapaneseSentence = value;
+                OnPropertyChanged(nameof(AnalyzeJapaneseSentence));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         // EmbeddingWhenExtractingTextFromImage
         public bool EmbeddingWhenExtractingTextFromImage {

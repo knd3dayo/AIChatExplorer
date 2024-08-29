@@ -261,6 +261,9 @@ namespace WpfAppCommon.Model {
         // 自動背景情報追加
         public virtual string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
 
+        // 自動背景情報に日本語文章解析結果を追加します
+        public virtual string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に日本語文章解析結果を追加します";
+
         // 同じフォルダにあるアイテムから背景情報を生成します。
         public virtual string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "同じフォルダにあるアイテムから背景情報を生成します。";
 

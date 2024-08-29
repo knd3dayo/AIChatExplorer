@@ -578,6 +578,13 @@ namespace WpfAppCommon.Model {
             if (string.IsNullOrEmpty(result) == false) {
                 item.BackgroundInfo = result;
             }
+            // 背景情報に日本語解析追加が有効になっている場合
+            if (ClipboardAppConfig.AnalyzeJapaneseSentence) {
+                result = ChatRequest.AnalyzeJapaneseSentence(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
+                if (string.IsNullOrEmpty(result) == false) {
+                    item.BackgroundInfo += "\n" + result;
+                }
+            }
         }
 
         // 自動でサマリーを付与するコマンド
