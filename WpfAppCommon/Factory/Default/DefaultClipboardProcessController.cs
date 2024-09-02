@@ -25,21 +25,14 @@ namespace WpfAppCommon.Factory.Default {
         public void OpenClipboardItemFile(ClipboardItem item, bool openAsNew = false) {
 
             foreach (var clipboardItemFile in item.ClipboardItemFiles) {
-                ProcessUtil.OpenFile(clipboardItemFile.FilePath);
-            }
-        }
-
-        public void OpenClipboardItemImage(ClipboardItem item) {
-
-            // ClipboardItemのClipboardItemImages毎に処理を実行
-            foreach (var clipboardItemImage in item.ClipboardItemImages) {
-
-                BitmapImage? bitmapImage = clipboardItemImage.BitmapImage;
-                if (bitmapImage == null) {
-                    continue;
+                // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
+                if (string.IsNullOrEmpty(clipboardItemFile.FilePath)) {
+                    // BitmapImageがNullでない場合はファイルを開く
+                    if (clipboardItemFile.BitmapImage != null) {
+                        ProcessUtil.OpenBitmapImage(clipboardItemFile.BitmapImage);
+                    }
                 }
-                // 画像を表示
-                ProcessUtil.OpenBitmapImage(bitmapImage);
+                ProcessUtil.OpenFile(clipboardItemFile.FilePath);
             }
         }
     }

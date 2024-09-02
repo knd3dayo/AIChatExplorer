@@ -9,27 +9,27 @@ namespace PythonAILib.Model {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class ChatRequest {
+    public class Chat {
 
-        public ChatRequest(OpenAIProperties openAIProperties) {
+        public Chat(OpenAIProperties openAIProperties) {
             OpenAIProperties = openAIProperties;
         }
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
-        public List<ChatItem> ChatHistory { get; set; } = [];
+        public List<ChatIHistorytem> ChatHistory { get; set; } = [];
 
-        public ChatItem? LastSendItem {
+        public ChatIHistorytem? LastSendItem {
             get {
                 // ChatItemsのうち、ユーザー発言の最後のものを取得
-                var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatItem.UserRole);
+                var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatIHistorytem.UserRole);
                 return lastUserChatItem;
             }
         }
-        public ChatItem? LastResponseItem {
+        public ChatIHistorytem? LastResponseItem {
             get {
                 // ChatItemsのうち、アシスタント発言の最後のものを取得
-                var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatItem.AssistantRole);
+                var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatIHistorytem.AssistantRole);
                 return lastAssistantChatItem;
             }
         }
@@ -90,22 +90,11 @@ namespace PythonAILib.Model {
 
         public static string CreateImageURL(string base64String) {
             string base64Header = base64String.Substring(0, 5);
-            // 先頭の文字列からイメージのフォーマットを判別
-            // PNG  iVBOR
-            // gif  R0lGO
-            //jpeg  /9j/4
-            // となる
-            string formatText;
-            if (base64Header == "iVBOR") {
-                formatText = "png";
-            } else if (base64Header == "R0lGO") {
-                formatText = "gif";
-            } else if (base64Header == "/9j/4") {
-                formatText = "jpeg";
-            } else {
-                // エラー
-                throw new Exception(PythonAILibStringResources.Instance.UnknownImageFormat);
+            ContentTypes.ImageType imageType = ContentTypes.GetImageTypeFromBase64(base64String);
+            if (imageType == ContentTypes.ImageType.unknown) {
+                return "";
             }
+            string formatText = imageType.ToString();
 
             // Base64文字列から画像のURLを作成
             string result = $"data:image/{formatText};base64,{base64String}";
@@ -151,7 +140,7 @@ namespace PythonAILib.Model {
             List<string> imageUrls = ImageURLs.Concat(AdditionalImageURLs).ToList();
 
             var dc = new Dictionary<string, object> {
-                ["role"] = ChatItem.UserRole,
+                ["role"] = ChatIHistorytem.UserRole,
                 ["content"] = CreateOpenAIContentList(CreatePromptText(), imageUrls)
             };
             messages.Add(dc);
@@ -221,9 +210,9 @@ namespace PythonAILib.Model {
                 return null;
             }
             // リクエストをChatItemsに追加
-            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.AssistantRole, result.Response, result.ReferencedFilePath));
             return result;
 
         }
@@ -234,9 +223,9 @@ namespace PythonAILib.Model {
             if (result == null) {
                 return null;
             }
-            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.AssistantRole, result.Response, result.ReferencedFilePath));
 
             return result;
         }
@@ -275,9 +264,9 @@ namespace PythonAILib.Model {
             if (result == null) {
                 return null;
             }
-            ChatHistory.Add(new ChatItem(ChatItem.UserRole, CreatePromptText()));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatItem(ChatItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatIHistorytem(ChatIHistorytem.AssistantRole, result.Response, result.ReferencedFilePath));
 
             return result;
 
@@ -288,7 +277,7 @@ namespace PythonAILib.Model {
             // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
             string newRequestPrompt = PythonAILibStringResources.Instance.AnalyzeAndDictionarizeRequest;
 
-            ChatRequest newRequest = new(OpenAIProperties) {
+            Chat newRequest = new(OpenAIProperties) {
                 ContentText = ContentText,
                 PromptTemplateText = newRequestPrompt,
                 JsonMode = true,
@@ -356,7 +345,7 @@ namespace PythonAILib.Model {
         }
 
         public static string CreateSummary(OpenAIProperties openAIProperties, string content) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.SummarizeRequest;
@@ -371,7 +360,7 @@ namespace PythonAILib.Model {
 
         // 背景情報を作成する
         public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.BackgroundInfoRequest;
@@ -387,7 +376,7 @@ namespace PythonAILib.Model {
         }
         // 日本語文章を解析する
         public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnalyzeJapaneseSentenceRequest;
@@ -401,7 +390,7 @@ namespace PythonAILib.Model {
         }
         // 自動QAを生成する
         public static string GenerateQA(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.GenerateQuestionRequest;
@@ -415,7 +404,7 @@ namespace PythonAILib.Model {
             }
             // 生成した質問をAIに問い合わせる
             string question = result.Response;
-            chatController = new ChatRequest(openAIProperties);
+            chatController = new Chat(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnswerRequest;
@@ -432,7 +421,7 @@ namespace PythonAILib.Model {
 
         // タイトルを作成する
         public static string CreateTitle(OpenAIProperties openAIProperties, string content) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.TitleRequest;
@@ -446,12 +435,12 @@ namespace PythonAILib.Model {
         }
         // 画像からテキストを抽出する
         public static string ExtractTextFromImage(OpenAIProperties openAIProperties, List<string> ImageBase64List) {
-            ChatRequest chatController = new(openAIProperties);
+            Chat chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = PythonAILibStringResources.Instance.ExtractTextRequest;
             chatController.ContentText = "";
-            chatController.ImageURLs = ImageBase64List.Select(ChatRequest.CreateImageURL).ToList();
+            chatController.ImageURLs = ImageBase64List.Select(Chat.CreateImageURL).ToList();
             if (chatController.ImageURLs.Count == 0) {
                 return "";
             }

@@ -84,12 +84,6 @@
                         <!--  テキスト抽出  -->
                         <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
-
-                        <!--  画像を開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenImageCommand}" Header="{Binding StringResources.OpenImage, Mode=OneTime}" />
-                        <!--  画像からテキストを抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextFromImageWithOpenAICommand}" Header="{Binding StringResources.ExtractTextFromImage, Mode=OneTime}" />
-
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
                             Header="{Binding StringResources.MaskData, Mode=OneTime}"
@@ -150,13 +144,15 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left">
+                <!--  テキスト  -->
                 <TabItem
                     Width="Auto"
                     Height="Auto"
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Text, Mode=OneTime}">
+                    Header="{Binding StringResources.Text, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.TextTabVisibility}">
                     <editorControl:MyTextBox
                         Name="Editor"
                         Margin="10,3,10,3"
@@ -174,34 +170,7 @@
                         </editorControl:MyTextBox.ContextMenu>
                     </editorControl:MyTextBox>
                 </TabItem>
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
-                    <editorControl:MyTextBox
-                        Name="BackgrondInfo"
-                        Margin="10,3,10,3"
-                        FontSize="10pt"
-                        Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}" />
-                </TabItem>
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.Summary, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.SummaryVisibility}">
-                    <editorControl:MyTextBox
-                        Name="Summary"
-                        Margin="10,3,10,3"
-                        FontSize="10pt"
-                        Text="{Binding ItemViewModel.Summary, UpdateSourceTrigger=PropertyChanged}" />
-                </TabItem>
+                <!--  ファイル  -->
                 <TabItem
                     Width="Auto"
                     Height="Auto"
@@ -209,7 +178,7 @@
                     Padding="0"
                     FontSize="10"
                     Header="{Binding StringResources.File, Mode=OneTime}"
-                    Visibility="{Binding FileTabVisibility}">
+                    Visibility="{Binding ItemViewModel.FileTabVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
                             <Grid Width="200">
@@ -253,6 +222,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
+                                VerticalAlignment="Center"
                                 Text="{Binding StringResources.FilePath, Mode=OneTime}" />
                             <editorControl:MyTextBox
                                 Grid.Row="0"
@@ -265,6 +235,7 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
+                                VerticalAlignment="Center"
                                 Text="{Binding StringResources.Folder, Mode=OneTime}" />
 
                             <editorControl:MyTextBox
@@ -277,6 +248,7 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
+                                VerticalAlignment="Center"
                                 Text="{Binding StringResources.FileName, Mode=OneTime}" />
                             <editorControl:MyTextBox
                                 Grid.Row="2"
@@ -288,6 +260,7 @@
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,3,10,3"
+                                VerticalAlignment="Center"
                                 Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
                             <editorControl:MyTextBox
                                 Grid.Row="3"
@@ -295,59 +268,65 @@
                                 Margin="10,3,10,3"
                                 IsReadOnly="True"
                                 Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
+                            <TextBlock
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                VerticalAlignment="Center"
+                                Text="{Binding StringResources.Image, Mode=OneTime}"
+                                Visibility="{Binding SelectedFileImageVisibility}" />
+                            <Image
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                Source="{Binding SelectedFile.BitmapImage, Mode=OneWay}"
+                                Stretch="Uniform"
+                                Visibility="{Binding SelectedFileImageVisibility}" />
+                            <TextBlock
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Margin="10,3,10,3"
+                                VerticalAlignment="Center"
+                                Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
+                            <editorControl:MyTextBox
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Margin="10,3,10,3"
+                                IsReadOnly="True"
+                                Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
+
                         </Grid>
                     </materialDesign:DrawerHost>
                 </TabItem>
+                <!--  背景情報  -->
                 <TabItem
                     Width="Auto"
                     Height="Auto"
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Image, Mode=OneTime}"
-                    Visibility="{Binding ImageTabVisibility}">
-                    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
-                        <materialDesign:DrawerHost.LeftDrawerContent>
-                            <Grid Width="200">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <ListBox
-                                    Grid.Row="0"
-                                    Margin="10,3,10,3"
-                                    AlternationCount="100"
-                                    ItemsSource="{Binding ItemViewModel.Images}"
-                                    SelectedIndex="{Binding SelectedImageIndex}"
-                                    SelectedItem="{Binding SelectedImage, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectionMode="Single">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding StringResources.Image, Mode=OneTime}" />
-                                                <ContentControl>
-                                                    <Binding Path="(ItemsControl.AlternationIndex)" RelativeSource="{RelativeSource AncestorType=ListBoxItem}" />
-                                                </ContentControl>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </materialDesign:DrawerHost.LeftDrawerContent>
-
-                        <ScrollViewer
-                            Grid.Row="2"
-                            MaxHeight="500"
-                            Margin="10,3,10,3"
-                            VerticalAlignment="Top">
-                            <Image
-                                MaxHeight="500"
-                                Margin="10,3,10,3"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Top"
-                                Source="{Binding SelectedImage}"
-                                Stretch="Uniform" />
-                        </ScrollViewer>
-                    </materialDesign:DrawerHost>
+                    Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
+                    <editorControl:MyTextBox
+                        Name="BackgrondInfo"
+                        Margin="10,3,10,3"
+                        FontSize="10pt"
+                        Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}" />
+                </TabItem>
+                <!--  サマリー  -->
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="{Binding StringResources.Summary, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.SummaryVisibility}">
+                    <editorControl:MyTextBox
+                        Name="Summary"
+                        Margin="10,3,10,3"
+                        FontSize="10pt"
+                        Text="{Binding ItemViewModel.Summary, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem>
             </TabControl>
         </Grid>

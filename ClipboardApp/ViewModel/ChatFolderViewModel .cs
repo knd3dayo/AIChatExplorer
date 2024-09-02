@@ -111,21 +111,18 @@ namespace ClipboardApp.ViewModel
                     });
 
                 },
-                // 選択中のクリップボードアイテムを取得するアクション
-                GetSelectedClipboardItemImageFunction = () => {
-                    List<ImageItemBase> images = [];
-                    var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
-                    if (selectedItems == null) {
-                        return images;
+                // ペーストアクション
+                PasteFromClipboardCommandAction = (toItems) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        return;
                     }
-                    foreach (ClipboardItemViewModel selectedItem in selectedItems) {
-                        selectedItem.ClipboardItem.ClipboardItemImages.ForEach((image) => {
-                            images.Add(image);
-                        });
-                    }
-                    return images;
+                    MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, (newItems) => {
+                        foreach (var item in newItems) {
+                            toItems.Add(item);
+                        }
+                    });
                 }
-
             };
 
             QAChat.QAChatMainWindow.OpenOpenAIChatWindow(props);

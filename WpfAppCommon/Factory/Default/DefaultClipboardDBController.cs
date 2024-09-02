@@ -50,8 +50,6 @@ namespace WpfAppCommon.Factory.Default
                         .Ignore(x => x.Items);
                     mapper.Entity<ClipboardFolder>()
                         .Ignore(x => x.Children);
-                    mapper.Entity<ClipboardItem>()
-                        .Ignore(x => x.ClipboardItemImages);
 
                 } catch (Exception e) {
                     throw new Exception("データベースのオープンに失敗しました。" + e.Message);
@@ -262,10 +260,6 @@ namespace WpfAppCommon.Factory.Default
             if (updateModifiedTime) {
                 item.UpdatedAt = DateTime.Now;
             }
-            // 画像イメージがある場合は、追加または更新
-            foreach (var image in item.ClipboardItemImages) {
-                UpsertItemImage(image);
-            }
             // ファイルがある場合は、追加または更新
             foreach (var file in item.ClipboardItemFiles) {
                 UpsertItemFile(file);
@@ -277,10 +271,6 @@ namespace WpfAppCommon.Factory.Default
         public void DeleteItem(ClipboardItem item) {
             if (item.Id == null) {
                 return;
-            }
-            // 画像イメージがある場合は、削除
-            foreach (var image in item.ClipboardItemImages) {
-                DeleteItemImage(image);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             // System.Windows.MessageBox.Show(item.CollectionName);
@@ -530,25 +520,6 @@ namespace WpfAppCommon.Factory.Default
             // VectorDBItemコレクションから、すべてのアイテムを取得
             var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();
-        }
-
-        //-- ClipboardItemImage
-        // ClipboardItemImageを追加または更新する
-        public void UpsertItemImage(ClipboardItemImage item) {
-            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
-            collection.Upsert(item);
-        }
-        // ClipboardItemImageを削除する
-        public void DeleteItemImage(ClipboardItemImage item) {
-            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
-            collection.Delete(item.Id);
-        }
-
-        // 指定したIDに対応するClipboardItemImageを取得する
-        public ClipboardItemImage? GetItemImage(ObjectId id) {
-            var collection = GetClipboardDatabase().GetCollection<ClipboardItemImage>(CLIPBOARD_IMAGE_COLLECTION_NAME);
-            var item = collection.FindById(id);
-            return item;
         }
 
         public void UpsertItemFile(ClipboardItemFile item) {

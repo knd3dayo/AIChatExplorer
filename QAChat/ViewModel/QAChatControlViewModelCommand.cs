@@ -32,10 +32,14 @@ namespace QAChat.ViewModel {
                     // ImageFilesとImageItemsのImageをChatControllerに設定
                     ChatController.ImageURLs = [];
                     foreach (var item in ImageFiles) {
-                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
+                        ChatController.ImageURLs.Add(Chat.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
                     }
-                    foreach (var item in ImageItems) {
-                        ChatController.ImageURLs.Add(ChatRequest.CreateImageURL(item.ClipboardItemImage.ImageBase64));
+                    foreach (var item in AdditionalItems) {
+                        foreach (var file in item.ClipboardItem.ClipboardItemFiles) {
+                            if (file.IsImage()) {
+                            ChatController.ImageURLs.Add(Chat.CreateImageURL(file.Base64String));
+                            }
+                        }
                     }
 
                     // OpenAIChat or LangChainChatを実行
@@ -118,6 +122,7 @@ namespace QAChat.ViewModel {
             OnPropertyChanged(nameof(VectorDBItemVisibility));
 
         });
+
         // Tabが変更されたときの処理
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
@@ -130,8 +135,6 @@ namespace QAChat.ViewModel {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
                     OnPropertyChanged(nameof(PreviewJson));
                 }
-
-
             }
         });
 
@@ -141,24 +144,8 @@ namespace QAChat.ViewModel {
             PromptTemplateCommandExecute(parameter);
         });
 
-
-        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
-
-            // テキスト選択
-            TextSelector.SelectText(textBox);
-            return;
-        });
-
-        // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
-
-            // 選択中のテキストをプロセスとして実行
-            TextSelector.ExecuteSelectedText(textbox);
-        });
-
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatItem> OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatIHistorytem> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
@@ -176,7 +163,6 @@ namespace QAChat.ViewModel {
             OnPropertyChanged(nameof(SystemVectorDBItems));
         });
 
-
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenExternalVectorDBItemCommand => new((parameter) => {
             QAChatStartupProps?.SelectVectorDBItemsAction(ExternalVectorDBItems);
@@ -190,53 +176,18 @@ namespace QAChat.ViewModel {
             OnPropertyChanged(nameof(ExternalVectorDBItems));
         });
 
-        // 画像選択コマンド SelectImageFileCommand
-        public SimpleDelegateCommand<Window> SelectImageFileCommand => new((window) => {
+        // クリップボードまたは他のクリップボードアイテムをペーストしたときの処理
+        public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
 
-            //ファイルダイアログを表示
-            // 画像ファイルを選択して画像ファイル名一覧に追加
-            CommonOpenFileDialog dialog = new() {
-                Title = StringResources.SelectImageFilePlease,
-                InitialDirectory = lastSelectedImageFolder,
-                Multiselect = true,
-                Filters = {
-                    new CommonFileDialogFilter(StringResources.ImageFile, "*.png;*.jpg;*.jpeg;*.bmp;*.gif"),
-                    new CommonFileDialogFilter(StringResources.AllFiles, "*.*"),
-                }
-            };
-            var currentWindow = Application.Current.Windows.OfType<Window>().SingleOrDefault(w => w.IsActive);
-            if (dialog.ShowDialog(currentWindow) != CommonFileDialogResult.Ok) {
-                return;
-            } else {
-                foreach (string filePath in dialog.FileNames) {
-                    // filePathをフォルダ名とファイル名に分割してフォルダ名を取得
-                    string? folderPath = Path.GetDirectoryName(filePath);
-                    if (folderPath != null) {
-                        lastSelectedImageFolder = folderPath;
-                    }
-                    // ScreenShotImageを生成してImageFilesに追加
-                    ScreenShotImage image = new() {
-                        ImagePath = filePath
-                    };
-                    // 画像ファイル名一覧に画像ファイル名を追加
-                    ImageFiles.Add(new ScreenShotImageViewModel(this, image));
-                }
-                OnPropertyChanged(nameof(ImageFiles));
+            List<ClipboardItem> values = [];
+            // ペースト処理を実行
+            QAChatStartupProps?.PasteFromClipboardCommandAction(values);
+            foreach (var item in values) {
+                AdditionalItemViewModel additionalItemViewModel = new(this, item);
+                AdditionalItems.Add(additionalItemViewModel);
             }
-            window.Activate();
 
-        });
 
-        // クリップボードの画像アイテムを追加
-        public SimpleDelegateCommand<Window> PasteImageItemCommand => new((window) => {
-            // 選択中のClipboardItemを取得
-            List<ImageItemBase>? images = QAChatStartupProps?.GetSelectedClipboardItemImageFunction();
-            if (images == null) {
-                return;
-            }
-            foreach (ImageItemBase image in images) {
-                ImageItems.Add(new ImageItemViewModel(this, image));
-            }
         });
 
         // Windowを閉じるコマンド

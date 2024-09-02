@@ -15,8 +15,7 @@ using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace WpfAppCommon.Model
-{
+namespace WpfAppCommon.Model {
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -701,11 +700,12 @@ namespace WpfAppCommon.Model
             if (contentTypes == ClipboardContentTypes.Text) {
                 item.Content = (string)e.Content;
             }
-            // If ContentType is Image, set image data
+            // If ContentType is BitmapImage, set image data
             if (contentTypes == ClipboardContentTypes.Image) {
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
-                ClipboardItemImage imageItem = ClipboardItemImage.Create(item, image);
-                item.ClipboardItemImages.Add(imageItem);
+                // byte
+                ClipboardItemFile imageItem = ClipboardItemFile.Create(item, image);
+                item.ClipboardItemFiles.Add(imageItem);
             }
             // If ContentType is Files, set file data
             else if (contentTypes == ClipboardContentTypes.Files) {
@@ -756,14 +756,18 @@ namespace WpfAppCommon.Model
             if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
-                    string text = PythonExecutor.PythonAIFunctions.ExtractText(fileItem.FilePath);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileItem.FilePath);
                     item.Content += "\n" + text;
                 }
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoExtractImageWithPyOCR is set, perform OCR
             if (ClipboardAppConfig.AutoExtractImageWithPyOCR) {
-                foreach (var imageItem in item.ClipboardItemImages) {
+                // ClipboardItemFilesがnullの場合は何もしない
+                if (item.ClipboardItemFiles == null) {
+                    return item;
+                }
+                foreach (var imageItem in item.ClipboardItemFiles) {
                     if (imageItem.Image == null) {
                         continue;
                     }

@@ -16,8 +16,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -26,8 +25,12 @@ namespace ClipboardApp.ViewModel
             FolderViewModel = folderViewModel;
 
             OnPropertyChanged(nameof(Content));
-            OnPropertyChanged(nameof(Images));
             OnPropertyChanged(nameof(Files));
+            OnPropertyChanged(nameof(TextTabVisibility));
+            OnPropertyChanged(nameof(ImageTabVisibility));
+            OnPropertyChanged(nameof(FileTabVisibility));
+            OnPropertyChanged(nameof(BackgroundInfoVisibility));
+            OnPropertyChanged(nameof(SummaryVisibility));
 
         }
         // StringResources
@@ -56,6 +59,7 @@ namespace ClipboardApp.ViewModel
                 OnPropertyChanged(nameof(Content));
             }
         }
+
         // BackgroundInfo
         public string BackgroundInfo {
             get {
@@ -76,20 +80,6 @@ namespace ClipboardApp.ViewModel
             }
         }
 
-        // Image
-        public ObservableCollection<ImageSource> Images {
-            get {
-                ObservableCollection<ImageSource> imageSources = [];
-                foreach (var clipboardItemImage in ClipboardItem.ClipboardItemImages) {
-                    BitmapImage? bitmapImage = clipboardItemImage.BitmapImage;
-                    if (bitmapImage != null) {
-                        imageSources.Add(bitmapImage);
-                    }
-                }
-                return imageSources;
-            }
-
-        }
         // Files
         public ObservableCollection<ClipboardItemFile> Files {
             get {
@@ -161,6 +151,17 @@ namespace ClipboardApp.ViewModel
                 }
             }
         }
+        // 分類がFileまたはImageの場合はVisible,それ以外はCollapsed
+        public Visibility FileOrImageVisibility {
+            get {
+                if (ClipboardItem.ContentType == ClipboardContentTypes.Files || ClipboardItem.ContentType == ClipboardContentTypes.Image) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+
         // BackgroundInfoが空の場合はCollapsed,それ以外はVisible
         public Visibility BackgroundInfoVisibility {
             get {
@@ -181,6 +182,24 @@ namespace ClipboardApp.ViewModel
                 }
             }
         }
+        // テキストタブの表示可否
+        public Visibility TextTabVisibility {
+            get {
+                return ContentType == ClipboardContentTypes.Text ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // イメージタブの表示可否
+        public Visibility ImageTabVisibility {
+            get {
+                return ContentType == ClipboardContentTypes.Image ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+        // ファイルタブの表示可否
+        public Visibility FileTabVisibility {
+            get {
+                return ContentType == ClipboardContentTypes.Files ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         public string DescriptionText {
             get {
@@ -194,6 +213,19 @@ namespace ClipboardApp.ViewModel
         public string TagsText {
             get {
                 return string.Join(",", ClipboardItem.Tags);
+            }
+        }
+
+        // Images
+        public ObservableCollection<BitmapImage> Images {
+            get {
+                ObservableCollection<BitmapImage> images = [];
+                foreach (var file in ClipboardItem.ClipboardItemFiles) {
+                    if (file.BitmapImage != null) {
+                        images.Add(file.BitmapImage);
+                    }
+                }
+                return images;
             }
         }
 
@@ -309,8 +341,7 @@ namespace ClipboardApp.ViewModel
                 return;
             }
             ClipboardItem.ExtractTextCommandExecute(ClipboardItem);
-            // 保存
-            SaveClipboardItemCommand.Execute(true);
+
         });
         // OpenAI Chatを開くコマンド
         public SimpleDelegateCommand<object> OpenOpenAIChatWindowCommand => new((parameter) => {
@@ -340,20 +371,21 @@ namespace ClipboardApp.ViewModel
                         vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
                     });
                 },
-                // 選択中のクリップボードアイテムを取得するアクション
-                GetSelectedClipboardItemImageFunction = () => {
-                    List<ImageItemBase> images = [];
-                    var selectedItems = MainWindowViewModel.ActiveInstance?.SelectedItems;
-                    if (selectedItems == null) {
-                        return images;
+                // ペーストアクション
+                PasteFromClipboardCommandAction = (toItems) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        return;
                     }
-                    foreach (ClipboardItemViewModel selectedItem in selectedItems) {
-                        selectedItem.ClipboardItem.ClipboardItemImages.ForEach((image) => {
-                            images.Add(image);
-                        });
-                    }
-                    return images;
+                    MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, (newItems) => {
+                        foreach (var item in newItems) {
+                            MainUITask.Run(() => {
+                                toItems.Add(item);
+                            });
+                        }
+                    });
                 }
+
 
             };
             QAChat.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
@@ -436,12 +468,6 @@ namespace ClipboardApp.ViewModel
         });
 
 
-        // 画像を開くコマンド
-        public SimpleDelegateCommand<object> OpenImageCommand => new((obj) => {
-            // 選択中のアイテムを開く
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemImage(ClipboardItem);
-        });
-
         // テキストをファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
             try {
@@ -452,15 +478,6 @@ namespace ClipboardApp.ViewModel
             }
         });
 
-        // 画像からテキストを抽出するコマンド
-        public SimpleDelegateCommand<object> ExtractTextFromImageWithOpenAICommand => new((obj) => {
-            if (ClipboardItem.ContentType != ClipboardContentTypes.Image) {
-                throw new Exception(StringResources.CannotExtractTextForNonImageContent);
-            }
-            string result = ChatRequest.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), ClipboardItem.ClipboardItemImages.Select(image => image.ImageBase64).ToList());
-            // 結果をContentに設定
-
-        });
         // ピン留めの切り替えコマンド
         public SimpleDelegateCommand<object> ChangePinCommand => new((obj) => {
             IsPinned = !IsPinned;

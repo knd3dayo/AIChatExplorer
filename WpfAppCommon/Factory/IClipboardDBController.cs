@@ -16,11 +16,6 @@ namespace WpfAppCommon.Factory
         public IEnumerable<ClipboardItem> SearchItems(ClipboardFolder folder, SearchCondition searchCondition);
         public IEnumerable<ClipboardItem> GetItems(ClipboardFolder folder);
 
-        //-- ClipboardItemImage
-        public void UpsertItemImage(ClipboardItemImage item);
-        public void DeleteItemImage(ClipboardItemImage item);
-        public ClipboardItemImage? GetItemImage(ObjectId id);
-
         //-- ClipboardItemFiles
         public void UpsertItemFile(ClipboardItemFile item);
         public void DeleteItemFile(ClipboardItemFile item);

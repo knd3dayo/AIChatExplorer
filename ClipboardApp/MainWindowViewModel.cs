@@ -12,8 +12,7 @@ using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
 
     public partial class MainWindowViewModel : MyWindowViewModel {
 
@@ -36,7 +35,7 @@ namespace ClipboardApp
 
             PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
 
-            
+
             // フォルダの初期化
             InitClipboardFolders();
 
@@ -232,7 +231,7 @@ namespace ClipboardApp
         }
 
 
-        
+
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {

@@ -38,12 +38,7 @@ namespace PythonAILib.Model {
                     return null;
                 }
                 byte[] binaryData = Convert.FromBase64String(ImageBase64);
-                MemoryStream ms = new(binaryData, 0, binaryData.Length);
-                BitmapImage bi = new();
-                bi.BeginInit();
-                bi.StreamSource = ms;
-                bi.EndInit();
-                return bi;
+                return ContentTypes.GetBitmapImage(binaryData);
             }
         }
 

@@ -539,10 +539,10 @@ namespace WpfAppCommon.Control.Settings {
             PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.PythonVenvPath);
             try {
                 // ChatControllerを作成
-                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-                List<ChatItem> chatItems = [];
+                Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+                List<ChatIHistorytem> chatItems = [];
                 // ChatItemを追加
-                ChatItem chatItem = new(ChatItem.UserRole, "Hello");
+                ChatIHistorytem chatItem = new(ChatIHistorytem.UserRole, "Hello");
                 chatItems.Add(chatItem);
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
@@ -565,8 +565,8 @@ namespace WpfAppCommon.Control.Settings {
         // TestLangChain
         private void TestLangChain() {
             try {
-                ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-                List<ChatItem> chatItems = [new ChatItem(ChatItem.UserRole, "Hello")];
+                Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+                List<ChatIHistorytem> chatItems = [new ChatIHistorytem(ChatIHistorytem.UserRole, "Hello")];
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
                 ChatResult? result = chatController.ExecuteChat();

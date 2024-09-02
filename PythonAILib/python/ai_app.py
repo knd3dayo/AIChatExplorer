@@ -1,6 +1,7 @@
 import os, json
 from PIL import Image
 from io import StringIO
+import tempfile
 import sys
 sys.path.append("python")
 
@@ -36,10 +37,22 @@ def capture_stdout_stderr(func):
     return wrapper
 
 # ファイルからテキストを抽出する
-def extract_text(filename):
+def extract_file_to_text(filename):
     import file_extractor
     return file_extractor.extract_text(filename)
 
+# base64形式のデータからテキストを抽出する
+def extract_base64_to_text(base64_data):
+    # base64データから一時ファイルを生成
+    with tempfile.NamedTemporaryFile(delete=False) as temp:
+        temp.write(base64_data)
+        temp_path = temp.name
+        import file_extractor
+        # 一時ファイルからテキストを抽出
+        text = file_extractor.extract_text(temp_path)
+        # 一時ファイルを削除
+        os.remove(temp_path)
+        return text
 
 ########################
 # openai関連

@@ -11,8 +11,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
         public enum Mode {
             Create,

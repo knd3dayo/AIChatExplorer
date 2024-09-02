@@ -13,17 +13,6 @@ namespace QAChat.Control {
             ClipboardItemImage = clipboardItemImage;
         }
 
-
-        // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド
-        public SimpleDelegateCommand<object> OpenSelectedImageItemCommand => new((parameter) => {
-            ProcessUtil.OpenBitmapImage(ClipboardItemImage.BitmapImage);
-        });
-
-        // RemoveSelectedImageFileCommand  選択した画像ファイルをScreenShotImageのリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveSelectedImageItemCommand => new((parameter) => {
-            QAChatControlViewModel.ImageItems.Remove(this);
-        });
-
     }
 
 }

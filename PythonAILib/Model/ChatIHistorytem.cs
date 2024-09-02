@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
 namespace PythonAILib.Model {
-    public class ChatItem {
+    public class ChatIHistorytem {
 
         public static string SystemRole { get; } = "system";
         public static string AssistantRole { get; } = "assistant";
@@ -44,17 +44,17 @@ namespace PythonAILib.Model {
             }
         }
 
-        public ChatItem(string role, string text) {
+        public ChatIHistorytem(string role, string text) {
             Role = role;
             Content = text;
         }
-        public ChatItem(string role , string text , List<string> sources)  {
+        public ChatIHistorytem(string role , string text , List<string> sources)  {
             Role = role;
             Content = text;
             Sources = sources;
         }
         // ChatItemsをJSON文字列に変換する
-        public static string ToJson(IEnumerable<ChatItem> items) {
+        public static string ToJson(IEnumerable<ChatIHistorytem> items) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true

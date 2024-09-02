@@ -163,9 +163,9 @@ namespace QAChat.ViewModel.ImageChat {
                     List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
                     ImagePath).ToList();
                     // Base64に変換
-                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatRequest.CreateImageURLFromFilePath(imageFileName)).ToList();
+                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => Chat.CreateImageURLFromFilePath(imageFileName)).ToList();
                     // ChatRequestを生成
-                    ChatRequest chatRequest = new(ClipboardAppConfig.CreateOpenAIProperties()) {
+                    Chat chatRequest = new(ClipboardAppConfig.CreateOpenAIProperties()) {
                         ChatMode = OpenAIExecutionModeEnum.Normal,
                         ImageURLs = imageBase64Strings,
                         ContentText = prompt

@@ -257,7 +257,6 @@ namespace ClipboardApp.ViewModel {
                 toFolder.AddItemCommand.Execute(newItem);
                 // Cutフラグが立っている場合はコピー元のアイテムを削除する
                 if (CutFlag) {
-
                     fromFolder.DeleteItemCommand.Execute(item);
                 }
             }

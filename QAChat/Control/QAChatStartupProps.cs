@@ -19,13 +19,12 @@ namespace QAChat.Control {
 
         public Action<ObservableCollection<VectorDBItemBase>> SelectFolderAction { get; set; } = (folders) => { };
 
-        public Func<List<ImageItemBase>> GetSelectedClipboardItemImageFunction { get; set; } = () => { return []; };
-
         public List<VectorDBItemBase> ExternalVectorDBItems {
             get {
                 return [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
             }
         }
+        public Action<List<ClipboardItem>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
     }
 
 }

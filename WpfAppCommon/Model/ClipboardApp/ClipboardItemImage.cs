@@ -7,19 +7,23 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model.ClipboardApp {
-    public class ClipboardItemImage : ImageItemBase {
+    public class ClipboardItemImage_ : ImageItemBase {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
+        [BsonIgnore]
         public ClipboardItem? ClipboardItem { get; set; }
 
-        public static ClipboardItemImage Create(ClipboardItem clipboardItem, Image image) {
-            ClipboardItemImage itemImage = new() {
+        public static ClipboardItemImage_ Create(ClipboardItem clipboardItem, Image image) {
+            ClipboardItemImage_ itemImage = new() {
                 ClipboardItem = clipboardItem,
                 Image = image
             };
             return itemImage;
         }
+
+
+
 
         // 削除
         public override void Delete() {
@@ -53,12 +57,13 @@ namespace WpfAppCommon.Model.ClipboardApp {
                 LogWrapper.Info(CommonStringResources.Instance.DeletedTextEmbeddingFromImage);
             }
 
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemImage(this);
+                // ★TODO Test ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemImage(this);
 
         }
         // 保存
         public override void Save() {
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItemImage(this);
+            // ★TODO Test
+            // ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItemImage(this);
             // クリップボードアイテムとファイルを同期する
             if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
                 if (ClipboardItem == null) {
@@ -100,9 +105,5 @@ namespace WpfAppCommon.Model.ClipboardApp {
             LogWrapper.Info(CommonStringResources.Instance.SavedTextEmbeddingFromImage);
         }
 
-        // 取得
-        public static ClipboardItemImage? GetItems(ObjectId objectId) {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetItemImage(objectId);
-        }
     }
 }

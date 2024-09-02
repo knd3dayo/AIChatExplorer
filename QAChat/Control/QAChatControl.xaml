@@ -28,6 +28,11 @@
             Key="Escape"
             Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <KeyBinding
+            Key="V"
+            Command="{Binding PasteCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+            Modifiers="Ctrl" />
     </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -189,152 +194,58 @@
                     Width="200"
                     Padding="10,0,10,0"
                     HorizontalAlignment="Left"
-                    IsChecked="{Binding IsImageItemDrawerOpen}"
+                    IsChecked="{Binding IsAdditionalItemDrawerOpen}"
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.ImageItem, Mode=OneTime}" />
+                        <TextBlock Text="{Binding StringResources.AdditionalItem, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageItemDrawerOpen}" OpenMode="Standard">
-                    <!--  画像アイテム  -->
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsAdditionalItemDrawerOpen}" OpenMode="Standard">
+                    <!--  クリップボードアイテム  -->
                     <materialDesign:DrawerHost.BottomDrawerContent>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                FontSize="10"
-                                Text="{Binding StringResources.ClickHereToPasteTheSelectedItem, Mode=OneTime}">
-                                <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding PasteImageItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
-                                </TextBlock.InputBindings>
-                            </TextBlock>
                             <ListBox
                                 Name="ListBox0"
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="0,0,10,0"
-                                ItemsSource="{Binding ImageItems}"
+                                ItemsSource="{Binding AdditionalItems}"
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                SelectionMode="Extended">
+                                SelectionMode="Extended"
+                                Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=Self}}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-                                            <Image
+                                            <TextBlock
                                                 Grid.Row="0"
-                                                Height="100"
                                                 Margin="0,0,0,0"
-                                                Source="{Binding ClipboardItemImage.BitmapImage}" />
+                                                Text="{Binding Description}" />
 
                                             <Grid.InputBindings>
+                                                <!--  クリップボードを開く  -->
                                                 <MouseBinding
                                                     Command="{Binding OpenSelectedImageItemCommand, Mode=OneTime}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftDoubleClick" />
                                             </Grid.InputBindings>
                                             <Grid.ContextMenu>
+                                                <!--  クリップボードを開く,削除する  -->
                                                 <ContextMenu>
                                                     <MenuItem
-                                                        Command="{Binding OpenSelectedImageItemCommand, Mode=OneTime}"
+                                                        Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
                                                         CommandParameter="{Binding}"
                                                         Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Select}" />
                                                     <MenuItem
-                                                        Command="{Binding RemoveSelectedImageItemCommand}"
+                                                        Command="{Binding RemoveSelectedItemCommand}"
                                                         CommandParameter="{Binding}"
                                                         Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Delete}" />
-                                                </ContextMenu>
-                                            </Grid.ContextMenu>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </Grid>
-
-                    </materialDesign:DrawerHost.BottomDrawerContent>
-                </materialDesign:DrawerHost>
-            </StackPanel>
-            <StackPanel Grid.Row="4">
-                <ToggleButton
-                    Width="200"
-                    Padding="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    IsChecked="{Binding IsImageFileDrawerOpen}"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                    <DockPanel Width="200">
-                        <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.ImageFile, Mode=OneTime}" />
-                    </DockPanel>
-                </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsImageFileDrawerOpen}" OpenMode="Standard">
-                    <!--  追加画像情報  -->
-                    <materialDesign:DrawerHost.BottomDrawerContent>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddImageFile, Mode=OneTime}">
-                                <TextBlock.InputBindings>
-                                    <MouseBinding
-                                        Command="{Binding SelectImageFileCommand, Mode=OneTime}"
-                                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                                        MouseAction="LeftClick" />
-                                </TextBlock.InputBindings>
-                            </TextBlock>
-                            <ListBox
-                                Name="ListBox1"
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="0,0,10,0"
-                                ItemsSource="{Binding ImageFiles}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                SelectionMode="Extended">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <Image
-                                                Grid.Row="0"
-                                                Height="100"
-                                                Margin="0,0,0,0"
-                                                Source="{Binding ScreenShotImage.BitmapImage}" />
-
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                Margin="0,0,10,0"
-                                                Text="{Binding ScreenShotImage.FileName}" />
-                                            <Grid.InputBindings>
-                                                <MouseBinding
-                                                    Command="{Binding OpenSelectedImageFileCommand, Mode=OneTime}"
-                                                    CommandParameter="{Binding}"
-                                                    Gesture="LeftDoubleClick" />
-                                            </Grid.InputBindings>
-                                            <Grid.ContextMenu>
-                                                <ContextMenu>
-                                                    <MenuItem
-                                                        Command="{Binding OpenSelectedImageFileCommand, Mode=OneTime}"
-                                                        CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
-                                                    <MenuItem
-                                                        Command="{Binding RemoveSelectedImageFileCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
                                                 </ContextMenu>
                                             </Grid.ContextMenu>
                                         </Grid>

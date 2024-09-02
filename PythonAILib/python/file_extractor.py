@@ -20,7 +20,7 @@ def identify_type(filename):
            
     return res, encoding
 
-def extract_text(filename):
+def extract_file_to_text(filename):
     res, encoding = identify_type(filename)
     print(res.output.mime_type)
     

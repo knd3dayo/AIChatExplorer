@@ -378,5 +378,1335 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // --- namespace WpfAppCommon.PythonIF ---
+
+        // --- DefaultClipboardController.cs ---
+        // クリップボードの内容が変更されました
+        public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
+        // クリップボードアイテムを処理
+        public virtual string ProcessClipboardItem { get; } = "クリップボードアイテムを処理";
+        // 自動処理を実行中
+        public virtual string AutoProcessing { get; } = "自動処理を実行中";
+        // クリップボードアイテムの追加処理が失敗しました。
+        public virtual string AddItemFailed { get; } = "クリップボードアイテムの追加処理が失敗しました。";
+
+        // 自動タイトル設定処理を実行します
+        public virtual string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";
+        // タイトル設定処理が失敗しました
+        public virtual string SetTitleFailed { get; } = "タイトル設定処理が失敗しました";
+
+        // 自動背景情報追加処理を実行します
+        public virtual string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
+        // 背景情報追加処理が失敗しました
+        public virtual string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
+
+        // 自動サマリー作成処理を実行します
+        public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
+        // サマリー作成処理が失敗しました
+        public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
+
+
+        // 自動イメージテキスト抽出処理を実行します
+        public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
+        // イメージテキスト抽出処理が失敗しました
+        public virtual string ExtractImageTextFailed { get; } = "イメージテキスト抽出処理が失敗しました";
+
+        // 自動タグ設定処理を実行します
+        public virtual string AutoSetTag { get; } = "自動タグ設定処理を実行します";
+        // タグ設定処理が失敗しました
+        public virtual string SetTagFailed { get; } = "タグ設定処理が失敗しました";
+        // 自動マージ処理を実行します
+        public virtual string AutoMerge { get; } = "自動マージ処理を実行します";
+        // マージ処理が失敗しました
+        public virtual string MergeFailed { get; } = "マージ処理が失敗しました";
+        // OCR処理を実行します
+        public virtual string OCR { get; } = "OCR処理を実行します";
+        // OCR処理が失敗しました
+        public virtual string OCRFailed { get; } = "OCR処理が失敗しました";
+
+        // 自動ファイル抽出処理を実行します
+        public virtual string ExecuteAutoFileExtract { get; } = "自動ファイル抽出処理を実行します";
+        // 自動ファイル抽出処理が失敗しました
+        public virtual string AutoFileExtractFailed { get; } = "自動ファイル抽出処理が失敗しました";
+
+        // --- EmptyPythonFunctions.cs ---
+        // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
+        public virtual string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
+
+        // --- PythonExecutor.cs ---
+        // カスタムPythonスクリプトの、templateファイル
+        public virtual string TemplateScript { get; } = "python/script_template.py";
+
+        // クリップボードアプリ用のPythonスクリプト
+        public virtual string WpfAppCommonUtilsScript { get; } = "python/ai_app.py";
+
+        // テンプレートファイルが見つかりません
+        public virtual string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";
+
+        // --- PythonNetFunctions.cs ---
+        // "PythonDLLが見つかりません。PythonDLLのパスを確認してください:"
+        public virtual string PythonDLLNotFound { get; } = "PythonDLLが見つかりません。PythonDLLのパスを確認してください:";
+        //  "Pythonの初期化に失敗しました。"
+        public virtual string PythonInitFailed { get; } = "Pythonの初期化に失敗しました。";
+
+        // "Pythonスクリプトファイルに、{function_name}関数が見つかりません"
+        public virtual string FunctionNotFound(string function_name) {
+            return $"Pythonスクリプトファイルに、{function_name}関数が見つかりません";
+        }
+        // "Pythonスクリプトの実行中にエラーが発生しました
+        public virtual string PythonExecuteError { get; } = "Pythonスクリプトの実行中にエラーが発生しました";
+
+        // "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。
+        public virtual string ModuleNotFound { get; } = "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。";
+
+        // $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+        public virtual string PythonExecuteErrorDetail(Exception e) {
+            return $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
+        }
+        // "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください"
+        public virtual string SpacyModelNameNotSet { get; } = "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください";
+
+        // "マスキング結果がありません"
+        public virtual string MaskingResultNotFound { get; } = "マスキング結果がありません";
+
+        // "マスキングした文字列取得に失敗しました"
+        public virtual string MaskingResultFailed { get; } = "マスキングした文字列取得に失敗しました";
+
+        // "マスキング解除結果がありません"
+        public virtual string UnmaskingResultNotFound { get; } = "マスキング解除結果がありません";
+        // "マスキング解除した文字列取得に失敗しました"
+        public virtual string UnmaskingResultFailed { get; } = "マスキング解除した文字列取得に失敗しました";
+
+        // "画像のバイト列に変換できません"
+        public virtual string ImageByteFailed { get; } = "画像のバイト列に変換できません";
+
+        // "VectorDBItemsが空です"
+        public virtual string VectorDBItemsEmpty { get; } = "VectorDBItemsが空です";
+
+        // "OpenAIの応答がありません"
+        public virtual string OpenAIResponseEmpty { get; } = "OpenAIの応答がありません";
+
+        // ファイルが存在しません
+        public virtual string FileNotFound { get; } = "ファイルが存在しません";
+
+        // -- ClipboardApp.MainWindowDataGrid1 --
+        // 更新日
+        public virtual string UpdateDate { get; } = "更新日";
+        // タイトル
+        public virtual string Title { get; } = "タイトル";
+
+        // ソースタイトル
+        public virtual string SourceTitle { get; } = "ソースタイトル";
+        // ピン留め
+        public virtual string Pin { get; } = "ピン留め";
+
+        // 種別
+        public virtual string Type { get; } = "種別";
+
+        // -- AutoProcessRule --
+        // 自動処理ルール
+
+        // ルール名
+        public virtual string RuleName { get; } = "ルール名";
+
+        // 有効
+        public virtual string Enable { get; } = "有効";
+
+        // 適用対象フォルダ
+        public virtual string TargetFolder { get; } = "適用対象フォルダ";
+
+        // すべてのアイテムに適用
+        public virtual string ApplyAllItems { get; } = "すべてのアイテムに適用";
+
+        // 次の条件に合致するアイテムに適用
+        public virtual string ApplyMatchedItems { get; } = "次の条件に合致するアイテムに適用";
+
+        // アイテムの種類
+        public virtual string ItemType { get; } = "アイテムの種類";
+        // アイテムのタイプがテキストの場合
+        public virtual string ItemTypeText { get; } = "アイテムのタイプがテキストの場合";
+        // 行以上
+        public virtual string LineOrMore { get; } = "行以上";
+
+        // 行以下のテキスト
+        public virtual string LineOrLess { get; } = "行以下のテキスト";
+
+        // アイテムのタイプがファイルの場合
+        public virtual string ItemTypeFile { get; } = "アイテムのタイプがファイルの場合";
+
+        // アイテムのタイプがイメージの場合
+        public virtual string ItemTypeImage { get; } = "アイテムのタイプがイメージの場合";
+
+        // タイトルに次の文字が含まれる場合
+        public virtual string TitleContains { get; } = "タイトルに次の文字が含まれる場合";
+
+        // 本文に次の文字列が含まれる場合
+        public virtual string BodyContains { get; } = "本文に次の文字列が含まれる場合";
+
+        // ソースアプリの名前に次の文字列が含まれる場合
+        public virtual string SourceAppContains { get; } = "ソースアプリの名前に次の文字列が含まれる場合";
+
+        // 実行する処理
+        public virtual string ExecuteProcess { get; } = "実行する処理";
+
+        // 次の処理を実行する
+        public virtual string ExecuteNextProcess { get; } = "次の処理を実行する";
+
+        // コピー/移動/マージ先
+        public virtual string CopyMoveMergeTarget { get; } = "コピー/移動/マージ先";
+
+        // Pythonスクリプトを実行する
+        public virtual string ExecutePythonScript { get; } = "Pythonスクリプトを実行する";
+
+        // OpenAIのプロンプトを実行する
+        public virtual string ExecuteOpenAI { get; } = "OpenAIのプロンプトを実行する";
+
+        // OpenAIの実行モード
+        public virtual string OpenAIMode { get; } = "OpenAIの実行モード";
+
+        // ベクトルDBに格納する
+        public virtual string StoreVectorDB { get; } = "ベクトルDBに格納する";
+
+        // 適用対象フォルダ(パス)
+        public virtual string TargetFolderFullPath { get; } = "適用対象フォルダ(パス)";
+
+        // フォルダ単位
+        public virtual string FolderUnit { get; } = "フォルダ単位";
+
+        // 上へ
+        public virtual string Up { get; } = "上へ";
+        // 下へ
+        public virtual string Down { get; } = "下へ";
+
+        // クリップボード監視対象のソースアプリ名
+        public virtual string SourceApp { get; } = "クリップボード監視対象のソースアプリ名";
+
+        // 監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe
+        public virtual string SourceAppExample { get; } = "監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe";
+
+        // 指定した行数以下のテキストアイテムを無視
+        public virtual string IgnoreTextLessOrEqualToSpecifiedLines { get; } = "指定した行数以下のテキストアイテムを無視";
+
+        // 自動タイトル生成
+        public virtual string AutoTitleGeneration { get; } = "自動タイトル生成";
+
+        // しない
+        public virtual string DoNot { get; } = "しない";
+
+        // OpenAIを使用して自動的にタイトルを生成する
+        public virtual string AutomaticallyGenerateTitleUsingOpenAI { get; } = "OpenAIを使用して自動的にタイトルを生成する";
+
+        // 自動でタグ生成する
+        public virtual string AutomaticallyGenerateTags { get; } = "自動でタグ生成する";
+
+        // クリップボードの内容から自動的にタグを生成します
+        public virtual string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
+
+        // 自動でマージ
+        public virtual string AutomaticallyMerge { get; } = "自動でマージ";
+
+        // コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします
+        public virtual string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; } = "コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします";
+
+        // 自動でEmbedding
+        public virtual string AutomaticallyEmbedding { get; } = "自動でEmbedding";
+
+        // クリップボードアイテム保存時に自動でEmbeddingを行います
+        public virtual string AutomaticallyEmbeddingWhenSavingClipboardItems { get; } = "クリップボードアイテム保存時に自動でEmbeddingを行います";
+
+        // ファイルから自動でテキスト抽出
+        public virtual string AutomaticallyExtractTextFromFile { get; } = "ファイルから自動でテキスト抽出";
+
+        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
+        public virtual string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います";
+
+        // 画像から自動でテキスト抽出
+        public virtual string AutomaticallyExtractTextFromImage { get; } = "画像から自動でテキスト抽出";
+
+        // PyOCRを使用してテキスト抽出します
+        public virtual string ExtractTextUsingPyOCR { get; } = "PyOCRを使用してテキスト抽出します";
+
+        // OpenAIを使用してテキスト抽出します
+        public virtual string ExtractTextUsingOpenAI { get; } = "OpenAIを使用してテキスト抽出します";
+
+        // 画像からテキスト抽出時にEmbedding
+        public virtual string EmbeddingWhenExtractingTextFromImage { get; } = "画像からテキスト抽出時にEmbedding";
+        // 画像からテキスト抽出時にEmbeddingを行います
+        public virtual string EmbeddingWhenExtractingTextFromImageDescription { get; } = "画像からテキスト抽出時にEmbeddingを行います";
+
+
+        // 自動背景情報追加
+        public virtual string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
+
+        // 自動背景情報に日本語文章解析結果を追加します
+        public virtual string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に日本語文章解析結果を追加します";
+
+        // 自動背景情報に自動QA結果を追加します
+        public virtual string AutomaticallyAddAutoQAResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に自動QA結果を追加します";
+
+        // 同じフォルダにあるアイテムから背景情報を生成します。
+        public virtual string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "同じフォルダにあるアイテムから背景情報を生成します。";
+
+        // Embeddingに背景情報を含める
+        public virtual string IncludeBackgroundInformationInEmbedding { get; } = "Embeddingに背景情報を含める";
+
+        // Embedding対象テキストに背景情報を含めます。
+        public virtual string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Embedding対象テキストに背景情報を含めます。";
+
+        // 自動サマリー生成
+        public virtual string AutomaticallyGenerateSummary { get; } = "自動サマリー生成";
+
+        // コンテンツからサマリーテキストを生成します。
+        public virtual string GenerateSummaryTextFromContent { get; } = "コンテンツからサマリーテキストを生成します。";
+
+        // クリップボードアイテムをOS上のフォルダと同期させる
+        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
+
+        // クリップボードアイテムをOS上のフォルダと同期させます。
+        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "クリップボードアイテムをOS上のフォルダと同期させます。";
+
+        // 同期先のフォルダ名
+        public virtual string SyncTargetFolderName { get; } = "同期先のフォルダ名";
+
+        // クリップボードアイテムを同期するOS上のフォルダ名を指定。
+        public virtual string SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems { get; } = "クリップボードアイテムを同期するOS上のフォルダ名を指定。";
+
+        // 同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。
+        public virtual string IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated { get; } = "同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。";
+
+        // エンティティ抽出/データマスキング
+        public virtual string EntityExtractionDataMasking { get; } = "エンティティ抽出/データマスキング";
+
+        // クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います
+        public virtual string ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent { get; } = "クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います";
+
+        // OpenAIに送信するデータ内の個人情報などをマスキングします。
+        public virtual string MaskPersonalInformationInDataSentToOpenAI { get; } = "OpenAIに送信するデータ内の個人情報などをマスキングします。";
+
+        // 新規自動処理ルール
+        public virtual string NewAutoProcessRule { get; } = "新規自動処理ルール";
+
+        // システム共通設定を保存
+        public virtual string SaveSystemCommonSettings { get; } = "システム共通設定を保存";
+
+        // -- FolderEditWindow --
+        // クリップボードフォルダ編集
+        public virtual string EditClipboardFolder { get; } = "クリップボードフォルダ編集";
+
+        // 名前
+        public virtual string Name { get; } = "名前";
+
+        // 説明
+        public virtual string Description { get; } = "説明";
+
+        // フォルダ選択
+        public virtual string SelectFolder { get; } = "フォルダ選択";
+
+        // ファイル選択
+        public virtual string SelectFile { get; } = "ファイル選択";
+
+        // -- EditItemWindow --
+        // テキストをファイルとして開く
+        public virtual string OpenTextAsFile { get; } = "テキストをファイルとして開く";
+
+        // ファイルを開く
+        public virtual string OpenFile { get; } = "ファイルを開く";
+
+        // 新規ファイルとして開く
+        public virtual string OpenAsNewFile { get; } = "新規ファイルとして開く";
+
+        // フォルダを開く
+        public virtual string OpenFolder { get; } = "フォルダを開く";
+
+        // テキストを抽出
+        public virtual string ExtractText { get; } = "テキストを抽出";
+
+        // 画像を開く
+        public virtual string OpenImage { get; } = "画像を開く";
+
+        // 画像からテキストを抽出
+        public virtual string ExtractTextFromImage { get; } = "画像からテキストを抽出";
+
+        // データをマスキング
+        public virtual string MaskData { get; } = "データをマスキング";
+
+        // ここをクリックするとタグ編集画面が開きます
+        public virtual string ClickHereToOpenTheTagEditScreen { get; } = "ここをクリックするとタグ編集画面が開きます";
+
+        // テキスト
+        public virtual string Text { get; } = "テキスト";
+
+
+        // ファイルパス
+        public virtual string FilePath { get; } = "ファイルパス";
+
+        // フォルダ
+        public virtual string Folder { get; } = "フォルダ";
+
+        // ファイル名
+        public virtual string FileName { get; } = "ファイル名";
+
+        // フォルダ名とファイル名
+        public virtual string FolderNameAndFileName { get; } = "フォルダ名とファイル名";
+
+        // イメージ
+        public virtual string Image { get; } = "イメージ";
+
+        // -- EditPythonScriptWindow --
+        // 内容
+        public virtual string Content { get; } = "内容";
+
+        // -- ListPythonScriptWindow --
+        // 新規Pythonスクリプト
+        public virtual string NewPythonScript { get; } = "新規Pythonスクリプト";
+
+        // -- SearchWindow --
+        // 検索対象フォルダ
+        public virtual string SearchTargetFolder { get; } = "検索対象フォルダ";
+
+        // 除外
+        public virtual string Exclude { get; } = "除外";
+
+        // コピー元アプリ名
+        public virtual string CopySourceAppName { get; } = "コピー元アプリ名";
+
+        // 開始日
+        public virtual string StartDate { get; } = "開始日";
+
+        // 終了日
+        public virtual string EndDate { get; } = "終了日";
+
+        // 適用対象配下のフォルダも対象にする
+        public virtual string IncludeSubfolders { get; } = "適用対象配下のフォルダも対象にする";
+
+        // クリア
+        public virtual string Clear { get; } = "クリア";
+
+        // -- TagSearchWindow
+        // タグ検索
+        public virtual string TagSearch { get; } = "タグ検索";
+
+        // -- VectorSearchResultWindow
+        // ベクトル検索結果
+        public virtual string VectorSearchResult { get; } = "ベクトル検索結果";
+
+        // -- ImageChatWindow
+        // 設定項目
+        public virtual string SettingItem { get; } = "設定項目";
+
+        // 設定値
+        public virtual string SettingValue { get; } = "設定値";
+
+        // チェックタイプ
+        public virtual string CheckType { get; } = "チェックタイプ";
+
+        // 貼り付け
+        public virtual string Paste { get; } = "貼り付け";
+
+        // -- ImageCheck.MainWindow --
+        // 画像ファイル選択
+        public virtual string SelectImageFile { get; } = "画像ファイル選択";
+
+        // 画像エビデンスチェック項目編集
+        public virtual string EditImageEvidenceCheckItem { get; } = "画像エビデンスチェック項目編集";
+
+        // 開く
+        public virtual string Open { get; } = "開く";
+
+        // ここに回答が表示されます
+        public virtual string TheAnswerWillBeDisplayedHere { get; } = "ここに回答が表示されます";
+
+        // ここに質問を入力
+        public virtual string EnterYourQuestionHere { get; } = "ここに質問を入力";
+
+        // 保存
+        public virtual string Save { get; } = "保存";
+
+        // 送信
+        public virtual string Send { get; } = "送信";
+
+        // -- ListVectorDBWindow --
+        // システム用のベクトルを表示
+        public virtual string DisplayVectorsForTheSystem { get; } = "システム用のベクトルを表示";
+
+        // ベクトルDBの場所
+        public virtual string VectorDBLocation { get; } = "ベクトルDBの場所";
+
+        // ベクトルDBのタイプ
+        public virtual string VectorDBType { get; } = "ベクトルDBのタイプ";
+
+        // 新規ベクトルDB設定
+        public virtual string NewVectorDBSetting { get; } = "新規ベクトルDB設定";
+
+        // ベクトルDB設定編集
+        public virtual string EditVectorDBSetting { get; } = "ベクトルDB設定編集";
+
+        // -- QAChatControl --
+        // 実験的機能1(文章解析+辞書生成+RAG)"
+        public virtual string ExperimentalFunction1 { get; } = "実験的機能1(文章解析+辞書生成+RAG)";
+
+        // ベクトルDB(フォルダ)
+        public virtual string VectorDBFolder { get; } = "ベクトルDB(フォルダ)";
+
+        // ここをクリックしてベクトルDB(フォルダ)を追加
+        public virtual string ClickHereToAddVectorDBFolder { get; } = "ここをクリックしてベクトルDB(フォルダ)を追加";
+
+        // リストから除外
+        public virtual string ExcludeFromList { get; } = "リストから除外";
+
+        // ベクトルDB(外部)
+        public virtual string VectorDBExternal { get; } = "ベクトルDB(外部)";
+
+        // ここをクリックしてベクトルDB(外部)を追加
+        public virtual string ClickHereToAddVectorDBExternal { get; } = "ここをクリックしてベクトルDB(外部)を追加";
+
+        // 画像アイテム
+        public virtual string AdditionalItem { get; } = "追加アイテム";
+
+        // ここをクリックして選択中のアイテムを貼り付け
+        public virtual string ClickHereToPasteTheSelectedItem { get; } = "ここをクリックして選択中のアイテムを貼り付け";
+
+        // 画像ファイル
+        public virtual string ImageFile { get; } = "画像ファイル";
+
+        // ここをクリックして画像ファイルを追加
+        public virtual string ClickHereToAddImageFile { get; } = "ここをクリックして画像ファイルを追加";
+
+        // チャット
+        public virtual string Chat { get; } = "チャット";
+
+        // プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
+        public virtual string PromptTemplate { get; } = "プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。";
+
+        // プレビュー
+        public virtual string Preview { get; } = "プレビュー";
+
+        // プレビュー(JSON)
+        public virtual string PreviewJSON { get; } = "プレビュー(JSON)";
+
+        // Copy
+        public virtual string Copy { get; } = "Copy";
+
+        // --- ClipboardFolderViewModel ---
+        // 自動処理が設定されています
+        public virtual string AutoProcessingIsSet { get; } = "自動処理が設定されています";
+
+        // 検索条件
+        public virtual string SearchCondition { get; } = "検索条件";
+
+        // フォルダを編集しました
+        public virtual string FolderEdited { get; } = "フォルダを編集しました";
+
+        // リロードしました
+        public virtual string Reloaded { get; } = "リロードしました";
+
+        // ファイルを選択してください
+        public virtual string SelectFilePlease { get; } = "ファイルを選択してください";
+
+        // フォルダを選択してください
+        public virtual string SelectFolderPlease { get; } = "フォルダを選択してください";
+
+        // フォルダをエクスポートしました
+        public virtual string FolderExported { get; } = "フォルダをエクスポートしました";
+
+        // フォルダをインポートしました
+        public virtual string FolderImported { get; } = "フォルダをインポートしました";
+
+        // ルートフォルダは削除できません
+        public virtual string RootFolderCannotBeDeleted { get; } = "ルートフォルダは削除できません";
+
+        // 確認
+        public virtual string Confirm { get; } = "確認";
+
+        // "フォルダを削除しますか？"
+        public virtual string ConfirmDeleteFolder { get; } = "フォルダを削除しますか？";
+
+        // "フォルダを削除しました"
+        public virtual string FolderDeleted { get; } = "フォルダを削除しました";
+
+        // "ピン留めされたアイテム以外の表示中のアイテムを削除しますか?"
+        public virtual string ConfirmDeleteItems { get; } = "ピン留めされたアイテム以外の表示中のアイテムを削除しますか?";
+
+        // アイテムを削除しました
+        public virtual string DeletedItems { get; } = "アイテムを削除しました";
+
+        // "追加しました"
+        public virtual string Added { get; } = "追加しました";
+
+        // "編集しました"
+        public virtual string Edited { get; } = "編集しました";
+
+        // 貼り付けました
+        public virtual string Pasted { get; } = "貼り付けました";
+
+        // "マージするアイテムを2つ選択してください"
+        public virtual string SelectTwoItemsToMerge { get; } = "マージするアイテムを2つ選択してください";
+
+        // マージ先のアイテムが選択されていません
+        public virtual string MergeTargetNotSelected { get; } = "マージ先のアイテムが選択されていません";
+
+        // マージ元のアイテムが選択されていません
+        public virtual string MergeSourceNotSelected { get; } = "マージ元のアイテムが選択されていません";
+
+        // "マージしました"
+        public virtual string Merged { get; } = "マージしました";
+
+        // エラーが発生しました。\nメッセージ
+        public virtual string ErrorOccurredAndMessage { get; } = "エラーが発生しました。\nメッセージ";
+
+        // スタックトレース
+        public virtual string StackTrace { get; } = "スタックトレース";
+
+        // --- ClipboardItemViewModel ---
+        // ファイル以外のコンテンツはフォルダを開けません
+        public virtual string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";
+
+        // ファイル以外のコンテンツはテキストを抽出できません
+        public virtual string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
+
+        // "MainWindowViewModelがNullです"
+        public virtual string MainWindowViewModelIsNull { get; } = "MainWindowViewModelがNullです";
+
+        // タイトルを生成します
+        public virtual string GenerateTitleInformation { get; } = "タイトルを生成します";
+        // "タイトルを生成しました"
+        public virtual string GeneratedTitleInformation { get; } = "タイトルを生成しました";
+        // 背景情報を生成します
+        public virtual string GenerateBackgroundInformation { get; } = "背景情報を生成します";
+
+        // "背景情報を生成しました"
+        public virtual string GeneratedBackgroundInformation { get; } = "背景情報を生成しました";
+
+        // "サマリーを生成します"
+        public virtual string GenerateSummary2 { get; } = "サマリーを生成します";
+
+        // "サマリーを生成しました"
+        public virtual string GeneratedSummary { get; } = "サマリーを生成しました";
+
+        // ベクトルを生成します
+        public virtual string GenerateVector2 { get; } = "ベクトルを生成します";
+
+        // "ベクトルを生成しました"
+        public virtual string GeneratedVector { get; } = "ベクトルを生成しました";
+
+        // 画像以外のコンテンツはテキストを抽出できません
+        public virtual string CannotExtractTextForNonImageContent { get; } = "画像以外のコンテンツはテキストを抽出できません";
+
+        // "数値を入力してください。"
+        public virtual string EnterANumber { get; } = "数値を入力してください。";
+
+        // フォルダが選択されていません。
+        public virtual string FolderNotSelected { get; } = "フォルダが選択されていません。";
+
+        // ルール名を入力してください。
+        public virtual string EnterRuleName { get; } = "ルール名を入力してください。";
+
+        // "アクションを選択してください。"
+        public virtual string SelectAction { get; } = "アクションを選択してください。";
+
+        // "編集対象のルールが見つかりません。"
+        public virtual string RuleNotFound { get; } = "編集対象のルールが見つかりません。";
+
+        // コピーまたは移動先のフォルダを選択してください。
+        public virtual string SelectCopyOrMoveTargetFolder { get; } = "コピーまたは移動先のフォルダを選択してください。";
+
+        // "同じフォルダにはコピーまたは移動できません。"
+        public virtual string CannotCopyOrMoveToTheSameFolder { get; } = "同じフォルダにはコピーまたは移動できません。";
+
+        // "コピー/移動処理の無限ループを検出しました。"
+        public virtual string DetectedAnInfiniteLoopInCopyMoveProcessing { get; } = "コピー/移動処理の無限ループを検出しました。";
+
+        // "PromptTemplateを選択してください。"
+        public virtual string SelectPromptTemplate { get; } = "PromptTemplateを選択してください。";
+
+        // PythonScriptを選択してください。
+        public virtual string SelectPythonScript { get; } = "PythonScriptを選択してください。";
+
+        // "VectorDBを選択してください。"
+        public virtual string SelectVectorDB { get; } = "VectorDBを選択してください。";
+
+        // 標準フォルダ以外にはコピーまたは移動できません。
+        public virtual string CannotCopyOrMoveToNonStandardFolders { get; } = "標準フォルダ以外にはコピーまたは移動できません。";
+
+        // RootFolderViewModelがNullです。
+        public virtual string RootFolderViewModelIsNull { get; } = "RootFolderViewModelがNullです。";
+
+
+        // --- EditPythonScriptWindowViewModel ---
+        // 説明を入力してください
+        public virtual string EnterDescription { get; } = "説明を入力してください";
+
+        // --- FolderEditWindowViewModel ---
+        // フォルダが指定されていません
+        public virtual string FolderNotSpecified { get; } = "フォルダが指定されていません";
+
+        // フォルダ名を入力してください
+        public virtual string EnterFolderName { get; } = "フォルダ名を入力してください";
+
+        // --- FolderSelectWindowViewModel ---
+        // "エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない
+        public virtual string FolderSelectWindowViewModelInstanceNotFound { get; } = "エラーが発生しました。FolderSelectWindowViewModelのインスタンスがない";
+
+        // エラーが発生しました。選択中のフォルダがない
+        public virtual string SelectedFolderNotFound { get; } = "エラーが発生しました。選択中のフォルダがない";
+
+        // --- ListAutoProcessRuleWindowViewModel ---
+        // 自動処理ルールが選択されていません。
+        public virtual string AutoProcessRuleNotSelected { get; } = "自動処理ルールが選択されていません。";
+
+        // を削除しますか？
+        public virtual string ConfirmDelete { get; } = "を削除しますか？";
+
+        // "システム共通設定を保存しました。"
+        public virtual string SavedSystemCommonSettings { get; } = "システム共通設定を保存しました。";
+
+        // "システム共通設定の変更はありません。"
+        public virtual string NoChangesToSystemCommonSettings { get; } = "システム共通設定の変更はありません。";
+
+        // --- ListPythonScriptWindowViewModel ---
+        // 実行
+        public virtual string Execute { get; } = "実行";
+
+        // スクリプトを選択してください
+        public virtual string SelectScript { get; } = "スクリプトを選択してください";
+
+        // --- SearchWindowViewModel ---
+        // 検索フォルダ
+        public virtual string SearchFolder { get; } = "検索フォルダ";
+
+        // 標準
+        public virtual string Standard { get; } = "標準";
+
+        // SearchConditionRuleがNullです
+        public virtual string SearchConditionRuleIsNull { get; } = "SearchConditionRuleがNullです";
+
+        // 検索条件がありません
+        public virtual string NoSearchConditions { get; } = "検索条件がありません";
+
+        // --- TagSearchWindowViewModel ---
+        // "タグが空です"
+        public virtual string TagIsEmpty { get; } = "タグが空です";
+
+        // "タグが既に存在します"
+        public virtual string TagAlreadyExists { get; } = "タグが既に存在します";
+
+        // バージョン情報
+        public virtual string VersionInformation { get; } = "バージョン情報";
+
+        // -- ClipboardApp.MainWindowViewModel --
+        // "アプリケーションを再起動すると、表示モードが変更されます。"
+        public virtual string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "アプリケーションを再起動すると、表示モードが変更されます。";
+        // 情報
+        public virtual string Information { get; } = "情報";
+
+        // "終了しますか?"
+        public virtual string ConfirmExit { get; } = "終了しますか?";
+
+        // 選択中のアイテムがない"
+        public virtual string NoItemSelected { get; } = "選択中のアイテムがない";
+
+        // 切り取りました"
+        public virtual string Cut { get; } = "切り取りました";
+
+        // コピーしました"
+        public virtual string Copied { get; } = "コピーしました";
+
+        // 貼り付け先のフォルダがない
+        public virtual string NoPasteFolder { get; } = "貼り付け先のフォルダがない";
+
+        // "コピー元のフォルダがない"
+        public virtual string NoCopyFolder { get; } = "コピー元のフォルダがない";
+
+        // "選択中のアイテムを削除しますか?"
+        public virtual string ConfirmDeleteSelectedItems { get; } = "選択中のアイテムを削除しますか?";
+
+        // "削除しました"
+        public virtual string Deleted { get; } = "削除しました";
+
+        // --- ImageCHat ---
+        // 画像を確認して以下の各文が正しいか否かを教えてください\n\n
+        public virtual string ConfirmTheFollowingSentencesAreCorrectOrNot { get; } = "画像を確認して以下の各文が正しいか否かを教えてください\n\n";
+
+        // 画像ファイルが選択されていません。
+        public virtual string NoImageFileSelected { get; } = "画像ファイルが選択されていません。";
+
+        // プロンプトを送信します
+        public virtual string SendPrompt { get; } = "プロンプトを送信します";
+        // 画像ファイル名
+        public virtual string ImageFileName { get; } = "画像ファイル名";
+
+        // エラーが発生しました。
+        public virtual string ErrorOccurred { get; } = "エラーが発生しました。";
+
+        // 画像ファイルを選択してください
+        public virtual string SelectImageFilePlease { get; } = "画像ファイルを選択してください";
+
+        // すべてのファイル
+        public virtual string AllFiles { get; } = "すべてのファイル";
+
+        // "ファイルが存在しません。"
+        public virtual string FileDoesNotExist { get; } = "ファイルが存在しません。";
+
+        // -- EditPromptItemWindowViewModel --
+        // プロンプト編集
+        public virtual string EditPrompt { get; } = "プロンプト編集";
+
+        // -- ListPromptTemplateWindow -- 
+        // 新規プロンプトテンプレート
+        public virtual string NewPromptTemplate { get; } = "新規プロンプトテンプレート";
+
+        // RAG
+        public virtual string RAG { get; } = "RAG";
+
+        // -- DevFeatures.cs
+        // テキスト以外のコンテンツはマスキングできません
+        public virtual string CannotMaskNonTextContent { get; } = "テキスト以外のコンテンツはマスキングできません";
+
+        // データをマスキングしました
+        public virtual string MaskedData { get; } = "データをマスキングしました";
+
+        // マスキングデータをもとに戻します
+        public virtual string RestoreMaskingData { get; } = "マスキングデータをもとに戻します";
+
+        // 画像が取得できません
+        public virtual string CannotGetImage { get; } = "画像が取得できません";
+
+        // リモートリポジトリが設定されていません
+        public virtual string NoRemoteRepositorySet { get; } = "リモートリポジトリが設定されていません";
+
+        // 作業ディレクトリが指定されていません
+        public virtual string NoWorkingDirectorySpecified { get; } = "作業ディレクトリが指定されていません";
+
+        // "指定されたディレクトリが存在しません"
+        public virtual string SpecifiedDirectoryDoesNotExist { get; } = "指定されたディレクトリが存在しません";
+
+        // "指定されたディレクトリはGitリポジトリではありません"
+        public virtual string SpecifiedDirectoryIsNotAGitRepository { get; } = "指定されたディレクトリはGitリポジトリではありません";
+
+        // "ベクトルDBが設定されていません"
+        public virtual string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
+
+        // -- ScreenShotCheckCondition.cs --
+
+        public virtual string CheckTypeEqual { get; } = "等しい";
+        public virtual string CheckTypeNotEqual { get; } = "等しくない";
+        public virtual string CheckTypeInclude { get; } = "含む";
+        public virtual string CheckTypeNotInclude { get; } = "含まない";
+        public virtual string CheckTypeStartWith { get; } = "開始している";
+        public virtual string CheckTypeNotStartWith { get; } = "開始していない";
+        public virtual string CheckTypeEndWith { get; } = "終わっている";
+        public virtual string CheckTypeNotEndWith { get; } = "終わっていない";
+        public virtual string CheckTypeEmpty { get; } = "空である";
+        public virtual string CheckTypeCheckBox { get; } = "チェックボックス";
+
+        // -- ScriptAutoProcessItem.cs --
+        // Pythonスクリプトを実行しました
+        public virtual string ExecutedPythonScript { get; } = "Pythonスクリプトを実行しました";
+
+        // -- SystemAutoProcessItem.cs --
+        // AutoProcessItemが見つかりません
+        public virtual string AutoProcessItemNotFound { get; } = "AutoProcessItemが見つかりません";
+
+        // -- EnumDescription.cs --
+
+        // Enum型ではありません
+        public virtual string NotEnumType { get; } = "Enum型ではありません";
+
+        // --- WindowsNotificationController.cs ---
+        // アクセス拒否
+        public virtual string AccessDenied { get; } = "アクセス拒否";
+
+        // --- EditPromptItemWindowViewModel ---
+        // 名前を入力してください
+        public virtual string EnterName { get; } = "名前を入力してください";
+
+        // --- EditRAGSourceWindowViewModel ---
+        // RAGソース編集
+        public virtual string EditRAGSource { get; } = "RAGソース編集";
+
+        // ItemViewModelがnullです"
+        public virtual string ItemViewModelIsNull { get; } = "ItemViewModelがnullです";
+
+        // EditVectorDBWindowViewModel
+        // Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません
+        public virtual string OnlyChromaInMemoryVectorDBTypeIsCurrentlySupported { get; } = "Chroma(インメモリ)以外のベクトルDBタイプは現在サポートされていません";
+
+        // プロンプトテンプレート一覧
+        public virtual string PromptTemplateList { get; } = "プロンプトテンプレート一覧";
+
+        // プロンプトテンプレートが選択されていません
+        public virtual string NoPromptTemplateSelected { get; } = "プロンプトテンプレートが選択されていません";
+
+        // ListVectorDBWindowViewModel
+        // 編集するベクトルDBを選択してください
+        public virtual string SelectVectorDBToEdit { get; } = "編集するベクトルDBを選択してください";
+
+        // 削除するベクトルDBを選択してください
+        public virtual string SelectVectorDBToDelete { get; } = "削除するベクトルDBを選択してください";
+
+        // 選択中のベクトルDBを削除しますか？
+        public virtual string ConfirmDeleteSelectedVectorDB { get; } = "選択中のベクトルDBを削除しますか？";
+
+        // ベクトルDBを選択してください
+        public virtual string SelectVectorDBPlease { get; } = "ベクトルDBを選択してください";
+
+        // RAGManagementWindowViewModel
+        // 編集するRAG Sourceを選択してください
+        public virtual string SelectRAGSourceToEdit { get; } = "編集するRAG Sourceを選択してください";
+
+        // 削除するRAG Sourceを選択してください
+        public virtual string SelectRAGSourceToDelete { get; } = "削除するRAG Sourceを選択してください";
+
+        // 選択中のRAG Sourceを削除しますか？
+        public virtual string ConfirmDeleteSelectedRAGSource { get; } = "選択中のRAG Sourceを削除しますか？";
+
+        // コミットを選択してください
+        public virtual string SelectCommitPlease { get; } = "コミットを選択してください";
+
+        // --- UpdateRAGIndexWindowViewModel
+        // インデックス化対象ファイル
+        public virtual string IndexingTargetFile { get; } = "インデックス化対象ファイル";
+
+        // ファイル追加
+        public virtual string AddFile { get; } = "ファイル追加";
+        // ファイル削除
+        public virtual string DeleteFile { get; } = "ファイル削除";
+
+        // ファイル更新
+        public virtual string UpdateFile { get; } = "ファイル更新";
+
+        // 対象ファイル取得
+        public virtual string GetTargetFile { get; } = "対象ファイル取得";
+
+        // インデックス作成
+        public virtual string CreateIndex { get; } = "インデックス作成";
+
+        //  "戻る"
+        public virtual string Back { get; } = "戻る";
+
+        // RAGSourceItemViewModelが設定されていません
+        public virtual string RAGSourceItemViewModelNotSet { get; } = "RAGSourceItemViewModelが設定されていません";
+
+        // "開始コミットを指定してください"
+        public virtual string SpecifyStartCommit { get; } = "開始コミットを指定してください";
+
+        // "対象を選択してください"
+        public virtual string SelectTarget { get; } = "対象を選択してください";
+
+        // 処理ファイル数
+        public virtual string ProcessedFileCount { get; } = "処理ファイル数";
+
+        // インデックス作成中
+        public virtual string CreatingIndex { get; } = "インデックス作成中";
+
+        // 完了
+        public virtual string Completed { get; } = "完了";
+
+        // 未対応ファイルタイプのためスキップ
+        public virtual string SkipUnsupportedFileType { get; } = "未対応ファイルタイプのためスキップ";
+
+        // 失敗
+        public virtual string Failed { get; } = "失敗";
+
+        // "インデックス作成が完了しました"
+        public virtual string IndexCreationCompleted { get; } = "インデックス作成が完了しました";
+
+        // インデックス作成処理を中断しました
+        public virtual string IndexCreationInterrupted { get; } = "インデックス作成処理を中断しました";
+
+        // チャットの送信に失敗しました。
+        public virtual string FailedToSendChat { get; } = "チャットの送信に失敗しました。";
+
+
+        // --- SettingUserControlViewModel
+        // Pythonの設定チェック
+        public virtual string PythonSettingCheck { get; } = "Pythonの設定チェック";
+
+        // PythonDLLのパスが設定されていません
+        public virtual string PythonDLLPathNotSet { get; } = "PythonDLLのパスが設定されていません";
+
+        // PythonDLLのパスが設定されています
+        public virtual string PythonDLLPathSet { get; } = "PythonDLLのパスが設定されています";
+
+        // PythonDLLのファイルが存在しません
+        public virtual string PythonDLLFileDoesNotExist { get; } = "PythonDLLのファイルが存在しません";
+
+        // PythonDLLのファイルが存在します
+        public virtual string PythonDLLFileExists { get; } = "PythonDLLのファイルが存在します";
+
+        // Pythonスクリプトをテスト実行
+        public virtual string TestRunPythonScript { get; } = "Pythonスクリプトをテスト実行";
+
+        // OpenAIの設定チェック
+        public virtual string OpenAISettingCheck { get; } = "OpenAIの設定チェック";
+
+        // OpenAIのAPIキーが設定されていません
+        public virtual string OpenAIKeyNotSet { get; } = "OpenAIのAPIキーが設定されていません";
+        // OpenAIのAPIキーが設定されています
+        public virtual string OpenAIKeySet { get; } = "OpenAIのAPIキーが設定されています";
+
+        // OpenAIのCompletionModelが設定されていません
+        public virtual string OpenAICompletionModelNotSet { get; } = "OpenAIのCompletionModelが設定されていません";
+
+        // OpenAIのCompletionModelが設定されています
+        public virtual string OpenAICompletionModelSet { get; } = "OpenAIのCompletionModelが設定されています";
+
+        // OpenAIのEmbeddingModelが設定されていません
+        public virtual string OpenAIEmbeddingModelNotSet { get; } = "OpenAIのEmbeddingModelが設定されていません";
+
+        // OpenAIのEmbeddingModelが設定されています
+        public virtual string OpenAIEmbeddingModelSet { get; } = "OpenAIのEmbeddingModelが設定されています";
+
+        // Azure OpenAIの設定チェック
+        public virtual string AzureOpenAISettingCheck { get; } = "Azure OpenAIの設定チェック";
+
+        // Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック
+        public virtual string AzureOpenAIEndpointNotSet { get; } = "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック";
+
+        // Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください
+        public virtual string SetAzureOpenAIEndpointOrBaseURL { get; } = "Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください";
+
+        // Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません
+        public virtual string CannotSetBothAzureOpenAIEndpointAndBaseURL { get; } = "Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません";
+
+        // OpenAIのテスト実行
+        public virtual string TestRunOpenAI { get; } = "OpenAIのテスト実行";
+
+        // Pythonの実行に失敗しました
+        public virtual string FailedToRunPython { get; } = "Pythonの実行に失敗しました";
+
+        // Pythonの実行が可能です
+        public virtual string PythonRunIsPossible { get; } = "Pythonの実行が可能です";
+
+        // OpenAIの実行に失敗しました
+        public virtual string FailedToRunOpenAI { get; } = "OpenAIの実行に失敗しました";
+
+        // OpenAIの実行が可能です。
+        public virtual string OpenAIRunIsPossible { get; } = "OpenAIの実行が可能です。";
+
+        // LangChainの実行に失敗しました
+        public virtual string FailedToRunLangChain { get; } = "LangChainの実行に失敗しました";
+
+        // LangChainの実行が可能です。
+        public virtual string LangChainRunIsPossible { get; } = "LangChainの実行が可能です。";
+        // 実行しますか？
+        public virtual string ConfirmRun { get; } = "実行しますか？";
+
+        // 設定チェック中
+        public virtual string CheckingSettings { get; } = "設定チェック中";
+
+        // 設定を保存しました。
+        public virtual string SettingsSaved { get; } = "設定を保存しました。";
+
+        // "キャンセルしました"
+        public virtual string Canceled { get; } = "キャンセルしました";
+
+        // MyStatusBarViewModel
+        // ログ
+        public virtual string Log { get; } = "ログ";
+
+        // --- AutoProcessRule.cs ---
+        // RuleName + "は無効です"
+        public virtual string RuleNameIsInvalid(string RuleName) {
+            return RuleName + "は無効です";
+        }
+        // 条件にマッチしませんでした
+        public virtual string NoMatch { get; } = "条件にマッチしませんでした";
+
+        // アクションが設定されていません
+        public virtual string NoActionSet { get; } = "アクションが設定されていません";
+
+        // 条件
+        public virtual string Condition { get; } = "条件";
+
+        // アクション
+        public virtual string Action { get; } = "アクション";
+
+        // アクション:なし
+        public virtual string ActionNone { get; } = "アクション:なし";
+
+        // フォルダ:なし
+        public virtual string FolderNone { get; } = "フォルダ:なし";
+
+        // 無限ループを検出しました
+        public virtual string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
+
+        // "Descriptionが" + condition.Keyword + "を含む
+        public virtual string DescriptionContains(string Keyword) {
+            return "Descriptionが" + Keyword + "を含む";
+        }
+        // "Contentが" + condition.Keyword + "を含む 
+        public virtual string ContentContains(string Keyword) {
+            return "Contentが" + Keyword + "を含む";
+        }
+        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
+        public virtual string SourceApplicationNameContains(string Keyword) {
+            return "SourceApplicationNameが" + Keyword + "を含む \n";
+        }
+        // "SourceApplicationTitleが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationTitleContains(string Keyword) {
+            return "SourceApplicationTitleが" + Keyword + "を含む";
+        }
+        // "SourceApplicationPathが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationPathContains(string Keyword) {
+            return "SourceApplicationPathが" + Keyword + "を含む";
+        }
+        // --- ClipboardAppVectorDBItem
+        //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+        public virtual string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+
+        // --- ClipboardFolder.cs ---
+        // クリップボード
+        public virtual string Clipboard { get; } = "クリップボード";
+
+        // チャット履歴
+        public virtual string ChatHistory { get; } = "チャット履歴";
+
+        // 自動処理でアイテムが削除または移動されました
+        public virtual string ItemsDeletedOrMovedByAutoProcessing { get; } = "自動処理でアイテムが削除または移動されました";
+
+        // "アイテムを追加しました"
+        public virtual string AddedItems { get; } = "アイテムを追加しました";
+
+        // 自動処理を適用します
+        public virtual string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理でアイテムが削除されました
+        public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
+
+        // JSON文字列をパースできませんでした
+        public virtual string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
+
+        // ClipboardItem
+        // Text以外のアイテムへのマージはできません
+        public virtual string CannotMergeToNonTextItems { get; } = "Text以外のアイテムへのマージはできません";
+
+        // "Text以外のアイテムが含まれているアイテムはマージできません"
+        public virtual string CannotMergeItemsContainingNonTextItems { get; } = "Text以外のアイテムが含まれているアイテムはマージできません";
+
+        // 作成日時
+        public virtual string CreationDateTime { get; } = "作成日時";
+
+        // ソースアプリ名
+        public virtual string SourceAppName { get; } = "ソースアプリ名";
+
+        // ピン留めしてます
+        public virtual string Pinned { get; } = "ピン留めしてます";
+
+        // フォルダを取得できません
+        public virtual string CannotGetFolder { get; } = "フォルダを取得できません";
+
+        // OS上のファイルに保存します
+        public virtual string SaveToFileOnOS { get; } = "OS上のファイルに保存します";
+
+        // Gitコミットしました
+        public virtual string CommittedToGit { get; } = "Gitコミットしました";
+
+        // リポジトリが見つかりませんでした
+        public virtual string RepositoryNotFound { get; } = "リポジトリが見つかりませんでした";
+
+        // コミットが空です
+        public virtual string CommitIsEmpty { get; } = "コミットが空です";
+
+        // OS上のファイルに保存しました
+        public virtual string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
+
+        // 背景情報
+        public virtual string BackgroundInformation { get; } = "背景情報";
+
+        // サマリー
+        public virtual string Summary { get; } = "サマリー";
+
+        // "Embeddingを保存します
+        public virtual string SaveEmbedding { get; } = "Embeddingを保存します";
+
+
+        // Embeddingを保存しました
+        public virtual string SavedEmbedding { get; } = "Embeddingを保存しました";
+
+        // Embeddingを削除します
+        public virtual string DeleteEmbedding { get; } = "Embeddingを削除します";
+
+        // Embeddingを削除しました
+        public virtual string DeletedEmbedding { get; } = "Embeddingを削除しました";
+
+        // 画像から抽出したテキストのEmbeddingを保存します
+        public virtual string SaveTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存します";
+        // 画像から抽出したテキストのEmbeddingを保存しました
+        public virtual string SavedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存しました";
+
+        // 画像から抽出したテキストのEmbeddingを削除します
+        public virtual string DeleteTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除します";
+        // 画像から抽出したテキストのEmbeddingを削除しました
+        public virtual string DeletedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除しました";
+
+
+        // "OS上のファイルを削除します"
+        public virtual string DeleteFileOnOS { get; } = "OS上のファイルを削除します";
+        // OS上のファイルを削除しました
+        public virtual string DeletedFileOnOS { get; } = "OS上のファイルを削除しました";
+
+        // サポートされていないファイル形式です
+        public virtual string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
+
+        // テキストを抽出しました
+        public virtual string TextExtracted { get; } = "テキストを抽出しました";
+
+
+        // --- ScreenShotCheckCondition.cs ---
+        //  $"{SettingItem}の値は{SettingValue}である";
+        public virtual string SettingValueIs(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値は{SettingValue}である";
+        }
+
+        // $"{SettingItem}の値は{SettingValue}でない";
+        public virtual string SettingValueIsNot(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値は{SettingValue}でない";
+        }
+        // $"{SettingItem}の値に{SettingValue}が含まれている";
+        public virtual string SettingValueContains(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値に{SettingValue}が含まれている";
+        }
+        // $"{SettingItem}の値に{SettingValue}が含まれていない";
+        public virtual string SettingValueNotContain(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値に{SettingValue}が含まれていない";
+        }
+
+        // $"{SettingItem}の値が{SettingValue}で始まっている";
+        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で始まっている";
+        }
+
+        // $"{SettingItem}の値が{SettingValue}で始まっていない";
+        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で始まっていない";
+        }
+        // $"{SettingItem}の値が{SettingValue}で終わっている";
+        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で終わっている";
+        }
+        // $"{SettingItem}の値が{SettingValue}で終わっていない";
+        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue) {
+            return $"{SettingItem}の値が{SettingValue}で終わっていない";
+        }
+
+        //  $"{SettingItem}の値が空である";
+        public virtual string SettingValueIsEmpty(string SettingItem) {
+            return $"{SettingItem}の値が空である";
+        }
+        // $"{SettingItem}のチェックボックスが{SettingValue}になっている";
+        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue) {
+            return $"{SettingItem}のチェックボックスが{SettingValue}になっている";
+        }
+
+        // --- SystemAutoProcessItem.cs ---
+        // 無視
+        public virtual string Ignore { get; } = "無視";
+        // "何もしません"
+        public virtual string DoNothing { get; } = "何もしません";
+
+        // フォルダにコピー
+        public virtual string CopyToFolder { get; } = "フォルダにコピー";
+        // クリップボードの内容を指定されたフォルダにコピーします
+        public virtual string CopyClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダにコピーします";
+
+        // フォルダに移動"
+        public virtual string MoveToFolder { get; } = "フォルダに移動";
+        // "クリップボードの内容を指定されたフォルダに移動します"
+        public virtual string MoveClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダに移動します";
+
+        // "クリップボードのテキストを抽出します"
+        public virtual string ExtractClipboardText { get; } = "クリップボードのテキストを抽出します";
+
+        // "データマスキング",
+        public virtual string DataMasking { get; } = "データマスキング";
+        // "クリップボードのテキストをマスキングします"
+        public virtual string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
+
+        //  "フォルダ内のアイテムをマージ", 
+        public virtual string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
+
+        // "フォルダ内のアイテムをマージします"
+        public virtual string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
+
+        // "同じSourceApplicationTitleを持つアイテムをマージ",
+        public virtual string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
+        // "同じSourceApplicationTitleを持つアイテムをマージします"
+        public virtual string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
+
+        // フォルダが選択されていません
+        public virtual string NoFolderSelected { get; } = "フォルダが選択されていません";
+
+        // フォルダにコピーします
+        public virtual string CopyToFolderDescription { get; } = "フォルダにコピーします";
+
+        // ディレクトリは新規ファイルとして開けません
+        public virtual string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
+
+        // --- TextSelector.cs ---
+        // ファイルを実行できませんでした
+        public virtual string FailedToRunFile { get; } = "ファイルを実行できませんでした";
+
+        // テキストファイルとして開きます。
+        public virtual string OpenAsTextFile { get; } = "テキストファイルとして開きます。";
+
+        // --- EditChatItemWindow ---
+        // チャットアイテム
+        public virtual string ChatItem { get; } = "チャットアイテム";
+
+        // --- ExportImportWindow ---
+        // 以下の項目をエクスポートします
+        public virtual string ExportTheFollowingItems { get; } = "以下の項目をエクスポートします";
+
+        // 作業ディレクトリ
+        public virtual string WorkingDirectory { get; } = "作業ディレクトリ";
+        // リポジトリURL
+        public virtual string RepositoryURL { get; } = "リポジトリURL";
+        // 最後にインデックス化したコミット
+        public virtual string LastIndexedCommit { get; } = "最後にインデックス化したコミット";
+        // 新規RAGソース
+        public virtual string NewRAGSource { get; } = "新規RAGソース";
+
+        // インポート時に自動処理を実行します
+        public virtual string ExecuteAutoProcessingOnImport { get; } = "インポート時に自動処理を実行します";
+
+
+        // 例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。
+        public virtual string ExampleGeneralVectorDB { get; } = "例：ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
+
+
+        // ドキュメントのチャンクサイズ
+        public virtual string DocumentChunkSize { get; } = "ドキュメントのチャンクサイズ";
+
+        // ベクトル検索結果の上限値
+        public virtual string VectorSearchResultLimit { get; } = "ベクトル検索結果の上限値";
+
+        // MultiVectorRetrieverを使用
+        public virtual string UseMultiVectorRetriever { get; } = "MultiVectorRetrieverを使用";
+
+        // DocStore用のSQLite3の場所
+        public virtual string SQLite3LocationForDocStore { get; } = "DocStore用のSQLite3の場所";
+
+        // 例：sqlite:///C:\Users\Username\sqlite3.db
+        public virtual string ExampleSQLite3Location { get; } = "例：sqlite:///C:\\Users\\Username\\sqlite3.db";
+
+        // マルチベクターリトリーバのドキュメントのチャンクサイズ
+        public virtual string DocumentChunkSizeForMultiVectorRetriever { get; } = "マルチベクターリトリーバのドキュメントのチャンクサイズ";
+
+        // 例：C:\Users\Username\vector.db
+        public virtual string ExampleVectorDBLocationChroma { get; } = "例：C:\\Users\\Username\\vector.db";
+
+        // 例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain
+        public virtual string ExampleVectorDBLocationPostgres { get; } = "例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
+
+        // チャット履歴をクリア
+        public virtual string ClearChatHistory { get; } = "チャット履歴をクリア";
+
+        // 本文をクリア
+        public virtual string ClearContent { get; } = "本文をクリア";
+
+        // 抽出したテキスト
+        public virtual string ExtractedText { get; } = "抽出したテキスト";
+
     }
 }

@@ -17,8 +17,7 @@ using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel {
 
 
@@ -303,7 +302,7 @@ namespace ClipboardApp
 
         }
         // Ctrl + V が押された時の処理
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel, Action<List<ClipboardItem>> action) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
@@ -327,6 +326,9 @@ namespace ClipboardApp
                     CopiedItemFolder,
                     SelectedFolder
                     );
+                // 貼り付け後の処理
+                action(CopiedItems.Select(x => x.ClipboardItem).ToList());
+
                 // Cutフラグをもとに戻す
                 windowViewModel.CutFlag = false;
                 // 貼り付け後にコピー選択中のアイテムをクリア
@@ -339,6 +341,8 @@ namespace ClipboardApp
                         await Task.Run(() => {
                             SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                         });
+                        // 貼り付け後の処理
+                        action([clipboardItem]);
 
                         MainUITask.Run(() => {
                             windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
@@ -583,7 +587,7 @@ namespace ClipboardApp
         });
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteItemCommand => new((parameter) => {
-            PasteFromClipboardCommandExecute(this);
+            PasteFromClipboardCommandExecute(this, (items) => { });
         });
 
         // Ctrl + M が押された時の処理

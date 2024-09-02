@@ -24,8 +24,6 @@ namespace ClipboardApp.ViewModel {
                 TagsString = string.Join(",", itemViewModel?.Tags ?? []);
 
                 OnPropertyChanged(nameof(ItemViewModel));
-                OnPropertyChanged(nameof(ImageTabVisibility));
-                OnPropertyChanged(nameof(FileTabVisibility));
             }
         }
         private ClipboardFolderViewModel? _folderViewModel;
@@ -76,19 +74,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // イメージタブの表示可否
-        public Visibility ImageTabVisibility {
-            get {
-                return ItemViewModel?.ContentType == ClipboardContentTypes.Image ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-        // ファイルタブの表示可否
-        public Visibility FileTabVisibility {
-            get {
-                return ItemViewModel?.ContentType == ClipboardContentTypes.Files ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
         // 更新後の処理
         private Action _afterUpdate = () => { };
 
@@ -123,8 +108,19 @@ namespace ClipboardApp.ViewModel {
             set {
                 selectedFile = value;
                 OnPropertyChanged(nameof(SelectedFile));
+                OnPropertyChanged(nameof(SelectedFileImageVisibility));
             }
         }
+        // 選択したファイルの画像のVisible. SelectedFileがNull、Imageがnullの場合はCollapsed
+        public Visibility SelectedFileImageVisibility {
+            get {
+                if (SelectedFile == null || SelectedFile.BitmapImage == null) {
+                    return Visibility.Collapsed;
+                }
+                return Visibility.Visible;
+            }
+        }
+
         // SelectedImage
         private ImageSource? selectedImage;
         public ImageSource? SelectedImage {
@@ -152,10 +148,6 @@ namespace ClipboardApp.ViewModel {
             // ClipboardItemFileがある場合はSelectedFileに設定
             if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
                 SelectedFile = ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
-            }
-            // ClipboardItemImageがある場合はSelectedImageに設定
-            if (ItemViewModel.Images.Count > 0) {
-                SelectedImage = ItemViewModel.Images[0];
             }
             _afterUpdate = afterUpdate;
 

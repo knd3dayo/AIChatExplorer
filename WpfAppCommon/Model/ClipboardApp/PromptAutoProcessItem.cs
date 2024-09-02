@@ -21,7 +21,7 @@ namespace WpfAppCommon.Model.ClipboardApp
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }
-            ChatRequest chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);

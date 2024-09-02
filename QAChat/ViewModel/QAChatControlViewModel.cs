@@ -14,9 +14,6 @@ namespace QAChat.ViewModel {
 
             QAChatStartupProps = props;
 
-            // ClipboardItemImages を ImageItems に設定
-            ImageItems = [.. props.ClipboardItem.ClipboardItemImages.Select((item) => new ImageItemViewModel(this, item))];
-
             // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
             SystemVectorDBItems.Add(props.ClipboardItem.GetFolder().GetVectorDBItem());
 
@@ -66,7 +63,7 @@ namespace QAChat.ViewModel {
         public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
 
 
-        public ChatRequest ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
+        public Chat ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
         public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
 
         // Progress Indicatorの表示状態
@@ -91,9 +88,9 @@ namespace QAChat.ViewModel {
             }
         }
 
-        public static ChatItem? SelectedItem { get; set; }
+        public static ChatIHistorytem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatItem> ChatHistory {
+        public ObservableCollection<ChatIHistorytem> ChatHistory {
             get {
                 return [.. ChatController.ChatHistory];
             }
@@ -150,17 +147,6 @@ namespace QAChat.ViewModel {
             }
         }
 
-        // 画像アイテムのリスト
-        private ObservableCollection<ImageItemViewModel> _ImageItems = new();
-        public ObservableCollection<ImageItemViewModel> ImageItems {
-            get {
-                return _ImageItems;
-            }
-            set {
-                _ImageItems = value;
-                OnPropertyChanged(nameof(ImageItems));
-            }
-        }
         // 画像ファイルのリスト
         private ObservableCollection<ScreenShotImageViewModel> _ImageFiles = new();
         public ObservableCollection<ScreenShotImageViewModel> ImageFiles {
@@ -196,15 +182,15 @@ namespace QAChat.ViewModel {
         }
 
         // AdditionalTextItems
-        private ObservableCollection<ClipboardItem> _AdditionalTextItems = new();
-        public ObservableCollection<ClipboardItem> AdditionalTextItems {
+        private ObservableCollection<AdditionalItemViewModel> _AdditionalItems = new();
+        public ObservableCollection<AdditionalItemViewModel> AdditionalItems {
             get {
 
-                return _AdditionalTextItems;
+                return _AdditionalItems;
             }
             set {
-                _AdditionalTextItems = value;
-                OnPropertyChanged(nameof(AdditionalTextItems));
+                _AdditionalItems = value;
+                OnPropertyChanged(nameof(AdditionalItems));
             }
         }
 
@@ -226,10 +212,18 @@ namespace QAChat.ViewModel {
                 // ImageFilesとImageItemsのImageをChatControllerに設定
                 ChatController.ImageURLs = [];
                 foreach (var item in ImageFiles) {
-                    ChatController.ImageURLs.Add(ChatRequest.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
+                    ChatController.ImageURLs.Add(Chat.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
                 }
-                foreach (var item in ImageItems) {
-                    ChatController.ImageURLs.Add(ChatRequest.CreateImageURL(item.ClipboardItemImage.ImageBase64));
+                foreach (var item in AdditionalItems) {
+                    foreach (var imageItem in item.ClipboardItem.ClipboardItemFiles) {
+                        if (! imageItem.IsImage()) {
+                            continue;
+                        }
+                        if (string.IsNullOrEmpty(imageItem.Base64String)) {
+                            continue;
+                        }
+                        ChatController.ImageURLs.Add(Chat.CreateImageURL(imageItem.Base64String));
+                    }
                 }
 
                 return ChatController.CreateOpenAIRequestJSON();
@@ -281,25 +275,14 @@ namespace QAChat.ViewModel {
         }
 
         // 画像アイテム用のDrawer表示状態
-        private bool _IsImageItemDrawerOpen = false;
-        public bool IsImageItemDrawerOpen {
+        private bool _IsAdditionalItemDrawerOpen = false;
+        public bool IsAdditionalItemDrawerOpen {
             get {
-                return _IsImageItemDrawerOpen;
+                return _IsAdditionalItemDrawerOpen;
             }
             set {
-                _IsImageItemDrawerOpen = value;
-                OnPropertyChanged(nameof(IsImageItemDrawerOpen));
-            }
-        }
-        // 画像ファイル用のDrawer表示状態
-        private bool _IsImageFileDrawerOpen = false;
-        public bool IsImageFileDrawerOpen {
-            get {
-                return _IsImageFileDrawerOpen;
-            }
-            set {
-                _IsImageFileDrawerOpen = value;
-                OnPropertyChanged(nameof(IsImageFileDrawerOpen));
+                _IsAdditionalItemDrawerOpen = value;
+                OnPropertyChanged(nameof(IsAdditionalItemDrawerOpen));
             }
         }
 

@@ -8,9 +8,9 @@ namespace QAChat.ViewModel {
 
         private readonly TextSelector TextSelector = new();
 
-        public ChatItem? ChatItem { get; set; }
+        public ChatIHistorytem? ChatItem { get; set; }
 
-        public void Initialize(ChatItem chatItem) {
+        public void Initialize(ChatIHistorytem chatItem) {
             ChatItem = chatItem;
             OnPropertyChanged(nameof(ChatItem));
         }

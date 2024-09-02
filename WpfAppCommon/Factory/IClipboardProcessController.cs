@@ -11,7 +11,5 @@ namespace WpfAppCommon.Factory {
 
         public void OpenClipboardItemFile(ClipboardItem item, bool openAsNew = false);
 
-        // 画像を開く
-        public void OpenClipboardItemImage(ClipboardItem item);
     }
 }

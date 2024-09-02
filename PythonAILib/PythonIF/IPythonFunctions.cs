@@ -3,15 +3,17 @@ using PythonAILib.Model;
 namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
-        public string ExtractText(string path);
+        public string ExtractFileToText(string path);
+
+        public string ExtractBase64ToText(string base64);
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 
         
-        public ChatResult OpenAIChat(ChatRequest chatController);
+        public ChatResult OpenAIChat(Chat chatController);
 
             
-        public ChatResult LangChainChat(ChatRequest chatController);
+        public ChatResult LangChainChat(Chat chatController);
 
         
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItemBase vectorDBItem, VectorSearchRequest request);

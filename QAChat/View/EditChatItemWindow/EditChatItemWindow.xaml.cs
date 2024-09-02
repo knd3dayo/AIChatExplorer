@@ -11,7 +11,7 @@ namespace QAChat.View.EditChatItemWindow {
             InitializeComponent();
         }
 
-        public static void OpenEditChatItemWindow(ChatItem chatItem) {
+        public static void OpenEditChatItemWindow(ChatIHistorytem chatItem) {
             var window = new EditChatItemWindow();
             EditChatItemWindowViewModel model = (EditChatItemWindowViewModel)window.DataContext;
             model.Initialize(chatItem);
