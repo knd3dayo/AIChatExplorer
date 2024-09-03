@@ -231,7 +231,7 @@
                                             <Grid.InputBindings>
                                                 <!--  クリップボードを開く  -->
                                                 <MouseBinding
-                                                    Command="{Binding OpenSelectedImageItemCommand, Mode=OneTime}"
+                                                    Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
                                                     CommandParameter="{Binding}"
                                                     Gesture="LeftDoubleClick" />
                                             </Grid.InputBindings>

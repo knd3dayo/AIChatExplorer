@@ -25,6 +25,8 @@ namespace QAChat.Control {
             }
         }
         public Action<Action<List<ClipboardItem>>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
+
+        public Action<ClipboardItem> OpenSelectedItemCommand { get; set; } = (item) => { };
     }
 
 }

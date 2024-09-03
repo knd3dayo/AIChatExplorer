@@ -25,5 +25,9 @@ namespace QAChat.Control {
             QAChatControlViewModel.AdditionalItems.Remove(this);
         });
 
+        // OpenSelectedItemCommand
+        public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
+            QAChatControlViewModel.QAChatStartupProps?.OpenSelectedItemCommand(ClipboardItem);
+        });
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
@@ -327,6 +328,19 @@ namespace ClipboardApp {
                     MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, false, (newItems) => {
                         action(newItems);
                     });
+                },
+                // 選択中のアイテムを開くアクション
+                OpenSelectedItemCommand = (item) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        return;
+                    }
+                    // item からClipboardFolderViewModelを取得
+                    ClipboardFolderViewModel folderViewModel = new(MainWindowViewModel.ActiveInstance, item.GetFolder());
+                    // item からClipboardItemViewModelを取得
+                    ClipboardItemViewModel itemViewModel = new(folderViewModel, item);
+                    EditItemWindow.OpenEditItemWindow(folderViewModel, itemViewModel, () => { });
+
                 }
             };
             return props;

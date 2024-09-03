@@ -189,6 +189,10 @@ namespace QAChat.ViewModel {
                 }
             });
         });
+        // 選択したアイテムを開くコマンド
+        public SimpleDelegateCommand<AdditionalItemViewModel> OpenSelectedItemCommand => new((item) => {
+            QAChatStartupProps?.OpenSelectedItemCommand(item.ClipboardItem);
+        });
 
         // Windowを閉じるコマンド
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {

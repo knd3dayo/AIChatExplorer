@@ -47,7 +47,7 @@ def extract_base64_to_text(base64_data):
     with tempfile.NamedTemporaryFile(delete=False) as temp:
         # base64からバイナリデータに変換
         base64_data = base64_data.encode()
-        f.write(base64_data)
+        temp.write(base64_data)
         temp_path = temp.name
         import file_extractor
         # 一時ファイルからテキストを抽出
