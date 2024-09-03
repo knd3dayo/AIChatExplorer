@@ -302,7 +302,7 @@ namespace ClipboardApp {
 
         }
         // Ctrl + V が押された時の処理
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel, Action<List<ClipboardItem>> action) {
+        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel, bool saveToFolder, Action<List<ClipboardItem>> action) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
@@ -320,12 +320,15 @@ namespace ClipboardApp {
                     LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
                     return;
                 }
-                SelectedFolder.PasteClipboardItemCommandExecute(
-                    windowViewModel.CutFlag,
-                    CopiedItems,
-                    CopiedItemFolder,
-                    SelectedFolder
-                    );
+                // saveToFolderがTrueの場合はフォルダに保存
+                if (saveToFolder) {
+                    SelectedFolder.PasteClipboardItemCommandExecute(
+                        windowViewModel.CutFlag,
+                        CopiedItems,
+                        CopiedItemFolder,
+                        SelectedFolder
+                        );
+                }
                 // 貼り付け後の処理
                 action(CopiedItems.Select(x => x.ClipboardItem).ToList());
 
@@ -339,14 +342,17 @@ namespace ClipboardApp {
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
-                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
+                            // saveToFolderがTrueの場合はフォルダに保存
+                            if (saveToFolder) {
+                                SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
+                            }
+                            // 貼り付け後の処理
+                            action([clipboardItem]);
+                            MainUITask.Run(() => {
+                                windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                            });
                         });
-                        // 貼り付け後の処理
-                        action([clipboardItem]);
 
-                        MainUITask.Run(() => {
-                            windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
-                        });
                     });
             }
 
@@ -587,7 +593,7 @@ namespace ClipboardApp {
         });
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteItemCommand => new((parameter) => {
-            PasteFromClipboardCommandExecute(this, (items) => { });
+            PasteFromClipboardCommandExecute(this, true, (items) => { });
         });
 
         // Ctrl + M が押された時の処理

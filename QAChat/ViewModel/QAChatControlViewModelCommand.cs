@@ -1,7 +1,5 @@
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using QAChat.Control;
@@ -37,7 +35,7 @@ namespace QAChat.ViewModel {
                     foreach (var item in AdditionalItems) {
                         foreach (var file in item.ClipboardItem.ClipboardItemFiles) {
                             if (file.IsImage()) {
-                            ChatController.ImageURLs.Add(Chat.CreateImageURL(file.Base64String));
+                                ChatController.ImageURLs.Add(Chat.CreateImageURL(file.Base64String));
                             }
                         }
                     }
@@ -179,15 +177,17 @@ namespace QAChat.ViewModel {
         // クリップボードまたは他のクリップボードアイテムをペーストしたときの処理
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
 
-            List<ClipboardItem> values = [];
             // ペースト処理を実行
-            QAChatStartupProps?.PasteFromClipboardCommandAction(values);
-            foreach (var item in values) {
-                AdditionalItemViewModel additionalItemViewModel = new(this, item);
-                AdditionalItems.Add(additionalItemViewModel);
-            }
-
-
+            QAChatStartupProps?.PasteFromClipboardCommandAction((values) => {
+                // ペーストしたアイテムを追加する
+                foreach (var item in values) {
+                    MainUITask.Run(() => {
+                        AdditionalItemViewModel additionalItemViewModel = new(this, item);
+                        AdditionalItems.Add(additionalItemViewModel);
+                        OnPropertyChanged(nameof(AdditionalItems));
+                    });
+                }
+            });
         });
 
         // Windowを閉じるコマンド

@@ -5,8 +5,8 @@ using WpfAppCommon.Model.ClipboardApp;
 
 namespace QAChat.Control {
     public class QAChatStartupProps {
-        public QAChatStartupProps(ClipboardFolder clipboardFolder, ClipboardItem clipboardItem) {
-            ClipboardFolder = clipboardFolder;
+        public QAChatStartupProps(ClipboardItem clipboardItem) {
+            ClipboardFolder = clipboardItem.GetFolder();
             ClipboardItem = clipboardItem;
         }
         public ClipboardFolder ClipboardFolder { get; set; }
@@ -24,7 +24,7 @@ namespace QAChat.Control {
                 return [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
             }
         }
-        public Action<List<ClipboardItem>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
+        public Action<Action<List<ClipboardItem>>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
     }
 
 }

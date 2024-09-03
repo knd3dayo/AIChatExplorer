@@ -86,45 +86,7 @@ namespace ClipboardApp.ViewModel
             OpenItemCommandExecute(clipboardItemViewModel);
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
-            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
-
-            QAChatStartupProps props = new(ClipboardItemFolder, itemViewModel.ClipboardItem) {
-                // ベクトルDBアイテムを開くアクション
-                OpenVectorDBItemAction = (vectorDBItem) => {
-                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
-                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
-                },
-                // ベクトルDBアイテムを選択するアクション
-                SelectVectorDBItemsAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                        vectorDBItems.Add(selectedItem);
-                    });
-                },
-                // フォルダ選択アクション
-                SelectFolderAction = (vectorDBItems) => {
-                    if (MainWindowViewModel.ActiveInstance == null) {
-                        LogWrapper.Error("MainWindowViewModelがNullです");
-                        return;
-                    }
-                    FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
-                        vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
-                    });
-
-                },
-                // ペーストアクション
-                PasteFromClipboardCommandAction = (toItems) => {
-                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
-                    if (MainWindowViewModel.ActiveInstance == null) {
-                        return;
-                    }
-                    MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, (newItems) => {
-                        foreach (var item in newItems) {
-                            toItems.Add(item);
-                        }
-                    });
-                }
-            };
-
+            QAChatStartupProps props = new(itemViewModel.ClipboardItem);
             QAChat.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 

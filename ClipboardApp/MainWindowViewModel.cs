@@ -1,9 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
+using QAChat.Control;
+using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Factory.Default;
@@ -13,13 +17,10 @@ using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp {
-
     public partial class MainWindowViewModel : MyWindowViewModel {
-
         public MainWindowViewModel() {
             // 旧バージョンのRootFolderの移行
             ClipboardFolder.MigrateRootFolder();
-
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
 
@@ -35,11 +36,8 @@ namespace ClipboardApp {
 
             PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
 
-
             // フォルダの初期化
             InitClipboardFolders();
-
-
 
             // Python処理機能の初期化
             PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
@@ -52,7 +50,6 @@ namespace ClipboardApp {
             backupController.BackupNow();
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
-
         }
 
         private void InitClipboardFolders() {
@@ -63,7 +60,6 @@ namespace ClipboardApp {
             ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
             OnPropertyChanged(nameof(ClipboardItemFolders));
         }
-
 
         public static MainWindowViewModel? ActiveInstance { get; set; }
 
@@ -230,8 +226,6 @@ namespace ClipboardApp {
             }
         }
 
-
-
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {
@@ -295,10 +289,48 @@ namespace ClipboardApp {
             }
         }
 
-        //--------------------------------------------------------------------------------
-        // コマンド
-        //--------------------------------------------------------------------------------
+        public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
 
+
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
+            QAChatStartupProps props = new(clipboardItem) {
+                // ベクトルDBアイテムを開くアクション
+                OpenVectorDBItemAction = (vectorDBItem) => {
+                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
+                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
+                },
+                // ベクトルDBアイテムを選択するアクション
+                SelectVectorDBItemsAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                        vectorDBItems.Add(selectedItem);
+                    });
+                },
+                // フォルダ選択アクション
+                SelectFolderAction = (vectorDBItems) => {
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        return;
+                    }
+                    FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
+                        vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
+                    });
+
+                },
+                // ペーストアクション
+                PasteFromClipboardCommandAction = (action) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        return;
+                    }
+                    List<ClipboardItem> result = [];
+                    MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, false, (newItems) => {
+                        action(newItems);
+                    });
+                }
+            };
+            return props;
+        }
 
     }
 

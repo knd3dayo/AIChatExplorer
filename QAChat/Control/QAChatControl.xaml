@@ -226,7 +226,7 @@
                                             <TextBlock
                                                 Grid.Row="0"
                                                 Margin="0,0,0,0"
-                                                Text="{Binding Description}" />
+                                                Text="{Binding ClipboardItem.Description}" />
 
                                             <Grid.InputBindings>
                                                 <!--  クリップボードを開く  -->
