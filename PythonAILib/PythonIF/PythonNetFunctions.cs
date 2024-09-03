@@ -70,7 +70,7 @@ namespace PythonAILib.PythonIF {
 
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_file_to_text";
+                string function_name = "extract_text_from_file";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
                 try {

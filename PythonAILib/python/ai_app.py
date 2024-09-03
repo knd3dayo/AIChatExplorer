@@ -37,9 +37,9 @@ def capture_stdout_stderr(func):
     return wrapper
 
 # ファイルからテキストを抽出する
-def extract_file_to_text(filename):
+def extract_text_from_file(filename):
     import file_extractor
-    return file_extractor.extract_text(filename)
+    return file_extractor.extract_text_from_file(filename)
 
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data):
@@ -51,7 +51,7 @@ def extract_base64_to_text(base64_data):
         temp_path = temp.name
         import file_extractor
         # 一時ファイルからテキストを抽出
-        text = file_extractor.extract_file_to_text(temp_path)
+        text = file_extractor.extract_text_from_file(temp_path)
         # 一時ファイルを削除
         os.remove(temp_path)
         return text
