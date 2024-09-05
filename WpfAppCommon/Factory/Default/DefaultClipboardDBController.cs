@@ -3,6 +3,7 @@ using LiteDB;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Model.ClipboardApp;
+using WpfAppCommon.Model.QAChat;
 
 namespace WpfAppCommon.Factory.Default
 {
@@ -453,6 +454,22 @@ namespace WpfAppCommon.Factory.Default
         public PromptItem GetPromptTemplate(ObjectId objectId) {
             var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
             return col.FindById(objectId);
+        }
+        // プロンプトテンプレートを名前で取得する
+        public PromptItem? GetPromptTemplateByName(string name) {
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            return col.FindOne(x => x.Name == name);
+        }
+        // システム定義のPromptItemを取得する
+        public PromptItem? GetSystemPromptTemplateByName(string name) {
+            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var item =  col.FindOne(x => x.Name == name);
+            if (item != null &&
+                ( item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.SystemDefined  
+                    || item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+                return item;
+            }
+            return null;
         }
 
 

@@ -20,9 +20,9 @@ namespace WpfAppCommon.Model {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
-                    item.Description += $" {StringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
+                    item.Description += $" {CommonStringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
                 } else {
-                    item.Description += $" {StringResources.Instance.File}:" + item.Content;
+                    item.Description += $" {CommonStringResources.Instance.File}:" + item.Content;
                 }
             }
         }

@@ -1,8 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model.QAChat;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel {
     public class PromptItemViewModel : ObservableObject {
         public PromptItemBase PromptItem { get; set; }
         public string Content {

@@ -232,7 +232,7 @@ namespace PythonAILib.Model {
         private ChatResult? ExecuteChatOpenAIRAG() {
             // ContentTextの内容をベクトル検索する。
             StringBuilder sb = new();
-            sb.AppendLine(PythonAILibStringResources.Instance.UnknownContent);
+            sb.AppendLine(PromptStringResource.Instance.UnknownContent);
             sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -275,7 +275,7 @@ namespace PythonAILib.Model {
             // 実験的機能1(文章解析+辞書生成+RAG)
             // 新規のChatRequestを作成.ContentTextにはこのChatRequestのContentTextを設定する.
             // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
-            string newRequestPrompt = PythonAILibStringResources.Instance.AnalyzeAndDictionarizeRequest;
+            string newRequestPrompt = PromptStringResource.Instance.AnalyzeAndDictionarizeRequest;
 
             Chat newRequest = new(OpenAIProperties) {
                 ContentText = ContentText,
@@ -305,7 +305,7 @@ namespace PythonAILib.Model {
             // リストの要素毎にVectorSearchを実行
             // 結果用のStringBuilderを作成
             StringBuilder sb = new();
-            sb.AppendLine(PythonAILibStringResources.Instance.UnknownContentDescription);
+            sb.AppendLine(PromptStringResource.Instance.UnknownContentDescription);
             sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -344,12 +344,19 @@ namespace PythonAILib.Model {
 
         }
 
-        public static string CreateSummary(OpenAIProperties openAIProperties, string content) {
-            Chat chatController = new(openAIProperties);
-            // Normal Chatを実行
-            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.SummarizeRequest;
-            chatController.ContentText = content;
+
+        // タイトルを作成する
+        public static string CreateTitle(OpenAIProperties openAIProperties, string content, string promptText = "") {
+            Chat chatController = new(openAIProperties) {
+                // Normal Chatを実行
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                PromptTemplateText = promptText,
+                ContentText = content
+            };
+
+            if (string.IsNullOrEmpty(promptText)) {
+                chatController.PromptTemplateText = PromptStringResource.Instance.TitleGenerationPrompt;
+            }
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
@@ -357,16 +364,18 @@ namespace PythonAILib.Model {
             }
             return "";
         }
-
         // 背景情報を作成する
-        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            Chat chatController = new(openAIProperties);
-            // OpenAI+RAG Chatを実行
-            chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.BackgroundInfoRequest;
-            chatController.ContentText = content;
-
-            chatController.VectorDBItems = vectorDBItems;
+        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content, string promptText ="") {
+            Chat chatController = new(openAIProperties) {
+                // OpenAI+RAG Chatを実行
+                ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
+                PromptTemplateText = promptText,
+                ContentText = content,
+                VectorDBItems = vectorDBItems
+            };
+            if (string.IsNullOrEmpty(promptText)) {
+                chatController.PromptTemplateText = PromptStringResource.Instance.BackgroundInformationGenerationPrompt;
+            }
 
             ChatResult? result = chatController.ExecuteChat();
             if (result != null) {
@@ -374,12 +383,33 @@ namespace PythonAILib.Model {
             }
             return "";
         }
+
+        // サマリーを作成する
+        public static string CreateSummary(OpenAIProperties openAIProperties, string content, string promptText="") {
+            Chat chatController = new(openAIProperties) {
+                // Normal Chatを実行
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                PromptTemplateText = promptText,
+                ContentText = content
+            };
+            if (string.IsNullOrEmpty(promptText)) {
+                chatController.PromptTemplateText = PromptStringResource.Instance.SummaryGenerationPrompt;
+            }
+
+            ChatResult? result = chatController.ExecuteChat();
+            if (result != null) {
+                return result.Response;
+            }
+            return "";
+        }
+
+
         // 日本語文章を解析する
         public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
             Chat chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnalyzeJapaneseSentenceRequest;
+            chatController.PromptTemplateText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
             chatController.ContentText = content;
 
             ChatResult? result = chatController.ExecuteChat();
@@ -393,7 +423,7 @@ namespace PythonAILib.Model {
             Chat chatController = new(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.GenerateQuestionRequest;
+            chatController.PromptTemplateText = PromptStringResource.Instance.GenerateQuestionRequest;
             chatController.ContentText = content;
 
             chatController.VectorDBItems = vectorDBItems;
@@ -407,7 +437,7 @@ namespace PythonAILib.Model {
             chatController = new Chat(openAIProperties);
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.AnswerRequest;
+            chatController.PromptTemplateText = PromptStringResource.Instance.AnswerRequest;
             chatController.ContentText = question;
 
             chatController.VectorDBItems = vectorDBItems;
@@ -418,27 +448,12 @@ namespace PythonAILib.Model {
             }
             return "";
         }
-
-        // タイトルを作成する
-        public static string CreateTitle(OpenAIProperties openAIProperties, string content) {
-            Chat chatController = new(openAIProperties);
-            // Normal Chatを実行
-            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.TitleRequest;
-            chatController.ContentText = content;
-
-            ChatResult? result = chatController.ExecuteChat();
-            if (result != null) {
-                return result.Response;
-            }
-            return "";
-        }
         // 画像からテキストを抽出する
         public static string ExtractTextFromImage(OpenAIProperties openAIProperties, List<string> ImageBase64List) {
             Chat chatController = new(openAIProperties);
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = PythonAILibStringResources.Instance.ExtractTextRequest;
+            chatController.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
             chatController.ContentText = "";
             chatController.ImageURLs = ImageBase64List.Select(Chat.CreateImageURL).ToList();
             if (chatController.ImageURLs.Count == 0) {

@@ -434,50 +434,7 @@ namespace WpfAppCommon.Model {
 
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
-        // OpenAIを使用してタイトルを生成する
-        public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
-            // ContentTypeがTextの場合
-            if (item.ContentType == ClipboardContentTypes.Text) {
-                // Contentがない場合は処理しない
-                if (string.IsNullOrEmpty(item.Content)) {
-                    return;
-                }
-                // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
-                string contentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
-                // ChatRequest.CreateTitleを実行
-                string result = Chat.CreateTitle(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
 
-                if (string.IsNullOrEmpty(result) == false) {
-                    item.Description = result;
-                }
-                return;
-            }
-            // ContentTypeがFiles,の場合
-            if (item.ContentType == ClipboardContentTypes.Files ) {
-                // FileObjectIdsがない場合は処理しない
-                if (item.ClipboardItemFiles.Count == 0) {
-                    return;
-                }
-                foreach (var clipboardItemFile in item.ClipboardItemFiles) {
-                    string path = clipboardItemFile.FilePath;
-                    if (string.IsNullOrEmpty(path)) {
-                        continue;
-                    }
-                    // ファイルのフルパスをタイトルとして使用
-                    item.Description += path + " ";
-                }
-                return;
-            }
-            // ContentTypeがImageの場合
-            item.Description = "Image";
-        }
-        // OpenAIを使用してイメージからテキスト抽出する。
-        public static void ExtractImageWithOpenAI(ClipboardItem item) {
-
-            foreach (var file in item.ClipboardItemFiles) {
-                file.ExtractText();
-            }
-        }
 
         // ベクトル検索を実行する
         public static List<VectorSearchResult> VectorSearchCommandExecute(ClipboardItem item) {
@@ -502,6 +459,47 @@ namespace WpfAppCommon.Model {
         }
 
 
+        // OpenAIを使用してタイトルを生成する
+        public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
+            // ContentTypeがTextの場合
+            if (item.ContentType == ClipboardContentTypes.Text) {
+                // Contentがない場合は処理しない
+                if (string.IsNullOrEmpty(item.Content)) {
+                    return;
+                }
+                // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
+                string contentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
+
+                // TitleGenerationプロンプトを取得
+                PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TitleGeneration);
+                // ChatRequest.CreateTitleを実行
+                string result = Chat.CreateTitle(ClipboardAppConfig.CreateOpenAIProperties(), contentText, promptItem.Prompt);
+
+                if (string.IsNullOrEmpty(result) == false) {
+                    item.Description = result;
+                }
+                return;
+            }
+            // ContentTypeがFiles,の場合
+            if (item.ContentType == ClipboardContentTypes.Files) {
+                // FileObjectIdsがない場合は処理しない
+                if (item.ClipboardItemFiles.Count == 0) {
+                    return;
+                }
+                foreach (var clipboardItemFile in item.ClipboardItemFiles) {
+                    string path = clipboardItemFile.FilePath;
+                    if (string.IsNullOrEmpty(path)) {
+                        continue;
+                    }
+                    // ファイルのフルパスをタイトルとして使用
+                    item.Description += path + " ";
+                }
+                return;
+            }
+            // ContentTypeがImageの場合
+            item.Description = "Image";
+        }
+
         // 自動でコンテキスト情報を付与するコマンド
         public static void CreateAutoBackgroundInfo(ClipboardItem item) {
             string contentText = item.Content;
@@ -513,7 +511,10 @@ namespace WpfAppCommon.Model {
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = item.FolderObjectId.ToString();
 
-            string result = Chat.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
+            // システム定義のPromptItemを取得
+            PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
+
+            string result = Chat.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
             if (string.IsNullOrEmpty(result) == false) {
                 item.BackgroundInfo = result;
             }
@@ -540,9 +541,20 @@ namespace WpfAppCommon.Model {
             if (string.IsNullOrEmpty(contentText)) {
                 return;
             }
-            string result = Chat.CreateSummary(ClipboardAppConfig.CreateOpenAIProperties(), contentText);
+            // システム定義のPromptItemを取得
+            PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
+
+            string result = Chat.CreateSummary(ClipboardAppConfig.CreateOpenAIProperties(), contentText, promptItem.Prompt);
             if (string.IsNullOrEmpty(result) == false) {
                 item.Summary = result;
+            }
+        }
+
+        // OpenAIを使用してイメージからテキスト抽出する。
+        public static void ExtractImageWithOpenAI(ClipboardItem item) {
+
+            foreach (var file in item.ClipboardItemFiles) {
+                file.ExtractText();
             }
         }
 

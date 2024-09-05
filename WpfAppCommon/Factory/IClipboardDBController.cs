@@ -71,6 +71,9 @@ namespace WpfAppCommon.Factory
 
         public PromptItem GetPromptTemplate(ObjectId id);
 
+        public PromptItem? GetPromptTemplateByName(string name);
+
+        public PromptItem? GetSystemPromptTemplateByName(string name);
 
         public void DeletePromptTemplate(PromptItem promptItem);
 

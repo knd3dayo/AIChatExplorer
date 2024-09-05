@@ -40,6 +40,9 @@ namespace ClipboardApp {
             // フォルダの初期化
             InitClipboardFolders();
 
+            // PromptItemの初期化
+            PromptItem.InitSystemPromptItems();
+
             // Python処理機能の初期化
             PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 

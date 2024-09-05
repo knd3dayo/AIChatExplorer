@@ -49,6 +49,8 @@ def extract_base64_to_text(base64_data):
         base64_data = base64_data.encode()
         temp.write(base64_data)
         temp_path = temp.name
+        temp.close()
+        
         import file_extractor
         # 一時ファイルからテキストを抽出
         text = file_extractor.extract_text_from_file(temp_path)
