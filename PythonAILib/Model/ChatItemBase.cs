@@ -1,4 +1,7 @@
 
+using PythonAILib.PythonIF;
+using PythonAILib.Utils;
+
 namespace PythonAILib.Model {
     public abstract class ChatItemBase {
 
@@ -18,6 +21,22 @@ namespace PythonAILib.Model {
         // サマリー
         public string Summary { get; set; } = "";
 
+        // 
+        public virtual List<ChatAttachedItemBase> ClipboardItemFiles { get; set; } = [];
+
+        // OpenAIを使用してイメージからテキスト抽出する。
+        public void ExtractImageWithOpenAI() {
+
+            foreach (var file in ClipboardItemFiles) {
+                file.ExtractText();
+            }
+        }
+
+        public abstract void Delete();
+
+        public abstract void Save(bool contentIsModified = true);
+
+        public abstract void UpdateEmbedding(VectorDBUpdateMode mode);
 
     }
 }

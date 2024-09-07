@@ -106,7 +106,7 @@ namespace PythonAILib.Model {
             if (TempData != null) {
                 return TempData;
             }
-            if (UseCache) {
+            if (UseCache || FilePath == null || File.Exists(FilePath) == false) {
                 return GetCachedData();
             } else {
                 return System.IO.File.ReadAllBytes(FilePath);

@@ -147,7 +147,7 @@ namespace ClipboardApp.ViewModel {
             }
             // ClipboardItemFileがある場合はSelectedFileに設定
             if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
-                SelectedFile = ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
+                SelectedFile = (ClipboardItemFile)ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
             }
             _afterUpdate = afterUpdate;
 

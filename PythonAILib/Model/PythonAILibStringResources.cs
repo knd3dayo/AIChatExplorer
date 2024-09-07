@@ -218,5 +218,6 @@ namespace PythonAILib.Model {
         // データ
         public virtual string Data { get; } = "データ";
 
+
     }
 }

@@ -779,7 +779,7 @@ namespace WpfAppCommon.Model {
             } else if (ClipboardAppConfig.AutoExtractImageWithOpenAI) {
 
                 LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
-                ClipboardItem.ExtractImageWithOpenAI(item);
+                item.ExtractImageWithOpenAI();
             }
 
             // ★TODO Implement processing based on automatic processing rules.
@@ -799,23 +799,21 @@ namespace WpfAppCommon.Model {
                 } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
 
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                    ClipboardItem.CreateAutoTitleWithOpenAI(item);
+                    item.CreateAutoTitleWithOpenAI();
                 }
             });
             var task3 = Task.Run(() => {
                 // 背景情報
                 if (ClipboardAppConfig.AutoBackgroundInfo) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
-                    ClipboardItem.CreateAutoBackgroundInfo(item);
+                    item.CreateAutoBackgroundInfo();
                 }
-
-
             });
             var task4 = Task.Run(() => {
                 // サマリー
                 if (ClipboardAppConfig.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    ClipboardItem.CreateAutoSummary(item);
+                    item.CreateAutoSummary();
                 }
             });
             await Task.WhenAll(task1, task2, task3, task4);

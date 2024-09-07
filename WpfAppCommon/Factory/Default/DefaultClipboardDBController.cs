@@ -263,7 +263,7 @@ namespace WpfAppCommon.Factory.Default
             }
             // ファイルがある場合は、追加または更新
             foreach (var file in item.ClipboardItemFiles) {
-                UpsertItemFile(file);
+                UpsertItemFile((ClipboardItemFile) file);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             collection.Upsert(item);

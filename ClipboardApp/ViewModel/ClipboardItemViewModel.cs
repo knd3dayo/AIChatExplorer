@@ -80,7 +80,7 @@ namespace ClipboardApp.ViewModel {
         }
 
         // Files
-        public ObservableCollection<ClipboardItemFile> Files {
+        public ObservableCollection<ChatAttachedItemBase> Files {
             get {
                 return [.. ClipboardItem.ClipboardItemFiles];
             }
@@ -339,7 +339,7 @@ namespace ClipboardApp.ViewModel {
                 LogWrapper.Error(StringResources.CannotExtractTextForNonFileContent);
                 return;
             }
-            ClipboardItem.ExtractTextCommandExecute(ClipboardItem);
+            ClipboardItem.ExtractTextCommandExecute();
 
         });
         // OpenAI Chatを開くコマンド
@@ -368,7 +368,7 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<object> GenerateTitleCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateTitleInformation);
             await Task.Run(() => {
-                ClipboardItem.CreateAutoTitleWithOpenAI(ClipboardItem);
+                ClipboardItem.CreateAutoTitleWithOpenAI();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
                 // objectがActionの場合は実行
@@ -385,7 +385,7 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateBackgroundInformation);
             await Task.Run(() => {
-                ClipboardItem.CreateAutoBackgroundInfo(this.ClipboardItem);
+                ClipboardItem.CreateAutoBackgroundInfo();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
@@ -396,7 +396,7 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateSummary2);
             await Task.Run(() => {
-                ClipboardItem.CreateAutoSummary(this.ClipboardItem);
+                ClipboardItem.CreateAutoSummary();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
@@ -420,7 +420,7 @@ namespace ClipboardApp.ViewModel {
             List<VectorSearchResult> vectorSearchResults = [];
             await Task.Run(() => {
                 // ベクトル検索を実行
-                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardItem));
+                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute());
             });
             // ベクトル検索結果ウィンドウを開く
             VectorSearchResultWindow.OpenVectorSearchResultWindow(vectorSearchResults);

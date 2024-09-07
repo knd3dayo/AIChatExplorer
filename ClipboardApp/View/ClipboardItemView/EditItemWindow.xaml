@@ -170,15 +170,15 @@
                         </editorControl:MyTextBox.ContextMenu>
                     </editorControl:MyTextBox>
                 </TabItem>
-                <!--  ファイル  -->
+                <!--  ファイル or Image  -->
                 <TabItem
                     Width="Auto"
                     Height="Auto"
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.File, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.FileTabVisibility}">
+                    Header="{Binding StringResources.FileOrImage, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.FileOrImageVisibility}">
                     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
                         <materialDesign:DrawerHost.LeftDrawerContent>
                             <Grid Width="200">

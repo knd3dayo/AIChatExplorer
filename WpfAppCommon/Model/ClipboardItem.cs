@@ -46,8 +46,8 @@ namespace WpfAppCommon.Model {
 
         // ファイル
         // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
-        private List<ClipboardItemFile> _clipboardItemFiles = [];
-        public List<ClipboardItemFile> ClipboardItemFiles {
+        private List<ChatAttachedItemBase> _clipboardItemFiles = [];
+        public override List<ChatAttachedItemBase> ClipboardItemFiles {
             get {
                 if (_clipboardItemFiles.Count() == 0) {
                     LoadFiles();
@@ -67,7 +67,7 @@ namespace WpfAppCommon.Model {
         private void SaveFiles() {
             //Fileを保存
             FileObjectIds = [];
-            foreach (var file in _clipboardItemFiles) {
+            foreach (ClipboardItemFile file in _clipboardItemFiles) {
                 file.Save();
                 // ClipboardItemFileをSaveした後にIdが設定される。そのあとでFileObjectIdsに追加
                 FileObjectIds.Add(file.Id);
@@ -280,7 +280,7 @@ namespace WpfAppCommon.Model {
         }
 
         // 自分自身をDBに保存する
-        public void Save(bool contentIsModified = true) {
+        public override void Save(bool contentIsModified = true) {
 
             if (contentIsModified) {
                 // ★TODO DBControllerに処理を移動する。
@@ -363,30 +363,8 @@ namespace WpfAppCommon.Model {
             }
         }
 
-        // Embeddingを更新する
-        public void UpdateEmbedding() {
-            LogWrapper.Info(CommonStringResources.Instance.SaveEmbedding);
-            // IPythonAIFunctions.ClipboardInfoを作成
-            string content = this.Content;
-            // 背景情報を含める場合
-            if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
-            }
-
-            ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
-
-            // VectorDBItemを取得
-            VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-            // Embeddingを保存
-            folderVectorDBItem.UpdateIndex(clipboardInfo);
-            LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
-        }
-
         // 自分自身をDBから削除する
-        public void Delete() {
-            // IPythonAIFunctions.ClipboardInfoを作成
-            ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
-
+        public override void Delete() {
             // 保存先フォルダを取得
             string folderPath = ClipboardAppConfig.SyncFolderName;
             // syncFolder/フォルダ名を取得
@@ -399,14 +377,7 @@ namespace WpfAppCommon.Model {
 
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
-                LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
-
-                // VectorDBItemを取得
-                VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // Embeddingを削除
-                folderVectorDBItem.DeleteIndex(clipboardInfo);
-                LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
-
+                UpdateEmbedding(VectorDBUpdateMode.delete);
             });
             Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
@@ -431,20 +402,54 @@ namespace WpfAppCommon.Model {
                 ClipboardItemFile? file = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemFile(fileObjectId);
                 file?.Delete();
             }
-
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
 
+        public override void UpdateEmbedding(VectorDBUpdateMode mode) {
+            if (mode == VectorDBUpdateMode.delete) {
+                LogWrapper.Info(CommonStringResources.Instance.DeleteEmbedding);
+                // VectorDBItemを取得
+                VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+                // IPythonAIFunctions.ClipboardInfoを作成
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                // Embeddingを削除
+                folderVectorDBItem.DeleteIndex(clipboardInfo);
+                LogWrapper.Info(CommonStringResources.Instance.DeletedEmbedding);
+                return;
+            }
+            if (mode == VectorDBUpdateMode.update) {
+                LogWrapper.Info(CommonStringResources.Instance.SaveEmbedding);
+                // IPythonAIFunctions.ClipboardInfoを作成
+                string content = this.Content;
+                // 背景情報を含める場合
+                if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                    content += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
+                }
+
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
+
+                // VectorDBItemを取得
+                VectorDBItemBase folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
+                // Embeddingを保存
+                folderVectorDBItem.UpdateIndex(clipboardInfo);
+                LogWrapper.Info(CommonStringResources.Instance.SavedEmbedding);
+            }
+        }
+
+        // Embeddingを更新する
+        public void UpdateEmbedding() {
+            UpdateEmbedding(VectorDBUpdateMode.update);
+        }
 
         // ベクトル検索を実行する
-        public static List<VectorSearchResult> VectorSearchCommandExecute(ClipboardItem item) {
+        public List<VectorSearchResult> VectorSearchCommandExecute() {
             // VectorDBItemを取得
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
-            string contentText = item.Content;
+            vectorDBItem.CollectionName = FolderObjectId.ToString();
+            string contentText = Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
             if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
-                contentText += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{item.BackgroundInfo}";
+                contentText += $"\n---{CommonStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
             }
             // VectorSearchRequestを作成
             VectorSearchRequest request = new() {
@@ -460,15 +465,15 @@ namespace WpfAppCommon.Model {
 
 
         // OpenAIを使用してタイトルを生成する
-        public static void CreateAutoTitleWithOpenAI(ClipboardItem item) {
+        public void CreateAutoTitleWithOpenAI() {
             // ContentTypeがTextの場合
-            if (item.ContentType == ClipboardContentTypes.Text) {
+            if (ContentType == ClipboardContentTypes.Text) {
                 // Contentがない場合は処理しない
-                if (string.IsNullOrEmpty(item.Content)) {
+                if (string.IsNullOrEmpty(Content)) {
                     return;
                 }
                 // Item.ContentからContentTextを取得.文字数が4096文字を超える場合は4096文字までに制限
-                string contentText = item.Content.Length > 4096 ? item.Content[..4096] : item.Content;
+                string contentText = Content.Length > 4096 ? Content[..4096] : Content;
 
                 // TitleGenerationプロンプトを取得
                 PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TitleGeneration);
@@ -476,67 +481,67 @@ namespace WpfAppCommon.Model {
                 string result = Chat.CreateTitle(ClipboardAppConfig.CreateOpenAIProperties(), contentText, promptItem.Prompt);
 
                 if (string.IsNullOrEmpty(result) == false) {
-                    item.Description = result;
+                    Description = result;
                 }
                 return;
             }
             // ContentTypeがFiles,の場合
-            if (item.ContentType == ClipboardContentTypes.Files) {
+            if (ContentType == ClipboardContentTypes.Files) {
                 // FileObjectIdsがない場合は処理しない
-                if (item.ClipboardItemFiles.Count == 0) {
+                if (ClipboardItemFiles.Count == 0) {
                     return;
                 }
-                foreach (var clipboardItemFile in item.ClipboardItemFiles) {
+                foreach (var clipboardItemFile in ClipboardItemFiles) {
                     string path = clipboardItemFile.FilePath;
                     if (string.IsNullOrEmpty(path)) {
                         continue;
                     }
                     // ファイルのフルパスをタイトルとして使用
-                    item.Description += path + " ";
+                    Description += path + " ";
                 }
                 return;
             }
             // ContentTypeがImageの場合
-            item.Description = "Image";
+            Description = "Image";
         }
 
         // 自動でコンテキスト情報を付与するコマンド
-        public static void CreateAutoBackgroundInfo(ClipboardItem item) {
-            string contentText = item.Content;
+        public void CreateAutoBackgroundInfo() {
+            string contentText = Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
                 return;
             }
             // ベクトルDBの設定
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = item.FolderObjectId.ToString();
+            vectorDBItem.CollectionName = FolderObjectId.ToString();
 
             // システム定義のPromptItemを取得
             PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
 
             string result = Chat.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
             if (string.IsNullOrEmpty(result) == false) {
-                item.BackgroundInfo = result;
+                BackgroundInfo = result;
             }
             // 背景情報に日本語解析追加が有効になっている場合
             if (ClipboardAppConfig.AnalyzeJapaneseSentence) {
                 result = Chat.AnalyzeJapaneseSentence(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
                 if (string.IsNullOrEmpty(result) == false) {
-                    item.BackgroundInfo += "\n" + result;
+                    BackgroundInfo += "\n" + result;
                 }
             }
             // 背景情報に自動QA生成が有効になっている場合
             if (ClipboardAppConfig.AutoGenerateQA) {
                 result = Chat.GenerateQA(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
                 if (string.IsNullOrEmpty(result) == false) {
-                    item.BackgroundInfo += "\n" + result;
+                    BackgroundInfo += "\n" + result;
                 }
             }
         }
 
         // 自動でサマリーを付与するコマンド
-        public static void CreateAutoSummary(ClipboardItem item) {
-            string contentText = item.Content;
+        public  void CreateAutoSummary() {
+            string contentText = Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
                 return;
@@ -546,26 +551,18 @@ namespace WpfAppCommon.Model {
 
             string result = Chat.CreateSummary(ClipboardAppConfig.CreateOpenAIProperties(), contentText, promptItem.Prompt);
             if (string.IsNullOrEmpty(result) == false) {
-                item.Summary = result;
-            }
-        }
-
-        // OpenAIを使用してイメージからテキスト抽出する。
-        public static void ExtractImageWithOpenAI(ClipboardItem item) {
-
-            foreach (var file in item.ClipboardItemFiles) {
-                file.ExtractText();
+                Summary = result;
             }
         }
 
         // テキストを抽出」を実行するコマンド
-        public static ClipboardItem ExtractTextCommandExecute(ClipboardItem clipboardItem) {
+        public ClipboardItem ExtractTextCommandExecute() {
 
-            foreach (var clipboardItemFile in clipboardItem.ClipboardItemFiles) {
+            foreach (var clipboardItemFile in ClipboardItemFiles) {
                 clipboardItemFile.ExtractText();
                 LogWrapper.Info($"{CommonStringResources.Instance.TextExtracted}");
             }
-            return clipboardItem;
+            return this;
         }
     }
 }

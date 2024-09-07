@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using CommunityToolkit.Mvvm.Input;
 using PythonAILib.Model;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
@@ -34,13 +35,26 @@ namespace QAChat.ViewModel
         public Func<PromptItemBase> CreatePromptItemFunction { get; set; } 
 
         // プロンプトテンプレートの一覧
-        public ObservableCollection<PromptItemViewModel> PromptItems { get; set; } = new ObservableCollection<PromptItemViewModel>();
+        public ObservableCollection<PromptItemViewModel> PromptItems { get; set; } = [];
         // 選択中の自動処理ルール
         private static PromptItemViewModel? _selectedPromptItem;
         public static PromptItemViewModel? SelectedPromptItem {
             get => _selectedPromptItem;
             set {
                 _selectedPromptItem = value;
+            }
+        }
+
+        //システム用のプロンプトテンプレートを表示するか否か
+        public bool _IsShowSystemPromptItems = false;
+        public bool IsShowSystemPromptItems {
+            get {
+                return _IsShowSystemPromptItems;
+            }
+            set {
+                _IsShowSystemPromptItems = value;
+                OnPropertyChanged(nameof(IsShowSystemPromptItems));
+                ReloadCommand.Execute();
             }
         }
 
@@ -82,7 +96,13 @@ namespace QAChat.ViewModel
             PromptItems.Clear();
             IClipboardDBController clipboardDBController = ClipboardAppFactory.Instance.GetClipboardDBController();
             foreach (var item in clipboardDBController.GetAllPromptTemplates()) {
-                PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
+                // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
+                if (!IsShowSystemPromptItems && 
+                    ( item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.SystemDefined ||
+                       item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.ModifiedSystemDefined )) {
+                    continue;
+                }
+                PromptItemViewModel itemViewModel = new (item);
                 PromptItems.Add(itemViewModel);
             }
             OnPropertyChanged(nameof(PromptItems));

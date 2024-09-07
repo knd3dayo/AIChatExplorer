@@ -127,6 +127,9 @@ namespace WpfAppCommon.Model {
         public virtual string AppName { get; } = "RAG Clipboard";
         // ファイル
         public virtual string File { get; } = "ファイル";
+
+        // ファイル/画像
+        public virtual string FileOrImage { get; } = "ファイル/画像";
         // 作成
         public virtual string Create { get; } = "作成";
         // アイテム作成
@@ -828,6 +831,8 @@ namespace WpfAppCommon.Model {
         // -- ListVectorDBWindow --
         // システム用のベクトルを表示
         public virtual string DisplayVectorsForTheSystem { get; } = "システム用のベクトルを表示";
+        // システム用のプロンプトを表示
+        public virtual string DisplayPromptsForTheSystem { get; } = "システム用のプロンプトを表示";
 
         // ベクトルDBの場所
         public virtual string VectorDBLocation { get; } = "ベクトルDBの場所";

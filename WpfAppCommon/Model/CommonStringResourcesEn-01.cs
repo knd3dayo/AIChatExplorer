@@ -97,6 +97,9 @@ namespace WpfAppCommon.Model {
         public override string AppName { get; } = "RAG Clipboard";
         // File
         public override string File { get; } = "File";
+
+        // File / Image
+        public virtual string FileOrImage { get; } = "File/Image";
         // Create
         public override string Create { get; } = "Create";
         // Create Item
@@ -609,6 +612,9 @@ namespace WpfAppCommon.Model {
 
         // -- ListVectorDBWindow --
         public override string DisplayVectorsForTheSystem { get; } = "Display vectors for the system";
+
+        public virtual string DisplayPromptsForTheSystem { get; } = "Display prompts for the system";
+
         public override string VectorDBLocation { get; } = "Vector DB location";
         public override string VectorDBType { get; } = "Vector DB type";
         public override string NewVectorDBSetting { get; } = "New vector DB setting";

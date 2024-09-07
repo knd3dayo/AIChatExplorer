@@ -36,6 +36,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -62,9 +63,17 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <!--  プロンプトテンプレート一覧のListBox  -->
         <StackPanel
-            Grid.Column="1"
+            Grid.Row="1"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <CheckBox
+                Margin="10,10,0,0"
+                Content="{Binding StringResources.DisplayPromptsForTheSystem}"
+                IsChecked="{Binding IsShowSystemPromptItems}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
             Margin="10,10,0,0"
             HorizontalAlignment="Left"
             Orientation="Vertical"
@@ -74,9 +83,9 @@
                 <ComboBoxItem Content="{Binding Source={StaticResource StringResources}, Path=Instance.RAG}" />
             </ComboBox>
         </StackPanel>
-
+        <!--  プロンプトテンプレート一覧のListBox  -->
         <ListView
-            Grid.Row="2"
+            Grid.Row="3"
             ItemsSource="{Binding PromptItems}"
             SelectedItem="{Binding SelectedPromptItem}">
             <i:Interaction.Triggers>
@@ -104,7 +113,7 @@
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -138,7 +147,7 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
 
     </Grid>
 </Window>
