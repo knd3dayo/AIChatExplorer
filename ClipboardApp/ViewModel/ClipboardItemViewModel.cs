@@ -80,7 +80,7 @@ namespace ClipboardApp.ViewModel {
         }
 
         // Files
-        public ObservableCollection<ChatAttachedItemBase> Files {
+        public ObservableCollection<ContentAttachedItemBase> Files {
             get {
                 return [.. ClipboardItem.ClipboardItemFiles];
             }
@@ -133,27 +133,27 @@ namespace ClipboardApp.ViewModel {
         // 分類がFileの場合はVisible,それ以外はCollapsed
         public Visibility FileVisibility {
             get {
-                if (ClipboardItem.ContentType == ClipboardContentTypes.Files) {
+                if (ClipboardItem.ContentType == ContentTypes.ContentItemTypes.Files) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
                 }
             }
         }
-        // 分類がTextの場合はVisible,それ以外はCollapsed
+        // Contentが空でない場合はVisible,それ以外はCollapsed
         public Visibility TextVisibility {
             get {
-                if (ClipboardItem.ContentType == ClipboardContentTypes.Text) {
+                if (string.IsNullOrEmpty(ClipboardItem.Content) == false) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
                 }
             }
         }
-        // 分類がFileまたはImageの場合はVisible,それ以外はCollapsed
+        // ClipboardItemFilesが空でない場合はVisible,それ以外はCollapsed
         public Visibility FileOrImageVisibility {
             get {
-                if (ClipboardItem.ContentType == ClipboardContentTypes.Files || ClipboardItem.ContentType == ClipboardContentTypes.Image) {
+                if (ClipboardItem.ClipboardItemFiles.Count > 0) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
@@ -184,19 +184,19 @@ namespace ClipboardApp.ViewModel {
         // テキストタブの表示可否
         public Visibility TextTabVisibility {
             get {
-                return ContentType == ClipboardContentTypes.Text ? Visibility.Visible : Visibility.Collapsed;
+                return ContentType == ContentTypes.ContentItemTypes.Text ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // イメージタブの表示可否
         public Visibility ImageTabVisibility {
             get {
-                return ContentType == ClipboardContentTypes.Image ? Visibility.Visible : Visibility.Collapsed;
+                return ContentType == ContentTypes.ContentItemTypes.Image ? Visibility.Visible : Visibility.Collapsed;
             }
         }
         // ファイルタブの表示可否
         public Visibility FileTabVisibility {
             get {
-                return ContentType == ClipboardContentTypes.Files ? Visibility.Visible : Visibility.Collapsed;
+                return ContentType == ContentTypes.ContentItemTypes.Files ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -269,19 +269,19 @@ namespace ClipboardApp.ViewModel {
             }
         }
         // ContentType
-        public ClipboardContentTypes ContentType {
+        public ContentTypes.ContentItemTypes ContentType {
             get {
                 return ClipboardItem.ContentType;
             }
         }
 
         // MergeItems
-        public void MergeItems(List<ClipboardItemViewModel> itemViewModels, bool mergeWithHeader) {
+        public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
             List<ClipboardItem> items = [];
             foreach (var itemViewModel in itemViewModels) {
                 items.Add(itemViewModel.ClipboardItem);
             }
-            ClipboardItem.MergeItems(items, mergeWithHeader);
+            ClipboardItem.MergeItems(items);
         }
 
 
@@ -315,7 +315,7 @@ namespace ClipboardApp.ViewModel {
 
         public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
             // ContentTypeがFileの場合のみフォルダを開く
-            if (ContentType != ClipboardContentTypes.Files) {
+            if (ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(StringResources.CannotOpenFolderForNonFileContent);
                 return;
             }
@@ -335,7 +335,7 @@ namespace ClipboardApp.ViewModel {
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            if (ContentType != ClipboardContentTypes.Files) {
+            if (ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(StringResources.CannotExtractTextForNonFileContent);
                 return;
             }
@@ -392,17 +392,32 @@ namespace ClipboardApp.ViewModel {
             LogWrapper.Info(StringResources.GeneratedBackgroundInformation);
 
         });
+
         // サマリーを生成するコマンド
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateSummary2);
             await Task.Run(() => {
-                ClipboardItem.CreateAutoSummary();
+                ClipboardItem.CreateSummary();
                 // 保存
                 SaveClipboardItemCommand.Execute(false);
             });
             LogWrapper.Info(StringResources.GeneratedSummary);
 
         });
+
+        // 課題リストを生成するコマンド
+        public SimpleDelegateCommand<object> GenerateIssuesCommand => new(async (obj) => {
+            LogWrapper.Info(StringResources.GenerateIssues);
+            await Task.Run(() => {
+                ClipboardItem.CreateIssues();
+                // 保存
+                SaveClipboardItemCommand.Execute(false);
+            });
+            LogWrapper.Info(StringResources.GeneratedIssues);
+
+        });
+
+
         // ベクトルを生成するコマンド
         public SimpleDelegateCommand<object> GenerateVectorCommand => new(async (obj) => {
             LogWrapper.Info(StringResources.GenerateVector2);
@@ -420,7 +435,7 @@ namespace ClipboardApp.ViewModel {
             List<VectorSearchResult> vectorSearchResults = [];
             await Task.Run(() => {
                 // ベクトル検索を実行
-                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute());
+                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardAppConfig.IncludeBackgroundInfoInEmbedding));
             });
             // ベクトル検索結果ウィンドウを開く
             VectorSearchResultWindow.OpenVectorSearchResultWindow(vectorSearchResults);

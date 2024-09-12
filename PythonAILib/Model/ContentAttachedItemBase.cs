@@ -4,7 +4,7 @@ using System.Windows.Media.Imaging;
 using LiteDB;
 
 namespace PythonAILib.Model {
-    public abstract class ChatAttachedItemBase {
+    public abstract class ContentAttachedItemBase {
 
 
         // LiteDBで保存するためのBase64文字列
@@ -64,7 +64,7 @@ namespace PythonAILib.Model {
         public BitmapImage? BitmapImage {
             get {
                 byte[] imageBytes = GetData();
-                if (!ContentTypes.IsImageData(imageBytes)) {
+                if (imageBytes == null || !ContentTypes.IsImageData(imageBytes)) {
                     return null;
                 }
                 return PythonAILib.Model.ContentTypes.GetBitmapImage(imageBytes);
@@ -74,7 +74,7 @@ namespace PythonAILib.Model {
         public Image? Image {
             get {
                 byte[] imageBytes = GetData();
-                if (!ContentTypes.IsImageData(imageBytes)) {
+                if (imageBytes == null || !ContentTypes.IsImageData(imageBytes)) {
                     return null;
                 }
                 return PythonAILib.Model.ContentTypes.GetImageFromBase64(Base64String ?? "");

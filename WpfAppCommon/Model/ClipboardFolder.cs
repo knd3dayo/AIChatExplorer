@@ -417,10 +417,6 @@ namespace WpfAppCommon.Model {
 
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
         public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
-            // 検索フォルダの場合は何もしない
-            if (FolderType == FolderTypeEnum.Search) {
-                return;
-            }
 
             // SourceApplicationNameが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
@@ -439,71 +435,17 @@ namespace WpfAppCommon.Model {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
                     && newItem.SourceApplicationName == item.SourceApplicationName) {
                     // TypeがTextのアイテムのみマージ
-                    if (item.ContentType == ClipboardContentTypes.Text) {
+                    if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
                         sameTitleItems.Add(item);
                     }
                 }
             }
-            // mergeFromItemsが空の場合は、newItemをそのまま返す。
-            if (sameTitleItems.Count == 0) {
-                return;
-            }
-            // マージ元のアイテムをマージ先(更新時間が一番古いもの)のアイテムにマージ
-            ClipboardItem mergeToItem = Items.Last();
-            // sameTitleItemsの1から最後までをマージ元のアイテムとする
-            sameTitleItems.RemoveAt(sameTitleItems.Count - 1);
-
-            // sameTitleItemsに、newItemを追加
-            sameTitleItems.Insert(0, newItem);
-            // マージ元のアイテムをマージ先のアイテムにマージ
-
-            mergeToItem.MergeItems(sameTitleItems, false);
-            // newItemにマージしたアイテムをコピー
-            mergeToItem.CopyTo(newItem);
-            // マージしたアイテムを削除
-            foreach (var mergedItem in sameTitleItems) {
-                DeleteItem(mergedItem);
-            }
-            // mergedItemを削除
-            DeleteItem(mergeToItem);
+            newItem.MergeItems(sameTitleItems);
         }
+
         // 指定されたフォルダの全アイテムをマージするコマンド
         public void MergeItems(ClipboardItem item) {
-            // 検索フォルダの場合は何もしない
-            if (FolderType == FolderTypeEnum.Search) {
-                return;
-            }
-            if (Items.Count == 0) {
-                return;
-            }
-
-            // マージ元のアイテム
-            List<ClipboardItem> mergedFromItems = [];
-            for (int i = Items.Count - 1; i > 0; i--) {
-                // TypeがTextのアイテムのみマージ
-                if (Items[i].ContentType == ClipboardContentTypes.Text) {
-                    mergedFromItems.Add(Items[i]);
-                }
-            }
-            // 先頭に引数のアイテムを追加
-            mergedFromItems.Insert(0, item);
-            // mergeToItemを取得(更新時間が一番古いアイテム)
-            ClipboardItem mergeToItem = mergedFromItems.Last();
-            // mergedFromItemsから、mergeToItemを削除
-            mergedFromItems.RemoveAt(mergedFromItems.Count - 1);
-
-            // マージ元のアイテムをマージ先のアイテムにマージ
-            mergeToItem.MergeItems(mergedFromItems, false);
-
-            // マージ先アイテムを、newItemにコピー
-            mergeToItem.CopyTo(item);
-
-            // マージしたアイテムを削除
-            foreach (var mergedItem in mergedFromItems) {
-                DeleteItem(mergedItem);
-            }
-            // マージ先アイテムを削除
-            DeleteItem(mergeToItem);
+            item.MergeItems(Items);
 
         }
         // --- Export/Import
@@ -679,13 +621,13 @@ namespace WpfAppCommon.Model {
         public static ClipboardItem? CreateClipboardItem(
             ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
 
-            ClipboardContentTypes contentTypes = ClipboardContentTypes.Text;
+            PythonAILib.Model.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Text;
             if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                contentTypes = ClipboardContentTypes.Text;
+                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Text;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                contentTypes = ClipboardContentTypes.Files;
+                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Files;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                contentTypes = ClipboardContentTypes.Image;
+                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Image;
             } else if ( e.ContentType == SharpClipboard.ContentTypes.Other) {
                 return null;
             } else {
@@ -697,18 +639,18 @@ namespace WpfAppCommon.Model {
             };
             SetApplicationInfo(item, e);
             // If ContentType is Text, set text data
-            if (contentTypes == ClipboardContentTypes.Text) {
+            if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
                 item.Content = (string)e.Content;
             }
             // If ContentType is BitmapImage, set image data
-            if (contentTypes == ClipboardContentTypes.Image) {
+            if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Image) {
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 // byte
                 ClipboardItemFile imageItem = ClipboardItemFile.Create(item, image);
                 item.ClipboardItemFiles.Add(imageItem);
             }
             // If ContentType is Files, set file data
-            else if (contentTypes == ClipboardContentTypes.Files) {
+            else if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Files) {
                 string[] files = (string[])e.Content;
 
                 // Get the cut/copied file/files.
@@ -742,7 +684,7 @@ namespace WpfAppCommon.Model {
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == ClipboardContentTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
+            if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
                 return null;
             }
 
@@ -753,7 +695,7 @@ namespace WpfAppCommon.Model {
                 ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == ClipboardContentTypes.Files && item.ClipboardItemFiles != null) {
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileItem.FilePath);
@@ -813,7 +755,7 @@ namespace WpfAppCommon.Model {
                 // サマリー
                 if (ClipboardAppConfig.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    item.CreateAutoSummary();
+                    item.CreateSummary();
                 }
             });
             await Task.WhenAll(task1, task2, task3, task4);

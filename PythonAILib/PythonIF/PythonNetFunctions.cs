@@ -190,21 +190,18 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // hello_world関数を呼び出す
                 result = function_object();
-
             });
             return result;
         }
         private void UpdateVectorDBIndexExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
-
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
                 try {
                     string resultString = pythonFunction(function_object);
                     LogWrapper.Info(resultString);
-
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {

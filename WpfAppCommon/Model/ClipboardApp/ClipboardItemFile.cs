@@ -6,8 +6,9 @@ using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model.ClipboardApp {
-    public class ClipboardItemFile : ChatAttachedItemBase {
+namespace WpfAppCommon.Model.ClipboardApp
+{
+    public class ClipboardItemFile : ContentAttachedItemBase {
 
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
             ClipboardItemFile itemFile = new() {
@@ -23,6 +24,15 @@ namespace WpfAppCommon.Model.ClipboardApp {
             };
             return itemFile;
         }
+        public static ClipboardItemFile CreateFromBase64(ClipboardItem clipboardItem, string base64string) {
+            ClipboardItemFile itemFile = new() {
+                ClipboardItem = clipboardItem,
+                CachedBase64String = base64string
+            };
+            return itemFile;
+        }
+
+
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
@@ -120,7 +130,7 @@ namespace WpfAppCommon.Model.ClipboardApp {
             string base64 = System.Convert.ToBase64String(data);
             try {
                 if (ContentTypes.IsImageData(base64)) {
-                    string result = Chat.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), [base64]);
+                    string result = ChatUtil.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         ExtractedText = result;
                     }

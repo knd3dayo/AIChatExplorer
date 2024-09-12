@@ -26,6 +26,13 @@ namespace PythonAILib.Model {
         // Please generate a summary of 100 to 200 characters from the following text.\n
         public override string SummaryGenerationPrompt { get; } = "Please generate a summary of 100 to 200 characters from the following text.\n";
 
+
+        // TODO List Generation
+        public override string IssuesGeneration { get; } = "TODO List Generation";
+
+        // "Please generate a TODO list from the following text.\n"
+        public override string IssuesGenerationPrompt { get; } = "Please generate a TODO list from the following text. The output should be in JSON format {result:[TODO items]}.\n";
+
         // BackgroundInformationGeneration
         public override string BackgroundInformationGeneration { get; } = "Background information generation";
 

@@ -1,5 +1,6 @@
 
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -345,17 +346,17 @@ namespace ClipboardApp.ViewModel {
                         case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
                             IsNotAllItemsRuleChecked = true;
 
-                            if (condition.ContentTypes.Contains(ClipboardContentTypes.Text)) {
+                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Text)) {
                                 IsTextItemApplied = true;
                                 OnPropertyChanged(nameof(IsTextItemApplied));
                                 MinTextLineCount = condition.MinLineCount.ToString();
                                 MaxTextLineCount = condition.MaxLineCount.ToString();
                             }
-                            if (condition.ContentTypes.Contains(ClipboardContentTypes.Image)) {
+                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Image)) {
                                 IsImageItemApplied = true;
                                 OnPropertyChanged(nameof(IsImageItemApplied));
                             }
-                            if (condition.ContentTypes.Contains(ClipboardContentTypes.Files)) {
+                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Files)) {
                                 IsFileItemApplied = true;
                                 OnPropertyChanged(nameof(IsFileItemApplied));
                             }
@@ -473,21 +474,21 @@ namespace ClipboardApp.ViewModel {
                     TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains, SourceApplicationTitle));
                 }
                 // ContentTypeの処理
-                List<ClipboardContentTypes> contentTypes = new List<ClipboardContentTypes>();
+                List<ContentTypes.ContentItemTypes> contentTypes = new List<ContentTypes.ContentItemTypes>();
                 // IsTextItemAppliedがTrueの場合は条件を追加
                 if (IsTextItemApplied) {
                     // TextItemを条件に追加
-                    contentTypes.Add(ClipboardContentTypes.Text);
+                    contentTypes.Add(ContentTypes.ContentItemTypes.Text);
                 }
                 // IsImageItemAppliedがTrueの場合は条件を追加
                 if (IsImageItemApplied) {
                     // ImageItemを条件に追加
-                    contentTypes.Add(ClipboardContentTypes.Image);
+                    contentTypes.Add(ContentTypes.ContentItemTypes.Image);
                 }
                 // IsFileItemAppliedがTrueの場合は条件を追加
                 if (IsFileItemApplied) {
                     // FileItemを条件に追加
-                    contentTypes.Add(ClipboardContentTypes.Files);
+                    contentTypes.Add(ContentTypes.ContentItemTypes.Files);
                 }
                 // ContentTypeIsを条件に追加
                 TargetAutoProcessRule.Conditions.Add(new AutoProcessRuleCondition(contentTypes, MinTextLineCountInt, MaxTextLineCountInt));

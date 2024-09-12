@@ -150,8 +150,24 @@ namespace PythonAILib.Model {
 
         // Chat history
         public override string ChatHistory { get; } = "Chat history";
+        public override string TextExtracted { get; } = "Extracted Text";
 
-        
+        public override string UpdateDate { get; } = "Update Date";
+        public override string Title { get; } = "Title";
+
+        public override string SourceTitle { get; } = "Source Title";
+        public override string Pin { get; } = "Pin";
+
+        public override string Type { get; } = "Type";
+
+        public override string CreationDateTime { get; } = "Creation Date Time";
+        public override string SourceAppName { get; } = "Source App Name";
+        public override string Pinned { get; } = "Pinned";
+
+        // Tag
+        public override string Tag { get; } = "Tag";
+        public override string BackgroundInformation { get; } = "Background Information";
+
 
     }
 }

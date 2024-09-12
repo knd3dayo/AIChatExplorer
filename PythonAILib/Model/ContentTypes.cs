@@ -5,6 +5,14 @@ using System.Drawing;
 namespace PythonAILib.Model {
     public class ContentTypes {
 
+        public enum ContentItemTypes {
+            Text,
+            Files,
+            Image,
+            ImageFile,
+            Unknown
+        }
+
         public  enum ImageType { png, jpg, gif, webp, unknown }
 
         public static bool IsImageFile(string filePath) {
@@ -35,6 +43,9 @@ namespace PythonAILib.Model {
             // jpeg  /9j/4
             // webp RIFF____WEBP
             // となる
+            if (base64String.Length < 5) {
+                return ImageType.unknown;
+            }
             string base64Header = base64String.Substring(0, 5);
             ImageType imageType = ImageType.unknown;
             if (base64Header == "iVBOR") {

@@ -218,6 +218,35 @@ namespace PythonAILib.Model {
         // データ
         public virtual string Data { get; } = "データ";
 
+        // テキストを抽出しました
+        public virtual string TextExtracted { get; } = "テキストを抽出しました";
+
+        // 更新日
+        public virtual string UpdateDate { get; } = "更新日";
+        // タイトル
+        public virtual string Title { get; } = "タイトル";
+
+        // ソースタイトル
+        public virtual string SourceTitle { get; } = "ソースタイトル";
+        // ピン留め
+        public virtual string Pin { get; } = "ピン留め";
+
+        // 種別
+        public virtual string Type { get; } = "種別";
+
+        // 作成日時
+        public virtual string CreationDateTime { get; } = "作成日時";
+
+        // ソースアプリ名
+        public virtual string SourceAppName { get; } = "ソースアプリ名";
+
+        // ピン留めしてます
+        public virtual string Pinned { get; } = "ピン留めしてます";
+        // タグ
+        public virtual string Tag { get; } = "タグ";
+
+        // 背景情報
+        public virtual string BackgroundInformation { get; } = "背景情報";
 
     }
 }

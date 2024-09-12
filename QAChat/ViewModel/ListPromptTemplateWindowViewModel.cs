@@ -6,11 +6,9 @@ using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon;
 using WpfAppCommon.Factory;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.QAChat;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel {
     public class ListPromptTemplateWindowViewModel : MyWindowViewModel {
 
         // 初期化
@@ -89,6 +87,14 @@ namespace QAChat.ViewModel
                 return ActionMode == ActionModeEum.Exec ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+        public string SelectButtonText {
+            get {
+                // ActionModeがExecの場合は、"実行"、それ以外は"選択"
+                return ActionMode == ActionModeEum.Exec ? StringResources.Execute : StringResources.Select;
+            }
+        }
+
+
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
 
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
@@ -109,14 +115,6 @@ namespace QAChat.ViewModel
 
         });
 
-
-        public string SelectButtonText {
-            get {
-                // ActionModeがExecの場合は、"実行"、それ以外は"選択"
-                return ActionMode == ActionModeEum.Exec ? StringResources.Execute :StringResources.Select;
-            }
-        }
-
         public SimpleDelegateCommand<object> EditPromptItemCommand => new((parameter) => {
             if (SelectedPromptItem == null) {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);
@@ -131,7 +129,7 @@ namespace QAChat.ViewModel
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
             PromptItemBase item = CreatePromptItemFunction();
-            PromptItemViewModel itemViewModel = new PromptItemViewModel(item);
+            PromptItemViewModel itemViewModel = new (item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
                 // PromptItemsを更新
                 ReloadCommand.Execute();

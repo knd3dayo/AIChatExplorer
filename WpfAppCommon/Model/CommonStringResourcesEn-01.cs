@@ -118,6 +118,13 @@ namespace WpfAppCommon.Model {
         // Generate Summary
         public override string GenerateSummary { get; } = "Generate Summary";
 
+        // "Generate the list of issues"
+        public virtual string GenerateTIssues { get; } = "Generate the list of issues";
+
+        // "The list of issues has been generated"
+        public virtual string GeneratedTIssues { get; } = "The list of issues has been generated";
+
+
         // Generate Vector
         public override string GenerateVector { get; } = "Generate Vector";
 
@@ -872,7 +879,6 @@ namespace WpfAppCommon.Model {
         public override string RepositoryNotFound { get; } = "Repository Not Found";
         public override string CommitIsEmpty { get; } = "Commit is Empty";
         public override string SavedToFileOnOS { get; } = "Saved to File on OS";
-        public override string BackgroundInformation { get; } = "Background Information";
         public override string Summary { get; } = "Summary";
         public override string SaveEmbedding { get; } = "Save Embedding";
         public override string SavedEmbedding { get; } = "Saved Embedding";
@@ -885,7 +891,6 @@ namespace WpfAppCommon.Model {
         public override string DeleteFileOnOS { get; } = "Delete File on OS";
         public override string DeletedFileOnOS { get; } = "Deleted File on OS";
         public override string UnsupportedFileType { get; } = "Unsupported File Type";
-        public override string TextExtracted { get; } = "Extracted Text";
         public override string Ignore { get; } = "Ignore";
         public override string DoNothing { get; } = "Do Nothing";
         public override string CopyToFolder { get; } = "Copy to Folder";

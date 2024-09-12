@@ -375,8 +375,7 @@ namespace ClipboardApp {
 
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
-                SelectedItems,
-                false
+                SelectedItems
                 );
         }
         // Ctrl + Shift + M が押された時の処理
@@ -397,8 +396,7 @@ namespace ClipboardApp {
 
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
-                SelectedItems,
-                true
+                SelectedItems
                 );
         }
 
@@ -562,6 +560,15 @@ namespace ClipboardApp {
             // 選択中のアイテムすべてに対して処理を行う
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 item.GenerateSummaryCommand.Execute();
+            }
+            // フォルダ内のアイテムを再読み込み
+            SelectedFolder?.LoadFolderCommand.Execute();
+        });
+        // 課題リストを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<object> GenerateIssuesCommand => new((parameter) => {
+            // 選択中のアイテムすべてに対して処理を行う
+            foreach (ClipboardItemViewModel item in SelectedItems) {
+                item.GenerateIssuesCommand.Execute();
             }
             // フォルダ内のアイテムを再読み込み
             SelectedFolder?.LoadFolderCommand.Execute();

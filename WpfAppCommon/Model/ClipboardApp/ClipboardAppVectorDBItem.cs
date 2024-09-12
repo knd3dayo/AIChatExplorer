@@ -101,13 +101,11 @@ namespace WpfAppCommon.Model.ClipboardApp {
         }
 
         public override void UpdateIndex(ContentInfo contentInfo) {
-            // CollectionNameの設定
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
+            UpdateIndex(contentInfo, ClipboardAppConfig.CreateOpenAIProperties());
         }
 
         public override void DeleteIndex(ContentInfo contentInfo) {
-
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), contentInfo, this);
+            DeleteIndex(contentInfo, ClipboardAppConfig.CreateOpenAIProperties());
         }
 
         public override void UpdateIndex(ImageInfo imageInfo) {

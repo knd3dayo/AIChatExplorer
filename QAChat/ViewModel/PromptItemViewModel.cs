@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Model.QAChat;
+using PythonAILib.Model;
 
 namespace QAChat.ViewModel {
     public class PromptItemViewModel : ObservableObject {

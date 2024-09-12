@@ -1,7 +1,6 @@
 using LiteDB;
 using PythonAILib.Model;
 using WpfAppCommon.Factory;
-using WpfAppCommon.Model.QAChat;
 
 namespace WpfAppCommon.Model.ClipboardApp {
     public class PromptItem : PromptItemBase {
@@ -13,6 +12,8 @@ namespace WpfAppCommon.Model.ClipboardApp {
             BackgroundInformationGeneration,
             // サマリー生成
             SummaryGeneration,
+            // 課題リスト生成
+            IssuesGeneration
         }
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -79,6 +80,17 @@ namespace WpfAppCommon.Model.ClipboardApp {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined
                 };
                 clipboardDBController.UpsertPromptTemplate(summaryGeneration);
+            }
+            // IssuesGenerationをDBから取得
+            PromptItem? issuesGeneration = clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.IssuesGeneration.ToString());
+            if (issuesGeneration == null) {
+                issuesGeneration = new PromptItem() {
+                    Name = SystemDefinedPromptNames.IssuesGeneration.ToString(),
+                    Description = PromptStringResource.Instance.IssuesGeneration,
+                    Prompt = PromptStringResource.Instance.IssuesGenerationPrompt,
+                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined
+                };
+                clipboardDBController.UpsertPromptTemplate(issuesGeneration);
             }
         }
 

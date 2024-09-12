@@ -988,6 +988,12 @@ namespace WpfAppCommon.Model {
         // "サマリーを生成しました"
         public virtual string GeneratedSummary { get; } = "サマリーを生成しました";
 
+        // "課題リストを生成します"
+        public virtual string GenerateIssues { get; } = "課題リストを生成します";
+
+        // "課題リストを生成しました"
+        public virtual string GeneratedIssues { get; } = "課題リストを生成しました";
+
         // ベクトルを生成します
         public virtual string GenerateVector2 { get; } = "ベクトルを生成します";
 
@@ -1516,8 +1522,6 @@ namespace WpfAppCommon.Model {
         // OS上のファイルに保存しました
         public virtual string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
 
-        // 背景情報
-        public virtual string BackgroundInformation { get; } = "背景情報";
 
         // サマリー
         public virtual string Summary { get; } = "サマリー";
@@ -1554,8 +1558,6 @@ namespace WpfAppCommon.Model {
         // サポートされていないファイル形式です
         public virtual string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
 
-        // テキストを抽出しました
-        public virtual string TextExtracted { get; } = "テキストを抽出しました";
 
 
         // --- ScreenShotCheckCondition.cs ---

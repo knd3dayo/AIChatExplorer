@@ -112,7 +112,7 @@ namespace ClipboardApp.ViewModel
             // 検索フォルダには貼り付け不可
 
         }
-        public override void MergeItemCommandExecute(ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
+        public override void MergeItemCommandExecute(ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems) {
             // 検索フォルダにはマージ不可
         }
 

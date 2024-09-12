@@ -90,12 +90,27 @@ namespace PythonAILib.Model {
 
         // Delete
         public abstract void Delete();
+
         public abstract void UpdateIndex(ContentInfo clipboard);
+
         public abstract void DeleteIndex(ContentInfo clipboard);
 
         public abstract void UpdateIndex(ImageInfo imageInfo);
 
         public abstract void DeleteIndex(ImageInfo imageInfo);
+
+        public  void UpdateIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+        }
+        public  void DeleteIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+        }
+        public  void UpdateIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
+        }
+        public void DeleteIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using PythonAILib.Model;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -48,14 +49,14 @@ namespace WpfAppCommon.Model.ClipboardApp {
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard
-            if (item.ContentType == ClipboardContentTypes.Text) {
+            if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // If ContentType is Files, copy files to clipboard
-            else if (item.ContentType == ClipboardContentTypes.Files) {
+            else if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Files) {
                 // FilePathの取得
                 System.Collections.Specialized.StringCollection strings = new();
                 foreach (var itemFile in item.ClipboardItemFiles) {

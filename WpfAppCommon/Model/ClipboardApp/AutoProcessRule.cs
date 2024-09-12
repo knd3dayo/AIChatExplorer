@@ -1,4 +1,5 @@
 using LiteDB;
+using PythonAILib.Model;
 using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Model.ClipboardApp {
@@ -10,7 +11,7 @@ namespace WpfAppCommon.Model.ClipboardApp {
         public ConditionTypeEnum Type { get; set; }
 
         // アイテムのタイプ種類のリスト
-        public List<ClipboardContentTypes> ContentTypes { get; set; } = [];
+        public List<ContentTypes.ContentItemTypes> ContentTypes { get; set; } = [];
 
         // 条件のキーワード
         public string Keyword { get; set; } = "";
@@ -19,7 +20,7 @@ namespace WpfAppCommon.Model.ClipboardApp {
             Type = type;
             Keyword = keyword;
         }
-        public AutoProcessRuleCondition(List<ClipboardContentTypes> contentTypes, int minLineCount, int maxLineCount) {
+        public AutoProcessRuleCondition(List<ContentTypes.ContentItemTypes> contentTypes, int minLineCount, int maxLineCount) {
             ContentTypes = contentTypes;
             MinLineCount = minLineCount;
             MaxLineCount = maxLineCount;
@@ -133,7 +134,7 @@ namespace WpfAppCommon.Model.ClipboardApp {
             if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
                 return false;
             }
-            if (clipboardItem.ContentType == ClipboardContentTypes.Text) {
+            if (clipboardItem.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
                 return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
             }
             return true;

@@ -126,6 +126,15 @@ namespace ClipboardApp.ViewModel {
             };
             menuItems.Add(generateSummaryMenuItem);
 
+            // 課題リストを生成
+            MenuItem generateIssuesMenuItem = new() {
+                Header = StringResources.GenerateIssues,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateIssuesCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateIssuesMenuItem);
+
             // ベクトル生成
             MenuItem generateVectorMenuItem = new() {
                 Header = StringResources.GenerateVector,
@@ -146,7 +155,7 @@ namespace ClipboardApp.ViewModel {
 
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
-                Header = StringResources.Pin,
+                Header = PythonAILib.Model.PythonAILibStringResources.Instance.Pin,
                 Command = itemViewModel.ChangePinCommand,
                 CommandParameter = itemViewModel
             };
@@ -266,44 +275,18 @@ namespace ClipboardApp.ViewModel {
         }
 
         public virtual void MergeItemCommandExecute(
-            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems, bool mergeWithHeader) {
+            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems) {
 
             if (selectedItems.Count < 2) {
                 LogWrapper.Error(StringResources.SelectTwoItemsToMerge);
                 return;
             }
-            // マージ先のアイテム。SelectedItems[0]がマージ先
-            if (selectedItems[0] is not ClipboardItemViewModel toItemViewModel) {
-                LogWrapper.Error(StringResources.MergeTargetNotSelected);
-                return;
-            }
-            List<ClipboardItemViewModel> fromItemsViewModel = [];
-            try {
-                // toItemにSelectedItems[1]からCount - 1までのアイテムをマージする
-                for (int i = 1; i < selectedItems.Count; i++) {
-                    if (selectedItems[i] is not ClipboardItemViewModel fromItemModelView) {
-                        LogWrapper.Error(StringResources.MergeSourceNotSelected);
-                        return;
-                    }
-                    fromItemsViewModel.Add(fromItemModelView);
-                }
-                toItemViewModel.MergeItems(fromItemsViewModel, mergeWithHeader);
+            selectedItems[0].MergeItems([.. selectedItems]);
 
-                // ClipboardItemをLiteDBに保存
-                toItemViewModel.SaveClipboardItemCommand.Execute(true);
-                // コピー元のアイテムを削除
-                foreach (var fromItem in fromItemsViewModel) {
-                    fromItem.DeleteItemCommand.Execute();
-                }
+            // フォルダ内のアイテムを再読み込み
+            folderViewModel.LoadFolderCommand.Execute();
+            LogWrapper.Info(StringResources.Merged);
 
-                // フォルダ内のアイテムを再読み込み
-                folderViewModel.LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.Merged);
-
-            } catch (Exception e) {
-                string message = $"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}";
-                LogWrapper.Error(message);
-            }
         }
     }
 }

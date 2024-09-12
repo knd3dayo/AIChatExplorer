@@ -21,6 +21,12 @@ namespace PythonAILib.Model {
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
         public virtual string SummaryGenerationPrompt { get; } = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
 
+        // 課題リスト生成
+        public virtual string IssuesGeneration { get; } = "課題リスト生成";
+
+        // "以下の文章から課題リストを生成してください。\n"
+        public virtual string IssuesGenerationPrompt { get; } = "以下の文章から課題リストを生成してください。出力はJSON形式で{result:[課題の項目]}でお願いします。\n";
+
         // BackgroundInformationGeneration
         public virtual string BackgroundInformationGeneration { get; } = "背景情報生成";
 

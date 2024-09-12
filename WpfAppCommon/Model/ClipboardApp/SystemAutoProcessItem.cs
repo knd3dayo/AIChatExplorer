@@ -129,7 +129,7 @@ namespace WpfAppCommon.Model.ClipboardApp {
             }
             if (name == TypeEnum.ExtractText.ToString()) {
                 return (args) => {
-                    return args.ClipboardItem.ExtractTextCommandExecute();
+                    return (ClipboardItem)args.ClipboardItem.ExtractTextCommandExecute();
                 };
             }
             if (name == TypeEnum.MaskData.ToString()) {
