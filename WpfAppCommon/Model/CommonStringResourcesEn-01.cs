@@ -99,7 +99,7 @@ namespace WpfAppCommon.Model {
         public override string File { get; } = "File";
 
         // File / Image
-        public virtual string FileOrImage { get; } = "File/Image";
+        public override string FileOrImage { get; } = "File/Image";
         // Create
         public override string Create { get; } = "Create";
         // Create Item
@@ -111,6 +111,9 @@ namespace WpfAppCommon.Model {
 
         // Generate Title
         public override string GenerateTitle { get; } = "Generate Title";
+
+        // Background Information
+        public override string BackgroundInformation { get; } = "Background Information";
 
         // Generate Background Info
         public override string GenerateBackgroundInfo { get; } = "Generate Background Info";
@@ -620,7 +623,7 @@ namespace WpfAppCommon.Model {
         // -- ListVectorDBWindow --
         public override string DisplayVectorsForTheSystem { get; } = "Display vectors for the system";
 
-        public virtual string DisplayPromptsForTheSystem { get; } = "Display prompts for the system";
+        public override string DisplayPromptsForTheSystem { get; } = "Display prompts for the system";
 
         public override string VectorDBLocation { get; } = "Vector DB location";
         public override string VectorDBType { get; } = "Vector DB type";
@@ -766,18 +769,6 @@ namespace WpfAppCommon.Model {
         public override string SpecifiedDirectoryDoesNotExist { get; } = "Specified directory does not exist";
         public override string SpecifiedDirectoryIsNotAGitRepository { get; } = "Specified directory is not a Git repository";
         public override string NoVectorDBSet { get; } = "No vector DB set";
-
-        // -- ScreenShotCheckCondition.cs --
-        public override string CheckTypeEqual { get; } = "Equal";
-        public override string CheckTypeNotEqual { get; } = "Not equal";
-        public override string CheckTypeInclude { get; } = "Include";
-        public override string CheckTypeNotInclude { get; } = "Not include";
-        public override string CheckTypeStartWith { get; } = "Start with";
-        public override string CheckTypeNotStartWith { get; } = "Not start with";
-        public override string CheckTypeEndWith { get; } = "End with";
-        public override string CheckTypeNotEndWith { get; } = "Not end with";
-        public override string CheckTypeEmpty { get; } = "Empty";
-        public override string CheckTypeCheckBox { get; } = "Check box";
 
         // -- ScriptAutoProcessItem.cs --
         public override string ExecutedPythonScript { get; } = "Executed Python script";
@@ -929,37 +920,6 @@ namespace WpfAppCommon.Model {
         public override string SourceApplicationPathContains(string Keyword) {
             return "Source Application Path Contains " + Keyword;
         }
-        public override string SettingValueIs(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " is " + SettingValue;
-        }
-        public override string SettingValueIsNot(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " is Not " + SettingValue;
-        }
-        public override string SettingValueContains(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Contains " + SettingValue;
-        }
-        public override string SettingValueNotContain(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Does Not Contain " + SettingValue;
-        }
-        public override string SettingValueStartsWith(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Starts With " + SettingValue;
-        }
-        public override string SettingValueNotStartWith(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Does Not Start With " + SettingValue;
-        }
-        public override string SettingValueEndsWith(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Ends With " + SettingValue;
-        }
-        public override string SettingValueNotEndWith(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " Does Not End With " + SettingValue;
-        }
-        public override string SettingValueIsEmpty(string SettingItem) {
-            return "Setting Value of " + SettingItem + " is Empty";
-        }
-        public override string SettingValueIsChecked(string SettingItem, string SettingValue) {
-            return "Setting Value of " + SettingItem + " is Checked " + SettingValue;
-        }
-
         public override string WorkingDirectory { get; } = "Working Directory";
         public override string RepositoryURL { get; } = "Repository URL";
         public override string LastIndexedCommit { get; } = "Last Indexed Commit";

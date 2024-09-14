@@ -1,10 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat {
+namespace QAChat.ViewModel.ImageChat
+{
 
     public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
 

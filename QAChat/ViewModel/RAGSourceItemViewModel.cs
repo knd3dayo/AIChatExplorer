@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
-using WpfAppCommon.Model.QAChat;
 
 namespace QAChat.ViewModel
 {
@@ -51,7 +49,11 @@ namespace QAChat.ViewModel
         // ComboBoxの選択肢
         public ObservableCollection<VectorDBItemBase> VectorDBItems {
             get {
-                return [.. ClipboardAppVectorDBItem.GetItems(false)];
+                var items = PythonAILibManager.Instance?.DBController.GetVectorDBItems(false);
+                if (items == null) {
+                    return new();
+                }
+                return new(items);
             }
         }
         public VectorDBItemBase? SelectedVectorDBItem {

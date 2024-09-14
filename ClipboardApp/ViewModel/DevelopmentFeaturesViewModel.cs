@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ClipboardApp.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {

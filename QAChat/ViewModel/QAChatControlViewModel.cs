@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using QAChat.Control;
+using QAChat.ViewModel.ImageChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -15,7 +16,7 @@ namespace QAChat.ViewModel {
             QAChatStartupProps = props;
 
             // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            SystemVectorDBItems.Add(props.ClipboardItem.GetFolder().GetVectorDBItem());
+            SystemVectorDBItems.Add(props.ClipboardItem.GetVectorDBItem());
 
             // ExternalVectorDBItemsを設定 ClipboardVectorDBItemのEnabledがTrueのものを取得
             ExternalVectorDBItems = [.. QAChatStartupProps.ExternalVectorDBItems];
@@ -37,9 +38,6 @@ namespace QAChat.ViewModel {
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
 
-        // 最後に画僧を選択したフォルダ
-        private string? lastSelectedImageFolder = null;
-
 
         // CollectionName
         private string? _CollectionName = null;
@@ -53,14 +51,14 @@ namespace QAChat.ViewModel {
             }
         }
         // SearchWindowを表示するAction
-        public Action<Action<List<ClipboardItem>>> ShowSearchWindowAction { get; set; } = (afterSelect) => { };
+        public Action<Action<List<ContentItemBase>>> ShowSearchWindowAction { get; set; } = (afterSelect) => { };
 
         // ClipboardItemを選択するアクション
-        public Action<Action<List<ClipboardItem>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
+        public Action<Action<List<ContentItemBase>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
 
 
         // 選択中のフォルダの全てのClipboardItem
-        public ObservableCollection<ClipboardItem> ClipboardItems { get; set; } = new();
+        public ObservableCollection<ContentItemBase> ClipboardItems { get; set; } = new();
 
 
         public Chat ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
@@ -195,8 +193,8 @@ namespace QAChat.ViewModel {
         }
 
         // SelectedContextItem
-        private ClipboardItem? _SelectedContextItem = null;
-        public ClipboardItem? SelectedContextItem {
+        private ContentItemBase? _SelectedContextItem = null;
+        public ContentItemBase? SelectedContextItem {
             get {
                 return _SelectedContextItem;
             }

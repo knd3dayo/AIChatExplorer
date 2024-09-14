@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
+using ClipboardApp.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 
 namespace ClipboardApp.ViewModel
 {

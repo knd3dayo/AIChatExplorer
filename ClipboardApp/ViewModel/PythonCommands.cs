@@ -1,7 +1,7 @@
+using ClipboardApp.Model;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

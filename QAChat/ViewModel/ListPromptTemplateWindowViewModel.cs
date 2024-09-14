@@ -2,9 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.Input;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 using QAChat.View.PromptTemplateWindow;
-using WpfAppCommon;
-using WpfAppCommon.Factory;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -98,9 +97,10 @@ namespace QAChat.ViewModel {
         private Action<PromptItemViewModel, OpenAIExecutionModeEnum> AfterSelect { get; set; } = (promptItemViewModel, mode) => { };
 
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
+            IDBController clipboardDBController = PythonAILibManager.Instance?.DBController ?? throw new NullReferenceException();
+
             // PromptItemsを更新
             PromptItems.Clear();
-            IClipboardDBController clipboardDBController = ClipboardAppFactory.Instance.GetClipboardDBController();
             foreach (var item in clipboardDBController.GetAllPromptTemplates()) {
                 // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
                 if (!IsShowSystemPromptItems && 

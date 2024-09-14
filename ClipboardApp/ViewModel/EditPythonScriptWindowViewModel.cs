@@ -1,7 +1,7 @@
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using ClipboardApp.View.PythonScriptView;
-using WpfAppCommon.Model.ClipboardApp;
+using ClipboardApp.Model;
 
 namespace ClipboardApp.ViewModel
 {

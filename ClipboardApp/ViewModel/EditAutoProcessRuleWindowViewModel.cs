@@ -1,15 +1,14 @@
 
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {

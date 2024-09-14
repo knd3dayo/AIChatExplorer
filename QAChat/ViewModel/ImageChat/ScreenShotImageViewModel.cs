@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using PythonAILib.Model;
 
 namespace QAChat.ViewModel.ImageChat {
-    public class ScreenShotImageViewModel :ObservableObject{
+    public class ScreenShotImageViewModel : ObservableObject {
 
         public ImageChatMainWindowViewModel MainWindowViewModel { get; set; }
         public ScreenShotImage ScreenShotImage { get; set; }

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Model;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.QAChat;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel

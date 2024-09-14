@@ -36,6 +36,9 @@ namespace PythonAILib.Model {
         //Tags
         public HashSet<string> Tags { get; set; } = [];
 
+        // 画像ファイルチェッカー
+        public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
+
         //　貼り付け元のアプリケーション名
         public string SourceApplicationName { get; set; } = "";
         //　貼り付け元のアプリケーションのタイトル
@@ -104,6 +107,9 @@ namespace PythonAILib.Model {
             }
         }
 
+        public abstract VectorDBItemBase GetVectorDBItem();
+
+        public abstract void CopyTo(ContentItemBase newItem);
         public abstract void Delete();
 
         public abstract void Save(bool contentIsModified = true);

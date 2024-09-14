@@ -6,16 +6,16 @@ using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.TagView;
 using ClipboardApp.ViewModel;
+using ClipboardApp.Model;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
-using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
+using ClipboardApp.Settings;
 
 namespace ClipboardApp {
     public partial class MainWindowViewModel {
@@ -137,7 +137,15 @@ namespace ClipboardApp {
         }
         // 画像エビデンスチェッカーを開くコマンド
         public void OpenScreenshotCheckerWindowExecute() {
-            ImageChatMainWindow.OpenMainWindow(null, false, () => {
+            // 選択中のフォルダがない場合 or 画像フォルダでない場合は画像ルートフォルダのアイテムを新規作成
+            ClipboardItem item;
+            if (SelectedFolder == null || SelectedFolder.ClipboardItemFolder.FolderType != ClipboardFolder.FolderTypeEnum.ImageCheck) {
+                item = new ClipboardItem(ImageCheckRootFolderViewModel.ClipboardItemFolder.Id);
+            } else {
+                item = new ClipboardItem(SelectedFolder.ClipboardItemFolder.Id);
+            }
+
+            ImageChatMainWindow.OpenMainWindow(item, () => {
                 SelectedFolder?.LoadFolderCommand.Execute();
             });
         }

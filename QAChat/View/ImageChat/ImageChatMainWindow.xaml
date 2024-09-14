@@ -12,11 +12,9 @@
     Title="{Binding StringResources.ImageChat, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:ImageChatMainWindowViewModel}"
     WindowState="Maximized"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:ImageChatMainWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -97,13 +95,7 @@
                     VerticalAlignment="Top"
                     materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
                     IsMainMenu="True">
-                    <MenuItem
-                        Height="Auto"
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Command="{Binding SettingCommand, Mode=OneTime}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Setting, Mode=OneTime}"
-                        IsEnabled="{Binding IsStartFromInternalApp}" />
+                    <MenuItem />
                 </Menu>
 
             </Grid>
@@ -218,23 +210,41 @@
                     HorizontalAlignment="Stretch"
                     Background="Gray"
                     ShowsPreview="True" />
-                <ScrollViewer
-                    Grid.Row="2"
-                    Margin="0,0,0,0"
-                    VerticalScrollBarVisibility="Auto">
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
                     <TextBox
-                        MinHeight="50"
+                        Grid.Row="0"
+                        Height="30"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
                         AcceptsReturn="True"
-                        FontSize="12"
-                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
+                        Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
-                            <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
+                            <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
                         </TextBox.InputBindings>
                     </TextBox>
-                </ScrollViewer>
+
+                    <ScrollViewer
+                        Grid.Row="1"
+                        Margin="0,0,0,0"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBox
+                            MinHeight="50"
+                            Margin="10,0,10,0"
+                            materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                            AcceptsReturn="True"
+                            FontSize="12"
+                            Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
         </Grid>
         <Border

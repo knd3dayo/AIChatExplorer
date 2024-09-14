@@ -32,11 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Control\MainWindowGridView1.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Settings\SettingUserControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

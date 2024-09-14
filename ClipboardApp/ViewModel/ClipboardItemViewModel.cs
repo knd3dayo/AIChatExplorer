@@ -3,17 +3,14 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using QAChat.Control;
-using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel;
-using WpfAppCommon;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using QAChat.View.ImageChat;
+using ClipboardApp.Model;
 
 namespace ClipboardApp.ViewModel {
     public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
@@ -75,13 +76,13 @@ namespace ClipboardApp.ViewModel {
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
-             ImageChatMainWindow.OpenMainWindow(clipboardItem, false, () => {
+             ImageChatMainWindow.OpenMainWindow(clipboardItem, () => {
                 LoadFolderCommand.Execute();
             });
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
             // 画像チェック画面を開く
-            ImageChatMainWindow.OpenMainWindow(itemViewModel.ClipboardItem, false, () => {
+            ImageChatMainWindow.OpenMainWindow(itemViewModel.ClipboardItem, () => {
                 LoadFolderCommand.Execute();
             });
         }

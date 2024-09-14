@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows;
+using ClipboardApp.Model;
 using ClipboardApp.View.ExportImportView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;

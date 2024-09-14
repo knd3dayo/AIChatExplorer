@@ -1,4 +1,5 @@
 using System.Windows;
+using PythonAILib.Model;
 using QAChat.ViewModel.ImageChat;
 using WpfAppCommon.Model;
 
@@ -10,12 +11,9 @@ namespace QAChat.View.ImageChat {
         public ImageChatMainWindow() {
             InitializeComponent();
         }
-        public static void OpenMainWindow(ClipboardItem? clipboardItem, bool isStartFromInternalApp, Action afterUpdate) {
+        public static void OpenMainWindow(ContentItemBase clipboardItem, Action afterUpdate) {
             ImageChat.ImageChatMainWindow imageEvidenceCheckerWindow = new();
-            ImageChatMainWindowViewModel imageEvidenceCheckerWindowViewModel = (ImageChatMainWindowViewModel)imageEvidenceCheckerWindow.DataContext;
-            // Initialize
-            imageEvidenceCheckerWindowViewModel.Initialize(clipboardItem, isStartFromInternalApp, afterUpdate);
-
+            imageEvidenceCheckerWindow.DataContext = new ImageChatMainWindowViewModel(clipboardItem, afterUpdate);
             imageEvidenceCheckerWindow.Show();
         }
     }

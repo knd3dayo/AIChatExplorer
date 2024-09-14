@@ -1,8 +1,9 @@
 using System.Windows;
-using WpfAppCommon.Model;
+using PythonAILib.Model;
 using QAChat.ViewModel.ImageChat;
 
-namespace QAChat.View.ImageChat {
+namespace QAChat.View.ImageChat
+{
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>

@@ -35,7 +35,11 @@ namespace QAChat.ViewModel {
                     foreach (var item in AdditionalItems) {
                         foreach (var file in item.ClipboardItem.ClipboardItemFiles) {
                             if (file.IsImage()) {
-                                ChatController.ImageURLs.Add(Chat.CreateImageURL(file.Base64String));
+                                string? base64String = file.Base64String;
+                                if (base64String == null) {
+                                    continue;
+                                }
+                                ChatController.ImageURLs.Add(Chat.CreateImageURL(base64String));
                             }
                         }
                     }
@@ -70,17 +74,8 @@ namespace QAChat.ViewModel {
                 return;
             }
             QAChatStartupProps.ClipboardItem.ChatItems = [.. ChatHistory];
-            // ClipboardItemを保存
-            QAChatStartupProps.ClipboardItem.Save();
 
-            //ChatHistoryItemがある場合は保存
-            // チャット履歴用のItemの設定
-            // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
-            ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(QAChatStartupProps.ClipboardItem.GetFolder(), ClipboardFolder.ChatRootFolder, true);
-            ClipboardItem chatHistoryItem = new(chatFolder.Id);
-
-            QAChatStartupProps.ClipboardItem.CopyTo(chatHistoryItem);
-            chatHistoryItem.Save();
+            QAChatStartupProps.SaveCommand(QAChatStartupProps.ClipboardItem);
 
         });
 
@@ -111,7 +106,7 @@ namespace QAChat.ViewModel {
             // ModeがNormal以外の場合は、VectorDBItemを取得
             ExternalVectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItemBase? item = QAChatStartupProps.ClipboardItem.GetFolder().GetVectorDBItem();
+                VectorDBItemBase? item = QAChatStartupProps.ClipboardItem.GetVectorDBItem();
                 if (item != null) {
                     ExternalVectorDBItems.Add(item);
                 }

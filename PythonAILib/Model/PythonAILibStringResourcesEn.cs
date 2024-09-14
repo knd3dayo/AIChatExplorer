@@ -168,6 +168,50 @@ namespace PythonAILib.Model {
         public override string Tag { get; } = "Tag";
         public override string BackgroundInformation { get; } = "Background Information";
 
+        // -- ScreenShotCheckCondition.cs --
+        public override string CheckTypeEqual { get; } = "Equal";
+        public override string CheckTypeNotEqual { get; } = "Not equal";
+        public override string CheckTypeInclude { get; } = "Include";
+        public override string CheckTypeNotInclude { get; } = "Not include";
+        public override string CheckTypeStartWith { get; } = "Start with";
+        public override string CheckTypeNotStartWith { get; } = "Not start with";
+        public override string CheckTypeEndWith { get; } = "End with";
+        public override string CheckTypeNotEndWith { get; } = "Not end with";
+        public override string CheckTypeEmpty { get; } = "Empty";
+        public override string CheckTypeCheckBox { get; } = "Check box";
+
+
+        public override string SettingValueIs(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " is " + SettingValue;
+        }
+        public override string SettingValueIsNot(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " is Not " + SettingValue;
+        }
+        public override string SettingValueContains(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Contains " + SettingValue;
+        }
+        public override string SettingValueNotContain(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Does Not Contain " + SettingValue;
+        }
+        public override string SettingValueStartsWith(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Starts With " + SettingValue;
+        }
+        public override string SettingValueNotStartWith(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Does Not Start With " + SettingValue;
+        }
+        public override string SettingValueEndsWith(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Ends With " + SettingValue;
+        }
+        public override string SettingValueNotEndWith(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " Does Not End With " + SettingValue;
+        }
+        public override string SettingValueIsEmpty(string SettingItem) {
+            return "Setting Value of " + SettingItem + " is Empty";
+        }
+        public override string SettingValueIsChecked(string SettingItem, string SettingValue) {
+            return "Setting Value of " + SettingItem + " is Checked " + SettingValue;
+        }
+
 
     }
 }

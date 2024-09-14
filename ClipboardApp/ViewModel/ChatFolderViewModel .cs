@@ -1,13 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
-using PythonAILib.Model;
 using QAChat.Control;
-using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel;
-using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
-using WpfAppCommon.Utils;
+using ClipboardApp.Model;
 
 namespace ClipboardApp.ViewModel
 {

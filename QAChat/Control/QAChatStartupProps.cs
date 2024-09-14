@@ -1,16 +1,12 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
-using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 
 namespace QAChat.Control {
     public class QAChatStartupProps {
-        public QAChatStartupProps(ClipboardItem clipboardItem) {
-            ClipboardFolder = clipboardItem.GetFolder();
+        public QAChatStartupProps(ContentItemBase clipboardItem) {
             ClipboardItem = clipboardItem;
         }
-        public ClipboardFolder ClipboardFolder { get; set; }
-        public ClipboardItem ClipboardItem { get; set; }
+        public ContentItemBase ClipboardItem { get; set; }
 
 
         public Action<VectorDBItemBase> OpenVectorDBItemAction { get; set; } = (vectorDBItem) => { };
@@ -21,12 +17,19 @@ namespace QAChat.Control {
 
         public List<VectorDBItemBase> ExternalVectorDBItems {
             get {
-                return [.. ClipboardAppVectorDBItem.GetEnabledItems(false)];
+                var items = PythonAILibManager.Instance?.DBController.GetVectorDBItems(false);
+                if (items == null) {
+                    return new();
+                }
+                return new(items);
             }
         }
-        public Action<Action<List<ClipboardItem>>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
+        public Action<Action<List<ContentItemBase>>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
 
-        public Action<ClipboardItem> OpenSelectedItemCommand { get; set; } = (item) => { };
+        public Action<ContentItemBase> OpenSelectedItemCommand { get; set; } = (item) => { };
+
+        public Action<ContentItemBase> SaveCommand{ get; set; } = (item) => { };
     }
+
 
 }

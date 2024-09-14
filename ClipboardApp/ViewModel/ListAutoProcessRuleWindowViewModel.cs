@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using ClipboardApp.Model;
+using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRuleView;
-using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
@@ -158,6 +158,7 @@ namespace ClipboardApp.ViewModel
         // SaveSystemCommonSettingCommand
         public SimpleDelegateCommand<object> SaveSystemCommonSettingCommand => new((parameter) => {
             if (SettingUserControlViewModel.Save()) {
+
                 LogWrapper.Info(StringResources.SavedSystemCommonSettings);
             } else {
                 LogWrapper.Warn(StringResources.NoChangesToSystemCommonSettings);

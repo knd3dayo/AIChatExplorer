@@ -3,7 +3,6 @@ using System.Windows;
 using PythonAILib.Model;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel
@@ -72,8 +71,11 @@ namespace QAChat.ViewModel
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            foreach (var item in ClipboardAppVectorDBItem.GetItems(IsShowSystemCommonVectorDB)) {
-                VectorDBItems.Add(new VectorDBItemViewModel(item));
+            var items = PythonAILibManager.Instance?.DBController.GetVectorDBItems(IsShowSystemCommonVectorDB);
+            if (items != null) {
+                foreach (var item in items) {
+                    VectorDBItems.Add(new VectorDBItemViewModel(item));
+                }
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
@@ -81,7 +83,11 @@ namespace QAChat.ViewModel
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             // SelectVectorDBItemを設定
-            SelectedVectorDBItem = new VectorDBItemViewModel(new ClipboardAppVectorDBItem());
+            var item = PythonAILibManager.Instance?.DBController.CreateVectorDBItem();
+            if (item == null) {
+                return;
+            }
+            SelectedVectorDBItem = new VectorDBItemViewModel(item);
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新

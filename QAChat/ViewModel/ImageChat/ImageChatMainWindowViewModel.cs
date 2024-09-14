@@ -7,20 +7,25 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
 using PythonAILib.PythonIF;
 using QAChat.View.ImageChat;
-using WpfAppCommon.Control.Settings;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.ImageChat {
     public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
-        public ImageChatMainWindowViewModel() {
+        public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            AfterUpdate = afterUpdate;
+            ClipboardItem = clipboardItem;
+            OnPropertyChanged(nameof(Description));
+            OnPropertyChanged(nameof(InputText));
+            OnPropertyChanged(nameof(ResultText));
+            OnPropertyChanged(nameof(ImageFiles));
 
         }
         // データ保存用のClipboardItem
-        public ClipboardItem ClipboardItem { get; set; } = new(ClipboardFolder.ImageCheckRootFolder.Id);
+        public ContentItemBase ClipboardItem { get; set; }
 
 
         // Progress Indicatorの表示状態
@@ -35,32 +40,9 @@ namespace QAChat.ViewModel.ImageChat {
             }
         }
 
-        // 内部から起動されたか否か
-        private bool isStartFromInternalApp = true;
-        public bool IsStartFromInternalApp {
-            get {
-                return isStartFromInternalApp;
-            }
-            set {
-                isStartFromInternalApp = value;
-                OnPropertyChanged(nameof(IsStartFromInternalApp));
-            }
-        }
         // 更新後の処理
         public Action AfterUpdate { get; set; } = () => { };
 
-        public void Initialize(ClipboardItem? clipboardItem, bool isStartFromInternalApp, Action afterUpdate) {
-            IsStartFromInternalApp = isStartFromInternalApp;
-            AfterUpdate = afterUpdate;
-            if (clipboardItem != null) {
-                ClipboardItem = clipboardItem;
-                OnPropertyChanged(nameof(Description));
-                OnPropertyChanged(nameof(InputText));
-                OnPropertyChanged(nameof(ResultText));
-                OnPropertyChanged(nameof(ImageFiles));
-
-            }
-        }
 
         public StringBuilder Log = new();
 
@@ -240,18 +222,6 @@ namespace QAChat.ViewModel.ImageChat {
             InputText = "";
             ImageFiles = [];
 
-        });
-
-        // 設定画面を開くコマンド
-        public SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            // SettingUserControlを生成してWindowを表示する。
-            SettingsUserControl settingsControl = new();
-            Window window = new() {
-                SizeToContent = SizeToContent.Height,
-                Title = CommonStringResources.Instance.SettingWindowTitle,
-                Content = settingsControl
-            };
-            window.ShowDialog();
         });
 
         // OpenSelectedImageFileCommand  選択した画像ファイルを開くコマンド

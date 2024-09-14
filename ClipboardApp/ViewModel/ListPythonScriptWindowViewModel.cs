@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
 using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon;
 using WpfAppCommon.Model;
-using WpfAppCommon.Model.ClipboardApp;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

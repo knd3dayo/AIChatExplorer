@@ -976,6 +976,10 @@ namespace WpfAppCommon.Model {
         public virtual string GenerateTitleInformation { get; } = "タイトルを生成します";
         // "タイトルを生成しました"
         public virtual string GeneratedTitleInformation { get; } = "タイトルを生成しました";
+
+        // 背景情報
+        public virtual string BackgroundInformation { get; } = "背景情報";
+
         // 背景情報を生成します
         public virtual string GenerateBackgroundInformation { get; } = "背景情報を生成します";
 
@@ -1196,19 +1200,6 @@ namespace WpfAppCommon.Model {
 
         // "ベクトルDBが設定されていません"
         public virtual string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
-
-        // -- ScreenShotCheckCondition.cs --
-
-        public virtual string CheckTypeEqual { get; } = "等しい";
-        public virtual string CheckTypeNotEqual { get; } = "等しくない";
-        public virtual string CheckTypeInclude { get; } = "含む";
-        public virtual string CheckTypeNotInclude { get; } = "含まない";
-        public virtual string CheckTypeStartWith { get; } = "開始している";
-        public virtual string CheckTypeNotStartWith { get; } = "開始していない";
-        public virtual string CheckTypeEndWith { get; } = "終わっている";
-        public virtual string CheckTypeNotEndWith { get; } = "終わっていない";
-        public virtual string CheckTypeEmpty { get; } = "空である";
-        public virtual string CheckTypeCheckBox { get; } = "チェックボックス";
 
         // -- ScriptAutoProcessItem.cs --
         // Pythonスクリプトを実行しました
@@ -1559,52 +1550,6 @@ namespace WpfAppCommon.Model {
         public virtual string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
 
 
-
-        // --- ScreenShotCheckCondition.cs ---
-        //  $"{SettingItem}の値は{SettingValue}である";
-        public virtual string SettingValueIs(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値は{SettingValue}である";
-        }
-
-        // $"{SettingItem}の値は{SettingValue}でない";
-        public virtual string SettingValueIsNot(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値は{SettingValue}でない";
-        }
-        // $"{SettingItem}の値に{SettingValue}が含まれている";
-        public virtual string SettingValueContains(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値に{SettingValue}が含まれている";
-        }
-        // $"{SettingItem}の値に{SettingValue}が含まれていない";
-        public virtual string SettingValueNotContain(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値に{SettingValue}が含まれていない";
-        }
-
-        // $"{SettingItem}の値が{SettingValue}で始まっている";
-        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値が{SettingValue}で始まっている";
-        }
-
-        // $"{SettingItem}の値が{SettingValue}で始まっていない";
-        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値が{SettingValue}で始まっていない";
-        }
-        // $"{SettingItem}の値が{SettingValue}で終わっている";
-        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値が{SettingValue}で終わっている";
-        }
-        // $"{SettingItem}の値が{SettingValue}で終わっていない";
-        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue) {
-            return $"{SettingItem}の値が{SettingValue}で終わっていない";
-        }
-
-        //  $"{SettingItem}の値が空である";
-        public virtual string SettingValueIsEmpty(string SettingItem) {
-            return $"{SettingItem}の値が空である";
-        }
-        // $"{SettingItem}のチェックボックスが{SettingValue}になっている";
-        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue) {
-            return $"{SettingItem}のチェックボックスが{SettingValue}になっている";
-        }
 
         // --- SystemAutoProcessItem.cs ---
         // 無視

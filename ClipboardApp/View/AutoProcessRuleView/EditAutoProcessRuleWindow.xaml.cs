@@ -11,8 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ClipboardApp.Model;
 using ClipboardApp.ViewModel;
-using WpfAppCommon.Model.ClipboardApp;
 
 namespace ClipboardApp.View.AutoProcessRuleView
 {
