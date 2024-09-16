@@ -1,9 +1,11 @@
+namespace PythonAILib.Model.Abstract
+{
 
-namespace PythonAILib.Model {
+    public abstract class PromptItemBase
+    {
 
-    public abstract class PromptItemBase {
-
-        public enum PromptTemplateTypeEnum {
+        public enum PromptTemplateTypeEnum
+        {
             // ユーザー定義
             UserDefined,
             // システム定義

@@ -2,13 +2,17 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
 
-namespace PythonAILib.Model {
+namespace PythonAILib.Model.Abstract
+{
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public abstract class VectorDBItemBase {
+    public abstract class VectorDBItemBase
+    {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
@@ -37,8 +41,10 @@ namespace PythonAILib.Model {
 
         // ベクトルDBの種類を表す文字列
         [JsonPropertyName("VectorDBTypeString")]
-        public string VectorDBTypeString {
-            get {
+        public string VectorDBTypeString
+        {
+            get
+            {
                 return Type.ToString();
             }
         }
@@ -68,20 +74,24 @@ namespace PythonAILib.Model {
         public bool IsSystem { get; set; } = false;
 
         // Json文字列化する
-        public static string ToJson(IEnumerable<VectorDBItemBase> items) {
-            var options = new JsonSerializerOptions {
+        public static string ToJson(IEnumerable<VectorDBItemBase> items)
+        {
+            var options = new JsonSerializerOptions
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            return System.Text.Json.JsonSerializer.Serialize(items, options);
+            return JsonSerializer.Serialize(items, options);
         }
         // Json文字列化する
-        public static string ToJson(VectorDBItemBase item) {
-            var options = new JsonSerializerOptions {
+        public static string ToJson(VectorDBItemBase item)
+        {
+            var options = new JsonSerializerOptions
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
-            return System.Text.Json.JsonSerializer.Serialize(item, options);
+            return JsonSerializer.Serialize(item, options);
         }
 
 
@@ -99,16 +109,20 @@ namespace PythonAILib.Model {
 
         public abstract void DeleteIndex(ImageInfo imageInfo);
 
-        public  void UpdateIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+        public void UpdateIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties)
+        {
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
         }
-        public  void DeleteIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+        public void DeleteIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties)
+        {
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
         }
-        public  void UpdateIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+        public void UpdateIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties)
+        {
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
         }
-        public void DeleteIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+        public void DeleteIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties)
+        {
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
         }
 

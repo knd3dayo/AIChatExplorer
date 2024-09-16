@@ -1,5 +1,5 @@
-
-namespace PythonAILib.Model.Abstract {
+namespace PythonAILib.Model.Abstract
+{
     public interface IDBController {
 
         //-- ClipboardItem

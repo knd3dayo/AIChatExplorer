@@ -1,8 +1,9 @@
 using System.Windows;
-using PythonAILib.Model;
 using ClipboardApp.ViewModel;
+using PythonAILib.Model.VectorDB;
 
-namespace ClipboardApp.View.VectorSearchView {
+namespace ClipboardApp.View.VectorSearchView
+{
     /// <summary>
     /// VectorSearchResultWindow.xaml の相互作用ロジック
     /// </summary>

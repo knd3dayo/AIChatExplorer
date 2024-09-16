@@ -2,12 +2,15 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
 using QAChat.Control;
 using QAChat.ViewModel.ImageChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化

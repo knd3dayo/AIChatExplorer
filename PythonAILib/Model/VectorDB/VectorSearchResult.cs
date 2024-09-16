@@ -3,8 +3,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-namespace PythonAILib.Model {
-    public class VectorSearchResult {
+namespace PythonAILib.Model.VectorDB
+{
+    public class VectorSearchResult
+    {
 
         // Content
         [JsonPropertyName("content")]
@@ -18,8 +20,10 @@ namespace PythonAILib.Model {
         [JsonPropertyName("source_url")]
         public string SourceUrl { get; set; } = string.Empty;
 
-        public string ToJson() {
-            JsonSerializerOptions jsonSerializerOptions = new() {
+        public string ToJson()
+        {
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
@@ -27,8 +31,10 @@ namespace PythonAILib.Model {
             return JsonSerializer.Serialize(this, options);
         }
 
-        public static List<VectorSearchResult> FromJson(string json) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
+        public static List<VectorSearchResult> FromJson(string json)
+        {
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };

@@ -1,10 +1,10 @@
 using System.Reflection;
-using PythonAILib.Model;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -50,14 +50,14 @@ namespace ClipboardApp.Model {
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard
-            if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
+            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
                 if (item.Content == null) {
                     return;
                 }
                 System.Windows.Clipboard.SetDataObject(item.Content);
             }
             // If ContentType is Files, copy files to clipboard
-            else if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 // FilePathの取得
                 System.Collections.Specialized.StringCollection strings = new();
                 foreach (var itemFile in item.ClipboardItemFiles) {

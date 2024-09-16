@@ -1,5 +1,7 @@
-namespace PythonAILib.Model {
-    public class CommitInfo {
+namespace PythonAILib.Model.File
+{
+    public class CommitInfo
+    {
         // コミットのハッシュ
         public string Hash { get; set; } = "";
         // コミットのメッセージ

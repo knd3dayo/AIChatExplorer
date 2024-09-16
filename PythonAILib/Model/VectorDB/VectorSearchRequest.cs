@@ -8,8 +8,10 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Threading.Tasks;
 
-namespace PythonAILib.Model {
-    public  class VectorSearchRequest {
+namespace PythonAILib.Model.VectorDB
+{
+    public class VectorSearchRequest
+    {
 
         // Query
         [JsonPropertyName("query")]
@@ -19,8 +21,10 @@ namespace PythonAILib.Model {
         [JsonPropertyName("search_kwargs")]
         public Dictionary<string, object> SearchKWArgs { get; set; } = [];
 
-    public string ToJson() {
-            JsonSerializerOptions jsonSerializerOptions = new() {
+        public string ToJson()
+        {
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };

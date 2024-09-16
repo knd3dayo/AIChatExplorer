@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PythonAILib.Model {
-    public class IssueItem {
+namespace PythonAILib.Model.Abstract
+{
+    public class IssueItemBase
+    {
 
         // タイトル
         public string Title { get; set; } = "";

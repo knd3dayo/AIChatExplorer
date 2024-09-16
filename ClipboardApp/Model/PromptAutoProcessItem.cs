@@ -1,7 +1,9 @@
 using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class PromptAutoProcessItem : SystemAutoProcessItem {
         public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;

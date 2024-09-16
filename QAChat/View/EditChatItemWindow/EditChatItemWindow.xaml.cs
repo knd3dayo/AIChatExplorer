@@ -1,8 +1,9 @@
 using System.Windows;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using QAChat.ViewModel;
 
-namespace QAChat.View.EditChatItemWindow {
+namespace QAChat.View.EditChatItemWindow
+{
     /// <summary>
     /// EditChatItemWindow.xaml の相互作用ロジック
     /// </summary>

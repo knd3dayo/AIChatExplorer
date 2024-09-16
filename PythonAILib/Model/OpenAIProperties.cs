@@ -7,8 +7,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading.Tasks;
+using PythonAILib.Model.Abstract;
 
-namespace PythonAILib.Model {
+namespace PythonAILib.Model
+{
     public class OpenAIProperties {
 
         [JsonPropertyName("OpenAIKey")]

@@ -1,7 +1,10 @@
-namespace PythonAILib.Model {
+namespace PythonAILib.Model.VectorDB
+{
     // Index更新処理結果を格納するクラス
-    public class UpdateIndexResult {
-        public enum UpdateIndexResultEnum {
+    public class UpdateIndexResult
+    {
+        public enum UpdateIndexResultEnum
+        {
             Success,
             Failed_FileNotFound,
             Failed_InvalidFileType,

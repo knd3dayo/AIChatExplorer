@@ -3,10 +3,12 @@ using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardFolderViewModel {
 
         // -- virtual
@@ -156,7 +158,7 @@ namespace ClipboardApp.ViewModel {
 
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
-                Header = PythonAILib.Model.PythonAILibStringResources.Instance.Pin,
+                Header = PythonAILibStringResources.Instance.Pin,
                 Command = itemViewModel.ChangePinCommand,
                 CommandParameter = itemViewModel
             };

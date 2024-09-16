@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.File;
 using WpfAppCommon.Model;
 
 namespace QAChat.ViewModel

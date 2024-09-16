@@ -6,14 +6,16 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -433,7 +435,7 @@ namespace ClipboardApp.Model {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
                     && newItem.SourceApplicationName == item.SourceApplicationName) {
                     // TypeがTextのアイテムのみマージ
-                    if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
+                    if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
                         sameTitleItems.Add(item);
                     }
                 }
@@ -619,13 +621,13 @@ namespace ClipboardApp.Model {
         public static ClipboardItem? CreateClipboardItem(
             ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
 
-            PythonAILib.Model.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Text;
+            PythonAILib.Model.File.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
             if (e.ContentType == SharpClipboard.ContentTypes.Text) {
-                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Text;
+                contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Files) {
-                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Files;
+                contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
-                contentTypes = PythonAILib.Model.ContentTypes.ContentItemTypes.Image;
+                contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image;
             } else if ( e.ContentType == SharpClipboard.ContentTypes.Other) {
                 return null;
             } else {
@@ -637,18 +639,18 @@ namespace ClipboardApp.Model {
             };
             SetApplicationInfo(item, e);
             // If ContentType is Text, set text data
-            if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
+            if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
                 item.Content = (string)e.Content;
             }
             // If ContentType is BitmapImage, set image data
-            if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Image) {
+            if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 // byte
                 ClipboardItemFile imageItem = ClipboardItemFile.Create(item, image);
                 item.ClipboardItemFiles.Add(imageItem);
             }
             // If ContentType is Files, set file data
-            else if (contentTypes == PythonAILib.Model.ContentTypes.ContentItemTypes.Files) {
+            else if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 string[] files = (string[])e.Content;
 
                 // Get the cut/copied file/files.
@@ -682,7 +684,7 @@ namespace ClipboardApp.Model {
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
+            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
                 return null;
             }
 
@@ -693,7 +695,7 @@ namespace ClipboardApp.Model {
                 ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
+            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileItem.FilePath);

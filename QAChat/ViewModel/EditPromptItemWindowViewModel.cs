@@ -1,9 +1,10 @@
 using System.Windows;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class EditPromptItemWindowViewModel : MyWindowViewModel {
 
         private PromptItemViewModel? itemViewModel;

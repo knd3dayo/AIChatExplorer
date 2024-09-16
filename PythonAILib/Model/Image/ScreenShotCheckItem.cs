@@ -1,5 +1,7 @@
-namespace PythonAILib.Model {
-    public class ScreenShotCheckItem {
+namespace PythonAILib.Model.Image
+{
+    public class ScreenShotCheckItem
+    {
 
         // チェック条件のリスト
         public List<ScreenShotCheckCondition> ScreenShotCheckIConditions { get; set; } = [];

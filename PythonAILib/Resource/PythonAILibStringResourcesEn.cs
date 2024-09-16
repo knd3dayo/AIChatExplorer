@@ -1,6 +1,8 @@
-namespace PythonAILib.Model {
+namespace PythonAILib.Resource
+{
 
-    public class PythonAILibStringResourcesEn : PythonAILibStringResources {
+    public class PythonAILibStringResourcesEn : PythonAILibStringResources
+    {
 
         // --- namespace WpfAppCommon.PythonIF ---
 
@@ -62,7 +64,8 @@ namespace PythonAILib.Model {
         public override string PythonInitFailed { get; } = "Failed to initialize Python.";
 
         // {function_name} function not found in Python script file
-        public override string FunctionNotFound(string function_name) {
+        public override string FunctionNotFound(string function_name)
+        {
             return $"Function '{function_name}' not found in Python script file";
         }
         // An error occurred while executing the Python script
@@ -72,7 +75,8 @@ namespace PythonAILib.Model {
         public override string ModuleNotFound { get; } = "Python module not found. Please install the module using pip install <module_name>.";
 
         // Message:\n{e.Message}\nStack Trace:\n{e.StackTrace}
-        public override string PythonExecuteErrorDetail(Exception e) {
+        public override string PythonExecuteErrorDetail(Exception e)
+        {
             return $"Message:\n{e.Message}\nStack Trace:\n{e.StackTrace}";
         }
         // Spacy model name not set. Please set SPACY_MODEL_NAME from the settings screen
@@ -181,34 +185,44 @@ namespace PythonAILib.Model {
         public override string CheckTypeCheckBox { get; } = "Check box";
 
 
-        public override string SettingValueIs(string SettingItem, string SettingValue) {
+        public override string SettingValueIs(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " is " + SettingValue;
         }
-        public override string SettingValueIsNot(string SettingItem, string SettingValue) {
+        public override string SettingValueIsNot(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " is Not " + SettingValue;
         }
-        public override string SettingValueContains(string SettingItem, string SettingValue) {
+        public override string SettingValueContains(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Contains " + SettingValue;
         }
-        public override string SettingValueNotContain(string SettingItem, string SettingValue) {
+        public override string SettingValueNotContain(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Does Not Contain " + SettingValue;
         }
-        public override string SettingValueStartsWith(string SettingItem, string SettingValue) {
+        public override string SettingValueStartsWith(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Starts With " + SettingValue;
         }
-        public override string SettingValueNotStartWith(string SettingItem, string SettingValue) {
+        public override string SettingValueNotStartWith(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Does Not Start With " + SettingValue;
         }
-        public override string SettingValueEndsWith(string SettingItem, string SettingValue) {
+        public override string SettingValueEndsWith(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Ends With " + SettingValue;
         }
-        public override string SettingValueNotEndWith(string SettingItem, string SettingValue) {
+        public override string SettingValueNotEndWith(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " Does Not End With " + SettingValue;
         }
-        public override string SettingValueIsEmpty(string SettingItem) {
+        public override string SettingValueIsEmpty(string SettingItem)
+        {
             return "Setting Value of " + SettingItem + " is Empty";
         }
-        public override string SettingValueIsChecked(string SettingItem, string SettingValue) {
+        public override string SettingValueIsChecked(string SettingItem, string SettingValue)
+        {
             return "Setting Value of " + SettingItem + " is Checked " + SettingValue;
         }
 

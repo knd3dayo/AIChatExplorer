@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Model.Image;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

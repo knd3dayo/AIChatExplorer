@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PythonAILib.Model {
-    public class PromptStringResource {
+namespace PythonAILib.Resource
+{
+    public class PromptStringResource
+    {
 
         // Instance
-        public static PromptStringResource Instance  { get; set;} = new ();
+        public static PromptStringResource Instance { get; set; } = new();
 
 
         // 定義が不明な文章については、以下の説明を参考にしてください

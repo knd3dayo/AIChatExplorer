@@ -1,5 +1,5 @@
 using System.Windows;
-using PythonAILib.Model;
+using PythonAILib.Model.Image;
 using QAChat.ViewModel.ImageChat;
 
 namespace QAChat.View.ImageChat

@@ -1,6 +1,11 @@
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);

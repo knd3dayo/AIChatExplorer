@@ -1,7 +1,14 @@
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.Image;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
 using PythonAILib.Utils;
 
-namespace PythonAILib.Model {
+namespace PythonAILib.Model
+{
     public abstract class ContentItemBase {
 
         // 生成日時
@@ -31,7 +38,7 @@ namespace PythonAILib.Model {
         public List<ChatIHistorytem> ChatItems { get; set; } = [];
 
         // Issues
-        public List<IssueItem> Issues { get; set; } = [];
+        public List<IssueItemBase> Issues { get; set; } = [];
 
         //Tags
         public HashSet<string> Tags { get; set; } = [];
@@ -201,7 +208,7 @@ namespace PythonAILib.Model {
             Issues.Clear();
 
             foreach (var item in result) {
-                IssueItem issueItem = new() {
+                IssueItemBase issueItem = new() {
                     Title = "",
                     Content = item,
                     Action = ""

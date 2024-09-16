@@ -6,7 +6,11 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using LibGit2Sharp;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

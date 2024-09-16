@@ -1,13 +1,16 @@
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド

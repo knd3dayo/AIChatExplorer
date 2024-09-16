@@ -6,12 +6,14 @@ using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
+using PythonAILib.Model.File;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
         public enum Mode {
             Create,

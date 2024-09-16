@@ -1,5 +1,7 @@
-namespace PythonAILib.Model {
-    public class FileStatus {
+namespace PythonAILib.Model.File
+{
+    public class FileStatus
+    {
         public string Path { get; set; } = "";
         public FileStatusEnum Status { get; set; } = FileStatusEnum.Unknown;
     }

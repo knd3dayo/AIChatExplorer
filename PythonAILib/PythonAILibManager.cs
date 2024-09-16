@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
 using PythonAILib.Utils;
 
-namespace QAChat {
+namespace QAChat
+{
     public class PythonAILibManager {
 
         public static PythonAILibManager? Instance { get; private set;}

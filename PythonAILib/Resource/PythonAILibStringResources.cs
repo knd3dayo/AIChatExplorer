@@ -1,12 +1,20 @@
-namespace PythonAILib.Model {
-    public class PythonAILibStringResources {
+using PythonAILib.Model;
+
+namespace PythonAILib.Resource
+{
+    public class PythonAILibStringResources
+    {
 
         private static PythonAILibStringResources? _Instance;
-        public static PythonAILibStringResources Instance {
-            get {
-                if (_Instance == null || _LangChanged) {
+        public static PythonAILibStringResources Instance
+        {
+            get
+            {
+                if (_Instance == null || _LangChanged)
+                {
                     _LangChanged = false;
-                    switch (Lang) {
+                    switch (Lang)
+                    {
                         case "ja-JP":
                             _Instance = new PythonAILibStringResources();
                             // PromptStringResourceもここで設定
@@ -25,13 +33,16 @@ namespace PythonAILib.Model {
 
         private static bool _LangChanged = false;
         private static string _Lang = "ja-JP";
-        public static string Lang {
+        public static string Lang
+        {
             get { return _Lang; }
-            set {
-                if (_Lang != value) {
+            set
+            {
+                if (_Lang != value)
+                {
                     _LangChanged = true;
                 }
-                _Lang = value; 
+                _Lang = value;
             }
         }
 
@@ -96,7 +107,8 @@ namespace PythonAILib.Model {
         public virtual string PythonInitFailed { get; } = "Pythonの初期化に失敗しました。";
 
         // "Pythonスクリプトファイルに、{function_name}関数が見つかりません"
-        public virtual string FunctionNotFound(string function_name) {
+        public virtual string FunctionNotFound(string function_name)
+        {
             return $"Pythonスクリプトファイルに、{function_name}関数が見つかりません";
         }
         // "Pythonスクリプトの実行中にエラーが発生しました
@@ -106,7 +118,8 @@ namespace PythonAILib.Model {
         public virtual string ModuleNotFound { get; } = "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。";
 
         // $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-        public virtual string PythonExecuteErrorDetail(Exception e) {
+        public virtual string PythonExecuteErrorDetail(Exception e)
+        {
             return $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
         }
         // "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください"
@@ -263,47 +276,57 @@ namespace PythonAILib.Model {
 
 
         //  $"{SettingItem}の値は{SettingValue}である";
-        public virtual string SettingValueIs(string SettingItem, string SettingValue) {
+        public virtual string SettingValueIs(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値は{SettingValue}である";
         }
 
         // $"{SettingItem}の値は{SettingValue}でない";
-        public virtual string SettingValueIsNot(string SettingItem, string SettingValue) {
+        public virtual string SettingValueIsNot(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値は{SettingValue}でない";
         }
         // $"{SettingItem}の値に{SettingValue}が含まれている";
-        public virtual string SettingValueContains(string SettingItem, string SettingValue) {
+        public virtual string SettingValueContains(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値に{SettingValue}が含まれている";
         }
         // $"{SettingItem}の値に{SettingValue}が含まれていない";
-        public virtual string SettingValueNotContain(string SettingItem, string SettingValue) {
+        public virtual string SettingValueNotContain(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値に{SettingValue}が含まれていない";
         }
 
         // $"{SettingItem}の値が{SettingValue}で始まっている";
-        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue) {
+        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値が{SettingValue}で始まっている";
         }
 
         // $"{SettingItem}の値が{SettingValue}で始まっていない";
-        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue) {
+        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値が{SettingValue}で始まっていない";
         }
         // $"{SettingItem}の値が{SettingValue}で終わっている";
-        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue) {
+        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値が{SettingValue}で終わっている";
         }
         // $"{SettingItem}の値が{SettingValue}で終わっていない";
-        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue) {
+        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}の値が{SettingValue}で終わっていない";
         }
 
         //  $"{SettingItem}の値が空である";
-        public virtual string SettingValueIsEmpty(string SettingItem) {
+        public virtual string SettingValueIsEmpty(string SettingItem)
+        {
             return $"{SettingItem}の値が空である";
         }
         // $"{SettingItem}のチェックボックスが{SettingValue}になっている";
-        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue) {
+        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue)
+        {
             return $"{SettingItem}のチェックボックスが{SettingValue}になっている";
         }
 

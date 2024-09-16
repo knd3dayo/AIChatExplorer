@@ -1,8 +1,10 @@
+using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     internal class DevelopmentFeatures {
     }
 
@@ -11,11 +13,11 @@ namespace ClipboardApp.Model {
 
         public static void CreateAutoTitle(ClipboardItem item) {
             // TextとImageの場合
-            if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text || item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Image) {
+            if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
                 item.Description = $"{item.SourceApplicationTitle}";
             }
             // Fileの場合
-            else if (item.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Files) {
+            else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
                 item.Description = $"{item.SourceApplicationTitle}";
                 // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
                 if (item.Content.Length > 20) {
@@ -43,7 +45,7 @@ namespace ClipboardApp.Model {
         // 自動処理でデータをマスキング」を実行するコマンド
         public ClipboardItem MaskDataCommandExecute() {
 
-            if (this.ContentType != PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
+            if (this.ContentType != ContentTypes.ContentItemTypes.Text) {
                 LogWrapper.Info(CommonStringResources.Instance.CannotMaskNonTextContent);
                 return this;
             }

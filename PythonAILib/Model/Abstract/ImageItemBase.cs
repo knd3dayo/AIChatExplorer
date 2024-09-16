@@ -7,34 +7,44 @@ using System.Threading.Tasks;
 using LiteDB;
 using System.Windows.Media.Imaging;
 using System.Drawing;
+using PythonAILib.Model.File;
 
-namespace PythonAILib.Model {
-    public abstract class ImageItemBase {
+namespace PythonAILib.Model.Abstract
+{
+    public abstract class ImageItemBase
+    {
 
         // 画像イメージのBase64文字列
         public string ImageBase64 { get; set; } = string.Empty;
 
         // 画像イメージ
         [BsonIgnore]
-        public Image? Image {
-            get {
-                if (string.IsNullOrEmpty(ImageBase64)) {
+        public System.Drawing.Image? Image
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageBase64))
+                {
                     return null;
                 }
                 byte[] imageBytes = Convert.FromBase64String(ImageBase64);
                 using MemoryStream ms = new(imageBytes);
-                return Image.FromStream(ms);
+                return System.Drawing.Image.FromStream(ms);
             }
-            set {
+            set
+            {
                 using MemoryStream ms = new();
                 value?.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 ImageBase64 = Convert.ToBase64String(ms.ToArray());
             }
         }
         [BsonIgnore]
-        public BitmapImage? BitmapImage {
-            get {
-                if (string.IsNullOrEmpty(ImageBase64)) {
+        public BitmapImage? BitmapImage
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ImageBase64))
+                {
                     return null;
                 }
                 byte[] binaryData = Convert.FromBase64String(ImageBase64);

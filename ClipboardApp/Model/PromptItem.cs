@@ -1,8 +1,10 @@
 using LiteDB;
-using PythonAILib.Model;
 using ClipboardApp.Factory;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Resource;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class PromptItem : PromptItemBase {
         // システム定義のプロンプト名
         public enum SystemDefinedPromptNames {

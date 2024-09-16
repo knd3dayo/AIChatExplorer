@@ -1,10 +1,12 @@
 using System.IO;
 using ClipboardApp.Factory;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
 
     /// <summary>
     /// VectorDBのアイテム

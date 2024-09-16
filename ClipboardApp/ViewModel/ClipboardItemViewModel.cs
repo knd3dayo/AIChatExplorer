@@ -5,14 +5,17 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model;
 using QAChat.Control;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
+using PythonAILib.Model.File;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ

@@ -1,5 +1,10 @@
-namespace PythonAILib.Model {
-    public abstract class RAGSourceItemBase {
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
+
+namespace PythonAILib.Model.Abstract
+{
+    public abstract class RAGSourceItemBase
+    {
 
         public string SourceURL { get; set; } = "";
         public string WorkingDirectory { get; set; } = "";

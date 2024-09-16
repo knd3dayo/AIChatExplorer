@@ -2,9 +2,12 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using PythonAILib.Resource;
 
-namespace PythonAILib.Model {
-    public class ChatIHistorytem {
+namespace PythonAILib.Model.Chat
+{
+    public class ChatIHistorytem
+    {
 
         public static string SystemRole { get; } = "system";
         public static string AssistantRole { get; } = "assistant";
@@ -29,13 +32,17 @@ namespace PythonAILib.Model {
 
         [JsonIgnore]
         // Content + Sourcesを返す
-        public string ContentWithSources {
-            get {
-                if (Sources.Count == 0) {
+        public string ContentWithSources
+        {
+            get
+            {
+                if (Sources.Count == 0)
+                {
                     return Content;
                 }
                 // sourceDocumentURLが空の場合は<参照元ドキュメントルート>とする。
-                if (string.IsNullOrEmpty(SourceDocumentURL)) {
+                if (string.IsNullOrEmpty(SourceDocumentURL))
+                {
                     SourceDocumentURL = PythonAILibStringResources.Instance.SourceDocumentRoot;
                 }
                 // Sourcesの各要素にSourceDocumentURLを付加する。
@@ -44,23 +51,27 @@ namespace PythonAILib.Model {
             }
         }
 
-        public ChatIHistorytem(string role, string text) {
+        public ChatIHistorytem(string role, string text)
+        {
             Role = role;
             Content = text;
         }
-        public ChatIHistorytem(string role , string text , List<string> sources)  {
+        public ChatIHistorytem(string role, string text, List<string> sources)
+        {
             Role = role;
             Content = text;
             Sources = sources;
         }
         // ChatItemsをJSON文字列に変換する
-        public static string ToJson(IEnumerable<ChatIHistorytem> items) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
+        public static string ToJson(IEnumerable<ChatIHistorytem> items)
+        {
+            JsonSerializerOptions jsonSerializerOptions = new()
+            {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
             JsonSerializerOptions options = jsonSerializerOptions;
-            return System.Text.Json.JsonSerializer.Serialize(items, options);
+            return JsonSerializer.Serialize(items, options);
         }
 
 

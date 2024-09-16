@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class EditVectorDBWindowViewModel : MyWindowViewModel {
 
         private VectorDBItemViewModel? itemViewModel;

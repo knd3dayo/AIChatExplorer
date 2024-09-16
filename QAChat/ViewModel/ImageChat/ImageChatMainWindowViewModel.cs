@@ -5,12 +5,15 @@ using System.Text;
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.Image;
 using PythonAILib.PythonIF;
 using QAChat.View.ImageChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat {
+namespace QAChat.ViewModel.ImageChat
+{
     public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {

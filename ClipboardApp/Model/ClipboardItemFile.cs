@@ -1,6 +1,8 @@
 using ClipboardApp.Factory;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
@@ -19,7 +21,7 @@ namespace ClipboardApp.Model
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, System.Drawing.Image image) {
             ClipboardItemFile itemFile = new() {
                 ClipboardItem = clipboardItem,
-                CachedBase64String = PythonAILib.Model.ContentTypes.GetBase64StringFromImage(image)
+                CachedBase64String = ContentTypes.GetBase64StringFromImage(image)
             };
             return itemFile;
         }

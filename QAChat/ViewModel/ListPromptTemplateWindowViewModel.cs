@@ -7,7 +7,8 @@ using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class ListPromptTemplateWindowViewModel : MyWindowViewModel {
 
         // 初期化

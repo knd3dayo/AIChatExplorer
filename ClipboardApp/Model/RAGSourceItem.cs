@@ -1,11 +1,14 @@
 using ClipboardApp.Factory;
 using LibGit2Sharp;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     /// <summary>
     /// RAGのソースとなるドキュメントを格納したリポジトリを管理するためのクラス
     /// </summary>
@@ -132,16 +135,16 @@ namespace ClipboardApp.Model {
             return commitInfo;
         }
         // 最初のコミットから最後のコミットで処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.FileStatus> GetFileStatusList() {
+        public override List<PythonAILib.Model.File.FileStatus> GetFileStatusList() {
             return GetFileStatusList(null, null);
         }
         // 指定したコミットの次のコミットで処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.FileStatus> GetAfterIndexedCommitFileStatusList() {
+        public override List<PythonAILib.Model.File.FileStatus> GetAfterIndexedCommitFileStatusList() {
             string? startHash = LastIndexCommitHash;
             return GetFileStatusList(startHash, null);
         }
         // 指定したコミット以後に処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.FileStatus> GetFileStatusList(string startHash) {
+        public override List<PythonAILib.Model.File.FileStatus> GetFileStatusList(string startHash) {
             return GetFileStatusList(startHash, "HEAD");
         }
         // HEADのコミットハッシュを取得
@@ -156,8 +159,8 @@ namespace ClipboardApp.Model {
 
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        private List<PythonAILib.Model.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
-            List<PythonAILib.Model.FileStatus> fileStatusList = [];
+        private List<PythonAILib.Model.File.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
+            List<PythonAILib.Model.File.FileStatus> fileStatusList = [];
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
                 // 現在のブランチのコミット一覧を取得
@@ -189,7 +192,7 @@ namespace ClipboardApp.Model {
                 // コミットの差分を取得
                 var changes = repository.Diff.Compare<TreeChanges>(startTree, endTree);
                 foreach (var change in changes) {
-                    PythonAILib.Model.FileStatus fileStatus = new() {
+                    PythonAILib.Model.File.FileStatus fileStatus = new() {
                         Path = change.Path,
                         Status = change.Status switch {
                             ChangeKind.Added => FileStatusEnum.Added,
@@ -210,7 +213,7 @@ namespace ClipboardApp.Model {
         }
 
         // 更新処理
-        public override UpdateIndexResult UpdateIndex(PythonAILib.Model.FileStatus fileStatus, UpdateIndexResult result) {
+        public override UpdateIndexResult UpdateIndex(PythonAILib.Model.File.FileStatus fileStatus, UpdateIndexResult result) {
 
             if (VectorDBItem == null) {
                 throw new Exception(CommonStringResources.Instance.NoVectorDBSet);

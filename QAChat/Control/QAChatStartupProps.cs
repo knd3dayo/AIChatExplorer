@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 
-namespace QAChat.Control {
+namespace QAChat.Control
+{
     public class QAChatStartupProps {
         public QAChatStartupProps(ContentItemBase clipboardItem) {
             ClipboardItem = clipboardItem;

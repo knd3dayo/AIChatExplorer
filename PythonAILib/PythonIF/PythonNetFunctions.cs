@@ -6,10 +6,16 @@ using System.Text.Unicode;
 using System.Windows.Shapes;
 using Python.Runtime;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
+using PythonAILib.Resource;
 using PythonAILib.Utils;
 
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public class PythonTask(Action action) : Task(action) {
 
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();

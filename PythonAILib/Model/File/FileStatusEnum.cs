@@ -1,5 +1,7 @@
-namespace PythonAILib.Model {
-    public enum FileStatusEnum {
+namespace PythonAILib.Model.File
+{
+    public enum FileStatusEnum
+    {
         Untracked,
         Modified,
         Added,

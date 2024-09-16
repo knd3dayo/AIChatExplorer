@@ -1,10 +1,12 @@
 using System.ComponentModel;
 
-namespace PythonAILib.Model {
+namespace PythonAILib.Model.VectorDB
+{
     /// <summary>
     /// VectorDBの種類。現在はChroma(インメモリ)のみ
     /// </summary>
-    public enum VectorDBTypeEnum {
+    public enum VectorDBTypeEnum
+    {
         [Description("Chroma")]
         Chroma = 1,
         [Description("PGVector")]

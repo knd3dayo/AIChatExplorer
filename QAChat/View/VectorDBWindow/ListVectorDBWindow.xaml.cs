@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 using QAChat.ViewModel;
 using WpfAppCommon.Model;
 

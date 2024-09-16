@@ -1,10 +1,11 @@
 using ClipboardApp.Factory;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Model.File;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
 
     // 自動処理ルールの条件
 
@@ -136,7 +137,7 @@ namespace ClipboardApp.Model {
             if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
                 return false;
             }
-            if (clipboardItem.ContentType == PythonAILib.Model.ContentTypes.ContentItemTypes.Text) {
+            if (clipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
                 return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
             }
             return true;

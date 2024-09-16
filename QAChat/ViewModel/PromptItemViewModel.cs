@@ -1,7 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class PromptItemViewModel : ObservableObject {
         public PromptItemBase PromptItem { get; set; }
         public string Content {

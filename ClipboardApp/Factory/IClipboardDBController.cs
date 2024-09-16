@@ -1,6 +1,5 @@
 using ClipboardApp.Model;
 using LiteDB;
-using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 
 namespace ClipboardApp.Factory

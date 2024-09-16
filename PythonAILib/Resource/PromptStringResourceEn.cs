@@ -1,6 +1,7 @@
-
-namespace PythonAILib.Model {
-    public class PromptStringResourceEn : PromptStringResource{
+namespace PythonAILib.Resource
+{
+    public class PromptStringResourceEn : PromptStringResource
+    {
 
         // Instance 
         public static PromptStringResourceEn Instance { get; set; } = new();
@@ -65,7 +66,7 @@ namespace PythonAILib.Model {
             "- Complete the omitted parts and create a list of propositions in the format of the above \"Japanese structure\". Also, explain the modality of each proposition.\r\n" +
             "  If there are multiple expected results, list up to 10 of the most likely ones.";
 
-        
+
         public override string GenerateQuestionRequest { get; } = "Please analyze the text and generate questions.\r\nExample:\r\n# Questions about definition (genus and specific difference)\r\n Text: Ponchororin soup is delicious.\r\n Question: Does Ponchororin soup belong to the category of soup dishes? Or what makes it different from other items in the category?\r\n# Questions about purpose and reason\r\n Text: The task of XX must be completed by the end of today.\r\n Question: What is the reason for needing to complete the task of XX by the end of today? Also, what is the purpose of performing the task of XX?\r\n# Questions about cause, background, and history\r\n Text: Tokugawa Ieyasu is a shogun.\r\n Question: What is the cause of Tokugawa Ieyasu becoming a shogun?\r\n# Questions about components and functions\r\n Text: Ponchororin soup is good for health.\r\n Question: What ingredients are used to make Ponchororin soup? And what effects does it have?";
 
         public override string AnswerRequest { get; } = "Please answer the following questions.\n";

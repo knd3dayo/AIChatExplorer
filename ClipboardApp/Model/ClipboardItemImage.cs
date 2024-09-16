@@ -2,12 +2,13 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class ClipboardItemImage_ : ImageItemBase {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;

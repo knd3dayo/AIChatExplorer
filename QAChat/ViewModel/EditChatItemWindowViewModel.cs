@@ -1,9 +1,10 @@
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel
+{
     public class EditChatItemWindowViewModel : MyWindowViewModel {
 
         private readonly TextSelector TextSelector = new();
