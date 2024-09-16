@@ -758,7 +758,15 @@ namespace ClipboardApp.Model
                     item.CreateSummary();
                 }
             });
-            await Task.WhenAll(task1, task2, task3, task4);
+            var task5 = Task.Run(() => {
+                // Issues
+                if (ClipboardAppConfig.AutoGenerateIssues) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateIssueList);
+                    item.CreateIssues();
+                }
+            });
+
+            await Task.WhenAll(task1, task2, task3, task4, task5);
 
             return item;
         }

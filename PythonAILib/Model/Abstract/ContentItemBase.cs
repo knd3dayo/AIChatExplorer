@@ -7,8 +7,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
 
-namespace PythonAILib.Model
-{
+namespace PythonAILib.Model {
     public abstract class ContentItemBase {
 
         // 生成日時
@@ -203,7 +202,7 @@ namespace PythonAILib.Model
                 return;
             }
             List<string> result = ChatUtil.CreateIssues(openAIProperties, vectorDBItems, contentText, promptItem.Prompt);
-            
+
             // IssueItemをクリア
             Issues.Clear();
 

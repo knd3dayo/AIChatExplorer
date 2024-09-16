@@ -6,8 +6,7 @@ using ClipboardApp.View.AutoProcessRuleView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
 
 

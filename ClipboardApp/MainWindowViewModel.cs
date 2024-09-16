@@ -306,17 +306,6 @@ namespace ClipboardApp {
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChatStartupProps props = new(clipboardItem) {
-                // ベクトルDBアイテムを開くアクション
-                OpenVectorDBItemAction = (vectorDBItem) => {
-                    VectorDBItemViewModel vectorDBItemViewModel = new(vectorDBItem);
-                    EditVectorDBWindow.OpenEditVectorDBWindow(vectorDBItemViewModel, (model) => { });
-                },
-                // ベクトルDBアイテムを選択するアクション
-                SelectVectorDBItemsAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                        vectorDBItems.Add(selectedItem);
-                    });
-                },
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
                     if (MainWindowViewModel.ActiveInstance == null) {
@@ -357,10 +346,6 @@ namespace ClipboardApp {
                 },
                 // Saveアクション
                 SaveCommand = (item) => {
-                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
-                    if (MainWindowViewModel.ActiveInstance == null) {
-                        return;
-                    }
                     clipboardItem = (ClipboardItem)item;
                     // ClipboardItemを保存
                     clipboardItem.Save();

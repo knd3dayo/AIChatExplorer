@@ -366,6 +366,20 @@ namespace ClipboardApp.Settings
                 isPropertyChanged = true;
             }
         }
+        // AutoGenerateIssues
+        public bool AutoGenerateIssues {
+            get {
+                return ClipboardAppConfig.AutoGenerateIssues;
+            }
+            set {
+                ClipboardAppConfig.AutoGenerateIssues = value;
+                OnPropertyChanged(nameof(AutoGenerateIssues));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
 
         // EmbeddingWhenExtractingTextFromImage
         public bool EmbeddingWhenExtractingTextFromImage {

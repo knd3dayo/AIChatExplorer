@@ -14,8 +14,7 @@ using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItemBase {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
@@ -499,15 +498,19 @@ namespace ClipboardApp.Model
 
         // 自動でサマリーを付与するコマンド
         public void CreateSummary() {
-            // システム定義のPromptItemを取得
-            PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
-            CreateSummary(promptItem, ClipboardAppConfig.CreateOpenAIProperties());
+            Task.Run(() => {
+                // システム定義のPromptItemを取得
+                PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
+                CreateSummary(promptItem, ClipboardAppConfig.CreateOpenAIProperties());
+            });
         }
         // 課題リストを作成する
         public void CreateIssues() {
-            // システム定義のPromptItemを取得
-            PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
-            CreateIssues(ClipboardAppConfig.CreateOpenAIProperties(), [ClipboardAppVectorDBItem.SystemCommonVectorDB], promptItem);
+            Task.Run(() => {
+                // システム定義のPromptItemを取得
+                PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
+                CreateIssues(ClipboardAppConfig.CreateOpenAIProperties(), [ClipboardAppVectorDBItem.SystemCommonVectorDB], promptItem);
+            });
         }
     }
 }

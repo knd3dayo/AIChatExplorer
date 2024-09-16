@@ -466,5 +466,17 @@ namespace WpfAppCommon.Properties {
                 this["AutoGenerateQA"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoGenerateIssues {
+            get {
+                return ((bool)(this["AutoGenerateIssues"]));
+            }
+            set {
+                this["AutoGenerateIssues"] = value;
+            }
+        }
     }
 }

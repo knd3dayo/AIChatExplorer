@@ -570,6 +570,22 @@ namespace WpfAppCommon.Model {
             }
         }
 
+        // 自動的にIssuesを生成する
+        private static Boolean? _autoGenerateIssues;
+        public static bool AutoGenerateIssues {
+            get {
+                if (_autoGenerateIssues == null) {
+                    _autoGenerateIssues = WpfAppCommon.Properties.Settings.Default.AutoGenerateIssues;
+                }
+                return _autoGenerateIssues.Value;
+            }
+            set {
+                _autoGenerateIssues = value;
+                WpfAppCommon.Properties.Settings.Default.AutoGenerateIssues = value;
+            }
+        }
+
+
         #endregion
 
 

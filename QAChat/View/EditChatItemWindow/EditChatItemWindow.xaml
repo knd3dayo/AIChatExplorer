@@ -5,6 +5,7 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -12,6 +13,7 @@
     Title="{Binding StringResources.ChatItem, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:EditChatItemWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
@@ -22,9 +24,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <local:EditChatItemWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -67,7 +66,7 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <TextBox
+        <editorControl:MyTextBox
             x:Name="textBox"
             Grid.Row="1"
             Margin="10,10,10,10"
@@ -77,21 +76,7 @@
             IsReadOnly="True"
             Text="{Binding ChatItem.Content, Mode=OneWay}"
             TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
-            VerticalScrollBarVisibility="Auto">
-            <TextBox.InputBindings>
-                <KeyBinding
-                    Key="A"
-                    Command="{Binding SelectTextCommand, Mode=OneTime}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                    Modifiers="Ctrl" />
-                <!--  選択したテキストをプロセスとして実行  -->
-                <KeyBinding
-                    Key="O"
-                    Command="{Binding ExecuteSelectedTextCommand, Mode=OneTime}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                    Modifiers="Ctrl" />
-            </TextBox.InputBindings>
-        </TextBox>
+            VerticalScrollBarVisibility="Auto" />
         <Grid Grid.Row="2">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
                 <Button

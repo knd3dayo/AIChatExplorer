@@ -223,7 +223,7 @@
                         AcceptsReturn="True"
                         Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
-                            <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                            <MouseBinding Command="{Binding SelectPromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
                         </TextBox.InputBindings>
                     </TextBox>
 

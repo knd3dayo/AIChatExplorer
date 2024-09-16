@@ -16,6 +16,7 @@
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
+        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -313,6 +314,62 @@
                         FontSize="10pt"
                         Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}" />
                 </TabItem>
+                <!--  Issues用のDataGridを表示するためのTabItem  -->
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="{Binding StringResources.IssuesList, Mode=OneTime}"
+                    Visibility="{Binding ItemViewModel.IssuesVisibility}">
+                    <DataGrid
+                        Name="IssuesDataGrid"
+                        Margin="10,0,10,0"
+                        AutoGenerateColumns="False"
+                        BorderThickness="1"
+                        CanUserAddRows="True"
+                        CanUserDeleteRows="True"
+                        CanUserReorderColumns="False"
+                        CanUserResizeColumns="True"
+                        CanUserResizeRows="False"
+                        CanUserSortColumns="True"
+                        ItemsSource="{Binding ItemViewModel.Issues}"
+                        RowHeaderWidth="0"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow"
+                        VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding IssueItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="150"
+                                Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Title}" />
+                            <DataGridTextColumn
+                                Width="400"
+                                Binding="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Content}" />
+                            <DataGridTextColumn
+                                Width="250"
+                                Binding="{Binding Action, UpdateSourceTrigger=PropertyChanged}"
+                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Action}" />
+                        </DataGrid.Columns>
+                        <DataGrid.ContextMenu>
+                            <!--  削除  -->
+                            <ContextMenu>
+                                <MenuItem
+                                    Command="{Binding DeleteIssueCommand}"
+                                    CommandParameter="{Binding}"
+                                    Header="{Binding StringResources.Delete}" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                    </DataGrid>
+                </TabItem>
+
                 <!--  サマリー  -->
                 <TabItem
                     Width="Auto"

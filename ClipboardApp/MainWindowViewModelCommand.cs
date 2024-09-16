@@ -417,9 +417,7 @@ namespace ClipboardApp {
             // ListPromptTemplateWindowを開く
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => {
                 // PromptTemplate = promptTemplateWindowViewModel.PromptItem;
-            },
-            // PromptItemを作成する関数
-            () => { return new PromptItem(); });
+            });
         }
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public void OpenListAutoProcessRuleWindowCommandExecute() {

@@ -11,10 +11,6 @@ namespace QAChat.Control
         public ContentItemBase ClipboardItem { get; set; }
 
 
-        public Action<VectorDBItemBase> OpenVectorDBItemAction { get; set; } = (vectorDBItem) => { };
-
-        public Action<ObservableCollection<VectorDBItemBase>> SelectVectorDBItemsAction { get; set; } = (vectorDBItems) => { };
-
         public Action<ObservableCollection<VectorDBItemBase>> SelectFolderAction { get; set; } = (folders) => { };
 
         public List<VectorDBItemBase> ExternalVectorDBItems {

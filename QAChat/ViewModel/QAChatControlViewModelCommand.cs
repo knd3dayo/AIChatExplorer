@@ -6,11 +6,11 @@ using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
+using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel {
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド
@@ -138,6 +138,7 @@ namespace QAChat.ViewModel
         public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
 
             PromptTemplateCommandExecute(parameter);
+
         });
 
         // チャットアイテムを編集するコマンド
@@ -161,7 +162,9 @@ namespace QAChat.ViewModel
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenExternalVectorDBItemCommand => new((parameter) => {
-            QAChatStartupProps?.SelectVectorDBItemsAction(ExternalVectorDBItems);
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                ExternalVectorDBItems.Add(selectedItem);
+            });
         });
 
         // 選択したVectorDBItemをリストから削除するコマンド

@@ -3,19 +3,18 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model.Abstract;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using ClipboardApp.Factory;
-using ClipboardApp.Model;
-using PythonAILib.Model.Abstract;
-using PythonAILib.Model.VectorDB;
-using PythonAILib.Model.File;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -96,6 +95,17 @@ namespace ClipboardApp.ViewModel
                 OnPropertyChanged(nameof(Description));
             }
         }
+
+        // Issues
+        public ObservableCollection<IssueItemBase> Issues {
+            get {
+                return [.. ClipboardItem.Issues];
+            }
+            set {
+                ClipboardItem.Issues = [.. value];
+                OnPropertyChanged(nameof(Issues));
+            }
+        }
         // Tags
         public HashSet<string> Tags {
             get {
@@ -171,6 +181,17 @@ namespace ClipboardApp.ViewModel
                 }
             }
         }
+        // Issuesが空の場合はCollapsed,それ以外はVisible
+        public Visibility IssuesVisibility {
+            get {
+                if (ClipboardItem.Issues.Count == 0) {
+                    return Visibility.Collapsed;
+                } else {
+                    return Visibility.Visible;
+                }
+            }
+        }
+
         // サマリーが空の場合はCollapsed,それ以外はVisible
         public Visibility SummaryVisibility {
             get {
@@ -458,6 +479,18 @@ namespace ClipboardApp.ViewModel
             IsPinned = !IsPinned;
             // ピン留めの時は更新日時を変更しない
             SaveClipboardItemCommand.Execute(false);
+        });
+
+        // Issuesの削除
+        public SimpleDelegateCommand<IssueItemBase> DeleteIssueCommand => new((item) => {
+            ClipboardItem.Issues.Remove(item);
+            // Issuesを更新
+            Issues.Clear();
+            foreach (var issue in ClipboardItem.Issues) {
+                Issues.Add(issue);
+            }
+            OnPropertyChanged(nameof(Issues));
+
         });
     }
 }

@@ -14,8 +14,7 @@ namespace QAChat.View.EditChatItemWindow
 
         public static void OpenEditChatItemWindow(ChatIHistorytem chatItem) {
             var window = new EditChatItemWindow();
-            EditChatItemWindowViewModel model = (EditChatItemWindowViewModel)window.DataContext;
-            model.Initialize(chatItem);
+            window.DataContext = new EditChatItemWindowViewModel(chatItem);
             window.Show();
         }
 

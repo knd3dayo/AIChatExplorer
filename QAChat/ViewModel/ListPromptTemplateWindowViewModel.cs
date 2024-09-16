@@ -12,14 +12,12 @@ namespace QAChat.ViewModel
     public class ListPromptTemplateWindowViewModel : MyWindowViewModel {
 
         // 初期化
-        public ListPromptTemplateWindowViewModel(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate, Func<PromptItemBase> createPromptItemFunction) {
+        public ListPromptTemplateWindowViewModel(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
             // PromptItemsを更新
             ReloadCommand.Execute();
             AfterSelect = afterUpdate;
             // ActionModeを設定
             ActionMode = actionMode;
-            // CreatePromptItemFunctionを設定
-            CreatePromptItemFunction = createPromptItemFunction;
 
             // SelectButtonTextを更新
             OnPropertyChanged(nameof(SelectButtonText));
@@ -29,9 +27,6 @@ namespace QAChat.ViewModel
             OnPropertyChanged(nameof(ModeVisibility));
 
         }
-        // PromptItemを作成する処理
-        public Func<PromptItemBase> CreatePromptItemFunction { get; set; } 
-
         // プロンプトテンプレートの一覧
         public ObservableCollection<PromptItemViewModel> PromptItems { get; set; } = [];
         // 選択中の自動処理ルール
@@ -129,7 +124,9 @@ namespace QAChat.ViewModel
 
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
-            PromptItemBase item = CreatePromptItemFunction();
+            IDBController clipboardDBController = PythonAILibManager.Instance?.DBController ?? throw new NullReferenceException();
+            PromptItemBase item = clipboardDBController.CreatePromptItem();
+
             PromptItemViewModel itemViewModel = new (item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {
                 // PromptItemsを更新

@@ -624,10 +624,6 @@ namespace ClipboardApp.ViewModel
                 // PromptTemplateが選択されたら、PromptTemplateに設定
                 ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptItemViewModel, mode) => {
                     SelectedPromptItem = promptItemViewModel;
-                },
-                // PromptItemを作成
-                () => {
-                    return new PromptItem();
                 });
         });
 

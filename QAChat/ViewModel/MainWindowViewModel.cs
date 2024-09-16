@@ -32,18 +32,9 @@ namespace QAChat.ViewModel {
             }
         }
 
-
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 QAChatControlViewModel.PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
-            },
-            // PromptItemBaseを生成する関数
-            () => { 
-                var item = PythonAILibManager.Instance?.DBController.CreatePromptItem();
-                if (item == null) {
-                    throw new Exception("Failed to generate PromptItem");
-                }
-                return item;
             });
         }
     }

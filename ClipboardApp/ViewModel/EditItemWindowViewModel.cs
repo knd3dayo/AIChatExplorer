@@ -4,7 +4,7 @@ using System.Windows.Media;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.TagView;
-using WpfAppCommon;
+using PythonAILib.Model.Abstract;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -12,7 +12,7 @@ namespace ClipboardApp.ViewModel {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    class EditItemWindowViewModel : MyWindowViewModel {
+    public class EditItemWindowViewModel : MyWindowViewModel {
 
 
         private ClipboardItemViewModel? itemViewModel;
@@ -135,6 +135,9 @@ namespace ClipboardApp.ViewModel {
         }
         public int SelectedImageIndex { get; set; } = 0;
 
+        // SelectedIssueItem
+        public IssueItemBase? SelectedIssueItem { get; set; }
+
         public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
@@ -200,6 +203,27 @@ namespace ClipboardApp.ViewModel {
             // ウィンドウを閉じる
             window.Close();
         });
+
+        // Issuesの削除
+        public SimpleDelegateCommand<object> DeleteIssueCommand => new((parameter) => {
+            if (SelectedIssueItem == null) {
+                return;
+            }
+            ItemViewModel?.DeleteIssueCommand.Execute(SelectedIssueItem);
+        });
+
+        // IssuesのSelectionChangedイベント発生時の処理
+        public SimpleDelegateCommand<RoutedEventArgs> IssueItemSelectionChangedCommand => new((routedEventArgs) => {
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                IssueItemBase item = (IssueItemBase)dataGrid.SelectedItem;
+                SelectedIssueItem = item;
+            }
+
+        });
+
+
 
     }
 }

@@ -9,11 +9,11 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Image;
 using PythonAILib.PythonIF;
 using QAChat.View.ImageChat;
+using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace QAChat.ViewModel.ImageChat {
     public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
@@ -47,8 +47,6 @@ namespace QAChat.ViewModel.ImageChat
         public Action AfterUpdate { get; set; } = () => { };
 
 
-        public StringBuilder Log = new();
-
         // プロンプトの入力テキスト
         public string InputText {
             get {
@@ -77,6 +75,17 @@ namespace QAChat.ViewModel.ImageChat
             set {
                 ClipboardItem.Description = value;
                 OnPropertyChanged(nameof(Description));
+            }
+        }
+        // PromptText
+        private string _PromptText = "";
+        public string PromptText {
+            get {
+                return _PromptText;
+            }
+            set {
+                _PromptText = value;
+                OnPropertyChanged(nameof(PromptText));
             }
         }
 
@@ -142,7 +151,6 @@ namespace QAChat.ViewModel.ImageChat
                 // モードがNormalの場合はOpenAIChatでチャットを送信
                 ChatResult? result = null;
                 await Task.Run(() => {
-                    string prompt = InputText;
 
                     // ScreenShotImageのリストからファイル名のリストを取得
                     List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
@@ -153,19 +161,13 @@ namespace QAChat.ViewModel.ImageChat
                     Chat chatRequest = new(ClipboardAppConfig.CreateOpenAIProperties()) {
                         ChatMode = OpenAIExecutionModeEnum.Normal,
                         ImageURLs = imageBase64Strings,
-                        ContentText = prompt
+                        ContentText = InputText,
+                        PromptTemplateText = PromptText
+
                     };
-                    // ログ
-                    LogWrapper.Info($"{StringResources.SendPrompt}{prompt}");
-                    // imageFileNamesをログに追加
-                    LogWrapper.Info($"{StringResources.ImageFileName}:{string.Join(",", imageFileNames)}");
                     // ChatRequestを送信してChatResultを受信
                     result = chatRequest.ExecuteChat();
 
-                    // verboseがある場合はログに追加
-                    if (!string.IsNullOrEmpty(result?.Verbose)) {
-                        Log.AppendLine(result.Verbose);
-                    }
                 });
                 // 結果を表示
                 if (result == null) {
@@ -245,6 +247,13 @@ namespace QAChat.ViewModel.ImageChat
             ClipboardItem.ScreenShotCheckItem.ScreenShotImages.Remove(image.ScreenShotImage);
             OnPropertyChanged(nameof(ImageFiles));
         });
+
+        public SimpleDelegateCommand<object> SelectPromptTemplateCommand => new((parameter) => {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
+            });
+        });
+
 
 
     }

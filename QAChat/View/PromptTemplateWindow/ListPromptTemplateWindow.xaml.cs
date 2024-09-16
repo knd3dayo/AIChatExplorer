@@ -15,9 +15,9 @@ namespace QAChat.View.PromptTemplateWindow
         }
 
         public static void OpenListPromptTemplateWindow(
-            ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback, Func<PromptItemBase> createPromptItemFunction) {
+            ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback) {
             ListPromptTemplateWindow listPromptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = new (actionModeEum, callback, createPromptItemFunction);
+            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = new (actionModeEum, callback);
             listPromptTemplateWindow.DataContext = listPromptTemplateWindowViewModel;
             listPromptTemplateWindow.ShowDialog();
         }
