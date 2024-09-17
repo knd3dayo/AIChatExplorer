@@ -3,11 +3,9 @@ using System.Windows.Controls;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
-using PythonAILib.PythonIF;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
 using QAChat.View.VectorDBWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel {
@@ -21,31 +19,11 @@ namespace QAChat.ViewModel {
                 // プログレスバーを表示
                 IsIndeterminate = true;
 
-                // Python処理機能の初期化
-                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
-
                 await Task.Run(() => {
 
                     // LangChainChat用。VectorDBItemsを設定
                     List<VectorDBItemBase> items = [.. SystemVectorDBItems, .. ExternalVectorDBItems];
                     ChatController.VectorDBItems = items;
-
-                    // ImageFilesとImageItemsのImageをChatControllerに設定
-                    ChatController.ImageURLs = [];
-                    foreach (var item in ImageFiles) {
-                        ChatController.ImageURLs.Add(Chat.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
-                    }
-                    foreach (var item in AdditionalItems) {
-                        foreach (var file in item.ClipboardItem.ClipboardItemFiles) {
-                            if (file.IsImage()) {
-                                string? base64String = file.Base64String;
-                                if (base64String == null) {
-                                    continue;
-                                }
-                                ChatController.ImageURLs.Add(Chat.CreateImageURL(base64String));
-                            }
-                        }
-                    }
 
                     // OpenAIChat or LangChainChatを実行
                     result = ChatController.ExecuteChat();
@@ -67,18 +45,6 @@ namespace QAChat.ViewModel {
             } finally {
                 IsIndeterminate = false;
             }
-
-        });
-
-        // Saveコマンド
-        public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
-            // ChatHistoryをClipboardItemに設定
-            if (QAChatStartupProps.ClipboardItem == null) {
-                return;
-            }
-            QAChatStartupProps.ClipboardItem.ChatItems = [.. ChatHistory];
-
-            QAChatStartupProps.SaveCommand(QAChatStartupProps.ClipboardItem);
 
         });
 
@@ -180,14 +146,13 @@ namespace QAChat.ViewModel {
 
             // ペースト処理を実行
             QAChatStartupProps?.PasteFromClipboardCommandAction((values) => {
-                // ペーストしたアイテムを追加する
-                foreach (var item in values) {
-                    MainUITask.Run(() => {
-                        AdditionalItemViewModel additionalItemViewModel = new(this, item);
-                        AdditionalItems.Add(additionalItemViewModel);
-                        OnPropertyChanged(nameof(AdditionalItems));
-                    });
-                }
+                MainUITask.Run(() => {
+                    // ペーストしたアイテムを追加する
+                    foreach (var item in values) {
+                        ChatController.AdditionalItems.Add(item);
+                    }
+                    OnPropertyChanged(nameof(AdditionalItems));
+                });
             });
         });
         // 選択したアイテムを開くコマンド

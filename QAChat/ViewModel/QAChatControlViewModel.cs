@@ -5,16 +5,16 @@ using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
 using QAChat.Control;
+using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.ImageChat;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel {
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
-        public QAChatControlViewModel(QAChatStartupProps props, Action<object>? PromptTemplateCommandExecute) {
+        public QAChatControlViewModel(QAChatStartupProps props) {
 
             QAChatStartupProps = props;
 
@@ -29,10 +29,6 @@ namespace QAChat.ViewModel
             // ClipboardItemがある場合は、ChatItemsを設定
             if (QAChatStartupProps.ClipboardItem != null) {
                 ChatHistory = [.. QAChatStartupProps.ClipboardItem.ChatItems];
-            }
-            // PromptTemplateCommandExecuteを設定
-            if (PromptTemplateCommandExecute != null) {
-                this.PromptTemplateCommandExecute = PromptTemplateCommandExecute;
             }
 
         }
@@ -53,19 +49,18 @@ namespace QAChat.ViewModel
                 OnPropertyChanged(nameof(CollectionName));
             }
         }
-        // SearchWindowを表示するAction
-        public Action<Action<List<ContentItemBase>>> ShowSearchWindowAction { get; set; } = (afterSelect) => { };
-
-        // ClipboardItemを選択するアクション
-        public Action<Action<List<ContentItemBase>>> SetContentTextFromClipboardItemsAction { get; set; } = (afterSelect) => { };
-
-
+        
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ContentItemBase> ClipboardItems { get; set; } = new();
 
 
         public Chat ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
-        public Action<object> PromptTemplateCommandExecute { get; set; } = (parameter) => { };
+        
+        private void PromptTemplateCommandExecute(object parameter) {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;
+            });
+        }
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -148,18 +143,6 @@ namespace QAChat.ViewModel
             }
         }
 
-        // 画像ファイルのリスト
-        private ObservableCollection<ScreenShotImageViewModel> _ImageFiles = new();
-        public ObservableCollection<ScreenShotImageViewModel> ImageFiles {
-            get {
-                return _ImageFiles;
-            }
-            set {
-                _ImageFiles = value;
-                OnPropertyChanged(nameof(ImageFiles));
-            }
-        }
-
 
         public string InputText {
             get {
@@ -169,8 +152,8 @@ namespace QAChat.ViewModel
                 ChatController.ContentText = value;
                 OnPropertyChanged(nameof(InputText));
             }
-
         }
+
         // プロンプトの文字列
         public string PromptText {
             get {
@@ -182,16 +165,14 @@ namespace QAChat.ViewModel
             }
         }
 
-        // AdditionalTextItems
-        private ObservableCollection<AdditionalItemViewModel> _AdditionalItems = new();
+        // AdditionalItems
         public ObservableCollection<AdditionalItemViewModel> AdditionalItems {
             get {
-
-                return _AdditionalItems;
-            }
-            set {
-                _AdditionalItems = value;
-                OnPropertyChanged(nameof(AdditionalItems));
+                ObservableCollection<AdditionalItemViewModel> items = [];
+                foreach (var item in ChatController.AdditionalItems) {
+                    items.Add(new(this, item));
+                }
+                return items;
             }
         }
 
@@ -207,26 +188,8 @@ namespace QAChat.ViewModel
             }
         }
 
-
         public string PreviewJson {
             get {
-                // ImageFilesとImageItemsのImageをChatControllerに設定
-                ChatController.ImageURLs = [];
-                foreach (var item in ImageFiles) {
-                    ChatController.ImageURLs.Add(Chat.CreateImageURLFromFilePath(item.ScreenShotImage.ImagePath));
-                }
-                foreach (var item in AdditionalItems) {
-                    foreach (var imageItem in item.ClipboardItem.ClipboardItemFiles) {
-                        if (! imageItem.IsImage()) {
-                            continue;
-                        }
-                        if (string.IsNullOrEmpty(imageItem.Base64String)) {
-                            continue;
-                        }
-                        ChatController.ImageURLs.Add(Chat.CreateImageURL(imageItem.Base64String));
-                    }
-                }
-
                 return ChatController.CreateOpenAIRequestJSON();
             }
         }
@@ -236,8 +199,6 @@ namespace QAChat.ViewModel
                 return ChatController.CreatePromptText();
             }
         }
-
-        private readonly TextSelector TextSelector = new();
 
         // 左側メニューのDrawer表示状態
         private bool _IsDrawerOpen = true;

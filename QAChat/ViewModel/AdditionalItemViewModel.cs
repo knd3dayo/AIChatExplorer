@@ -23,7 +23,7 @@ namespace QAChat.Control {
 
         // RemoveSelectedItemCommand
         public SimpleDelegateCommand<object> RemoveSelectedItemCommand => new((parameter) => {
-            QAChatControlViewModel.AdditionalItems.Remove(this);
+            QAChatControlViewModel.ChatController.AdditionalItems.Remove(ClipboardItem);
         });
 
         // OpenSelectedItemCommand

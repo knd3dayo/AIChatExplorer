@@ -2,8 +2,7 @@ using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 
-namespace QAChat.Control
-{
+namespace QAChat.Control {
     public class QAChatStartupProps {
         public QAChatStartupProps(ContentItemBase clipboardItem) {
             ClipboardItem = clipboardItem;
@@ -22,11 +21,11 @@ namespace QAChat.Control
                 return new(items);
             }
         }
-        public Action<Action<List<ContentItemBase>>> PasteFromClipboardCommandAction{ get; set;} = (items) => { };
+        public Action<Action<List<ContentItemBase>>> PasteFromClipboardCommandAction { get; set; } = (items) => { };
 
         public Action<ContentItemBase> OpenSelectedItemCommand { get; set; } = (item) => { };
 
-        public Action<ContentItemBase> SaveCommand{ get; set; } = (item) => { };
+        public Action<ContentItemBase> SaveCommand { get; set; } = (item) => { };
     }
 
 

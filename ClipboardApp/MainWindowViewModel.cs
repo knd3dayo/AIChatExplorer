@@ -308,11 +308,11 @@ namespace ClipboardApp {
             QAChatStartupProps props = new(clipboardItem) {
                 // フォルダ選択アクション
                 SelectFolderAction = (vectorDBItems) => {
-                    if (MainWindowViewModel.ActiveInstance == null) {
+                    if (ActiveInstance == null) {
                         LogWrapper.Error("MainWindowViewModelがNullです");
                         return;
                     }
-                    FolderSelectWindow.OpenFolderSelectWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, (folderViewModel) => {
+                    FolderSelectWindow.OpenFolderSelectWindow(ActiveInstance.RootFolderViewModel, (folderViewModel) => {
                         vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
                     });
 
@@ -320,11 +320,11 @@ namespace ClipboardApp {
                 // ペーストアクション
                 PasteFromClipboardCommandAction = (action) => {
                     // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
-                    if (MainWindowViewModel.ActiveInstance == null) {
+                    if (ActiveInstance == null) {
                         return;
                     }
                     List<ClipboardItem> result = [];
-                    MainWindowViewModel.PasteFromClipboardCommandExecute(MainWindowViewModel.ActiveInstance, false, (newItems) => {
+                    PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
                         // newItemsをContentItemBaseに変換
                         List<ContentItemBase> contentItemBases = [.. newItems];
                         action(contentItemBases);

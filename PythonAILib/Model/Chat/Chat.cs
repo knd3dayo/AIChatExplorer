@@ -49,9 +49,7 @@ namespace PythonAILib.Model.Chat {
         public int MaxTokens { get; set; } = 0;
 
 
-        public List<string> AdditionalTextItems { get; set; } = [];
-
-        public List<string> AdditionalImageURLs { get; set; } = [];
+        public List<ContentItemBase> AdditionalItems { get; set; } = [];
 
         public List<VectorDBItemBase> VectorDBItems { get; set; } = [];
 
@@ -67,11 +65,11 @@ namespace PythonAILib.Model.Chat {
             promptText += ContentText;
 
             // ContextItemsが空でない場合は、ContextItemsのContentを追加
-            if (AdditionalTextItems.Any()) {
+            if (AdditionalItems.Any()) {
                 promptText += PythonAILibStringResources.Instance.SourcesHeader;
                 // ContextItemsのContentを追加
-                foreach (var item in AdditionalTextItems) {
-                    promptText += item + "\n";
+                foreach (ContentItemBase item in AdditionalItems) {
+                    promptText += item.Content + "\n";
                 }
             }
             return promptText;
@@ -84,15 +82,8 @@ namespace PythonAILib.Model.Chat {
             return result;
         }
 
-        public static string CreateImageURL(byte[] imageBytes) {
-            // filePathから画像のBase64文字列を作成
-            string base64String = Convert.ToBase64String(imageBytes);
-            string result = CreateImageURL(base64String);
-            return result;
-        }
-
         public static string CreateImageURL(string base64String) {
-            string base64Header = base64String.Substring(0, 5);
+
             ContentTypes.ImageType imageType = ContentTypes.GetImageTypeFromBase64(base64String);
             if (imageType == ContentTypes.ImageType.unknown) {
                 return "";
@@ -104,7 +95,14 @@ namespace PythonAILib.Model.Chat {
             return result;
         }
 
-        public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
+        private static string CreateImageURL(byte[] imageBytes) {
+            // filePathから画像のBase64文字列を作成
+            string base64String = Convert.ToBase64String(imageBytes);
+            string result = CreateImageURL(base64String);
+            return result;
+        }
+
+        private static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
 
             //OpenAIのリクエストパラメーターのContent部分のデータを作成
             List<Dictionary<string, object>> parameters = [];
@@ -127,7 +125,8 @@ namespace PythonAILib.Model.Chat {
             }
             return parameters;
         }
-        public List<Dictionary<string, object>> CreateOpenAIMessagesList() {
+
+        private  List<Dictionary<string, object>> CreateOpenAIMessagesList() {
             //OpenAIのリクエストパラメーターのMessage部分のデータを作成
             // Messages部分はRoleとContentからなるDictionaryのリスト
             List<Dictionary<string, object>> messages = [];
@@ -140,11 +139,24 @@ namespace PythonAILib.Model.Chat {
             }
             // このオブジェクトのプロパティを基にしたContentを作成
             // ImageURLとAdditionalImageURLsを結合したリストを作成
-            List<string> imageUrls = ImageURLs.Concat(AdditionalImageURLs).ToList();
+            List<string> additionalImageURLs = [];
+            foreach (ContentItemBase item in AdditionalItems) {
+                foreach (var imageItem in item.ClipboardItemFiles) {
+                    if (imageItem.IsImage()) {
+                        string? base64String = imageItem.Base64String;
+                        if (base64String == null) {
+                            continue;
+                        }
+                        additionalImageURLs.Add(CreateImageURL(base64String));
+                    }
+                }
+            }
+
+            List<string> imageURLs = [.. ImageURLs, .. additionalImageURLs];
 
             var dc = new Dictionary<string, object> {
                 ["role"] = ChatIHistorytem.UserRole,
-                ["content"] = CreateOpenAIContentList(CreatePromptText(), imageUrls)
+                ["content"] = CreateOpenAIContentList(CreatePromptText(), imageURLs)
             };
             messages.Add(dc);
             return messages;
