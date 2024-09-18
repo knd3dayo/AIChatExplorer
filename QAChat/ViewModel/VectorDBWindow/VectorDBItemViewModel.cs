@@ -3,8 +3,7 @@ using PythonAILib.Model.Abstract;
 using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel.VectorDBWindow {
     public class VectorDBItemViewModel : MyWindowViewModel {
 
         private readonly VectorDBItemBase item;

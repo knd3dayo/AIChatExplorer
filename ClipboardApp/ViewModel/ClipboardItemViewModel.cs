@@ -369,7 +369,7 @@ namespace ClipboardApp.ViewModel {
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(ClipboardItem);
-            QAChat.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
+            QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
 
         });
 

@@ -1,6 +1,7 @@
 using System.Windows;
 using PythonAILib.Model.Chat;
 using QAChat.ViewModel;
+using QAChat.ViewModel.QAChatMain;
 
 namespace QAChat.View.EditChatItemWindow
 {

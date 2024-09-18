@@ -11,13 +11,15 @@ using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
 using ClipboardApp.Settings;
+using QAChat.ViewModel.VectorDBWindow;
+using QAChat.ViewModel.PromptTemplateWindow;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel {
 
 

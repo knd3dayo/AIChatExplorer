@@ -6,9 +6,11 @@ using PythonAILib.Model.Chat;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
 using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel.QAChatMain
+{
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド

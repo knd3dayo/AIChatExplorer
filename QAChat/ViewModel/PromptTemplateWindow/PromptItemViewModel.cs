@@ -1,35 +1,44 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Abstract;
 
-namespace QAChat.ViewModel
+namespace QAChat.ViewModel.PromptTemplateWindow
 {
-    public class PromptItemViewModel : ObservableObject {
+    public class PromptItemViewModel : ObservableObject
+    {
         public PromptItemBase PromptItem { get; set; }
-        public string Content {
+        public string Content
+        {
             get => PromptItem.Prompt;
-            set {
+            set
+            {
                 PromptItem.Prompt = value;
                 OnPropertyChanged(nameof(Content));
             }
         }
-        public string Description {
+        public string Description
+        {
             get => PromptItem.Description;
-            set {
+            set
+            {
                 PromptItem.Description = value;
                 OnPropertyChanged(nameof(Description));
             }
         }
 
-        public string Name {
+        public string Name
+        {
             get => PromptItem.Name;
-            set {
+            set
+            {
                 PromptItem.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
         }
-        public PromptItemViewModel(PromptItemBase promptItem) {
+        public PromptItemViewModel(PromptItemBase promptItem)
+        {
             PromptItem = promptItem;
-            if (promptItem != null) {
+            if (promptItem != null)
+            {
                 Content = promptItem.Prompt;
                 Description = promptItem.Description;
             }

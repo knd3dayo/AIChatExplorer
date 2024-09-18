@@ -4,8 +4,7 @@ using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
-{
+namespace QAChat.ViewModel.VectorDBWindow {
     public class EditVectorDBWindowViewModel : MyWindowViewModel {
 
         private VectorDBItemViewModel? itemViewModel;

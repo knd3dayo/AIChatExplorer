@@ -6,11 +6,12 @@ using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
-using QAChat.ViewModel.ImageChat;
+using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.QAChatMain;
 using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel {
+namespace QAChat.ViewModel.QAChatMain
+{
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
@@ -49,13 +50,13 @@ namespace QAChat.ViewModel {
                 OnPropertyChanged(nameof(CollectionName));
             }
         }
-        
+
         // 選択中のフォルダの全てのClipboardItem
         public ObservableCollection<ContentItemBase> ClipboardItems { get; set; } = new();
 
 
         public Chat ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
-        
+
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
                 PromptText = promptTemplateWindowViewModel.PromptItem.Prompt;

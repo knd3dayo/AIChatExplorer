@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using PythonAILib.Model;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
+using QAChat.ViewModel.QAChatMain;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

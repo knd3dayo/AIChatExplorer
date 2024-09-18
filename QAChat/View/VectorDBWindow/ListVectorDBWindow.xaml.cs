@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using PythonAILib.Model.Abstract;
-using QAChat.ViewModel;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.VectorDBWindow

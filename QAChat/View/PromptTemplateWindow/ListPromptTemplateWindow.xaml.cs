@@ -1,7 +1,7 @@
 using System.Windows;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
-using QAChat.ViewModel;
+using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 
 namespace QAChat.View.PromptTemplateWindow

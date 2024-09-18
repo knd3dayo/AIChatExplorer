@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using PythonAILib.Model;
-using QAChat.ViewModel;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Control {
+namespace QAChat.ViewModel.QAChatMain {
     public class AdditionalItemViewModel {
 
 

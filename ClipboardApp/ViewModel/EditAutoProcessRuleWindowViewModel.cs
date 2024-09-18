@@ -8,7 +8,7 @@ using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
 using PythonAILib.Model.File;
 using QAChat.View.PromptTemplateWindow;
-using QAChat.ViewModel;
+using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

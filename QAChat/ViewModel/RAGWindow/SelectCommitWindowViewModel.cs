@@ -4,17 +4,20 @@ using PythonAILib.Model.File;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel
+namespace QAChat.ViewModel.RAGWindow
 {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class SelectCommitWindowViewModel : MyWindowViewModel {
-        public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action) {
+    public class SelectCommitWindowViewModel : MyWindowViewModel
+    {
+        public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action)
+        {
             this.itemViewModel = itemViewModel;
             // コミット情報を取得
             CommitInfoList.Clear();
-            foreach (var commit in itemViewModel.Item.GetCommitList()) {
+            foreach (var commit in itemViewModel.Item.GetCommitList())
+            {
                 CommitInfoList.Add(commit);
             }
             afterUpdate = action;
@@ -24,15 +27,18 @@ namespace QAChat.ViewModel
         public ObservableCollection<CommitInfo> CommitInfoList { get; set; } = [];
 
         // RagSourceItemViewModel
-        private RAGSourceItemViewModel itemViewModel { get; set;}
+        private RAGSourceItemViewModel itemViewModel { get; set; }
 
         // 選択中のコミットハッシュ
         private CommitInfo? selectedCommitInfo;
-        public CommitInfo? SelectedCommitInfo {
-            get {
+        public CommitInfo? SelectedCommitInfo
+        {
+            get
+            {
                 return selectedCommitInfo;
             }
-            set {
+            set
+            {
                 selectedCommitInfo = value;
                 OnPropertyChanged(nameof(SelectedCommitInfo));
             }
@@ -40,9 +46,11 @@ namespace QAChat.ViewModel
         private Action<string> afterUpdate = (hash) => { };
 
         // OKボタン
-        public SimpleDelegateCommand<Window> OkCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OkCommand => new((window) =>
+        {
             // 選択中のコミットハッシュが空の場合はエラー
-            if (SelectedCommitInfo == null) {
+            if (SelectedCommitInfo == null)
+            {
                 LogWrapper.Error(StringResources.SelectCommitPlease);
                 return;
             }

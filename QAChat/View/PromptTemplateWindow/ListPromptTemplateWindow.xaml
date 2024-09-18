@@ -8,7 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:QAChat.ViewModel"
+    xmlns:view="clr-namespace:QAChat.ViewModel.PromptTemplateWindow"
     Title="{Binding StringResources.PromptTemplateList, Mode=OneTime}"
     Width="800"
     Height="450"

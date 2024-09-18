@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.ViewModel;
+using QAChat.ViewModel.RAGWindow;
 
 namespace QAChat.View.RAGWindow
 {

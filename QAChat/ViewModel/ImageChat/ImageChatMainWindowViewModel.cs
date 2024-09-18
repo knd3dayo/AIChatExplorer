@@ -10,10 +10,12 @@ using PythonAILib.Model.Image;
 using PythonAILib.PythonIF;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
+using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat {
+namespace QAChat.ViewModel.ImageChat
+{
     public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
