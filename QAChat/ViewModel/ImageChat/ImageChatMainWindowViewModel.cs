@@ -114,7 +114,7 @@ namespace QAChat.ViewModel.ImageChat
         public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
             ScreenShotCheckPromptWindow.OpenScreenShotCheckPromptWindow(ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions, (Conditions) => {
-                // ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditionsにConditionsをコピー
+                // ContentItem.ScreenShotCheckItem.ScreenShotCheckIConditionsにConditionsをコピー
                 ClipboardItem.ScreenShotCheckItem.ScreenShotCheckIConditions = [.. Conditions];
 
                 // ScreenShotCheckItemsを文字列に変換

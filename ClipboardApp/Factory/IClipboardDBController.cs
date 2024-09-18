@@ -28,7 +28,7 @@ namespace ClipboardApp.Factory
         public void UpsertFolder(ClipboardFolder folder);
 
         
-        // public void DeleteItems(List<ClipboardItem> items);
+        // public void DeleteItems(List<ContentItem> items);
 
         // -- SearchRule
         public SearchRule? GetSearchRuleByFolder(ClipboardFolder folder);

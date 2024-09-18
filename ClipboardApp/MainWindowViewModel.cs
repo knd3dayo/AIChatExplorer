@@ -318,7 +318,7 @@ namespace ClipboardApp {
 
                 },
                 // ペーストアクション
-                PasteFromClipboardCommandAction = (action) => {
+                AddContentItemCommandAction = (action) => {
                     // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
                     if (ActiveInstance == null) {
                         return;

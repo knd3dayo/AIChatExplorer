@@ -307,7 +307,7 @@ namespace ClipboardApp.Factory.Default
 
         // ClipboardItemを検索する。
         public IEnumerable<ClipboardItem> SearchItems(ClipboardFolder folder, SearchCondition searchCondition) {
-            // 結果を格納するIEnumerable<ClipboardItem>を作成
+            // 結果を格納するIEnumerable<ContentItem>を作成
             IEnumerable<ClipboardItem> result = [];
             // フォルダが存在しない場合は、結果を返す
             if (folder == null) {

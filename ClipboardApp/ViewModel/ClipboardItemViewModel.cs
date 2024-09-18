@@ -34,7 +34,7 @@ namespace ClipboardApp.ViewModel {
         // StringResources
         public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
 
-        // ClipboardItem
+        // ContentItem
         public ClipboardItem ClipboardItem { get; }
         // FolderViewModel
         public ClipboardFolderViewModel FolderViewModel { get; set; }

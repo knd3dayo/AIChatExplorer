@@ -20,16 +20,16 @@ namespace QAChat.ViewModel.QAChatMain
             QAChatStartupProps = props;
 
             // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            SystemVectorDBItems.Add(props.ClipboardItem.GetVectorDBItem());
+            SystemVectorDBItems.Add(props.ContentItem.GetVectorDBItem());
 
             // ExternalVectorDBItemsを設定 ClipboardVectorDBItemのEnabledがTrueのものを取得
             ExternalVectorDBItems = [.. QAChatStartupProps.ExternalVectorDBItems];
 
             // InputTextを設定
-            InputText = QAChatStartupProps.ClipboardItem?.Content ?? "";
+            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
             // ClipboardItemがある場合は、ChatItemsを設定
-            if (QAChatStartupProps.ClipboardItem != null) {
-                ChatHistory = [.. QAChatStartupProps.ClipboardItem.ChatItems];
+            if (QAChatStartupProps.ContentItem != null) {
+                ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
 
         }

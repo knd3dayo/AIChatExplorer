@@ -617,7 +617,7 @@ namespace ClipboardApp.Model
         }
 
 
-        /// Create ClipboardItem
+        /// Create ContentItem
         public static ClipboardItem? CreateClipboardItem(
             ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
 

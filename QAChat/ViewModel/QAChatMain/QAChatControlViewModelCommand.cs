@@ -36,7 +36,7 @@ namespace QAChat.ViewModel.QAChatMain
                     return;
                 }
                 // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-                QAChatStartupProps.ClipboardItem.ChatItems = [.. ChatHistory];
+                QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
                 // inputTextをクリア
                 InputText = "";
                 OnPropertyChanged(nameof(ChatHistory));
@@ -54,7 +54,7 @@ namespace QAChat.ViewModel.QAChatMain
         public SimpleDelegateCommand<object> ClearChatHistoryCommand => new((parameter) => {
             ChatHistory = [];
             // ClipboardItemがある場合は、ChatItemsをクリア
-            QAChatStartupProps.ClipboardItem.ChatItems = [];
+            QAChatStartupProps.ContentItem.ChatItems = [];
             OnPropertyChanged(nameof(ChatHistory));
         });
 
@@ -77,7 +77,7 @@ namespace QAChat.ViewModel.QAChatMain
             // ModeがNormal以外の場合は、VectorDBItemを取得
             ExternalVectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItemBase? item = QAChatStartupProps.ClipboardItem.GetVectorDBItem();
+                VectorDBItemBase? item = QAChatStartupProps.ContentItem.GetVectorDBItem();
                 if (item != null) {
                     ExternalVectorDBItems.Add(item);
                 }
@@ -147,7 +147,7 @@ namespace QAChat.ViewModel.QAChatMain
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
 
             // ペースト処理を実行
-            QAChatStartupProps?.PasteFromClipboardCommandAction((values) => {
+            QAChatStartupProps?.AddContentItemCommandAction((values) => {
                 MainUITask.Run(() => {
                     // ペーストしたアイテムを追加する
                     foreach (var item in values) {

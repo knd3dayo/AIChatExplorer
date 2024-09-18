@@ -42,7 +42,7 @@ namespace ClipboardApp.Model
             IsClipboardMonitorEnabled = false;
         }
         /// <summary>
-        /// Copy the content of ClipboardItem to the clipboard
+        /// Copy the content of ContentItem to the clipboard
         /// </summary>
         /// <param name="item"></param>
         public void SetDataObject(ClipboardItem item) {
