@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.QAChatMain"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:qaChatControl="clr-namespace:QAChat.Control"
     x:Name="Root"
     d:DataContext="{d:DesignInstance Type=local:QAChatControlViewModel}"
     d:DesignHeight="450"
@@ -213,42 +214,14 @@
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="0,0,10,0"
+                                HorizontalAlignment="Stretch"
                                 ItemsSource="{Binding AdditionalItems}"
                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                 SelectionMode="Extended"
                                 Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=Self}}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock
-                                                Grid.Row="0"
-                                                Margin="0,0,0,0"
-                                                Text="{Binding ClipboardItem.Description}" />
-
-                                            <Grid.InputBindings>
-                                                <!--  クリップボードを開く  -->
-                                                <MouseBinding
-                                                    Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
-                                                    CommandParameter="{Binding}"
-                                                    Gesture="LeftDoubleClick" />
-                                            </Grid.InputBindings>
-                                            <Grid.ContextMenu>
-                                                <!--  クリップボードを開く,削除する  -->
-                                                <ContextMenu>
-                                                    <MenuItem
-                                                        Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
-                                                        CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Open}" />
-                                                    <MenuItem
-                                                        Command="{Binding RemoveSelectedItemCommand}"
-                                                        CommandParameter="{Binding}"
-                                                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Delete}" />
-                                                </ContextMenu>
-                                            </Grid.ContextMenu>
-                                        </Grid>
+                                        <qaChatControl:ContentItemPanel DataContext="{Binding}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>

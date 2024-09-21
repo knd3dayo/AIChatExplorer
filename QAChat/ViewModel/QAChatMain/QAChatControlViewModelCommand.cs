@@ -9,8 +9,7 @@ using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain
-{
+namespace QAChat.ViewModel.QAChatMain {
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド
@@ -159,7 +158,7 @@ namespace QAChat.ViewModel.QAChatMain
         });
         // 選択したアイテムを開くコマンド
         public SimpleDelegateCommand<AdditionalItemViewModel> OpenSelectedItemCommand => new((item) => {
-            QAChatStartupProps?.OpenSelectedItemCommand(item.ClipboardItem);
+            QAChatStartupProps?.OpenSelectedItemCommand(item.ContentItem);
         });
 
         // Windowを閉じるコマンド

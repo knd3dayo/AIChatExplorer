@@ -3,8 +3,7 @@ using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>

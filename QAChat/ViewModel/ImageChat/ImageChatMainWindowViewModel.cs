@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
@@ -14,8 +13,7 @@ using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace QAChat.ViewModel.ImageChat {
     public class ImageChatMainWindowViewModel : MyWindowViewModel {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
@@ -27,11 +25,13 @@ namespace QAChat.ViewModel.ImageChat
             OnPropertyChanged(nameof(InputText));
             OnPropertyChanged(nameof(ResultText));
             OnPropertyChanged(nameof(ImageFiles));
-
+            ChatController = new(ClipboardAppConfig.CreateOpenAIProperties());
         }
         // データ保存用のClipboardItem
         public ContentItemBase ClipboardItem { get; set; }
 
+        // Chat
+        public Chat ChatController { get; set; }
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -159,16 +159,13 @@ namespace QAChat.ViewModel.ImageChat
                     ImagePath).ToList();
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => Chat.CreateImageURLFromFilePath(imageFileName)).ToList();
-                    // ChatRequestを生成
-                    Chat chatRequest = new(ClipboardAppConfig.CreateOpenAIProperties()) {
-                        ChatMode = OpenAIExecutionModeEnum.Normal,
-                        ImageURLs = imageBase64Strings,
-                        ContentText = InputText,
-                        PromptTemplateText = PromptText
 
-                    };
+                    ChatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+                    ChatController.ImageURLs = imageBase64Strings;
+                    ChatController.ContentText = InputText;
+                    ChatController.PromptTemplateText = PromptText;
                     // ChatRequestを送信してChatResultを受信
-                    result = chatRequest.ExecuteChat();
+                    result = ChatController.ExecuteChat();
 
                 });
                 // 結果を表示
@@ -228,6 +225,7 @@ namespace QAChat.ViewModel.ImageChat
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
             ImageFiles = [];
+            ChatController = new(ClipboardAppConfig.CreateOpenAIProperties());
 
         });
 

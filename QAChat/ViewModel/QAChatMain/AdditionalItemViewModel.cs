@@ -1,26 +1,24 @@
 using PythonAILib.Model;
 using WpfAppCommon.Utils;
-
+using QAChat.ViewModel.ContentItemPanel;
 namespace QAChat.ViewModel.QAChatMain {
-    public class AdditionalItemViewModel {
+    public class AdditionalItemViewModel: ContentItemPanelViewModel {
 
 
         public QAChatControlViewModel QAChatControlViewModel { get; set; }
-        public ContentItemBase ClipboardItem { get; set; }
-
-        public AdditionalItemViewModel(QAChatControlViewModel qaChatControlViewModel, ContentItemBase clipboardItem) {
+        
+        public AdditionalItemViewModel(QAChatControlViewModel qaChatControlViewModel, ContentItemBase clipboardItem) : base(clipboardItem) {
             QAChatControlViewModel = qaChatControlViewModel;
-            ClipboardItem = clipboardItem;
+            ContentItem = clipboardItem;
         }
 
-        // RemoveSelectedItemCommand
-        public SimpleDelegateCommand<object> RemoveSelectedItemCommand => new((parameter) => {
-            QAChatControlViewModel.ChatController.AdditionalItems.Remove(ClipboardItem);
-        });
+        public override void OpenContentItem() {
+            QAChatControlViewModel.QAChatStartupProps?.OpenSelectedItemCommand(ContentItem);
+        }
+        // 削除
+        public override void RemoveContentItem() {
+            QAChatControlViewModel.ChatController.AdditionalItems.Remove(ContentItem);
+        }
 
-        // OpenSelectedItemCommand
-        public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            QAChatControlViewModel.QAChatStartupProps?.OpenSelectedItemCommand(ClipboardItem);
-        });
     }
 }

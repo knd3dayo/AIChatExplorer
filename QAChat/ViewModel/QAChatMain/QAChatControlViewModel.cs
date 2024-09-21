@@ -7,11 +7,9 @@ using PythonAILib.Model.Chat;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
-using QAChat.ViewModel.QAChatMain;
 using WpfAppCommon.Model;
 
-namespace QAChat.ViewModel.QAChatMain
-{
+namespace QAChat.ViewModel.QAChatMain {
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
