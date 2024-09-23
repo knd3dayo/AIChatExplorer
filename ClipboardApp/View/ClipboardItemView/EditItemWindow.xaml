@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.View.ClipboardItemView"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel"
@@ -152,22 +153,7 @@
                     FontSize="10"
                     Header="{Binding StringResources.Text, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.TextTabVisibility}">
-                    <editorControl:MyTextBox
-                        Name="Editor"
-                        Margin="10,3,10,3"
-                        FontSize="10pt"
-                        Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="{Binding TextWrapping, Mode=OneWay}">
-                        <editorControl:MyTextBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Command="ApplicationCommands.Copy" />
-                                <MenuItem Command="ApplicationCommands.Cut" />
-                                <MenuItem Command="ApplicationCommands.Paste" />
-                                <MenuItem Command="ApplicationCommands.SelectAll" />
-                                <Separator />
-                            </ContextMenu>
-                        </editorControl:MyTextBox.ContextMenu>
-                    </editorControl:MyTextBox>
+                    <local:ContentPanel DataContext="{Binding}" />
                 </TabItem>
                 <!--  ファイル or Image  -->
                 <TabItem
@@ -178,124 +164,7 @@
                     FontSize="10"
                     Header="{Binding StringResources.FileOrImage, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.FileOrImageVisibility}">
-                    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
-                        <materialDesign:DrawerHost.LeftDrawerContent>
-                            <Grid Width="200">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <ListBox
-                                    Grid.Row="0"
-                                    Margin="10,3,10,3"
-                                    ItemsSource="{Binding ItemViewModel.Files}"
-                                    SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
-                                    SelectionMode="Single">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Width="180"
-                                                Margin="10,3,10,3"
-                                                Text="{Binding FileName, Mode=OneWay}" />
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </Grid>
-                        </materialDesign:DrawerHost.LeftDrawerContent>
-
-                        <Grid Margin="10,0,10,0" HorizontalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="600" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.FilePath, Mode=OneTime}" />
-                            <editorControl:MyTextBox
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                IsReadOnly="True"
-                                Text="{Binding SelectedFile.FilePath, Mode=OneWay}" />
-
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.Folder, Mode=OneTime}" />
-
-                            <editorControl:MyTextBox
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                IsReadOnly="True"
-                                Text="{Binding SelectedFile.FolderName, Mode=OneWay}" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.FileName, Mode=OneTime}" />
-                            <editorControl:MyTextBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                IsReadOnly="True"
-                                Text="{Binding SelectedFile.FileName, Mode=OneWay}" />
-                            <TextBlock
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
-                            <editorControl:MyTextBox
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                IsReadOnly="True"
-                                Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
-                            <TextBlock
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.Image, Mode=OneTime}"
-                                Visibility="{Binding SelectedFileImageVisibility}" />
-                            <Image
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                Source="{Binding SelectedFile.BitmapImage, Mode=OneWay}"
-                                Stretch="Uniform"
-                                Visibility="{Binding SelectedFileImageVisibility}" />
-                            <TextBlock
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                Margin="10,3,10,3"
-                                VerticalAlignment="Center"
-                                Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
-                            <editorControl:MyTextBox
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                Margin="10,3,10,3"
-                                IsReadOnly="True"
-                                Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
-
-                        </Grid>
-                    </materialDesign:DrawerHost>
+                    <local:FilePanel DataContext="{Binding}" />
                 </TabItem>
                 <!--  背景情報  -->
                 <TabItem
@@ -306,11 +175,7 @@
                     FontSize="10"
                     Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
-                    <editorControl:MyTextBox
-                        Name="BackgrondInfo"
-                        Margin="10,3,10,3"
-                        FontSize="10pt"
-                        Text="{Binding ItemViewModel.BackgroundInfo, UpdateSourceTrigger=PropertyChanged}" />
+                    <local:BackgroundInfoPanel DataContext="{Binding}" />
                 </TabItem>
                 <!--  Issues用のDataGridを表示するためのTabItem  -->
                 <TabItem
@@ -321,53 +186,9 @@
                     FontSize="10"
                     Header="{Binding StringResources.IssuesList, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.IssuesVisibility}">
-                    <DataGrid
-                        Name="IssuesDataGrid"
-                        Margin="10,0,10,0"
-                        AutoGenerateColumns="False"
-                        BorderThickness="1"
-                        CanUserAddRows="True"
-                        CanUserDeleteRows="True"
-                        CanUserReorderColumns="False"
-                        CanUserResizeColumns="True"
-                        CanUserResizeRows="False"
-                        CanUserSortColumns="True"
-                        ItemsSource="{Binding ItemViewModel.Issues}"
-                        RowHeaderWidth="0"
-                        SelectionMode="Single"
-                        SelectionUnit="FullRow"
-                        VerticalScrollBarVisibility="Auto">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding IssueItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn
-                                Width="150"
-                                Binding="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Title}" />
-                            <DataGridTextColumn
-                                Width="400"
-                                Binding="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Content}" />
-                            <DataGridTextColumn
-                                Width="250"
-                                Binding="{Binding Action, UpdateSourceTrigger=PropertyChanged}"
-                                Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Action}" />
-                        </DataGrid.Columns>
-                        <DataGrid.ContextMenu>
-                            <!--  削除  -->
-                            <ContextMenu>
-                                <MenuItem
-                                    Command="{Binding DeleteIssueCommand}"
-                                    CommandParameter="{Binding}"
-                                    Header="{Binding StringResources.Delete}" />
-                            </ContextMenu>
-                        </DataGrid.ContextMenu>
-                    </DataGrid>
-                </TabItem>
 
+                    <local:IssuePanel DataContext="{Binding}" />
+                </TabItem>
                 <!--  サマリー  -->
                 <TabItem
                     Width="Auto"
@@ -377,11 +198,7 @@
                     FontSize="10"
                     Header="{Binding StringResources.Summary, Mode=OneTime}"
                     Visibility="{Binding ItemViewModel.SummaryVisibility}">
-                    <editorControl:MyTextBox
-                        Name="Summary"
-                        Margin="10,3,10,3"
-                        FontSize="10pt"
-                        Text="{Binding ItemViewModel.Summary, UpdateSourceTrigger=PropertyChanged}" />
+                    <local:SummaryPanel DataContext="{Binding}" />
                 </TabItem>
             </TabControl>
         </Grid>
@@ -395,7 +212,6 @@
                     IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
             </DockPanel>
-
             <DockPanel HorizontalAlignment="Right">
                 <Grid>
                     <Grid.ColumnDefinitions>
