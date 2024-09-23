@@ -46,8 +46,9 @@ namespace PythonAILib.Resource
             }
         }
 
-        // --- namespace WpfAppCommon.PythonIF ---
 
+        // PythonAILibManagerIsNotInitialized
+        public virtual string PythonAILibManagerIsNotInitialized { get; } = "PythonAILibManagerが初期化されていません";
 
         // クリップボードの内容が変更されました
         public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";

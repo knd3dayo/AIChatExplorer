@@ -1,16 +1,17 @@
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.Model {
-    public class MyWindowViewModel : ObservableObject{
+namespace ClipboardApp.Model {
+    public class ClipboardAppViewModelBase : ObservableObject {
 
         // CommonStringResources
         public CommonStringResources StringResources {
             get {
                 // 文字列リソースの言語設定
-                CommonStringResources.Lang = ClipboardAppConfig.ActualLang;
+                CommonStringResources.Lang = ClipboardAppConfig.Instance.ActualLang;
                 return CommonStringResources.Instance;
             }
         }
@@ -22,7 +23,7 @@ namespace WpfAppCommon.Model {
         private Window? window;
         public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
 
-            if (routedEventArgs.Source is  Window) {
+            if (routedEventArgs.Source is Window) {
                 Window window = (Window)routedEventArgs.Source;
                 this.window = window;
                 Tools.ActiveWindow = window;

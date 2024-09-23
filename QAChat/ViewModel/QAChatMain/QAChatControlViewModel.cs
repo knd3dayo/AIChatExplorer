@@ -17,11 +17,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
             QAChatStartupProps = props;
 
-            // SystemVectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            SystemVectorDBItems.Add(props.ContentItem.GetVectorDBItem());
-
-            // ExternalVectorDBItemsを設定 ClipboardVectorDBItemのEnabledがTrueのものを取得
-            ExternalVectorDBItems = [.. QAChatStartupProps.ExternalVectorDBItems];
+            // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
+            VectorDBItems.Add(props.ContentItem.GetVectorDBItem());
 
             // InputTextを設定
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";
@@ -53,7 +50,7 @@ namespace QAChat.ViewModel.QAChatMain {
         public ObservableCollection<ContentItemBase> ClipboardItems { get; set; } = new();
 
 
-        public Chat ChatController { get; set; } = new(ClipboardAppConfig.CreateOpenAIProperties());
+        public Chat ChatController { get; set; } = new();
 
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -83,9 +80,9 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        public static ChatIHistorytem? SelectedItem { get; set; }
+        public static ChatHistoryItem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatIHistorytem> ChatHistory {
+        public ObservableCollection<ChatHistoryItem> ChatHistory {
             get {
                 return [.. ChatController.ChatHistory];
             }
@@ -96,52 +93,27 @@ namespace QAChat.ViewModel.QAChatMain {
 
         }
 
-        private ObservableCollection<VectorDBItemBase> _externalVectorDBItems = [];
-        public ObservableCollection<VectorDBItemBase> ExternalVectorDBItems {
+        private ObservableCollection<VectorDBItemBase> _vectorDBItemBases = [];
+        public ObservableCollection<VectorDBItemBase> VectorDBItems {
             get {
-                return _externalVectorDBItems;
+                return _vectorDBItemBases;
             }
             set {
-                _externalVectorDBItems = value;
-                OnPropertyChanged(nameof(ExternalVectorDBItems));
+                _vectorDBItemBases = value;
+                OnPropertyChanged(nameof(VectorDBItems));
             }
         }
 
-        // SelectedExternalVectorDBItem
-        private VectorDBItemBase? _SelectedExternalVectorDBItem = null;
-        public VectorDBItemBase? SelectedExternalVectorDBItem {
+        private VectorDBItemBase? _SelectedVectorDBItem = null;
+        public VectorDBItemBase? SelectedVectorDBItem {
             get {
-                return _SelectedExternalVectorDBItem;
+                return _SelectedVectorDBItem;
             }
             set {
-                _SelectedExternalVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedExternalVectorDBItem));
+                _SelectedVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
             }
         }
-
-        // ベクトルDB(フォルダ)
-        private ObservableCollection<VectorDBItemBase> _SystemVectorDBItems = [];
-        public ObservableCollection<VectorDBItemBase> SystemVectorDBItems {
-            get {
-                return _SystemVectorDBItems;
-            }
-            set {
-                _SystemVectorDBItems = value;
-                OnPropertyChanged(nameof(SystemVectorDBItems));
-            }
-        }
-        // ベクトルDB(フォルダ)の選択中のアイテム
-        private VectorDBItemBase? _SelectedSystemVectorDBItem = null;
-        public VectorDBItemBase? SelectedSystemVectorDBItem {
-            get {
-                return _SelectedSystemVectorDBItem;
-            }
-            set {
-                _SelectedSystemVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedSystemVectorDBItem));
-            }
-        }
-
 
         public string InputText {
             get {
@@ -189,7 +161,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                return ChatController.CreateOpenAIRequestJSON();
+                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILib.Resource.PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                return ChatController.CreateOpenAIRequestJSON(libManager.ConfigParams.GetOpenAIProperties());
             }
         }
 
@@ -211,27 +184,15 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        // システムベクトルDBのDrawer表示状態
-        private bool _IsSystemVectorDBDrawerOpen = false;
-        public bool IsSystemVectorDBDrawerOpen {
-            get {
-                return _IsSystemVectorDBDrawerOpen;
-            }
-            set {
-                _IsSystemVectorDBDrawerOpen = value;
-                OnPropertyChanged(nameof(IsSystemVectorDBDrawerOpen));
-            }
-        }
-
         // 外部ベクトルDBのDrawer表示状態
-        private bool _IsExternalVectorDBDrawerOpen = false;
-        public bool IsExternalVectorDBDrawerOpen {
+        private bool _IsVectorDBDrawerOpen = false;
+        public bool IsVectorDBDrawerOpen {
             get {
-                return _IsExternalVectorDBDrawerOpen;
+                return _IsVectorDBDrawerOpen;
             }
             set {
-                _IsExternalVectorDBDrawerOpen = value;
-                OnPropertyChanged(nameof(IsExternalVectorDBDrawerOpen));
+                _IsVectorDBDrawerOpen = value;
+                OnPropertyChanged(nameof(IsVectorDBDrawerOpen));
             }
         }
 
@@ -255,6 +216,15 @@ namespace QAChat.ViewModel.QAChatMain {
                 } else {
                     return Visibility.Visible;
                 }
+            }
+        }
+
+        public TextWrapping TextWrapping {
+            get {
+                if (QAChatManager.Instance == null) {
+                    return TextWrapping.NoWrap;
+                }
+                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
             }
         }
     }

@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.ViewModel"
+    xmlns:local="clr-namespace:QAChat.ViewModel.QAChatMain"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding StringResources.ChatItem, Mode=OneTime}"
@@ -75,7 +75,7 @@
             HorizontalScrollBarVisibility="Auto"
             IsReadOnly="True"
             Text="{Binding ChatItem.Content, Mode=OneWay}"
-            TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
+            TextWrapping="{Binding TextWrapping, Mode=OneWay}"
             VerticalScrollBarVisibility="Auto" />
         <Grid Grid.Row="2">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">

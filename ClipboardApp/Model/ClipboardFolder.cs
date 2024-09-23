@@ -14,8 +14,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -684,18 +683,18 @@ namespace ClipboardApp.Model
             // ★TODO Implement processing based on automatic processing rules.
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
-            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= ClipboardAppConfig.IgnoreLineCount) {
+            if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= ClipboardAppConfig.Instance.IgnoreLineCount) {
                 return null;
             }
 
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
-            if (ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle) {
+            if (ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle) {
                 LogWrapper.Info(CommonStringResources.Instance.AutoMerge);
                 ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
+            if (ClipboardAppConfig.Instance.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
                 LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
                 foreach (var fileItem in item.ClipboardItemFiles) {
                     string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileItem.FilePath);
@@ -704,7 +703,7 @@ namespace ClipboardApp.Model
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoExtractImageWithPyOCR is set, perform OCR
-            if (ClipboardAppConfig.AutoExtractImageWithPyOCR) {
+            if (ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR) {
                 // ClipboardItemFilesがnullの場合は何もしない
                 if (item.ClipboardItemFiles == null) {
                     return item;
@@ -713,12 +712,12 @@ namespace ClipboardApp.Model
                     if (imageItem.Image == null) {
                         continue;
                     }
-                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.TesseractExePath);
+                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.Instance.TesseractExePath);
                     item.Content += "\n" + extractImageText;
                 }
                 LogWrapper.Info(CommonStringResources.Instance.OCR);
 
-            } else if (ClipboardAppConfig.AutoExtractImageWithOpenAI) {
+            } else if (ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI) {
 
                 LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
                 item.ExtractImageWithOpenAI();
@@ -727,18 +726,18 @@ namespace ClipboardApp.Model
             // ★TODO Implement processing based on automatic processing rules.
             var task1 = Task.Run(() => {
                 // If AUTO_TAG is set, automatically set the tags
-                if (ClipboardAppConfig.AutoTag) {
+                if (ClipboardAppConfig.Instance.AutoTag) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTag);
                     ClipboardItem.CreateAutoTags(item);
                 }
             });
             var task2 = Task.Run(() => {
                 // If AUTO_DESCRIPTION is set, automatically set the Description
-                if (ClipboardAppConfig.AutoDescription) {
+                if (ClipboardAppConfig.Instance.AutoDescription) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                     ClipboardItem.CreateAutoTitle(item);
 
-                } else if (ClipboardAppConfig.AutoDescriptionWithOpenAI) {
+                } else if (ClipboardAppConfig.Instance.AutoDescriptionWithOpenAI) {
 
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                     item.CreateAutoTitleWithOpenAI();
@@ -746,21 +745,21 @@ namespace ClipboardApp.Model
             });
             var task3 = Task.Run(() => {
                 // 背景情報
-                if (ClipboardAppConfig.AutoBackgroundInfo) {
+                if (ClipboardAppConfig.Instance.AutoBackgroundInfo) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
                     item.CreateAutoBackgroundInfo();
                 }
             });
             var task4 = Task.Run(() => {
                 // サマリー
-                if (ClipboardAppConfig.AutoSummary) {
+                if (ClipboardAppConfig.Instance.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
                     item.CreateSummary();
                 }
             });
             var task5 = Task.Run(() => {
                 // Issues
-                if (ClipboardAppConfig.AutoGenerateIssues) {
+                if (ClipboardAppConfig.Instance.AutoGenerateIssues) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateIssueList);
                     item.CreateIssues();
                 }

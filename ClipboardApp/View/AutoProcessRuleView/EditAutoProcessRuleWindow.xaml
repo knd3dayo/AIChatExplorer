@@ -5,11 +5,12 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:ClipboardApp.ViewModel"
     Title="{Binding StringResources.EditAutoProcessRuleWindowTitle, Mode=OneTime}"
     Width="700"
+    d:DataContext="{d:DesignInstance Type=local:EditAutoProcessRuleWindowViewModel}"
     SizeToContent="Height"
     mc:Ignorable="d">
     <Window.Resources>
@@ -20,9 +21,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <view:EditAutoProcessRuleWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

@@ -1,8 +1,10 @@
 
+using ClipboardApp.Model;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.ViewModel {
-    public class VersionWindowViewModel: MyWindowViewModel {
+namespace ClipboardApp.ViewModel
+{
+    public class VersionWindowViewModel: ClipboardAppViewModelBase {
 
         public string Version { get; set; }
 

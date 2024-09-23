@@ -9,16 +9,17 @@ using PythonAILib.PythonIF;
 using QAChat.Control;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using ClipboardApp.Model;
 using QAChat;
+using ClipboardApp.View.SelectVectorDBView;
 
 
-namespace ClipboardApp {
-    public partial class MainWindowViewModel : MyWindowViewModel {
+namespace ClipboardApp
+{
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() {
             // 旧バージョンのRootFolderの移行
             ClipboardFolder.MigrateRootFolder();
@@ -35,16 +36,9 @@ namespace ClipboardApp {
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
-            PythonAILibManager.Init(
-                ClipboardAppConfig.ActualLang,
-                ClipboardAppConfig.PythonDllPath,
-                ClipboardAppConfig.PythonVenvPath,
-                ClipboardAppFactory.Instance.GetClipboardDBController(),
-                LogWrapper.Info,
-                LogWrapper.Warn,
-                LogWrapper.Error
-            );
-
+            ClipboardAppPythonAILibConfigParams configParams = new();
+            PythonAILibManager.Init(configParams);
+            QAChatManager.Init(configParams);
             // フォルダの初期化
             InitClipboardFolders();
 
@@ -216,16 +210,16 @@ namespace ClipboardApp {
         // テキストを右端で折り返すかどうか
         public bool TextWrapping {
             get {
-                return ClipboardAppConfig.TextWrapping == System.Windows.TextWrapping.Wrap;
+                return ClipboardAppConfig.Instance.TextWrapping == System.Windows.TextWrapping.Wrap;
             }
             set {
                 if (value) {
-                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.Wrap;
+                    ClipboardAppConfig.Instance.TextWrapping = System.Windows.TextWrapping.Wrap;
                 } else {
-                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.NoWrap;
+                    ClipboardAppConfig.Instance.TextWrapping = System.Windows.TextWrapping.NoWrap;
                 }
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(TextWrapping));
             }
         }
@@ -233,19 +227,19 @@ namespace ClipboardApp {
         // プレビューモード　プレビューを表示するかどうか
         public static Visibility PreviewModeVisibility {
             get {
-                return ClipboardAppConfig.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
+                return ClipboardAppConfig.Instance.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {
-                return ClipboardAppConfig.PreviewMode;
+                return ClipboardAppConfig.Instance.PreviewMode;
             }
             set {
-                ClipboardAppConfig.PreviewMode = value;
+                ClipboardAppConfig.Instance.PreviewMode = value;
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
 
                 OnPropertyChanged(nameof(PreviewMode));
                 OnPropertyChanged(nameof(PreviewModeVisibility));
@@ -283,12 +277,12 @@ namespace ClipboardApp {
         // 開発中の機能を有効にするかどうか
         public bool EnableDevFeatures {
             get {
-                return ClipboardAppConfig.EnableDevFeatures;
+                return ClipboardAppConfig.Instance.EnableDevFeatures;
             }
             set {
-                ClipboardAppConfig.EnableDevFeatures = value;
+                ClipboardAppConfig.Instance.EnableDevFeatures = value;
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(EnableDevFeatures));
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
             }
@@ -296,7 +290,7 @@ namespace ClipboardApp {
         // 開発中機能の表示
         public Visibility EnableDevFeaturesVisibility {
             get {
-                return ClipboardAppConfig.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
+                return ClipboardAppConfig.Instance.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -307,13 +301,15 @@ namespace ClipboardApp {
 
             QAChatStartupProps props = new(clipboardItem) {
                 // フォルダ選択アクション
-                SelectFolderAction = (vectorDBItems) => {
+                SelectVectorDBItemAction = (vectorDBItems) => {
                     if (ActiveInstance == null) {
                         LogWrapper.Error("MainWindowViewModelがNullです");
                         return;
                     }
-                    FolderSelectWindow.OpenFolderSelectWindow(ActiveInstance.RootFolderViewModel, (folderViewModel) => {
-                        vectorDBItems.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow( ActiveInstance.RootFolderViewModel, (selectedItems) => {
+                        foreach (var item in selectedItems) {
+                            vectorDBItems.Add(item);
+                        }
                     });
 
                 },

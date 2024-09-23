@@ -8,10 +8,8 @@ namespace ClipboardApp.ViewModel
 {
     public class PythonCommands {
         public static void CreateScriptCommandExecute(object obj) {
-            EditPythonScriptWindow editScriptWindow = new();
-            EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
-            editScriptWindowViewModel.ScriptItem = new ScriptItem("", "", PythonExecutor.LoadPythonScript(PythonExecutor.TemplateScript), ScriptType.Python);
-            editScriptWindow.ShowDialog();
+
+            EditPythonScriptWindow.OpenEditPythonScriptWindow(new ScriptItem("", "", PythonExecutor.LoadPythonScript(PythonExecutor.TemplateScript), ScriptType.Python));
         }
 
         public static void EditScriptItemCommandExecute(object obj) {
@@ -19,25 +17,17 @@ namespace ClipboardApp.ViewModel
                 LogWrapper.Error(CommonStringResources.Instance.SelectScript);
                 return;
             }
-            EditPythonScriptWindow editScriptWindow = new();
-            EditPythonScriptWindowViewModel editScriptWindowViewModel = (EditPythonScriptWindowViewModel)editScriptWindow.DataContext;
-            editScriptWindowViewModel.ScriptItem = scriptItem;
-            editScriptWindow.ShowDialog();
+            EditPythonScriptWindow.OpenEditPythonScriptWindow(scriptItem);
         }
 
         // スクリプト一覧画面を編集モードで開くコマンド
         public static void OpenListPythonScriptWindowCommandExecute(object obj) {
-            ListPythonScriptWindow SelectScriptWindow = new();
-            ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
-            SelectScriptWindowViewModel.Initialize(ListPythonScriptWindowViewModel.ActionModeEnum.Edit, (scriptItem) => { });
-            SelectScriptWindow.ShowDialog();
+            ListPythonScriptWindow.OpenListPythonScriptWindow(ListPythonScriptWindowViewModel.ActionModeEnum.Edit, (scriptItem) => { });
         }
+
         // スクリプト一覧画面を実行モードで開くコマンド
         public static void OpenListPythonScriptWindowExecCommandExecute(Action<ScriptItem> action) {
-            ListPythonScriptWindow SelectScriptWindow = new ListPythonScriptWindow();
-            ListPythonScriptWindowViewModel SelectScriptWindowViewModel = (ListPythonScriptWindowViewModel)SelectScriptWindow.DataContext;
-            SelectScriptWindowViewModel.Initialize(ListPythonScriptWindowViewModel.ActionModeEnum.Exec, action);
-            SelectScriptWindow.ShowDialog();
+            ListPythonScriptWindow.OpenListPythonScriptWindow(ListPythonScriptWindowViewModel.ActionModeEnum.Exec, action);
         }
 
         public static void DeleteScriptCommandExecute(object obj) {

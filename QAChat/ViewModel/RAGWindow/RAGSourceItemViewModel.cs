@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.File;
-using WpfAppCommon.Model;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.RAGWindow
-{
-    public class RAGSourceItemViewModel : MyWindowViewModel
+namespace QAChat.ViewModel.RAGWindow {
+    public class RAGSourceItemViewModel : QAChatViewModelBase
     {
 
         public RAGSourceItemViewModel(RAGSourceItemBase item)
@@ -62,7 +61,7 @@ namespace QAChat.ViewModel.RAGWindow
         {
             get
             {
-                var items = PythonAILibManager.Instance?.DBController.GetVectorDBItems(false);
+                var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems(false);
                 if (items == null)
                 {
                     return new();

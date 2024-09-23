@@ -5,14 +5,14 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.TagView;
 using PythonAILib.Model.Abstract;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : MyWindowViewModel {
+    public class EditItemWindowViewModel : ClipboardAppViewModelBase {
 
 
         private ClipboardItemViewModel? itemViewModel;
@@ -138,7 +138,7 @@ namespace ClipboardApp.ViewModel {
         // SelectedIssueItem
         public IssueItemBase? SelectedIssueItem { get; set; }
 
-        public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
@@ -155,6 +155,13 @@ namespace ClipboardApp.ViewModel {
             }
             _afterUpdate = afterUpdate;
 
+        }
+
+        // TextWrapping
+        public TextWrapping TextWrapping {
+            get {
+                return ClipboardAppConfig.Instance.TextWrapping;
+            }
         }
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {

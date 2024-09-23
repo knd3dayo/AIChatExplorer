@@ -4,10 +4,8 @@ using ClipboardApp.Model;
 using LiteDB;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
-using WpfAppCommon.Model;
 
-namespace ClipboardApp.Factory.Default
-{
+namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
         public static readonly string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public static readonly string CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
@@ -40,7 +38,7 @@ namespace ClipboardApp.Factory.Default
             if (db == null) {
                 try {
                     /// AppDataフォルダーパスを取得
-                    string appDataPath = ClipboardAppConfig.AppDataFolder;
+                    string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
                     // データベースファイルのパスを作成
                     string dbPath = Path.Combine(appDataPath, "clipboard.db");
                     db = new LiteDatabase(dbPath);

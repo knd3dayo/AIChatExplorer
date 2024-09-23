@@ -113,7 +113,7 @@ namespace ClipboardApp.Model {
                 clipboardItem.FileObjectIds.Add(newFile.Id);
             }
             //-- ChatItemsをコピー
-            newItem.ChatItems = new List<ChatIHistorytem>(ChatItems);
+            newItem.ChatItems = new List<ChatHistoryItem>(ChatItems);
 
         }
 
@@ -246,14 +246,14 @@ namespace ClipboardApp.Model {
                 // OS上のファイルに保存
                 Task.Run(() => {
                     // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
-                    if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                    if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                         SaveToOSFolder();
                     }
                 });
 
                 // Embeddingを更新
                 Task.Run(() => {
-                    if (ClipboardAppConfig.AutoEmbedding) {
+                    if (ClipboardAppConfig.Instance.AutoEmbedding) {
                         UpdateEmbedding();
                     }
                 });
@@ -264,7 +264,7 @@ namespace ClipboardApp.Model {
         private void SaveToOSFolder() {
             LogWrapper.Info(CommonStringResources.Instance.SaveToFileOnOS);
             // 保存先フォルダを取得
-            string syncFolder = ClipboardAppConfig.SyncFolderName;
+            string syncFolder = ClipboardAppConfig.Instance.SyncFolderName;
             // フォルダが存在しない場合は作成
             if (Directory.Exists(syncFolder) == false) {
                 Directory.CreateDirectory(syncFolder);
@@ -282,7 +282,7 @@ namespace ClipboardApp.Model {
             File.WriteAllText(syncFilePath, this.Content);
 
             // 自動コミットが有効の場合はGitにコミット
-            if (ClipboardAppConfig.AutoCommit) {
+            if (ClipboardAppConfig.Instance.AutoCommit) {
                 GitCommit(syncFilePath);
             }
 
@@ -292,15 +292,15 @@ namespace ClipboardApp.Model {
         public void GitCommit(string syncFilePath) {
             try {
 
-                using (var repo = new Repository(ClipboardAppConfig.SyncFolderName)) {
+                using (var repo = new Repository(ClipboardAppConfig.Instance.SyncFolderName)) {
                     Commands.Stage(repo, syncFilePath);
                     Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
                     Signature committer = author;
                     repo.Commit("Auto commit", author, committer);
-                    LogWrapper.Info($"{CommonStringResources.Instance.CommittedToGit}:{syncFilePath} {ClipboardAppConfig.SyncFolderName}");
+                    LogWrapper.Info($"{CommonStringResources.Instance.CommittedToGit}:{syncFilePath} {ClipboardAppConfig.Instance.SyncFolderName}");
                 }
             } catch (RepositoryNotFoundException e) {
-                LogWrapper.Info($"{CommonStringResources.Instance.RepositoryNotFound}:{ClipboardAppConfig.SyncFolderName} {e.Message}");
+                LogWrapper.Info($"{CommonStringResources.Instance.RepositoryNotFound}:{ClipboardAppConfig.Instance.SyncFolderName} {e.Message}");
             } catch (EmptyCommitException e) {
                 LogWrapper.Info($"{CommonStringResources.Instance.CommitIsEmpty}:{syncFilePath} {e.Message}");
             }
@@ -309,7 +309,7 @@ namespace ClipboardApp.Model {
         // 自分自身をDBから削除する
         public override void Delete() {
             // 保存先フォルダを取得
-            string folderPath = ClipboardAppConfig.SyncFolderName;
+            string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
             // syncFolder/フォルダ名を取得
             folderPath = Path.Combine(folderPath, FolderPath);
             // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
@@ -325,13 +325,13 @@ namespace ClipboardApp.Model {
             Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
-                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                     // ファイルが存在する場合は削除
                     if (File.Exists(syncFilePath)) {
                         File.Delete(syncFilePath);
                     }
                     // 自動コミットが有効の場合はGitにコミット
-                    if (ClipboardAppConfig.AutoCommit) {
+                    if (ClipboardAppConfig.Instance.AutoCommit) {
                         GitCommit(syncFilePath);
                     }
                 }
@@ -365,7 +365,7 @@ namespace ClipboardApp.Model {
                 // IPythonAIFunctions.ClipboardInfoを作成
                 string content = this.Content;
                 // 背景情報を含める場合
-                if (ClipboardAppConfig.IncludeBackgroundInfoInEmbedding) {
+                if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
                     content += $"\n---{PythonAILibStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
                 }
 
@@ -388,13 +388,13 @@ namespace ClipboardApp.Model {
         public List<VectorSearchResult> VectorSearchCommandExecute(bool IncludeBackgroundInfo) {
             // VectorDBItemを取得
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            return VectorSearchCommandExecute(ClipboardAppConfig.CreateOpenAIProperties(), vectorDBItem, IncludeBackgroundInfo);
+            return VectorSearchCommandExecute(ClipboardAppConfig.Instance.CreateOpenAIProperties(), vectorDBItem, IncludeBackgroundInfo);
         }
 
 
         // OpenAIを使用してタイトルを生成する
         public void CreateAutoTitleWithOpenAI() {
-            CreateAutoTitleWithOpenAI(PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TitleGeneration), ClipboardAppConfig.CreateOpenAIProperties());
+            CreateAutoTitleWithOpenAI(PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TitleGeneration), ClipboardAppConfig.Instance.CreateOpenAIProperties());
         }
 
         // 自動でコンテキスト情報を付与するコマンド
@@ -412,7 +412,7 @@ namespace ClipboardApp.Model {
 
             var task2 = Task.Run(() => {
                 // 背景情報に日本語解析追加が有効になっている場合
-                if (ClipboardAppConfig.AnalyzeJapaneseSentence) {
+                if (ClipboardAppConfig.Instance.AnalyzeJapaneseSentence) {
                     string? analyzedJapaneseSentence = GetAnalyzedJapaneseSentence();
                     return analyzedJapaneseSentence;
                 }
@@ -420,7 +420,7 @@ namespace ClipboardApp.Model {
             });
             var task3 = Task.Run(() => {
                 // 背景情報に自動QA生成が有効になっている場合
-                if (ClipboardAppConfig.AutoGenerateQA) {
+                if (ClipboardAppConfig.Instance.AutoGenerateQA) {
                     string? generatedQA = GetGeneratedQA();
                     return generatedQA;
                 }
@@ -454,7 +454,7 @@ namespace ClipboardApp.Model {
 
             // システム定義のPromptItemを取得
             PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
-            result = ChatUtil.CreateBackgroundInfo(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
+            result = ChatUtil.CreateBackgroundInfo(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
 
             return result;
 
@@ -471,7 +471,7 @@ namespace ClipboardApp.Model {
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
 
-            result = ChatUtil.AnalyzeJapaneseSentence(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
+            result = ChatUtil.AnalyzeJapaneseSentence(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText);
             if (string.IsNullOrEmpty(result) == false) {
                 BackgroundInfo += "\n" + result;
             }
@@ -489,7 +489,7 @@ namespace ClipboardApp.Model {
             VectorDBItemBase vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
 
-            result = ChatUtil.GenerateQA(ClipboardAppConfig.CreateOpenAIProperties(), [vectorDBItem], contentText);
+            result = ChatUtil.GenerateQA(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText);
             if (string.IsNullOrEmpty(result) == false) {
                 BackgroundInfo += "\n" + result;
             }
@@ -501,7 +501,7 @@ namespace ClipboardApp.Model {
             Task.Run(() => {
                 // システム定義のPromptItemを取得
                 PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
-                CreateSummary(promptItem, ClipboardAppConfig.CreateOpenAIProperties());
+                CreateSummary(promptItem, ClipboardAppConfig.Instance.CreateOpenAIProperties());
             });
         }
         // 課題リストを作成する
@@ -509,7 +509,7 @@ namespace ClipboardApp.Model {
             Task.Run(() => {
                 // システム定義のPromptItemを取得
                 PromptItem promptItem = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
-                CreateIssues(ClipboardAppConfig.CreateOpenAIProperties(), [ClipboardAppVectorDBItem.SystemCommonVectorDB], promptItem);
+                CreateIssues(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [ClipboardAppVectorDBItem.SystemCommonVectorDB], promptItem);
             });
         }
     }

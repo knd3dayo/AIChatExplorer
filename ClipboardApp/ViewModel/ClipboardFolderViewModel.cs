@@ -1,11 +1,10 @@
 using System.Collections.ObjectModel;
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 using ClipboardApp.Model;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : MyWindowViewModel {
+    public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
         // ClipboardFolder
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
@@ -59,7 +58,6 @@ namespace ClipboardApp.ViewModel
             }
         }
 
-
         private void UpdateStatusText() {
             string message = $"{StringResources.Folder}[{FolderName}]";
             // AutoProcessRuleが設定されている場合
@@ -86,7 +84,6 @@ namespace ClipboardApp.ViewModel
             }
             Tools.StatusText.ReadyText = message;
             Tools.StatusText.Text = message;
-
         }
     }
 }

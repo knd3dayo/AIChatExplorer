@@ -7,8 +7,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     /// <summary>
     /// RAGのソースとなるドキュメントを格納したリポジトリを管理するためのクラス
     /// </summary>
@@ -228,7 +227,7 @@ namespace ClipboardApp.Model
                     mode = VectorDBUpdateMode.delete;
                 }
                 GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
-                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
+                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;

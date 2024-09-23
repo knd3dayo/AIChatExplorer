@@ -8,12 +8,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding StringResources.TagSearch, Mode=OneTime}"
     Width="400"
+    d:DataContext="{d:DesignInstance Type=local:TagSearchWindowViewModel}"
     ResizeMode="NoResize"
     SizeToContent="Height"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:TagSearchWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

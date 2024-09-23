@@ -5,8 +5,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
 
     /// <summary>
     /// VectorDBのアイテム
@@ -21,8 +20,8 @@ namespace ClipboardApp.Model
                 // DBからベクトルDBを取得
                 var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
                 if (item == null) {
-                    string docDBPath = Path.Combine(ClipboardAppConfig.AppDataFolder, "clipboard_doc_store.db");
-                    string vectorDBPath = Path.Combine(ClipboardAppConfig.AppDataFolder, "clipboard_vector_db.db");
+                    string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
+                    string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db.db");
                     item = new ClipboardAppVectorDBItem() {
                         Id = LiteDB.ObjectId.Empty,
                         Name = SystemCommonVectorDBName,
@@ -104,21 +103,21 @@ namespace ClipboardApp.Model
         }
 
         public override void UpdateIndex(ContentInfo contentInfo) {
-            UpdateIndex(contentInfo, ClipboardAppConfig.CreateOpenAIProperties());
+            UpdateIndex(contentInfo, ClipboardAppConfig.Instance.CreateOpenAIProperties());
         }
 
         public override void DeleteIndex(ContentInfo contentInfo) {
-            DeleteIndex(contentInfo, ClipboardAppConfig.CreateOpenAIProperties());
+            DeleteIndex(contentInfo, ClipboardAppConfig.Instance.CreateOpenAIProperties());
         }
 
         public override void UpdateIndex(ImageInfo imageInfo) {
             // CollectionNameの設定
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), imageInfo, this);
         }
 
         public override void DeleteIndex(ImageInfo imageInfo) {
 
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.CreateOpenAIProperties(), imageInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), imageInfo, this);
         }
 
     }

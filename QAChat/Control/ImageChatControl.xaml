@@ -184,7 +184,7 @@
                         FontSize="12"
                         IsReadOnly="True"
                         Text="{Binding ResultText, Mode=OneWay}"
-                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
+                        TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
                 </ScrollViewer>
                 <GridSplitter
                     Grid.Row="1"
@@ -220,7 +220,7 @@
                             AcceptsReturn="True"
                             FontSize="12"
                             Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
-                            TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
+                            TextWrapping="{Binding TextWrapping, Mode=OneWay}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Escape" Command="{Binding CloseCommand, Mode=OneTime}" />
                             </TextBox.InputBindings>

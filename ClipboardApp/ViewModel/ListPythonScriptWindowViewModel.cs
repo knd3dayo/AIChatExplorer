@@ -4,12 +4,11 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class ListPythonScriptWindowViewModel : MyWindowViewModel {
+    public class ListPythonScriptWindowViewModel : ClipboardAppViewModelBase {
 
         public enum ActionModeEnum {
             Edit,
@@ -48,7 +47,7 @@ namespace ClipboardApp.ViewModel
         }
 
 
-        public void Initialize(ActionModeEnum actionModeEnum, Action<ScriptItem> afterSelect) {
+        public ListPythonScriptWindowViewModel(ActionModeEnum actionModeEnum, Action<ScriptItem> afterSelect) {
             ActionMode = actionModeEnum;
             this.afterSelect = afterSelect;
 

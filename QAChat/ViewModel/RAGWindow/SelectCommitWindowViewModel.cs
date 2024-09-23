@@ -1,15 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.File;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.RAGWindow
-{
+namespace QAChat.ViewModel.RAGWindow {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class SelectCommitWindowViewModel : MyWindowViewModel
+    public class SelectCommitWindowViewModel : QAChatViewModelBase
     {
         public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action)
         {

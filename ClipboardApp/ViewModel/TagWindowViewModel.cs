@@ -5,12 +5,11 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.TagView;
 using WpfAppCommon;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class TagWindowViewModel : MyWindowViewModel {
+    public class TagWindowViewModel : ClipboardAppViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
@@ -20,7 +19,7 @@ namespace ClipboardApp.ViewModel
 
         private Action? AfterUpdate { get; set; }
 
-        public void Initialize(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        public TagWindowViewModel(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
             ClipboardItemViewModel = itemViewModel;
             AfterUpdate = afterUpdate;
 

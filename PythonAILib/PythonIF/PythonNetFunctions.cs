@@ -170,10 +170,9 @@ namespace PythonAILib.PythonIF
 
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat( Chat chatRequest) {
+        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
 
-            string chat_history_json =chatRequest.CreateOpenAIRequestJSON();
-            OpenAIProperties props = chatRequest.OpenAIProperties;
+            string chat_history_json =chatRequest.CreateOpenAIRequestJSON(props);
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -358,11 +357,10 @@ namespace PythonAILib.PythonIF
             return chatResult;
 
         }
-        public ChatResult LangChainChat(Chat chatRequest) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties, Chat chatRequest) {
 
             string prompt = chatRequest.CreatePromptText();
-            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON();
-            OpenAIProperties openAIProperties = chatRequest.OpenAIProperties;
+            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON(openAIProperties);
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 

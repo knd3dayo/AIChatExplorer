@@ -13,17 +13,17 @@ namespace ClipboardApp.Settings
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
-    public partial class SettingUserControlViewModel : MyWindowViewModel {
+    public partial class SettingUserControlViewModel : ClipboardAppViewModelBase {
         // プロパティが変更されたか否か
         private bool isPropertyChanged = false;
         // Lang
 
         public string Lang {
             get {
-                return ClipboardAppConfig.Lang;
+                return ClipboardAppConfig.Instance.Lang;
             }
             set {
-                ClipboardAppConfig.Lang = value;
+                ClipboardAppConfig.Instance.Lang = value;
                 OnPropertyChanged(nameof(Lang));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -32,11 +32,11 @@ namespace ClipboardApp.Settings
         // SelectedLanguage
         public int SelectedLanguage {
             get {
-                if (string.IsNullOrEmpty(ClipboardAppConfig.Lang)) {
+                if (string.IsNullOrEmpty(ClipboardAppConfig.Instance.Lang)) {
                     return 0;
-                } else if (ClipboardAppConfig.Lang == "ja-JP") {
+                } else if (ClipboardAppConfig.Instance.Lang == "ja-JP") {
                     return 1;
-                } else if (ClipboardAppConfig.Lang == "en-US") {
+                } else if (ClipboardAppConfig.Instance.Lang == "en-US") {
                     return 2;
                 } else {
                     return 0;
@@ -45,13 +45,13 @@ namespace ClipboardApp.Settings
             set {
                 switch (value) {
                     case 0:
-                        ClipboardAppConfig.Lang = "";
+                        ClipboardAppConfig.Instance.Lang = "";
                         break;
                     case 1:
-                        ClipboardAppConfig.Lang = "ja-JP";
+                        ClipboardAppConfig.Instance.Lang = "ja-JP";
                         break;
                     case 2:
-                        ClipboardAppConfig.Lang = "en-US";
+                        ClipboardAppConfig.Instance.Lang = "en-US";
                         break;
                 }
                 isPropertyChanged = true;
@@ -63,10 +63,10 @@ namespace ClipboardApp.Settings
 
         public string MonitorTargetAppNames {
             get {
-                return ClipboardAppConfig.MonitorTargetAppNames;
+                return ClipboardAppConfig.Instance.MonitorTargetAppNames;
             }
             set {
-                ClipboardAppConfig.MonitorTargetAppNames = value;
+                ClipboardAppConfig.Instance.MonitorTargetAppNames = value;
                 OnPropertyChanged(nameof(MonitorTargetAppNames));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -76,10 +76,10 @@ namespace ClipboardApp.Settings
         // PythonDLLのパス
         public string PythonDllPath {
             get {
-                return ClipboardAppConfig.PythonDllPath;
+                return ClipboardAppConfig.Instance.PythonDllPath;
             }
             set {
-                ClipboardAppConfig.PythonDllPath = value;
+                ClipboardAppConfig.Instance.PythonDllPath = value;
                 OnPropertyChanged(nameof(PythonDllPath));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -88,10 +88,10 @@ namespace ClipboardApp.Settings
         // PythonVenvPath
         public string PythonVenvPath {
             get {
-                return ClipboardAppConfig.PythonVenvPath;
+                return ClipboardAppConfig.Instance.PythonVenvPath;
             }
             set {
-                ClipboardAppConfig.PythonVenvPath = value;
+                ClipboardAppConfig.Instance.PythonVenvPath = value;
                 OnPropertyChanged(nameof(PythonVenvPath));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -101,10 +101,10 @@ namespace ClipboardApp.Settings
         // Azure OpenAIを使用するかどうか
         public bool AzureOpenAI {
             get {
-                return ClipboardAppConfig.AzureOpenAI;
+                return ClipboardAppConfig.Instance.AzureOpenAI;
             }
             set {
-                ClipboardAppConfig.AzureOpenAI = value;
+                ClipboardAppConfig.Instance.AzureOpenAI = value;
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
             }
@@ -112,10 +112,10 @@ namespace ClipboardApp.Settings
         // OpenAIのAPIキー
         public string OpenAIKey {
             get {
-                return ClipboardAppConfig.OpenAIKey;
+                return ClipboardAppConfig.Instance.OpenAIKey;
             }
             set {
-                ClipboardAppConfig.OpenAIKey = value;
+                ClipboardAppConfig.Instance.OpenAIKey = value;
                 OnPropertyChanged(nameof(OpenAIKey));
 
                 // プロパティが変更されたことを設定
@@ -125,10 +125,10 @@ namespace ClipboardApp.Settings
         // OpenAICompletionModel
         public string OpenAICompletionModel {
             get {
-                return ClipboardAppConfig.OpenAICompletionModel;
+                return ClipboardAppConfig.Instance.OpenAICompletionModel;
             }
             set {
-                ClipboardAppConfig.OpenAICompletionModel = value;
+                ClipboardAppConfig.Instance.OpenAICompletionModel = value;
                 OnPropertyChanged(nameof(OpenAICompletionModel));
 
                 // プロパティが変更されたことを設定
@@ -138,10 +138,10 @@ namespace ClipboardApp.Settings
         // OpenAIEmbeddingModel
         public string OpenAIEmbeddingModel {
             get {
-                return ClipboardAppConfig.OpenAIEmbeddingModel;
+                return ClipboardAppConfig.Instance.OpenAIEmbeddingModel;
             }
             set {
-                ClipboardAppConfig.OpenAIEmbeddingModel = value;
+                ClipboardAppConfig.Instance.OpenAIEmbeddingModel = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingModel));
 
                 // プロパティが変更されたことを設定
@@ -152,10 +152,10 @@ namespace ClipboardApp.Settings
         // Azure OpenAIのエンドポイント
         public string AzureOpenAIEndpoint {
             get {
-                return ClipboardAppConfig.AzureOpenAIEndpoint;
+                return ClipboardAppConfig.Instance.AzureOpenAIEndpoint;
             }
             set {
-                ClipboardAppConfig.AzureOpenAIEndpoint = value;
+                ClipboardAppConfig.Instance.AzureOpenAIEndpoint = value;
                 OnPropertyChanged(nameof(AzureOpenAIEndpoint));
 
                 // プロパティが変更されたことを設定
@@ -165,10 +165,10 @@ namespace ClipboardApp.Settings
         // OpenAICompletionBaseURL
         public string OpenAICompletionBaseURL {
             get {
-                return ClipboardAppConfig.OpenAICompletionBaseURL;
+                return ClipboardAppConfig.Instance.OpenAICompletionBaseURL;
             }
             set {
-                ClipboardAppConfig.OpenAICompletionBaseURL = value;
+                ClipboardAppConfig.Instance.OpenAICompletionBaseURL = value;
                 OnPropertyChanged(nameof(OpenAICompletionBaseURL));
 
                 // プロパティが変更されたことを設定
@@ -178,10 +178,10 @@ namespace ClipboardApp.Settings
         // OpenAIEmbeddingBaseURL
         public string OpenAIEmbeddingBaseURL {
             get {
-                return ClipboardAppConfig.OpenAIEmbeddingBaseURL;
+                return ClipboardAppConfig.Instance.OpenAIEmbeddingBaseURL;
             }
             set {
-                ClipboardAppConfig.OpenAIEmbeddingBaseURL = value;
+                ClipboardAppConfig.Instance.OpenAIEmbeddingBaseURL = value;
                 OnPropertyChanged(nameof(OpenAIEmbeddingBaseURL));
 
                 // プロパティが変更されたことを設定
@@ -192,10 +192,10 @@ namespace ClipboardApp.Settings
         // AutoMergeItemsBySourceApplicationTitle
         public bool AutoMergeItemsBySourceApplicationTitle {
             get {
-                return ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle;
+                return ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle;
             }
             set {
-                ClipboardAppConfig.AutoMergeItemsBySourceApplicationTitle = value;
+                ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle = value;
                 OnPropertyChanged(nameof(AutoMergeItemsBySourceApplicationTitle));
 
                 // プロパティが変更されたことを設定
@@ -205,10 +205,10 @@ namespace ClipboardApp.Settings
         // AutoBackgroundInfo
         public bool AutoBackgroundInfo {
             get {
-                return ClipboardAppConfig.AutoBackgroundInfo;
+                return ClipboardAppConfig.Instance.AutoBackgroundInfo;
             }
             set {
-                ClipboardAppConfig.AutoBackgroundInfo = value;
+                ClipboardAppConfig.Instance.AutoBackgroundInfo = value;
                 OnPropertyChanged(nameof(AutoBackgroundInfo));
 
                 // プロパティが変更されたことを設定
@@ -218,10 +218,10 @@ namespace ClipboardApp.Settings
         // AutoSummary
         public bool AutoSummary {
             get {
-                return ClipboardAppConfig.AutoSummary;
+                return ClipboardAppConfig.Instance.AutoSummary;
             }
             set {
-                ClipboardAppConfig.AutoSummary = value;
+                ClipboardAppConfig.Instance.AutoSummary = value;
                 OnPropertyChanged(nameof(AutoSummary));
 
                 // プロパティが変更されたことを設定
@@ -232,10 +232,10 @@ namespace ClipboardApp.Settings
         // IncludeBackgroundInfoInEmbedding
         public bool IncludeBackgroundInfoInEmbedding {
             get {
-                return ClipboardAppConfig.IncludeBackgroundInfoInEmbedding;
+                return ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding;
             }
             set {
-                ClipboardAppConfig.IncludeBackgroundInfoInEmbedding = value;
+                ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding = value;
                 OnPropertyChanged(nameof(IncludeBackgroundInfoInEmbedding));
 
                 // プロパティが変更されたことを設定
@@ -249,10 +249,10 @@ namespace ClipboardApp.Settings
         // 指定した行数以下の場合は無視する。
         public int IgnoreLineCount {
             get {
-                return ClipboardAppConfig.IgnoreLineCount;
+                return ClipboardAppConfig.Instance.IgnoreLineCount;
             }
             set {
-                ClipboardAppConfig.IgnoreLineCount = value;
+                ClipboardAppConfig.Instance.IgnoreLineCount = value;
                 OnPropertyChanged(nameof(IgnoreLineCount));
 
                 // プロパティが変更されたことを設定
@@ -262,10 +262,10 @@ namespace ClipboardApp.Settings
         // クリップボードアイテムとOS上のフォルダを同期するかどうか
         public bool SyncClipboardItemAndOSFolder {
             get {
-                return ClipboardAppConfig.SyncClipboardItemAndOSFolder;
+                return ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder;
             }
             set {
-                ClipboardAppConfig.SyncClipboardItemAndOSFolder = value;
+                ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder = value;
                 OnPropertyChanged(nameof(SyncClipboardItemAndOSFolder));
                 OnPropertyChanged(nameof(SyncClipboardItemAndOSFolderVisibility));
                 // プロパティが変更されたことを設定
@@ -275,10 +275,10 @@ namespace ClipboardApp.Settings
         // ファイル更新時に自動的にコミットするかどうか
         public bool AutoCommit {
             get {
-                return ClipboardAppConfig.AutoCommit;
+                return ClipboardAppConfig.Instance.AutoCommit;
             }
             set {
-                ClipboardAppConfig.AutoCommit = value;
+                ClipboardAppConfig.Instance.AutoCommit = value;
                 OnPropertyChanged(nameof(AutoCommit));
 
                 // プロパティが変更されたことを設定
@@ -289,10 +289,10 @@ namespace ClipboardApp.Settings
         // SyncFolderName
         public string SyncFolderName {
             get {
-                return ClipboardAppConfig.SyncFolderName;
+                return ClipboardAppConfig.Instance.SyncFolderName;
             }
             set {
-                ClipboardAppConfig.SyncFolderName = value;
+                ClipboardAppConfig.Instance.SyncFolderName = value;
                 OnPropertyChanged(nameof(SyncFolderName));
 
                 // プロパティが変更されたことを設定
@@ -309,10 +309,10 @@ namespace ClipboardApp.Settings
         // AutoDescriptionWithOpenAI
         public bool AutoDescriptionWithOpenAI {
             get {
-                return ClipboardAppConfig.AutoDescriptionWithOpenAI;
+                return ClipboardAppConfig.Instance.AutoDescriptionWithOpenAI;
             }
             set {
-                ClipboardAppConfig.AutoDescriptionWithOpenAI = value;
+                ClipboardAppConfig.Instance.AutoDescriptionWithOpenAI = value;
                 OnPropertyChanged(nameof(AutoDescriptionWithOpenAI));
 
                 // プロパティが変更されたことを設定
@@ -330,10 +330,10 @@ namespace ClipboardApp.Settings
         //　AutoExtractImageWithOpenAI
         public bool AutoExtractImageWithOpenAI {
             get {
-                return ClipboardAppConfig.AutoExtractImageWithOpenAI;
+                return ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI;
             }
             set {
-                ClipboardAppConfig.AutoExtractImageWithOpenAI = value;
+                ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI = value;
                 OnPropertyChanged(nameof(AutoExtractImageWithOpenAI));
 
                 // プロパティが変更されたことを設定
@@ -343,10 +343,10 @@ namespace ClipboardApp.Settings
         // AnalyzeJapaneseSentence
         public bool AnalyzeJapaneseSentence {
             get {
-                return ClipboardAppConfig.AnalyzeJapaneseSentence;
+                return ClipboardAppConfig.Instance.AnalyzeJapaneseSentence;
             }
             set {
-                ClipboardAppConfig.AnalyzeJapaneseSentence = value;
+                ClipboardAppConfig.Instance.AnalyzeJapaneseSentence = value;
                 OnPropertyChanged(nameof(AnalyzeJapaneseSentence));
 
                 // プロパティが変更されたことを設定
@@ -356,10 +356,10 @@ namespace ClipboardApp.Settings
         // AutoGenerateQA
         public bool AutoGenerateQA {
             get {
-                return ClipboardAppConfig.AutoGenerateQA;
+                return ClipboardAppConfig.Instance.AutoGenerateQA;
             }
             set {
-                ClipboardAppConfig.AutoGenerateQA = value;
+                ClipboardAppConfig.Instance.AutoGenerateQA = value;
                 OnPropertyChanged(nameof(AutoGenerateQA));
 
                 // プロパティが変更されたことを設定
@@ -369,10 +369,10 @@ namespace ClipboardApp.Settings
         // AutoGenerateIssues
         public bool AutoGenerateIssues {
             get {
-                return ClipboardAppConfig.AutoGenerateIssues;
+                return ClipboardAppConfig.Instance.AutoGenerateIssues;
             }
             set {
-                ClipboardAppConfig.AutoGenerateIssues = value;
+                ClipboardAppConfig.Instance.AutoGenerateIssues = value;
                 OnPropertyChanged(nameof(AutoGenerateIssues));
 
                 // プロパティが変更されたことを設定
@@ -384,10 +384,10 @@ namespace ClipboardApp.Settings
         // EmbeddingWhenExtractingTextFromImage
         public bool EmbeddingWhenExtractingTextFromImage {
             get {
-                return ClipboardAppConfig.EmbeddingWhenExtractingTextFromImage;
+                return ClipboardAppConfig.Instance.EmbeddingWhenExtractingTextFromImage;
             }
             set {
-                ClipboardAppConfig.EmbeddingWhenExtractingTextFromImage = value;
+                ClipboardAppConfig.Instance.EmbeddingWhenExtractingTextFromImage = value;
                 OnPropertyChanged(nameof(EmbeddingWhenExtractingTextFromImage));
 
                 // プロパティが変更されたことを設定
@@ -399,10 +399,10 @@ namespace ClipboardApp.Settings
         // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
         public bool AutoEmbedding {
             get {
-                return ClipboardAppConfig.AutoEmbedding;
+                return ClipboardAppConfig.Instance.AutoEmbedding;
             }
             set {
-                ClipboardAppConfig.AutoEmbedding = value;
+                ClipboardAppConfig.Instance.AutoEmbedding = value;
                 OnPropertyChanged(nameof(AutoEmbedding));
 
                 // プロパティが変更されたことを設定
@@ -412,10 +412,10 @@ namespace ClipboardApp.Settings
         // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
         public bool AutoFileExtract {
             get {
-                return ClipboardAppConfig.AutoFileExtract;
+                return ClipboardAppConfig.Instance.AutoFileExtract;
             }
             set {
-                ClipboardAppConfig.AutoFileExtract = value;
+                ClipboardAppConfig.Instance.AutoFileExtract = value;
                 OnPropertyChanged(nameof(AutoFileExtract));
 
                 // プロパティが変更されたことを設定
@@ -426,10 +426,10 @@ namespace ClipboardApp.Settings
         // BackupGeneration
         public int BackupGeneration {
             get {
-                return ClipboardAppConfig.BackupGeneration;
+                return ClipboardAppConfig.Instance.BackupGeneration;
             }
             set {
-                ClipboardAppConfig.BackupGeneration = value;
+                ClipboardAppConfig.Instance.BackupGeneration = value;
                 OnPropertyChanged(nameof(BackupGeneration));
 
                 // プロパティが変更されたことを設定
@@ -535,7 +535,7 @@ namespace ClipboardApp.Settings
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -554,18 +554,18 @@ namespace ClipboardApp.Settings
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
             try {
                 // ChatControllerを作成
-                Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-                List<ChatIHistorytem> chatItems = [];
+                Chat chatController = new();
+                List<ChatHistoryItem> chatItems = [];
                 // ChatItemを追加
-                ChatIHistorytem chatItem = new(ChatIHistorytem.UserRole, "Hello");
+                ChatHistoryItem chatItem = new(ChatHistoryItem.UserRole, "Hello");
                 chatItems.Add(chatItem);
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
 
-                string resultString = chatController.ExecuteChat()?.Response ?? "";
+                string resultString = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties())?.Response ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
                     testResult.Result = false;
@@ -583,11 +583,11 @@ namespace ClipboardApp.Settings
         // TestLangChain
         private void TestLangChain() {
             try {
-                Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
-                List<ChatIHistorytem> chatItems = [new ChatIHistorytem(ChatIHistorytem.UserRole, "Hello")];
+                Chat chatController = new();
+                List<ChatHistoryItem> chatItems = [new ChatHistoryItem(ChatHistoryItem.UserRole, "Hello")];
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
-                ChatResult? result = chatController.ExecuteChat();
+                ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties());
                 if (string.IsNullOrEmpty(result?.Response)) {
                     LogWrapper.Error($"[NG]:{StringResources.FailedToRunLangChain}");
                 } else {
@@ -642,12 +642,12 @@ namespace ClipboardApp.Settings
 
         public bool Save() {
             if (isPropertyChanged) {
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
 
-                if (CommonStringResources.Lang != ClipboardAppConfig.ActualLang) {
-                    CommonStringResources.Lang = ClipboardAppConfig.ActualLang;
+                if (CommonStringResources.Lang != ClipboardAppConfig.Instance.ActualLang) {
+                    CommonStringResources.Lang = ClipboardAppConfig.Instance.ActualLang;
                     // PythonAILibの言語を変更
-                    PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
+                    PythonAILibStringResources.Lang = ClipboardAppConfig.Instance.ActualLang;
                 }
 
                 isPropertyChanged = false;
@@ -674,7 +674,7 @@ namespace ClipboardApp.Settings
 
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-            ClipboardAppConfig.Reload();
+            ClipboardAppConfig.Instance.Reload();
             LogWrapper.Info(StringResources.Canceled);
             // Windowを閉じる
             window.Close();

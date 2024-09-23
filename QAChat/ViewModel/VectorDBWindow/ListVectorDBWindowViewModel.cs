@@ -2,62 +2,16 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.Abstract;
 using QAChat.View.VectorDBWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.VectorDBWindow
-{
+namespace QAChat.ViewModel.VectorDBWindow {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListVectorDBWindowViewModel : MyWindowViewModel
-    {
+    public class ListVectorDBWindowViewModel : QAChatViewModelBase {
 
-        public enum ActionModeEnum
-        {
-            Edit,
-            Select,
-        }
-        // VectorDBItemのリスト
-        public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
-
-        // 選択中のVectorDBItem
-        private VectorDBItemViewModel? selectedVectorDBItem;
-        public VectorDBItemViewModel? SelectedVectorDBItem
-        {
-            get
-            {
-                return selectedVectorDBItem;
-            }
-            set
-            {
-                selectedVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedVectorDBItem));
-            }
-        }
-        // システム用のVectorDBItemを表示するか否か
-        private bool isShowSystemCommonVectorDB;
-        public bool IsShowSystemCommonVectorDB
-        {
-            get
-            {
-                return isShowSystemCommonVectorDB;
-            }
-            set
-            {
-                isShowSystemCommonVectorDB = value;
-                OnPropertyChanged(nameof(IsShowSystemCommonVectorDB));
-                // リストを更新
-                LoadVectorItemsCommand.Execute();
-
-            }
-        }
-
-        private ActionModeEnum mode;
-        Action<VectorDBItemBase>? callBackup;
-
-        public void Initialize(ActionModeEnum mode, Action<VectorDBItemBase> callBackup)
-        {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, Action<VectorDBItemBase> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
@@ -66,13 +20,48 @@ namespace QAChat.ViewModel.VectorDBWindow
         }
 
 
+        public enum ActionModeEnum {
+            Edit,
+            Select,
+        }
+        // VectorDBItemのリスト
+        public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
+
+        private ActionModeEnum mode;
+        Action<VectorDBItemBase>? callBackup;
+
+
+        // 選択中のVectorDBItem
+        private VectorDBItemViewModel? selectedVectorDBItem;
+        public VectorDBItemViewModel? SelectedVectorDBItem {
+            get {
+                return selectedVectorDBItem;
+            }
+            set {
+                selectedVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
+            }
+        }
+        // システム用のVectorDBItemを表示するか否か
+        private bool isShowSystemCommonVectorDB;
+        public bool IsShowSystemCommonVectorDB {
+            get {
+                return isShowSystemCommonVectorDB;
+            }
+            set {
+                isShowSystemCommonVectorDB = value;
+                OnPropertyChanged(nameof(IsShowSystemCommonVectorDB));
+                // リストを更新
+                LoadVectorItemsCommand.Execute();
+
+            }
+        }
+
+
         // 選択ボタンの表示可否
-        public Visibility SelectModeVisibility
-        {
-            get
-            {
-                if (mode == ActionModeEnum.Select)
-                {
+        public Visibility SelectModeVisibility {
+            get {
+                if (mode == ActionModeEnum.Select) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
@@ -80,15 +69,12 @@ namespace QAChat.ViewModel.VectorDBWindow
         }
 
         // VectorDBItemのロード
-        public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) =>
-        {
+        public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            var items = PythonAILibManager.Instance?.DBController.GetVectorDBItems(IsShowSystemCommonVectorDB);
-            if (items != null)
-            {
-                foreach (var item in items)
-                {
+            var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems(IsShowSystemCommonVectorDB);
+            if (items != null) {
+                foreach (var item in items) {
                     VectorDBItems.Add(new VectorDBItemViewModel(item));
                 }
             }
@@ -96,34 +82,28 @@ namespace QAChat.ViewModel.VectorDBWindow
         });
 
         // VectorDB Sourceの追加
-        public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) =>
-        {
+        public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
             // SelectVectorDBItemを設定
-            var item = PythonAILibManager.Instance?.DBController.CreateVectorDBItem();
-            if (item == null)
-            {
+            var item = PythonAILibManager.Instance?.DataFactory.CreateVectorDBItem();
+            if (item == null) {
                 return;
             }
             SelectedVectorDBItem = new VectorDBItemViewModel(item);
             // ベクトルDBの編集Windowを開く
-            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) =>
-            {
+            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新
                 LoadVectorItemsCommand.Execute();
             });
 
         });
         // Vector DB編集
-        public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) =>
-        {
-            if (SelectedVectorDBItem == null)
-            {
+        public SimpleDelegateCommand<object> EditVectorDBCommand => new((parameter) => {
+            if (SelectedVectorDBItem == null) {
                 LogWrapper.Error(StringResources.SelectVectorDBToEdit);
                 return;
             }
             // ベクトルDBの編集Windowを開く
-            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) =>
-            {
+            EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
 
                 // リストを更新
                 LoadVectorItemsCommand.Execute();
@@ -131,30 +111,25 @@ namespace QAChat.ViewModel.VectorDBWindow
 
         });
         // DeleteVectorDBCommand
-        public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) =>
-        {
-            if (SelectedVectorDBItem == null)
-            {
+        public SimpleDelegateCommand<object> DeleteVectorDBCommand => new((parameter) => {
+            if (SelectedVectorDBItem == null) {
                 LogWrapper.Error(StringResources.SelectVectorDBToDelete);
                 return;
             }
             // 確認ダイアログを表示
             MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedVectorDB, StringResources.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes)
-            {
+            if (result == MessageBoxResult.Yes) {
 
                 // 削除
-                SelectedVectorDBItem.Delete();
+                SelectedVectorDBItem.Item.Delete();
                 // リストを更新
                 LoadVectorItemsCommand.Execute();
             }
         });
 
         // SelectCommand
-        public SimpleDelegateCommand<Window> SelectCommand => new((window) =>
-        {
-            if (SelectedVectorDBItem == null)
-            {
+        public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
+            if (SelectedVectorDBItem == null) {
                 LogWrapper.Error(StringResources.SelectVectorDBPlease);
                 return;
             }

@@ -7,14 +7,15 @@ using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Image;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.ImageChat {
-    public class ImageChatMainWindowViewModel : MyWindowViewModel {
+    public class ImageChatMainWindowViewModel : QAChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
             // PythonAILibのLogWrapperのログ出力設定
@@ -25,7 +26,7 @@ namespace QAChat.ViewModel.ImageChat {
             OnPropertyChanged(nameof(InputText));
             OnPropertyChanged(nameof(ResultText));
             OnPropertyChanged(nameof(ImageFiles));
-            ChatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            ChatController = new();
         }
         // データ保存用のClipboardItem
         public ContentItemBase ClipboardItem { get; set; }
@@ -110,6 +111,16 @@ namespace QAChat.ViewModel.ImageChat {
         // 最後に選択された画像ファイルがあるフォルダ
         private string lastSelectedImageFolder = ".";
 
+        public TextWrapping TextWrapping {
+            get {
+                if (QAChatManager.Instance == null) {
+                    return TextWrapping.NoWrap;
+                }
+                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
+            }
+        }
+
+
         // ScreenShotCheckPromptWindowを開くコマンド
         public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {
             // ScreenShotCheckPromptWindowを生成してWindowを表示する。
@@ -136,6 +147,8 @@ namespace QAChat.ViewModel.ImageChat {
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
+            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
                 LogWrapper.Error(StringResources.NoImageFileSelected);
@@ -145,9 +158,6 @@ namespace QAChat.ViewModel.ImageChat {
             try {
                 // プログレスバーを表示
                 IsIndeterminate = true;
-
-                // Python処理機能の初期化
-                PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
 
                 // モードがLangChainWithVectorDBの場合はLangChainOpenAIChatでチャットを送信
                 // モードがNormalの場合はOpenAIChatでチャットを送信
@@ -165,7 +175,7 @@ namespace QAChat.ViewModel.ImageChat {
                     ChatController.ContentText = InputText;
                     ChatController.PromptTemplateText = PromptText;
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatController.ExecuteChat();
+                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
 
                 });
                 // 結果を表示
@@ -225,7 +235,7 @@ namespace QAChat.ViewModel.ImageChat {
         public SimpleDelegateCommand<object> ClearChatCommand => new((parameter) => {
             InputText = "";
             ImageFiles = [];
-            ChatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            ChatController = new();
 
         });
 

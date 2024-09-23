@@ -2,13 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.Image;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace QAChat.ViewModel.ImageChat {
 
-    public class ScreenShotCheckPromptWindowViewModel : MyWindowViewModel {
+    public class ScreenShotCheckPromptWindowViewModel : QAChatViewModelBase {
 
         // 設定項目、設定値を保持するScreenShotCheckItem DataGridのItemsSource 
         public ObservableCollection<ScreenShotCheckCondition> ScreenShotCheckItems { get; set; } = [];  

@@ -1,14 +1,25 @@
+using System.Windows;
 using PythonAILib.Model.Chat;
-using WpfAppCommon.Model;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.QAChatMain {
-    public class EditChatItemWindowViewModel : MyWindowViewModel {
+    public class EditChatItemWindowViewModel : QAChatViewModelBase {
 
-        public ChatIHistorytem ChatItem { get; set; }
+        public ChatHistoryItem ChatItem { get; set; }
 
-        public EditChatItemWindowViewModel(ChatIHistorytem chatItem) {
+        public EditChatItemWindowViewModel(ChatHistoryItem chatItem) {
             ChatItem = chatItem;
             OnPropertyChanged(nameof(ChatItem));
         }
+
+        public TextWrapping TextWrapping {
+            get {
+                if (QAChatManager.Instance == null) {
+                    return TextWrapping.NoWrap;
+                }
+                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
+            }
+        }
+
     }
 }

@@ -1,6 +1,5 @@
-namespace PythonAILib.Model.Abstract
-{
-    public interface IDBController {
+namespace PythonAILib.Model.Abstract {
+    public interface IDataFactory {
 
         //-- ClipboardItem
         public ContentItemBase? GetItem(ContentItemBase item);

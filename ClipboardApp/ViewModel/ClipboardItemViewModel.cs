@@ -456,7 +456,7 @@ namespace ClipboardApp.ViewModel {
             List<VectorSearchResult> vectorSearchResults = [];
             await Task.Run(() => {
                 // ベクトル検索を実行
-                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardAppConfig.IncludeBackgroundInfoInEmbedding));
+                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding));
             });
             // ベクトル検索結果ウィンドウを開く
             VectorSearchResultWindow.OpenVectorSearchResultWindow(vectorSearchResults);

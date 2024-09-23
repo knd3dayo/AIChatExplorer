@@ -646,10 +646,10 @@ namespace WpfAppCommon.Model {
         // -- QAChatControl --
         public override string ExperimentalFunction1 { get; } = "Experimental function 1";
         public override string VectorDBFolder { get; } = "Vector DB (folder)";
-        public override string ClickHereToAddVectorDBFolder { get; } = "Click here to add Vector DB (folder)";
         public override string ExcludeFromList { get; } = "Exclude from list";
+        public override string VectorDB { get; } = "Vector DB";
         public override string VectorDBExternal { get; } = "Vector DB (external)";
-        public override string ClickHereToAddVectorDBExternal { get; } = "Click here to add Vector DB (external)";
+        public override string ClickHereToAddVectorDB { get; } = "Click here to add Vector DB";
         public override string AdditionalItem { get; } = "Additional Item";
         public override string ClickHereToPasteTheSelectedItem { get; } = "Click here to paste the selected item";
         public override string ImageFile { get; } = "Image file";

@@ -4,7 +4,7 @@ using PythonAILib.Model.Abstract;
 
 namespace ClipboardApp.Factory
 {
-    public interface IClipboardDBController : IDBController{
+    public interface IClipboardDBController : IDataFactory{
 
 
 

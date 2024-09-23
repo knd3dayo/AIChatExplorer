@@ -33,7 +33,7 @@ namespace ClipboardApp.Model {
                 return;
             }
             // Python処理機能の初期化
-            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
+            PythonExecutor.Init(ClipboardAppConfig.Instance.PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
 
             while (true) {
                 // _EnabledがFalseの場合は終了

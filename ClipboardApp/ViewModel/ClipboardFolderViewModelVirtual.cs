@@ -4,11 +4,9 @@ using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Resource;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {
 
         // -- virtual

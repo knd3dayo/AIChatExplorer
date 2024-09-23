@@ -1,12 +1,13 @@
 using System.Windows;
-using WpfAppCommon.Model;
+using ClipboardApp.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
-    public class TagSearchWindowViewModel : MyWindowViewModel {
+namespace ClipboardApp.ViewModel
+{
+    public class TagSearchWindowViewModel : ClipboardAppViewModelBase {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
-        public void Initialize(Action<string, bool> afterUpdate) {
+        public TagSearchWindowViewModel(Action<string, bool> afterUpdate) {
             _afterUpdate = afterUpdate;
         }
         private bool _excludeTag = false;

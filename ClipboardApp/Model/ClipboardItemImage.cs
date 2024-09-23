@@ -7,8 +7,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class ClipboardItemImage_ : ImageItemBase {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -32,9 +31,9 @@ namespace ClipboardApp.Model
             string idString = Id.ToString();
 
             Task.Run(() => {
-                if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+                if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                     // SyncFolderName/フォルダ名/ファイル名を削除する
-                    string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                    string syncFolderName = ClipboardAppConfig.Instance.SyncFolderName;
                     if (ClipboardItem == null) {
                         throw new Exception("FilePath is null");
                     }
@@ -44,7 +43,7 @@ namespace ClipboardApp.Model
                         File.Delete(syncFilePath);
                     }
                     // 自動コミットが有効の場合はGitにコミット
-                    if (ClipboardAppConfig.AutoCommit) {
+                    if (ClipboardAppConfig.Instance.AutoCommit) {
                         ClipboardItem.GitCommit(syncFilePath);
                     }
                 }
@@ -67,12 +66,12 @@ namespace ClipboardApp.Model
             // ★TODO Test
             // ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItemImage(this);
             // クリップボードアイテムとファイルを同期する
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+            if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                 if (ClipboardItem == null) {
                     throw new Exception("FilePath is null");
                 }
                 // SyncFolderName/フォルダ名/ファイル名にファイルを保存する
-                string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                string syncFolderName = ClipboardAppConfig.Instance.SyncFolderName;
                 string syncFolder = Path.Combine(syncFolderName, ClipboardItem.FolderPath);
                 string syncFilePath = Path.Combine(syncFolder, Id.ToString());
                 if (!Directory.Exists(syncFolder)) {
@@ -84,7 +83,7 @@ namespace ClipboardApp.Model
                 Image.Save(syncFilePath, System.Drawing.Imaging.ImageFormat.Png);
 
                 // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
+                if (ClipboardAppConfig.Instance.AutoCommit) {
                     ClipboardItem.GitCommit(syncFilePath);
                 }
             }

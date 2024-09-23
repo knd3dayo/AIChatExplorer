@@ -1,20 +1,12 @@
 using System.Windows;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Model;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.VectorDBWindow {
-    public class VectorDBItemViewModel : MyWindowViewModel {
+    public class VectorDBItemViewModel(VectorDBItemBase item) : QAChatViewModelBase {
+        public VectorDBItemBase Item { get; private set; } = item;
 
-        private readonly VectorDBItemBase item;
-        public VectorDBItemViewModel(VectorDBItemBase item) {
-            this.item = item;
-        }
-        public VectorDBItemBase Item {
-            get {
-                return item;
-            }
-        }
 
         // ベクトルDBの種類を表す列挙型
         public VectorDBTypeEnum VectorDBType {
@@ -125,8 +117,6 @@ namespace QAChat.ViewModel.VectorDBWindow {
             }
         }
 
-
-
         // DocStoreURLを表示するか否かのVisibility
         public Visibility DocStoreURLVisibility {
             get {
@@ -136,16 +126,6 @@ namespace QAChat.ViewModel.VectorDBWindow {
                 return Visibility.Collapsed;
             }
         }
-
-        // Save
-        public void Save() {
-            Item.Save();
-        }
-        // Delete
-        public void Delete() {
-            Item.Delete();
-        }
-
 
     }
 }

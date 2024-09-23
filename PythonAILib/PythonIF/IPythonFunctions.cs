@@ -4,8 +4,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
@@ -14,13 +13,13 @@ namespace PythonAILib.PythonIF
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 
-        
-        public ChatResult OpenAIChat(Chat chatController);
 
-            
-        public ChatResult LangChainChat(Chat chatController);
+        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatController);
 
-        
+
+        public ChatResult LangChainChat(OpenAIProperties props, Chat chatController);
+
+
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItemBase vectorDBItem, VectorSearchRequest request);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItemBase vectorDBItem);

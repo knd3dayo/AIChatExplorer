@@ -1,19 +1,19 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using QAChat.View.RAGWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.RAGWindow {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListRAGSourceWindowViewModel : MyWindowViewModel {
+    public class ListRAGSourceWindowViewModel : QAChatViewModelBase {
 
         public ListRAGSourceWindowViewModel() {
             // RagSourceItemのリストを初期化
             RagSourceItems.Clear();
-            var items = PythonAILibManager.Instance?.DBController.GetRAGSourceItems();
+            var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
             if (items != null) {
                 foreach (var item in items) {
                     RagSourceItems.Add(new RAGSourceItemViewModel(item));
@@ -40,7 +40,7 @@ namespace QAChat.ViewModel.RAGWindow {
         // RAG Sourceの追加
         public SimpleDelegateCommand<object> AddRagSourceCommand => new((parameter) => {
             // SelectRAGSourceItemを設定
-            var item = PythonAILibManager.Instance?.DBController.CreateRAGSourceItem();
+            var item = PythonAILibManager.Instance?.DataFactory.CreateRAGSourceItem();
             if (item == null) {
                 return;
             }
@@ -50,7 +50,7 @@ namespace QAChat.ViewModel.RAGWindow {
             EditRAGSourceWindow.OpenEditRAGSourceWindow(SelectedRagSourceItem, (afterUpdate) => {
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DBController.GetRAGSourceItems();
+                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
                 if (items != null) {
                     foreach (var item in items) {
                         RagSourceItems.Add(new RAGSourceItemViewModel(item));
@@ -71,7 +71,7 @@ namespace QAChat.ViewModel.RAGWindow {
 
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DBController.GetRAGSourceItems();
+                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
                 if (items != null) {
                     foreach (var item in items) {
                         RagSourceItems.Add(new RAGSourceItemViewModel(item));
@@ -95,7 +95,7 @@ namespace QAChat.ViewModel.RAGWindow {
                 SelectedRagSourceItem.Item.Delete();
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DBController.GetRAGSourceItems();
+                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
                 if (items != null) {
                     foreach (var item in items) {
                         RagSourceItems.Add(new RAGSourceItemViewModel(item));

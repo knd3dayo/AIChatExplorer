@@ -5,16 +5,14 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:ClipboardApp.ViewModel"
     Title="{Binding StringResources.EditClipboardFolder, Mode=OneTime}"
     Width="500"
+    d:DataContext="{d:DesignInstance Type=local:FolderEditWindowViewModel}"
     SizeToContent="Height"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <view:FolderEditWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

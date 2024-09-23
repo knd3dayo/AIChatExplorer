@@ -32,7 +32,7 @@ namespace ClipboardApp.Model
         // 自動でタグを付与するコマンド
         public static void CreateAutoTags(ClipboardItem item) {
             // PythonでItem.ContentからEntityを抽出
-            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+            string spacyModel = Properties.Settings.Default.SpacyModel;
             HashSet<string> entities = PythonExecutor.PythonMiscFunctions.ExtractEntity(spacyModel, item.Content);
             foreach (var entity in entities) {
 
@@ -49,7 +49,7 @@ namespace ClipboardApp.Model
                 LogWrapper.Info(CommonStringResources.Instance.CannotMaskNonTextContent);
                 return this;
             }
-            string spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+            string spacyModel = Properties.Settings.Default.SpacyModel;
             string result = PythonExecutor.PythonMiscFunctions.GetMaskedString(spacyModel, this.Content);
             this.Content = result;
 

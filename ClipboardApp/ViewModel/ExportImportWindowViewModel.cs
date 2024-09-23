@@ -1,10 +1,12 @@
 using System.Windows;
+using ClipboardApp.Model;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
-    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel, Action AfterUpdate) : MyWindowViewModel {
+namespace ClipboardApp.ViewModel
+{
+    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel, Action AfterUpdate) : ClipboardAppViewModelBase {
 
 
         public int SelectedIndex { get; set; }

@@ -3,11 +3,11 @@ using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRuleView;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
-    public class ListAutoProcessRuleWindowViewModel : MyWindowViewModel {
+namespace ClipboardApp.ViewModel
+{
+    public class ListAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
 
 
         // システム共通ルール設定用
@@ -24,7 +24,7 @@ namespace ClipboardApp.ViewModel {
             }
         }
         private static MainWindowViewModel? _mainWindowViewModel;
-        public void Initialize(MainWindowViewModel mainWindowViewModel) {
+        public ListAutoProcessRuleWindowViewModel(MainWindowViewModel mainWindowViewModel) {
             _mainWindowViewModel = mainWindowViewModel;
             // AutoProcessRulesを更新
             AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];

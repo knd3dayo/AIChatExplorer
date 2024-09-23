@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ClipboardApp.Model;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class VectorSearchResultWindowViewModel : MyWindowViewModel{
+    public class VectorSearchResultWindowViewModel : ClipboardAppViewModelBase{
 
 
         public void Initialize(List<VectorSearchResult> vectorSearches) {

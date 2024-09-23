@@ -1,10 +1,19 @@
 using System.Windows;
 using PythonAILib.Model.Abstract;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.PromptTemplateWindow {
-    public class EditPromptItemWindowViewModel : MyWindowViewModel {
+    public class EditPromptItemWindowViewModel : QAChatViewModelBase {
+
+        // 初期化
+        public EditPromptItemWindowViewModel(PromptItemViewModel itemViewModel, Action<PromptItemViewModel> afterUpdate) {
+            ItemViewModel = itemViewModel;
+            Name = ItemViewModel.PromptItem.Name ?? "";
+            Description = ItemViewModel.Description ?? "";
+            Prompt = ItemViewModel.Content ?? "";
+            AfterUpdate = afterUpdate;
+        }
 
         private PromptItemViewModel? itemViewModel;
         public PromptItemViewModel? ItemViewModel {
@@ -50,14 +59,17 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
         }
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
-        // 初期化
-        public EditPromptItemWindowViewModel(PromptItemViewModel itemViewModel, Action<PromptItemViewModel> afterUpdate) {
-            ItemViewModel = itemViewModel;
-            Name = ItemViewModel.PromptItem.Name ?? "";
-            Description = ItemViewModel.Description ?? "";
-            Prompt = ItemViewModel.Content ?? "";
-            AfterUpdate = afterUpdate;
+        public TextWrapping TextWrapping {
+            get {
+                if (QAChatManager.Instance == null) {
+                    return TextWrapping.NoWrap;
+                }
+                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
+            }
         }
+
+
+
         // OKボタンのコマンド
         public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映

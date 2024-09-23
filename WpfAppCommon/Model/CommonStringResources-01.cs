@@ -870,10 +870,13 @@ namespace WpfAppCommon.Model {
         public virtual string ExcludeFromList { get; } = "リストから除外";
 
         // ベクトルDB(外部)
+        public virtual string VectorDB { get; } = "ベクトルDB";
+
+        // ベクトルDB(外部)
         public virtual string VectorDBExternal { get; } = "ベクトルDB(外部)";
 
-        // ここをクリックしてベクトルDB(外部)を追加
-        public virtual string ClickHereToAddVectorDBExternal { get; } = "ここをクリックしてベクトルDB(外部)を追加";
+        // ここをクリックしてベクトルDBを追加
+        public virtual string ClickHereToAddVectorDB { get; } = "ここをクリックしてベクトルDBを追加";
 
         // 画像アイテム
         public virtual string AdditionalItem { get; } = "追加アイテム";

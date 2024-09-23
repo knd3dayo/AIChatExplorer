@@ -1,9 +1,8 @@
-using WpfAppCommon.Model;
 using ClipboardApp.Model;
 
 namespace ClipboardApp.ViewModel
 {
-    public class TagItemViewModel : MyWindowViewModel {
+    public class TagItemViewModel : ClipboardAppViewModelBase {
 
         // コンストラクタ
         public TagItemViewModel(TagItem tagItem) {

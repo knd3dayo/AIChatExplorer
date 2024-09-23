@@ -1,11 +1,10 @@
 using System.Windows;
 using QAChat.View.RAGWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.RAGWindow
-{
-    public class EditRAGSourceWindowViewModel : MyWindowViewModel
+namespace QAChat.ViewModel.RAGWindow {
+    public class EditRAGSourceWindowViewModel : QAChatViewModelBase
     {
 
         // 初期化

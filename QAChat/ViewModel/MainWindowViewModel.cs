@@ -3,11 +3,11 @@ using PythonAILib.Model;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.QAChatMain;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
 namespace QAChat.ViewModel {
-    public class MainWindowViewModel : MyWindowViewModel {
+    public class MainWindowViewModel : QAChatViewModelBase {
 
         //初期化
         public MainWindowViewModel(QAChatStartupProps props) {

@@ -54,7 +54,6 @@
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="" />
                 </Menu>
-
             </materialDesign:ColorZone>
         </StackPanel>
         <DataGrid

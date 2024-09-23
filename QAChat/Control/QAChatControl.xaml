@@ -78,7 +78,6 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
             </Grid>
-            <!--  ベクトルDB(フォルダ)  -->
             <StackPanel
                 Grid.Row="1"
                 HorizontalAlignment="Left"
@@ -87,14 +86,14 @@
                     Width="200"
                     Padding="10,0,10,0"
                     HorizontalAlignment="Left"
-                    IsChecked="{Binding IsSystemVectorDBDrawerOpen}"
+                    IsChecked="{Binding IsVectorDBDrawerOpen}"
                     Style="{StaticResource MaterialDesignFlatButton}">
                     <DockPanel Width="200">
                         <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.VectorDBFolder, Mode=OneTime}" />
+                        <TextBlock Text="{Binding StringResources.VectorDB, Mode=OneTime}" />
                     </DockPanel>
                 </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsSystemVectorDBDrawerOpen}" OpenMode="Standard">
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsVectorDBDrawerOpen}" OpenMode="Standard">
                     <materialDesign:DrawerHost.BottomDrawerContent>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -106,22 +105,27 @@
                                 Margin="10,10,10,10"
                                 HorizontalAlignment="Left"
                                 FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddVectorDBFolder, Mode=OneTime}">
+                                Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
                                 <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding AddVectorDBItemFolderCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                                    <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                                 </TextBlock.InputBindings>
                             </TextBlock>
                             <ListBox
                                 Grid.Row="1"
                                 Margin="10,10,10,10"
-                                ItemsSource="{Binding SystemVectorDBItems}"
-                                SelectedItem="{Binding SelectedSystemVectorDBItem}"
+                                ItemsSource="{Binding VectorDBItems}"
+                                SelectedItem="{Binding SelectedVectorDBItem}"
                                 Visibility="{Binding VectorDBItemVisibility}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
                                 <ListBox.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
@@ -132,65 +136,7 @@
                     </materialDesign:DrawerHost.BottomDrawerContent>
                 </materialDesign:DrawerHost>
             </StackPanel>
-            <StackPanel
-                Grid.Row="2"
-                HorizontalAlignment="Left"
-                Visibility="{Binding VectorDBItemVisibility}">
-                <ToggleButton
-                    Width="200"
-                    Padding="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    IsChecked="{Binding IsExternalVectorDBDrawerOpen}"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                    <DockPanel Width="200">
-                        <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.VectorDBExternal, Mode=OneTime}" />
-                    </DockPanel>
-                </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsExternalVectorDBDrawerOpen}" OpenMode="Standard">
-                    <materialDesign:DrawerHost.BottomDrawerContent>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddVectorDBExternal, Mode=OneTime}">
-                                <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
-                                </TextBlock.InputBindings>
-                            </TextBlock>
-                            <ListBox
-                                Grid.Row="1"
-                                Margin="10,10,10,10"
-                                ItemsSource="{Binding ExternalVectorDBItems}"
-                                SelectedItem="{Binding SelectedExternalVectorDBItem}"
-                                Visibility="{Binding VectorDBItemVisibility}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDoubleClick">
-                                        <i:InvokeCommandAction Command="{Binding OpenExternalVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <ListBox.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveExternalVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
-                                    </ContextMenu>
-                                </ListBox.ContextMenu>
-                            </ListBox>
-                        </Grid>
-                    </materialDesign:DrawerHost.BottomDrawerContent>
-                </materialDesign:DrawerHost>
-            </StackPanel>
-            <StackPanel Grid.Row="3">
+            <StackPanel Grid.Row="2">
                 <ToggleButton
                     Width="200"
                     Padding="10,0,10,0"
@@ -352,7 +298,7 @@
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
                             Text="{Binding PreviewText, Mode=OneWay}"
-                            TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
+                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <TabItem
@@ -370,7 +316,7 @@
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
                             Text="{Binding PreviewJson, Mode=OneWay}"
-                            TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}" />
+                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
                 <i:Interaction.Triggers>

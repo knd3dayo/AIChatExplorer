@@ -5,14 +5,13 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:local="clr-namespace:ClipboardApp.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:ClipboardApp.ViewModel"
     Title="ImportClipboardItemsWindow"
     Width="600"
     Height="380"
-    d:DataContext="{d:DesignInstance view:ExportImportWindowViewModel}"
+    d:DataContext="{d:DesignInstance local:ExportImportWindowViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

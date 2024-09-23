@@ -1,18 +1,22 @@
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
-using ClipboardApp.View.PythonScriptView;
 using ClipboardApp.Model;
+using ClipboardApp.View.PythonScriptView;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    class EditPythonScriptWindowViewModel : MyWindowViewModel {
-        private ScriptItem? scriptItem;
-        public ScriptItem? ScriptItem {
+    class EditPythonScriptWindowViewModel : ClipboardAppViewModelBase {
+
+        public EditPythonScriptWindowViewModel(ScriptItem scriptItem) {
+            _scriptItem = scriptItem;
+        }
+
+        private ScriptItem _scriptItem;
+        public ScriptItem ScriptItem {
             get {
-                return scriptItem;
+                return _scriptItem;
             }
             set {
-                scriptItem = value;
+                _scriptItem = value;
                 OnPropertyChanged(nameof(ScriptItem));
             }
         }

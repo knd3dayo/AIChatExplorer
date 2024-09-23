@@ -1,7 +1,7 @@
+using ClipboardApp.Model;
 using PythonAILib.PythonIF;
 using System.Text;
 using System.Windows;
-using WpfAppCommon.Model;
 
 namespace ClipboardApp.Settings {
     public partial class SettingUserControlViewModel {
@@ -10,7 +10,7 @@ namespace ClipboardApp.Settings {
         #region 開発中機能関連の設定
         public Visibility EnableDevFeaturesVisibility {
             get {
-                if (ClipboardAppConfig.EnableDevFeatures) {
+                if (ClipboardAppConfig.Instance.EnableDevFeatures) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
@@ -18,9 +18,9 @@ namespace ClipboardApp.Settings {
             }
             set {
                 if (value == Visibility.Visible) {
-                    ClipboardAppConfig.EnableDevFeatures = true;
+                    ClipboardAppConfig.Instance.EnableDevFeatures = true;
                 } else {
-                    ClipboardAppConfig.EnableDevFeatures = false;
+                    ClipboardAppConfig.Instance.EnableDevFeatures = false;
                 }
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
                 // プロパティが変更されたことを設定
@@ -30,10 +30,10 @@ namespace ClipboardApp.Settings {
         // EnableDevFeatures
         public bool EnableDevFeatures {
             get {
-                return ClipboardAppConfig.EnableDevFeatures;
+                return ClipboardAppConfig.Instance.EnableDevFeatures;
             }
             set {
-                ClipboardAppConfig.EnableDevFeatures = value;
+                ClipboardAppConfig.Instance.EnableDevFeatures = value;
                 OnPropertyChanged(nameof(EnableDevFeatures));
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
                 // プロパティが変更されたことを設定
@@ -44,10 +44,10 @@ namespace ClipboardApp.Settings {
         // TesseractExePath
         public string TesseractExePath {
             get {
-                return ClipboardAppConfig.TesseractExePath;
+                return ClipboardAppConfig.Instance.TesseractExePath;
             }
             set {
-                ClipboardAppConfig.TesseractExePath = value;
+                ClipboardAppConfig.Instance.TesseractExePath = value;
                 OnPropertyChanged(nameof(TesseractExePath));
 
                 // プロパティが変更されたことを設定
@@ -58,10 +58,10 @@ namespace ClipboardApp.Settings {
         // UseSpacy
         public bool UseSpacy {
             get {
-                return ClipboardAppConfig.UseSpacy;
+                return ClipboardAppConfig.Instance.UseSpacy;
             }
             set {
-                ClipboardAppConfig.UseSpacy = value;
+                ClipboardAppConfig.Instance.UseSpacy = value;
                 OnPropertyChanged(nameof(UseSpacy));
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -70,10 +70,10 @@ namespace ClipboardApp.Settings {
         // SpacyModel
         public string SpacyModel {
             get {
-                return ClipboardAppConfig.SpacyModel;
+                return ClipboardAppConfig.Instance.SpacyModel;
             }
             set {
-                ClipboardAppConfig.SpacyModel = value;
+                ClipboardAppConfig.Instance.SpacyModel = value;
                 OnPropertyChanged(nameof(SpacyModel));
 
                 // プロパティが変更されたことを設定
@@ -84,10 +84,10 @@ namespace ClipboardApp.Settings {
         // UserMaskedDataInOpenAI
         public bool UserMaskedDataInOpenAI {
             get {
-                return ClipboardAppConfig.UserMaskedDataInOpenAI;
+                return ClipboardAppConfig.Instance.UserMaskedDataInOpenAI;
             }
             set {
-                ClipboardAppConfig.UserMaskedDataInOpenAI = value;
+                ClipboardAppConfig.Instance.UserMaskedDataInOpenAI = value;
                 OnPropertyChanged(nameof(UserMaskedDataInOpenAI));
 
                 // プロパティが変更されたことを設定
@@ -97,10 +97,10 @@ namespace ClipboardApp.Settings {
         // AutoTag
         public bool AutoTag {
             get {
-                return ClipboardAppConfig.AutoTag;
+                return ClipboardAppConfig.Instance.AutoTag;
             }
             set {
-                ClipboardAppConfig.AutoTag = value;
+                ClipboardAppConfig.Instance.AutoTag = value;
                 OnPropertyChanged(nameof(AutoTag));
 
                 // プロパティが変更されたことを設定
@@ -110,10 +110,10 @@ namespace ClipboardApp.Settings {
         // AutoDescription
         public bool AutoDescription {
             get {
-                return ClipboardAppConfig.AutoDescription;
+                return ClipboardAppConfig.Instance.AutoDescription;
             }
             set {
-                ClipboardAppConfig.AutoDescription = value;
+                ClipboardAppConfig.Instance.AutoDescription = value;
                 OnPropertyChanged(nameof(AutoDescription));
 
                 // プロパティが変更されたことを設定
@@ -123,10 +123,10 @@ namespace ClipboardApp.Settings {
         // AutoExtractImageWithPyOCR
         public bool AutoExtractImageWithPyOCR {
             get {
-                return ClipboardAppConfig.AutoExtractImageWithPyOCR;
+                return ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR;
             }
             set {
-                ClipboardAppConfig.AutoExtractImageWithPyOCR = value;
+                ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR = value;
                 OnPropertyChanged(nameof(AutoExtractImageWithPyOCR));
 
                 // プロパティが変更されたことを設定

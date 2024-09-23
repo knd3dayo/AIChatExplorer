@@ -1,37 +1,28 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model;
-using WpfAppCommon.Model;
 
 namespace ClipboardApp.ViewModel
 {
-    public class AutoProcessItemViewModel : MyWindowViewModel {
-
-        private readonly SystemAutoProcessItem autoProcessItem;
-
-        public SystemAutoProcessItem AutoProcessItem => autoProcessItem;
+    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ClipboardAppViewModelBase {
+        public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
         public string Name {
             get {
-                return autoProcessItem.Name;
+                return AutoProcessItem.Name;
             }
             set {
-                autoProcessItem.Name = value;
+                AutoProcessItem.Name = value;
                 OnPropertyChanged(nameof(Name));
             }
         }
         public string DisplayName {
             get {
-                return autoProcessItem.DisplayName;
+                return AutoProcessItem.DisplayName;
             }
             set {
-                autoProcessItem.DisplayName = value;
+                AutoProcessItem.DisplayName = value;
                 OnPropertyChanged(nameof(DisplayName));
             }
-        }
-
-        // コンストラクタ
-        public AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) {
-            this.autoProcessItem = autoProcessItem;
         }
 
         // システムデフォルトのAutoProcessItemを取得
@@ -56,7 +47,7 @@ namespace ClipboardApp.ViewModel
         }
 
         public bool IsCopyOrMoveOrMergeAction() {
-            return autoProcessItem.IsCopyOrMoveOrMergeAction();
+            return AutoProcessItem.IsCopyOrMoveOrMergeAction();
         }
 
     }

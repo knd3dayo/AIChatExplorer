@@ -1,11 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
 namespace QAChat.ViewModel.VectorDBWindow {
-    public class EditVectorDBWindowViewModel : MyWindowViewModel {
+    public class EditVectorDBWindowViewModel : QAChatViewModelBase {
 
         private VectorDBItemViewModel? itemViewModel;
         public VectorDBItemViewModel? ItemViewModel {
@@ -79,7 +79,7 @@ namespace QAChat.ViewModel.VectorDBWindow {
                 return;
             }
             // RAGSourceItemを更新
-            ItemViewModel.Save();
+            ItemViewModel.Item.Save();
 
             AfterUpdate(ItemViewModel);
 

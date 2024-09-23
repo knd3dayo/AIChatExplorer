@@ -7,8 +7,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class ClipboardItemFile : ContentAttachedItemBase {
 
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
@@ -44,9 +43,9 @@ namespace ClipboardApp.Model
         public override void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItemFile(this);
             // クリップボードアイテムとファイルを同期する
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+            if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                 // SyncFolderName/フォルダ名/ファイル名を削除する
-                string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                string syncFolderName = ClipboardAppConfig.Instance.SyncFolderName;
 
                 string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem?.FolderPath ?? "");
                 string syncFilePath = System.IO.Path.Combine(syncFolder, FileName);
@@ -54,7 +53,7 @@ namespace ClipboardApp.Model
                     System.IO.File.Delete(syncFilePath);
                 }
                 // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
+                if (ClipboardAppConfig.Instance.AutoCommit) {
                     ClipboardItem?.GitCommit(syncFilePath);
                 }
 
@@ -67,12 +66,12 @@ namespace ClipboardApp.Model
 
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItemFile(this);
             // クリップボードアイテムとファイルを同期する
-            if (ClipboardAppConfig.SyncClipboardItemAndOSFolder) {
+            if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
                 if (FilePath == null) {
                     throw new Exception("FilePath is null");
                 }
                 // SyncFolderName/フォルダ名/ファイル名にファイルを保存する
-                string syncFolderName = ClipboardAppConfig.SyncFolderName;
+                string syncFolderName = ClipboardAppConfig.Instance.SyncFolderName;
                 string syncFolder = System.IO.Path.Combine(syncFolderName, ClipboardItem?.FolderPath ?? "");
                 string syncFilePath = System.IO.Path.Combine(syncFolder, FileName);
                 if (!System.IO.Directory.Exists(syncFolder)) {
@@ -82,7 +81,7 @@ namespace ClipboardApp.Model
                     System.IO.File.Copy(FilePath, syncFilePath, true);
                 }
                 // 自動コミットが有効の場合はGitにコミット
-                if (ClipboardAppConfig.AutoCommit) {
+                if (ClipboardAppConfig.Instance.AutoCommit) {
                     ClipboardItem?.GitCommit(syncFilePath);
                 }
             }
@@ -131,7 +130,7 @@ namespace ClipboardApp.Model
             string base64 = System.Convert.ToBase64String(data);
             try {
                 if (ContentTypes.IsImageData(base64)) {
-                    string result = ChatUtil.ExtractTextFromImage(ClipboardAppConfig.CreateOpenAIProperties(), [base64]);
+                    string result = ChatUtil.ExtractTextFromImage(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         ExtractedText = result;
                     }

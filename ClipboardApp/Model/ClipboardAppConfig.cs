@@ -2,12 +2,22 @@
 using System.IO;
 using PythonAILib.Model;
 
-namespace WpfAppCommon.Model {
+namespace ClipboardApp.Model {
     public class ClipboardAppConfig {
 
+        private static ClipboardAppConfig? _instance;
+        public static ClipboardAppConfig Instance {
+            get {
+                if (_instance == null) {
+                    _instance = new ClipboardAppConfig();
+                }
+                return _instance;
+            }
+        }
+
         // 開発中機能の有効化
-        private static Boolean? _enableDevFeatures;
-        public static bool EnableDevFeatures {
+        private bool? _enableDevFeatures;
+        public bool EnableDevFeatures {
             get {
                 if (_enableDevFeatures == null) {
                     _enableDevFeatures = Properties.Settings.Default.EnableDevFeatures;
@@ -21,8 +31,8 @@ namespace WpfAppCommon.Model {
         }
 
         // 言語
-        private static string? _lang;
-        public static string Lang {
+        private string? _lang;
+        public string Lang {
             get {
                 if (_lang == null) {
                     _lang = Properties.Settings.Default.Lang;
@@ -34,17 +44,17 @@ namespace WpfAppCommon.Model {
                 Properties.Settings.Default.Lang = value;
             }
         }
-        public static string ActualLang {
+        public string ActualLang {
             get {
                 if (string.IsNullOrEmpty(Lang)) {
-                    return  System.Globalization.CultureInfo.CurrentUICulture.Name;
+                    return System.Globalization.CultureInfo.CurrentUICulture.Name;
                 }
                 return Lang;
             }
         }
 
         // このアプリケーションのデータ用のフォルダを取得
-        public static string AppDataFolder {
+        public string AppDataFolder {
             get {
                 string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 string appDataFolder = Path.Combine(appDataPath, "ClipboardApp");
@@ -57,531 +67,531 @@ namespace WpfAppCommon.Model {
         // WpfCommon.Properties.Settingsの値をプロパティとして宣言する。
 
         // MonitorTargetAppNames
-        private static string? _monitorTargetAppNames;
-        public static string MonitorTargetAppNames {
+        private string? _monitorTargetAppNames;
+        public string MonitorTargetAppNames {
             get {
                 if (_monitorTargetAppNames == null) {
-                    _monitorTargetAppNames = WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames;
+                    _monitorTargetAppNames = Properties.Settings.Default.MonitorTargetAppNames;
                 }
                 return _monitorTargetAppNames;
             }
             set {
                 _monitorTargetAppNames = value;
-                WpfAppCommon.Properties.Settings.Default.MonitorTargetAppNames = value;
+                Properties.Settings.Default.MonitorTargetAppNames = value;
             }
         }
 
         // PythonDllPath
-        private static string? _pythonDllPath;
-        public static string PythonDllPath {
+        private string? _pythonDllPath;
+        public string PythonDllPath {
             get {
                 if (_pythonDllPath == null) {
-                    _pythonDllPath = WpfAppCommon.Properties.Settings.Default.PythonDllPath;
+                    _pythonDllPath = Properties.Settings.Default.PythonDllPath;
                 }
                 return _pythonDllPath;
             }
             set {
                 _pythonDllPath = value;
-                WpfAppCommon.Properties.Settings.Default.PythonDllPath = value;
+                Properties.Settings.Default.PythonDllPath = value;
             }
         }
         // PythonVenvPath
-        private static string? _pythonVenvPath;
-        public static string PythonVenvPath {
+        private string? _pythonVenvPath;
+        public string PythonVenvPath {
             get {
                 if (_pythonVenvPath == null) {
-                    _pythonVenvPath = WpfAppCommon.Properties.Settings.Default.PythonVenvPath;
+                    _pythonVenvPath = Properties.Settings.Default.PythonVenvPath;
                 }
                 return _pythonVenvPath;
             }
             set {
                 _pythonVenvPath = value;
-                WpfAppCommon.Properties.Settings.Default.PythonVenvPath = value;
+                Properties.Settings.Default.PythonVenvPath = value;
             }
         }
 
         // AzureOpenAI
-        private static Boolean? _azureOpenAI;
-        public static bool AzureOpenAI {
+        private bool? _azureOpenAI;
+        public bool AzureOpenAI {
             get {
                 if (_azureOpenAI == null) {
-                    _azureOpenAI = WpfAppCommon.Properties.Settings.Default.AzureOpenAI;
+                    _azureOpenAI = Properties.Settings.Default.AzureOpenAI;
                 }
                 return _azureOpenAI.Value;
             }
             set {
                 _azureOpenAI = value;
-                WpfAppCommon.Properties.Settings.Default.AzureOpenAI = value;
+                Properties.Settings.Default.AzureOpenAI = value;
             }
         }
         // AzureOpenAIEndpoint
-        private static string? _azureOpenAIEndpoint;
-        public static string AzureOpenAIEndpoint {
+        private string? _azureOpenAIEndpoint;
+        public string AzureOpenAIEndpoint {
             get {
                 if (_azureOpenAIEndpoint == null) {
-                    _azureOpenAIEndpoint = WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
+                    _azureOpenAIEndpoint = Properties.Settings.Default.AzureOpenAIEndpoint;
                 }
                 return _azureOpenAIEndpoint;
             }
             set {
                 _azureOpenAIEndpoint = value;
-                WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint = value;
+                Properties.Settings.Default.AzureOpenAIEndpoint = value;
             }
         }
 
         // OpenAIKey
-        private static string? _openAIKey;
-        public static string OpenAIKey {
+        private string? _openAIKey;
+        public string OpenAIKey {
             get {
                 if (_openAIKey == null) {
-                    _openAIKey = WpfAppCommon.Properties.Settings.Default.OpenAIKey;
+                    _openAIKey = Properties.Settings.Default.OpenAIKey;
                 }
                 return _openAIKey;
             }
             set {
                 _openAIKey = value;
-                WpfAppCommon.Properties.Settings.Default.OpenAIKey = value;
+                Properties.Settings.Default.OpenAIKey = value;
             }
         }
         // OpenAICompletionModel
-        private static string? _openAICompletionModel;
-        public static string OpenAICompletionModel {
+        private string? _openAICompletionModel;
+        public string OpenAICompletionModel {
             get {
                 if (_openAICompletionModel == null) {
-                    _openAICompletionModel = WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel;
+                    _openAICompletionModel = Properties.Settings.Default.OpenAICompletionModel;
                 }
                 return _openAICompletionModel;
             }
             set {
                 _openAICompletionModel = value;
-                WpfAppCommon.Properties.Settings.Default.OpenAICompletionModel = value;
+                Properties.Settings.Default.OpenAICompletionModel = value;
             }
         }
         // OpenAIEmbeddingModel
-        private static string? _openAIEmbeddingModel;
-        public static string OpenAIEmbeddingModel {
+        private string? _openAIEmbeddingModel;
+        public string OpenAIEmbeddingModel {
             get {
                 if (_openAIEmbeddingModel == null) {
-                    _openAIEmbeddingModel = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel;
+                    _openAIEmbeddingModel = Properties.Settings.Default.OpenAIEmbeddingModel;
                 }
                 return _openAIEmbeddingModel;
             }
             set {
                 _openAIEmbeddingModel = value;
-                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingModel = value;
+                Properties.Settings.Default.OpenAIEmbeddingModel = value;
             }
         }
         // OpenAICompletionBaseURL
-        private static string? _openAICompletionBaseURL;
-        public static string OpenAICompletionBaseURL {
+        private string? _openAICompletionBaseURL;
+        public string OpenAICompletionBaseURL {
             get {
                 if (_openAICompletionBaseURL == null) {
-                    _openAICompletionBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
+                    _openAICompletionBaseURL = Properties.Settings.Default.OpenAICompletionBaseURL;
                 }
                 return _openAICompletionBaseURL;
             }
             set {
                 _openAICompletionBaseURL = value;
-                WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL = value;
+                Properties.Settings.Default.OpenAICompletionBaseURL = value;
             }
         }
         // OpenAIEmbeddingBaseURL
-        private static string? _openAIEmbeddingBaseURL;
-        public static string OpenAIEmbeddingBaseURL {
+        private string? _openAIEmbeddingBaseURL;
+        public string OpenAIEmbeddingBaseURL {
             get {
                 if (_openAIEmbeddingBaseURL == null) {
-                    _openAIEmbeddingBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+                    _openAIEmbeddingBaseURL = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
                 }
                 return _openAIEmbeddingBaseURL;
             }
             set {
                 _openAIEmbeddingBaseURL = value;
-                WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
+                Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
             }
         }
 
         // AutoExtractImageWithPyOCR
-        private static Boolean? _autoExtractImageWithPyOCR;
-        public static bool AutoExtractImageWithPyOCR {
+        private bool? _autoExtractImageWithPyOCR;
+        public bool AutoExtractImageWithPyOCR {
             get {
                 if (_autoExtractImageWithPyOCR == null) {
-                    _autoExtractImageWithPyOCR = WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithPyOCR;
+                    _autoExtractImageWithPyOCR = Properties.Settings.Default.AutoExtractImageWithPyOCR;
                 }
                 return _autoExtractImageWithPyOCR.Value;
             }
             set {
                 _autoExtractImageWithPyOCR = value;
-                WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithPyOCR = value;
+                Properties.Settings.Default.AutoExtractImageWithPyOCR = value;
             }
         }
 
         // EmbeddingWhenExtractingTextFromImage
-        private static Boolean? _embeddingWhenExtractingTextFromImage;
-        public static bool EmbeddingWhenExtractingTextFromImage {
+        private bool? _embeddingWhenExtractingTextFromImage;
+        public bool EmbeddingWhenExtractingTextFromImage {
             get {
                 if (_embeddingWhenExtractingTextFromImage == null) {
-                    _embeddingWhenExtractingTextFromImage = WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage;
+                    _embeddingWhenExtractingTextFromImage = Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage;
                 }
                 return _embeddingWhenExtractingTextFromImage.Value;
             }
             set {
                 _embeddingWhenExtractingTextFromImage = value;
-                WpfAppCommon.Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage = value;
+                Properties.Settings.Default.EmbeddingWhenExtractingTextFromImage = value;
             }
         }
 
         // SyncClipboardItemAndOSFolder
-        private static Boolean? _syncClipboardItemAndOSFolder;
-        public static bool SyncClipboardItemAndOSFolder {
+        private bool? _syncClipboardItemAndOSFolder;
+        public bool SyncClipboardItemAndOSFolder {
             get {
                 if (_syncClipboardItemAndOSFolder == null) {
-                    _syncClipboardItemAndOSFolder = WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder;
+                    _syncClipboardItemAndOSFolder = Properties.Settings.Default.SyncClipboardItemAndOSFolder;
                 }
                 return _syncClipboardItemAndOSFolder.Value;
             }
             set {
                 _syncClipboardItemAndOSFolder = value;
-                WpfAppCommon.Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
+                Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
             }
         }
         // SyncFolderName
-        private static string? _syncFolderName;
-        public static string SyncFolderName {
+        private string? _syncFolderName;
+        public string SyncFolderName {
             get {
                 if (_syncFolderName == null) {
-                    _syncFolderName = WpfAppCommon.Properties.Settings.Default.SyncFolderName;
+                    _syncFolderName = Properties.Settings.Default.SyncFolderName;
                 }
                 return _syncFolderName;
             }
             set {
                 _syncFolderName = value;
-                WpfAppCommon.Properties.Settings.Default.SyncFolderName = value;
+                Properties.Settings.Default.SyncFolderName = value;
             }
         }
 
 
         // AutoCommit
-        private static Boolean? _autoCommit;
-        public static bool AutoCommit {
+        private bool? _autoCommit;
+        public bool AutoCommit {
             get {
                 if (_autoCommit == null) {
-                    _autoCommit = WpfAppCommon.Properties.Settings.Default.AutoCommit;
+                    _autoCommit = Properties.Settings.Default.AutoCommit;
                 }
                 return _autoCommit.Value;
             }
             set {
                 _autoCommit = value;
-                WpfAppCommon.Properties.Settings.Default.AutoCommit = value;
+                Properties.Settings.Default.AutoCommit = value;
             }
         }
 
         // AutoMergeItemsBySourceApplicationTitle
-        private static Boolean? _autoMergeItemsBySourceApplicationTitle;
-        public static bool AutoMergeItemsBySourceApplicationTitle {
+        private bool? _autoMergeItemsBySourceApplicationTitle;
+        public bool AutoMergeItemsBySourceApplicationTitle {
             get {
                 if (_autoMergeItemsBySourceApplicationTitle == null) {
-                    _autoMergeItemsBySourceApplicationTitle = WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
+                    _autoMergeItemsBySourceApplicationTitle = Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
                 }
                 return _autoMergeItemsBySourceApplicationTitle.Value;
             }
             set {
                 _autoMergeItemsBySourceApplicationTitle = value;
-                WpfAppCommon.Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
+                Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
             }
         }
 
         // AutoBackgroundInfo
-        private static Boolean? _autoBackgroundInfo;
-        public static bool AutoBackgroundInfo {
+        private bool? _autoBackgroundInfo;
+        public bool AutoBackgroundInfo {
             get {
                 if (_autoBackgroundInfo == null) {
-                    _autoBackgroundInfo = WpfAppCommon.Properties.Settings.Default.AutoBackgroundInfo;
+                    _autoBackgroundInfo = Properties.Settings.Default.AutoBackgroundInfo;
                 }
                 return _autoBackgroundInfo.Value;
             }
             set {
                 _autoBackgroundInfo = value;
-                WpfAppCommon.Properties.Settings.Default.AutoBackgroundInfo = value;
+                Properties.Settings.Default.AutoBackgroundInfo = value;
             }
         }
         // AutoSummary
-        private static Boolean? _autoSummary;
-        public static bool AutoSummary {
+        private bool? _autoSummary;
+        public bool AutoSummary {
             get {
                 if (_autoSummary == null) {
-                    _autoSummary = WpfAppCommon.Properties.Settings.Default.AutoSummary;
+                    _autoSummary = Properties.Settings.Default.AutoSummary;
                 }
                 return _autoSummary.Value;
             }
             set {
                 _autoSummary = value;
-                WpfAppCommon.Properties.Settings.Default.AutoSummary = value;
+                Properties.Settings.Default.AutoSummary = value;
             }
         }
 
         // AutoDescriptionWithOpenAI
-        private static Boolean? _autoDescriptionWithOpenAI;
-        public static bool AutoDescriptionWithOpenAI {
+        private bool? _autoDescriptionWithOpenAI;
+        public bool AutoDescriptionWithOpenAI {
             get {
                 if (_autoDescriptionWithOpenAI == null) {
-                    _autoDescriptionWithOpenAI = WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI;
+                    _autoDescriptionWithOpenAI = Properties.Settings.Default.AutoDescriptionWithOpenAI;
                 }
                 return _autoDescriptionWithOpenAI.Value;
             }
             set {
                 _autoDescriptionWithOpenAI = value;
-                WpfAppCommon.Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
+                Properties.Settings.Default.AutoDescriptionWithOpenAI = value;
             }
         }
         // AutoExtractImageWithOpenAI
-        private static Boolean? _autoExtractImageWithOpenAI;
-        public static bool AutoExtractImageWithOpenAI {
+        private bool? _autoExtractImageWithOpenAI;
+        public bool AutoExtractImageWithOpenAI {
             get {
                 if (_autoExtractImageWithOpenAI == null) {
-                    _autoExtractImageWithOpenAI = WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithOpenAI;
+                    _autoExtractImageWithOpenAI = Properties.Settings.Default.AutoExtractImageWithOpenAI;
                 }
                 return _autoExtractImageWithOpenAI.Value;
             }
             set {
                 _autoExtractImageWithOpenAI = value;
-                WpfAppCommon.Properties.Settings.Default.AutoExtractImageWithOpenAI = value;
+                Properties.Settings.Default.AutoExtractImageWithOpenAI = value;
             }
         }
         // UserMaskedDataInOpenAI
-        private static Boolean? _userMaskedDataInOpenAI;
-        public static bool UserMaskedDataInOpenAI {
+        private bool? _userMaskedDataInOpenAI;
+        public bool UserMaskedDataInOpenAI {
             get {
                 if (_userMaskedDataInOpenAI == null) {
-                    _userMaskedDataInOpenAI = WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI;
+                    _userMaskedDataInOpenAI = Properties.Settings.Default.UserMaskedDataInOpenAI;
                 }
                 return _userMaskedDataInOpenAI.Value;
             }
             set {
                 _userMaskedDataInOpenAI = value;
-                WpfAppCommon.Properties.Settings.Default.UserMaskedDataInOpenAI = value;
+                Properties.Settings.Default.UserMaskedDataInOpenAI = value;
             }
         }
 
         // AutoEmbedding
-        private static Boolean? _autoEmbedding;
-        public static bool AutoEmbedding {
+        private bool? _autoEmbedding;
+        public bool AutoEmbedding {
             get {
                 if (_autoEmbedding == null) {
-                    _autoEmbedding = WpfAppCommon.Properties.Settings.Default.AutoEmbedding;
+                    _autoEmbedding = Properties.Settings.Default.AutoEmbedding;
                 }
                 return _autoEmbedding.Value;
             }
             set {
                 _autoEmbedding = value;
-                WpfAppCommon.Properties.Settings.Default.AutoEmbedding = value;
+                Properties.Settings.Default.AutoEmbedding = value;
             }
         }
         // Embeddingの対象に背景情報を含める
-        private static Boolean? _includeBackgroundInfoInEmbedding;
+        private bool? _includeBackgroundInfoInEmbedding;
 
-        public static bool IncludeBackgroundInfoInEmbedding {
+        public bool IncludeBackgroundInfoInEmbedding {
             get {
                 if (_includeBackgroundInfoInEmbedding == null) {
-                    _includeBackgroundInfoInEmbedding = WpfAppCommon.Properties.Settings.Default.IncludeBackgroundInfoInEmbedding;
+                    _includeBackgroundInfoInEmbedding = Properties.Settings.Default.IncludeBackgroundInfoInEmbedding;
                 }
                 return _includeBackgroundInfoInEmbedding.Value;
             }
             set {
                 _includeBackgroundInfoInEmbedding = value;
-                WpfAppCommon.Properties.Settings.Default.IncludeBackgroundInfoInEmbedding = value;
+                Properties.Settings.Default.IncludeBackgroundInfoInEmbedding = value;
             }
         }
 
 
         // AutoFileExtract
-        private static Boolean? _autoFileExtract;
-        public static bool AutoFileExtract {
+        private bool? _autoFileExtract;
+        public bool AutoFileExtract {
             get {
                 if (_autoFileExtract == null) {
-                    _autoFileExtract = WpfAppCommon.Properties.Settings.Default.AutoFileExtract;
+                    _autoFileExtract = Properties.Settings.Default.AutoFileExtract;
                 }
                 return _autoFileExtract.Value;
             }
             set {
                 _autoFileExtract = value;
-                WpfAppCommon.Properties.Settings.Default.AutoFileExtract = value;
+                Properties.Settings.Default.AutoFileExtract = value;
             }
         }
         // BackupGeneration
-        private static int _backupGeneration = -1;
-        public static int BackupGeneration {
+        private int _backupGeneration = -1;
+        public int BackupGeneration {
             get {
                 if (_backupGeneration == -1) {
-                    _backupGeneration = WpfAppCommon.Properties.Settings.Default.BackupGeneration;
+                    _backupGeneration = Properties.Settings.Default.BackupGeneration;
                 }
                 return _backupGeneration;
             }
             set {
                 _backupGeneration = value;
-                WpfAppCommon.Properties.Settings.Default.BackupGeneration = value;
+                Properties.Settings.Default.BackupGeneration = value;
             }
         }
 
 
 
         // TextWrapping
-        private static bool _textWrapping = false;
-        public static System.Windows.TextWrapping TextWrapping {
+        private bool _textWrapping = false;
+        public System.Windows.TextWrapping TextWrapping {
             get {
-                _textWrapping = WpfAppCommon.Properties.Settings.Default.TextWrapping;
+                _textWrapping = Properties.Settings.Default.TextWrapping;
                 return _textWrapping ? System.Windows.TextWrapping.Wrap : System.Windows.TextWrapping.NoWrap;
             }
             set {
                 _textWrapping = value == System.Windows.TextWrapping.Wrap;
-                WpfAppCommon.Properties.Settings.Default.TextWrapping = _textWrapping;
+                Properties.Settings.Default.TextWrapping = _textWrapping;
             }
         }
 
 
         // PreviewMode
-        private static Boolean? _previewMode;
-        public static bool PreviewMode {
+        private bool? _previewMode;
+        public bool PreviewMode {
             get {
                 if (_previewMode == null) {
-                    _previewMode = WpfAppCommon.Properties.Settings.Default.PreviewMode;
+                    _previewMode = Properties.Settings.Default.PreviewMode;
                 }
                 return _previewMode.Value;
             }
             set {
                 _previewMode = value;
-                WpfAppCommon.Properties.Settings.Default.PreviewMode = value;
+                Properties.Settings.Default.PreviewMode = value;
             }
         }
 
         // IgnoreLineCount
-        private static int _ignoreLineCount = -1;
-        public static int IgnoreLineCount {
+        private int _ignoreLineCount = -1;
+        public int IgnoreLineCount {
             get {
                 if (_ignoreLineCount == -1) {
-                    _ignoreLineCount = WpfAppCommon.Properties.Settings.Default.IgnoreLineCount;
+                    _ignoreLineCount = Properties.Settings.Default.IgnoreLineCount;
                 }
                 return _ignoreLineCount;
             }
             set {
                 _ignoreLineCount = value;
-                WpfAppCommon.Properties.Settings.Default.IgnoreLineCount = value;
+                Properties.Settings.Default.IgnoreLineCount = value;
             }
         }
         #region 開発中機能関連の設定
         // UseSpacy
-        private static Boolean? _useSpacy;
-        public static bool UseSpacy {
+        private bool? _useSpacy;
+        public bool UseSpacy {
             get {
                 if (_useSpacy == null) {
-                    _useSpacy = WpfAppCommon.Properties.Settings.Default.UseSpacy;
+                    _useSpacy = Properties.Settings.Default.UseSpacy;
                 }
                 return _useSpacy.Value;
             }
             set {
                 _useSpacy = value;
-                WpfAppCommon.Properties.Settings.Default.UseSpacy = value;
+                Properties.Settings.Default.UseSpacy = value;
             }
         }
         // SpacyModel
-        private static string? _spacyModel;
-        public static string SpacyModel {
+        private string? _spacyModel;
+        public string SpacyModel {
             get {
                 if (_spacyModel == null) {
-                    _spacyModel = WpfAppCommon.Properties.Settings.Default.SpacyModel;
+                    _spacyModel = Properties.Settings.Default.SpacyModel;
                 }
                 return _spacyModel;
             }
             set {
                 _spacyModel = value;
-                WpfAppCommon.Properties.Settings.Default.SpacyModel = value;
+                Properties.Settings.Default.SpacyModel = value;
             }
         }
         // TesseractExePath
-        private static string? _tesseractExePath;
-        public static string TesseractExePath {
+        private string? _tesseractExePath;
+        public string TesseractExePath {
             get {
                 if (_tesseractExePath == null) {
-                    _tesseractExePath = WpfAppCommon.Properties.Settings.Default.TesseractExePath;
+                    _tesseractExePath = Properties.Settings.Default.TesseractExePath;
                 }
                 return _tesseractExePath;
             }
             set {
                 _tesseractExePath = value;
-                WpfAppCommon.Properties.Settings.Default.TesseractExePath = value;
+                Properties.Settings.Default.TesseractExePath = value;
             }
         }
 
         // AutoTag
-        private static Boolean? _autoTag;
-        public static bool AutoTag {
+        private bool? _autoTag;
+        public bool AutoTag {
             get {
                 if (_autoTag == null) {
-                    _autoTag = WpfAppCommon.Properties.Settings.Default.AutoTag;
+                    _autoTag = Properties.Settings.Default.AutoTag;
                 }
                 return _autoTag.Value;
             }
             set {
                 _autoTag = value;
-                WpfAppCommon.Properties.Settings.Default.AutoTag = value;
+                Properties.Settings.Default.AutoTag = value;
             }
         }
 
         // AutoDescription
-        private static Boolean? _autoDescription;
-        public static bool AutoDescription {
+        private bool? _autoDescription;
+        public bool AutoDescription {
             get {
                 if (_autoDescription == null) {
-                    _autoDescription = WpfAppCommon.Properties.Settings.Default.AutoDescription;
+                    _autoDescription = Properties.Settings.Default.AutoDescription;
                 }
                 return _autoDescription.Value;
             }
             set {
                 _autoDescription = value;
-                WpfAppCommon.Properties.Settings.Default.AutoDescription = value;
+                Properties.Settings.Default.AutoDescription = value;
             }
         }
 
         // AnalyzeJapaneseSentence 日本語文章の解析
-        private static Boolean? _analyzeJapaneseSentence;
-        public static bool AnalyzeJapaneseSentence {
+        private bool? _analyzeJapaneseSentence;
+        public bool AnalyzeJapaneseSentence {
             get {
                 if (_analyzeJapaneseSentence == null) {
-                    _analyzeJapaneseSentence = WpfAppCommon.Properties.Settings.Default.AnalyzeJapaneseSentence;
+                    _analyzeJapaneseSentence = Properties.Settings.Default.AnalyzeJapaneseSentence;
                 }
                 return _analyzeJapaneseSentence.Value;
             }
             set {
                 _analyzeJapaneseSentence = value;
-                WpfAppCommon.Properties.Settings.Default.AnalyzeJapaneseSentence = value;
+                Properties.Settings.Default.AnalyzeJapaneseSentence = value;
             }
         }
         // 自動的にQAを生成する
-        private static Boolean? _autoGenerateQA;
-        public static bool AutoGenerateQA {
+        private bool? _autoGenerateQA;
+        public bool AutoGenerateQA {
             get {
                 if (_autoGenerateQA == null) {
-                    _autoGenerateQA = WpfAppCommon.Properties.Settings.Default.AutoGenerateQA;
+                    _autoGenerateQA = Properties.Settings.Default.AutoGenerateQA;
                 }
                 return _autoGenerateQA.Value;
             }
             set {
                 _autoGenerateQA = value;
-                WpfAppCommon.Properties.Settings.Default.AutoGenerateQA = value;
+                Properties.Settings.Default.AutoGenerateQA = value;
             }
         }
 
         // 自動的にIssuesを生成する
-        private static Boolean? _autoGenerateIssues;
-        public static bool AutoGenerateIssues {
+        private bool? _autoGenerateIssues;
+        public bool AutoGenerateIssues {
             get {
                 if (_autoGenerateIssues == null) {
-                    _autoGenerateIssues = WpfAppCommon.Properties.Settings.Default.AutoGenerateIssues;
+                    _autoGenerateIssues = Properties.Settings.Default.AutoGenerateIssues;
                 }
                 return _autoGenerateIssues.Value;
             }
             set {
                 _autoGenerateIssues = value;
-                WpfAppCommon.Properties.Settings.Default.AutoGenerateIssues = value;
+                Properties.Settings.Default.AutoGenerateIssues = value;
             }
         }
 
@@ -589,14 +599,14 @@ namespace WpfAppCommon.Model {
         #endregion
 
 
-        public static void Save() {
-            WpfAppCommon.Properties.Settings.Default.Save();
+        public void Save() {
+            Properties.Settings.Default.Save();
 
         }
-        public static void Reload() {
+        public void Reload() {
             Properties.Settings.Default.Reload();
         }
-        public static  OpenAIProperties CreateOpenAIProperties() {
+        public OpenAIProperties CreateOpenAIProperties() {
             OpenAIProperties openAIProperties = new() {
                 OpenAIKey = OpenAIKey,
                 OpenAICompletionModel = OpenAICompletionModel,
@@ -604,15 +614,15 @@ namespace WpfAppCommon.Model {
                 AzureOpenAI = AzureOpenAI,
             };
 
-            if (string.IsNullOrEmpty(WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint) == false) {
-                openAIProperties.AzureOpenAIEndpoint = WpfAppCommon.Properties.Settings.Default.AzureOpenAIEndpoint;
+            if (string.IsNullOrEmpty(Properties.Settings.Default.AzureOpenAIEndpoint) == false) {
+                openAIProperties.AzureOpenAIEndpoint = Properties.Settings.Default.AzureOpenAIEndpoint;
             }
 
-            if (WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                openAIProperties.OpenAICompletionBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAICompletionBaseURL;
+            if (Properties.Settings.Default.OpenAICompletionBaseURL != "") {
+                openAIProperties.OpenAICompletionBaseURL = Properties.Settings.Default.OpenAICompletionBaseURL;
             }
-            if (WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
-                openAIProperties.OpenAIEmbeddingBaseURL = WpfAppCommon.Properties.Settings.Default.OpenAIEmbeddingBaseURL;
+            if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
+                openAIProperties.OpenAIEmbeddingBaseURL = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
             }
             return openAIProperties;
         }

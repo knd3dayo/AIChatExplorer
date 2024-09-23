@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using ClipboardApp.Model;
 using PythonAILib.PythonIF;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
@@ -15,7 +14,7 @@ namespace ClipboardApp.ViewModel {
 
         // EnableDevelopmentFeaturesがTrueの場合のみ有効
         public bool EnableDevelopmentFeatures {
-            get { return ClipboardAppConfig.EnableDevFeatures; }
+            get { return ClipboardAppConfig.Instance.EnableDevFeatures; }
         }
 
         // EnableDevelopmentFeaturesがTrueの場合はVisible

@@ -1,9 +1,7 @@
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
-using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class PromptAutoProcessItem : SystemAutoProcessItem {
         public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
@@ -23,7 +21,7 @@ namespace ClipboardApp.Model
             if (PromptItemId == LiteDB.ObjectId.Empty) {
                 return null;
             }
-            Chat chatController = new(ClipboardAppConfig.CreateOpenAIProperties());
+            Chat chatController = new();
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
@@ -35,7 +33,7 @@ namespace ClipboardApp.Model
             // フォルダのVectorDBItemを追加
             chatController.VectorDBItems.Add(clipboardFolder.GetVectorDBItem());
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties());
             if (result == null) {
                 return clipboardItem;
             }

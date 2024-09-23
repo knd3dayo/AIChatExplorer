@@ -4,8 +4,7 @@ using Python.Runtime;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public class PythonExecutor {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
@@ -77,7 +76,7 @@ namespace PythonAILib.PythonIF
             if (!File.Exists(Runtime.PythonDLL)) {
                 string message = StringResources.PythonDLLNotFound;
                 throw new Exception(message + Runtime.PythonDLL);
-                
+
             }
             // Venv環境が存在するかチェック
             if (!string.IsNullOrEmpty(pathToVirtualEnv) && !Directory.Exists(pathToVirtualEnv)) {

@@ -35,12 +35,33 @@
     <Compile Update="Control\MainWindowGridView1.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Properties\Misc.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Misc.settings</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Update="Settings\SettingUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Misc.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Misc.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

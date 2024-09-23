@@ -9,12 +9,11 @@ using PythonAILib.Model;
 using PythonAILib.Model.File;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class EditAutoProcessRuleWindowViewModel : MyWindowViewModel {
+    public class EditAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
         public enum Mode {
             Create,
             Edit
@@ -278,7 +277,7 @@ namespace ClipboardApp.ViewModel
         public MainWindowViewModel? MainWindowViewModel { get; set; }
         // 
         // 初期化
-        public void Initialize(
+        public EditAutoProcessRuleWindowViewModel(
             Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             if (mainWindowViewModel == null) {
                 LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
@@ -395,19 +394,6 @@ namespace ClipboardApp.ViewModel
 
                 OnPropertyChanged(nameof(Conditions));
             }
-        }
-
-        // 初期化 modeがEditの場合
-        public void InitializeEdit(
-            MainWindowViewModel? mainWindowViewModel, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
-            Initialize(
-                Mode.Edit, mainWindowViewModel, autoProcessRule, afterUpdate);
-
-        }
-        // 初期化 modeがCreateの場合
-        public void InitializeCreate(
-            MainWindowViewModel? mainWindowViewModel, Action<AutoProcessRule> afterUpdate) {
-            Initialize(Mode.Create, mainWindowViewModel, null, afterUpdate);
         }
 
         // ---　コマンド 

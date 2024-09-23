@@ -13,6 +13,7 @@
     Title="{Binding Title}"
     Width="900"
     Height="600"
+    d:DataContext="{d:DesignInstance Type=viewModel:EditItemWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
     <Window.Resources>
@@ -24,9 +25,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <viewModel:EditItemWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -159,7 +157,7 @@
                         Margin="10,3,10,3"
                         FontSize="10pt"
                         Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}">
+                        TextWrapping="{Binding TextWrapping, Mode=OneWay}">
                         <editorControl:MyTextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Command="ApplicationCommands.Copy" />

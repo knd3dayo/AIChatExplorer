@@ -3,10 +3,12 @@ using System.Windows.Controls;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
+using PythonAILib.Resource;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
@@ -14,6 +16,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
+            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 ChatResult? result = null;
@@ -23,11 +26,11 @@ namespace QAChat.ViewModel.QAChatMain {
                 await Task.Run(() => {
 
                     // LangChainChat用。VectorDBItemsを設定
-                    List<VectorDBItemBase> items = [.. SystemVectorDBItems, .. ExternalVectorDBItems];
+                    List<VectorDBItemBase> items = [.. VectorDBItems];
                     ChatController.VectorDBItems = items;
 
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatController.ExecuteChat();
+                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
                 });
 
                 if (result == null) {
@@ -74,11 +77,11 @@ namespace QAChat.ViewModel.QAChatMain {
             int index = comboBox.SelectedIndex;
             ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがNormal以外の場合は、VectorDBItemを取得
-            ExternalVectorDBItems = [];
+            VectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
                 VectorDBItemBase? item = QAChatStartupProps.ContentItem.GetVectorDBItem();
                 if (item != null) {
-                    ExternalVectorDBItems.Add(item);
+                    VectorDBItems.Add(item);
                 }
             }
             // VectorDBItemVisibilityを更新
@@ -109,37 +112,29 @@ namespace QAChat.ViewModel.QAChatMain {
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatIHistorytem> OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatHistoryItem> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
-        // ベクトルDB(フォルダ)をリストから削除するコマンド
+        // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedSystemVectorDBItem != null) {
-                SystemVectorDBItems.Remove(SelectedSystemVectorDBItem);
+            if (SelectedVectorDBItem != null) {
+                VectorDBItems.Remove(SelectedVectorDBItem);
             }
-            OnPropertyChanged(nameof(SystemVectorDBItems));
+            OnPropertyChanged(nameof(VectorDBItems));
         });
-        // ベクトルDB(フォルダ)を追加するコマンド
-        public SimpleDelegateCommand<object> AddVectorDBItemFolderCommand => new((parameter) => {
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            QAChatStartupProps?.SelectFolderAction(SystemVectorDBItems);
-            OnPropertyChanged(nameof(SystemVectorDBItems));
+            QAChatStartupProps?.SelectVectorDBItemAction(VectorDBItems);
+            OnPropertyChanged(nameof(VectorDBItems));
         });
 
         // 選択したVectorDBItemの編集画面を開くコマンド
-        public SimpleDelegateCommand<object> OpenExternalVectorDBItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                ExternalVectorDBItems.Add(selectedItem);
+                VectorDBItems.Add(selectedItem);
             });
-        });
-
-        // 選択したVectorDBItemをリストから削除するコマンド
-        public SimpleDelegateCommand<object> RemoveExternalVectorDBItemCommand => new((parameter) => {
-            if (SelectedExternalVectorDBItem != null) {
-                ExternalVectorDBItems.Remove(SelectedExternalVectorDBItem);
-            }
-            OnPropertyChanged(nameof(ExternalVectorDBItems));
         });
 
         // クリップボードまたは他のクリップボードアイテムをペーストしたときの処理

@@ -4,12 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using QAChat.View.PromptTemplateWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Model;
 
-namespace QAChat.ViewModel.PromptTemplateWindow
-{
-    public class ListPromptTemplateWindowViewModel : MyWindowViewModel
+namespace QAChat.ViewModel.PromptTemplateWindow {
+    public class ListPromptTemplateWindowViewModel : QAChatViewModelBase
     {
 
         // 初期化
@@ -111,7 +110,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow
 
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) =>
         {
-            IDBController clipboardDBController = PythonAILibManager.Instance?.DBController ?? throw new NullReferenceException();
+            IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
 
             // PromptItemsを更新
             PromptItems.Clear();
@@ -148,7 +147,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) =>
         {
-            IDBController clipboardDBController = PythonAILibManager.Instance?.DBController ?? throw new NullReferenceException();
+            IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
             PromptItemBase item = clipboardDBController.CreatePromptItem();
 
             PromptItemViewModel itemViewModel = new(item);

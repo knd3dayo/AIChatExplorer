@@ -1,6 +1,5 @@
 using System.Reflection;
 using WK.Libraries.SharpClipboardNS;
-using WpfAppCommon.Model;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model {
@@ -108,10 +107,10 @@ namespace ClipboardApp.Model {
         /// <returns></returns>
         private static bool IsMonitorTargetApp(ClipboardChangedEventArgs e) {
             // If MonitorTargetAppNames is not an empty string and does not contain in MonitorTargetAppNames, do not process
-            if (ClipboardAppConfig.MonitorTargetAppNames != "") {
+            if (ClipboardAppConfig.Instance.MonitorTargetAppNames != "") {
                 // Compare uppercase letters
                 string upperSourceApplication = e.SourceApplication.Name.ToUpper();
-                string upperMonitorTargetAppNames = ClipboardAppConfig.MonitorTargetAppNames.ToUpper();
+                string upperMonitorTargetAppNames = ClipboardAppConfig.Instance.MonitorTargetAppNames.ToUpper();
                 if (!upperMonitorTargetAppNames.Contains(upperSourceApplication)) {
                     return false;
                 }

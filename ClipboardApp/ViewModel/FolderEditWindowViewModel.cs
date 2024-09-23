@@ -1,10 +1,10 @@
 using System.Windows;
-using WpfAppCommon.Model;
+using ClipboardApp.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class FolderEditWindowViewModel : MyWindowViewModel {
+    public class FolderEditWindowViewModel : ClipboardAppViewModelBase {
 
         private ClipboardFolderViewModel? _FolderViewModel = null;
         public ClipboardFolderViewModel? FolderViewModel {
@@ -32,7 +32,7 @@ namespace ClipboardApp.ViewModel
         private Action? _afterUpdate;
 
         // 起動時の処理
-        public void Initialize(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public FolderEditWindowViewModel(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             _afterUpdate = afterUpdate;
             FolderViewModel = folderViewModel;
 

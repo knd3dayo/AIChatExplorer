@@ -22,7 +22,7 @@ namespace ClipboardApp.Settings {
 
         // CancelCommand
         public SimpleDelegateCommand<Window> CancelCommand => new((window) => {
-            WpfAppCommon.Properties.Settings.Default.Reload();
+            Properties.Settings.Default.Reload();
             LogWrapper.Info(CommonStringResources.Instance.Canceled);
             // Windowを閉じる
             window.Close();

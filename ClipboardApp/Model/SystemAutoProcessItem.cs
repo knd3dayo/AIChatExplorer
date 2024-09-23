@@ -68,7 +68,7 @@ namespace ClipboardApp.Model {
                 ];
                 // itemにデータマスキングコマンドを追加
                 // UseSpacyがTrueの場合のみ追加
-                if (ClipboardAppConfig.UseSpacy) {
+                if (ClipboardAppConfig.Instance.UseSpacy) {
                     items.Add(
                         new SystemAutoProcessItem("MaskData", CommonStringResources.Instance.DataMasking, CommonStringResources.Instance.MaskClipboardText)
                         );

@@ -11,10 +11,8 @@
     Title="{Binding StringResources.ListTagWindowTitle, Mode=OneTime}"
     Width="500"
     Height="300"
+    d:DataContext="{d:DesignInstance Type=local:TagWindowViewModel}"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:TagWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

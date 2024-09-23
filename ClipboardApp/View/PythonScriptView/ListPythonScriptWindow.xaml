@@ -10,11 +10,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding StringResources.ListPythonScriptWindowTitle, Mode=OneTime}"
     Width="700"
+    d:DataContext="{d:DesignInstance Type=local:ListPythonScriptWindowViewModel}"
     SizeToContent="Height"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:ListPythonScriptWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

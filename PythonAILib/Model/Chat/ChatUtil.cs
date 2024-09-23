@@ -12,7 +12,7 @@ namespace PythonAILib.Model.Chat {
             // contentの文字数が4096文字を超える場合は4096文字までに制限
             string contentText = content.Length > 4096 ? content[..4096] : content;
 
-            Chat chatController = new(openAIProperties) {
+            Chat chatController = new() {
                 // Normal Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 PromptTemplateText = promptText,
@@ -23,7 +23,7 @@ namespace PythonAILib.Model.Chat {
                 chatController.PromptTemplateText = PromptStringResource.Instance.TitleGenerationPrompt;
             }
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
@@ -31,7 +31,7 @@ namespace PythonAILib.Model.Chat {
         }
         // 背景情報を作成する
         public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content, string promptText = "") {
-            Chat chatController = new(openAIProperties) {
+            Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
                 PromptTemplateText = promptText,
@@ -42,7 +42,7 @@ namespace PythonAILib.Model.Chat {
                 chatController.PromptTemplateText = PromptStringResource.Instance.BackgroundInformationGenerationPrompt;
             }
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
@@ -51,7 +51,7 @@ namespace PythonAILib.Model.Chat {
 
         // サマリーを作成する
         public static string CreateSummary(OpenAIProperties openAIProperties, string content, string promptText = "") {
-            Chat chatController = new(openAIProperties) {
+            Chat chatController = new() {
                 // Normal Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.Normal,
                 PromptTemplateText = promptText,
@@ -61,7 +61,7 @@ namespace PythonAILib.Model.Chat {
                 chatController.PromptTemplateText = PromptStringResource.Instance.SummaryGenerationPrompt;
             }
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
@@ -71,13 +71,13 @@ namespace PythonAILib.Model.Chat {
 
         // 日本語文章を解析する
         public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            Chat chatController = new(openAIProperties);
+            Chat chatController = new();
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
             chatController.ContentText = content;
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
@@ -85,7 +85,7 @@ namespace PythonAILib.Model.Chat {
         }
         // 自動QAを生成する
         public static string GenerateQA(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
-            Chat chatController = new(openAIProperties);
+            Chat chatController = new();
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PromptStringResource.Instance.GenerateQuestionRequest;
@@ -93,13 +93,13 @@ namespace PythonAILib.Model.Chat {
 
             chatController.VectorDBItems = vectorDBItems;
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result == null) {
                 return "";
             }
             // 生成した質問をAIに問い合わせる
             string question = result.Response;
-            chatController = new Chat(openAIProperties);
+            chatController = new Chat();
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
             chatController.PromptTemplateText = PromptStringResource.Instance.AnswerRequest;
@@ -107,7 +107,7 @@ namespace PythonAILib.Model.Chat {
 
             chatController.VectorDBItems = vectorDBItems;
 
-            result = chatController.ExecuteChat();
+            result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
@@ -115,7 +115,7 @@ namespace PythonAILib.Model.Chat {
         }
         // 課題リストを生成する
         public static List<string> CreateIssues(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content, string promptText = "") {
-            Chat chatController = new(openAIProperties) {
+            Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
                 PromptTemplateText = promptText,
@@ -127,7 +127,7 @@ namespace PythonAILib.Model.Chat {
                 chatController.PromptTemplateText = PromptStringResource.Instance.IssuesGenerationPrompt;
             }
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null &&  !string.IsNullOrEmpty(result.Response)) {
                 // JSON形式の結果をパースしてリストに変換
                 JsonSerializerOptions options = new() {
@@ -145,7 +145,7 @@ namespace PythonAILib.Model.Chat {
 
         // 画像からテキストを抽出する
         public static string ExtractTextFromImage(OpenAIProperties openAIProperties, List<string> ImageBase64List) {
-            Chat chatController = new(openAIProperties);
+            Chat chatController = new();
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
@@ -155,7 +155,7 @@ namespace PythonAILib.Model.Chat {
                 return "";
             }
 
-            ChatResult? result = chatController.ExecuteChat();
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
                 return result.Response;
             }
