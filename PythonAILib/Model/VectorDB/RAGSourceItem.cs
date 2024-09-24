@@ -1,27 +1,66 @@
-using ClipboardApp.Factory;
 using LibGit2Sharp;
-using LiteDB;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
-using WpfAppCommon.Model;
+using PythonAILib.Resource;
+using QAChat;
 
-namespace ClipboardApp.Model {
-    /// <summary>
-    /// RAGのソースとなるドキュメントを格納したリポジトリを管理するためのクラス
-    /// </summary>
-    public class RAGSourceItem : RAGSourceItemBase {
+namespace PythonAILib.Model.VectorDB {
+    public class RAGSourceItem {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // ベクトルを格納するためのVectorDBItemのId
-        private LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
+        protected LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.Empty;
 
-        // VectorDBItemの取得
-        public override VectorDBItemBase? VectorDBItem {
+
+        public string SourceURL { get; set; } = "";
+        public string WorkingDirectory { get; set; } = "";
+
+        public string LastIndexCommitHash { get; set; } = "";
+        // Get
+        public static IEnumerable<RAGSourceItem> GetItems() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            // GetItemsメソッドを呼び出して取得
+            IEnumerable<RAGSourceItem> items = libManager.DataFactory.GetRAGSourceItems();
+            return items.Cast<RAGSourceItem>();
+        }
+
+        public void Save() {
+
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            // UpsertItemメソッドを呼び出して保存
+            libManager.DataFactory.UpsertRAGSourceItem(this);
+
+        }
+        public void Delete() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            // DeleteItemメソッドを呼び出して削除
+            libManager.DataFactory.DeleteRAGSourceItem(this);
+
+        }
+
+        public string SeekSourceURL(string workingDirectory) {
+            try {
+                // pathが存在するか確認
+                if (!System.IO.Directory.Exists(workingDirectory)) {
+                    return "";
+                }
+                Repository repo = new(workingDirectory);
+                // リモートリポジトリのURLを取得
+                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(PythonAILibStringResources.Instance.NoRemoteRepositorySet);
+                // リモートリポジトリのURLをSourceURLに設定
+                return remoteURL.Value;
+
+            } catch (RepositoryNotFoundException) {
+                return "";
+            }
+
+        }
+
+        public VectorDBItem? VectorDBItem {
+
             get {
-                return ClipboardAppVectorDBItem.GetItemById(VectorDBItemId);
+                return VectorDBItem.GetItemById(VectorDBItemId);
             }
             set {
                 if (value == null) {
@@ -32,74 +71,42 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // --- RAGSourceItem
-        // Save
-        public override void Save() {
-            // DBControllerのインスタンスを取得
-            IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // UpsertItemメソッドを呼び出して保存
-            dbController.UpsertRAGSourceItem(this);
-
-        }
-
-        // Delete
-        public override void Delete() {
-            // DBControllerのインスタンスを取得
-            IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // DeleteItemメソッドを呼び出して削除
-            dbController.DeleteRAGSourceItem(this);
-        }
-        // Get
-        public static IEnumerable<RAGSourceItem> GetItems() {
-            // DBControllerのインスタンスを取得
-            IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // GetItemsメソッドを呼び出して取得
-            IEnumerable<RAGSourceItemBase> items = dbController.GetRAGSourceItems();
-            return items.Cast<RAGSourceItem>();
-        }
-
-        public override string SeekSourceURL(string path) {
-            try {
-                // pathが存在するか確認
-                if (!System.IO.Directory.Exists(path)) {
-                    return "";
-                }
-                Repository repo = new(path);
-                // リモートリポジトリのURLを取得
-                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
-                // リモートリポジトリのURLをSourceURLに設定
-                return remoteURL.Value;
-
-            } catch (RepositoryNotFoundException) {
-                return "";
+        public CommitInfo GetCommit(string hash) {
+            CommitInfo commitInfo = new();
+            // リポジトリの取得
+            using (var repository = new Repository(WorkingDirectory)) {
+                // リポジトリのコミットを取得
+                var commit = repository.Lookup<Commit>(hash);
+                commitInfo.Hash = commit.Sha;
+                commitInfo.Message = commit.Message;
+                commitInfo.Date = commit.Author.When;
             }
+            return commitInfo;
+
         }
 
-
-        // Git作業ディレクトリの確認を行う。
-        public override bool CheckWorkingDirectory() {
+        public bool CheckWorkingDirectory() {
             string path = WorkingDirectory;
             if (string.IsNullOrEmpty(path)) {
-                throw new Exception(CommonStringResources.Instance.NoWorkingDirectorySpecified);
+                throw new Exception(PythonAILibStringResources.Instance.NoWorkingDirectorySpecified);
             }
             if (!System.IO.Directory.Exists(path)) {
-                throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryDoesNotExist);
+                throw new Exception(PythonAILibStringResources.Instance.SpecifiedDirectoryDoesNotExist);
             }
             try {
                 Repository repo = new(path);
                 // リモートリポジトリのURLを取得
-                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(CommonStringResources.Instance.NoRemoteRepositorySet);
+                ConfigurationEntry<string> remoteURL = repo.Config.Get<string>("remote.origin.url") ?? throw new Exception(PythonAILibStringResources.Instance.NoRemoteRepositorySet);
                 // リモートリポジトリのURLをSourceURLに設定
                 SourceURL = remoteURL.Value;
 
             } catch (RepositoryNotFoundException) {
-                throw new Exception(CommonStringResources.Instance.SpecifiedDirectoryIsNotAGitRepository);
+                throw new Exception(PythonAILibStringResources.Instance.SpecifiedDirectoryIsNotAGitRepository);
             }
             return true;
-
         }
 
-        public override List<CommitInfo> GetCommitList() {
+        public List<CommitInfo> GetCommitList() {
             List<CommitInfo> commitList = [];
 
             // リポジトリの取得
@@ -118,48 +125,21 @@ namespace ClipboardApp.Model {
                 }
             }
             return commitList;
+
         }
 
-        // 指定したコミットハッシュのコミットを取得
-        public override CommitInfo GetCommit(string hash) {
-            CommitInfo commitInfo = new();
-            // リポジトリの取得
-            using (var repository = new Repository(WorkingDirectory)) {
-                // リポジトリのコミットを取得
-                var commit = repository.Lookup<Commit>(hash);
-                commitInfo.Hash = commit.Sha;
-                commitInfo.Message = commit.Message;
-                commitInfo.Date = commit.Author.When;
-            }
-            return commitInfo;
-        }
+
         // 最初のコミットから最後のコミットで処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.File.FileStatus> GetFileStatusList() {
-            return GetFileStatusList(null, null);
-        }
-        // 指定したコミットの次のコミットで処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.File.FileStatus> GetAfterIndexedCommitFileStatusList() {
-            string? startHash = LastIndexCommitHash;
-            return GetFileStatusList(startHash, null);
-        }
-        // 指定したコミット以後に処理されたファイルのリストを取得
-        public override List<PythonAILib.Model.File.FileStatus> GetFileStatusList(string startHash) {
-            return GetFileStatusList(startHash, "HEAD");
-        }
-        // HEADのコミットハッシュを取得
-        public override string GetHeadCommitHash() {
-            using var repository = new Repository(WorkingDirectory);
-            return repository.Head.Tip.Sha;
-        }
-        // LastIndexCommitHashをHEADのコミットハッシュに設定
-        public override void SetLastIndexCommitHash() {
-            LastIndexCommitHash = GetHeadCommitHash();
-        }
 
+        public List<File.FileStatus> GetFileStatusList() {
+
+            return GetFileStatusList(null, null);
+
+        }
 
         // 指定した範囲のコミットで処理されたファイルのリストを取得
-        private List<PythonAILib.Model.File.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
-            List<PythonAILib.Model.File.FileStatus> fileStatusList = [];
+        public List<File.FileStatus> GetFileStatusList(string? startHash, string? endHash) {
+            List<File.FileStatus> fileStatusList = [];
             // リポジトリの取得
             using (var repository = new Repository(WorkingDirectory)) {
                 // 現在のブランチのコミット一覧を取得
@@ -191,7 +171,7 @@ namespace ClipboardApp.Model {
                 // コミットの差分を取得
                 var changes = repository.Diff.Compare<TreeChanges>(startTree, endTree);
                 foreach (var change in changes) {
-                    PythonAILib.Model.File.FileStatus fileStatus = new() {
+                    File.FileStatus fileStatus = new() {
                         Path = change.Path,
                         Status = change.Status switch {
                             ChangeKind.Added => FileStatusEnum.Added,
@@ -211,11 +191,37 @@ namespace ClipboardApp.Model {
             return fileStatusList;
         }
 
-        // 更新処理
-        public override UpdateIndexResult UpdateIndex(PythonAILib.Model.File.FileStatus fileStatus, UpdateIndexResult result) {
+        // 指定したコミットの次のコミットで処理されたファイルのリストを取得
+
+        public List<File.FileStatus> GetAfterIndexedCommitFileStatusList() {
+            string? startHash = LastIndexCommitHash;
+            return GetFileStatusList(startHash, null);
+
+        }
+
+        // 指定したコミット以後に処理されたファイルのリストを取得
+
+        public List<File.FileStatus> GetFileStatusList(string startHash) {
+            return GetFileStatusList(startHash, "HEAD");
+
+        }
+
+        // HEADのコミットハッシュを取得
+        public string GetHeadCommitHash() {
+            using var repository = new Repository(WorkingDirectory);
+            return repository.Head.Tip.Sha;
+        }
+
+        // LastIndexCommitHashをHEADのコミットハッシュに設定
+        public void SetLastIndexCommitHash() {
+            LastIndexCommitHash = GetHeadCommitHash();
+        }
+
+        public UpdateIndexResult UpdateIndex(File.FileStatus fileStatus, UpdateIndexResult result) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
 
             if (VectorDBItem == null) {
-                throw new Exception(CommonStringResources.Instance.NoVectorDBSet);
+                throw new Exception(PythonAILibStringResources.Instance.NoVectorDBSet);
             }
             int token = 0;
             try {
@@ -227,7 +233,7 @@ namespace ClipboardApp.Model {
                     mode = VectorDBUpdateMode.delete;
                 }
                 GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL);
-                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), gitFileInfo, VectorDBItem);
+                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(libManager.ConfigParams.GetOpenAIProperties(), gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
@@ -238,6 +244,7 @@ namespace ClipboardApp.Model {
             result.Result = UpdateIndexResult.UpdateIndexResultEnum.Success;
 
             return result;
+
 
         }
 

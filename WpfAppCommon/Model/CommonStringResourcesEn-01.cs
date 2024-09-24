@@ -777,11 +777,6 @@ namespace WpfAppCommon.Model {
         public override string MaskedData { get; } = "Masked data";
         public override string RestoreMaskingData { get; } = "Restore masking data";
         public override string CannotGetImage { get; } = "Cannot get image";
-        public override string NoRemoteRepositorySet { get; } = "No remote repository set";
-        public override string NoWorkingDirectorySpecified { get; } = "No working directory specified";
-        public override string SpecifiedDirectoryDoesNotExist { get; } = "Specified directory does not exist";
-        public override string SpecifiedDirectoryIsNotAGitRepository { get; } = "Specified directory is not a Git repository";
-        public override string NoVectorDBSet { get; } = "No vector DB set";
 
         // -- ScriptAutoProcessItem.cs --
         public override string ExecutedPythonScript { get; } = "Executed Python script";
@@ -884,17 +879,8 @@ namespace WpfAppCommon.Model {
         public override string CommitIsEmpty { get; } = "Commit is Empty";
         public override string SavedToFileOnOS { get; } = "Saved to File on OS";
         public override string Summary { get; } = "Summary";
-        public override string SaveEmbedding { get; } = "Save Embedding";
-        public override string SavedEmbedding { get; } = "Saved Embedding";
-        public override string DeleteEmbedding { get; } = "Delete Embedding";
-        public override string DeletedEmbedding { get; } = "Deleted Embedding";
-        public override string SaveTextEmbeddingFromImage { get; } = "Save Text Embedding from Image";
-        public override string SavedTextEmbeddingFromImage { get; } = "Saved Text Embedding from Image";
-        public override string DeleteTextEmbeddingFromImage { get; } = "Delete Text Embedding from Image";
-        public override string DeletedTextEmbeddingFromImage { get; } = "Deleted Text Embedding from Image";
         public override string DeleteFileOnOS { get; } = "Delete File on OS";
         public override string DeletedFileOnOS { get; } = "Deleted File on OS";
-        public override string UnsupportedFileType { get; } = "Unsupported File Type";
         public override string Ignore { get; } = "Ignore";
         public override string DoNothing { get; } = "Do Nothing";
         public override string CopyToFolder { get; } = "Copy to Folder";

@@ -1,9 +1,10 @@
 using System.Windows;
-using PythonAILib.Model.Abstract;
 using WpfAppCommon.Utils;
 using QAChat.Model;
+using PythonAILib.Model.Prompt;
 
-namespace QAChat.ViewModel.PromptTemplateWindow {
+namespace QAChat.ViewModel.PromptTemplateWindow
+{
     public class EditPromptItemWindowViewModel : QAChatViewModelBase {
 
         // 初期化
@@ -79,7 +80,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
             if (ItemViewModel.PromptItem == null) {
                 return;
             }
-            PromptItemBase promptItem = ItemViewModel.PromptItem;
+            PromptItem promptItem = ItemViewModel.PromptItem;
             promptItem.Description = Description;
             promptItem.Prompt = Prompt;
             promptItem.Name = Name;

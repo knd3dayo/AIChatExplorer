@@ -12,19 +12,19 @@ namespace QAChat {
 
         public IPythonAILibConfigParams ConfigParams { get; private set; }
 
-        private PythonAILibManager(IPythonAILibConfigParams parmas) {
+        private PythonAILibManager(IPythonAILibConfigParams parameters) {
 
-            ConfigParams = parmas;
-            Action<string> infoAction = parmas.GetInfoAction();
-            Action<string> warnAction = parmas.GetWarnAction();
-            Action<string> errorAction = parmas.GetErrorAction();
+            ConfigParams = parameters;
+            Action<string> infoAction = parameters.GetInfoAction();
+            Action<string> warnAction = parameters.GetWarnAction();
+            Action<string> errorAction = parameters.GetErrorAction();
 
             // 言語設定
-            PythonAILibStringResources.Lang = parmas.GetLang();
+            PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化
-            PythonExecutor.Init(parmas.GetPythonDllPath(), parmas.GetPathToVirtualEnv());
+            PythonExecutor.Init(parameters.GetPythonDllPath(), parameters.GetPathToVirtualEnv());
             // DBControllerの設定
-            DataFactory = parmas.GetDataFactory();
+            DataFactory = parameters.GetDataFactory();
             // LogWrapperのログ出力設定
             LogWrapper.SetActions(infoAction, warnAction, errorAction);
 

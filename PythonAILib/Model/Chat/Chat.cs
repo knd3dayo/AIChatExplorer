@@ -2,13 +2,13 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Model.Chat
+{
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -32,7 +32,7 @@ namespace PythonAILib.Model.Chat {
 
         public List<ContentItemBase> AdditionalItems { get; set; } = [];
 
-        public List<VectorDBItemBase> VectorDBItems { get; set; } = [];
+        public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
         public ChatHistoryItem? GetLastSendItem() {

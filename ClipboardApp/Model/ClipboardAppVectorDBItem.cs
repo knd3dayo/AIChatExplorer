@@ -1,21 +1,19 @@
 using System.IO;
 using ClipboardApp.Factory;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
 
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
-    public class ClipboardAppVectorDBItem : VectorDBItemBase {
+    public class ClipboardAppVectorDBItem : VectorDBItem {
 
-        // システム共通のベクトルDBの名前
-        public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
         // システム共通のベクトルDB
-        public static VectorDBItemBase SystemCommonVectorDB {
+        public static VectorDBItem SystemCommonVectorDB {
             get {
                 // DBからベクトルDBを取得
                 var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
@@ -46,39 +44,23 @@ namespace ClipboardApp.Model {
         public ClipboardAppVectorDBItem() {
         }
 
-        // Save
-        public override void Save() {
-            // DBControllerのインスタンスを取得
-            IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // UpsertItemメソッドを呼び出して保存
-            dbController.UpsertVectorDBItem(this);
-
-        }
-
-        // Delete
-        public override void Delete() {
-            // DBControllerのインスタンスを取得
-            IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // DeleteItemメソッドを呼び出して削除
-            dbController.DeleteVectorDBItem(this);
-        }
         // Get
-        public static IEnumerable<VectorDBItemBase> GetItems(bool includeSystemVectorDB) {
+        public static IEnumerable<VectorDBItem> GetItems(bool includeSystemVectorDB) {
             // DBControllerのインスタンスを取得
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // GetItemsメソッドを呼び出して取得
-            IEnumerable<VectorDBItemBase> items = dbController.GetVectorDBItems();
+            IEnumerable<VectorDBItem> items = dbController.GetVectorDBItems();
             if (!includeSystemVectorDB) {
                 items = items.Where(item => !item.IsSystem && item.Name != SystemCommonVectorDBName);
             }
 
             return items;
         }
-        public static IEnumerable<VectorDBItemBase> GetEnabledItems(bool includeSystemVectorDB) {
+        public static IEnumerable<VectorDBItem> GetEnabledItems(bool includeSystemVectorDB) {
             return GetItems(includeSystemVectorDB).Where(item => item.IsEnabled);
         }
 
-        public static VectorDBItemBase GetFolderVectorDBItem(ClipboardFolder folder) {
+        public static VectorDBItem GetFolderVectorDBItem(ClipboardFolder folder) {
             // SystemCommonVectorDBからコピーを作成
             ClipboardAppVectorDBItem item = new() {
                 Id = SystemCommonVectorDB.Id,
@@ -95,29 +77,6 @@ namespace ClipboardApp.Model {
                 IsSystem = SystemCommonVectorDB.IsSystem
             };
             return item;
-        }
-
-        // GetItemById
-        public static VectorDBItemBase? GetItemById(LiteDB.ObjectId id) {
-            return GetItems(true).FirstOrDefault(item => item.Id == id);
-        }
-
-        public override void UpdateIndex(ContentInfo contentInfo) {
-            UpdateIndex(contentInfo, ClipboardAppConfig.Instance.CreateOpenAIProperties());
-        }
-
-        public override void DeleteIndex(ContentInfo contentInfo) {
-            DeleteIndex(contentInfo, ClipboardAppConfig.Instance.CreateOpenAIProperties());
-        }
-
-        public override void UpdateIndex(ImageInfo imageInfo) {
-            // CollectionNameの設定
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), imageInfo, this);
-        }
-
-        public override void DeleteIndex(ImageInfo imageInfo) {
-
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(ClipboardAppConfig.Instance.CreateOpenAIProperties(), imageInfo, this);
         }
 
     }

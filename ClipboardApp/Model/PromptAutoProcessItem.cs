@@ -7,7 +7,7 @@ namespace ClipboardApp.Model {
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
         public PromptAutoProcessItem() {
         }
-        public PromptAutoProcessItem(PromptItem promptItem) {
+        public PromptAutoProcessItem(ClipboardPromptItem promptItem) {
 
             Name = promptItem.Name;
             DisplayName = promptItem.Name;
@@ -24,7 +24,7 @@ namespace ClipboardApp.Model {
             Chat chatController = new();
 
             // PromptItemを取得
-            PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
+            ClipboardPromptItem PromptItem = ClipboardPromptItem.GetPromptItemById(PromptItemId);
             chatController.PromptTemplateText = PromptItem.Prompt;
             chatController.ChatMode = Mode;
             ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();

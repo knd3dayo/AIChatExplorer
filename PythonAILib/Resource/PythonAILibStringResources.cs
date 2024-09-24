@@ -1,20 +1,12 @@
-using PythonAILib.Model;
-
-namespace PythonAILib.Resource
-{
-    public class PythonAILibStringResources
-    {
+namespace PythonAILib.Resource {
+    public class PythonAILibStringResources {
 
         private static PythonAILibStringResources? _Instance;
-        public static PythonAILibStringResources Instance
-        {
-            get
-            {
-                if (_Instance == null || _LangChanged)
-                {
+        public static PythonAILibStringResources Instance {
+            get {
+                if (_Instance == null || _LangChanged) {
                     _LangChanged = false;
-                    switch (Lang)
-                    {
+                    switch (Lang) {
                         case "ja-JP":
                             _Instance = new PythonAILibStringResources();
                             // PromptStringResourceもここで設定
@@ -33,13 +25,10 @@ namespace PythonAILib.Resource
 
         private static bool _LangChanged = false;
         private static string _Lang = "ja-JP";
-        public static string Lang
-        {
+        public static string Lang {
             get { return _Lang; }
-            set
-            {
-                if (_Lang != value)
-                {
+            set {
+                if (_Lang != value) {
                     _LangChanged = true;
                 }
                 _Lang = value;
@@ -108,8 +97,7 @@ namespace PythonAILib.Resource
         public virtual string PythonInitFailed { get; } = "Pythonの初期化に失敗しました。";
 
         // "Pythonスクリプトファイルに、{function_name}関数が見つかりません"
-        public virtual string FunctionNotFound(string function_name)
-        {
+        public virtual string FunctionNotFound(string function_name) {
             return $"Pythonスクリプトファイルに、{function_name}関数が見つかりません";
         }
         // "Pythonスクリプトの実行中にエラーが発生しました
@@ -119,8 +107,7 @@ namespace PythonAILib.Resource
         public virtual string ModuleNotFound { get; } = "Pythonのモジュールが見つかりません。pip install <モジュール名>>でモジュールをインストールしてください。";
 
         // $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
-        public virtual string PythonExecuteErrorDetail(Exception e)
-        {
+        public virtual string PythonExecuteErrorDetail(Exception e) {
             return $"メッセージ:\n{e.Message}\nスタックトレース:\n{e.StackTrace}";
         }
         // "Spacyモデル名が設定されていません。設定画面からSPACY_MODEL_NAMEを設定してください"
@@ -277,60 +264,87 @@ namespace PythonAILib.Resource
 
 
         //  $"{SettingItem}の値は{SettingValue}である";
-        public virtual string SettingValueIs(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueIs(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値は{SettingValue}である";
         }
 
         // $"{SettingItem}の値は{SettingValue}でない";
-        public virtual string SettingValueIsNot(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueIsNot(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値は{SettingValue}でない";
         }
         // $"{SettingItem}の値に{SettingValue}が含まれている";
-        public virtual string SettingValueContains(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueContains(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値に{SettingValue}が含まれている";
         }
         // $"{SettingItem}の値に{SettingValue}が含まれていない";
-        public virtual string SettingValueNotContain(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueNotContain(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値に{SettingValue}が含まれていない";
         }
 
         // $"{SettingItem}の値が{SettingValue}で始まっている";
-        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueStartsWith(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値が{SettingValue}で始まっている";
         }
 
         // $"{SettingItem}の値が{SettingValue}で始まっていない";
-        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueNotStartWith(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値が{SettingValue}で始まっていない";
         }
         // $"{SettingItem}の値が{SettingValue}で終わっている";
-        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueEndsWith(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値が{SettingValue}で終わっている";
         }
         // $"{SettingItem}の値が{SettingValue}で終わっていない";
-        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueNotEndWith(string SettingItem, string SettingValue) {
             return $"{SettingItem}の値が{SettingValue}で終わっていない";
         }
 
         //  $"{SettingItem}の値が空である";
-        public virtual string SettingValueIsEmpty(string SettingItem)
-        {
+        public virtual string SettingValueIsEmpty(string SettingItem) {
             return $"{SettingItem}の値が空である";
         }
         // $"{SettingItem}のチェックボックスが{SettingValue}になっている";
-        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue)
-        {
+        public virtual string SettingValueIsChecked(string SettingItem, string SettingValue) {
             return $"{SettingItem}のチェックボックスが{SettingValue}になっている";
         }
 
+        // リモートリポジトリが設定されていません
+        public virtual string NoRemoteRepositorySet { get; } = "リモートリポジトリが設定されていません";
+
+        // 作業ディレクトリが指定されていません
+        public virtual string NoWorkingDirectorySpecified { get; } = "作業ディレクトリが指定されていません";
+
+        // "指定されたディレクトリが存在しません"
+        public virtual string SpecifiedDirectoryDoesNotExist { get; } = "指定されたディレクトリが存在しません";
+
+        // "指定されたディレクトリはGitリポジトリではありません"
+        public virtual string SpecifiedDirectoryIsNotAGitRepository { get; } = "指定されたディレクトリはGitリポジトリではありません";
+
+        // "ベクトルDBが設定されていません"
+        public virtual string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
+        // サポートされていないファイル形式です
+        public virtual string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
+
+        // "Embeddingを保存します
+        public virtual string SaveEmbedding { get; } = "Embeddingを保存します";
+        // Embeddingを保存しました
+        public virtual string SavedEmbedding { get; } = "Embeddingを保存しました";
+        // Embeddingを削除します
+        public virtual string DeleteEmbedding { get; } = "Embeddingを削除します";
+
+        // Embeddingを削除しました
+        public virtual string DeletedEmbedding { get; } = "Embeddingを削除しました";
+
+
+        // 画像から抽出したテキストのEmbeddingを保存します
+        public virtual string SaveTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存します";
+        // 画像から抽出したテキストのEmbeddingを保存しました
+        public virtual string SavedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存しました";
+
+        // 画像から抽出したテキストのEmbeddingを削除します
+        public virtual string DeleteTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除します";
+        // 画像から抽出したテキストのEmbeddingを削除しました
+        public virtual string DeletedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除しました";
 
 
     }

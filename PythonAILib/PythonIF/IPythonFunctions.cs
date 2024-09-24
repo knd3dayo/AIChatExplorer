@@ -1,10 +1,10 @@
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
@@ -20,13 +20,13 @@ namespace PythonAILib.PythonIF {
         public ChatResult LangChainChat(OpenAIProperties props, Chat chatController);
 
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItemBase vectorDBItem, VectorSearchRequest request);
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, VectorSearchRequest request);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItemBase vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItemBase vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItemBase vectorDBItem);
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
         public void ExportToExcel(string filePath, CommonDataTable data);

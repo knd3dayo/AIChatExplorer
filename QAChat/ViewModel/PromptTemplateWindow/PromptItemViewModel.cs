@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Prompt;
 
 namespace QAChat.ViewModel.PromptTemplateWindow
 {
     public class PromptItemViewModel : ObservableObject
     {
-        public PromptItemBase PromptItem { get; set; }
+        public PromptItem PromptItem { get; set; }
         public string Content
         {
             get => PromptItem.Prompt;
@@ -34,7 +34,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow
                 OnPropertyChanged(nameof(Name));
             }
         }
-        public PromptItemViewModel(PromptItemBase promptItem)
+        public PromptItemViewModel(PromptItem promptItem)
         {
             PromptItem = promptItem;
             if (promptItem != null)

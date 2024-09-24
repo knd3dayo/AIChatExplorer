@@ -4,7 +4,7 @@ using System.Windows.Media;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.TagView;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
@@ -136,7 +136,7 @@ namespace ClipboardApp.ViewModel
         public int SelectedImageIndex { get; set; } = 0;
 
         // SelectedIssueItem
-        public IssueItemBase? SelectedIssueItem { get; set; }
+        public IssueItem? SelectedIssueItem { get; set; }
 
         public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
@@ -224,7 +224,7 @@ namespace ClipboardApp.ViewModel
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                IssueItemBase item = (IssueItemBase)dataGrid.SelectedItem;
+                IssueItem item = (IssueItem)dataGrid.SelectedItem;
                 SelectedIssueItem = item;
             }
 

@@ -6,7 +6,6 @@ using System.Text.Unicode;
 using System.Windows.Shapes;
 using Python.Runtime;
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -219,7 +218,7 @@ namespace PythonAILib.PythonIF
             });
         }
                     
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItemBase vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
             if (contentInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
@@ -253,7 +252,7 @@ namespace PythonAILib.PythonIF
         }
 
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItemBase vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
             if (imageInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(imageInfo.ImageURL)) {
@@ -287,7 +286,7 @@ namespace PythonAILib.PythonIF
         }
 
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItemBase vectorDBItem) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
             if (!File.Exists(gitFileInfo.AbsolutePath)) {
@@ -423,7 +422,7 @@ namespace PythonAILib.PythonIF
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItemBase vectorDBItem, VectorSearchRequest vectorSearchRequest) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, VectorSearchRequest vectorSearchRequest) {
             // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
             openAIProperties.VectorDBItems = [vectorDBItem];
             // propsをJSON文字列に変換

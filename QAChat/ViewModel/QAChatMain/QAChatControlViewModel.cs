@@ -2,14 +2,15 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 
-namespace QAChat.ViewModel.QAChatMain {
+namespace QAChat.ViewModel.QAChatMain
+{
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
@@ -93,8 +94,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         }
 
-        private ObservableCollection<VectorDBItemBase> _vectorDBItemBases = [];
-        public ObservableCollection<VectorDBItemBase> VectorDBItems {
+        private ObservableCollection<VectorDBItem> _vectorDBItemBases = [];
+        public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
                 return _vectorDBItemBases;
             }
@@ -104,8 +105,8 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        private VectorDBItemBase? _SelectedVectorDBItem = null;
-        public VectorDBItemBase? SelectedVectorDBItem {
+        private VectorDBItem? _SelectedVectorDBItem = null;
+        public VectorDBItem? SelectedVectorDBItem {
             get {
                 return _SelectedVectorDBItem;
             }

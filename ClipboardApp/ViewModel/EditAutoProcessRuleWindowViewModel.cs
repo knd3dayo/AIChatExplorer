@@ -377,7 +377,7 @@ namespace ClipboardApp.ViewModel
                     }
                     IsPromptTemplateChecked = true;
                     // PromptItemを取得
-                    PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
+                    ClipboardPromptItem promptItem = ClipboardPromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
                     SelectedPromptItem = new PromptItemViewModel(promptItem);
                     // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
                     OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
@@ -511,7 +511,7 @@ namespace ClipboardApp.ViewModel
                     return;
                 }
                 // キャスト
-                PromptItem promptItem = (PromptItem)SelectedPromptItem.PromptItem;
+                ClipboardPromptItem promptItem = (ClipboardPromptItem)SelectedPromptItem.PromptItem;
                 PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
 
                 // OpenAIExecutionModeEnumを設定

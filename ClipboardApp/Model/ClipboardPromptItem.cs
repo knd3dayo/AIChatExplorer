@@ -1,11 +1,12 @@
-using LiteDB;
 using ClipboardApp.Factory;
-using PythonAILib.Model.Abstract;
+using LiteDB;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
+using QAChat;
 
 namespace ClipboardApp.Model
 {
-    public class PromptItem : PromptItemBase {
+    public class ClipboardPromptItem : PromptItem {
         // システム定義のプロンプト名
         public enum SystemDefinedPromptNames {
             // タイトル生成
@@ -18,26 +19,19 @@ namespace ClipboardApp.Model
             IssuesGeneration
         }
 
-        public ObjectId Id { get; set; } = ObjectId.Empty;
-        // 名前
-
-        // Save
-        public override void Save() {
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertPromptTemplate(this);
-        }
 
         // PromptItemを取得
-        public static PromptItem GetPromptItemById(ObjectId id) {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetPromptTemplate(id);
+        public static ClipboardPromptItem GetPromptItemById(ObjectId id) {
+            return (ClipboardPromptItem)ClipboardAppFactory.Instance.GetClipboardDBController().GetPromptTemplate(id);
         }
         // 名前を指定してPromptItemを取得
-        public static PromptItem? GetPromptItemByName(string name) {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetPromptTemplateByName(name);
+        public static ClipboardPromptItem? GetPromptItemByName(string name) {
+            return (ClipboardPromptItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetPromptTemplateByName(name);
         }
         // 名前を指定してシステム定義のPromptItemを取得
-        public static PromptItem GetSystemPromptItemByName(SystemDefinedPromptNames name) {
-            
-            var item =  ClipboardAppFactory.Instance.GetClipboardDBController().GetSystemPromptTemplateByName(name.ToString());
+        public static ClipboardPromptItem GetSystemPromptItemByName(SystemDefinedPromptNames name) {
+
+            var item = (ClipboardPromptItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetSystemPromptTemplateByName(name.ToString());
             if (item == null) {
                 throw new System.Exception("PromptItem not found");
             }
@@ -50,10 +44,10 @@ namespace ClipboardApp.Model
             IClipboardDBController clipboardDBController = ClipboardAppFactory.Instance.GetClipboardDBController();
 
             // TitleGenerationをDBから取得
-            PromptItem? titleGeneration = clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.TitleGeneration.ToString());
+            ClipboardPromptItem? titleGeneration = (ClipboardPromptItem?)clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.TitleGeneration.ToString());
 
             if (titleGeneration == null) {
-                titleGeneration = new PromptItem() {
+                titleGeneration = new ClipboardPromptItem() {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
                     Description = PromptStringResource.Instance.TitleGeneration,
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
@@ -62,9 +56,9 @@ namespace ClipboardApp.Model
                 clipboardDBController.UpsertPromptTemplate(titleGeneration);
             }
             // BackgroundInformationGenerationをDBから取得
-            PromptItem? backgroundInformationGeneration = clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            ClipboardPromptItem? backgroundInformationGeneration = (ClipboardPromptItem?)clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
             if (backgroundInformationGeneration == null) {
-                backgroundInformationGeneration = new PromptItem() {
+                backgroundInformationGeneration = new ClipboardPromptItem() {
                     Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
                     Description = PromptStringResource.Instance.BackgroundInformationGeneration,
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
@@ -73,9 +67,9 @@ namespace ClipboardApp.Model
                 clipboardDBController.UpsertPromptTemplate(backgroundInformationGeneration);
             }
             // SummaryGenerationをDBから取得
-            PromptItem? summaryGeneration = clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.SummaryGeneration.ToString());
+            ClipboardPromptItem? summaryGeneration = (ClipboardPromptItem?)clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.SummaryGeneration.ToString());
             if (summaryGeneration == null) {
-                summaryGeneration = new PromptItem() {
+                summaryGeneration = new ClipboardPromptItem() {
                     Name = SystemDefinedPromptNames.SummaryGeneration.ToString(),
                     Description = PromptStringResource.Instance.SummaryGenerationPrompt,
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
@@ -84,9 +78,9 @@ namespace ClipboardApp.Model
                 clipboardDBController.UpsertPromptTemplate(summaryGeneration);
             }
             // IssuesGenerationをDBから取得
-            PromptItem? issuesGeneration = clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.IssuesGeneration.ToString());
+            ClipboardPromptItem? issuesGeneration = (ClipboardPromptItem?)clipboardDBController.GetSystemPromptTemplateByName(SystemDefinedPromptNames.IssuesGeneration.ToString());
             if (issuesGeneration == null) {
-                issuesGeneration = new PromptItem() {
+                issuesGeneration = new ClipboardPromptItem() {
                     Name = SystemDefinedPromptNames.IssuesGeneration.ToString(),
                     Description = PromptStringResource.Instance.IssuesGeneration,
                     Prompt = PromptStringResource.Instance.IssuesGenerationPrompt,

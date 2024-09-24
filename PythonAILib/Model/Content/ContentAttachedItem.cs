@@ -1,19 +1,25 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 using LiteDB;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
+using PythonAILib.PythonIF;
+using PythonAILib.Resource;
+using PythonAILib.Utils;
+using QAChat;
 
-namespace PythonAILib.Model.Abstract {
-    public abstract class ContentAttachedItemBase {
+namespace PythonAILib.Model.Content {
+    public class ContentAttachedItem {
 
+        public ObjectId Id { get; set; } = ObjectId.Empty;
 
         // LiteDBで保存するためのBase64文字列
         [BsonIgnore]
-        public string? Base64String {
+        public string Base64String {
             get {
                 // use cacheの場合はキャッシュを使用する
                 if (UseCache) {
-                    return CachedBase64String;
+                    return CachedBase64String ?? "";
                 }
                 // キャッシュがない場合はファイルから取得する
                 byte[] bytes = GetData();
@@ -114,14 +120,44 @@ namespace PythonAILib.Model.Abstract {
         }
 
         // 削除
-        public abstract void Delete();
+        public virtual void Delete() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            libManager.DataFactory.DeleteAttachedItem(this);
+        }
         // 保存
-        public abstract void Save();
-        // Embedding更新
-        public abstract void UpdateEmbedding();
+        public virtual void Save() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            libManager.DataFactory.UpsertAttachedItem(this);
+        }
 
         // テキストを抽出する
-        public abstract void ExtractText();
+        public void ExtractText() {
 
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            byte[] data = GetData();
+            string base64 = Convert.ToBase64String(data);
+            try {
+
+                if (ContentTypes.IsImageData(base64)) {
+                    string result = ChatUtil.ExtractTextFromImage(openAIProperties, [base64]);
+                    if (string.IsNullOrEmpty(result) == false) {
+                        ExtractedText = result;
+                    }
+                } else {
+                    string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64);
+                    ExtractedText = text;
+                }
+
+            } catch (UnsupportedFileTypeException) {
+                LogWrapper.Info(PythonAILibStringResources.Instance.UnsupportedFileType);
+            }
+        }
+
+        // 取得
+        public static ContentAttachedItem? GetItem(ObjectId objectId) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            return libManager.DataFactory.GetAttachedItem(objectId);
+        }
     }
 }

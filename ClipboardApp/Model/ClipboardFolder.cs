@@ -6,15 +6,16 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using LiteDB;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -563,7 +564,7 @@ namespace ClipboardApp.Model {
         }
 
         // SystemCommonVectorDBを取得する。
-        public VectorDBItemBase GetVectorDBItem() {
+        public VectorDBItem GetVectorDBItem() {
             return ClipboardAppVectorDBItem.GetFolderVectorDBItem(this);
         }
 

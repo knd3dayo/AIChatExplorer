@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PythonAILib.Model.Abstract
-{
-    public class IssueItemBase
-    {
+namespace PythonAILib.Model.Content {
+    public class IssueItem {
 
         // タイトル
         public string Title { get; set; } = "";

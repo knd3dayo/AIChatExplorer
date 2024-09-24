@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using System.Threading.Tasks;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.Model
 {
@@ -34,7 +34,7 @@ namespace PythonAILib.Model
         public string? OpenAIEmbeddingBaseURL { get; set; } = null;
 
         [JsonPropertyName("VectorDBItems")]
-        public List<VectorDBItemBase> VectorDBItems { get; set; } = [];
+        public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
         public string ToJson() {

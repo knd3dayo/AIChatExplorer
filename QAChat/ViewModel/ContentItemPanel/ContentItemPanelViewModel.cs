@@ -4,18 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Content;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ContentItemPanel {
+namespace QAChat.ViewModel.ContentItemPanel
+{
     public abstract class ContentItemPanelViewModel(ContentItemBase contentItemBase) {
 
         public static CommonStringResources StringResources { get; } = CommonStringResources.Instance;
         public ContentItemBase ContentItem { get; set; } = contentItemBase;
 
         // 選択中のContentAttachedItemBase
-        public ContentAttachedItemBase? SelectedFile { get; set; }
+        public ContentAttachedItem? SelectedFile { get; set; }
 
         // 選択中のContentItemBaseを開く
         public abstract void OpenContentItem();

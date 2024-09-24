@@ -112,6 +112,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="pythonnet" Version="3.1.0-preview2024-06-03" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.6" />

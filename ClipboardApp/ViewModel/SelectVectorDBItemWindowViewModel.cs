@@ -1,21 +1,22 @@
 using System.Windows;
 using ClipboardApp.View.ClipboardItemFolderView;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class SelectVectorDBItemWindowViewModel : ObservableObject {
 
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
-        public Action<List<VectorDBItemBase>> Action { get; set; }
+        public Action<List<VectorDBItem>> Action { get; set; }
 
         public ClipboardFolderViewModel FolderViewModel { get; set; }
-        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<List<VectorDBItemBase>> action) {
+        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<List<VectorDBItem>> action) {
             Action = action;
             FolderViewModel = rootFolderViewModel;
         }
@@ -45,14 +46,14 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             if (IsFolder) {
                 FolderSelectWindow.OpenFolderSelectWindow(FolderViewModel, (folderViewModel) => {
-                    List<VectorDBItemBase> vectorDBItemBases = [];
+                    List<VectorDBItem> vectorDBItemBases = [];
                     vectorDBItemBases.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
                     Action(vectorDBItemBases);
                 });
                 return;
             }
             if (IsExternal) {
-                List<VectorDBItemBase> vectorDBItemBases = [];
+                List<VectorDBItem> vectorDBItemBases = [];
                 ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (vectorDBItemBase) => {
                     vectorDBItemBases.Add(vectorDBItemBase);
                     Action(vectorDBItemBases);

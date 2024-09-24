@@ -1202,20 +1202,6 @@ namespace WpfAppCommon.Model {
         // 画像が取得できません
         public virtual string CannotGetImage { get; } = "画像が取得できません";
 
-        // リモートリポジトリが設定されていません
-        public virtual string NoRemoteRepositorySet { get; } = "リモートリポジトリが設定されていません";
-
-        // 作業ディレクトリが指定されていません
-        public virtual string NoWorkingDirectorySpecified { get; } = "作業ディレクトリが指定されていません";
-
-        // "指定されたディレクトリが存在しません"
-        public virtual string SpecifiedDirectoryDoesNotExist { get; } = "指定されたディレクトリが存在しません";
-
-        // "指定されたディレクトリはGitリポジトリではありません"
-        public virtual string SpecifiedDirectoryIsNotAGitRepository { get; } = "指定されたディレクトリはGitリポジトリではありません";
-
-        // "ベクトルDBが設定されていません"
-        public virtual string NoVectorDBSet { get; } = "ベクトルDBが設定されていません";
 
         // -- ScriptAutoProcessItem.cs --
         // Pythonスクリプトを実行しました
@@ -1533,37 +1519,12 @@ namespace WpfAppCommon.Model {
         // サマリー
         public virtual string Summary { get; } = "サマリー";
 
-        // "Embeddingを保存します
-        public virtual string SaveEmbedding { get; } = "Embeddingを保存します";
-
-
-        // Embeddingを保存しました
-        public virtual string SavedEmbedding { get; } = "Embeddingを保存しました";
-
-        // Embeddingを削除します
-        public virtual string DeleteEmbedding { get; } = "Embeddingを削除します";
-
-        // Embeddingを削除しました
-        public virtual string DeletedEmbedding { get; } = "Embeddingを削除しました";
-
-        // 画像から抽出したテキストのEmbeddingを保存します
-        public virtual string SaveTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存します";
-        // 画像から抽出したテキストのEmbeddingを保存しました
-        public virtual string SavedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを保存しました";
-
-        // 画像から抽出したテキストのEmbeddingを削除します
-        public virtual string DeleteTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除します";
-        // 画像から抽出したテキストのEmbeddingを削除しました
-        public virtual string DeletedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除しました";
-
+        
 
         // "OS上のファイルを削除します"
         public virtual string DeleteFileOnOS { get; } = "OS上のファイルを削除します";
         // OS上のファイルを削除しました
         public virtual string DeletedFileOnOS { get; } = "OS上のファイルを削除しました";
-
-        // サポートされていないファイル形式です
-        public virtual string UnsupportedFileType { get; } = "サポートされていないファイル形式です";
 
 
 

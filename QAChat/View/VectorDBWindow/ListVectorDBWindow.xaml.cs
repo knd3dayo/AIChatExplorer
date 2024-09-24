@@ -1,8 +1,9 @@
 using System.Windows;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 using QAChat.ViewModel.VectorDBWindow;
 
-namespace QAChat.View.VectorDBWindow {
+namespace QAChat.View.VectorDBWindow
+{
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック
     /// </summary>
@@ -10,7 +11,7 @@ namespace QAChat.View.VectorDBWindow {
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, Action<VectorDBItemBase> callBackup) {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, Action<VectorDBItem> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
             ListVectorDBWindowViewModel listVectorDBWindowViewModel = new(mode, callBackup);
             listVectorDBWindow.DataContext = listVectorDBWindowViewModel;

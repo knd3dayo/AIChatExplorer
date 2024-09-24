@@ -1,11 +1,11 @@
 using System.Windows;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
 
-namespace QAChat.ViewModel.VectorDBWindow {
-    public class VectorDBItemViewModel(VectorDBItemBase item) : QAChatViewModelBase {
-        public VectorDBItemBase Item { get; private set; } = item;
+namespace QAChat.ViewModel.VectorDBWindow
+{
+    public class VectorDBItemViewModel(VectorDBItem item) : QAChatViewModelBase {
+        public VectorDBItem Item { get; private set; } = item;
 
 
         // ベクトルDBの種類を表す列挙型

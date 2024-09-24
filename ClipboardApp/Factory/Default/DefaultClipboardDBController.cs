@@ -1,9 +1,11 @@
-using System.Collections.Generic;
 using System.IO;
 using ClipboardApp.Model;
 using LiteDB;
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
+using PythonAILib.Model.VectorDB;
+using PythonAILib.Utils;
 
 namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
@@ -25,7 +27,7 @@ namespace ClipboardApp.Factory.Default {
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
 
-        // RAGSourceItem
+        // ClipboardRAGSourceItem
         public const string RAGSourceItemCollectionName = "RAGSourceItem";
         // VectorDBItem
         public const string VectorDBItemCollectionName = "VectorDBItem";
@@ -42,6 +44,38 @@ namespace ClipboardApp.Factory.Default {
                     // データベースファイルのパスを作成
                     string dbPath = Path.Combine(appDataPath, "clipboard.db");
                     db = new LiteDatabase(dbPath);
+
+                    // WpfAppCommon.Model.ClipboardItemをClipboardApp.Model.ClipboardItemに変更
+                    var collection = db.GetCollection(CLIPBOARD_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                        string typeString = item["_type"];
+                        if (typeString == "WpfAppCommon.Model.ClipboardApp.ClipboardItem, WpfAppCommon") {
+                            item["_type"] = "ClipboardApp.Model.ClipboardItem, ClipboardApp";
+                            collection.Update(item);
+                        }
+                        var fileItems = item["ClipboardItemFiles"];
+                        if (fileItems != null ) {
+                            foreach (var fileItem in fileItems.AsArray) {
+                                string fileTypeString = fileItem["_type"];
+                                if (fileTypeString.Contains("WpfAppCommon.Model.ClipboardApp.ClipboardItemFile, WpfAppCommon")) {
+                                    string newTypeString = fileTypeString.Replace("WpfAppCommon.Model.ClipboardApp.ClipboardItemFile, WpfAppCommon", "ClipboardApp.Model.ClipboardItemFile, ClipboardApp");
+                                    fileItem["_type"] = newTypeString;
+                                    collection.Update(item);
+                                }
+                            }
+                        }
+
+                    }
+                    // ClipboardItemFile
+                    var fileCollection = db.GetCollection(CLIPBOARD_FILE_COLLECTION_NAME);
+                    foreach (var item in fileCollection.FindAll()) {
+                        string typeString = item["_type"];
+                        if (typeString == "WpfAppCommon.Model.ClipboardApp.ClipboardItemFile, WpfAppCommon") {
+                            item["_type"] = "ClipboardApp.Model.ClipboardItemFile, ClipboardApp";
+                            fileCollection.Update(item);
+                        }
+                    }
+
 
                     // BSonMapperの設定
                     // ClipboardItemFolderのChildren, Items, SearchConditionを無視する
@@ -88,7 +122,7 @@ namespace ClipboardApp.Factory.Default {
             }
             return result;
         }
-        
+
         public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
             // Debug FolderName = folderNameのアイテムが複数ある時はエラー
@@ -135,7 +169,7 @@ namespace ClipboardApp.Factory.Default {
             }
             return result;
         }
-        
+
         // ClipboardItemFolderをLiteDBに追加または更新する
         public void UpsertFolder(ClipboardFolder folder) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
@@ -273,7 +307,7 @@ namespace ClipboardApp.Factory.Default {
             }
             // ファイルがある場合は、追加または更新
             foreach (var file in clipboardItem.ClipboardItemFiles) {
-                UpsertItemFile((ClipboardItemFile) file);
+                UpsertAttachedItem((ClipboardItemFile)file);
             }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItem>(CLIPBOARD_ITEM_COLLECTION_NAME);
             collection.Upsert(clipboardItem);
@@ -463,33 +497,37 @@ namespace ClipboardApp.Factory.Default {
         // --- PromptItem関連 ----------------------------------------------
 
         // create
-        public PromptItemBase CreatePromptItem() {
-            return new PromptItem();
+        public PromptItem CreatePromptItem() {
+            return new ClipboardPromptItem();
         }
 
-        public void UpsertPromptTemplate(PromptItem promptItem) {
+        public void UpsertPromptTemplate(PromptItem item) {
+            if (item is not ClipboardPromptItem promptItem) {
+                throw new Exception("Incorrect argument type.");
+            }
             var db = GetClipboardDatabase();
 
-            var col = db.GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var col = db.GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             col.Upsert(promptItem);
         }
+
         // プロンプトテンプレートを取得する
         public PromptItem GetPromptTemplate(ObjectId objectId) {
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             return col.FindById(objectId);
         }
         // プロンプトテンプレートを名前で取得する
         public PromptItem? GetPromptTemplateByName(string name) {
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             return col.FindOne(x => x.Name == name);
         }
         // システム定義のPromptItemを取得する
         public PromptItem? GetSystemPromptTemplateByName(string name) {
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            var item =  col.FindOne(x => x.Name == name);
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
+            var item = col.FindOne(x => x.Name == name);
             if (item != null &&
-                ( item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.SystemDefined  
-                    || item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+                (item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined
+                    || item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.ModifiedSystemDefined)) {
                 return item;
             }
             return null;
@@ -497,15 +535,19 @@ namespace ClipboardApp.Factory.Default {
 
 
         // 引数として渡されたプロンプトテンプレートを削除する
-        public void DeletePromptTemplate(PromptItem promptItem) {
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+        public void DeletePromptTemplate(PromptItem item) {
+            if (item is not ClipboardPromptItem promptItem) {
+                throw new Exception("Incorrect argument type.");
+            }
+
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             col.Delete(promptItem.Id);
         }
 
         // プロンプトテンプレートを全て取得する
-        public ICollection<PromptItemBase> GetAllPromptTemplates() {
-            ICollection<PromptItemBase> collation = [];
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+        public ICollection<PromptItem> GetAllPromptTemplates() {
+            ICollection<PromptItem> collation = [];
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             foreach (var item in col.FindAll()) {
                 collation.Add(item);
             }
@@ -513,38 +555,44 @@ namespace ClipboardApp.Factory.Default {
         }
         // プロンプトテンプレートを全て削除する
         public static void DeleteAllPromptTemplates() {
-            var col = GetClipboardDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
+            var col = GetClipboardDatabase().GetCollection<ClipboardPromptItem>(PromptTemplateCollectionName);
             col.DeleteAll();
         }
 
-        //----  RAGSourceItem
+        //----  ClipboardRAGSourceItem
         // create
-        public RAGSourceItemBase CreateRAGSourceItem() {
-            return new RAGSourceItem();
+        public RAGSourceItem CreateRAGSourceItem() {
+            return new ClipboardRAGSourceItem();
         }
         // update
         public void UpsertRAGSourceItem(RAGSourceItem item) {
+            if (item is not ClipboardRAGSourceItem ragItem) {
+                throw new Exception("Incorrect argument type.");
+            }
             // RAGSourceItemコレクションに、itemを追加または更新
-            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
-            collection.Upsert(item);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardRAGSourceItem>(RAGSourceItemCollectionName);
+            collection.Upsert(ragItem);
 
         }
         // delete
         public void DeleteRAGSourceItem(RAGSourceItem item) {
+            if (item is not ClipboardRAGSourceItem ragItem) {
+                throw new Exception("Incorrect argument type.");
+            }
             // RAGSourceItemコレクションから、itemを削除
-            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
-            collection.Delete(item.Id);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardRAGSourceItem>(RAGSourceItemCollectionName);
+            collection.Delete(ragItem.Id);
         }
 
         // get
-        public IEnumerable<RAGSourceItemBase> GetRAGSourceItems() {
+        public IEnumerable<RAGSourceItem> GetRAGSourceItems() {
             // RAGSourceItemコレクションから、すべてのアイテムを取得
-            var collection = GetClipboardDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
+            var collection = GetClipboardDatabase().GetCollection<ClipboardRAGSourceItem>(RAGSourceItemCollectionName);
             return collection.FindAll();
         }
-        //----  RAGSourceItem
+        //----  ClipboardRAGSourceItem
         // update
-        public void UpsertVectorDBItem(VectorDBItemBase item) {
+        public void UpsertVectorDBItem(VectorDBItem item) {
             if (item is not ClipboardAppVectorDBItem clipboardAppVectorDB) {
                 return;
             }
@@ -554,37 +602,36 @@ namespace ClipboardApp.Factory.Default {
 
         }
         // delete
-        public void DeleteVectorDBItem(VectorDBItemBase item) {
+        public void DeleteVectorDBItem(VectorDBItem item) {
             // VectorDBItemコレクションから、itemを削除
             var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             collection.Delete(item.Id);
         }
         // get
-        public IEnumerable<VectorDBItemBase> GetVectorDBItems() {
+        public IEnumerable<VectorDBItem> GetVectorDBItems() {
             // VectorDBItemコレクションから、すべてのアイテムを取得
             var collection = GetClipboardDatabase().GetCollection<ClipboardAppVectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();
         }
 
-        public IEnumerable<VectorDBItemBase> GetVectorDBItems(bool isSystemVectorDB) {
-            // VectorDBItemコレクションから、すべてのアイテムを取得
-            var items = GetVectorDBItems();
-            if (!isSystemVectorDB) {
-                items = items.Where(item => !item.IsSystem && item.Name != ClipboardAppVectorDBItem.SystemCommonVectorDBName);
+        public void UpsertAttachedItem(ContentAttachedItem item) {
+            if (item is not ClipboardItemFile clipboardItemFile) {
+                // Incorrect argument type error
+                throw new Exception("Incorrect argument type.");
             }
-            return items;
 
-        }
-
-        public void UpsertItemFile(ClipboardItemFile item) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
-            collection.Upsert(item);
+            collection.Upsert(clipboardItemFile);
         }
-        public void DeleteItemFile(ClipboardItemFile item) {
+        public void DeleteAttachedItem(ContentAttachedItem item) {
+            if (item is not ClipboardItemFile clipboardItemFile) {
+                // Incorrect argument type error
+                throw new Exception("Incorrect argument type.");
+            }
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
-            collection.Delete(item.Id);
+            collection.Delete(clipboardItemFile.Id);
         }
-        public ClipboardItemFile? GetItemFile(ObjectId id) {
+        public ContentAttachedItem? GetAttachedItem(ObjectId id) {
             var collection = GetClipboardDatabase().GetCollection<ClipboardItemFile>(CLIPBOARD_FILE_COLLECTION_NAME);
             var item = collection.FindById(id);
             return item;
@@ -592,7 +639,7 @@ namespace ClipboardApp.Factory.Default {
 
 
         // -- VectorDBItem
-        public VectorDBItemBase CreateVectorDBItem() {
+        public VectorDBItem CreateVectorDBItem() {
             return new ClipboardAppVectorDBItem();
         }
 

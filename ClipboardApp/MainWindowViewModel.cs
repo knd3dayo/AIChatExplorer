@@ -43,7 +43,7 @@ namespace ClipboardApp
             InitClipboardFolders();
 
             // PromptItemの初期化
-            PromptItem.InitSystemPromptItems();
+            ClipboardPromptItem.InitSystemPromptItems();
 
             // データベースのチェックポイント処理
             DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();

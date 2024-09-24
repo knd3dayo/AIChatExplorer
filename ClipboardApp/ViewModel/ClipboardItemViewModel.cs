@@ -7,14 +7,15 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.VectorSearchView;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -79,7 +80,7 @@ namespace ClipboardApp.ViewModel {
         }
 
         // Files
-        public ObservableCollection<ContentAttachedItemBase> Files {
+        public ObservableCollection<ContentAttachedItem> Files {
             get {
                 return [.. ClipboardItem.ClipboardItemFiles];
             }
@@ -97,7 +98,7 @@ namespace ClipboardApp.ViewModel {
         }
 
         // Issues
-        public ObservableCollection<IssueItemBase> Issues {
+        public ObservableCollection<IssueItem> Issues {
             get {
                 return [.. ClipboardItem.Issues];
             }
@@ -482,7 +483,7 @@ namespace ClipboardApp.ViewModel {
         });
 
         // Issuesの削除
-        public SimpleDelegateCommand<IssueItemBase> DeleteIssueCommand => new((item) => {
+        public SimpleDelegateCommand<IssueItem> DeleteIssueCommand => new((item) => {
             ClipboardItem.Issues.Remove(item);
             // Issuesを更新
             Issues.Clear();

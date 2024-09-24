@@ -1,14 +1,56 @@
-using PythonAILib.Model.Abstract;
+using LiteDB;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Image;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
+using QAChat;
 
 namespace PythonAILib.Model {
     public abstract class ContentItemBase {
+
+        public ObjectId Id { get; set; } = ObjectId.Empty;
+
+
+        // ファイルのObjectId
+        public List<LiteDB.ObjectId> FileObjectIds { get; set; } = [];
+
+
+        // ファイル
+        // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
+        protected List<ContentAttachedItem> _attachedItems = [];
+        public  List<ContentAttachedItem> AttachedItems {
+            get {
+                if (_attachedItems.Count() == 0) {
+                    LoadFiles();
+                }
+                return _attachedItems;
+            }
+        }
+        protected void LoadFiles() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            foreach (var fileObjectId in FileObjectIds) {
+                ContentAttachedItem? file = libManager.DataFactory.GetAttachedItem(fileObjectId);
+                if (file != null) {
+                    _attachedItems.Add(file);
+                }
+            }
+        }
+
+        protected void SaveFiles() {
+            //Fileを保存
+            FileObjectIds = [];
+            foreach (ContentAttachedItem file in _attachedItems) {
+                file.Save();
+                // ClipboardItemFileをSaveした後にIdが設定される。そのあとでFileObjectIdsに追加
+                FileObjectIds.Add(file.Id);
+            }
+        }
+
 
         // 生成日時
         public DateTime CreatedAt { get; set; }
@@ -37,7 +79,7 @@ namespace PythonAILib.Model {
         public List<ChatHistoryItem> ChatItems { get; set; } = [];
 
         // Issues
-        public List<IssueItemBase> Issues { get; set; } = [];
+        public List<IssueItem> Issues { get; set; } = [];
 
         //Tags
         public HashSet<string> Tags { get; set; } = [];
@@ -113,18 +155,22 @@ namespace PythonAILib.Model {
             }
         }
 
-        public abstract VectorDBItemBase GetVectorDBItem();
+        public abstract VectorDBItem GetVectorDBItem();
 
-        public abstract void CopyTo(ContentItemBase newItem);
-        public abstract void Delete();
+        public virtual void Delete() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            libManager.DataFactory.DeleteItem(this);
 
-        public abstract void Save(bool contentIsModified = true);
+        }
 
-        public abstract void UpdateEmbedding(VectorDBUpdateMode mode);
+        public virtual void Save(bool contentIsModified = true) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            libManager.DataFactory.UpsertItem(this, contentIsModified);
 
-        public abstract ContentItemBase Copy();
+        }
+        
         // 
-        public virtual List<ContentAttachedItemBase> ClipboardItemFiles { get; set; } = [];
+        public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
 
         // OpenAIを使用してイメージからテキスト抽出する。
         public void ExtractImageWithOpenAI() {
@@ -145,7 +191,7 @@ namespace PythonAILib.Model {
         }
 
         // OpenAIを使用してタイトルを生成する
-        public void CreateAutoTitleWithOpenAI(PromptItemBase promptItem, OpenAIProperties openAIProperties) {
+        public void CreateAutoTitleWithOpenAI(PromptItem promptItem, OpenAIProperties openAIProperties) {
             // ContentTypeがTextの場合
             if (ContentType == ContentTypes.ContentItemTypes.Text) {
                 // Contentがない場合は処理しない
@@ -183,7 +229,7 @@ namespace PythonAILib.Model {
         }
 
         // 自動でサマリーを付与するコマンド
-        public void CreateSummary(PromptItemBase promptItem, OpenAIProperties openAIProperties) {
+        public void CreateSummary(PromptItem promptItem, OpenAIProperties openAIProperties) {
             string contentText = Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
@@ -195,7 +241,7 @@ namespace PythonAILib.Model {
             }
         }
         // 課題リストを作成する
-        public void CreateIssues(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, PromptItemBase promptItem) {
+        public void CreateIssues(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem) {
             string contentText = Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
@@ -207,7 +253,7 @@ namespace PythonAILib.Model {
             Issues.Clear();
 
             foreach (var item in result) {
-                IssueItemBase issueItem = new() {
+                IssueItem issueItem = new() {
                     Title = "",
                     Content = item,
                     Action = ""
@@ -219,7 +265,7 @@ namespace PythonAILib.Model {
 
 
         // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(OpenAIProperties openAIProperties, VectorDBItemBase vectorDBItem, bool IncludeBackgroundInfo) {
+        public List<VectorSearchResult> VectorSearchCommandExecute(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, bool IncludeBackgroundInfo) {
             string contentText = Content;
             // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
             if (IncludeBackgroundInfo) {

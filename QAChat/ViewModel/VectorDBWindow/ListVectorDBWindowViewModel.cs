@@ -1,17 +1,18 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Model.Abstract;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Utils;
 using QAChat.Model;
+using PythonAILib.Model.VectorDB;
 
-namespace QAChat.ViewModel.VectorDBWindow {
+namespace QAChat.ViewModel.VectorDBWindow
+{
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
     public class ListVectorDBWindowViewModel : QAChatViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, Action<VectorDBItemBase> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, Action<VectorDBItem> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
@@ -28,7 +29,7 @@ namespace QAChat.ViewModel.VectorDBWindow {
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         private ActionModeEnum mode;
-        Action<VectorDBItemBase>? callBackup;
+        Action<VectorDBItem>? callBackup;
 
 
         // 選択中のVectorDBItem
@@ -72,11 +73,15 @@ namespace QAChat.ViewModel.VectorDBWindow {
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems(IsShowSystemCommonVectorDB);
-            if (items != null) {
-                foreach (var item in items) {
-                    VectorDBItems.Add(new VectorDBItemViewModel(item));
-                }
+            var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems();
+            if (items == null) {
+                return;
+            }
+            if (IsShowSystemCommonVectorDB) {
+                items = items.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            } 
+            foreach (var item in items) {
+                VectorDBItems.Add(new VectorDBItemViewModel(item));
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });

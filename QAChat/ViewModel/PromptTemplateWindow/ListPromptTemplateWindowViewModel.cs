@@ -6,8 +6,10 @@ using PythonAILib.Model.Abstract;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 using QAChat.Model;
+using PythonAILib.Model.Prompt;
 
-namespace QAChat.ViewModel.PromptTemplateWindow {
+namespace QAChat.ViewModel.PromptTemplateWindow
+{
     public class ListPromptTemplateWindowViewModel : QAChatViewModelBase
     {
 
@@ -118,8 +120,8 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
             {
                 // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
                 if (!IsShowSystemPromptItems &&
-                    (item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.SystemDefined ||
-                       item.PromptTemplateType == PromptItemBase.PromptTemplateTypeEnum.ModifiedSystemDefined))
+                    (item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined ||
+                       item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.ModifiedSystemDefined))
                 {
                     continue;
                 }
@@ -148,7 +150,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) =>
         {
             IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
-            PromptItemBase item = clipboardDBController.CreatePromptItem();
+            PromptItem item = clipboardDBController.CreatePromptItem();
 
             PromptItemViewModel itemViewModel = new(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) =>
@@ -185,7 +187,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);
                 return;
             }
-            PromptItemBase? item = SelectedPromptItem?.PromptItem;
+            PromptItem? item = SelectedPromptItem?.PromptItem;
             if (item == null)
             {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);

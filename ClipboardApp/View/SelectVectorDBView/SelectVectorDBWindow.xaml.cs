@@ -1,8 +1,9 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 
-namespace ClipboardApp.View.SelectVectorDBView {
+namespace ClipboardApp.View.SelectVectorDBView
+{
     /// <summary>
     /// SelectVectorDBWindow.xaml の相互作用ロジック
     /// </summary>
@@ -10,7 +11,7 @@ namespace ClipboardApp.View.SelectVectorDBView {
         public SelectVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenSelectVectorDBWindow(ClipboardFolderViewModel folderViewModel ,Action<List<VectorDBItemBase>> action) {
+        public static void OpenSelectVectorDBWindow(ClipboardFolderViewModel folderViewModel ,Action<List<VectorDBItem>> action) {
             SelectVectorDBWindow window = new();
             SelectVectorDBItemWindowViewModel viewModel = new(folderViewModel, action);
             window.DataContext = viewModel;

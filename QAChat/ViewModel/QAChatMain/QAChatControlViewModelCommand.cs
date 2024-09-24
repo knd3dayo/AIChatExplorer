@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using QAChat.Control;
 using QAChat.View.EditChatItemWindow;
@@ -11,7 +11,8 @@ using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain {
+namespace QAChat.ViewModel.QAChatMain
+{
     public partial class QAChatControlViewModel {
 
         // チャットを送信するコマンド
@@ -26,7 +27,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 await Task.Run(() => {
 
                     // LangChainChat用。VectorDBItemsを設定
-                    List<VectorDBItemBase> items = [.. VectorDBItems];
+                    List<VectorDBItem> items = [.. VectorDBItems];
                     ChatController.VectorDBItems = items;
 
                     // OpenAIChat or LangChainChatを実行
@@ -79,7 +80,7 @@ namespace QAChat.ViewModel.QAChatMain {
             // ModeがNormal以外の場合は、VectorDBItemを取得
             VectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItemBase? item = QAChatStartupProps.ContentItem.GetVectorDBItem();
+                VectorDBItem? item = QAChatStartupProps.ContentItem.GetVectorDBItem();
                 if (item != null) {
                     VectorDBItems.Add(item);
                 }

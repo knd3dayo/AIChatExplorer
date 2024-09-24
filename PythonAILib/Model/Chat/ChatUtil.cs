@@ -1,8 +1,9 @@
 using System.Text.Json;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Model.Chat
+{
     public class ChatUtil {
 
         // タイトルを作成する
@@ -30,7 +31,7 @@ namespace PythonAILib.Model.Chat {
             return "";
         }
         // 背景情報を作成する
-        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content, string promptText = "") {
+        public static string CreateBackgroundInfo(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content, string promptText = "") {
             Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
@@ -70,7 +71,7 @@ namespace PythonAILib.Model.Chat {
 
 
         // 日本語文章を解析する
-        public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
+        public static string AnalyzeJapaneseSentence(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content) {
             Chat chatController = new();
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
@@ -84,7 +85,7 @@ namespace PythonAILib.Model.Chat {
             return "";
         }
         // 自動QAを生成する
-        public static string GenerateQA(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content) {
+        public static string GenerateQA(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content) {
             Chat chatController = new();
             // OpenAI+RAG Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.OpenAIRAG;
@@ -114,7 +115,7 @@ namespace PythonAILib.Model.Chat {
             return "";
         }
         // 課題リストを生成する
-        public static List<string> CreateIssues(OpenAIProperties openAIProperties, List<VectorDBItemBase> vectorDBItems, string content, string promptText = "") {
+        public static List<string> CreateIssues(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string content, string promptText = "") {
             Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
