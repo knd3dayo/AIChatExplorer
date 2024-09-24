@@ -46,6 +46,7 @@ namespace ClipboardApp.Factory.Default {
                     db = new LiteDatabase(dbPath);
 
                     // WpfAppCommon.Model.ClipboardItemをClipboardApp.Model.ClipboardItemに変更
+                    /*** クラスの場所変更時の暫定的な処理
                     var collection = db.GetCollection(CLIPBOARD_ITEM_COLLECTION_NAME);
                     foreach (var item in collection.FindAll()) {
                         string typeString = item["_type"];
@@ -54,9 +55,12 @@ namespace ClipboardApp.Factory.Default {
                             collection.Update(item);
                         }
                         var fileItems = item["ClipboardItemFiles"];
-                        if (fileItems != null ) {
+                        if (fileItems != null && fileItems.AsArray != null) {
                             foreach (var fileItem in fileItems.AsArray) {
-                                string fileTypeString = fileItem["_type"];
+                                string? fileTypeString = fileItem["_type"];
+                                if (fileTypeString == null) {
+                                    continue;
+                                }
                                 if (fileTypeString.Contains("WpfAppCommon.Model.ClipboardApp.ClipboardItemFile, WpfAppCommon")) {
                                     string newTypeString = fileTypeString.Replace("WpfAppCommon.Model.ClipboardApp.ClipboardItemFile, WpfAppCommon", "ClipboardApp.Model.ClipboardItemFile, ClipboardApp");
                                     fileItem["_type"] = newTypeString;
@@ -75,7 +79,7 @@ namespace ClipboardApp.Factory.Default {
                             fileCollection.Update(item);
                         }
                     }
-
+                    ***/
 
                     // BSonMapperの設定
                     // ClipboardItemFolderのChildren, Items, SearchConditionを無視する
