@@ -27,7 +27,10 @@ namespace PythonAILib.Resource
         public virtual string IssuesGeneration { get; } = "課題リスト生成";
 
         // "以下の文章から課題リストを生成してください。\n"
-        public virtual string IssuesGenerationPrompt { get; } = "以下の文章から課題リストを生成してください。出力はJSON形式で{result:[課題の項目]}でお願いします。\n";
+        public virtual string IssuesGenerationPrompt { get; } = "以下の文章から課題リストを生成してください。\n";
+
+        // Json形式で文字列のリストを生成するプロンプト
+        public virtual string JsonStringListGenerationPrompt { get; } = "出力は箇条書きの形式として、JSON形式で{result:[箇条書きの項目]}でお願いします。\n";
 
         // BackgroundInformationGeneration
         public virtual string BackgroundInformationGeneration { get; } = "背景情報生成";

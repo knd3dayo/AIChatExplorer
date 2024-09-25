@@ -32,7 +32,11 @@ namespace PythonAILib.Resource
         public override string IssuesGeneration { get; } = "TODO List Generation";
 
         // "Please generate a TODO list from the following text.\n"
-        public override string IssuesGenerationPrompt { get; } = "Please generate a TODO list from the following text. The output should be in JSON format {result:[TODO items]}.\n";
+        public override string IssuesGenerationPrompt { get; } = "Please generate a TODO list from the following text. \n";
+
+        // Json形式で文字列のリストを生成するプロンプト
+        public override string JsonStringListGenerationPrompt { get; } = "Please generate a list of strings in JSON format {result:[list items]} as bullet points.\n";
+
 
         // BackgroundInformationGeneration
         public override string BackgroundInformationGeneration { get; } = "Background information generation";

@@ -182,6 +182,11 @@ namespace ImageChat.Model {
         public VectorDBItem CreateVectorDBItem() {
             return new VectorDBItem();
         }
+
+        public VectorDBItem GetSystemVectorDBItem() {
+            throw new NotImplementedException();
+        }
+
         // update
         public void UpsertVectorDBItem(VectorDBItem item) {
             var collection = GetDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);

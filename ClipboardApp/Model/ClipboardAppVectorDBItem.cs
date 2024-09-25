@@ -1,11 +1,9 @@
 using System.IO;
 using ClipboardApp.Factory;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
 
     /// <summary>
     /// VectorDBのアイテム
@@ -15,34 +13,13 @@ namespace ClipboardApp.Model
         // システム共通のベクトルDB
         public static VectorDBItem SystemCommonVectorDB {
             get {
-                // DBからベクトルDBを取得
-                var item = GetItems(true).FirstOrDefault(item => item.Name == SystemCommonVectorDBName);
-                if (item == null) {
-                    string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
-                    string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db.db");
-                    item = new ClipboardAppVectorDBItem() {
-                        Id = LiteDB.ObjectId.Empty,
-                        Name = SystemCommonVectorDBName,
-                        Description = CommonStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
-                        Type = VectorDBTypeEnum.Chroma,
-                        VectorDBURL = vectorDBPath,
-                        DocStoreURL = $"sqlite:///{docDBPath}",
-                        IsUseMultiVectorRetriever = true,
-                        IsEnabled = true,
-                        IsSystem = true
-                    };
-                    item.Save();
-                }
-                // IsSystemフラグ導入前のバージョンへの対応
-                item.IsSystem = true;
-                return item;
-
+                IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
+                return dbController.GetSystemVectorDBItem();
             }
         }
 
 
-        public ClipboardAppVectorDBItem() {
-        }
+        public ClipboardAppVectorDBItem() { }
 
         // Get
         public static IEnumerable<VectorDBItem> GetItems(bool includeSystemVectorDB) {

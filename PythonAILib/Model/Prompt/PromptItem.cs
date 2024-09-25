@@ -14,6 +14,17 @@ namespace PythonAILib.Model.Prompt {
             // 変更を加えたシステム定義
             ModifiedSystemDefined
         }
+        public enum SystemDefinedPromptNames {
+            // タイトル生成
+            TitleGeneration,
+            // 背景情報生成
+            BackgroundInformationGeneration,
+            // サマリー生成
+            SummaryGeneration,
+            // 課題リスト生成
+            IssuesGeneration
+        }
+
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
         // 名前

@@ -8,16 +8,6 @@ namespace ClipboardApp.Model
 {
     public class ClipboardPromptItem : PromptItem {
         // システム定義のプロンプト名
-        public enum SystemDefinedPromptNames {
-            // タイトル生成
-            TitleGeneration,
-            // 背景情報生成
-            BackgroundInformationGeneration,
-            // サマリー生成
-            SummaryGeneration,
-            // 課題リスト生成
-            IssuesGeneration
-        }
 
 
         // PromptItemを取得

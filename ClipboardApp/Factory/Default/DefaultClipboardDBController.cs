@@ -5,7 +5,7 @@ using PythonAILib.Model;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.Utils;
+using WpfAppCommon.Model;
 
 namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : IClipboardDBController {
@@ -645,6 +645,35 @@ namespace ClipboardApp.Factory.Default {
         // -- VectorDBItem
         public VectorDBItem CreateVectorDBItem() {
             return new ClipboardAppVectorDBItem();
+        }
+
+        public VectorDBItem GetSystemVectorDBItem() {
+            // DBからベクトルDBを取得
+            // GetItemsメソッドを呼び出して取得
+            IEnumerable<VectorDBItem> items = GetVectorDBItems();
+            var item = items.FirstOrDefault(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+
+            if (item == null) {
+                string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
+                string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db.db");
+                item = new ClipboardAppVectorDBItem() {
+                    Id = LiteDB.ObjectId.Empty,
+                    Name = VectorDBItem.SystemCommonVectorDBName,
+                    Description = CommonStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
+                    Type = VectorDBTypeEnum.Chroma,
+                    VectorDBURL = vectorDBPath,
+                    DocStoreURL = $"sqlite:///{docDBPath}",
+                    IsUseMultiVectorRetriever = true,
+                    IsEnabled = true,
+                    IsSystem = true
+                };
+                item.Save();
+            }
+            // IsSystemフラグ導入前のバージョンへの対応
+            item.IsSystem = true;
+            return item;
+
+
         }
 
     }

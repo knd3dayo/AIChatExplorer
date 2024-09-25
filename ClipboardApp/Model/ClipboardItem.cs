@@ -345,13 +345,13 @@ namespace ClipboardApp.Model
         public List<VectorSearchResult> VectorSearchCommandExecute(bool IncludeBackgroundInfo) {
             // VectorDBItemを取得
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            return VectorSearchCommandExecute(ClipboardAppConfig.Instance.CreateOpenAIProperties(), vectorDBItem, IncludeBackgroundInfo);
+            return VectorSearchCommandExecute(vectorDBItem, IncludeBackgroundInfo);
         }
 
 
         // OpenAIを使用してタイトルを生成する
         public void CreateAutoTitleWithOpenAI() {
-            CreateAutoTitleWithOpenAI(ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.TitleGeneration), ClipboardAppConfig.Instance.CreateOpenAIProperties());
+            CreateAutoTitleWithOpenAI(ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.TitleGeneration));
         }
 
         // 自動でコンテキスト情報を付与するコマンド
@@ -411,7 +411,7 @@ namespace ClipboardApp.Model
 
             // システム定義のPromptItemを取得
             ClipboardPromptItem promptItem = ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
-            result = ChatUtil.CreateBackgroundInfo(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
+            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
 
             return result;
 
@@ -427,8 +427,8 @@ namespace ClipboardApp.Model
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
-
-            result = ChatUtil.AnalyzeJapaneseSentence(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText);
+            string promptText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
+            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText , promptText);
             if (string.IsNullOrEmpty(result) == false) {
                 BackgroundInfo += "\n" + result;
             }
@@ -445,29 +445,18 @@ namespace ClipboardApp.Model
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
+            List<string> promptList =
+            [
+                PromptStringResource.Instance.GenerateQuestionRequest,
+                PromptStringResource.Instance.AnswerRequest,
+            ];
 
-            result = ChatUtil.GenerateQA(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText);
+            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptList);
             if (string.IsNullOrEmpty(result) == false) {
                 BackgroundInfo += "\n" + result;
             }
             return result;
         }
 
-        // 自動でサマリーを付与するコマンド
-        public void CreateSummary() {
-            Task.Run(() => {
-                // システム定義のPromptItemを取得
-                ClipboardPromptItem promptItem = ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.SummaryGeneration);
-                CreateSummary(promptItem, ClipboardAppConfig.Instance.CreateOpenAIProperties());
-            });
-        }
-        // 課題リストを作成する
-        public void CreateIssues() {
-            Task.Run(() => {
-                // システム定義のPromptItemを取得
-                ClipboardPromptItem promptItem = ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.IssuesGeneration);
-                CreateIssues(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [ClipboardAppVectorDBItem.SystemCommonVectorDB], promptItem);
-            });
-        }
     }
 }
