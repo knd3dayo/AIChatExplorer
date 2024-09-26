@@ -7,6 +7,7 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Prompt;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
@@ -377,7 +378,7 @@ namespace ClipboardApp.ViewModel
                     }
                     IsPromptTemplateChecked = true;
                     // PromptItemを取得
-                    ClipboardPromptItem promptItem = ClipboardPromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
+                    PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
                     SelectedPromptItem = new PromptItemViewModel(promptItem);
                     // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
                     OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;

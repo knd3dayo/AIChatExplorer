@@ -68,6 +68,9 @@ namespace PythonAILib.Model {
         // 背景情報
         public string BackgroundInfo { get; set; } = "";
 
+        // 文脈情報のリスト
+        public List<string> ContextInfo { get; set; } = [];
+
         // サマリー
         public string Summary { get; set; } = "";
 
@@ -191,10 +194,11 @@ namespace PythonAILib.Model {
         }
 
         // OpenAIを使用してタイトルを生成する
-        public void CreateAutoTitleWithOpenAI(PromptItem promptItem) {
+        public void CreateAutoTitleWithOpenAI() {
 
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            PromptItem promptItem = libManager.DataFactory.GetSystemPromptTemplateByName(PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString()) ?? throw new Exception("PromptItem not found");
 
             // ContentTypeがTextの場合
             if (ContentType == ContentTypes.ContentItemTypes.Text) {
@@ -259,7 +263,28 @@ namespace PythonAILib.Model {
             }
         }
 
-        // 箇条書きを作成する
+        // Contentに関する文脈情報を箇条書きで作成する
+        public void CreateContextInfo(List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            string contentText = Content;
+            // contentTextがない場合は処理しない
+            if (string.IsNullOrEmpty(contentText)) {
+                return;
+            }
+
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+
+            // システム定義のPromptItemを取得
+            PromptItem? promptItem = libManager.DataFactory.GetSystemPromptTemplateByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            if (promptItem == null) {
+                throw new Exception("PromptItem not found");
+            }
+            List<string> result = ChatUtil.CreateRAGResultBulletedList(openAIProperties, vectorDBItems,  contentText, promptItem.Prompt);
+            ContextInfo.Clear();
+            foreach (var item in result) {
+                ContextInfo.Add(item);
+            }
+        }
 
         // 課題リストを作成する
         public void CreateIssues() {
@@ -293,6 +318,71 @@ namespace PythonAILib.Model {
             }
         }
 
+        public string? CreateNormalBackgroundInfo(List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            string result;
+            string contentText = Content;
+            // contentTextがない場合は処理しない
+            if (string.IsNullOrEmpty(contentText)) {
+                return null;
+            }
+
+            // システム定義のPromptItemを取得
+            PromptItem? promptItem = libManager.DataFactory.GetSystemPromptTemplateByName (PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            if (promptItem == null) {
+                throw new Exception("PromptItem not found");
+            }
+            result = ChatUtil.CreateRAGChatResultText(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItems, contentText, promptItem.Prompt);
+
+            return result;
+
+        }
+
+
+        // 日本語の文章を解析する
+        public string? CreateAnalyzedJapaneseSentence(List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            string result;
+            string contentText = Content;
+            // contentTextがない場合は処理しない
+            if (string.IsNullOrEmpty(contentText)) {
+                return null;
+            }
+            // ベクトルDBの設定
+            string promptText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
+            result = ChatUtil.CreateRAGChatResultText(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItems, contentText, promptText);
+            if (string.IsNullOrEmpty(result) == false) {
+                BackgroundInfo += "\n" + result;
+            }
+            return result;
+        }
+
+        // QAを作成する
+        public string? CreateQA(List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            string result;
+            string contentText = Content;
+            // contentTextがない場合は処理しない
+            if (string.IsNullOrEmpty(contentText)) {
+                return null;
+            }
+
+            List<string> promptList =
+            [
+                PromptStringResource.Instance.GenerateQuestionRequest,
+                PromptStringResource.Instance.AnswerRequest,
+            ];
+
+            result = ChatUtil.CreateRAGChatResultText(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItems, contentText, promptList);
+            if (string.IsNullOrEmpty(result) == false) {
+                BackgroundInfo += "\n" + result;
+            }
+            return result;
+
+        }
 
 
         // ベクトル検索を実行する

@@ -349,11 +349,6 @@ namespace ClipboardApp.Model
         }
 
 
-        // OpenAIを使用してタイトルを生成する
-        public void CreateAutoTitleWithOpenAI() {
-            CreateAutoTitleWithOpenAI(ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.TitleGeneration));
-        }
-
         // 自動でコンテキスト情報を付与するコマンド
         public void CreateAutoBackgroundInfo() {
             string contentText = Content;
@@ -363,14 +358,14 @@ namespace ClipboardApp.Model
             }
             var task1 = Task.Run(() => {
                 // 標準背景情報を生成
-                string? normalBackgroundInfo = GetNormalBackgroundInfo();
+                string? normalBackgroundInfo = CreateNormalBackgroundInfo();
                 return normalBackgroundInfo;
             });
 
             var task2 = Task.Run(() => {
                 // 背景情報に日本語解析追加が有効になっている場合
                 if (ClipboardAppConfig.Instance.AnalyzeJapaneseSentence) {
-                    string? analyzedJapaneseSentence = GetAnalyzedJapaneseSentence();
+                    string? analyzedJapaneseSentence = CreateAnalyzedJapaneseSentence();
                     return analyzedJapaneseSentence;
                 }
                 return null;
@@ -378,7 +373,7 @@ namespace ClipboardApp.Model
             var task3 = Task.Run(() => {
                 // 背景情報に自動QA生成が有効になっている場合
                 if (ClipboardAppConfig.Instance.AutoGenerateQA) {
-                    string? generatedQA = GetGeneratedQA();
+                    string? generatedQA = CreateQA();
                     return generatedQA;
                 }
                 return null;
@@ -398,64 +393,29 @@ namespace ClipboardApp.Model
             }
         }
 
-        public string? GetNormalBackgroundInfo() {
-            string result;
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return null;
-            }
+        public string? CreateNormalBackgroundInfo() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
 
-            // システム定義のPromptItemを取得
-            ClipboardPromptItem promptItem = ClipboardPromptItem.GetSystemPromptItemByName(ClipboardPromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
-            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptItem.Prompt);
-
-            return result;
+            return CreateNormalBackgroundInfo([vectorDBItem]);
 
         }
 
-        public string? GetAnalyzedJapaneseSentence() {
-            string result;
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return null;
-            }
+        public string? CreateAnalyzedJapaneseSentence() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
-            string promptText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
-            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText , promptText);
-            if (string.IsNullOrEmpty(result) == false) {
-                BackgroundInfo += "\n" + result;
-            }
-            return result;
+
+            return CreateAnalyzedJapaneseSentence([vectorDBItem]);
         }
 
-        public string? GetGeneratedQA() {
-            string result;
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return null;
-            }
+        public string? CreateQA() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             vectorDBItem.CollectionName = FolderObjectId.ToString();
-            List<string> promptList =
-            [
-                PromptStringResource.Instance.GenerateQuestionRequest,
-                PromptStringResource.Instance.AnswerRequest,
-            ];
 
-            result = ChatUtil.CreateRAGChatResultText(ClipboardAppConfig.Instance.CreateOpenAIProperties(), [vectorDBItem], contentText, promptList);
-            if (string.IsNullOrEmpty(result) == false) {
-                BackgroundInfo += "\n" + result;
-            }
-            return result;
+            return CreateQA([vectorDBItem]);
         }
 
     }

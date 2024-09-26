@@ -1,5 +1,6 @@
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Prompt;
 
 namespace ClipboardApp.Model {
     public class PromptAutoProcessItem : SystemAutoProcessItem {
@@ -24,7 +25,7 @@ namespace ClipboardApp.Model {
             Chat chatController = new();
 
             // PromptItemを取得
-            ClipboardPromptItem PromptItem = ClipboardPromptItem.GetPromptItemById(PromptItemId);
+            PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
             chatController.PromptTemplateText = PromptItem.Prompt;
             chatController.ChatMode = Mode;
             ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();

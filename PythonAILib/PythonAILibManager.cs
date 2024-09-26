@@ -1,6 +1,7 @@
 using LiteDB.Engine;
 using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
+using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
@@ -33,6 +34,8 @@ namespace QAChat {
         public static void Init(IPythonAILibConfigParams parmas) {
 
             Instance = new PythonAILibManager(parmas);
+            // PromptItemの初期化
+            PromptItem.InitSystemPromptItems();
         }
 
         public IDataFactory DataFactory { get; set; }
