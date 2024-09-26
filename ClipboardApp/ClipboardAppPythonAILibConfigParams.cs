@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
@@ -38,5 +39,28 @@ namespace ClipboardApp {
         public TextWrapping GetTextWrapping() {
             return ClipboardAppConfig.Instance.TextWrapping;
         }
+
+        public string GetDBPath() {
+
+            /// AppDataフォルダーパスを取得
+            string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
+            // データベースファイルのパスを作成
+            string dbPath = Path.Combine(appDataPath, "clipboard.db");
+
+            return dbPath;
+
+        }
+        public string GetSystemVectorDBPath() {
+            string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db.db");
+            return vectorDBPath;
+        }
+
+        public string GetSystemDocDBPath() {
+            string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
+            return docDBPath;
+
+        }
+
+
     }
 }

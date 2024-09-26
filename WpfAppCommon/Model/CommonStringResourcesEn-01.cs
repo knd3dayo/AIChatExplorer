@@ -859,7 +859,6 @@ namespace WpfAppCommon.Model {
         public override string ActionNone { get; } = "Action None";
         public override string FolderNone { get; } = "Folder None";
         public override string DetectedAnInfiniteLoop { get; } = "Detected an Infinite Loop";
-        public override string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "General Vector DB for Searching Past Documents Based on User Questions";
         public override string Clipboard { get; } = "Clipboard";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";

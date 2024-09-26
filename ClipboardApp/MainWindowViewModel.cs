@@ -1,30 +1,21 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model;
-using PythonAILib.PythonIF;
-using QAChat.Control;
-using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel;
-using WpfAppCommon.Utils;
-using ClipboardApp.Factory;
-using ClipboardApp.Factory.Default;
-using ClipboardApp.Model;
 using QAChat;
-using ClipboardApp.View.SelectVectorDBView;
+using QAChat.Control;
+using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() {
-            // 旧バージョンのRootFolderの移行
-            ClipboardFolder.MigrateRootFolder();
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
-            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
             Init();
 
         }
@@ -40,13 +31,15 @@ namespace ClipboardApp
             PythonAILibManager.Init(configParams);
             QAChatManager.Init(configParams);
             // フォルダの初期化
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
             InitClipboardFolders();
 
             // PromptItemの初期化
             ClipboardPromptItem.InitSystemPromptItems();
 
             // データベースのチェックポイント処理
-            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
+            ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();
 
             // DBのバックアップの取得
             IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
@@ -54,6 +47,8 @@ namespace ClipboardApp
         }
 
         private void InitClipboardFolders() {
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
 
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
@@ -75,8 +70,13 @@ namespace ClipboardApp
 
         }
         // RootFolderのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
+
         // 画像チェックフォルダのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
         public ImageCheckFolderViewModel ImageCheckRootFolderViewModel { get; private set; }
 
         public void ReLoadRootFolders() {
@@ -306,7 +306,7 @@ namespace ClipboardApp
                         LogWrapper.Error("MainWindowViewModelがNullです");
                         return;
                     }
-                    SelectVectorDBWindow.OpenSelectVectorDBWindow( ActiveInstance.RootFolderViewModel, (selectedItems) => {
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, (selectedItems) => {
                         foreach (var item in selectedItems) {
                             vectorDBItems.Add(item);
                         }

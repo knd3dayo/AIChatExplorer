@@ -7,6 +7,9 @@ namespace PythonAILib.Model.Abstract
 {
     public interface IDataFactory {
 
+        // Database
+        public LiteDatabase GetDatabase();
+
         //-- ContentItemBase
         public ContentItemBase? GetItem(ContentItemBase item);
 

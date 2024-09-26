@@ -9,6 +9,11 @@ namespace PythonAILib.Model.Abstract {
 
         public string GetLang();
         public string GetPythonDllPath();
+        public string GetDBPath();
+
+        public string GetSystemVectorDBPath();
+
+        public string GetSystemDocDBPath();
 
         public string GetPathToVirtualEnv();
 
@@ -21,7 +26,6 @@ namespace PythonAILib.Model.Abstract {
         public Action<string> GetWarnAction();
 
         public Action<string> GetErrorAction();
-
 
 
     }

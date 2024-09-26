@@ -37,5 +37,17 @@ namespace ImageChat {
         public TextWrapping GetTextWrapping() {
             return ImageChatConfig.Instance.TextWrapping;
         }
+
+        public string GetDBPath() {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetSystemVectorDBPath() {
+            throw new System.NotImplementedException();
+        }
+
+        public string GetSystemDocDBPath() {
+            throw new System.NotImplementedException();
+        }
     }
 }

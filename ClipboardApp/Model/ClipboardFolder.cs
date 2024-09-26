@@ -14,8 +14,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -83,28 +82,6 @@ namespace ClipboardApp.Model
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
                 imageCheckRootFolder.Save();
             }
-
-        }
-        // 旧バージョンのアプリで既に作成済みのRootFolderを新バージョンアプリ用にマイグレーションする。
-        public static void MigrateRootFolder() {
-
-            var rootFolderInfoCollection = DefaultClipboardDBController.GetClipboardDatabase()
-                .GetCollection<ClipboardFolder.RootFolderInfo>(DefaultClipboardDBController.CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
-
-            List<RootFolderInfo> rootFolders = rootFolderInfoCollection.FindAll().ToList();
-            foreach (var rootFolderInfo in rootFolders) {
-                if (rootFolderInfo.FolderName == CommonStringResources.Instance.Clipboard) {
-                    rootFolderInfo.FolderType = FolderTypeEnum.Normal;
-                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.SearchFolder) {
-                    rootFolderInfo.FolderType = FolderTypeEnum.Search;
-                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ChatHistory) {
-                    rootFolderInfo.FolderType = FolderTypeEnum.Chat;
-                } else if (rootFolderInfo.FolderName == CommonStringResources.Instance.ImageChat) {
-                    rootFolderInfo.FolderType = FolderTypeEnum.ImageCheck;
-                }   
-            }
-            // 保存
-            rootFolderInfoCollection.Update(rootFolders);
 
         }
 
@@ -229,6 +206,8 @@ namespace ClipboardApp.Model
         public string Description { get; set; } = "";
 
 
+        // 子フォルダ　LiteDBには保存しない。
+        [BsonIgnore]
         public List<ClipboardFolder> Children {
             get {
                 // DBからParentIDが自分のIDのものを取得
@@ -236,7 +215,8 @@ namespace ClipboardApp.Model
             }
         }
 
-        // アイテム BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
+        // アイテム LiteDBには保存しない。
+        [BsonIgnore]
         public List<ClipboardItem> Items {
             get {
                 if (FolderType == FolderTypeEnum.Search) {
@@ -374,7 +354,7 @@ namespace ClipboardApp.Model
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            string jsonString =  System.Text.Json.JsonSerializer.Serialize(Items, options);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(Items, options);
 
             File.WriteAllText(fileName, jsonString);
 
@@ -491,7 +471,7 @@ namespace ClipboardApp.Model
                 ClipboardItem item = new(Id);
                 // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
                 if (importTitle && importText) {
-                    item.Description = row.Count > 0? row[0] : "";
+                    item.Description = row.Count > 0 ? row[0] : "";
                     item.Content = row.Count > 1 ? row[1] : "";
                 } else if (importTitle) {
                     item.Description = row.Count > 0 ? row[0] : "";
@@ -505,7 +485,7 @@ namespace ClipboardApp.Model
                         // 自動処理後のアイテムを保存
                         item.Save();
                     });
-                } 
+                }
             }
         }
 
@@ -527,7 +507,7 @@ namespace ClipboardApp.Model
 
 
         // 指定したFilePath名のフォルダを取得する。
-        public static ClipboardFolder? GetAnotherTreeFolderRecursive(ClipboardFolder rootFolder , string filePath, bool create = false) {
+        public static ClipboardFolder? GetAnotherTreeFolderRecursive(ClipboardFolder rootFolder, string filePath, bool create = false) {
 
             string[] pathList = filePath.Split(Path.DirectorySeparatorChar);
 
@@ -552,8 +532,8 @@ namespace ClipboardApp.Model
             return rootFolder;
         }
 
-        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder fromFolder, ClipboardFolder toRootFolder,  bool create = false) {
-            
+        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder fromFolder, ClipboardFolder toRootFolder, bool create = false) {
+
             ClipboardFolder? toFolder = GetAnotherTreeFolderRecursive(toRootFolder, fromFolder.FolderPath, create);
             // chatFolderがnullの場合は、ChatRootFolderを返す
             if (toFolder == null) {
@@ -609,7 +589,7 @@ namespace ClipboardApp.Model
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
                 } finally {
-                    MainUITask.Run( () => { 
+                    MainUITask.Run(() => {
                         Tools.StatusText.ReadyText = oldReadyText;
                     });
                 }
@@ -628,7 +608,7 @@ namespace ClipboardApp.Model
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image;
-            } else if ( e.ContentType == SharpClipboard.ContentTypes.Other) {
+            } else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
                 return null;
             } else {
                 return null;

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using LiteDB;
 
@@ -28,16 +29,16 @@ namespace ClipboardApp.Model {
         }
         public static ObservableCollection<ScriptItem> ScriptItems {
             get {
-                var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
                 return new ObservableCollection<ScriptItem>(collection.FindAll());
             }
         }
         public static void SaveScriptItem(ScriptItem scriptItem) {
-            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Upsert(scriptItem);
         }
         public static void DeleteScriptItem(ScriptItem scriptItem) {
-            var collection = DefaultClipboardDBController.GetClipboardDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Delete(scriptItem.Id);
         }
 

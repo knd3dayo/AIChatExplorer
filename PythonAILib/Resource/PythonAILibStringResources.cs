@@ -346,6 +346,8 @@ namespace PythonAILib.Resource {
         // 画像から抽出したテキストのEmbeddingを削除しました
         public virtual string DeletedTextEmbeddingFromImage { get; } = "画像から抽出したテキストのEmbeddingを削除しました";
 
+        //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+        public virtual string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
     }
 }

@@ -3,11 +3,9 @@ using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.View.PythonScriptView;
-using WpfAppCommon;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class ListPythonScriptWindowViewModel : ClipboardAppViewModelBase {
 
         public enum ActionModeEnum {
@@ -17,7 +15,7 @@ namespace ClipboardApp.ViewModel
         }
         private ActionModeEnum ActionMode { get; set; } = ActionModeEnum.Edit;
 
-        public static ObservableCollection<ScriptItem> ScriptItems { get; } = ScriptItem.ScriptItems;
+        public ObservableCollection<ScriptItem> ScriptItems { get; } = ScriptItem.ScriptItems;
 
         private ScriptItem? _selectedScriptItem;
 

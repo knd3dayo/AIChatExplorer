@@ -1456,8 +1456,6 @@ namespace WpfAppCommon.Model {
             return "SourceApplicationPathが" + Keyword + "を含む";
         }
         // --- ClipboardAppVectorDBItem
-        //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
-        public virtual string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
         // --- ClipboardFolder.cs ---
         // クリップボード

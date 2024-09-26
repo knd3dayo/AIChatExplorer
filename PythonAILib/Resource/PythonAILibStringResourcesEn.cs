@@ -227,6 +227,7 @@ namespace PythonAILib.Resource {
         public override string SavedTextEmbeddingFromImage { get; } = "Saved Text Embedding from Image";
         public override string DeleteTextEmbeddingFromImage { get; } = "Delete Text Embedding from Image";
         public override string DeletedTextEmbeddingFromImage { get; } = "Deleted Text Embedding from Image";
+        public override string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "General Vector DB for Searching Past Documents Based on User Questions";
 
     }
 }

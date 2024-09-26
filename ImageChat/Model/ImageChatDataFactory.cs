@@ -27,10 +27,10 @@ namespace ImageChat.Model {
             }
         }
 
-        private static LiteDatabase? db;
+        private LiteDatabase? db;
 
 
-        public static LiteDatabase GetDatabase() {
+        public  LiteDatabase GetDatabase() {
             if (db == null) {
                 try {
                     /// AppDataフォルダーパスを取得
