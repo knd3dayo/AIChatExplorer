@@ -81,7 +81,7 @@ namespace PythonAILib.Resource
         public virtual string ExtractTextRequest { get; } = "この画像のテキストを抽出してください。\n";
 
         // 上記の文章の不明点については、以下の関連情報を参考にしてください
-        public virtual string UnknownContent { get; } = "上記の文章の不明点については、以下の関連情報を参考にしてください";
+        public virtual string RelatedInformation { get; } = "関連情報。不正確な情報が含まれる可能性がありますが、参考にしてください";
 
         // 以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
         // "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +

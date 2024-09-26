@@ -1,13 +1,11 @@
-namespace PythonAILib.Resource
-{
-    public class PromptStringResourceEn : PromptStringResource
-    {
+namespace PythonAILib.Resource {
+    public class PromptStringResourceEn : PromptStringResource {
 
         // Instance 
         public static PromptStringResourceEn Instance { get; set; } = new();
 
         // For any unclear points about the above text, please refer to the following related information
-        public override string UnknownContent { get; } = "For any unclear points about the above text, please refer to the following related information";
+        public override string RelatedInformation { get; } = "Related information. Please note that it may contain inaccurate information.";
 
         // Please analyze the following text and identify sentences containing undefined terms. " +
         // "Undefined terms are those whose genus, specific difference, cause, purpose, function, or components are unclear." +

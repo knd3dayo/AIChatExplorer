@@ -651,7 +651,7 @@ namespace ClipboardApp.Factory.Default {
             // DBからベクトルDBを取得
             // GetItemsメソッドを呼び出して取得
             IEnumerable<VectorDBItem> items = GetVectorDBItems();
-            var item = items.FirstOrDefault(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            var item = items.FirstOrDefault(item => item.IsSystem && item.Name == VectorDBItem.SystemCommonVectorDBName);
 
             if (item == null) {
                 string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");

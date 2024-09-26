@@ -322,7 +322,9 @@ namespace PythonAILib.Model {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
 
             string result;
-            string contentText = Content;
+            // ヘッダー情報とコンテンツ情報を結合
+            // ★TODO タグ情報を追加する
+            string contentText = HeaderText + "\n" +  Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
                 return null;

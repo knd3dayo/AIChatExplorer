@@ -7,8 +7,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -240,8 +239,6 @@ namespace PythonAILib.Model.Chat
         private ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties) {
             // ContentTextの内容をベクトル検索する。
             StringBuilder sb = new();
-            sb.AppendLine(PromptStringResource.Instance.UnknownContent);
-            sb.AppendLine("----------------------------------------------------");
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
             // VectorSearchRequestを作成. テスト用にFilterを設定
@@ -258,6 +255,8 @@ namespace PythonAILib.Model.Chat
             foreach (var vectorDBItem in VectorDBItems) {
                 List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
                 foreach (var vectorSearchResult in results) {
+                    sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
+                    sb.AppendLine("----------------------------------------------------");
                     sb.AppendLine(vectorSearchResult.Content);
                     hasVectorSearch = true;
                 }

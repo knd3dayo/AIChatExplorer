@@ -7,15 +7,13 @@ using ClipboardApp.Factory;
 using LibGit2Sharp;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItemBase {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
@@ -45,13 +43,13 @@ namespace ClipboardApp.Model
         // インスタンスメソッド
         // -------------------------------------------------------------------
 
-        public  ClipboardItem Copy() {
+        public ClipboardItem Copy() {
             ClipboardItem newItem = new(this.FolderObjectId);
             CopyTo(newItem);
             return newItem;
 
         }
-        public  void CopyTo(ContentItemBase newItem) {
+        public void CopyTo(ContentItemBase newItem) {
             if (newItem is not ClipboardItem) {
                 return;
             }
@@ -279,7 +277,7 @@ namespace ClipboardApp.Model
             // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
             string syncFilePath = Path.Combine(folderPath, Id + ".txt");
 
-            
+
             // AutoEmbedding == Trueの場合はEmbeddingを削除
             Task.Run(() => {
                 UpdateEmbedding(VectorDBUpdateMode.delete);
@@ -309,7 +307,7 @@ namespace ClipboardApp.Model
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
 
-        public  void UpdateEmbedding(VectorDBUpdateMode mode) {
+        public void UpdateEmbedding(VectorDBUpdateMode mode) {
             if (mode == VectorDBUpdateMode.delete) {
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
@@ -321,7 +319,9 @@ namespace ClipboardApp.Model
             }
             if (mode == VectorDBUpdateMode.update) {
                 // IPythonAIFunctions.ClipboardInfoを作成
-                string content = this.Content;
+                // タイトルとHeaderTextを追加
+                string content = Description + "\n" + HeaderText + "\n" + Content;
+
                 // 背景情報を含める場合
                 if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
                     content += $"\n---{PythonAILibStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
@@ -345,6 +345,8 @@ namespace ClipboardApp.Model
         public List<VectorSearchResult> VectorSearchCommandExecute(bool IncludeBackgroundInfo) {
             // VectorDBItemを取得
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
+            // CollectionNameを設定
+            vectorDBItem.CollectionName = FolderObjectId.ToString();
             return VectorSearchCommandExecute(vectorDBItem, IncludeBackgroundInfo);
         }
 
