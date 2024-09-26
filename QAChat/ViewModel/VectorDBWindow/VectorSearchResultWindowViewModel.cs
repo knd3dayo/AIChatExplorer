@@ -1,17 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using ClipboardApp.Model;
 using PythonAILib.Model.VectorDB;
+using QAChat.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
-    public class VectorSearchResultWindowViewModel : ClipboardAppViewModelBase{
+namespace QAChat.ViewModel.VectorDBWindow {
+    public class VectorSearchResultWindowViewModel : QAChatViewModelBase {
 
 
         public void Initialize(List<VectorSearchResult> vectorSearches) {
