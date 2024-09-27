@@ -21,7 +21,48 @@ namespace ClipboardApp.Factory.Default {
         public const string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
 
 
-        // --- static method ----------------------------------------------
+        // --- ClipboardItem ----------------------------------------------
+        // ClipboardItemを取得する。
+        public override ContentItemBase? GetItem(ContentItemBase item) {
+            if ( item is not ClipboardItem clipboardItem) {
+                throw new Exception("item is not ClipboardItem");
+            }
+            var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
+            var result = collection.FindById(clipboardItem.Id);
+            return result;
+        }
+
+        // ClipboardItemをLiteDBに追加または更新する
+        public override void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
+
+            if (item is not ClipboardItem clipboardItem) {
+                throw new Exception("item is not ClipboardItem");
+            }
+            // 更新日時を設定
+            if (updateModifiedTime) {
+                item.UpdatedAt = DateTime.Now;
+            }
+            // ファイルがある場合は、追加または更新
+            foreach (var file in item.ClipboardItemFiles) {
+                UpsertAttachedItem(file);
+            }
+            var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
+            collection.Upsert(clipboardItem);
+        }
+
+        // アイテムをDBから削除する
+        public override void DeleteItem(ContentItemBase item) {
+            if (item is not ClipboardItem clipboardItem) {
+                throw new Exception("item is not ClipboardItem");
+            }
+            if (item.Id == null) {
+                return;
+            }
+            var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
+            // System.Windows.MessageBox.Show(item.CollectionName);
+            collection.Delete(clipboardItem.Id);
+        }
+
 
 
         #region フォルダー関連

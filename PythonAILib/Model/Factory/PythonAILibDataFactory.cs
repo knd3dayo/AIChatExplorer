@@ -107,7 +107,7 @@ namespace PythonAILib.Model.Factory {
         //-- ContentItemBase
 
         // ClipboardItemを取得する。
-        public ContentItemBase? GetItem(ContentItemBase item) {
+        public virtual ContentItemBase? GetItem(ContentItemBase item) {
 
             var collection = GetDatabase().GetCollection<ContentItemBase>(CONTENT_ITEM_COLLECTION_NAME);
             var result = collection.FindById(item.Id);
@@ -115,7 +115,7 @@ namespace PythonAILib.Model.Factory {
         }
 
         // ClipboardItemをLiteDBに追加または更新する
-        public void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
+        public virtual void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
 
             // 更新日時を設定
             if (updateModifiedTime) {
@@ -129,9 +129,8 @@ namespace PythonAILib.Model.Factory {
             collection.Upsert(item);
         }
 
-
         // アイテムをDBから削除する
-        public void DeleteItem(ContentItemBase item) {
+        public virtual void DeleteItem(ContentItemBase item) {
             if (item.Id == null) {
                 return;
             }
