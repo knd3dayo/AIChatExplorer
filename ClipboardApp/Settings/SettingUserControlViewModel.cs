@@ -1,6 +1,8 @@
 using System.Text;
 using System.Windows;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.ViewModel;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;

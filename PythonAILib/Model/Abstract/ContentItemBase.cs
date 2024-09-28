@@ -4,6 +4,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Image;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
@@ -23,7 +24,7 @@ namespace PythonAILib.Model {
         // ファイル
         // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
         protected List<ContentAttachedItem> _attachedItems = [];
-        public  List<ContentAttachedItem> AttachedItems {
+        public List<ContentAttachedItem> AttachedItems {
             get {
                 if (_attachedItems.Count() == 0) {
                     LoadFiles();
@@ -158,6 +159,10 @@ namespace PythonAILib.Model {
             }
         }
 
+
+        // 
+        public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
+
         public abstract VectorDBItem GetVectorDBItem();
 
         public virtual void Delete() {
@@ -171,9 +176,6 @@ namespace PythonAILib.Model {
             libManager.DataFactory.UpsertItem(this, contentIsModified);
 
         }
-        
-        // 
-        public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
 
         // OpenAIを使用してイメージからテキスト抽出する。
         public void ExtractImageWithOpenAI() {
@@ -279,7 +281,7 @@ namespace PythonAILib.Model {
             if (promptItem == null) {
                 throw new Exception("PromptItem not found");
             }
-            List<string> result = ChatUtil.CreateRAGResultBulletedList(openAIProperties, vectorDBItems,  contentText, promptItem.Prompt);
+            List<string> result = ChatUtil.CreateRAGResultBulletedList(openAIProperties, vectorDBItems, contentText, promptItem.Prompt);
             ContextInfo.Clear();
             foreach (var item in result) {
                 ContextInfo.Add(item);
@@ -324,14 +326,14 @@ namespace PythonAILib.Model {
             string result;
             // ヘッダー情報とコンテンツ情報を結合
             // ★TODO タグ情報を追加する
-            string contentText = HeaderText + "\n" +  Content;
+            string contentText = HeaderText + "\n" + Content;
             // contentTextがない場合は処理しない
             if (string.IsNullOrEmpty(contentText)) {
                 return null;
             }
 
             // システム定義のPromptItemを取得
-            PromptItem? promptItem = libManager.DataFactory.GetSystemPromptTemplateByName (PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            PromptItem? promptItem = libManager.DataFactory.GetSystemPromptTemplateByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
             if (promptItem == null) {
                 throw new Exception("PromptItem not found");
             }

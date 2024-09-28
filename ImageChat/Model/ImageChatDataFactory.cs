@@ -4,6 +4,7 @@ using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
 namespace ImageChat.Model {
@@ -203,6 +204,23 @@ namespace ImageChat.Model {
             var collection = GetDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
             return collection.FindAll();
         }
+
+        public IEnumerable<TagItem> GetTagList() {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteTag(TagItem tag) {
+            throw new NotImplementedException();
+        }
+
+        public void UpsertTag(TagItem tag) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
+            throw new NotImplementedException();
+        }
+
 
     }
 }

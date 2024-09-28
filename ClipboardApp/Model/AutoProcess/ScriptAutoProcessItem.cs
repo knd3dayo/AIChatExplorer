@@ -1,13 +1,18 @@
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Script;
 using PythonAILib.PythonIF;
 
-namespace ClipboardApp.Model {
-    public class ScriptAutoProcessItem : SystemAutoProcessItem {
+namespace ClipboardApp.Model.AutoProcess
+{
+    public class ScriptAutoProcessItem : SystemAutoProcessItem
+    {
         public ScriptItem? ScriptItem { get; set; }
 
         public ScriptAutoProcessItem() { }
 
-        public ScriptAutoProcessItem(ScriptItem scriptItem) {
+        public ScriptAutoProcessItem(ScriptItem scriptItem)
+        {
 
             ScriptItem = scriptItem;
             Name = scriptItem.Name;
@@ -16,19 +21,23 @@ namespace ClipboardApp.Model {
             Type = TypeEnum.RunPythonScript;
         }
 
-        public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems() {
+        public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems()
+        {
 
             // DBからスクリプトのScriptItemを取得
             List<ScriptItem> items = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()];
             List<ScriptAutoProcessItem> result = [];
-            foreach (var item in items) {
+            foreach (var item in items)
+            {
                 result.Add(new ScriptAutoProcessItem(item));
             }
             return result;
         }
-        public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
+        public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder)
+        {
 
-            if (ScriptItem == null) {
+            if (ScriptItem == null)
+            {
                 return null;
             }
             Func<AutoProcessItemArgs, ClipboardItem?> action = RunPythonAction(ScriptItem);
@@ -36,8 +45,10 @@ namespace ClipboardApp.Model {
             return result;
         }
 
-        public static Func<AutoProcessItemArgs, ClipboardItem?> RunPythonAction(ScriptItem item) {
-            return (args) => {
+        public static Func<AutoProcessItemArgs, ClipboardItem?> RunPythonAction(ScriptItem item)
+        {
+            return (args) =>
+            {
                 RunPythonScriptCommandExecute(item, args.ClipboardItem);
                 return args.ClipboardItem;
             };
@@ -45,7 +56,8 @@ namespace ClipboardApp.Model {
         }
 
         // 自動実行でPythonスクリプトを実行するコマンド
-        public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItem clipboardItem) {
+        public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItem clipboardItem)
+        {
             string inputJson = ClipboardItem.ToJson(clipboardItem);
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);

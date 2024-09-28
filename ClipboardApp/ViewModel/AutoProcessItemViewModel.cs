@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
 
 namespace ClipboardApp.ViewModel
 {

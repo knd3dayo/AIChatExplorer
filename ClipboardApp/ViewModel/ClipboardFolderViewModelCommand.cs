@@ -1,12 +1,13 @@
 using System.IO;
 using System.Windows;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ExportImportView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardFolderViewModel {
 
         //-----コマンド

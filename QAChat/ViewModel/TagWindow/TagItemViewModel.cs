@@ -1,8 +1,8 @@
-using ClipboardApp.Model;
+using PythonAILib.Model.Tag;
+using QAChat.Model;
 
-namespace ClipboardApp.ViewModel
-{
-    public class TagItemViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.TagWindow {
+    public class TagItemViewModel : QAChatViewModelBase {
 
         // コンストラクタ
         public TagItemViewModel(TagItem tagItem) {

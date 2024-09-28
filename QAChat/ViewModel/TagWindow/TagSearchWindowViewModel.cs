@@ -1,10 +1,10 @@
 using System.Windows;
-using ClipboardApp.Model;
+using QAChat.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
 {
-    public class TagSearchWindowViewModel : ClipboardAppViewModelBase {
+    public class TagSearchWindowViewModel : QAChatViewModelBase {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
         public TagSearchWindowViewModel(Action<string, bool> afterUpdate) {

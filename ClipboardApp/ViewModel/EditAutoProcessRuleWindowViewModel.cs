@@ -2,7 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Script;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.Model;
@@ -512,7 +514,7 @@ namespace ClipboardApp.ViewModel
                     return;
                 }
                 // キャスト
-                ClipboardPromptItem promptItem = (ClipboardPromptItem)SelectedPromptItem.PromptItem;
+                PromptItem promptItem = SelectedPromptItem.PromptItem;
                 PromptAutoProcessItem promptAutoProcessItem = new(promptItem);
 
                 // OpenAIExecutionModeEnumを設定

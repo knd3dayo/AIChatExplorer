@@ -1,4 +1,4 @@
-using ClipboardApp.Model;
+using ClipboardApp.Model.Script;
 using ClipboardApp.View.PythonScriptView;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;

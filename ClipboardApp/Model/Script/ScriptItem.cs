@@ -3,8 +3,10 @@ using ClipboardApp.Factory;
 using ClipboardApp.Factory.Default;
 using LiteDB;
 
-namespace ClipboardApp.Model {
-    public enum ScriptType {
+namespace ClipboardApp.Model.Script
+{
+    public enum ScriptType
+    {
         Python,
         PowerShell,
         Batch,
@@ -14,30 +16,36 @@ namespace ClipboardApp.Model {
         CSharp,
         Other
     }
-    public class ScriptItem {
+    public class ScriptItem
+    {
         public ObjectId? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string Content { get; set; }
         public ScriptType Type { get; set; }
 
-        public ScriptItem(string name, string description, string content, ScriptType type) {
+        public ScriptItem(string name, string description, string content, ScriptType type)
+        {
             Name = name;
             Description = description;
             Content = content;
             Type = type;
         }
-        public static ObservableCollection<ScriptItem> ScriptItems {
-            get {
+        public static ObservableCollection<ScriptItem> ScriptItems
+        {
+            get
+            {
                 var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
                 return new ObservableCollection<ScriptItem>(collection.FindAll());
             }
         }
-        public static void SaveScriptItem(ScriptItem scriptItem) {
+        public static void SaveScriptItem(ScriptItem scriptItem)
+        {
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Upsert(scriptItem);
         }
-        public static void DeleteScriptItem(ScriptItem scriptItem) {
+        public static void DeleteScriptItem(ScriptItem scriptItem)
+        {
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().GetCollection<ScriptItem>(DefaultClipboardDBController.SCRIPT_COLLECTION_NAME);
             collection.Delete(scriptItem.Id);
         }

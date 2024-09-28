@@ -1,8 +1,9 @@
 using System.Windows;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Search;
 using ClipboardApp.ViewModel;
 
-namespace ClipboardApp.View.SearchView {
+namespace ClipboardApp.View.SearchView
+{
     /// <summary>
     /// Window1.xaml の相互作用ロジック
     /// </summary>

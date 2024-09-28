@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Folder;
 using LibGit2Sharp;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
@@ -13,7 +14,8 @@ using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public partial class ClipboardItem : ContentItemBase {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {

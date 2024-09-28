@@ -16,6 +16,14 @@ namespace PythonAILib.Model.VectorDB {
         // システム共通のベクトルDBの名前
         public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
 
+        // システム共通のベクトルDB
+        public static VectorDBItem SystemCommonVectorDB {
+            get {
+                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                return libManager.DataFactory.GetSystemVectorDBItem();
+            }
+        }
+
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前

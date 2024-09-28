@@ -5,16 +5,20 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel.TagWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -309,21 +313,6 @@ namespace ClipboardApp.ViewModel {
         // Copy
         public ClipboardItemViewModel Copy() {
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.Copy());
-        }
-
-        public void UpdateTagList(ObservableCollection<TagItemViewModel> tagList) {
-            // Tagsをクリア
-            Tags.Clear();
-            // TagListのチェックを反映
-            foreach (var item in tagList) {
-                if (item.IsChecked) {
-                    Tags.Add(item.Tag);
-                } else {
-                    Tags.Remove(item.Tag);
-                }
-            }
-            // DBに反映
-            SaveClipboardItemCommand.Execute(true);
         }
 
         // アイテム保存

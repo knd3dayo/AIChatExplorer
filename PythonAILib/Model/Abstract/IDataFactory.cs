@@ -1,10 +1,10 @@
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Model.Abstract
-{
+namespace PythonAILib.Model.Abstract {
     public interface IDataFactory {
 
         // Database
@@ -62,6 +62,17 @@ namespace PythonAILib.Model.Abstract
 
         // -- VectorDBItem
         public VectorDBItem CreateVectorDBItem();
+
+        // -- TagItem
+        public IEnumerable<TagItem> GetTagList();
+
+        public void DeleteTag(TagItem tag);
+
+        public void UpsertTag(TagItem tag);
+
+        public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
+
+
 
     }
 }

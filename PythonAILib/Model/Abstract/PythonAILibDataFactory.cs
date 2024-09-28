@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiteDB;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using QAChat;
 
-namespace PythonAILib.Model.Factory {
-    public class PythonAILibDataFactory : IDataFactory {
+namespace PythonAILib.Model.Abstract {
+    public abstract class PythonAILibDataFactory : IDataFactory {
 
         public const string CHAT_SESSION_COLLECTION_NAME = "chat_session";
         public const string CONTENT_ITEM_COLLECTION_NAME = "clipboard_item";
         public const string CONTENT_ATTACHED_ITEM_COLLECTION_NAME = "clipboard_file";
+        public const string TAG_COLLECTION_NAME = "tags";
 
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
@@ -81,7 +77,7 @@ namespace PythonAILib.Model.Factory {
                     collection = db.GetCollection(RAGSourceItemCollectionName);
                     foreach (var item in collection.FindAll()) {
                         var dbItem = item["VectorDBItem"];
-                        if (dbItem != null ) {
+                        if (dbItem != null) {
                             string? fileTypeString = dbItem["_type"];
                             if (fileTypeString == null) {
                                 continue;
@@ -107,37 +103,13 @@ namespace PythonAILib.Model.Factory {
         //-- ContentItemBase
 
         // ClipboardItemを取得する。
-        public virtual ContentItemBase? GetItem(ContentItemBase item) {
-
-            var collection = GetDatabase().GetCollection<ContentItemBase>(CONTENT_ITEM_COLLECTION_NAME);
-            var result = collection.FindById(item.Id);
-            return result;
-        }
+        public abstract ContentItemBase? GetItem(ContentItemBase item);
 
         // ClipboardItemをLiteDBに追加または更新する
-        public virtual void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
-
-            // 更新日時を設定
-            if (updateModifiedTime) {
-                item.UpdatedAt = DateTime.Now;
-            }
-            // ファイルがある場合は、追加または更新
-            foreach (var file in item.ClipboardItemFiles) {
-                UpsertAttachedItem(file);
-            }
-            var collection = GetDatabase().GetCollection<ContentItemBase>(CONTENT_ITEM_COLLECTION_NAME);
-            collection.Upsert(item);
-        }
+        public abstract void UpsertItem(ContentItemBase item, bool updateModifiedTime = true);
 
         // アイテムをDBから削除する
-        public virtual void DeleteItem(ContentItemBase item) {
-            if (item.Id == null) {
-                return;
-            }
-            var collection = GetDatabase().GetCollection<ContentItemBase>(CONTENT_ITEM_COLLECTION_NAME);
-            // System.Windows.MessageBox.Show(item.CollectionName);
-            collection.Delete(item.Id);
-        }
+        public abstract void DeleteItem(ContentItemBase item);
 
         //-- AttachedItems  
         public void UpsertAttachedItem(ContentAttachedItem item) {
@@ -211,7 +183,7 @@ namespace PythonAILib.Model.Factory {
 
 
         //----  RAGSourceItem
-        
+
         public RAGSourceItem CreateRAGSourceItem() {
             return new RAGSourceItem();
         }
@@ -249,10 +221,10 @@ namespace PythonAILib.Model.Factory {
             if (item == null) {
                 PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
 
-                string docDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
-                string vectorDBPath = libManager.ConfigParams.GetSystemDocDBPath();
+                string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
+                string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
                 item = new VectorDBItem() {
-                    Id = LiteDB.ObjectId.Empty,
+                    Id = ObjectId.Empty,
                     Name = VectorDBItem.SystemCommonVectorDBName,
                     Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
                     Type = VectorDBTypeEnum.Chroma,
@@ -299,8 +271,52 @@ namespace PythonAILib.Model.Factory {
         }
 
 
+        // --- TagItem関連 ----------------------------------------------
+        // タグを取得する
+        public IEnumerable<TagItem> GetTagList() {
+            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            var items = collection.FindAll();
+            return items;
+        }
 
+        // 名前を指定してタグを検索する
+        public IEnumerable<TagItem> SearchTag(TagItem tag) {
+            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            var tags = collection.FindAll().Where(x => x.Tag != null && x.Tag.Contains(tag.Tag));
+            return tags;
 
+        }
+        public IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
+            if (string.IsNullOrEmpty(tag)) {
+                return GetTagList();
+            }
+            if (exclude) {
+                return GetTagList().Where(x => x.Tag.Contains(tag) == false);
+            } else {
+                return GetTagList().Where(x => x.Tag.Contains(tag));
+            }
 
+        }
+        // タグを削除する
+        public void DeleteTag(TagItem tag) {
+            if (tag.Id == null) {
+                return;
+            }
+            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            collection.Delete(tag.Id);
+        }
+
+        // タグを追加する
+        public void UpsertTag(TagItem tag) {
+            // すでに存在するかチェック
+            var tags = SearchTag(tag);
+            foreach (var i in tags) {
+                if (i.Tag == tag.Tag) {
+                    return;
+                }
+            }
+            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
+            collection.Insert(tag);
+        }
     }
 }

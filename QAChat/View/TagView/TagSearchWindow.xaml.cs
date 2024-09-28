@@ -1,7 +1,7 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
 
-namespace ClipboardApp.View.TagView {
+namespace QAChat.View.TagView {
     /// <summary>
     /// TagSearchWindow.xaml の相互作用ロジック
     /// </summary>

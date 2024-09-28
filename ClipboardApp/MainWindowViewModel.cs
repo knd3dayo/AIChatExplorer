@@ -4,16 +4,20 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model;
+using PythonAILib.Model.Prompt;
 using QAChat;
 using QAChat.Control;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() {
             Init();
@@ -34,9 +38,6 @@ namespace ClipboardApp {
             RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
             InitClipboardFolders();
-
-            // PromptItemの初期化
-            ClipboardPromptItem.InitSystemPromptItems();
 
             // データベースのチェックポイント処理
             ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();

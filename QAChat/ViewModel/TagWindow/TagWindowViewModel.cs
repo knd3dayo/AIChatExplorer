@@ -1,26 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Factory;
-using ClipboardApp.Model;
-using ClipboardApp.View.TagView;
-using WpfAppCommon;
+using PythonAILib.Model;
+using PythonAILib.Model.Tag;
+using QAChat.Model;
+using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
-    public class TagWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.TagWindow {
+    public class TagWindowViewModel : QAChatViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
         public List<TagItemViewModel> SelectedTagList { get; set; } = [];
 
-        private ClipboardItemViewModel? ClipboardItemViewModel { get; set; }
+        private ContentItemBase? ContentItem { get; set; }
 
         private Action? AfterUpdate { get; set; }
 
-        public TagWindowViewModel(ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
-            ClipboardItemViewModel = itemViewModel;
+        public TagWindowViewModel(ContentItemBase? contentItem, Action afterUpdate) {
+            ContentItem = contentItem;
             AfterUpdate = afterUpdate;
 
             ReloadTagList();
@@ -54,7 +53,8 @@ namespace ClipboardApp.ViewModel
             }
 
             TagItem tagItem = new() { Tag = tag };
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertTag(tagItem);
+            tagItem.Save();
+
             TagList.Add(new TagItemViewModel(tagItem));
             NewTag = "";
             // LiteDBから再読み込み
@@ -65,12 +65,12 @@ namespace ClipboardApp.ViewModel
         // LiteDBから再読み込み
         public void ReloadTagList() {
             TagList.Clear();
-            IEnumerable<TagItem> tagItems = ClipboardAppFactory.Instance.GetClipboardDBController().GetTagList();
+            IEnumerable<TagItem> tagItems = TagItem.GetTagList();
             foreach (var item in tagItems) {
                 TagItemViewModel tagItemViewModel = new(item);
-                if (ClipboardItemViewModel != null) {
+                if (ContentItem != null) {
                     var tagString = item.Tag;
-                    tagItemViewModel.IsChecked = ClipboardItemViewModel.Tags.Contains(tagString);
+                    tagItemViewModel.IsChecked = ContentItem.Tags.Contains(tagString);
                 }
                 TagList.Add(tagItemViewModel);
             }
@@ -117,7 +117,18 @@ namespace ClipboardApp.ViewModel
         });
 
         public SimpleDelegateCommand<Window> OkCommand => new((window) => {
-            ClipboardItemViewModel?.UpdateTagList(TagList);
+            // TagListのうちIsCheckedがTrueのものを取得
+            HashSet<string> tags = new();
+            foreach (var item in TagList) {
+                if (item.IsChecked) {
+                    tags.Add(item.Tag);
+                }
+            }
+            if (ContentItem != null) {
+                ContentItem.Tags = tags;
+                ContentItem.Save();
+            }
+
             // 更新後の処理を実行
             AfterUpdate?.Invoke();
 
@@ -133,9 +144,9 @@ namespace ClipboardApp.ViewModel
                 TagList.Clear();
                 foreach (var item in TagItem.FilterTag(tag, exclude)) {
                     TagList.Add(new TagItemViewModel(item));
-                    if (ClipboardItemViewModel != null) {
+                    if (ContentItem != null) {
                         var tagString = item.Tag;
-                        TagList.Last().IsChecked = ClipboardItemViewModel.Tags.Contains(tagString);
+                        TagList.Last().IsChecked = ContentItem.Tags.Contains(tagString);
                     }
                 }
 

@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Script;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
 
     public partial class ClipboardItemViewModel {
 

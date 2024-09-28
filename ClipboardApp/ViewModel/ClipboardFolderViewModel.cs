@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
-using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

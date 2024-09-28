@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Folder;
 
-namespace ClipboardApp.Model
+namespace ClipboardApp.Model.AutoProcess
 {
     public class AutoProcessRuleController
     {

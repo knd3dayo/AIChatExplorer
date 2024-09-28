@@ -4,8 +4,10 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using QAChat.View.ImageChat;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {

@@ -1,11 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.Factory;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Script;
 using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class ListPythonScriptWindowViewModel : ClipboardAppViewModelBase {
 
         public enum ActionModeEnum {

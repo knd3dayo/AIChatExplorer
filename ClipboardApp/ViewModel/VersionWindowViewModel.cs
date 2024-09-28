@@ -1,5 +1,3 @@
-
-using ClipboardApp.Model;
 using WpfAppCommon.Model;
 
 namespace ClipboardApp.ViewModel

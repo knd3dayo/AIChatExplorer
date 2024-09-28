@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRuleView;
 using WpfAppCommon.Utils;

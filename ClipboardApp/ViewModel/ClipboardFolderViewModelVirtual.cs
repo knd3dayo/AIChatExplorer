@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public partial class ClipboardFolderViewModel {
 
         // -- virtual

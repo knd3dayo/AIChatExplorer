@@ -1,5 +1,4 @@
 using System.Windows;
-using ClipboardApp.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel

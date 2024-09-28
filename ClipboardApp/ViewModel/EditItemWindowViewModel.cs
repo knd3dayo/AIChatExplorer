@@ -3,8 +3,9 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
-using ClipboardApp.View.TagView;
+using ClipboardApp.Model.Folder;
 using PythonAILib.Model.Content;
+using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel
@@ -170,7 +171,7 @@ namespace ClipboardApp.ViewModel
                 LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow.OpenTagWindow(ItemViewModel, () => {
+            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });

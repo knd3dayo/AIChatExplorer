@@ -1,5 +1,4 @@
 using System.Windows;
-using ClipboardApp.Model;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

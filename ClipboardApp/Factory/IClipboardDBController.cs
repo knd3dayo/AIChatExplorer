@@ -1,8 +1,13 @@
 using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Script;
+using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Abstract;
 
-namespace ClipboardApp.Factory {
+namespace ClipboardApp.Factory
+{
     public interface IClipboardDBController : IDataFactory {
 
 
@@ -40,16 +45,6 @@ namespace ClipboardApp.Factory {
         public void DeleteAutoProcessRule(AutoProcessRule rule);
 
         public IEnumerable<AutoProcessRule> GetCopyToMoveToRules();
-
-        //-- Tag 要改修
-        public IEnumerable<TagItem> GetTagList();
-
-        public void DeleteTag(TagItem tag);
-
-        public void UpsertTag(TagItem tag);
-
-
-        public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
 
         // --- Python Script
         public IEnumerable<ScriptItem> GetScriptItems();

@@ -1,14 +1,19 @@
 using System.IO;
 using ClipboardApp.Model;
+using ClipboardApp.Model.AutoProcess;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Script;
+using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model;
+using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Factory;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Model;
 
-namespace ClipboardApp.Factory.Default {
+namespace ClipboardApp.Factory.Default
+{
     public class DefaultClipboardDBController : PythonAILibDataFactory, IClipboardDBController {
         public const string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public const string CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
@@ -16,7 +21,6 @@ namespace ClipboardApp.Factory.Default {
         public const string SCRIPT_COLLECTION_NAME = "scripts";
         public const string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
 
-        public const string TAG_COLLECTION_NAME = "tags";
         public const string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
         public const string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
 
@@ -368,55 +372,6 @@ namespace ClipboardApp.Factory.Default {
             var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
             var items = collection.FindAll();
             return items.ToList();
-        }
-
-        // --- TagItem関連 ----------------------------------------------
-        // タグを取得する
-        public IEnumerable<TagItem> GetTagList() {
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var items = collection.FindAll();
-            return items;
-        }
-
-        // 名前を指定してタグを検索する
-        public IEnumerable<TagItem> SearchTag(TagItem tag) {
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var tags = collection.FindAll().Where(x => x.Tag != null && x.Tag.Contains(tag.Tag));
-            return tags;
-
-        }
-        public IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
-            if (string.IsNullOrEmpty(tag)) {
-                return GetTagList();
-            }
-            if (exclude) {
-                return GetTagList().Where(x => x.Tag.Contains(tag) == false);
-            } else {
-                return GetTagList().Where(x => x.Tag.Contains(tag));
-            }
-
-        }
-        // タグを削除する
-        public void DeleteTag(TagItem tag) {
-            if (tag.Id == null) {
-                return;
-            }
-
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            collection.Delete(tag.Id);
-        }
-
-        // タグを追加する
-        public void UpsertTag(TagItem tag) {
-            // すでに存在するかチェック
-            var tags = SearchTag(tag);
-            foreach (var i in tags) {
-                if (i.Tag == tag.Tag) {
-                    return;
-                }
-            }
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            collection.Insert(tag);
         }
     }
 }

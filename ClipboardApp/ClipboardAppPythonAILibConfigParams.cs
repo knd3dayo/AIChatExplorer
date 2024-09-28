@@ -51,7 +51,7 @@ namespace ClipboardApp {
 
         }
         public string GetSystemVectorDBPath() {
-            string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db.db");
+            string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db");
             return vectorDBPath;
         }
 

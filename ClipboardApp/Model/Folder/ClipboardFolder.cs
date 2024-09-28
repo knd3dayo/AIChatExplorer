@@ -4,7 +4,8 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
-using ClipboardApp.Factory.Default;
+using ClipboardApp.Model.AutoProcess;
+using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -14,7 +15,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model.Folder {
     public class ClipboardFolder {
 
         public enum FolderTypeEnum {
@@ -27,9 +28,9 @@ namespace ClipboardApp.Model {
         public class RootFolderInfo {
 
             public string FolderName { get; set; } = "";
-            public LiteDB.ObjectId Id { get; set; } = ObjectId.Empty;
+            public ObjectId Id { get; set; } = ObjectId.Empty;
 
-            public LiteDB.ObjectId FolderId { get; set; } = ObjectId.Empty;
+            public ObjectId FolderId { get; set; } = ObjectId.Empty;
 
             public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
@@ -292,7 +293,7 @@ namespace ClipboardApp.Model {
             }
 
             // CollectionNameを設定
-            item.FolderObjectId = this.Id;
+            item.FolderObjectId = Id;
 
             // 自動処理を適用
             ClipboardItem? result = item;
@@ -672,7 +673,7 @@ namespace ClipboardApp.Model {
             // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
             if (ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle) {
                 LogWrapper.Info(CommonStringResources.Instance.AutoMerge);
-                ClipboardFolder.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
+                RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
             if (ClipboardAppConfig.Instance.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {

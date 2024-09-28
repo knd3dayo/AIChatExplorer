@@ -1,8 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiteDB;
 
-namespace ClipboardApp.Model {
-    public class SearchCondition : ObservableObject {
+namespace ClipboardApp.Model.Search
+{
+    public class SearchCondition : ObservableObject
+    {
         private string _description = "";
         private string _content = "";
         private string _tags = "";
@@ -24,118 +26,149 @@ namespace ClipboardApp.Model {
         public string Name { get; set; } = "";
 
         // デフォルトコンストラクタ
-        public SearchCondition() {
+        public SearchCondition()
+        {
         }
 
-        public string Description {
+        public string Description
+        {
             get { return _description; }
-            set {
+            set
+            {
                 _description = value;
                 OnPropertyChanged(nameof(Description));
             }
         }
 
-        public string Content {
+        public string Content
+        {
             get { return _content; }
-            set {
+            set
+            {
                 _content = value;
                 OnPropertyChanged(nameof(Content));
             }
         }
-        public string Tags {
+        public string Tags
+        {
             get { return _tags; }
-            set {
+            set
+            {
                 _tags = value;
                 OnPropertyChanged(nameof(Tags));
             }
         }
-        public string SourceApplicationName {
+        public string SourceApplicationName
+        {
             get { return _sourceApplicationName; }
-            set {
+            set
+            {
                 _sourceApplicationName = value;
                 OnPropertyChanged(nameof(SourceApplicationName));
             }
         }
-        public string SourceApplicationTitle {
+        public string SourceApplicationTitle
+        {
             get { return _sourceApplicationTitle; }
-            set {
+            set
+            {
                 _sourceApplicationTitle = value;
                 OnPropertyChanged(nameof(SourceApplicationTitle));
             }
         }
 
-        public DateTime StartTime {
+        public DateTime StartTime
+        {
             get { return _startTime; }
-            set {
+            set
+            {
                 _startTime = value;
                 OnPropertyChanged(nameof(StartTime));
             }
         }
 
-        public DateTime EndTime {
+        public DateTime EndTime
+        {
             get { return _endTime; }
-            set {
+            set
+            {
                 _endTime = value;
                 OnPropertyChanged(nameof(EndTime));
             }
         }
-        public bool EnableStartTime {
+        public bool EnableStartTime
+        {
             get { return _enableStartTime; }
-            set {
+            set
+            {
                 _enableStartTime = value;
                 OnPropertyChanged(nameof(EnableStartTime));
             }
         }
-        public bool EnableEndTime {
+        public bool EnableEndTime
+        {
             get { return _enableEndTime; }
-            set {
+            set
+            {
                 _enableEndTime = value;
                 OnPropertyChanged(nameof(EnableEndTime));
             }
         }
 
-        public bool ExcludeDescription {
+        public bool ExcludeDescription
+        {
             get { return _ExcludeDescription; }
-            set {
+            set
+            {
                 _ExcludeDescription = value;
                 OnPropertyChanged(nameof(ExcludeDescription));
             }
         }
-        public bool ExcludeContent {
+        public bool ExcludeContent
+        {
             get { return _ExcludeContent; }
-            set {
+            set
+            {
                 _ExcludeContent = value;
                 OnPropertyChanged(nameof(ExcludeContent));
             }
         }
-        public bool ExcludeTags {
+        public bool ExcludeTags
+        {
             get { return _ExcludeTags; }
-            set {
+            set
+            {
                 _ExcludeTags = value;
                 OnPropertyChanged(nameof(ExcludeTags));
             }
         }
-        public bool ExcludeSourceApplicationName {
+        public bool ExcludeSourceApplicationName
+        {
             get { return _ExcludeSourceApplicationName; }
-            set {
+            set
+            {
                 _ExcludeSourceApplicationName = value;
                 OnPropertyChanged(nameof(ExcludeSourceApplicationName));
             }
         }
-        public bool ExcludeSourceApplicationTitle {
+        public bool ExcludeSourceApplicationTitle
+        {
             get { return _ExcludeSourceApplicationTitle; }
-            set {
+            set
+            {
                 _ExcludeSourceApplicationTitle = value;
                 OnPropertyChanged(nameof(ExcludeSourceApplicationTitle));
             }
         }
 
-        public SearchCondition Copy() {
+        public SearchCondition Copy()
+        {
             SearchCondition searchCondition = new();
             searchCondition.CopyFrom(this);
             return searchCondition;
         }
-        public void CopyFrom(SearchCondition searchCondition) {
+        public void CopyFrom(SearchCondition searchCondition)
+        {
             Description = searchCondition.Description;
             Content = searchCondition.Content;
             Tags = searchCondition.Tags;
@@ -153,7 +186,8 @@ namespace ClipboardApp.Model {
 
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             Description = "";
             Content = "";
             Tags = "";
@@ -170,7 +204,8 @@ namespace ClipboardApp.Model {
             ExcludeSourceApplicationTitle = false;
 
         }
-        public bool IsEmpty() {
+        public bool IsEmpty()
+        {
             return
                 string.IsNullOrEmpty(Description)
                 && string.IsNullOrEmpty(Content)
@@ -180,47 +215,70 @@ namespace ClipboardApp.Model {
                 && EnableEndTime == false
                 && EnableEndTime == false;
         }
-        public string ToStringSearchCondition() {
+        public string ToStringSearchCondition()
+        {
             string description = "";
-            if (string.IsNullOrEmpty(Description) == false) {
-                if (ExcludeDescription) {
+            if (string.IsNullOrEmpty(Description) == false)
+            {
+                if (ExcludeDescription)
+                {
                     description += " -Description: " + Description;
-                } else {
+                }
+                else
+                {
                     description += " Description: " + Description;
                 }
             }
-            if (string.IsNullOrEmpty(Content) == false) {
-                if (ExcludeContent) {
+            if (string.IsNullOrEmpty(Content) == false)
+            {
+                if (ExcludeContent)
+                {
                     description += " -Content: " + Content;
-                } else {
+                }
+                else
+                {
                     description += " Content: " + Content;
                 }
             }
-            if (string.IsNullOrEmpty(Tags) == false) {
-                if (ExcludeTags) {
+            if (string.IsNullOrEmpty(Tags) == false)
+            {
+                if (ExcludeTags)
+                {
                     description += " -Tags: " + Tags;
-                } else {
+                }
+                else
+                {
                     description += " Tags: " + Tags;
                 }
             }
-            if (string.IsNullOrEmpty(SourceApplicationName) == false) {
-                if (ExcludeSourceApplicationName) {
+            if (string.IsNullOrEmpty(SourceApplicationName) == false)
+            {
+                if (ExcludeSourceApplicationName)
+                {
                     description += " -SourceApplicationName: " + SourceApplicationName;
-                } else {
+                }
+                else
+                {
                     description += " SourceApplicationName: " + SourceApplicationName;
                 }
             }
-            if (string.IsNullOrEmpty(SourceApplicationTitle) == false) {
-                if (ExcludeSourceApplicationTitle) {
+            if (string.IsNullOrEmpty(SourceApplicationTitle) == false)
+            {
+                if (ExcludeSourceApplicationTitle)
+                {
                     description += " -SourceApplicationTitle: " + SourceApplicationTitle;
-                } else {
+                }
+                else
+                {
                     description += " SourceApplicationTitle: " + SourceApplicationTitle;
                 }
             }
-            if (EnableStartTime) {
+            if (EnableStartTime)
+            {
                 description += " StartTime: " + StartTime;
             }
-            if (EnableEndTime) {
+            if (EnableEndTime)
+            {
                 description += " EndTime: " + EndTime;
             }
             return description;

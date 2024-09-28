@@ -1,8 +1,9 @@
 using System.Windows;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Script;
 using ClipboardApp.ViewModel;
 
-namespace ClipboardApp.View.PythonScriptView {
+namespace ClipboardApp.View.PythonScriptView
+{
     /// <summary>
     /// NewScriptWindow.xaml の相互作用ロジック
     /// </summary>

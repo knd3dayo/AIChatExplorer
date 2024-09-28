@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Search;
+using ClipboardApp.Model.Folder;
 
 namespace ClipboardApp.ViewModel
 {

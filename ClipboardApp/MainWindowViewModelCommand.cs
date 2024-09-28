@@ -1,22 +1,24 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
+using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
-using ClipboardApp.View.TagView;
 using ClipboardApp.ViewModel;
-using ClipboardApp.Model;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
+using QAChat.View.TagView;
 using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
-using ClipboardApp.Settings;
-using QAChat.ViewModel.VectorDBWindow;
-using QAChat.ViewModel.PromptTemplateWindow;
 
 namespace ClipboardApp
 {

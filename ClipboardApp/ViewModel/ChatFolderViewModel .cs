@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using ClipboardApp.View.ClipboardItemFolderView;
 using QAChat.Control;
 using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
 
 namespace ClipboardApp.ViewModel
 {
