@@ -3,6 +3,7 @@ using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
@@ -48,7 +49,7 @@ namespace QAChat.ViewModel.QAChatMain
         }
 
         // 選択中のフォルダの全てのClipboardItem
-        public ObservableCollection<ContentItemBase> ClipboardItems { get; set; } = new();
+        public ObservableCollection<ContentItem> ClipboardItems { get; set; } = new();
 
 
         public Chat ChatController { get; set; } = new();
@@ -149,8 +150,8 @@ namespace QAChat.ViewModel.QAChatMain
         }
 
         // SelectedContextItem
-        private ContentItemBase? _SelectedContextItem = null;
-        public ContentItemBase? SelectedContextItem {
+        private ContentItem? _SelectedContextItem = null;
+        public ContentItem? SelectedContextItem {
             get {
                 return _SelectedContextItem;
             }

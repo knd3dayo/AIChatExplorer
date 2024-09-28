@@ -1,13 +1,13 @@
 using System.IO;
 using LiteDB;
-using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
-namespace ImageChat.Model {
+namespace ImageChat.Model
+{
     internal class ImageChatDataFactory : IDataFactory {
 
         public const string IMAGECHAT_ITEM_COLLECTION_NAME = "imagechat_item";
@@ -51,8 +51,8 @@ namespace ImageChat.Model {
 
 
 
-        //-- ContentItemBase
-        public ContentItemBase? GetItem(ContentItemBase item) {
+        //-- ContentItem
+        public ContentItem? GetItem(ContentItem item) {
             if (item is not ImageChatContentItem) {
                 // Incorrect argument type error
                 throw new Exception("Incorrect argument type.");
@@ -63,7 +63,7 @@ namespace ImageChat.Model {
             return result;
         }
 
-        public void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
+        public void UpsertItem(ContentItem item, bool updateModifiedTime = true) {
             if (item is not ImageChatContentItem) {
                 // Incorrect argument type error
                 throw new Exception("Incorrect argument type.");
@@ -80,7 +80,7 @@ namespace ImageChat.Model {
         }
 
 
-        public void DeleteItem(ContentItemBase item) {
+        public void DeleteItem(ContentItem item) {
             if (item is not ImageChatContentItem) {
                 // Incorrect argument type error
                 throw new Exception("Incorrect argument type.");

@@ -2,12 +2,14 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Model.Chat
+{
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -29,7 +31,7 @@ namespace PythonAILib.Model.Chat {
         public int MaxTokens { get; set; } = 0;
 
 
-        public List<ContentItemBase> AdditionalItems { get; set; } = [];
+        public List<ContentItem> AdditionalItems { get; set; } = [];
 
         public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
@@ -60,7 +62,7 @@ namespace PythonAILib.Model.Chat {
             if (AdditionalItems.Any()) {
                 promptText += PythonAILibStringResources.Instance.SourcesHeader;
                 // ContextItemsのContentを追加
-                foreach (ContentItemBase item in AdditionalItems) {
+                foreach (ContentItem item in AdditionalItems) {
                     promptText += item.Content + "\n";
                 }
             }
@@ -132,7 +134,7 @@ namespace PythonAILib.Model.Chat {
             // このオブジェクトのプロパティを基にしたContentを作成
             // ImageURLとAdditionalImageURLsを結合したリストを作成
             List<string> additionalImageURLs = [];
-            foreach (ContentItemBase item in AdditionalItems) {
+            foreach (ContentItem item in AdditionalItems) {
                 foreach (var imageItem in item.ClipboardItemFiles) {
                     if (imageItem.IsImage()) {
                         string? base64String = imageItem.Base64String;

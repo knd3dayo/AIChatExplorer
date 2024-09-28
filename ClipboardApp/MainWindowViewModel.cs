@@ -9,7 +9,9 @@ using ClipboardApp.Model.Search;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model;
+using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.ViewModel.Search;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using QAChat;
 using QAChat.Control;
@@ -323,7 +325,7 @@ namespace ClipboardApp
                     List<ClipboardItem> result = [];
                     PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
                         // newItemsをContentItemBaseに変換
-                        List<ContentItemBase> contentItemBases = [.. newItems];
+                        List<ContentItem> contentItemBases = [.. newItems];
                         action(contentItemBases);
                     });
                 },

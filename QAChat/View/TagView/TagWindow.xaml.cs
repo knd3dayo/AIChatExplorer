@@ -1,9 +1,10 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model;
+using PythonAILib.Model.Content;
 using QAChat.ViewModel.TagWindow;
 
-namespace QAChat.View.TagView {
+namespace QAChat.View.TagView
+{
     /// <summary>
     /// TagWindow.xaml の相互作用ロジック
     /// </summary>
@@ -11,7 +12,7 @@ namespace QAChat.View.TagView {
         public TagWindow() {
             InitializeComponent();
         }
-        public static void OpenTagWindow(ContentItemBase? contentItem, Action action) {
+        public static void OpenTagWindow(ContentItem? contentItem, Action action) {
             TagWindow tagWindow = new();
             TagWindowViewModel tagWindowViewModel =new(contentItem, action);
             tagWindow.DataContext = tagWindowViewModel;

@@ -1,5 +1,6 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.AutoProcess;
 
 namespace ClipboardApp.View.AutoProcessRuleView {
     /// <summary>

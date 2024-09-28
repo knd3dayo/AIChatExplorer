@@ -1,6 +1,7 @@
 using System.Windows;
 using ClipboardApp.Model.Search;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Search;
 
 namespace ClipboardApp.View.SearchView
 {

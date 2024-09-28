@@ -2,8 +2,7 @@ using ClipboardApp.Model.Script;
 using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Script {
     class EditPythonScriptWindowViewModel : ClipboardAppViewModelBase {
 
         public EditPythonScriptWindowViewModel(ScriptItem scriptItem) {

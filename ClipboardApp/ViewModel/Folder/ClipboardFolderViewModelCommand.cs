@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ExportImportView;
+using ClipboardApp.ViewModel.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

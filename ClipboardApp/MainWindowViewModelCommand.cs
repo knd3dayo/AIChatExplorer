@@ -9,6 +9,7 @@ using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Script;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;

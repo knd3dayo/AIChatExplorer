@@ -1,7 +1,9 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Folder;
 
-namespace ClipboardApp.View.ClipboardItemFolderView {
+namespace ClipboardApp.View.ClipboardItemFolderView
+{
     /// <summary>
     /// FolderSelectWindow.xaml の相互作用ロジック
     /// </summary>

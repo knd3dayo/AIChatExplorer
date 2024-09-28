@@ -1,13 +1,14 @@
-using PythonAILib.Model;
 using WpfAppCommon.Utils;
 using QAChat.ViewModel.ContentItemPanel;
-namespace QAChat.ViewModel.QAChatMain {
+using PythonAILib.Model.Content;
+namespace QAChat.ViewModel.QAChatMain
+{
     public class AdditionalItemViewModel: ContentItemPanelViewModel {
 
 
         public QAChatControlViewModel QAChatControlViewModel { get; set; }
         
-        public AdditionalItemViewModel(QAChatControlViewModel qaChatControlViewModel, ContentItemBase clipboardItem) : base(clipboardItem) {
+        public AdditionalItemViewModel(QAChatControlViewModel qaChatControlViewModel, ContentItem clipboardItem) : base(clipboardItem) {
             QAChatControlViewModel = qaChatControlViewModel;
             ContentItem = clipboardItem;
         }

@@ -6,16 +6,17 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
 using LibGit2Sharp;
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model {
-    public partial class ClipboardItem : ContentItemBase {
+namespace ClipboardApp.Model
+{
+    public partial class ClipboardItem : ContentItem {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
             CreatedAt = DateTime.Now;
@@ -47,7 +48,7 @@ namespace ClipboardApp.Model {
             return newItem;
 
         }
-        public void CopyTo(ContentItemBase newItem) {
+        public void CopyTo(ContentItem newItem) {
             if (newItem is not ClipboardItem) {
                 return;
             }

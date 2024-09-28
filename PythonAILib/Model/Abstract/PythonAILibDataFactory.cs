@@ -6,7 +6,8 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using QAChat;
 
-namespace PythonAILib.Model.Abstract {
+namespace PythonAILib.Model.Abstract
+{
     public abstract class PythonAILibDataFactory : IDataFactory {
 
         public const string CHAT_SESSION_COLLECTION_NAME = "chat_session";
@@ -100,16 +101,16 @@ namespace PythonAILib.Model.Abstract {
 
 
 
-        //-- ContentItemBase
+        //-- ContentItem
 
         // ClipboardItemを取得する。
-        public abstract ContentItemBase? GetItem(ContentItemBase item);
+        public abstract ContentItem? GetItem(ContentItem item);
 
         // ClipboardItemをLiteDBに追加または更新する
-        public abstract void UpsertItem(ContentItemBase item, bool updateModifiedTime = true);
+        public abstract void UpsertItem(ContentItem item, bool updateModifiedTime = true);
 
         // アイテムをDBから削除する
-        public abstract void DeleteItem(ContentItemBase item);
+        public abstract void DeleteItem(ContentItem item);
 
         //-- AttachedItems  
         public void UpsertAttachedItem(ContentAttachedItem item) {

@@ -13,11 +13,13 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 using QAChat.Model;
+using PythonAILib.Model.Content;
 
-namespace QAChat.ViewModel.ImageChat {
+namespace QAChat.ViewModel.ImageChat
+{
     public class ImageChatMainWindowViewModel : QAChatViewModelBase {
         // コンストラクタ
-        public ImageChatMainWindowViewModel(ContentItemBase clipboardItem, Action afterUpdate) {
+        public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
             // PythonAILibのLogWrapperのログ出力設定
             PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
             AfterUpdate = afterUpdate;
@@ -29,7 +31,7 @@ namespace QAChat.ViewModel.ImageChat {
             ChatController = new();
         }
         // データ保存用のClipboardItem
-        public ContentItemBase ClipboardItem { get; set; }
+        public ContentItem ClipboardItem { get; set; }
 
         // Chat
         public Chat ChatController { get; set; }

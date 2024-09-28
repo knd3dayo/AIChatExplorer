@@ -4,8 +4,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Script {
     public class PythonCommands {
         public static void CreateScriptCommandExecute(object obj) {
 

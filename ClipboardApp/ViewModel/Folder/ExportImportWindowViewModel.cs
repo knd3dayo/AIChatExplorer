@@ -3,8 +3,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Folder {
     public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel, Action AfterUpdate) : ClipboardAppViewModelBase {
 
 

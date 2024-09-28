@@ -1,8 +1,7 @@
 using System.Windows;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Folder {
     public class FolderEditWindowViewModel : ClipboardAppViewModelBase {
 
         private ClipboardFolderViewModel? _FolderViewModel = null;

@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model.AutoProcess;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.AutoProcess {
     public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ClipboardAppViewModelBase {
         public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 

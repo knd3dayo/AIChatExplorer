@@ -10,11 +10,11 @@ namespace PythonAILib.Model.Abstract {
         // Database
         public LiteDatabase GetDatabase();
 
-        //-- ContentItemBase
-        public ContentItemBase? GetItem(ContentItemBase item);
+        //-- ContentItem
+        public ContentItem? GetItem(ContentItem item);
 
-        public void UpsertItem(ContentItemBase item, bool contentIsModified = true);
-        public void DeleteItem(ContentItemBase item);
+        public void UpsertItem(ContentItem item, bool contentIsModified = true);
+        public void DeleteItem(ContentItem item);
 
         //-- AttachedItems
         public void UpsertAttachedItem(ContentAttachedItem item);
@@ -52,7 +52,7 @@ namespace PythonAILib.Model.Abstract {
         // get
         public IEnumerable<VectorDBItem> GetVectorDBItems();
 
-        public VectorDBItem GetSystemVectorDBItem(); 
+        public VectorDBItem GetSystemVectorDBItem();
 
 
         //----  RAGSourceItem

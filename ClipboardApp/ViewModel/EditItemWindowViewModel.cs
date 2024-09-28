@@ -8,8 +8,7 @@ using PythonAILib.Model.Content;
 using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>

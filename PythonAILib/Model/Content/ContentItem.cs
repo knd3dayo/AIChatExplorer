@@ -1,27 +1,25 @@
 using LiteDB;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Image;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
 using QAChat;
 
-namespace PythonAILib.Model {
-    public abstract class ContentItemBase {
+namespace PythonAILib.Model.Content {
+    public class ContentItem {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
         // ClipboardFolderのObjectId
-        public LiteDB.ObjectId CollectionId { get; set; } = LiteDB.ObjectId.Empty;
+        public ObjectId CollectionId { get; set; } = ObjectId.Empty;
 
 
         // ファイルのObjectId
-        public List<LiteDB.ObjectId> FileObjectIds { get; set; } = [];
+        public List<ObjectId> FileObjectIds { get; set; } = [];
 
 
         // ファイル
@@ -166,7 +164,13 @@ namespace PythonAILib.Model {
         // 
         public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
 
-        public abstract VectorDBItem GetVectorDBItem();
+        public virtual VectorDBItem GetVectorDBItem() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            VectorDBItem item = libManager.DataFactory.GetSystemVectorDBItem();
+            item.CollectionName = CollectionId.ToString();
+            return item;
+
+        }
 
         public virtual void Delete() {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
@@ -189,7 +193,7 @@ namespace PythonAILib.Model {
         }
 
         // テキストを抽出」を実行するコマンド
-        public ContentItemBase ExtractTextCommandExecute() {
+        public ContentItem ExtractTextCommandExecute() {
 
             foreach (var clipboardItemFile in ClipboardItemFiles) {
                 clipboardItemFile.ExtractText();

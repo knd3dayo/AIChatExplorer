@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemFolderView;
-using QAChat.Control;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.View.ClipboardItemFolderView;
+using QAChat.Control;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Folder {
     public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {

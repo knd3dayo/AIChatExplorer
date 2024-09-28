@@ -1,24 +1,25 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Tag;
 using QAChat.Model;
 using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.TagWindow {
+namespace QAChat.ViewModel.TagWindow
+{
     public class TagWindowViewModel : QAChatViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 
         public List<TagItemViewModel> SelectedTagList { get; set; } = [];
 
-        private ContentItemBase? ContentItem { get; set; }
+        private ContentItem? ContentItem { get; set; }
 
         private Action? AfterUpdate { get; set; }
 
-        public TagWindowViewModel(ContentItemBase? contentItem, Action afterUpdate) {
+        public TagWindowViewModel(ContentItem? contentItem, Action afterUpdate) {
             ContentItem = contentItem;
             AfterUpdate = afterUpdate;
 

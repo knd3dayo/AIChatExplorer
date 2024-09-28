@@ -1,7 +1,7 @@
 
 using System.Windows;
 using ClipboardApp.Model.Script;
-using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Script;
 
 namespace ClipboardApp.View.PythonScriptView
 {

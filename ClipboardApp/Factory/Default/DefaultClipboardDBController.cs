@@ -5,7 +5,6 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Script;
 using ClipboardApp.Model.Search;
 using LiteDB;
-using PythonAILib.Model;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
@@ -27,7 +26,7 @@ namespace ClipboardApp.Factory.Default
 
         // --- ClipboardItem ----------------------------------------------
         // ClipboardItemを取得する。
-        public override ContentItemBase? GetItem(ContentItemBase item) {
+        public override ContentItem? GetItem(ContentItem item) {
             if ( item is not ClipboardItem clipboardItem) {
                 throw new Exception("item is not ClipboardItem");
             }
@@ -37,7 +36,7 @@ namespace ClipboardApp.Factory.Default
         }
 
         // ClipboardItemをLiteDBに追加または更新する
-        public override void UpsertItem(ContentItemBase item, bool updateModifiedTime = true) {
+        public override void UpsertItem(ContentItem item, bool updateModifiedTime = true) {
 
             if (item is not ClipboardItem clipboardItem) {
                 throw new Exception("item is not ClipboardItem");
@@ -55,7 +54,7 @@ namespace ClipboardApp.Factory.Default
         }
 
         // アイテムをDBから削除する
-        public override void DeleteItem(ContentItemBase item) {
+        public override void DeleteItem(ContentItem item) {
             if (item is not ClipboardItem clipboardItem) {
                 throw new Exception("item is not ClipboardItem");
             }

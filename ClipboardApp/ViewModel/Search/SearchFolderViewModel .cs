@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.View.SearchView;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Search;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
+using ClipboardApp.View.SearchView;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
         public override ObservableCollection<MenuItem> MenuItems {
             get {

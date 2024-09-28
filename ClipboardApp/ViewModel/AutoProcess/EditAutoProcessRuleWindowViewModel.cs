@@ -7,6 +7,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Script;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.PythonScriptView;
+using ClipboardApp.ViewModel.Script;
 using PythonAILib.Model;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
@@ -14,7 +15,7 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
+namespace ClipboardApp.ViewModel.AutoProcess
 {
     public class EditAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
         public enum Mode {

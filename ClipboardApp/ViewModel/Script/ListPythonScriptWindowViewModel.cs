@@ -5,8 +5,7 @@ using ClipboardApp.Model.Script;
 using ClipboardApp.View.PythonScriptView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel.Script {
     public class ListPythonScriptWindowViewModel : ClipboardAppViewModelBase {
 
         public enum ActionModeEnum {
