@@ -82,7 +82,7 @@ namespace ClipboardApp.Factory.Default
 
             // Itemsを削除
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            collection.FindAll().Where(x => x.FolderObjectId == folder.Id).ToList().ForEach(x => DeleteItem(x));
+            collection.FindAll().Where(x => x.CollectionId == folder.Id).ToList().ForEach(x => DeleteItem(x));
             // folderを削除
             var folderCollection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
             folderCollection.Delete(folder.Id);
@@ -261,7 +261,7 @@ namespace ClipboardApp.Factory.Default
         // ClipboardItemのリストをLiteDBから取得する
         public IEnumerable<ClipboardItem> GetItems(ClipboardFolder folder) {
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            var items = collection.FindAll().Where(x => x.FolderObjectId == folder.Id).OrderByDescending(x => x.UpdatedAt);
+            var items = collection.FindAll().Where(x => x.CollectionId == folder.Id).OrderByDescending(x => x.UpdatedAt);
             return items;
 
         }
@@ -281,7 +281,7 @@ namespace ClipboardApp.Factory.Default
 
             // folder内のアイテムを保持するコレクションを取得
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            var clipboardItems = collection.FindAll().Where(x => x.FolderObjectId == folder.Id);
+            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == folder.Id);
             // Filterの結果を結果に追加
             result = Filter(clipboardItems, searchCondition);
 

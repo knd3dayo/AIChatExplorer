@@ -14,25 +14,21 @@ using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItemBase {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
-            FolderObjectId = folderObjectId;
+            CollectionId = folderObjectId;
         }
 
         // プロパティ
 
-        // ClipboardFolderのObjectId
-        public LiteDB.ObjectId FolderObjectId { get; set; } = LiteDB.ObjectId.Empty;
-
         public string FolderPath {
             get {
                 // FolderObjectIdからClipboardFolderを取得
-                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
+                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
                 if (folder == null) {
                     return "";
                 }
@@ -46,7 +42,7 @@ namespace ClipboardApp.Model
         // -------------------------------------------------------------------
 
         public ClipboardItem Copy() {
-            ClipboardItem newItem = new(this.FolderObjectId);
+            ClipboardItem newItem = new(this.CollectionId);
             CopyTo(newItem);
             return newItem;
 
@@ -138,7 +134,7 @@ namespace ClipboardApp.Model
 
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder GetFolder(Type? objectType = null) {
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(FolderObjectId);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
             return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
         }
 
@@ -348,7 +344,7 @@ namespace ClipboardApp.Model
             // VectorDBItemを取得
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
             // CollectionNameを設定
-            vectorDBItem.CollectionName = FolderObjectId.ToString();
+            vectorDBItem.CollectionName = CollectionId.ToString();
             return VectorSearchCommandExecute(vectorDBItem, IncludeBackgroundInfo);
         }
 
@@ -400,7 +396,7 @@ namespace ClipboardApp.Model
         public string? CreateNormalBackgroundInfo() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = FolderObjectId.ToString();
+            vectorDBItem.CollectionName = CollectionId.ToString();
 
             return CreateNormalBackgroundInfo([vectorDBItem]);
 
@@ -409,7 +405,7 @@ namespace ClipboardApp.Model
         public string? CreateAnalyzedJapaneseSentence() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = FolderObjectId.ToString();
+            vectorDBItem.CollectionName = CollectionId.ToString();
 
             return CreateAnalyzedJapaneseSentence([vectorDBItem]);
         }
@@ -417,7 +413,7 @@ namespace ClipboardApp.Model
         public string? CreateQA() {
             // ベクトルDBの設定
             VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = FolderObjectId.ToString();
+            vectorDBItem.CollectionName = CollectionId.ToString();
 
             return CreateQA([vectorDBItem]);
         }

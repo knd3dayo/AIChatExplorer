@@ -7,6 +7,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Search;
 using LiteDB;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
@@ -16,7 +17,7 @@ using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public class ClipboardFolder {
+    public class ClipboardFolder : ContentCollection{
 
         public enum FolderTypeEnum {
             Normal,
@@ -293,7 +294,7 @@ namespace ClipboardApp.Model.Folder {
             }
 
             // CollectionNameを設定
-            item.FolderObjectId = Id;
+            item.CollectionId = Id;
 
             // 自動処理を適用
             ClipboardItem? result = item;
@@ -387,7 +388,7 @@ namespace ClipboardApp.Model.Folder {
                 if (item == null) {
                     continue;
                 }
-                item.FolderObjectId = Id;
+                item.CollectionId = Id;
                 // Itemsに追加
                 Items.Add(item);
                 //保存

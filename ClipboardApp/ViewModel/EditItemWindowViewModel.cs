@@ -190,7 +190,7 @@ namespace ClipboardApp.ViewModel
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.FolderObjectId);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.CollectionId);
             ClipboardItem? item = folder?.ApplyAutoProcess(ItemViewModel.ClipboardItem);
             // ClipboardItemを更新
             if (item != null) {

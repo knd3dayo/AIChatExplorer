@@ -16,6 +16,9 @@ namespace PythonAILib.Model {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
+        // ClipboardFolderのObjectId
+        public LiteDB.ObjectId CollectionId { get; set; } = LiteDB.ObjectId.Empty;
+
 
         // ファイルのObjectId
         public List<LiteDB.ObjectId> FileObjectIds { get; set; } = [];
