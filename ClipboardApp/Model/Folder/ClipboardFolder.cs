@@ -299,7 +299,7 @@ namespace ClipboardApp.Model.Folder {
             // 自動処理を適用
             ClipboardItem? result = item;
             if (IsAutoProcessEnabled) {
-                result = ApplyAutoProcess(item);
+                result = item.ApplyAutoProcess();
             }
 
             if (result == null) {
@@ -327,27 +327,7 @@ namespace ClipboardApp.Model.Folder {
             item.Delete();
         }
 
-        // 自動処理を適用する処理
-        public ClipboardItem? ApplyAutoProcess(ClipboardItem clipboardItem) {
-            // 検索フォルダの場合は何もしない
-            if (FolderType == FolderTypeEnum.Search) {
-                return clipboardItem;
-            }
 
-            ClipboardItem? result = clipboardItem;
-            // AutoProcessRulesを取得
-            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this);
-            foreach (var rule in AutoProcessRules) {
-                LogWrapper.Info($"{CommonStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                result = rule.RunAction(result);
-                // resultがNullの場合は処理を中断
-                if (result == null) {
-                    LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedByAutoProcessing);
-                    return null;
-                }
-            }
-            return result;
-        }
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string fileName) {

@@ -1,19 +1,20 @@
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Script;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using QAChat;
 
-namespace PythonAILib.Model.Abstract
-{
+namespace PythonAILib.Model.Abstract {
     public abstract class PythonAILibDataFactory : IDataFactory {
 
         public const string CHAT_SESSION_COLLECTION_NAME = "chat_session";
         public const string CONTENT_ITEM_COLLECTION_NAME = "clipboard_item";
         public const string CONTENT_ATTACHED_ITEM_COLLECTION_NAME = "clipboard_file";
         public const string TAG_COLLECTION_NAME = "tags";
+        public const string SCRIPT_COLLECTION_NAME = "scripts";
 
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
@@ -319,5 +320,21 @@ namespace PythonAILib.Model.Abstract
             var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
             collection.Insert(tag);
         }
+        // --- ScriptItem関連 ----------------------------------------------
+        public IEnumerable<ScriptItem> GetScriptItems() {
+            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
+            var items = collection.FindAll();
+            return items.ToList();
+        }
+        public void UpsertScriptItem(ScriptItem scriptItem) {
+            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
+            collection.Upsert(scriptItem);
+        }
+
+        public void DeleteScriptItem(ScriptItem scriptItem) {
+            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
+            collection.Delete(scriptItem.Id);
+        }
+
     }
 }

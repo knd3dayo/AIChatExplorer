@@ -1,23 +1,16 @@
-using System.IO;
 using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Script;
 using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Model;
 
-namespace ClipboardApp.Factory.Default
-{
+namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : PythonAILibDataFactory, IClipboardDBController {
         public const string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public const string CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
 
-        public const string SCRIPT_COLLECTION_NAME = "scripts";
         public const string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
 
         public const string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
@@ -27,7 +20,7 @@ namespace ClipboardApp.Factory.Default
         // --- ClipboardItem ----------------------------------------------
         // ClipboardItemを取得する。
         public override ContentItem? GetItem(ContentItem item) {
-            if ( item is not ClipboardItem clipboardItem) {
+            if (item is not ClipboardItem clipboardItem) {
                 throw new Exception("item is not ClipboardItem");
             }
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
@@ -365,12 +358,5 @@ namespace ClipboardApp.Factory.Default
 
         }
         #endregion
-        // --- ScriptItem関連 ----------------------------------------------
-
-        public IEnumerable<ScriptItem> GetScriptItems() {
-            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
-            var items = collection.FindAll();
-            return items.ToList();
-        }
     }
 }

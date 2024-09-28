@@ -1,9 +1,10 @@
-using ClipboardApp.Model.Script;
-using ClipboardApp.View.PythonScriptView;
+using PythonAILib.Model.Script;
+using QAChat.Model;
 using WpfAppCommon.Utils;
+using QAChat.View.PythonScriptView;
 
-namespace ClipboardApp.ViewModel.Script {
-    class EditPythonScriptWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.Script {
+    class EditPythonScriptWindowViewModel : QAChatViewModelBase {
 
         public EditPythonScriptWindowViewModel(ScriptItem scriptItem) {
             _scriptItem = scriptItem;

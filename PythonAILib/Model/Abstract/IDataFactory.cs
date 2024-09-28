@@ -1,6 +1,7 @@
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILib.Model.Script;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
@@ -72,7 +73,12 @@ namespace PythonAILib.Model.Abstract {
 
         public IEnumerable<TagItem> FilterTag(string tag, bool exclude);
 
+        // --- Python Script
+        public IEnumerable<ScriptItem> GetScriptItems();
 
+        public void UpsertScriptItem(ScriptItem scriptItem);
+
+        public void DeleteScriptItem(ScriptItem scriptItem);
 
     }
 }

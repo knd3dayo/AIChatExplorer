@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Factory;
-using ClipboardApp.Model.Script;
-using ClipboardApp.View.PythonScriptView;
+using PythonAILib.Model.Script;
+using PythonAILib.Resource;
+using QAChat.Model;
+using QAChat.View.PythonScriptView;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Script {
-    public class ListPythonScriptWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.Script {
+    public class ListPythonScriptWindowViewModel : QAChatViewModelBase {
 
         public enum ActionModeEnum {
             Edit,
@@ -50,7 +51,9 @@ namespace ClipboardApp.ViewModel.Script {
             this.afterSelect = afterSelect;
 
             ScriptItems.Clear();
-            foreach (var item in ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            foreach (var item in libManager.DataFactory.GetScriptItems()) {
                 ScriptItems.Add(item);
             }
             OnPropertyChanged(nameof(ScriptItems));

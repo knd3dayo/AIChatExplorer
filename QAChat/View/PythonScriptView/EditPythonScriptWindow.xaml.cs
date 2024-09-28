@@ -1,10 +1,8 @@
 using System.Windows;
-using ClipboardApp.Model.Script;
-using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.Script;
+using PythonAILib.Model.Script;
+using QAChat.ViewModel.Script;
 
-namespace ClipboardApp.View.PythonScriptView
-{
+namespace QAChat.View.PythonScriptView {
     /// <summary>
     /// NewScriptWindow.xaml の相互作用ロジック
     /// </summary>

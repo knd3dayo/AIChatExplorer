@@ -1,10 +1,10 @@
-using ClipboardApp.Model.Script;
-using ClipboardApp.View.PythonScriptView;
+using PythonAILib.Model.Script;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.View.PythonScriptView;
 
-namespace ClipboardApp.ViewModel.Script {
+namespace QAChat.ViewModel.Script {
     public class PythonCommands {
         public static void CreateScriptCommandExecute(object obj) {
 

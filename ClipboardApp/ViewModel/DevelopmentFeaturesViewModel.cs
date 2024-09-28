@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Script;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
+using PythonAILib.Model.Script;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
 
     public partial class ClipboardItemViewModel {
 

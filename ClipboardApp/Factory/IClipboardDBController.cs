@@ -1,13 +1,11 @@
 using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Script;
 using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Abstract;
 
-namespace ClipboardApp.Factory
-{
+namespace ClipboardApp.Factory {
     public interface IClipboardDBController : IDataFactory {
 
 
@@ -46,10 +44,6 @@ namespace ClipboardApp.Factory
 
         public IEnumerable<AutoProcessRule> GetCopyToMoveToRules();
 
-        // --- Python Script
-        public IEnumerable<ScriptItem> GetScriptItems();
-
-        
     }
 
 }
