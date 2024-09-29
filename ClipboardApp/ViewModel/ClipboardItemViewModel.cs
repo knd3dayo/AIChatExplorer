@@ -29,7 +29,6 @@ namespace ClipboardApp.ViewModel
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Files));
             OnPropertyChanged(nameof(TextTabVisibility));
-            OnPropertyChanged(nameof(ImageTabVisibility));
             OnPropertyChanged(nameof(FileTabVisibility));
             OnPropertyChanged(nameof(BackgroundInfoVisibility));
             OnPropertyChanged(nameof(SummaryVisibility));
@@ -212,16 +211,11 @@ namespace ClipboardApp.ViewModel
                 return ContentType == ContentTypes.ContentItemTypes.Text ? Visibility.Visible : Visibility.Collapsed;
             }
         }
-        // イメージタブの表示可否
-        public Visibility ImageTabVisibility {
-            get {
-                return ContentType == ContentTypes.ContentItemTypes.Image ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+
         // ファイルタブの表示可否
         public Visibility FileTabVisibility {
             get {
-                return ContentType == ContentTypes.ContentItemTypes.Files ? Visibility.Visible : Visibility.Collapsed;
+                return (ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

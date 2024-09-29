@@ -143,64 +143,8 @@
             <TabControl
                 Grid.Row="1"
                 Margin="10,3,10,3"
-                HorizontalContentAlignment="Left">
-                <!--  テキスト  -->
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.Text, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.TextTabVisibility}">
-                    <local:ContentPanel DataContext="{Binding}" />
-                </TabItem>
-                <!--  ファイル or Image  -->
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.FileOrImage, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.FileOrImageVisibility}">
-                    <local:FilePanel DataContext="{Binding}" />
-                </TabItem>
-                <!--  背景情報  -->
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.BackgroundInfoVisibility}">
-                    <local:BackgroundInfoPanel DataContext="{Binding}" />
-                </TabItem>
-                <!--  Issues用のDataGridを表示するためのTabItem  -->
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.IssuesList, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.IssuesVisibility}">
-
-                    <local:IssuePanel DataContext="{Binding}" />
-                </TabItem>
-                <!--  サマリー  -->
-                <TabItem
-                    Width="Auto"
-                    Height="Auto"
-                    Margin="10,0,10,0"
-                    Padding="0"
-                    FontSize="10"
-                    Header="{Binding StringResources.Summary, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.SummaryVisibility}">
-                    <local:SummaryPanel DataContext="{Binding}" />
-                </TabItem>
-            </TabControl>
+                HorizontalContentAlignment="Left"
+                ItemsSource="{Binding TabItems}" />
         </Grid>
         <Grid Grid.Row="2">
             <DockPanel HorizontalAlignment="Left">

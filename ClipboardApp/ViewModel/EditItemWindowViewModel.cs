@@ -1,9 +1,11 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Model.Content;
 using QAChat.View.TagView;
 using WpfAppCommon.Utils;
@@ -175,6 +177,94 @@ namespace ClipboardApp.ViewModel {
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
         });
+
+        // TabItems 
+        public ObservableCollection<TabItem> TabItems {
+            get {
+                ObservableCollection<TabItem> tabItems = new();
+                // Content 
+                ContentPanel contentPanel = new() {
+                    DataContext = this,
+                };
+                TabItem contentTabItem = new() {
+                    Header = StringResources.Text,
+                    Content = contentPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.TextTabVisibility ?? Visibility.Visible
+                };
+                tabItems.Add(contentTabItem);
+                // FileOrImage
+                FilePanel filePanel = new() {
+                    DataContext = this,
+                };
+                TabItem fileTabItem = new() {
+                    Header = StringResources.FileOrImage,
+                    Content = filePanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.FileTabVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(fileTabItem);
+
+                // BackgroundInformation
+                BackgroundInfoPanel backgroundInformationPanel = new() {
+                    DataContext = this,
+                };
+                TabItem backgroundInformationTabItem = new() {
+                    Header = StringResources.BackgroundInformation,
+                    Content = backgroundInformationPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.BackgroundInfoVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(backgroundInformationTabItem);
+
+                // Issues
+                IssuePanel issuesPanel = new() {
+                    DataContext = this,
+                };
+                TabItem issuesTabItem = new() {
+                    Header = StringResources.IssuesList,
+                    Content = issuesPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.IssuesVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(issuesTabItem);
+                // Summary
+                SummaryPanel summaryPanel = new() {
+                    DataContext = this,
+                };
+                TabItem summaryTabItem = new() {
+                    Header = StringResources.Summary,
+                    Content = summaryPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.SummaryVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(summaryTabItem);
+
+                return tabItems;
+            }
+        }
+
+
 
         // QAChatButtonCommand
         public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
