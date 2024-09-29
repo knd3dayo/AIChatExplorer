@@ -416,30 +416,5 @@ namespace ClipboardApp.Model {
             }
         }
 
-        public string? CreateNormalBackgroundInfo() {
-            // ベクトルDBの設定
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = CollectionId.ToString();
-
-            return CreateNormalBackgroundInfo([vectorDBItem]);
-
-        }
-
-        public string? CreateAnalyzedJapaneseSentence() {
-            // ベクトルDBの設定
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = CollectionId.ToString();
-
-            return CreateAnalyzedJapaneseSentence([vectorDBItem]);
-        }
-
-        public string? CreateQA() {
-            // ベクトルDBの設定
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            vectorDBItem.CollectionName = CollectionId.ToString();
-
-            return CreateQA([vectorDBItem]);
-        }
-
     }
 }

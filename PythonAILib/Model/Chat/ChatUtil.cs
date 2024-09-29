@@ -1,10 +1,57 @@
 using System.Text.Json;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
+using QAChat;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     public class ChatUtil {
+
+        // 生成AIチャットの結果を取得する
+        public static List<string> CreateSystemPromptChatResult(string content, PromptItem.SystemDefinedPromptNames systemDefinedPrompt, List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+
+            // システム定義のPromptItemを取得
+            PromptItem? promptItem = libManager.DataFactory.GetPromptTemplateByName(systemDefinedPrompt.ToString());
+
+            if (promptItem == null) {
+                throw new Exception("PromptItem not found");
+            }
+            // promptItemのResultTypeがTextの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.Text) {
+                // promptItemのChatTypeがNormalの場合、ChatRequest.CreateChatを実行
+                if (promptItem.ChatType == PromptItem.ChatTypeEnum.Normal) {
+                    string result = ChatUtil.CreateNormalChatResultText(openAIProperties, content, promptItem.Prompt);
+                    if (string.IsNullOrEmpty(result) == false) {
+                        return [result];
+                    }
+                }
+                // promptItemのChatTypeがRAGの場合、ChatRequest.CreateRAGChatを実行
+                if (promptItem.ChatType == PromptItem.ChatTypeEnum.RAG) {
+                    string result = ChatUtil.CreateRAGChatResultText(openAIProperties, vectorDBItems, content, promptItem.Prompt);
+                    if (string.IsNullOrEmpty(result) == false) {
+                        return [result];
+                    }
+                }
+            }
+            // promptItemのResultTypeがListの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.List) {
+                // promptItemのChatTypeがNormalの場合、ChatRequest.CreateChatを実行
+                if (promptItem.ChatType == PromptItem.ChatTypeEnum.Normal) {
+                    List<string> result = ChatUtil.CreateNormalResultBulletedList(openAIProperties, content, promptItem.Prompt);
+                    return result;
+                }
+                // promptItemのChatTypeがRAGの場合、ChatRequest.CreateRAGChatを実行
+                if (promptItem.ChatType == PromptItem.ChatTypeEnum.RAG) {
+                    List<string> result = ChatUtil.CreateRAGResultBulletedList(openAIProperties, vectorDBItems, content, promptItem.Prompt);
+                    return result;
+                }
+            }
+            return [];
+        }
+
+
 
         // Normal Chatを実行して文字列の結果を取得する
         public static string CreateNormalChatResultText(OpenAIProperties openAIProperties, string content, string promptText) {

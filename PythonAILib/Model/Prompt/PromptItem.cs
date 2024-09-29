@@ -26,10 +26,23 @@ namespace PythonAILib.Model.Prompt {
             // 文脈情報生成
             ContextInformationGeneration,
         }
+        public enum PromptResultTypeEnum {
+            // テキスト
+            Text,
+            // リスト
+            List,
+        }
+        public enum ChatTypeEnum {
+            // Normal
+            Normal,
+            // RAG,
+            RAG,
+            // Langchain
+            Langchain,
+        }
 
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
-        // 名前
 
         // 名前
         public string Name { get; set; } = "";
@@ -41,6 +54,12 @@ namespace PythonAILib.Model.Prompt {
 
         // プロンプトテンプレートの種類
         public PromptTemplateTypeEnum PromptTemplateType { get; set; } = PromptTemplateTypeEnum.UserDefined;
+
+        // プロンプト結果の種類
+        public PromptResultTypeEnum PromptResultType { get; set; } = PromptResultTypeEnum.Text;
+
+        // チャットタイプ
+        public ChatTypeEnum ChatType { get; set; } = ChatTypeEnum.Normal;
 
         // Save
         public void Save() {
