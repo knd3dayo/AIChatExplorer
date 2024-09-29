@@ -1,14 +1,15 @@
 using ClipboardApp.Model;
+using PythonAILib.Model.Content;
 using QAChat;
 using QAChat.ViewModel.ImageChat;
 
 namespace ImageChat {
-    public class MainWindowViewModel : ImageChatViewModelBase {
+    public class MainWindowViewModel : ImageChatMainWindowViewModel {
 
 
-        public MainWindowViewModel() {
+        public MainWindowViewModel(ContentItem contentItem, Action afterUpdate) : base(contentItem, afterUpdate){
             Init();
-            ImageChatMainWindowViewModel = new ImageChatMainWindowViewModel(new PythonAILib.Model.Content.ContentItem(), () => { });
+            ImageChatMainWindowViewModel = new ImageChatMainWindowViewModel(contentItem, afterUpdate);
         }
 
         public void Init() {

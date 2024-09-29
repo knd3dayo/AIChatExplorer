@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -16,6 +16,7 @@ namespace ImageChat {
     public partial class MainWindow : Window {
         public MainWindow() {
             InitializeComponent();
+            this.DataContext = new MainWindowViewModel( new PythonAILib.Model.Content.ContentItem(), () => {});
         }
     }
 }

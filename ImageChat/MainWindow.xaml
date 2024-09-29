@@ -14,9 +14,6 @@
     Height="450"
     WindowState="Maximized"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:MainWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
@@ -35,8 +32,61 @@
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <qc:ImageChatControl Grid.Row="0" DataContext="{Binding ImageChatMainWindowViewModel}" />
+        <materialDesign:ColorZone
+            Grid.Row="0"
+            materialDesign:ElevationAssist.Elevation="Dp4"
+            DockPanel.Dock="Top"
+            Mode="PrimaryMid">
+            <!--  メニューバー  -->
+            <Grid Margin="0,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Menu
+                    Name="menu0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="True">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="{Binding StringResources.File, Mode=OneTime}">
+                        <MenuItem
+                            Height="Auto"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding SelectImageFileCommand, Mode=OneTime}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
+                    </MenuItem>
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="{Binding StringResources.Edit, Mode=OneTime}">
+                        <MenuItem
+                            Height="Auto"
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding ScreenShotCheckPromptCommand, Mode=OneTime}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{Binding StringResources.EditImageEvidenceCheckItem, Mode=OneTime}" />
+                    </MenuItem>
+                </Menu>
+                <Menu
+                    Name="menu1"
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="True">
+                    <MenuItem />
+                </Menu>
+            </Grid>
+        </materialDesign:ColorZone>
+        <qc:ImageChatControl Grid.Row="1" DataContext="{Binding ImageChatMainWindowViewModel}" />
     </Grid>
 </Window>

@@ -23,66 +23,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <materialDesign:ColorZone
-            Grid.Row="0"
-            materialDesign:ElevationAssist.Elevation="Dp4"
-            DockPanel.Dock="Top"
-            Mode="PrimaryMid">
-            <!--  メニューバー  -->
-            <Grid Margin="0,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Menu
-                    Name="menu0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
-                    IsMainMenu="True">
-                    <MenuItem
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.File, Mode=OneTime}">
-                        <MenuItem
-                            Height="Auto"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding SelectImageFileCommand, Mode=OneTime}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
-                    </MenuItem>
-                    <MenuItem
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Edit, Mode=OneTime}">
-                        <MenuItem
-                            Height="Auto"
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ScreenShotCheckPromptCommand, Mode=OneTime}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditImageEvidenceCheckItem, Mode=OneTime}" />
-                    </MenuItem>
-                </Menu>
-                <Menu
-                    Name="menu1"
-                    Grid.Column="1"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
-                    IsMainMenu="True">
-                    <MenuItem />
-                </Menu>
-
-            </Grid>
-        </materialDesign:ColorZone>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="*" />
@@ -106,7 +52,7 @@
                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
-        <Grid Grid.Row="2" Margin="0,0,0,0">
+        <Grid Grid.Row="1" Margin="0,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Name="Grid1" Width="200" />
                 <ColumnDefinition Width="3" />
@@ -238,15 +184,10 @@
             BorderBrush="Gray"
             BorderThickness="1" />
         <StackPanel
-            Grid.Row="4"
+            Grid.Row="3"
             Margin="0,0,0,0"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
-            <Button
-                Margin="10,10,10,10"
-                Command="{Binding SaveCommand}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Save}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding SendChatCommand}"
@@ -262,9 +203,9 @@
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                 Content="{Binding StringResources.Close}" />
         </StackPanel>
-        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
         <ProgressBar
-            Grid.Row="2"
+            Grid.Row="1"
             IsIndeterminate="{Binding IsIndeterminate}"
             Style="{StaticResource MaterialDesignCircularProgressBar}"
             Value="0" />

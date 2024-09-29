@@ -5,23 +5,19 @@ using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
-using PythonAILib.PythonIF;
 using PythonAILib.Resource;
+using QAChat.Model;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
-using QAChat.Model;
-using PythonAILib.Model.Content;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace QAChat.ViewModel.ImageChat {
     public class ImageChatMainWindowViewModel : QAChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
-            // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
             AfterUpdate = afterUpdate;
             ClipboardItem = clipboardItem;
             OnPropertyChanged(nameof(Description));
@@ -139,12 +135,6 @@ namespace QAChat.ViewModel.ImageChat
                 InputText = result;
 
             });
-        });
-
-        // SaveCommand
-        public SimpleDelegateCommand<object> SaveCommand => new((parameter) => {
-            // ClipboardItemを保存
-            ClipboardItem.Save();
         });
 
         // チャットを送信するコマンド
