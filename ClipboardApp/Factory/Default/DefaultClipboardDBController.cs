@@ -10,12 +10,9 @@ namespace ClipboardApp.Factory.Default {
     public class DefaultClipboardDBController : PythonAILibDataFactory, IClipboardDBController {
         public const string CLIPBOARD_FOLDERS_COLLECTION_NAME = "folders";
         public const string CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
-
         public const string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
-
         public const string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
         public const string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
-
 
         // --- ClipboardItem ----------------------------------------------
         // ClipboardItemを取得する。
@@ -58,6 +55,33 @@ namespace ClipboardApp.Factory.Default {
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(clipboardItem.Id);
         }
+
+        //-- AttachedItems  
+        public override void UpsertAttachedItem(ContentAttachedItem item) {
+            if (item is not ClipboardItemFile clipboardItemFile) {
+                throw new Exception("item is not ContentAttachedItem");
+            }
+
+            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            collection.Upsert(clipboardItemFile);
+        }
+        public override void DeleteAttachedItem(ContentAttachedItem item) {
+            if (item is not ClipboardItemFile clipboardItemFile) {
+                throw new Exception("item is not ContentAttachedItem");
+            }
+            if (item.Id == null) {
+                return;
+            }
+            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            collection.Delete(clipboardItemFile.Id);
+        }
+        public override ContentAttachedItem? GetAttachedItem(ObjectId id) {
+            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            var item = collection.FindById(id);
+            return item;
+        }
+
+
 
 
 

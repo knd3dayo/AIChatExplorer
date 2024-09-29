@@ -132,9 +132,9 @@ def run_langchain_chat( props_json: str, request_prompt: str, request_json: str)
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
-        openai_props, vector_db_props, prompt, chat_history_json, search_kwarg  = langchain_util.process_langchain_chat_parameter(props_json, request_prompt, request_json)
+        openai_props, vector_db_props, prompt, chat_history_json  = langchain_util.process_langchain_chat_parameter(props_json, request_prompt, request_json)
         # langchan_chatを実行
-        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json, search_kwarg)
+        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

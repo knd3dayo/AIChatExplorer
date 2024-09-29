@@ -4,6 +4,7 @@ using PythonAILib.Model.Abstract;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 using ImageChat.Model;
+using System.IO;
 
 namespace ImageChat {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
@@ -37,17 +38,27 @@ namespace ImageChat {
         public TextWrapping GetTextWrapping() {
             return ImageChatConfig.Instance.TextWrapping;
         }
-
         public string GetDBPath() {
-            throw new System.NotImplementedException();
-        }
 
+            /// AppDataフォルダーパスを取得
+            string appDataPath = ImageChatConfig.Instance.AppDataFolder;
+            // データベースファイルのパスを作成
+            string dbPath = Path.Combine(appDataPath, "imagechat.db");
+
+            return dbPath;
+
+        }
         public string GetSystemVectorDBPath() {
-            throw new System.NotImplementedException();
+            string vectorDBPath = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "imagechat_vector_db");
+            return vectorDBPath;
         }
 
         public string GetSystemDocDBPath() {
-            throw new System.NotImplementedException();
+            string docDBPath = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "imagechat_doc_store.db");
+            return docDBPath;
+
         }
+
+
     }
 }

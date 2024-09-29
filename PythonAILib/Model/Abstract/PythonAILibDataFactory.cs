@@ -114,22 +114,9 @@ namespace PythonAILib.Model.Abstract {
         public abstract void DeleteItem(ContentItem item);
 
         //-- AttachedItems  
-        public void UpsertAttachedItem(ContentAttachedItem item) {
-
-            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            collection.Upsert(item);
-        }
-        public void DeleteAttachedItem(ContentAttachedItem item) {
-
-            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            collection.Delete(item.Id);
-        }
-        public ContentAttachedItem? GetAttachedItem(ObjectId id) {
-            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            var item = collection.FindById(id);
-            return item;
-        }
-
+        public abstract void UpsertAttachedItem(ContentAttachedItem item);
+        public abstract void DeleteAttachedItem(ContentAttachedItem item);
+        public abstract ContentAttachedItem? GetAttachedItem(ObjectId id);
 
         // Prompt
         // create

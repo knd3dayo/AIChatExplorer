@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Model.VectorDB;
+using QAChat.Model;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Utils;
-using QAChat.Model;
-using PythonAILib.Model.VectorDB;
 
-namespace QAChat.ViewModel.VectorDBWindow
-{
+namespace QAChat.ViewModel.VectorDBWindow {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
@@ -77,9 +76,9 @@ namespace QAChat.ViewModel.VectorDBWindow
             if (items == null) {
                 return;
             }
-            if (IsShowSystemCommonVectorDB) {
+            if (!IsShowSystemCommonVectorDB) {
                 items = items.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-            } 
+            }
             foreach (var item in items) {
                 VectorDBItems.Add(new VectorDBItemViewModel(item));
             }

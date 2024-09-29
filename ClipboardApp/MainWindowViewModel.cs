@@ -12,14 +12,12 @@ using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.Search;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
 using QAChat;
 using QAChat.Control;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() {
             Init();

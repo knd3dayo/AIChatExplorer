@@ -65,5 +65,27 @@ namespace ImageChat.Model {
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(imageChatContentItem.Id);
         }
+
+        public override void UpsertAttachedItem(ContentAttachedItem item) {
+
+            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            collection.Upsert(item);
+        }
+        public override void DeleteAttachedItem(ContentAttachedItem item) {
+            if (item.Id == null) {
+                return;
+            }
+            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            collection.Delete(item.Id);
+        }
+        public override ContentAttachedItem? GetAttachedItem(ObjectId id) {
+            var collection = GetDatabase().GetCollection<ContentAttachedItem>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
+            var item = collection.FindById(id);
+            return item;
+        }
+
+
+
+
     }
 }

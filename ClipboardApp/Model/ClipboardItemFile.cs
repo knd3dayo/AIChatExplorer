@@ -1,16 +1,11 @@
 using ClipboardApp.Factory;
 using LiteDB;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
-using PythonAILib.Resource;
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class ClipboardItemFile : ContentAttachedItem {
 
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
