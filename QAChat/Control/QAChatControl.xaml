@@ -1,0 +1,377 @@
+<UserControl
+    x:Class="QAChat.Control.QAChatControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:QAChat.ViewModel.QAChatMain"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:qaChatControl="clr-namespace:QAChat.Control"
+    x:Name="Root"
+    d:DataContext="{d:DesignInstance Type=local:QAChatControlViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <commonModel:CommonStringResources x:Key="StringResources" />
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <KeyBinding
+            Key="V"
+            Command="{Binding PasteCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+            Modifiers="Ctrl" />
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Column="0"
+            Width="250"
+            Margin="10,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    FontWeight="Bold"
+                    Text="モード" />
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="10,0,10,0"
+                    SelectedIndex="{Binding Mode}">
+                    <ComboBoxItem Content="OpenAI" />
+                    <ComboBoxItem Content="OpenAI+RAG" />
+                    <ComboBoxItem Content="LangChain" />
+                    <ComboBoxItem Content="{Binding StringResources.ExperimentalFunction1, Mode=OneTime}" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </Grid>
+            <StackPanel
+                Grid.Row="1"
+                HorizontalAlignment="Left"
+                Visibility="{Binding VectorDBItemVisibility}">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding IsVectorDBDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="{Binding StringResources.VectorDB, Mode=OneTime}" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsVectorDBDrawerOpen}" OpenMode="Standard">
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10,10,10,10"
+                                HorizontalAlignment="Left"
+                                FontSize="10"
+                                Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <ListBox
+                                Grid.Row="1"
+                                Margin="10,10,10,10"
+                                ItemsSource="{Binding VectorDBItems}"
+                                SelectedItem="{Binding SelectedVectorDBItem}"
+                                Visibility="{Binding VectorDBItemVisibility}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseDoubleClick">
+                                        <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <ListBox.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
+                                    </ContextMenu>
+                                </ListBox.ContextMenu>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+            <StackPanel Grid.Row="2">
+                <ToggleButton
+                    Width="200"
+                    Padding="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    IsChecked="{Binding IsAdditionalItemDrawerOpen}"
+                    Style="{StaticResource MaterialDesignFlatButton}">
+                    <DockPanel Width="200">
+                        <materialDesign:PackIcon Kind="Menu" />
+                        <TextBlock Text="{Binding StringResources.AdditionalItem, Mode=OneTime}" />
+                    </DockPanel>
+                </ToggleButton>
+                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsAdditionalItemDrawerOpen}" OpenMode="Standard">
+                    <!--  クリップボードアイテム  -->
+                    <materialDesign:DrawerHost.BottomDrawerContent>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ListBox
+                                Name="ListBox0"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,0,10,0"
+                                HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding AdditionalItems}"
+                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                SelectionMode="Extended"
+                                Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=Self}}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <qaChatControl:ContentItemPanel DataContext="{Binding}" />
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+
+                    </materialDesign:DrawerHost.BottomDrawerContent>
+                </materialDesign:DrawerHost>
+            </StackPanel>
+        </Grid>
+        <GridSplitter Grid.Column="1" Width="5" />
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TabControl
+                Grid.Row="0"
+                Margin="10,5,10,5"
+                HorizontalContentAlignment="Left">
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="{Binding StringResources.Chat, Mode=OneTime}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <ListBox
+                            Grid.Row="0"
+                            ItemsSource="{Binding ChatHistory, Mode=OneWay}"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            SelectedItem="{Binding SelectedItem}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Card
+                                        Margin="10,10,10,10"
+                                        HorizontalAlignment="Stretch"
+                                        materialDesign:ElevationAssist.Elevation="Dp6">
+                                        <Grid Margin="0,0,0,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="50" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Margin="10,5,10,5"
+                                                HorizontalAlignment="Left"
+                                                FontSize="8pt"
+                                                Text="{Binding Role, Mode=OneWay}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                MinHeight="30"
+                                                Margin="10,5,10,5"
+                                                HorizontalAlignment="Left"
+                                                FontSize="8pt"
+                                                Text="{Binding ContentWithSources, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis">
+                                                <TextBlock.InputBindings>
+                                                    <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
+                                                    <MouseBinding
+                                                        Command="{Binding DataContext.OpenChatItemCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"
+                                                        MouseAction="LeftDoubleClick" />
+                                                </TextBlock.InputBindings>
+                                            </TextBlock>
+                                        </Grid>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                        <GridSplitter
+                            Grid.Row="1"
+                            Height="5"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch" />
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBox
+                                Grid.Row="0"
+                                Height="30"
+                                Margin="10,0,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
+                                AcceptsReturn="True"
+                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <ScrollViewer
+                                Grid.Row="1"
+                                Margin="0,0,0,0"
+                                VerticalScrollBarVisibility="Auto">
+                                <editorControl:MyTextBox
+                                    MinHeight="50"
+                                    Margin="10,0,10,0"
+                                    materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                                    AcceptsReturn="True"
+                                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="{Binding StringResources.Preview, Mode=OneTime}">
+                    <ScrollViewer
+                        Height="300"
+                        VerticalAlignment="Top"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBox
+                            Margin="10,10,10,10"
+                            VerticalAlignment="Top"
+                            Text="{Binding PreviewText, Mode=OneWay}"
+                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="10,0,10,0"
+                    Padding="0"
+                    FontSize="10"
+                    Header="{Binding StringResources.PreviewJSON}">
+                    <ScrollViewer
+                        Height="300"
+                        VerticalAlignment="Top"
+                        VerticalScrollBarVisibility="Auto">
+                        <TextBox
+                            Margin="10,10,10,10"
+                            VerticalAlignment="Top"
+                            Text="{Binding PreviewJson, Mode=OneWay}"
+                            TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                    </ScrollViewer>
+                </TabItem>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding TabSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </TabControl>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ToggleButton
+                    x:Name="MenuToggleButton"
+                    Grid.Column="0"
+                    Height="25"
+                    Margin="10,0,10,5"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="HamburgerToggleButton"
+                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+
+                <StackPanel
+                    Grid.Column="3"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding SendChatCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{Binding StringResources.Send, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding ClearChatHistoryCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.ClearChatHistory, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding ClearInputTextCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.ClearContent, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{Binding StringResources.Close, Mode=OneTime}" />
+                </StackPanel>
+            </Grid>
+            <ProgressBar
+                Grid.Row="0"
+                IsIndeterminate="{Binding IsIndeterminate}"
+                Style="{StaticResource MaterialDesignCircularProgressBar}"
+                Value="0" />
+
+        </Grid>
+    </Grid>
+</UserControl>

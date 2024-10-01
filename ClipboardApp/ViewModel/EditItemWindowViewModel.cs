@@ -1,19 +1,22 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ClipboardApp.View.TagView;
-using WpfAppCommon;
-using WpfAppCommon.Control.QAChat;
-using WpfAppCommon.Model;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
+using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    class EditItemWindowViewModel : MyWindowViewModel {
+    public class EditItemWindowViewModel : ClipboardAppViewModelBase {
 
-        private readonly TextSelector TextSelector = new();
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -25,8 +28,6 @@ namespace ClipboardApp.ViewModel {
                 TagsString = string.Join(",", itemViewModel?.Tags ?? []);
 
                 OnPropertyChanged(nameof(ItemViewModel));
-                OnPropertyChanged(nameof(ImageTabVisibility));
-                OnPropertyChanged(nameof(FileTabVisibility));
             }
         }
         private ClipboardFolderViewModel? _folderViewModel;
@@ -77,24 +78,8 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // イメージタブの表示可否
-        public Visibility ImageTabVisibility {
-            get {
-                return ItemViewModel?.ContentType == ClipboardContentTypes.Image ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-        // ファイルタブの表示可否
-        public Visibility FileTabVisibility {
-            get {
-                return ItemViewModel?.ContentType == ClipboardContentTypes.Files ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
         // 更新後の処理
         private Action _afterUpdate = () => { };
-
-        // QAChatControlのViewModel
-        public QAChatControlViewModel QAChatControlViewModel { get; set; } = new();
 
         // IsDrawerOpen
         private bool isDrawerOpen = false;
@@ -127,8 +112,19 @@ namespace ClipboardApp.ViewModel {
             set {
                 selectedFile = value;
                 OnPropertyChanged(nameof(SelectedFile));
+                OnPropertyChanged(nameof(SelectedFileImageVisibility));
             }
         }
+        // 選択したファイルの画像のVisible. SelectedFileがNull、Imageがnullの場合はCollapsed
+        public Visibility SelectedFileImageVisibility {
+            get {
+                if (SelectedFile == null || SelectedFile.BitmapImage == null) {
+                    return Visibility.Collapsed;
+                }
+                return Visibility.Visible;
+            }
+        }
+
         // SelectedImage
         private ImageSource? selectedImage;
         public ImageSource? SelectedImage {
@@ -142,7 +138,10 @@ namespace ClipboardApp.ViewModel {
         }
         public int SelectedImageIndex { get; set; } = 0;
 
-        public void Initialize(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        // SelectedIssueItem
+        public IssueItem? SelectedIssueItem { get; set; }
+
+        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
@@ -155,14 +154,17 @@ namespace ClipboardApp.ViewModel {
             }
             // ClipboardItemFileがある場合はSelectedFileに設定
             if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
-                SelectedFile = ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
-            }
-            // ClipboardItemImageがある場合はSelectedImageに設定
-            if (ItemViewModel.Images.Count > 0) {
-                SelectedImage = ItemViewModel.Images[0];
+                SelectedFile = (ClipboardItemFile)ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
             }
             _afterUpdate = afterUpdate;
 
+        }
+
+        // TextWrapping
+        public TextWrapping TextWrapping {
+            get {
+                return ClipboardAppConfig.Instance.TextWrapping;
+            }
         }
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
@@ -171,26 +173,107 @@ namespace ClipboardApp.ViewModel {
                 LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow.OpenTagWindow(ItemViewModel, () => {
+            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
         });
 
-        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
+        // TabItems 
+        public ObservableCollection<TabItem> TabItems {
+            get {
+                ObservableCollection<TabItem> tabItems = new();
+                // Content 
+                ContentPanel contentPanel = new() {
+                    DataContext = this,
+                };
+                TabItem contentTabItem = new() {
+                    Header = StringResources.Text,
+                    Content = contentPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.TextTabVisibility ?? Visibility.Visible
+                };
+                tabItems.Add(contentTabItem);
+                // FileOrImage
+                FilePanel filePanel = new() {
+                    DataContext = this,
+                };
+                TabItem fileTabItem = new() {
+                    Header = StringResources.FileOrImage,
+                    Content = filePanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.FileTabVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(fileTabItem);
 
-            // テキスト選択
-            TextSelector.SelectText(textBox);
-            return;
-        });
-        // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
+                // BackgroundInformation
+                BackgroundInfoPanel backgroundInformationPanel = new() {
+                    DataContext = this,
+                };
+                PromptItem item1 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
 
-            // 選択中のテキストをプロセスとして実行
-            TextSelector.ExecuteSelectedText(textbox);
+                TabItem backgroundInformationTabItem = new() {
+                    Header = item1.Description,
+                    Content = backgroundInformationPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.BackgroundInfoVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(backgroundInformationTabItem);
 
-        });
+                // Issues
+                IssuePanel issuesPanel = new() {
+                    DataContext = this,
+                };
+                PromptItem item2 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
+
+
+                TabItem issuesTabItem = new() {
+                    Header = item2.Description,
+                    Content = issuesPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.IssuesVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(issuesTabItem);
+                // Summary
+                SummaryPanel summaryPanel = new() {
+                    DataContext = this,
+                };
+
+                PromptItem item3 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
+
+                TabItem summaryTabItem = new() {
+                    Header = item3.Description,
+                    Content = summaryPanel,
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.SummaryVisibility ?? Visibility.Collapsed
+                };
+                tabItems.Add(summaryTabItem);
+
+                return tabItems;
+            }
+        }
+
+
 
         // QAChatButtonCommand
         public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
@@ -205,8 +288,8 @@ namespace ClipboardApp.ViewModel {
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.FolderObjectId);
-            ClipboardItem? item = folder?.ApplyAutoProcess(ItemViewModel.ClipboardItem);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ItemViewModel.ClipboardItem.CollectionId);
+            ClipboardItem? item = ItemViewModel.ClipboardItem.ApplyAutoProcess();
             // ClipboardItemを更新
             if (item != null) {
                 item.Save();
@@ -226,6 +309,27 @@ namespace ClipboardApp.ViewModel {
             // ウィンドウを閉じる
             window.Close();
         });
+
+        // Issuesの削除
+        public SimpleDelegateCommand<object> DeleteIssueCommand => new((parameter) => {
+            if (SelectedIssueItem == null) {
+                return;
+            }
+            ItemViewModel?.DeleteIssueCommand.Execute(SelectedIssueItem);
+        });
+
+        // IssuesのSelectionChangedイベント発生時の処理
+        public SimpleDelegateCommand<RoutedEventArgs> IssueItemSelectionChangedCommand => new((routedEventArgs) => {
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                IssueItem item = (IssueItem)dataGrid.SelectedItem;
+                SelectedIssueItem = item;
+            }
+
+        });
+
+
 
     }
 }

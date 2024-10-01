@@ -1,19 +1,25 @@
 using PythonAILib.Model;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public partial interface IPythonAIFunctions {
 
-        public string ExtractText(string path);
+        public string ExtractFileToText(string path);
+
+        public string ExtractBase64ToText(string base64);
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 
-        
-        public ChatResult OpenAIChat(ChatRequest chatController);
 
-            
-        public ChatResult LangChainChat(ChatRequest chatController);
+        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatController);
 
-        
+
+        public ChatResult LangChainChat(OpenAIProperties props, Chat chatController);
+
+
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, VectorDBItem vectorDBItem, VectorSearchRequest request);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);

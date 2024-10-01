@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\**" />
+    <EmbeddedResource Remove="Model\**" />
+    <None Remove="Model\**" />
+    <Page Remove="Model\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="favicon.ico" />
   </ItemGroup>
 
@@ -29,6 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="View\ImageChat\ScreenShotCheckPromptWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\PromptTemplateWindow\EditPromptItemWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

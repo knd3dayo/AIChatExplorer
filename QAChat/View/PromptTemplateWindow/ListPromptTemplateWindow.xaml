@@ -8,10 +8,11 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:QAChat.ViewModel"
+    xmlns:view="clr-namespace:QAChat.ViewModel.PromptTemplateWindow"
     Title="{Binding StringResources.PromptTemplateList, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=view:ListPromptTemplateWindowViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
@@ -22,9 +23,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <view:ListPromptTemplateWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -36,6 +34,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -64,9 +63,17 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <!--  プロンプトテンプレート一覧のListBox  -->
         <StackPanel
-            Grid.Column="1"
+            Grid.Row="1"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <CheckBox
+                Margin="10,10,0,0"
+                Content="{Binding StringResources.DisplayPromptsForTheSystem}"
+                IsChecked="{Binding IsShowSystemPromptItems}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
             Margin="10,10,0,0"
             HorizontalAlignment="Left"
             Orientation="Vertical"
@@ -76,9 +83,9 @@
                 <ComboBoxItem Content="{Binding Source={StaticResource StringResources}, Path=Instance.RAG}" />
             </ComboBox>
         </StackPanel>
-
+        <!--  プロンプトテンプレート一覧のListBox  -->
         <ListView
-            Grid.Row="2"
+            Grid.Row="3"
             ItemsSource="{Binding PromptItems}"
             SelectedItem="{Binding SelectedPromptItem}">
             <i:Interaction.Triggers>
@@ -106,7 +113,7 @@
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -140,7 +147,7 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="5" VerticalAlignment="Bottom" />
 
     </Grid>
 </Window>

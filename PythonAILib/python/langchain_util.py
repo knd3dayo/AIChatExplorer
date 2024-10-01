@@ -170,7 +170,7 @@ class RetrievalQAUtil:
         # Retrieverを作成
         # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
         # content_typeもvector_db_propsで指定できるようにする
-        search_kwargs = {"search_kwargs", {"k": vector_db_props.MaxSearchResults, "filter":{"content_type": "text"}}}
+        search_kwargs = {"search_kwargs": {"k": vector_db_props.MaxSearchResults, "filter":{"content_type": "text"}}}
 
         retriever = RetrieverUtil(self.client, vector_db_props).create_retriever(search_kwargs)
             

@@ -1,26 +1,25 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Factory;
+using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
+using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model;
-using PythonAILib.PythonIF;
-using WpfAppCommon;
-using WpfAppCommon.Factory;
-using WpfAppCommon.Factory.Default;
-using WpfAppCommon.Model;
+using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.ViewModel.Search;
+using PythonAILib.Model.Content;
+using QAChat;
+using QAChat.Control;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp
-{
-
-    public partial class MainWindowViewModel : MyWindowViewModel {
-
+namespace ClipboardApp {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() {
-            // 旧バージョンのRootFolderの移行
-            ClipboardFolder.MigrateRootFolder();
-
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
             Init();
 
         }
@@ -32,38 +31,34 @@ namespace ClipboardApp
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
             };
-
-            PythonAILibStringResources.Lang = ClipboardAppConfig.ActualLang;
-
-            
+            ClipboardAppPythonAILibConfigParams configParams = new();
+            PythonAILibManager.Init(configParams);
+            QAChatManager.Init(configParams);
             // フォルダの初期化
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
             InitClipboardFolders();
 
-
-
-            // Python処理機能の初期化
-            PythonExecutor.Init(ClipboardAppConfig.PythonDllPath, ClipboardAppConfig.PythonVenvPath);
-
             // データベースのチェックポイント処理
-            DefaultClipboardDBController.GetClipboardDatabase().Checkpoint();
+            ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();
 
             // DBのバックアップの取得
             IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
             backupController.BackupNow();
-            // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
-
         }
 
         private void InitClipboardFolders() {
+            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
 
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
             ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
-            ClipboardItemFolders.Add(new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder));
+
+            ClipboardItemFolders.Add(ImageCheckRootFolderViewModel);
+
             OnPropertyChanged(nameof(ClipboardItemFolders));
         }
-
 
         public static MainWindowViewModel? ActiveInstance { get; set; }
 
@@ -76,7 +71,14 @@ namespace ClipboardApp
 
         }
         // RootFolderのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
+
+        // 画像チェックフォルダのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
+        public ImageCheckFolderViewModel ImageCheckRootFolderViewModel { get; private set; }
 
         public void ReLoadRootFolders() {
             foreach (var folder in ClipboardItemFolders) {
@@ -209,16 +211,16 @@ namespace ClipboardApp
         // テキストを右端で折り返すかどうか
         public bool TextWrapping {
             get {
-                return ClipboardAppConfig.TextWrapping == System.Windows.TextWrapping.Wrap;
+                return ClipboardAppConfig.Instance.TextWrapping == System.Windows.TextWrapping.Wrap;
             }
             set {
                 if (value) {
-                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.Wrap;
+                    ClipboardAppConfig.Instance.TextWrapping = System.Windows.TextWrapping.Wrap;
                 } else {
-                    ClipboardAppConfig.TextWrapping = System.Windows.TextWrapping.NoWrap;
+                    ClipboardAppConfig.Instance.TextWrapping = System.Windows.TextWrapping.NoWrap;
                 }
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(TextWrapping));
             }
         }
@@ -226,21 +228,19 @@ namespace ClipboardApp
         // プレビューモード　プレビューを表示するかどうか
         public static Visibility PreviewModeVisibility {
             get {
-                return ClipboardAppConfig.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
+                return ClipboardAppConfig.Instance.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
-
-        
         //　プレビューモード表示するかどうか
         public bool PreviewMode {
             get {
-                return ClipboardAppConfig.PreviewMode;
+                return ClipboardAppConfig.Instance.PreviewMode;
             }
             set {
-                ClipboardAppConfig.PreviewMode = value;
+                ClipboardAppConfig.Instance.PreviewMode = value;
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
 
                 OnPropertyChanged(nameof(PreviewMode));
                 OnPropertyChanged(nameof(PreviewModeVisibility));
@@ -278,12 +278,12 @@ namespace ClipboardApp
         // 開発中の機能を有効にするかどうか
         public bool EnableDevFeatures {
             get {
-                return ClipboardAppConfig.EnableDevFeatures;
+                return ClipboardAppConfig.Instance.EnableDevFeatures;
             }
             set {
-                ClipboardAppConfig.EnableDevFeatures = value;
+                ClipboardAppConfig.Instance.EnableDevFeatures = value;
                 // Save
-                ClipboardAppConfig.Save();
+                ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(EnableDevFeatures));
                 OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
             }
@@ -291,14 +291,75 @@ namespace ClipboardApp
         // 開発中機能の表示
         public Visibility EnableDevFeaturesVisibility {
             get {
-                return ClipboardAppConfig.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
+                return ClipboardAppConfig.Instance.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
-        //--------------------------------------------------------------------------------
-        // コマンド
-        //--------------------------------------------------------------------------------
+        public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
 
+
+            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+
+            QAChatStartupProps props = new(clipboardItem) {
+                // フォルダ選択アクション
+                SelectVectorDBItemAction = (vectorDBItems) => {
+                    if (ActiveInstance == null) {
+                        LogWrapper.Error("MainWindowViewModelがNullです");
+                        return;
+                    }
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, (selectedItems) => {
+                        foreach (var item in selectedItems) {
+                            vectorDBItems.Add(item);
+                        }
+                    });
+
+                },
+                // ペーストアクション
+                AddContentItemCommandAction = (action) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (ActiveInstance == null) {
+                        return;
+                    }
+                    List<ClipboardItem> result = [];
+                    PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
+                        // newItemsをContentItemBaseに変換
+                        List<ContentItem> contentItemBases = [.. newItems];
+                        action(contentItemBases);
+                    });
+                },
+                // 選択中のアイテムを開くアクション
+                OpenSelectedItemCommand = (item) => {
+                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
+                    if (MainWindowViewModel.ActiveInstance == null) {
+                        return;
+                    }
+                    clipboardItem = (ClipboardItem)item;
+                    // item からClipboardFolderViewModelを取得
+                    ClipboardFolderViewModel folderViewModel = new(MainWindowViewModel.ActiveInstance, clipboardItem.GetFolder());
+                    // item からClipboardItemViewModelを取得
+                    ClipboardItemViewModel itemViewModel = new(folderViewModel, clipboardItem);
+                    EditItemWindow.OpenEditItemWindow(folderViewModel, itemViewModel, () => { });
+
+                },
+                // Saveアクション
+                SaveCommand = (item) => {
+                    clipboardItem = (ClipboardItem)item;
+                    // ClipboardItemを保存
+                    clipboardItem.Save();
+
+                    //ChatHistoryItemがある場合は保存
+                    // チャット履歴用のItemの設定
+                    // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
+                    ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(clipboardItem.GetFolder(), ClipboardFolder.ChatRootFolder, true);
+                    ClipboardItem chatHistoryItem = new(chatFolder.Id);
+
+                    clipboardItem.CopyTo(chatHistoryItem);
+                    chatHistoryItem.Save();
+                }
+            };
+
+            return props;
+        }
 
     }
 

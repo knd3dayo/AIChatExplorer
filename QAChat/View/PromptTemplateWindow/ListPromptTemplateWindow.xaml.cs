@@ -1,10 +1,8 @@
 using System.Windows;
 using PythonAILib.Model;
-using QAChat.ViewModel;
-using WpfAppCommon.Model;
+using QAChat.ViewModel.PromptTemplateWindow;
 
-namespace QAChat.View.PromptTemplateWindow
-{
+namespace QAChat.View.PromptTemplateWindow {
     /// <summary>
     /// ListAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>
@@ -13,10 +11,11 @@ namespace QAChat.View.PromptTemplateWindow
             InitializeComponent();
         }
 
-        public static void OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback) {
+        public static void OpenListPromptTemplateWindow(
+            ListPromptTemplateWindowViewModel.ActionModeEum actionModeEum, Action<PromptItemViewModel, OpenAIExecutionModeEnum> callback) {
             ListPromptTemplateWindow listPromptTemplateWindow = new();
-            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = (ListPromptTemplateWindowViewModel)listPromptTemplateWindow.DataContext;
-            listPromptTemplateWindowViewModel.Initialize(actionModeEum, callback);
+            ListPromptTemplateWindowViewModel listPromptTemplateWindowViewModel = new(actionModeEum, callback);
+            listPromptTemplateWindow.DataContext = listPromptTemplateWindowViewModel;
             listPromptTemplateWindow.ShowDialog();
         }
     }

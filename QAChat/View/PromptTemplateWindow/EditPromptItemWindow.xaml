@@ -6,17 +6,15 @@
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.ViewModel"
+    xmlns:local="clr-namespace:QAChat.ViewModel.PromptTemplateWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding StringResources.EditPrompt}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:EditPromptItemWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:EditPromptItemWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
@@ -27,20 +25,20 @@
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Enter"
-            Command="{Binding OKButtonCommand}"
+            Command="{Binding OKButtonCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
         <KeyBinding
             Key="Escape"
-            Command="{Binding CloseCommand}"
+            Command="{Binding CloseCommand, Mode=OneTime}"
             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Grid>
@@ -122,7 +120,7 @@
                 HorizontalScrollBarVisibility="Auto"
                 IsEnabled="True"
                 Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="{x:Static commonModel:ClipboardAppConfig.TextWrapping}"
+                TextWrapping="{Binding TextWrapping, Mode=OneWay}"
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">
@@ -130,13 +128,13 @@
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
-                    Command="{Binding OKButtonCommand}"
+                    Command="{Binding OKButtonCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{Binding StringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
-                    Command="{Binding CloseCommand}"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{Binding StringResources.Cancel}"
                     DockPanel.Dock="Right" />

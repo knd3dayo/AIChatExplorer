@@ -3,12 +3,18 @@ using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Windows.Shapes;
 using Python.Runtime;
 using PythonAILib.Model;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.VectorDB;
+using PythonAILib.Resource;
 using PythonAILib.Utils;
 
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public class PythonTask(Action action) : Task(action) {
 
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
@@ -63,13 +69,13 @@ namespace PythonAILib.PythonIF {
         }
 
         // IPythonFunctionsのメソッドを実装
-        public string ExtractText(string path) {
+        public string ExtractFileToText(string path) {
             // ResultContainerを作成
             string result = "";
 
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
-                string function_name = "extract_text";
+                string function_name = "extract_text_from_file";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
                 try {
@@ -84,7 +90,28 @@ namespace PythonAILib.PythonIF {
             });
             return result;
         }
+        public string ExtractBase64ToText(string base64) {
 
+            // ResultContainerを作成
+            string result = "";
+
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "extract_base64_to_text";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // extract_text関数を呼び出す
+                try {
+                    result = function_object(base64);
+                } catch (PythonException e) {
+                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                    if (e.Message.Contains("Unsupported file type")) {
+                        throw new UnsupportedFileTypeException(e.Message);
+                    }
+                    throw;
+                }
+            });
+            return result;
+        }
 
         public void OpenAIEmbedding(OpenAIProperties props, string text) {
 
@@ -142,10 +169,9 @@ namespace PythonAILib.PythonIF {
 
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat( ChatRequest chatRequest) {
+        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
 
-            string chat_history_json =chatRequest.CreateOpenAIRequestJSON();
-            OpenAIProperties props = chatRequest.OpenAIProperties;
+            string chat_history_json =chatRequest.CreateOpenAIRequestJSON(props);
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -168,21 +194,18 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // hello_world関数を呼び出す
                 result = function_object();
-
             });
             return result;
         }
         private void UpdateVectorDBIndexExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
-
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
                 try {
                     string resultString = pythonFunction(function_object);
                     LogWrapper.Info(resultString);
-
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {
@@ -333,11 +356,10 @@ namespace PythonAILib.PythonIF {
             return chatResult;
 
         }
-        public ChatResult LangChainChat(ChatRequest chatRequest) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties, Chat chatRequest) {
 
             string prompt = chatRequest.CreatePromptText();
-            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON();
-            OpenAIProperties openAIProperties = chatRequest.OpenAIProperties;
+            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON(openAIProperties);
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 

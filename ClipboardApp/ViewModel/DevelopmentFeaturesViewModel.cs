@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using ClipboardApp.Model;
 using PythonAILib.PythonIF;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using PythonAILib.Model.Script;
 
 namespace ClipboardApp.ViewModel {
 
@@ -14,7 +10,7 @@ namespace ClipboardApp.ViewModel {
 
         // EnableDevelopmentFeaturesがTrueの場合のみ有効
         public bool EnableDevelopmentFeatures {
-            get { return ClipboardAppConfig.EnableDevFeatures; }
+            get { return ClipboardAppConfig.Instance.EnableDevFeatures; }
         }
 
         // EnableDevelopmentFeaturesがTrueの場合はVisible
@@ -46,22 +42,6 @@ namespace ClipboardApp.ViewModel {
                 MainWindowViewModel.UpdateProgressCircleVisibility(false);
             }
 
-        });
-        // 画像からテキストを抽出するコマンド
-        public SimpleDelegateCommand<object> MenuItemExtractTextFromImageCommand => new((parameter) => {
-            // 画像以外の場合はエラー
-            if (ContentType != ClipboardContentTypes.Image) {
-                // 対話処理のため、エラー時はダイアログを表示
-                LogWrapper.Error(StringResources.CannotExtractTextForNonImageContent);
-                return;
-            }
-            try {
-                ClipboardItem.ExtractTextFromImageCommandExecute(ClipboardItem);
-                // 保存
-                ClipboardItem.Save();
-            } catch (Exception ex) {
-                LogWrapper.Error($"{StringResources.OCRFailed} \n{ex.Message}");
-            }
         });
 
         // コンテキストメニューの「データをマスキング」の実行用コマンド

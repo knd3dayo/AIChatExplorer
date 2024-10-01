@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using QAChat.ViewModel;
+using QAChat.ViewModel.PromptTemplateWindow;
 
 namespace QAChat.View.PromptTemplateWindow
 {
@@ -26,8 +26,8 @@ namespace QAChat.View.PromptTemplateWindow
         }
         public static void OpenEditPromptItemWindow(PromptItemViewModel promptItemViewModel, Action<PromptItemViewModel> callback) {
             EditPromptItemWindow editPromptItemWindow = new();
-            EditPromptItemWindowViewModel editPromptItemWindowViewModel = (EditPromptItemWindowViewModel)editPromptItemWindow.DataContext;
-            editPromptItemWindowViewModel.Initialize(promptItemViewModel, callback);
+            EditPromptItemWindowViewModel editPromptItemWindowViewModel = new(promptItemViewModel, callback);
+            editPromptItemWindow.DataContext = editPromptItemWindowViewModel;
             editPromptItemWindow.ShowDialog();
         }
     }

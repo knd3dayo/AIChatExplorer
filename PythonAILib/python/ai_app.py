@@ -1,6 +1,7 @@
 import os, json
 from PIL import Image
 from io import StringIO
+import tempfile
 import sys
 sys.path.append("python")
 
@@ -36,10 +37,26 @@ def capture_stdout_stderr(func):
     return wrapper
 
 # ファイルからテキストを抽出する
-def extract_text(filename):
+def extract_text_from_file(filename):
     import file_extractor
-    return file_extractor.extract_text(filename)
+    return file_extractor.extract_text_from_file(filename)
 
+# base64形式のデータからテキストを抽出する
+def extract_base64_to_text(base64_data):
+    # base64データから一時ファイルを生成
+    with tempfile.NamedTemporaryFile(delete=False) as temp:
+        # base64からバイナリデータに変換
+        base64_data = base64_data.encode()
+        temp.write(base64_data)
+        temp_path = temp.name
+        temp.close()
+        
+        import file_extractor
+        # 一時ファイルからテキストを抽出
+        text = file_extractor.extract_text_from_file(temp_path)
+        # 一時ファイルを削除
+        os.remove(temp_path)
+        return text
 
 ########################
 # openai関連
@@ -115,9 +132,9 @@ def run_langchain_chat( props_json: str, request_prompt: str, request_json: str)
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
-        openai_props, vector_db_props, prompt, chat_history_json, search_kwarg  = langchain_util.process_langchain_chat_parameter(props_json, request_prompt, request_json)
+        openai_props, vector_db_props, prompt, chat_history_json  = langchain_util.process_langchain_chat_parameter(props_json, request_prompt, request_json)
         # langchan_chatを実行
-        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json, search_kwarg)
+        result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history_json)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

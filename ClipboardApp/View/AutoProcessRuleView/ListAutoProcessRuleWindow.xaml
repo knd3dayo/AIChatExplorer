@@ -5,13 +5,13 @@
     xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:local="clr-namespace:ClipboardApp.ViewModel.AutoProcess"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:view="clr-namespace:ClipboardApp.ViewModel"
     Title="{Binding StringResources.ListAutoProcessRuleWindowTitle, Mode=OneTime}"
     Width="850"
     MinHeight="580"
+    d:DataContext="{d:DesignInstance Type=local:ListAutoProcessRuleWindowViewModel}"
     SizeToContent="Height"
     mc:Ignorable="d">
     <Window.Resources>
@@ -22,9 +22,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </Window.Resources>
-    <Window.DataContext>
-        <view:ListAutoProcessRuleWindowViewModel />
-    </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -150,6 +147,9 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
@@ -327,29 +327,52 @@
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
-                            <TextBlock
+                            <CheckBox
                                 Grid.Row="14"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AnalyzeJapaneseSentence}" />
+                            <CheckBox
+                                Grid.Row="15"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyAddAutoQAResultsToBackgroundInformation, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateQA}" />
+                            <TextBlock
+                                Grid.Row="16"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="14"
+                                Grid.Row="16"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.IncludeBackgroundInfoInEmbedding}" />
 
                             <TextBlock
-                                Grid.Row="15"
+                                Grid.Row="17"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="15"
+                                Grid.Row="17"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoSummary}" />
+                            <TextBlock
+                                Grid.Row="18"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyGenerateIssueList, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="18"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.GenerateIssueListFromContent, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateIssues}" />
                         </Grid>
                         <!--  その他の設定  -->
                         <Grid Grid.Row="1">

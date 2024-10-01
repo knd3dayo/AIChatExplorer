@@ -1,16 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model;
+using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
+using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.View.SearchView;
-using ClipboardApp.View.TagView;
 using ClipboardApp.ViewModel;
+using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.RAGWindow;
+using QAChat.View.TagView;
 using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel;
-using WpfAppCommon.Control.Settings;
+using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.Script;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using WpfCommonApp.Control.StatusMessage;
@@ -135,7 +141,15 @@ namespace ClipboardApp {
         }
         // 画像エビデンスチェッカーを開くコマンド
         public void OpenScreenshotCheckerWindowExecute() {
-            ImageChat.MainWindow.OpenMainWindow(null, false, () => {
+            // 選択中のフォルダがない場合 or 画像フォルダでない場合は画像ルートフォルダのアイテムを新規作成
+            ClipboardItem item;
+            if (SelectedFolder == null || SelectedFolder.ClipboardItemFolder.FolderType != ClipboardFolder.FolderTypeEnum.ImageCheck) {
+                item = new ClipboardItem(ImageCheckRootFolderViewModel.ClipboardItemFolder.Id);
+            } else {
+                item = new ClipboardItem(SelectedFolder.ClipboardItemFolder.Id);
+            }
+
+            ImageChatMainWindow.OpenMainWindow(item, () => {
                 SelectedFolder?.LoadFolderCommand.Execute();
             });
         }
@@ -143,7 +157,7 @@ namespace ClipboardApp {
         // OpenRAGManagementWindowCommandExecute メニューの「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenRAGManagementWindowCommandExecute() {
             // RARManagementWindowを開く
-            RagManagementWindow.OpenRagManagementWindow();
+            ListRAGSourceWindow.OpenRagManagementWindow();
         }
         // OpenVectorDBManagementWindowCommandExecute メニューの「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public static void OpenVectorDBManagementWindowCommandExecute() {
@@ -300,7 +314,7 @@ namespace ClipboardApp {
 
         }
         // Ctrl + V が押された時の処理
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel, bool saveToFolder, Action<List<ClipboardItem>> action) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
@@ -318,12 +332,18 @@ namespace ClipboardApp {
                     LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
                     return;
                 }
-                SelectedFolder.PasteClipboardItemCommandExecute(
-                    windowViewModel.CutFlag,
-                    CopiedItems,
-                    CopiedItemFolder,
-                    SelectedFolder
-                    );
+                // saveToFolderがTrueの場合はフォルダに保存
+                if (saveToFolder) {
+                    SelectedFolder.PasteClipboardItemCommandExecute(
+                        windowViewModel.CutFlag,
+                        CopiedItems,
+                        CopiedItemFolder,
+                        SelectedFolder
+                        );
+                }
+                // 貼り付け後の処理
+                action(CopiedItems.Select(x => x.ClipboardItem).ToList());
+
                 // Cutフラグをもとに戻す
                 windowViewModel.CutFlag = false;
                 // 貼り付け後にコピー選択中のアイテムをクリア
@@ -334,12 +354,17 @@ namespace ClipboardApp {
                     async (clipboardItem) => {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
-                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
+                            // saveToFolderがTrueの場合はフォルダに保存
+                            if (saveToFolder) {
+                                SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
+                            }
+                            // 貼り付け後の処理
+                            action([clipboardItem]);
+                            MainUITask.Run(() => {
+                                windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
+                            });
                         });
 
-                        MainUITask.Run(() => {
-                            windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
-                        });
                     });
             }
 
@@ -362,8 +387,7 @@ namespace ClipboardApp {
 
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
-                SelectedItems,
-                false
+                SelectedItems
                 );
         }
         // Ctrl + Shift + M が押された時の処理
@@ -384,8 +408,7 @@ namespace ClipboardApp {
 
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
-                SelectedItems,
-                true
+                SelectedItems
                 );
         }
 
@@ -397,7 +420,7 @@ namespace ClipboardApp {
         public static void OpenListPromptTemplateWindowCommandExecute(MainWindowViewModel windowViewModel) {
             // ListPromptTemplateWindowを開く
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Edit, (promptTemplateWindowViewModel, OpenAIExecutionModeEnum) => {
-                // PromptTemplate = promptTemplateWindowViewModel.PromptItem;
+                // PromptTemplate = promptTemplateWindowViewModel.ClipboardPromptItem;
             });
         }
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
@@ -551,6 +574,15 @@ namespace ClipboardApp {
             // フォルダ内のアイテムを再読み込み
             SelectedFolder?.LoadFolderCommand.Execute();
         });
+        // 課題リストを生成する処理 複数アイテム処理可
+        public SimpleDelegateCommand<object> GenerateIssuesCommand => new((parameter) => {
+            // 選択中のアイテムすべてに対して処理を行う
+            foreach (ClipboardItemViewModel item in SelectedItems) {
+                item.GenerateIssuesCommand.Execute();
+            }
+            // フォルダ内のアイテムを再読み込み
+            SelectedFolder?.LoadFolderCommand.Execute();
+        });
 
         // ベクトルを生成する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
@@ -578,7 +610,7 @@ namespace ClipboardApp {
         });
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteItemCommand => new((parameter) => {
-            PasteFromClipboardCommandExecute(this);
+            PasteFromClipboardCommandExecute(this, true, (items) => { });
         });
 
         // Ctrl + M が押された時の処理

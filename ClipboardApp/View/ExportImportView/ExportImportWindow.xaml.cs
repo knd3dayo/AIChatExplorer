@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Folder;
 
 namespace ClipboardApp.View.ExportImportView {
     /// <summary>
