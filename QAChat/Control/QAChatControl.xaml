@@ -361,6 +361,10 @@
                         Content="{Binding StringResources.ClearContent, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
+                        Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.ReloadContent, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{Binding StringResources.Close, Mode=OneTime}" />

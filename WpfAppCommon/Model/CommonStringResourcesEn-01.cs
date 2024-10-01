@@ -937,6 +937,9 @@ namespace WpfAppCommon.Model {
         // Clear Content
         public override string ClearContent { get; } = "Clear Content";
 
+        // Reload Content
+        public override string ReloadContent { get; } = "Reload Content";
+
         public override string ExtractedText { get; } = "Extracted Text";
 
     }
