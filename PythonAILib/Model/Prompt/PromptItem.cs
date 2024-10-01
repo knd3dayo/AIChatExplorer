@@ -96,10 +96,7 @@ namespace PythonAILib.Model.Prompt {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             // TitleGenerationをDBから取得
             PromptItem? titleGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.TitleGeneration.ToString());
-            if (titleGeneration != null) { 
-                libManager.DataFactory.DeletePromptTemplate(titleGeneration); 
-                titleGeneration = null;
-            }
+
             if (titleGeneration == null) {
                 titleGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
@@ -114,10 +111,7 @@ namespace PythonAILib.Model.Prompt {
             }
             // BackgroundInformationGenerationをDBから取得
             PromptItem? backgroundInformationGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-            if (backgroundInformationGeneration != null) {
-                libManager.DataFactory.DeletePromptTemplate(backgroundInformationGeneration);
-                backgroundInformationGeneration = null;
-            }
+
             if (backgroundInformationGeneration == null) {
                 backgroundInformationGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
@@ -131,11 +125,6 @@ namespace PythonAILib.Model.Prompt {
             }
             // SummaryGenerationをDBから取得
             PromptItem? summaryGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.SummaryGeneration.ToString());
-
-            if (summaryGeneration != null) {
-                libManager.DataFactory.DeletePromptTemplate(summaryGeneration);
-                summaryGeneration = null;
-            }
 
             if (summaryGeneration == null) {
                 summaryGeneration = new PromptItem() {
@@ -151,11 +140,6 @@ namespace PythonAILib.Model.Prompt {
             }
             // IssuesGenerationをDBから取得
             PromptItem? issuesGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.IssuesGeneration.ToString());
-
-            if (issuesGeneration != null) {
-                libManager.DataFactory.DeletePromptTemplate(issuesGeneration);
-                issuesGeneration = null;
-            }
 
             if (issuesGeneration == null) {
                 issuesGeneration = new PromptItem() {
