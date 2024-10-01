@@ -21,13 +21,13 @@ namespace PythonAILib.Resource {
         public override string UnknownContentDescription { get; } = "For unclear sentences, please refer to the following explanation";
 
         // SummaryGeneration
-        public override string SummaryGeneration { get; } = "Summary generation";
+        public override string SummaryGeneration { get; } = "Summary";
         // Please generate a summary of 100 to 200 characters from the following text.\n
         public override string SummaryGenerationPrompt { get; } = "Please generate a summary of 100 to 200 characters from the following text.\n";
 
 
         // TODO List Generation
-        public override string IssuesGeneration { get; } = "TODO List Generation";
+        public override string IssuesGeneration { get; } = "TODO List";
 
         // "Please generate a TODO list from the following text.\n"
         public override string IssuesGenerationPrompt { get; } = "Please generate a TODO list from the following text. \n";
@@ -37,7 +37,7 @@ namespace PythonAILib.Resource {
 
 
         // BackgroundInformationGeneration
-        public override string BackgroundInformationGeneration { get; } = "Background information generation";
+        public override string BackgroundInformationGeneration { get; } = "Background information";
 
         // Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n
         public override string BackgroundInformationGenerationPrompt { get; } = "Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n";

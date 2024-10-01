@@ -7,6 +7,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
 using QAChat.View.TagView;
 using WpfAppCommon.Utils;
 
@@ -217,8 +218,10 @@ namespace ClipboardApp.ViewModel {
                 BackgroundInfoPanel backgroundInformationPanel = new() {
                     DataContext = this,
                 };
+                PromptItem item1 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
+
                 TabItem backgroundInformationTabItem = new() {
-                    Header = StringResources.BackgroundInformation,
+                    Header = item1.Description,
                     Content = backgroundInformationPanel,
                     Height = Double.NaN,
                     Width = Double.NaN,
@@ -233,8 +236,11 @@ namespace ClipboardApp.ViewModel {
                 IssuePanel issuesPanel = new() {
                     DataContext = this,
                 };
+                PromptItem item2 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
+
+
                 TabItem issuesTabItem = new() {
-                    Header = StringResources.IssuesList,
+                    Header = item2.Description,
                     Content = issuesPanel,
                     Height = Double.NaN,
                     Width = Double.NaN,
@@ -248,8 +254,11 @@ namespace ClipboardApp.ViewModel {
                 SummaryPanel summaryPanel = new() {
                     DataContext = this,
                 };
+
+                PromptItem item3 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
+
                 TabItem summaryTabItem = new() {
-                    Header = StringResources.Summary,
+                    Header = item3.Description,
                     Content = summaryPanel,
                     Height = Double.NaN,
                     Width = Double.NaN,

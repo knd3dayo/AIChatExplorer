@@ -19,7 +19,7 @@ namespace PythonAILib.Model.Chat {
                 throw new Exception("PromptItem not found");
             }
             // promptItemのResultTypeがTextの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.Text) {
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TextContent) {
                 // promptItemのChatTypeがNormalの場合、ChatRequest.CreateChatを実行
                 if (promptItem.ChatType == PromptItem.ChatTypeEnum.Normal) {
                     string result = ChatUtil.CreateNormalChatResultText(openAIProperties, content, promptItem.Prompt);
@@ -36,7 +36,7 @@ namespace PythonAILib.Model.Chat {
                 }
             }
             // promptItemのResultTypeがListの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.List) {
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.ListContent) {
                 // promptItemのChatTypeがNormalの場合、ChatRequest.CreateChatを実行
                 if (promptItem.ChatType == PromptItem.ChatTypeEnum.Normal) {
                     List<string> result = ChatUtil.CreateNormalResultBulletedList(openAIProperties, content, promptItem.Prompt);

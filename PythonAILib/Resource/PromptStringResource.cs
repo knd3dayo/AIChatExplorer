@@ -18,13 +18,13 @@ namespace PythonAILib.Resource
 
 
         // サマリー生成
-        public virtual string SummaryGeneration { get; } = "サマリー生成";
+        public virtual string SummaryGeneration { get; } = "サマリー";
 
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
         public virtual string SummaryGenerationPrompt { get; } = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
 
         // 課題リスト生成
-        public virtual string IssuesGeneration { get; } = "課題リスト生成";
+        public virtual string IssuesGeneration { get; } = "課題リスト";
 
         // "以下の文章から課題リストを生成してください。\n"
         public virtual string IssuesGenerationPrompt { get; } = "以下の文章から課題リストを生成してください。\n";
@@ -33,7 +33,7 @@ namespace PythonAILib.Resource
         public virtual string JsonStringListGenerationPrompt { get; } = "出力は箇条書きの形式として、JSON形式で{result:[箇条書きの項目]}でお願いします。\n";
 
         // BackgroundInformationGeneration
-        public virtual string BackgroundInformationGeneration { get; } = "背景情報生成";
+        public virtual string BackgroundInformationGeneration { get; } = "背景情報";
 
         // "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n"
         public virtual string BackgroundInformationGenerationPrompt { get; } = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
