@@ -6,6 +6,7 @@
     xmlns:local="clr-namespace:WpfCommonApp.Control.StatusMessage"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:StatusMessageWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -15,9 +16,6 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </UserControl.Resources>
-    <UserControl.DataContext>
-        <local:StatusMessageWindowViewModel />
-    </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

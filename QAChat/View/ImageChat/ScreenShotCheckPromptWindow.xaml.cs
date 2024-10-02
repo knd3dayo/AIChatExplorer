@@ -14,8 +14,7 @@ namespace QAChat.View.ImageChat
 
         public static void OpenScreenShotCheckPromptWindow(List<ScreenShotCheckCondition> conditions, Action<List<ScreenShotCheckCondition>> action) {
             ScreenShotCheckPromptWindow screenShotCheckPromptWindow = new();
-            ScreenShotCheckPromptWindowViewModel viewModel = (ScreenShotCheckPromptWindowViewModel)screenShotCheckPromptWindow.DataContext;
-            viewModel.Initialize(conditions, action);
+            screenShotCheckPromptWindow.DataContext = new ScreenShotCheckPromptWindowViewModel(conditions, action);
 
             screenShotCheckPromptWindow.ShowDialog();
         }

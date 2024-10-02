@@ -23,7 +23,12 @@ def capture_stdout_stderr(func):
         buffer = StringIO()
         sys.stdout = buffer
         sys.stderr = buffer
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except Exception as e:
+            # エラーが発生した場合はエラーメッセージを出力
+            print(e)
+            result = None
         # strout,stderrorを元に戻す
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__

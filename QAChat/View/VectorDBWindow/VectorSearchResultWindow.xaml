@@ -10,10 +10,8 @@
     Title="{Binding StringResources.VectorSearchResult}"
     Width="800"
     Height="450"
+    d:DataContext="d:DesignInstance Type=VectorSearchResultWindowViewModel"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:VectorSearchResultWindowViewModel />
-    </Window.DataContext>
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />

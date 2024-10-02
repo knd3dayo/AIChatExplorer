@@ -14,7 +14,7 @@ namespace QAChat.ViewModel.ImageChat {
         Action<List<ScreenShotCheckCondition>> Action { get; set; } = (parameter) => { };
 
         // Initialize
-        public void Initialize(List<ScreenShotCheckCondition> conditions, Action<List<ScreenShotCheckCondition>> action) {
+        public ScreenShotCheckPromptWindowViewModel(List<ScreenShotCheckCondition> conditions, Action<List<ScreenShotCheckCondition>> action) {
             ScreenShotCheckItems = [.. conditions];
             OnPropertyChanged(nameof(ScreenShotCheckItems));
             Action = action;

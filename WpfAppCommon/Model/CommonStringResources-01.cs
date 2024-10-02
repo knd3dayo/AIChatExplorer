@@ -1632,6 +1632,9 @@ namespace WpfAppCommon.Model {
         // 本文をクリア
         public virtual string ClearContent { get; } = "本文をクリア";
 
+        // 本文を再読み込み
+        public virtual string ReloadContent { get; } = "本文を再読み込み";
+
         // 抽出したテキスト
         public virtual string ExtractedText { get; } = "抽出したテキスト";
 
