@@ -12,10 +12,8 @@ namespace QAChat.View.VectorDBWindow {
         }
 
         public static void OpenVectorSearchResultWindow(List<VectorSearchResult> vectorSearchResults) {
-            VectorSearchResultWindow vectorSearchResultWindow = new ();
-            VectorSearchResultWindowViewModel vectorSearchResultWindowViewModel = (VectorSearchResultWindowViewModel) vectorSearchResultWindow.DataContext;
-            vectorSearchResultWindowViewModel.Initialize(vectorSearchResults);
-            vectorSearchResultWindow.DataContext = vectorSearchResultWindowViewModel;
+            VectorSearchResultWindow vectorSearchResultWindow = new();
+            vectorSearchResultWindow.DataContext = new VectorSearchResultWindowViewModel(vectorSearchResults);
             vectorSearchResultWindow.ShowDialog();
         }
     }

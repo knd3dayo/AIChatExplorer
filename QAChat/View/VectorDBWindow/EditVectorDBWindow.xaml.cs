@@ -12,9 +12,9 @@ namespace QAChat.View.VectorDBWindow
         }
 
         public static void OpenEditVectorDBWindow(VectorDBItemViewModel itemViewModel, Action<VectorDBItemViewModel> callback) {
-            EditVectorDBWindow editVectorDBWindow = new();
-            EditVectorDBWindowViewModel editVectorDBWindowViewModel = (EditVectorDBWindowViewModel)editVectorDBWindow.DataContext;
-            editVectorDBWindowViewModel.Initialize(itemViewModel, callback);
+            EditVectorDBWindow editVectorDBWindow = new() {
+                DataContext = new EditVectorDBWindowViewModel(itemViewModel, callback)
+            };
             editVectorDBWindow.ShowDialog();
         }
     }

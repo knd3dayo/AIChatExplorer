@@ -24,12 +24,13 @@ namespace WpfAppCommon.Control {
         // ステータスバーをクリックしたときの処理
         public static SimpleDelegateCommand<object> OpenStatusMessageWindowCommand => new((parameter) => {
             StatusMessageWindow userControl = new StatusMessageWindow();
+            StatusMessageWindowViewModel statusMessageWindowViewModel = new StatusMessageWindowViewModel();
+            userControl.DataContext = statusMessageWindowViewModel;
             Window window = new() {
                 Title = CommonStringResources.Instance.Log,
                 Content = userControl
             };
-            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)userControl.DataContext;
-            statusMessageWindowViewModel.Initialize();
+
             window.ShowDialog();
         });
 

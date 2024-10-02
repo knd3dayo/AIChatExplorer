@@ -13,7 +13,7 @@ namespace WpfCommonApp.Control.StatusMessage {
         }
 
 
-        public void Initialize() {
+        public StatusMessageWindowViewModel() {
             // メッセージを初期化
             Message = string.Join("\n", StatusText.Messages);
         }

@@ -13,10 +13,8 @@
     Title="{Binding StringResources.ScreenShotCheckPromptWindowTitle, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="d:DdesignInstance Type=local:ScreenShotCheckPromptWindowViewModel"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:ScreenShotCheckPromptWindowViewModel x:Name="datacontext" />
-    </Window.DataContext>
     <Window.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

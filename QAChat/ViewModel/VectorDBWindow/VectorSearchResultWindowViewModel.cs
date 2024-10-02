@@ -7,7 +7,7 @@ namespace QAChat.ViewModel.VectorDBWindow {
     public class VectorSearchResultWindowViewModel : QAChatViewModelBase {
 
 
-        public void Initialize(List<VectorSearchResult> vectorSearches) {
+        public VectorSearchResultWindowViewModel(List<VectorSearchResult> vectorSearches) {
             VectorSearchResults = [.. vectorSearches];
             OnPropertyChanged(nameof(VectorSearchResults));
         }

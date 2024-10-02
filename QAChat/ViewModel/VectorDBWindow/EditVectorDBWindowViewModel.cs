@@ -66,7 +66,7 @@ namespace QAChat.ViewModel.VectorDBWindow {
 
         private Action<VectorDBItemViewModel> AfterUpdate { get; set; } = (promptItem) => { };
         // 初期化
-        public void Initialize(VectorDBItemViewModel itemViewModel, Action<VectorDBItemViewModel> afterUpdate) {
+        public EditVectorDBWindowViewModel(VectorDBItemViewModel itemViewModel, Action<VectorDBItemViewModel> afterUpdate) {
             ItemViewModel = itemViewModel;
 
             AfterUpdate = afterUpdate;

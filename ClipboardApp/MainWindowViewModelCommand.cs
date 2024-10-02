@@ -438,12 +438,11 @@ namespace ClipboardApp {
         // ステータスバーをクリックしたときの処理
         public static void OpenStatusMessageWindowCommand() {
             StatusMessageWindow userControl = new StatusMessageWindow();
+            userControl.DataContext = new StatusMessageWindowViewModel();
             Window window = new() {
                 Title = "Status Message",
                 Content = userControl
             };
-            StatusMessageWindowViewModel statusMessageWindowViewModel = (StatusMessageWindowViewModel)userControl.DataContext;
-            statusMessageWindowViewModel.Initialize();
             window.ShowDialog();
 
         }
