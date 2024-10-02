@@ -175,8 +175,6 @@ class LangChainVectorDB:
 
 
     def _add_document_list(self, content_text: str, description_text: str, source: str, source_url: str, content_type:str="text" , image_url="" ):
-        # doc_idを生成
-        doc_id = str(uuid.uuid4())
         
         # MultiVectorRetrieverの場合はchunk_size=MultiVectorRetrieverのChunkSize
         if self.vector_db_props.IsUseMultiVectorRetriever:
@@ -189,11 +187,15 @@ class LangChainVectorDB:
             text_list = self._split_text(content_text, chunk_size=chunk_size)
             document_list = []
             for text in text_list:
+                # text毎にdoc_idを生成
+                doc_id = str(uuid.uuid4())
                 document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type})
                 document_list.append(document)
     
         elif content_type == "image":
             # 画像の場合はそのままDocumentのリストを返す
+            # doc_idを生成
+            doc_id = str(uuid.uuid4())
             document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type, "image_url": image_url})
             document_list.append(document)
 
