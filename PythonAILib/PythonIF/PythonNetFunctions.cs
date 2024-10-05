@@ -1,9 +1,7 @@
-using System.Drawing;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Windows.Shapes;
 using Python.Runtime;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
@@ -13,8 +11,7 @@ using PythonAILib.Resource;
 using PythonAILib.Utils;
 
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public class PythonTask(Action action) : Task(action) {
 
         public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
@@ -171,7 +168,7 @@ namespace PythonAILib.PythonIF
         // 通常のOpenAIChatを実行する
         public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
 
-            string chat_history_json =chatRequest.CreateOpenAIRequestJSON(props);
+            string chat_history_json = chatRequest.CreateOpenAIRequestJSON(props);
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -217,7 +214,7 @@ namespace PythonAILib.PythonIF
                 }
             });
         }
-                    
+
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
@@ -380,7 +377,7 @@ namespace PythonAILib.PythonIF
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, prompt , chatHistoryJson);
+                string resultString = function_object(propsJson, prompt, chatHistoryJson);
                 return resultString;
             });
 
@@ -460,7 +457,7 @@ namespace PythonAILib.PythonIF
         // ImportFromExcelを実行する
         public CommonDataTable ImportFromExcel(string filePath) {
             // ResultContainerを作成
-            CommonDataTable  result = new([]);
+            CommonDataTable result = new([]);
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す

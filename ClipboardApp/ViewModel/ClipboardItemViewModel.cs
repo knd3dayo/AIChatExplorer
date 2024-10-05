@@ -7,6 +7,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
+using ClipboardApp.View.SelectVectorDBView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -14,6 +15,7 @@ using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.TagWindow;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -442,8 +444,31 @@ namespace ClipboardApp.ViewModel
                 vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding));
             });
             // ベクトル検索結果ウィンドウを開く
-            VectorSearchResultWindow.OpenVectorSearchResultWindow(vectorSearchResults);
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
+            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
+                vectorSearchWindowViewModel.InputText = ClipboardItem.Content + "\n" + ClipboardItem.BackgroundInfo;
+            } else {
+                vectorSearchWindowViewModel.InputText = ClipboardItem.Content;
+            }
+            vectorSearchWindowViewModel.VectorDBItem = ClipboardItem.GetVectorDBItem();
+            vectorSearchWindowViewModel.InputText = ClipboardItem.Content;
+            vectorSearchWindowViewModel.VectorSearchResults = [.. vectorSearchResults];
 
+            // ベクトルDBアイテムを選択したときのアクション
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
+                if (MainWindowViewModel.ActiveInstance == null) {
+                    LogWrapper.Error("MainWindowViewModelがNullです");
+                    return;
+                }
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
+                    foreach (var item in selectedItems) {
+                        vectorDBItems.Add(item);
+                    }
+                });
+            };
+
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+            // ベクトル検索結果を更新
         });
 
 

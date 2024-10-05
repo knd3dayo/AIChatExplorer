@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using NLog;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
-    public class CustomLogger : Logger{
+    public class CustomLogger : Logger {
 
         public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
 

@@ -11,15 +11,9 @@ namespace WpfAppCommon.Control {
         // ステータスバーのテキスト
         public StatusText StatusText {
             get {
-                if (window == null) {
-                    return new StatusText();
-                }
-                return StatusText.GetStatusText(window);
+                return Tools.StatusText;
             }
         }
-
-        // ステータスバーをクリックした時の処理の実装
-        public static Action? OpenStatusMessageWindow { get; set; }
 
         // ステータスバーをクリックしたときの処理
         public static SimpleDelegateCommand<object> OpenStatusMessageWindowCommand => new((parameter) => {
@@ -33,7 +27,7 @@ namespace WpfAppCommon.Control {
 
             window.ShowDialog();
         });
-
+        
         // ロード時の処理
         private Window? window;
         public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {

@@ -2,14 +2,16 @@ from dotenv import load_dotenv
 import os, json
 import base64
 from mimetypes import guess_type
+from typing import Any
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
-        self.OpenAIKey:str = props_dict.get("OpenAIKey")
-        self.OpenAICompletionModel:str = props_dict.get("OpenAICompletionModel")
-        self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel")
-        self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel")
-        
+        self.OpenAIKey:str = props_dict.get("OpenAIKey", "")
+        self.OpenAICompletionModel:str = props_dict.get("OpenAICompletionModel", "")
+        self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel", "")
+        self.OpenAIWhisperModel:str = props_dict.get("OpenAIWhisperModel" , "")
+        self.OpenAITranscriptionModel:str = props_dict.get("OpenAITranscriptionModel", "")
+
         self.AzureOpenAI =props_dict.get("AzureOpenAI", False)
         if type(self.AzureOpenAI) == str:
             self.AzureOpenAI = self.AzureOpenAI.upper() == "TRUE"
@@ -97,12 +99,12 @@ class OpenAIProps:
 class VectorDBProps:
     def __init__(self, props_dict: dict):
         # VectorStoreの設定
-        self.VectorDBURL = props_dict.get("VectorDBURL")
-        self.VectorDBTypeString = props_dict.get("VectorDBTypeString")
-        self.Name = props_dict.get("VectorDBName", None)
-        self.VectorDBDescription = props_dict.get("VectorDBDescription", None)
+        self.VectorDBURL: str = props_dict.get("VectorDBURL", "")
+        self.VectorDBTypeString :str = props_dict.get("VectorDBTypeString", "")
+        self.Name:str = props_dict.get("VectorDBName", "")
+        self.VectorDBDescription:str = props_dict.get("VectorDBDescription", "")
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する
-        if self.VectorDBDescription == None:
+        if not self.VectorDBDescription:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
         
         # チャンクサイズ
@@ -159,7 +161,7 @@ def get_vector_db_settings() -> VectorDBProps:
         "VectorDBURL": os.getenv("VECTOR_DB_URL"),
         "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
         "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
-        "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER").upper() == "TRUE",
+        "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
         "DocStoreURL": os.getenv("DOC_STORE_URL"),
         "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
         # チャンクサイズ
@@ -190,21 +192,21 @@ def local_image_to_data_url(image_path) -> str:
 
     
 # openai_chat用のパラメーターを作成する
-def create_openai_chat_parameter_dict(model: str, messages_json: str, templature : float = None, json_mode : bool = False) -> dict:
-    params = {}
+def create_openai_chat_parameter_dict(model: str, messages_json: str, templature : float =0.5, json_mode : bool = False) -> dict:
+    params : dict [ str, Any]= {}
     params["model"] = model
     params["messages"] = json.loads(messages_json)
     if templature:
-        params["temperature"] = templature
+        params["temperature"] = str(templature)
     if json_mode:
-        params["response_format"] = {"type": "json_object"}
+        params["response_format"]= {"type": "json_object"}
     return params
 
 # openai_chat_with_vision用のパラメーターを作成する
-def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image_file_name_list: list, templature : float = None, json_mode : bool = False, max_tokens = None) -> dict:
+def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image_file_name_list: list, templature : float =0.5, json_mode : bool = False, max_tokens = None) -> dict:
     # messagesの作成
     messages = []
-    content = [{"type": "text", "text": prompt}]
+    content: list[dict [ str, Any]]  = [{"type": "text", "text": prompt}]
 
     for image_file_name in image_file_name_list:
         image_data_url = local_image_to_data_url(image_file_name)
@@ -214,7 +216,7 @@ def create_openai_chat_with_vision_parameter_dict(model: str, prompt: str, image
     messages.append(role_user_dict)
 
     # 入力パラメーターの設定
-    params = {}
+    params : dict [ str, Any]= {}
     params["messages"] = messages
     params["model"] = model
     if templature:

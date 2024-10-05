@@ -307,7 +307,7 @@ namespace ClipboardApp {
                         LogWrapper.Error("MainWindowViewModelがNullです");
                         return;
                     }
-                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, (selectedItems) => {
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, false, (selectedItems) => {
                         foreach (var item in selectedItems) {
                             vectorDBItems.Add(item);
                         }

@@ -2,7 +2,7 @@
 import os, json, sys, uuid
 sys.path.append("python")
 
-from ast import Tuple
+from typing import Tuple, List
 from langchain_community.vectorstores import Chroma
 from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
@@ -39,7 +39,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
             **params
             )
 
-    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
+    def _get_document_ids_by_tag(self, name:str="", value:str="") -> Tuple[List, List]:
         ids=[]
         metadata_list = []
         doc_dict = self.db.get(where={name: value})

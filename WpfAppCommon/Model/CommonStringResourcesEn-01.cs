@@ -646,6 +646,13 @@ namespace WpfAppCommon.Model {
         // -- QAChatControl --
         public override string ExperimentalFunction1 { get; } = "Experimental function 1";
         public override string VectorDBFolder { get; } = "Vector DB (folder)";
+
+        // ここをクリックしてベクトルDB(フォルダ)を追加
+        public override string ClickHereToAddVectorDBFolder { get; } = "Click here to add Vector DB (Folder)";
+
+        // ベクトルDB選択
+        public override string SelectVectorDB { get; } = "Select Vector DB";
+
         public override string ExcludeFromList { get; } = "Exclude from list";
         public override string VectorDB { get; } = "Vector DB";
         public override string VectorDBExternal { get; } = "Vector DB (external)";
@@ -708,7 +715,6 @@ namespace WpfAppCommon.Model {
         public override string DetectedAnInfiniteLoopInCopyMoveProcessing { get; } = "Detected an infinite loop in copy/move processing";
         public override string SelectPromptTemplate { get; } = "Select prompt template";
         public override string SelectPythonScript { get; } = "Select Python script";
-        public override string SelectVectorDB { get; } = "Select Vector DB";
         public override string CannotCopyOrMoveToNonStandardFolders { get; } = "Cannot copy or move to non-standard folders";
         public override string RootFolderViewModelIsNull { get; } = "RootFolderViewModel is null";
 

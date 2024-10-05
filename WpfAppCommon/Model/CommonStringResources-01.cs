@@ -866,6 +866,9 @@ namespace WpfAppCommon.Model {
         // ここをクリックしてベクトルDB(フォルダ)を追加
         public virtual string ClickHereToAddVectorDBFolder { get; } = "ここをクリックしてベクトルDB(フォルダ)を追加";
 
+        // ベクトルDB選択
+        public virtual string SelectVectorDB { get; } = "ベクトルDB選択";
+
         // リストから除外
         public virtual string ExcludeFromList { get; } = "リストから除外";
 
@@ -1053,9 +1056,7 @@ namespace WpfAppCommon.Model {
         // PythonScriptを選択してください。
         public virtual string SelectPythonScript { get; } = "PythonScriptを選択してください。";
 
-        // "VectorDBを選択してください。"
-        public virtual string SelectVectorDB { get; } = "VectorDBを選択してください。";
-
+        
         // 標準フォルダ以外にはコピーまたは移動できません。
         public virtual string CannotCopyOrMoveToNonStandardFolders { get; } = "標準フォルダ以外にはコピーまたは移動できません。";
 

@@ -1,19 +1,14 @@
 
-from ast import Tuple
+from typing import Any, Sequence, Tuple, List
 from calendar import c
-from importlib import metadata
-import os, json, sys, uuid
-from pydoc import doc
-from telnetlib import DO
-from langchain_community.callbacks import get_openai_callback
+import sys
 
 from langchain_postgres import PGVector
 from langchain_postgres.vectorstores import PGVector
 from sqlalchemy.orm import Session
-from sqlalchemy import create_engine
+import sqlalchemy
 from sqlalchemy.sql import text
 
-from langchain_community.vectorstores.pgembedding import EmbeddingStore
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
@@ -46,27 +41,26 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
             **params
             )
 
-    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
-        engine = create_engine(self.vector_db_props.VectorDBURL)
+    def _get_document_ids_by_tag(self, name:str="", value:str="") -> Tuple[List, List]:
+        engine = sqlalchemy.create_engine(self.vector_db_props.VectorDBURL)
         with Session(engine) as session:
             stmt = text("select uuid from langchain_pg_collection where name=:name")
             stmt = stmt.bindparams(name=self.vector_db_props.CollectionName)
             rows  = session.execute(stmt).fetchone()
-            if (len(rows) == 0):
-                return []
+            if rows is None or len(rows) == 0:
+                return [], []
             collection_id = rows[0]
             print(collection_id)
             stmt = text("select id, cmetadata from langchain_pg_embedding where collection_id=:collection_id and cmetadata->>:name=:value")
             stmt = stmt.bindparams(collection_id=collection_id, name=name, value=value)
-            rows = session.execute(stmt).all()
-            document_ids = [row[0] for row in rows]
-            metadata_list = [row[1] for row in rows]
+            rows2: Sequence[Any] = session.execute(stmt).all() 
+            document_ids = [row[0] for row in rows2]
+            metadata_list = [row[1] for row in rows2]
             
             return document_ids, metadata_list
 
     def _save(self, documents:list=[]):
         self.db.add_documents(documents)
-        
  
     def _delete(self, doc_ids:list=[]):
         if len(doc_ids) == 0:

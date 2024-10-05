@@ -5,6 +5,8 @@ from langchain_core.stores import BaseStore
 from typing import Sequence, Optional, Tuple, Iterator, Union, TypeVar
 from sqlalchemy import create_engine
 from sqlalchemy import text
+import abc
+from typing import Any
 
 sys.path.append("python")
 K = TypeVar("K")
@@ -36,7 +38,7 @@ class SQLDocStore(BaseStore):
     def mget(self, keys: Sequence[K]) -> list[Optional[V]]:
         # documentsテーブルから指定されたkeyのレコードを取得
         connection = self.engine.connect()
-        result = []
+        result:list[Any] = []
         for key in keys:
             sql = text("SELECT data FROM documents WHERE id = :key")
             row = connection.execute(sql, parameters=dict(key = key)).fetchall()
@@ -50,7 +52,7 @@ class SQLDocStore(BaseStore):
         return result
     
     
-    def mset(self, key_value_pairs: Sequence[Tuple[K, V]]) -> None:
+    def mset(self, key_value_pairs: Sequence[Tuple[K, Document]]) -> None:
         # documentsテーブルにkey-valueのペアを保存. keyが既に存在する場合は上書き
         connection = self.engine.connect()
         for key, value in key_value_pairs:
@@ -63,6 +65,6 @@ class SQLDocStore(BaseStore):
         connection.commit()
         connection.close()
     
-    def yield_keys(*, prefix: Optional[str] = None) -> Union[Iterator[K], Iterator[str]]:
-        pass
+    def yield_keys(self, *, prefix: Optional[str] = None) -> Union[Iterator[K], Iterator[str]]:
+        return iter([])
     

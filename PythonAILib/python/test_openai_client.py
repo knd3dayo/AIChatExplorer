@@ -31,7 +31,7 @@ if __name__ == "__main__":
     
     import openai_props
     # envファイルからpropsを取得する
-    props = openai_props.get_props()
+    props = openai_props.env_to_props()
     openai_client = OpenAIClient(props)
 
     # chatを実行
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     result = openai_client.openai_chat(input_json_002, True)
     print(result)
     # list_openai_modelsを実行
-    result = openai_client.list_openai_models()
+    model_list: list[str] = openai_client.list_openai_models()
     print(result)
     
     # gpt4-vのchatを実行

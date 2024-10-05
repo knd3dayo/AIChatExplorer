@@ -7,22 +7,24 @@ using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class SelectVectorDBItemWindowViewModel : ObservableObject {
 
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public Action<List<VectorDBItem>> Action { get; set; }
 
+        public bool CloseAfterSelect { get; set; }
+
         public ClipboardFolderViewModel FolderViewModel { get; set; }
-        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<List<VectorDBItem>> action) {
+        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
             Action = action;
             FolderViewModel = rootFolderViewModel;
+            CloseAfterSelect = closeAfterSelect;
         }
 
         private bool isFolder = true;
-        public bool IsFolder { 
+        public bool IsFolder {
             get {
                 return isFolder;
             }
@@ -50,7 +52,6 @@ namespace ClipboardApp.ViewModel
                     vectorDBItemBases.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
                     Action(vectorDBItemBases);
                 });
-                return;
             }
             if (IsExternal) {
                 List<VectorDBItem> vectorDBItemBases = [];
@@ -58,9 +59,10 @@ namespace ClipboardApp.ViewModel
                     vectorDBItemBases.Add(vectorDBItemBase);
                     Action(vectorDBItemBases);
                 });
-                return;
             }
-            window.Close();
+            if (CloseAfterSelect) {
+                window.Close();
+            }
         });
 
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {

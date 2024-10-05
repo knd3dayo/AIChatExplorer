@@ -79,7 +79,7 @@ namespace PythonAILib.Resource {
         public virtual string TemplateScript { get; } = "python/script_template.py";
 
         // OpenAI用のPythonスクリプト
-        public virtual string WpfAppCommonOpenAIScript { get; } = "python/ai_app.py";
+        public virtual string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
 
         // その他用のPythonスクリプト
         public virtual string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";

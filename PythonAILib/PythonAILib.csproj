@@ -11,6 +11,7 @@
     <None Remove="python\ai_app.py" />
     <None Remove="python\ai_app_pyocr.py" />
     <None Remove="python\ai_app_spacy.py" />
+    <None Remove="python\ai_app_wrapper.py" />
     <None Remove="python\excel_util.py" />
     <None Remove="python\file_extractor.py" />
     <None Remove="python\flask_app.py" />
@@ -37,6 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="python\ai_app_wrapper.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python\excel_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -76,7 +80,7 @@
     <EmbeddedResource Include="python\langchain_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python\langchain_vector_db_faiss.py">
+    <EmbeddedResource Include="python\dev\langchain_vector_db_faiss.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python\dev\llamaindex_client.py">

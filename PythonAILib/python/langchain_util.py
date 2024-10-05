@@ -3,10 +3,9 @@ import json, sys
 from re import search
 from langchain.prompts import PromptTemplate
 from langchain.agents import create_openai_tools_agent, AgentExecutor
-from langchain.prompts import PromptTemplate
 from langchain.tools import Tool
 from langchain.docstore.document import Document
-from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain
+from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain, BaseQAWithSourcesChain
 from langchain.tools import Tool
 from langchain.docstore.document import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
@@ -18,6 +17,8 @@ sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from openai_props import OpenAIProps, VectorDBProps
 from langchain_vector_db import get_vector_db
+
+from typing import Any
 
 class RetrieverUtil:
     
@@ -131,7 +132,7 @@ class RetrievalQAUtil:
         return prompt_template_str
 
     
-    def __create_retrieval_qa(self, vector_db_props:VectorDBProps, prompt_template_str: str = None) -> RetrievalQAWithSourcesChain: 
+    def __create_retrieval_qa(self, vector_db_props:VectorDBProps, prompt_template_str: str = "") -> BaseQAWithSourcesChain: 
         '''
         # 関数の説明
         # prompt_template_strからPromptTemplateを作成する。
@@ -158,7 +159,7 @@ class RetrievalQAUtil:
                 template=prompt_template_str, 
                 # for stuff 
                 input_variables=["question", "summaries"],
-                output_variables=["answer", "source_documents"]
+                # output_variables=["answer", "source_documents"]
                 # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
                 # input_variables=["question", "context_str"],
                 # output_variables=["source_documents"]   
@@ -276,9 +277,11 @@ class RetrievalQAUtil:
             "tool_call_id": step[0].tool_call_id,
             "output": str(step[1]),
         }
-    def convert_to_langchain_chat_history(self, chat_history_json: str):
+
+    @classmethod
+    def convert_to_langchain_chat_history(cls, chat_history_json: str):
         # openaiのchat_historyをlangchainのchat_historyに変換
-        langchain_chat_history = []
+        langchain_chat_history : list[Any]= []
         chat_history = json.loads(chat_history_json)
         for chat in chat_history:
             role = chat["role"]
@@ -292,8 +295,7 @@ class RetrievalQAUtil:
         return langchain_chat_history
 
 # ベクトル検索を行う
-def run_vector_search( props_json: str, request_json: str):    
-    openai_props, vector_db_item, query, search_kwargs = process_vector_search_parameter(props_json, request_json)
+def run_vector_search( openai_props: OpenAIProps, vector_db_item : VectorDBProps, query : str, search_kwargs: dict):    
 
     client = LangChainOpenAIClient(openai_props)
 
@@ -303,13 +305,12 @@ def run_vector_search( props_json: str, request_json: str):
     print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
 
     retriever = RetrieverUtil(client, vector_db_item).create_retriever(search_kwargs=search_kwargs)
-    documents = retriever.invoke(query)
+    documents: list[Document] = retriever.invoke(query)
 
     print(f"documents:\n{documents}")
     # documentsの要素からcontent, source, source_urlを取得
     result = []
     for doc in documents:
-        doc: Document
         content = doc.page_content
         source = doc.metadata.get("source", "")
         source_url = doc.metadata.get("source_url", "")
@@ -371,6 +372,7 @@ def process_langchain_chat_parameter(props_json: str, prompt, request_json: str)
     messages.pop()
     # messagesをjson文字列に変換
     chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
+    chat_history = RetrievalQAUtil.convert_to_langchain_chat_history(chat_history_json)
 
     # OpenAIPorpsを生成
     props = json.loads(props_json)
@@ -379,15 +381,17 @@ def process_langchain_chat_parameter(props_json: str, prompt, request_json: str)
 
     # デバッグ出力
     print(f'prompt: {prompt}')
-    print(f'chat_history_json: {chat_history_json}')
+    print(f'chat_history: {chat_history}')
     print('vector db')
     for item in vector_db_props:
         print(f'Name:{item.Name} VectorDBDescription:{item.VectorDBDescription} VectorDBTypeString:{item.VectorDBTypeString} VectorDBURL:{item.VectorDBURL} CollectionName:{item.CollectionName}')
         
-    return openai_props, vector_db_props, prompt, chat_history_json
+    return openai_props, vector_db_props, prompt, chat_history
 
 
-def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], prompt: str, chat_history_json: str = None):
+from typing import Optional
+
+def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], prompt: str, chat_history: Optional[list[Any]] = None):
 
     # langchainのログを出力する
     langchain.verbose = True
@@ -395,12 +399,6 @@ def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], pr
     client = LangChainOpenAIClient(props)
     RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
     ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
-
-    # openaiのchat_historyのjson文字列をlangchainのchat_historyに変換
-    if chat_history_json is not None:
-        chat_history = RetrievalQAUtilInstance.convert_to_langchain_chat_history(chat_history_json)
-    else:
-        chat_history = []
     
     result = ChatAgentExecutorInstance.invoke(
             {

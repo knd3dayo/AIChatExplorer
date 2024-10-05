@@ -11,9 +11,9 @@ namespace ClipboardApp.View.SelectVectorDBView
         public SelectVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenSelectVectorDBWindow(ClipboardFolderViewModel folderViewModel ,Action<List<VectorDBItem>> action) {
+        public static void OpenSelectVectorDBWindow(ClipboardFolderViewModel folderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
             SelectVectorDBWindow window = new();
-            SelectVectorDBItemWindowViewModel viewModel = new(folderViewModel, action);
+            SelectVectorDBItemWindowViewModel viewModel = new(folderViewModel, closeAfterSelect, action);
             window.DataContext = viewModel;
             window.ShowDialog();
         }

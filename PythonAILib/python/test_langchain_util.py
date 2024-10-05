@@ -1,8 +1,8 @@
-from openai_props import OpenAIProps, VectorDBProps, get_props, get_vector_db_settings
+from openai_props import OpenAIProps, VectorDBProps, env_to_props, get_vector_db_settings
 from langchain_util import langchain_chat
 if __name__ == '__main__':
 
-    props:OpenAIProps = get_props()
+    props:OpenAIProps = env_to_props()
     vector_db_items:VectorDBProps = get_vector_db_settings()
 
     question1 = input("質問をどうぞ:")
