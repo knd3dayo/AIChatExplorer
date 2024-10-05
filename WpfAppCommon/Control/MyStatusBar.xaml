@@ -20,11 +20,6 @@
     <UserControl.DataContext>
         <local:MyStatusBarViewModel />
     </UserControl.DataContext>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <Grid>
         <StatusBar
             Name="statusBar1"

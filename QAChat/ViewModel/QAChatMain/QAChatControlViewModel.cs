@@ -10,8 +10,7 @@ using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Model;
 
-namespace QAChat.ViewModel.QAChatMain
-{
+namespace QAChat.ViewModel.QAChatMain {
 
     public partial class QAChatControlViewModel : ObservableObject {
         //初期化
