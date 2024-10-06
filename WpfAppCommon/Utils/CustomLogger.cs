@@ -7,26 +7,23 @@ namespace WpfAppCommon.Utils {
 
         public static Window ActiveWindow { get; set; } = Application.Current.MainWindow;
 
-        public static StatusText StatusText {
+        private static StatusText StatusText {
             get {
-                return StatusText.GetStatusText(ActiveWindow);
+                return Tools.StatusText;
             }
         }
+
         public new void Info(string message) {
             // 親クラスのメソッドを呼び出す
             base.Info(message);
             MainUITask.Run(() => {
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
+                StatusText.Text = message;
             });
         }
         public new void Warn(string message) {
             MainUITask.Run(() => {
                 base.Warn(message);
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
+                StatusText.Text = message;
                 // 開発中はメッセージボックスを表示する
                 System.Windows.MessageBox.Show(ActiveWindow, message);
             });
@@ -35,9 +32,7 @@ namespace WpfAppCommon.Utils {
         public new void Error(string message) {
             MainUITask.Run(() => {
                 base.Error(message);
-                if (StatusText != null) {
-                    StatusText.Text = message;
-                }
+                StatusText.Text = message;
                 System.Windows.MessageBox.Show(ActiveWindow, message);
             });
         }

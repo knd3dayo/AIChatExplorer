@@ -172,9 +172,6 @@ namespace ClipboardApp.Model.Folder {
 
 
         // プロパティ
-        // LiteDBのID
-        public ObjectId Id { get; set; } = ObjectId.Empty;
-
         // 親フォルダのID
         public ObjectId ParentId { get; set; } = ObjectId.Empty;
 
@@ -554,9 +551,10 @@ namespace ClipboardApp.Model.Folder {
 
             // Execute in a separate thread
             Task.Run(() => {
-                string oldReadyText = Tools.StatusText.ReadyText;
+                StatusText statusText = Tools.StatusText;
                 MainUITask.Run(() => {
-                    Tools.StatusText.ReadyText = CommonStringResources.Instance.AutoProcessing;
+                    statusText.InProgressText = CommonStringResources.Instance.AutoProcessing;
+                    statusText.IsInProgress = true;
                 });
                 try {
                     // Apply automatic processing
@@ -570,9 +568,10 @@ namespace ClipboardApp.Model.Folder {
 
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
+
                 } finally {
                     MainUITask.Run(() => {
-                        Tools.StatusText.ReadyText = oldReadyText;
+                        statusText.IsInProgress = false;
                     });
                 }
             });

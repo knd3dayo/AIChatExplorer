@@ -6,6 +6,7 @@
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel.VectorDBWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -24,6 +25,18 @@
         </Style>
         <commonModel:CommonStringResources x:Key="StringResources" />
     </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding ClosedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+
+    </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
@@ -148,7 +161,10 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </DockPanel>
-        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar
+            Grid.Row="4"
+            VerticalAlignment="Bottom"
+            DataContext="{Binding StatusBar}" />
         <ProgressBar
             Grid.Row="1"
             IsIndeterminate="{Binding IsIndeterminate}"

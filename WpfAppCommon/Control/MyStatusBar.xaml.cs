@@ -1,4 +1,8 @@
-﻿using System.Windows.Controls;
+using System.Windows;
+using System.Windows.Controls;
+using WpfAppCommon.Model;
+using WpfAppCommon.Utils;
+using WpfCommonApp.Control.StatusMessage;
 
 namespace WpfAppCommon.Control {
     /// <summary>

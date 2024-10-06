@@ -18,9 +18,6 @@ namespace ClipboardApp {
 
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
-
-            // StatusTextのスレッドを停止
-            StatusText.DisposeAll();
         }
     }
 

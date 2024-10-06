@@ -9,6 +9,7 @@ using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using QAChat.View.TagView;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
@@ -46,9 +47,8 @@ namespace ClipboardApp.ViewModel {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            Tools.StatusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
-            // StatusText.Textにフォルダ名を設定
-            Tools.StatusText.Text = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
+            StatusText statusText = Tools.StatusText;
+            statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
         }
 
         private string title = "";

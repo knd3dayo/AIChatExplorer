@@ -9,11 +9,7 @@ namespace WpfAppCommon.Control {
     public class MyStatusBarViewModel : ObservableObject {
 
         // ステータスバーのテキスト
-        public StatusText StatusText {
-            get {
-                return Tools.StatusText;
-            }
-        }
+        public StatusText StatusText { get; set; } = Tools.StatusText;
 
         // ステータスバーをクリックしたときの処理
         public static SimpleDelegateCommand<object> OpenStatusMessageWindowCommand => new((parameter) => {
@@ -29,11 +25,9 @@ namespace WpfAppCommon.Control {
         });
         
         // ロード時の処理
-        private Window? window;
         public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
             UserControl userControl = (UserControl)routedEventArgs.Source;
             Window window = Window.GetWindow(userControl);
-            this.window = window;
             OnPropertyChanged(nameof(StatusText));
         });
 

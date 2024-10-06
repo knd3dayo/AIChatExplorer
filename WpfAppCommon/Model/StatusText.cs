@@ -4,34 +4,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
 
-        // StatusTextDictionaryのキー
-        public static string GetStatusTextKey(Window window) {
-            Type type = window.GetType();
-            string? key = type.FullName;
-            if (key == null) {
-                key = type.Name;
-            }
-            return key;
-        }
-        public static Dictionary<string, StatusText> StatusTextDictionary { get; } = [];
-
-        public static StatusText GetStatusText(Window window) {
-            string key = GetStatusTextKey(window);
-            if (StatusTextDictionary.ContainsKey(key)) {
-                return StatusTextDictionary[key];
-            } else {
-                StatusText statusText = new();
-                StatusTextDictionary.Add(key, statusText);
-                return statusText;
-            }
-        }
-
         public static string DefaultText { get; } = "Ready";
 
         private string _text = DefaultText;
         private CancellationTokenSource? _tokenSource;
 
         public string ReadyText { get; set; } = DefaultText;
+
+        public string InProgressText { get; set; } = "In progress...";
+
+        public bool IsInProgress { get; set; } = false;
 
         public static List<string> Messages { get; } = new List<string>();
 
@@ -73,7 +55,11 @@ namespace WpfAppCommon.Model {
             if (token.IsCancellationRequested) {
                 return;
             }
-            Ready();
+            if (IsInProgress) {
+                Text = InProgressText;
+            } else {
+                Ready();
+            }
         }
         public void Init() {
             ReadyText = DefaultText;
@@ -82,16 +68,6 @@ namespace WpfAppCommon.Model {
         public void Ready() {
             Text = ReadyText;
             OnPropertyChanged(nameof(Text));
-        }
-        private void Dispose() {
-            if (_tokenSource != null) {
-                _tokenSource.Cancel();
-            }
-        }
-        public static void DisposeAll() {
-            foreach (StatusText statusText in StatusTextDictionary.Values) {
-                statusText.Dispose();
-            }
         }
     }
 
