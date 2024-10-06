@@ -86,7 +86,7 @@ namespace ClipboardApp.ViewModel.Search {
                 SearchFolder = clipboardFolder
             };
 
-            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel, true, () => {
+            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, true, () => {
                 // 保存と再読み込み
                 searchFolderViewModel.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
@@ -104,7 +104,7 @@ namespace ClipboardApp.ViewModel.Search {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = ClipboardItemFolder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, this, true, afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, this.ClipboardItemFolder, true, afterUpdate);
 
         }
 

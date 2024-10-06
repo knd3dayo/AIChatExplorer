@@ -4,8 +4,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
         // ClipboardFolder

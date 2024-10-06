@@ -14,13 +14,11 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel.TagWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {
 
         // コンストラクタ
@@ -311,6 +309,7 @@ namespace ClipboardApp.ViewModel
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.Copy());
         }
 
+        #region コマンド
         // アイテム保存
         public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItem.Save);
 
@@ -318,168 +317,65 @@ namespace ClipboardApp.ViewModel
         public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((obj) => {
             ClipboardItem.Delete();
         });
-
+        // フォルダを開くコマンド
         public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
-            // ContentTypeがFileの場合のみフォルダを開く
-            if (ContentType != ContentTypes.ContentItemTypes.Files) {
-                LogWrapper.Error(StringResources.CannotOpenFolderForNonFileContent);
-                return;
-            }
-            // Process.Startでフォルダを開く
-            foreach (var item in ClipboardItem.ClipboardItemFiles) {
-                string? folderPath = item.FolderName;
-                if (folderPath != null) {
-                    var p = new Process {
-                        StartInfo = new ProcessStartInfo(folderPath) {
-                            UseShellExecute = true
-                        }
-                    };
-                    p.Start();
-                }
-            }
+            ClipboardAppCommandExecute.OpenFolderCommand(ClipboardItem);
         });
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
         public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            if (ContentType != ContentTypes.ContentItemTypes.Files) {
-                LogWrapper.Error(StringResources.CannotExtractTextForNonFileContent);
-                return;
-            }
-            ClipboardItem.ExtractTextCommandExecute();
-
+            ClipboardAppCommandExecute.ExtractTextCommand(ClipboardItem);
         });
+
         // OpenAI Chatを開くコマンド
         public SimpleDelegateCommand<object> OpenOpenAIChatWindowCommand => new((parameter) => {
-
-            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
-
-            QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(ClipboardItem);
-            QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
-
+            ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(ClipboardItem);
         });
 
         // ファイルを開くコマンド
         public SimpleDelegateCommand<object> OpenFileCommand => new((obj) => {
-            // 選択中のアイテムを開く
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, false);
+            ClipboardAppCommandExecute.OpenFileCommand(ClipboardItem);
         });
 
         // ファイルを新規ファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenFileAsNewFileCommand => new((obj) => {
-            // 選択中のアイテムを開く
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(ClipboardItem, true);
+            ClipboardAppCommandExecute.OpenFileAsNewFileCommand(ClipboardItem);
         });
 
         // タイトルを生成するコマンド
-        public SimpleDelegateCommand<object> GenerateTitleCommand => new(async (obj) => {
-            LogWrapper.Info(StringResources.GenerateTitleInformation);
-            await Task.Run(() => {
-                ClipboardItem.CreateAutoTitleWithOpenAI();
-                // 保存
-                SaveClipboardItemCommand.Execute(false);
-                // objectがActionの場合は実行
-                if (obj is Action action) {
-                    action();
-                }
-
-            });
-            LogWrapper.Info(StringResources.GeneratedTitleInformation);
-
+        public SimpleDelegateCommand<object> GenerateTitleCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateTitleCommand([ClipboardItem], obj);
         });
 
         // 背景情報を生成するコマンド
-        public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new(async (obj) => {
-            LogWrapper.Info(StringResources.GenerateBackgroundInformation);
-            await Task.Run(() => {
-                ClipboardItem.CreateAutoBackgroundInfo();
-                // 保存
-                SaveClipboardItemCommand.Execute(false);
-            });
-            LogWrapper.Info(StringResources.GeneratedBackgroundInformation);
+        public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateBackgroundInfoCommand([ClipboardItem], obj);
 
         });
 
         // サマリーを生成するコマンド
-        public SimpleDelegateCommand<object> GenerateSummaryCommand => new(async (obj) => {
-            LogWrapper.Info(StringResources.GenerateSummary2);
-            await Task.Run(() => {
-                ClipboardItem.CreateSummary();
-                // 保存
-                SaveClipboardItemCommand.Execute(false);
-            });
-            LogWrapper.Info(StringResources.GeneratedSummary);
-
+        public SimpleDelegateCommand<object> GenerateSummaryCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateSummaryCommand([ClipboardItem], obj);
         });
 
         // 課題リストを生成するコマンド
-        public SimpleDelegateCommand<object> GenerateIssuesCommand => new(async (obj) => {
-            LogWrapper.Info(StringResources.GenerateIssues);
-            await Task.Run(() => {
-                ClipboardItem.CreateIssues();
-                // 保存
-                SaveClipboardItemCommand.Execute(false);
-            });
-            LogWrapper.Info(StringResources.GeneratedIssues);
-
+        public SimpleDelegateCommand<object> GenerateIssuesCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateIssuesCommand([ClipboardItem], obj);
         });
-
 
         // ベクトルを生成するコマンド
-        public SimpleDelegateCommand<object> GenerateVectorCommand => new(async (obj) => {
-            LogWrapper.Info(StringResources.GenerateVector2);
-            await Task.Run(() => {
-                ClipboardItem.UpdateEmbedding();
-                // 保存
-                SaveClipboardItemCommand.Execute(false);
-            });
-            LogWrapper.Info(StringResources.GeneratedVector);
-
+        public SimpleDelegateCommand<object> GenerateVectorCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateVectorCommand([ClipboardItem], obj);
         });
+
         // ベクトル検索を実行するコマンド
-        public SimpleDelegateCommand<object> VectorSearchCommand => new(async (obj) => {
-            // ClipboardItemを元にベクトル検索を実行
-            List<VectorSearchResult> vectorSearchResults = [];
-            await Task.Run(() => {
-                // ベクトル検索を実行
-                vectorSearchResults.AddRange(ClipboardItem.VectorSearchCommandExecute(ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding));
-            });
-            // ベクトル検索結果ウィンドウを開く
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
-                vectorSearchWindowViewModel.InputText = ClipboardItem.Content + "\n" + ClipboardItem.BackgroundInfo;
-            } else {
-                vectorSearchWindowViewModel.InputText = ClipboardItem.Content;
-            }
-            vectorSearchWindowViewModel.VectorDBItem = ClipboardItem.GetVectorDBItem();
-            vectorSearchWindowViewModel.InputText = ClipboardItem.Content;
-            vectorSearchWindowViewModel.VectorSearchResults = [.. vectorSearchResults];
-
-            // ベクトルDBアイテムを選択したときのアクション
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                if (MainWindowViewModel.ActiveInstance == null) {
-                    LogWrapper.Error("MainWindowViewModelがNullです");
-                    return;
-                }
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
-                    foreach (var item in selectedItems) {
-                        vectorDBItems.Add(item);
-                    }
-                });
-            };
-
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-            // ベクトル検索結果を更新
+        public SimpleDelegateCommand<object> VectorSearchCommand => new((obj) => {
+            ClipboardAppCommandExecute.SearchVectorCommand(ClipboardItem, obj);
         });
-
 
         // テキストをファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
-            try {
-                // 選択中のアイテムを開く
-                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(ClipboardItem);
-            } catch (Exception e) {
-                LogWrapper.Error(e.Message);
-            }
+            ClipboardAppCommandExecute.OpenContentAsFileCommand(ClipboardItem);
         });
 
         // ピン留めの切り替えコマンド
@@ -491,14 +387,11 @@ namespace ClipboardApp.ViewModel
 
         // Issuesの削除
         public SimpleDelegateCommand<IssueItem> DeleteIssueCommand => new((item) => {
-            ClipboardItem.Issues.Remove(item);
-            // Issuesを更新
-            Issues.Clear();
-            foreach (var issue in ClipboardItem.Issues) {
-                Issues.Add(issue);
-            }
+            ClipboardAppCommandExecute.DeleteIssueCommand(ClipboardItem, item);
             OnPropertyChanged(nameof(Issues));
 
         });
+
+        #endregion
     }
 }

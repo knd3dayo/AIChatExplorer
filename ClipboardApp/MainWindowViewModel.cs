@@ -321,7 +321,7 @@ namespace ClipboardApp {
                         return;
                     }
                     List<ClipboardItem> result = [];
-                    PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
+                    ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
                         // newItemsをContentItemBaseに変換
                         List<ContentItem> contentItemBases = [.. newItems];
                         action(contentItemBases);

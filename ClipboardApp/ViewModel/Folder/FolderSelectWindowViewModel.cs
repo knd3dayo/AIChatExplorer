@@ -3,11 +3,20 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder
-{
+namespace ClipboardApp.ViewModel.Folder {
 
-    public class FolderSelectWindowViewModel : ClipboardAppViewModelBase
-    {
+    public class FolderSelectWindowViewModel : ClipboardAppViewModelBase {
+
+        public FolderSelectWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction) {
+
+            FolderSelectedAction = _FolderSelectedAction;
+            if (rootFolderViewModel == null) {
+                return;
+            }
+            RootFolders.Add(rootFolderViewModel);
+            Instance = this;
+        }
+
         private static FolderSelectWindowViewModel? Instance;
         // フォルダツリーのルート
         public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = [];
@@ -17,14 +26,11 @@ namespace ClipboardApp.ViewModel.Folder
 
         // 選択されたフォルダ
         private ClipboardFolderViewModel? selectedFolder;
-        public ClipboardFolderViewModel? SelectedFolder
-        {
-            get
-            {
+        public ClipboardFolderViewModel? SelectedFolder {
+            get {
                 return selectedFolder;
             }
-            set
-            {
+            set {
                 selectedFolder = value;
                 selectedFolder?.LoadChildren();
                 OnPropertyChanged(nameof(SelectedFolder));
@@ -32,39 +38,21 @@ namespace ClipboardApp.ViewModel.Folder
         }
 
         private string _selectedFolderAbsoluteCollectionName = "";
-        public string SelectedFolderAbsoluteCollectionName
-        {
-            get
-            {
+        public string SelectedFolderAbsoluteCollectionName {
+            get {
                 return _selectedFolderAbsoluteCollectionName;
             }
-            set
-            {
+            set {
                 _selectedFolderAbsoluteCollectionName = value;
                 OnPropertyChanged(nameof(SelectedFolderAbsoluteCollectionName));
             }
         }
-
-        public FolderSelectWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction)
-        {
-
-            FolderSelectedAction = _FolderSelectedAction;
-            if (rootFolderViewModel == null)
-            {
-                return;
-            }
-            RootFolders.Add(rootFolderViewModel);
-            Instance = this;
-        }
-        public static SimpleDelegateCommand<FolderSelectWindow> SelectFolderCommand => new((folderSelectWindow) =>
-        {
-            if (Instance == null)
-            {
+        public static SimpleDelegateCommand<FolderSelectWindow> SelectFolderCommand => new((folderSelectWindow) => {
+            if (Instance == null) {
                 LogWrapper.Warn(CommonStringResources.Instance.FolderSelectWindowViewModelInstanceNotFound);
                 return;
             }
-            if (Instance.SelectedFolder == null)
-            {
+            if (Instance.SelectedFolder == null) {
                 LogWrapper.Warn(CommonStringResources.Instance.SelectedFolderNotFound);
                 return;
             }
@@ -74,15 +62,12 @@ namespace ClipboardApp.ViewModel.Folder
 
         });
 
-        public static void FolderSelectWindowSelectFolderCommandExecute(object parameter)
-        {
-            if (Instance == null)
-            {
+        public static void FolderSelectWindowSelectFolderCommandExecute(object parameter) {
+            if (Instance == null) {
                 LogWrapper.Warn(CommonStringResources.Instance.FolderSelectWindowViewModelInstanceNotFound);
                 return;
             }
-            if (parameter is not ClipboardFolderViewModel folder)
-            {
+            if (parameter is not ClipboardFolderViewModel folder) {
                 LogWrapper.Warn(CommonStringResources.Instance.SelectedFolderNotFound);
                 return;
             }
