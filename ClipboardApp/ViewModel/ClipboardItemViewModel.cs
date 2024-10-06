@@ -370,7 +370,7 @@ namespace ClipboardApp.ViewModel {
 
         // ベクトル検索を実行するコマンド
         public SimpleDelegateCommand<object> VectorSearchCommand => new((obj) => {
-            ClipboardAppCommandExecute.SearchVectorCommand(ClipboardItem, obj);
+            ClipboardAppCommandExecute.OpenVectorSearchWindowCommand(ClipboardItem);
         });
 
         // テキストをファイルとして開くコマンド

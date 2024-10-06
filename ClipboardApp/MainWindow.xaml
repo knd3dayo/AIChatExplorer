@@ -224,6 +224,11 @@
                                 Command="{Binding OpenScreenshotCheckerWindow, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.ImageChat, Mode=OneTime}" />
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.VectorSearch, Mode=OneTime}" />
                         </MenuItem>
 
                         <MenuItem

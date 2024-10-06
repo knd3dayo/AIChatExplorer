@@ -21,7 +21,14 @@ namespace QAChat.ViewModel.VectorDBWindow {
         public Action<List<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // ProgressIndicatorの表示
-        public bool IsIndeterminate { get; set; } = false;
+        private bool _isIndeterminate = false;
+        public bool IsIndeterminate {
+            get => _isIndeterminate;
+            set {
+                _isIndeterminate = value;
+                OnPropertyChanged(nameof(IsIndeterminate));
+            }
+        }
 
         // クリアボタンのコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {

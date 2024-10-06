@@ -160,6 +160,12 @@ namespace ClipboardApp {
             });
         });
 
+        // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
+        public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
+            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
+            ClipboardAppCommandExecute.OpenVectorSearchWindowCommand(folderViewModel.ClipboardItemFolder);
+        });
+
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
             ClipboardAppCommandExecute.OpenRAGManagementWindowCommand();

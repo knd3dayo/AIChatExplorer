@@ -11,7 +11,6 @@ using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.ImageChat;
 using QAChat.View.RAGWindow;
@@ -86,15 +85,20 @@ namespace ClipboardApp {
             QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(item);
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
+
         // 画像チャットを開くコマンド
         public static void OpenImageChatWindowCommand(ClipboardItem item, Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
+
+
         // メニューの「RAG管理」をクリックしたときの処理
         public static void OpenRAGManagementWindowCommand() {
             // RARManagementWindowを開く
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
+
+
 
         // メニューの「ベクトルDB管理」をクリックしたときの処理
         public static void OpenVectorDBManagementWindowCommand() {
@@ -310,9 +314,6 @@ namespace ClipboardApp {
         }
 
 
-
-
-
         // フォルダを開くコマンド
         public static void OpenFolderCommand(ClipboardItem contentItem) {
             // ContentTypeがFileの場合のみフォルダを開く
@@ -429,7 +430,7 @@ namespace ClipboardApp {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.UpdateEmbedding(); 
+                    item.UpdateEmbedding();
                     // 保存
                     item.Save(false);
                 }
@@ -442,25 +443,9 @@ namespace ClipboardApp {
         }
 
         // ベクトル検索を実行するコマンド
-        public static async void SearchVectorCommand(ClipboardItem contentItem, object obj) {
-
-            // ClipboardItemを元にベクトル検索を実行
-            List<VectorSearchResult> vectorSearchResults = [];
-            await Task.Run(() => {
-                // ベクトル検索を実行
-                vectorSearchResults.AddRange(contentItem.VectorSearchCommandExecute(ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding));
-            });
+        public static void OpenVectorSearchWindowCommand(ClipboardFolder folder) {
             // ベクトル検索結果ウィンドウを開く
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
-                vectorSearchWindowViewModel.InputText = contentItem.Content + "\n" + contentItem.BackgroundInfo;
-            } else {
-                vectorSearchWindowViewModel.InputText = contentItem.Content;
-            }
-            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetVectorDBItem();
-            vectorSearchWindowViewModel.InputText = contentItem.Content;
-            vectorSearchWindowViewModel.VectorSearchResults = [.. vectorSearchResults];
-
             // ベクトルDBアイテムを選択したときのアクション
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
                 if (MainWindowViewModel.ActiveInstance == null) {
@@ -474,9 +459,45 @@ namespace ClipboardApp {
                 });
             };
 
+            vectorSearchWindowViewModel.VectorDBItem = folder.GetVectorDBItem();
+
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-            // ベクトル検索結果を更新
+
         }
+
+        // ベクトル検索を実行するコマンド
+        public static void OpenVectorSearchWindowCommand(ClipboardItem contentItem) {
+
+            // ベクトル検索結果ウィンドウを開く
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
+            // ベクトルDBアイテムを選択したときのアクション
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
+                if (MainWindowViewModel.ActiveInstance == null) {
+                    LogWrapper.Error("MainWindowViewModelがNullです");
+                    return;
+                }
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
+                    foreach (var item in selectedItems) {
+                        vectorDBItems.Add(item);
+                    }
+                });
+            };
+
+
+            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
+                vectorSearchWindowViewModel.InputText = contentItem.Content + "\n" + contentItem.BackgroundInfo;
+            } else {
+                vectorSearchWindowViewModel.InputText = contentItem.Content;
+            }
+            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetVectorDBItem();
+            vectorSearchWindowViewModel.InputText = contentItem.Content;
+            // ベクトル検索を実行
+            vectorSearchWindowViewModel.SendCommand.Execute(null);
+
+
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+        }
+
         // テキストをファイルとして開くコマンド
         public static void OpenContentAsFileCommand(ClipboardItem contentItem) {
             try {

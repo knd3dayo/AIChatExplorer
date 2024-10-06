@@ -13,6 +13,7 @@
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:VectorSearchWindowViewModel}"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -101,6 +102,7 @@
         </DataGrid>
         <ScrollViewer
             Grid.Row="2"
+            Height="100"
             Margin="0,0,0,0"
             VerticalScrollBarVisibility="Auto">
             <editorControl:MyTextBox
