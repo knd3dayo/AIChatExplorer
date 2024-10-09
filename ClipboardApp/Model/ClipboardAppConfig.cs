@@ -580,18 +580,18 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // 自動的にIssuesを生成する
-        private bool? _autoGenerateIssues;
-        public bool AutoGenerateIssues {
+        // 自動的にTasksを生成する
+        private bool? _autoGenerateTasks;
+        public bool AutoGenerateTasks {
             get {
-                if (_autoGenerateIssues == null) {
-                    _autoGenerateIssues = Properties.Settings.Default.AutoGenerateIssues;
+                if (_autoGenerateTasks == null) {
+                    _autoGenerateTasks = Properties.Settings.Default.AutoGenerateTasks;
                 }
-                return _autoGenerateIssues.Value;
+                return _autoGenerateTasks.Value;
             }
             set {
-                _autoGenerateIssues = value;
-                Properties.Settings.Default.AutoGenerateIssues = value;
+                _autoGenerateTasks = value;
+                Properties.Settings.Default.AutoGenerateTasks = value;
             }
         }
 

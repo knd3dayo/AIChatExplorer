@@ -409,11 +409,11 @@ namespace ClipboardApp {
         }
 
         // 課題リストを生成するコマンド
-        public static async void GenerateIssuesCommand(List<ClipboardItem> contentItem, object obj) {
-            LogWrapper.Info(CommonStringResources.Instance.GenerateIssues);
+        public static async void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj) {
+            LogWrapper.Info(CommonStringResources.Instance.GenerateTasks);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.CreateIssues();
+                    item.CreateTasks();
                     // 保存
                     item.Save(false);
                 }
@@ -422,7 +422,7 @@ namespace ClipboardApp {
                     action();
                 }
             });
-            LogWrapper.Info(CommonStringResources.Instance.GeneratedIssues);
+            LogWrapper.Info(CommonStringResources.Instance.GeneratedTasks);
         }
 
         // ベクトルを生成するコマンド
@@ -507,9 +507,9 @@ namespace ClipboardApp {
                 LogWrapper.Error(e.Message);
             }
         }
-        // Issuesの削除
-        public static void DeleteIssueCommand(ClipboardItem contentItem, IssueItem issueItem) {
-            contentItem.Issues.Remove(issueItem);
+        // Tasksの削除
+        public static void DeleteTaskCommand(ClipboardItem contentItem, TaskItem TaskItem) {
+            contentItem.Tasks.Remove(TaskItem);
         }
 
     }

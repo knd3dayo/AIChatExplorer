@@ -366,13 +366,13 @@
                                 Grid.Row="18"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyGenerateIssueList, Mode=OneTime}" />
+                                Text="{Binding StringResources.AutomaticallyGenerateTaskList, Mode=OneTime}" />
                             <CheckBox
                                 Grid.Row="18"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.GenerateIssueListFromContent, Mode=OneTime}"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateIssues}" />
+                                Content="{Binding StringResources.GenerateTaskListFromContent, Mode=OneTime}"
+                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateTasks}" />
                         </Grid>
                         <!--  その他の設定  -->
                         <Grid Grid.Row="1">

@@ -275,8 +275,8 @@ namespace ClipboardApp {
         });
 
         // 課題リストを生成する処理 複数アイテム処理可
-        public SimpleDelegateCommand<object> GenerateIssuesCommand => new((parameter) => {
-            ClipboardAppCommandExecute.GenerateIssuesCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+        public SimpleDelegateCommand<object> GenerateTasksCommand => new((parameter) => {
+            ClipboardAppCommandExecute.GenerateTasksCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();

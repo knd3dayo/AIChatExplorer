@@ -120,14 +120,14 @@ namespace WpfAppCommon.Model {
 
         // Generate Summary
         public override string GenerateSummary { get; } = "Generate Summary";
-        // IssueList
-        public override string IssuesList { get; } = "Issue List";
+        // TaskList
+        public override string TasksList { get; } = "Task List";
 
-        // "Generate the list of issues"
-        public virtual string GenerateTIssues { get; } = "Generate the list of issues";
+        // "Generate the list of Tasks"
+        public virtual string GenerateTTasks { get; } = "Generate the list of Tasks";
 
-        // "The list of issues has been generated"
-        public virtual string GeneratedTIssues { get; } = "The list of issues has been generated";
+        // "The list of Tasks has been generated"
+        public virtual string GeneratedTTasks { get; } = "The list of Tasks has been generated";
 
 
         // Generate Vector
@@ -378,9 +378,9 @@ namespace WpfAppCommon.Model {
         public override string CreateSummaryFailed { get; } = "Failed to create summary";
 
         // 自動課題リスト作成処理を実行します
-        public override string AutoCreateIssueList { get; } = "Execute auto issue list creation process";
+        public override string AutoCreateTaskList { get; } = "Execute auto Task list creation process";
         // 課題リスト作成処理が失敗しました
-        public override string CreateIssueListFailed { get; } = "Failed to create issue list";
+        public override string CreateTaskListFailed { get; } = "Failed to create Task list";
 
 
         public override string AutoExtractImageText { get; } = "Executing auto image text extraction process";
@@ -544,11 +544,11 @@ namespace WpfAppCommon.Model {
 
         public override string GenerateSummaryTextFromContent { get; } = "Generate summary text from content";
 
-        // Automatically generate issue list
-        public override string AutomaticallyGenerateIssueList { get; } = "Automatically generate issue list";
+        // Automatically generate Task list
+        public override string AutomaticallyGenerateTaskList { get; } = "Automatically generate Task list";
 
-        // Generate issue list from content
-        public override string GenerateIssueListFromContent { get; } = "Generate issue list from content";
+        // Generate Task list from content
+        public override string GenerateTaskListFromContent { get; } = "Generate Task list from content";
         public override string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "Synchronize clipboard items with folders on the OS";
 
         public override string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "Synchronize clipboard items with folders on the OS";

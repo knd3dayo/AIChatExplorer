@@ -720,10 +720,10 @@ namespace ClipboardApp.Model.Folder {
                 }
             });
             var task5 = Task.Run(() => {
-                // Issues
-                if (ClipboardAppConfig.Instance.AutoGenerateIssues) {
-                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateIssueList);
-                    item.CreateIssues();
+                // Tasks
+                if (ClipboardAppConfig.Instance.AutoGenerateTasks) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateTaskList);
+                    item.CreateTasks();
                 }
             });
 

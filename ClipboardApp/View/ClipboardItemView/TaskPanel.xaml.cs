@@ -15,10 +15,10 @@ using System.Windows.Shapes;
 
 namespace ClipboardApp.View.ClipboardItemView {
     /// <summary>
-    /// IssuePanel.xaml の相互作用ロジック
+    /// TaskPanel.xaml の相互作用ロジック
     /// </summary>
-    public partial class IssuePanel : UserControl {
-        public IssuePanel() {
+    public partial class TaskPanel : UserControl {
+        public TaskPanel() {
             InitializeComponent();
         }
     }

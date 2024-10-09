@@ -409,9 +409,9 @@ namespace WpfAppCommon.Model {
         public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
 
         // 自動課題リスト作成処理を実行します
-        public virtual string AutoCreateIssueList { get; } = "自動課題リスト作成処理を実行します";
+        public virtual string AutoCreateTaskList { get; } = "自動課題リスト作成処理を実行します";
         // 課題リスト作成処理が失敗しました
-        public virtual string CreateIssueListFailed { get; } = "課題リスト作成処理が失敗しました";
+        public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
 
         // 自動イメージテキスト抽出処理を実行します
         public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
@@ -667,10 +667,10 @@ namespace WpfAppCommon.Model {
         public virtual string GenerateSummaryTextFromContent { get; } = "コンテンツからサマリーテキストを生成します。";
 
         // 自動課題リスト生成
-        public virtual string AutomaticallyGenerateIssueList { get; } = "自動課題リスト生成";
+        public virtual string AutomaticallyGenerateTaskList { get; } = "自動課題リスト生成";
 
         // コンテンツから課題リストを生成します。
-        public virtual string GenerateIssueListFromContent { get; } = "コンテンツから課題リストを生成します。";
+        public virtual string GenerateTaskListFromContent { get; } = "コンテンツから課題リストを生成します。";
 
         // クリップボードアイテムをOS上のフォルダと同期させる
         public virtual string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
@@ -1009,13 +1009,13 @@ namespace WpfAppCommon.Model {
         public virtual string GeneratedSummary { get; } = "サマリーを生成しました";
 
         // 課題リスト
-        public virtual string IssuesList { get; } = "課題リスト";
+        public virtual string TasksList { get; } = "課題リスト";
 
         // "課題リストを生成します"
-        public virtual string GenerateIssues { get; } = "課題リストを生成します";
+        public virtual string GenerateTasks { get; } = "課題リストを生成します";
 
         // "課題リストを生成しました"
-        public virtual string GeneratedIssues { get; } = "課題リストを生成しました";
+        public virtual string GeneratedTasks { get; } = "課題リストを生成しました";
 
         // ベクトルを生成します
         public virtual string GenerateVector2 { get; } = "ベクトルを生成します";

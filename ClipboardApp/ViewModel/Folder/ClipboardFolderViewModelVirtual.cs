@@ -130,13 +130,13 @@ namespace ClipboardApp.ViewModel
             menuItems.Add(generateSummaryMenuItem);
 
             // 課題リストを生成
-            MenuItem generateIssuesMenuItem = new() {
-                Header = StringResources.GenerateIssues,
+            MenuItem generateTasksMenuItem = new() {
+                Header = StringResources.GenerateTasks,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateIssuesCommand,
+                Command = MainWindowViewModel.ActiveInstance.GenerateTasksCommand,
                 CommandParameter = itemViewModel
             };
-            menuItems.Add(generateIssuesMenuItem);
+            menuItems.Add(generateTasksMenuItem);
 
             // ベクトル生成
             MenuItem generateVectorMenuItem = new() {

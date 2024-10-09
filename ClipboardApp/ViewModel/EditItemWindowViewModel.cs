@@ -138,8 +138,8 @@ namespace ClipboardApp.ViewModel {
         }
         public int SelectedImageIndex { get; set; } = 0;
 
-        // SelectedIssueItem
-        public IssueItem? SelectedIssueItem { get; set; }
+        // SelectedTaskItem
+        public TaskItem? SelectedTaskItem { get; set; }
 
         public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
@@ -232,24 +232,24 @@ namespace ClipboardApp.ViewModel {
                 };
                 tabItems.Add(backgroundInformationTabItem);
 
-                // Issues
-                IssuePanel issuesPanel = new() {
+                // Tasks
+                TaskPanel TasksPanel = new() {
                     DataContext = this,
                 };
-                PromptItem item2 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.IssuesGeneration);
+                PromptItem item2 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TasksGeneration);
 
 
-                TabItem issuesTabItem = new() {
+                TabItem TasksTabItem = new() {
                     Header = item2.Description,
-                    Content = issuesPanel,
+                    Content = TasksPanel,
                     Height = Double.NaN,
                     Width = Double.NaN,
                     Margin = new Thickness(0, 0, 0, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
-                    Visibility = ItemViewModel?.IssuesVisibility ?? Visibility.Collapsed
+                    Visibility = ItemViewModel?.TasksVisibility ?? Visibility.Collapsed
                 };
-                tabItems.Add(issuesTabItem);
+                tabItems.Add(TasksTabItem);
                 // Summary
                 SummaryPanel summaryPanel = new() {
                     DataContext = this,
@@ -310,21 +310,21 @@ namespace ClipboardApp.ViewModel {
             window.Close();
         });
 
-        // Issuesの削除
-        public SimpleDelegateCommand<object> DeleteIssueCommand => new((parameter) => {
-            if (SelectedIssueItem == null) {
+        // Tasksの削除
+        public SimpleDelegateCommand<object> DeleteTaskCommand => new((parameter) => {
+            if (SelectedTaskItem == null) {
                 return;
             }
-            ItemViewModel?.DeleteIssueCommand.Execute(SelectedIssueItem);
+            ItemViewModel?.DeleteTaskCommand.Execute(SelectedTaskItem);
         });
 
-        // IssuesのSelectionChangedイベント発生時の処理
-        public SimpleDelegateCommand<RoutedEventArgs> IssueItemSelectionChangedCommand => new((routedEventArgs) => {
+        // TasksのSelectionChangedイベント発生時の処理
+        public SimpleDelegateCommand<RoutedEventArgs> TaskItemSelectionChangedCommand => new((routedEventArgs) => {
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                IssueItem item = (IssueItem)dataGrid.SelectedItem;
-                SelectedIssueItem = item;
+                TaskItem item = (TaskItem)dataGrid.SelectedItem;
+                SelectedTaskItem = item;
             }
 
         });

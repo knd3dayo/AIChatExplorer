@@ -99,14 +99,14 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // Issues
-        public ObservableCollection<IssueItem> Issues {
+        // Tasks
+        public ObservableCollection<TaskItem> Tasks {
             get {
-                return [.. ClipboardItem.Issues];
+                return [.. ClipboardItem.Tasks];
             }
             set {
-                ClipboardItem.Issues = [.. value];
-                OnPropertyChanged(nameof(Issues));
+                ClipboardItem.Tasks = [.. value];
+                OnPropertyChanged(nameof(Tasks));
             }
         }
         // Tags
@@ -184,10 +184,10 @@ namespace ClipboardApp.ViewModel {
                 }
             }
         }
-        // Issuesが空の場合はCollapsed,それ以外はVisible
-        public Visibility IssuesVisibility {
+        // Tasksが空の場合はCollapsed,それ以外はVisible
+        public Visibility TasksVisibility {
             get {
-                if (ClipboardItem.Issues.Count == 0) {
+                if (ClipboardItem.Tasks.Count == 0) {
                     return Visibility.Collapsed;
                 } else {
                     return Visibility.Visible;
@@ -359,8 +359,8 @@ namespace ClipboardApp.ViewModel {
         });
 
         // 課題リストを生成するコマンド
-        public SimpleDelegateCommand<object> GenerateIssuesCommand => new((obj) => {
-            ClipboardAppCommandExecute.GenerateIssuesCommand([ClipboardItem], obj);
+        public SimpleDelegateCommand<object> GenerateTasksCommand => new((obj) => {
+            ClipboardAppCommandExecute.GenerateTasksCommand([ClipboardItem], obj);
         });
 
         // ベクトルを生成するコマンド
@@ -385,10 +385,10 @@ namespace ClipboardApp.ViewModel {
             SaveClipboardItemCommand.Execute(false);
         });
 
-        // Issuesの削除
-        public SimpleDelegateCommand<IssueItem> DeleteIssueCommand => new((item) => {
-            ClipboardAppCommandExecute.DeleteIssueCommand(ClipboardItem, item);
-            OnPropertyChanged(nameof(Issues));
+        // Tasksの削除
+        public SimpleDelegateCommand<TaskItem> DeleteTaskCommand => new((item) => {
+            ClipboardAppCommandExecute.DeleteTaskCommand(ClipboardItem, item);
+            OnPropertyChanged(nameof(Tasks));
 
         });
 

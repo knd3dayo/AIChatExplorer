@@ -470,12 +470,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoGenerateIssues {
+        public bool AutoGenerateTasks {
             get {
-                return ((bool)(this["AutoGenerateIssues"]));
+                return ((bool)(this["AutoGenerateTasks"]));
             }
             set {
-                this["AutoGenerateIssues"] = value;
+                this["AutoGenerateTasks"] = value;
             }
         }
         

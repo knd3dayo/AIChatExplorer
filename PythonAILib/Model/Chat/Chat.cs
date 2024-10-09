@@ -8,8 +8,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -258,14 +257,13 @@ namespace PythonAILib.Model.Chat
                 List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
                 foreach (var vectorSearchResult in results) {
                     sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
-                    sb.AppendLine("----------------------------------------------------");
                     sb.AppendLine(vectorSearchResult.Content);
                     hasVectorSearch = true;
                 }
             }
             if (hasVectorSearch) {
                 // 結果をContentTextに追加
-                ContentText += "\n" + sb.ToString();
+                ContentText += "--- 本文 ----\n" + sb.ToString();
             }
 
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);

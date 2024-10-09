@@ -68,6 +68,7 @@ namespace PythonAILib.Model.Abstract {
                         }
                     }
                     ***/
+                    /***
                     var collection = db.GetCollection(VectorDBItemCollectionName);
                     foreach (var item in collection.FindAll()) {
                         string typeString = item["_type"];
@@ -91,6 +92,16 @@ namespace PythonAILib.Model.Abstract {
                             }
                         }
 
+                    }
+                    ***/
+                    // PromptItemのChatTypeをRAGからOpenAIRAGに変更
+                    var collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string chatTypeString = item["ChatType"];
+                        if (chatTypeString == "RAG") {
+                            item["ChatType"] = "OpenAIRAG";
+                            collection.Update(item);
+                        }
                     }
 
                 } catch (Exception e) {

@@ -368,14 +368,14 @@ namespace ClipboardApp.Settings
                 isPropertyChanged = true;
             }
         }
-        // AutoGenerateIssues
-        public bool AutoGenerateIssues {
+        // AutoGenerateTasks
+        public bool AutoGenerateTasks {
             get {
-                return ClipboardAppConfig.Instance.AutoGenerateIssues;
+                return ClipboardAppConfig.Instance.AutoGenerateTasks;
             }
             set {
-                ClipboardAppConfig.Instance.AutoGenerateIssues = value;
-                OnPropertyChanged(nameof(AutoGenerateIssues));
+                ClipboardAppConfig.Instance.AutoGenerateTasks = value;
+                OnPropertyChanged(nameof(AutoGenerateTasks));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
