@@ -1,20 +1,13 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ClipboardApp.Factory;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
-using ClipboardApp.View.SelectVectorDBView;
+using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
-using QAChat.Control;
-using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel.VectorDBWindow;
+using PythonAILib.Model.Prompt;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -42,6 +35,8 @@ namespace ClipboardApp.ViewModel {
         // FolderViewModel
         public ClipboardFolderViewModel FolderViewModel { get; set; }
 
+
+        #region PromptItemsに依存する処理
         // Context Menu
 
         public ObservableCollection<MenuItem> MenuItems {
@@ -49,6 +44,8 @@ namespace ClipboardApp.ViewModel {
                 return FolderViewModel.CreateItemContextMenuItems(this);
             }
         }
+
+        #endregion
 
         // Content
         public string Content {

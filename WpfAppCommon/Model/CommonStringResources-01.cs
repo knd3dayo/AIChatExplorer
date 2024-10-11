@@ -139,6 +139,9 @@ namespace WpfAppCommon.Model {
         // 編集
         public virtual string Edit { get; } = "編集";
 
+        #region プロンプトメニュー
+
+        public virtual string PromptMenu { get; } = "プロンプトメニュー";
         // タイトルを生成
         public virtual string GenerateTitle { get; } = "タイトルを生成";
 
@@ -151,6 +154,7 @@ namespace WpfAppCommon.Model {
         // ベクトル生成
         public virtual string GenerateVector { get; } = "ベクトル生成";
 
+        #endregion
 
         //ベクトル検索
         public virtual string VectorSearch { get; } = "ベクトル検索";

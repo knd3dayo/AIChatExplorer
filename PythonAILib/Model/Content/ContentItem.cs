@@ -67,15 +67,6 @@ namespace PythonAILib.Model.Content {
         public string Description { get; set; } = "";
 
 
-        // 背景情報
-        public string BackgroundInfo { get; set; } = "";
-
-        // 文脈情報のリスト
-        public List<string> ContextInfo { get; set; } = [];
-
-        // サマリー
-        public string Summary { get; set; } = "";
-
         // クリップボードの内容の種類
         public ContentTypes.ContentItemTypes ContentType { get; set; }
 
@@ -83,8 +74,41 @@ namespace PythonAILib.Model.Content {
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatHistoryItem> ChatItems { get; set; } = [];
 
+        #region プロンプトテンプレートに基づくチャットの結果
+        public PromptChatResult PromptChatResult { get; set; } = new();
+
+        // 背景情報
+        public string BackgroundInfo {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+            }
+        }
+
+        // サマリー
+        public string Summary {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+            }
+        }
+
         // Tasks
-        public List<TaskItem> Tasks { get; set; } = [];
+        public List<TaskItem> Tasks {
+            get {
+                List<TaskItem>? tasks = PromptChatResult.GetComplexContent( PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                return tasks ?? [];
+            }
+            set {
+                PromptChatResult.SetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString(), value);
+            }
+        }
+
+        #endregion
 
         //Tags
         public HashSet<string> Tags { get; set; } = [];
@@ -272,28 +296,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        // Contentに関する文脈情報を箇条書きで作成する
-        public void CreateContextInfo(List<VectorDBItem> vectorDBItems) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return;
-            }
-
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-
-            // システム定義のPromptItemを取得
-            PromptItem? promptItem = libManager.DataFactory.GetSystemPromptTemplateByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-            if (promptItem == null) {
-                throw new Exception("PromptItem not found");
-            }
-            List<string> result = ChatUtil.CreateBulletedListChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
-            ContextInfo.Clear();
-            foreach (var item in result) {
-                ContextInfo.Add(item);
-            }
-        }
 
         // 課題リストを作成する
         public void CreateTasks() {

@@ -109,6 +109,9 @@ namespace WpfAppCommon.Model {
         // Edit
         public override string Edit { get; } = "Edit";
 
+        #region Prompt Menu
+        public override string PromptMenu { get; } = "Prompt Menu";
+
         // Generate Title
         public override string GenerateTitle { get; } = "Generate Title";
 
@@ -129,6 +132,7 @@ namespace WpfAppCommon.Model {
         // "The list of Tasks has been generated"
         public virtual string GeneratedTTasks { get; } = "The list of Tasks has been generated";
 
+        #endregion
 
         // Generate Vector
         public override string GenerateVector { get; } = "Generate Vector";

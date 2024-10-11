@@ -78,6 +78,52 @@ namespace ClipboardApp.ViewModel
 
             }
         }
+
+        public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
+            // プロンプトメニュー
+            MenuItem promptMenuItem = new() {
+                Header = StringResources.PromptMenu,
+            };
+
+            // タイトルを生成
+            MenuItem generateTitleMenuItem = new() {
+                Header = StringResources.GenerateTitle,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateTitleCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(generateTitleMenuItem);
+
+            // 背景情報生成
+            MenuItem generateBackgroundInfoMenuItem = new() {
+                Header = StringResources.GenerateBackgroundInfo,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateBackgroundInfoCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(generateBackgroundInfoMenuItem);
+
+            // サマリーを生成
+            MenuItem generateSummaryMenuItem = new() {
+                Header = StringResources.GenerateSummary,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateSummaryCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(generateSummaryMenuItem);
+
+            // 課題リストを生成
+            MenuItem generateTasksMenuItem = new() {
+                Header = StringResources.GenerateTasks,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateTasksCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(generateTasksMenuItem);
+
+            return promptMenuItem;
+        }
+
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
@@ -101,42 +147,9 @@ namespace ClipboardApp.ViewModel
                 InputGestureText = "Ctrl+Shit+O"
             };
             menuItems.Add(openContentAsFileMenuItem);
-
-            // タイトルを生成
-            MenuItem generateTitleMenuItem = new() {
-                Header = StringResources.GenerateTitle,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateTitleCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(generateTitleMenuItem);
-
-            // 背景情報生成
-            MenuItem generateBackgroundInfoMenuItem = new() {
-                Header = StringResources.GenerateBackgroundInfo,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateBackgroundInfoCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(generateBackgroundInfoMenuItem);
-
-            // サマリーを生成
-            MenuItem generateSummaryMenuItem = new() {
-                Header = StringResources.GenerateSummary,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateSummaryCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(generateSummaryMenuItem);
-
-            // 課題リストを生成
-            MenuItem generateTasksMenuItem = new() {
-                Header = StringResources.GenerateTasks,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateTasksCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(generateTasksMenuItem);
+            // プロンプトメニュー
+            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
+            menuItems.Add(promptMenuItem);
 
             // ベクトル生成
             MenuItem generateVectorMenuItem = new() {

@@ -92,6 +92,7 @@ namespace ClipboardApp.ViewModel {
                 OnPropertyChanged(nameof(IsDrawerOpen));
             }
         }
+
         // IsMenuDrawerOpen
         private bool isMenuDrawerOpen = false;
         public bool IsMenuDrawerOpen {
@@ -166,18 +167,7 @@ namespace ClipboardApp.ViewModel {
                 return ClipboardAppConfig.Instance.TextWrapping;
             }
         }
-        // タグ追加ボタンのコマンド
-        public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
-            if (ItemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません");
-                return;
-            }
-            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
-                // TagsStringを更新
-                TagsString = string.Join(",", ItemViewModel.Tags);
-            });
-        });
 
         // TabItems 
         public ObservableCollection<TabItem> TabItems {
@@ -273,7 +263,18 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
+        // タグ追加ボタンのコマンド
+        public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
 
+            if (ItemViewModel == null) {
+                LogWrapper.Error("クリップボードアイテムが選択されていません");
+                return;
+            }
+            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
+                // TagsStringを更新
+                TagsString = string.Join(",", ItemViewModel.Tags);
+            });
+        });
 
         // QAChatButtonCommand
         public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
