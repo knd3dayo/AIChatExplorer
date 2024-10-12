@@ -17,8 +17,8 @@ namespace ClipboardApp.View.ClipboardItemView {
     /// <summary>
     /// TaskPanel.xaml の相互作用ロジック
     /// </summary>
-    public partial class SummaryPanel : UserControl {
-        public SummaryPanel() {
+    public partial class PromptResultTextPanel : UserControl {
+        public PromptResultTextPanel() {
             InitializeComponent();
         }
     }

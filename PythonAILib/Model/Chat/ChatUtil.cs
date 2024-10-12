@@ -50,7 +50,7 @@ namespace PythonAILib.Model.Chat {
         }
 
         // Chatを実行してリストの結果を取得する
-        public static List<string> CreateBulletedListChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
+        public static List<string> CreateListChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
 
             string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
             Chat chatController = new() {

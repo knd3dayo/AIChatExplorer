@@ -23,8 +23,6 @@ namespace ClipboardApp.ViewModel {
             OnPropertyChanged(nameof(Files));
             OnPropertyChanged(nameof(TextTabVisibility));
             OnPropertyChanged(nameof(FileTabVisibility));
-            OnPropertyChanged(nameof(BackgroundInfoVisibility));
-            OnPropertyChanged(nameof(SummaryVisibility));
 
         }
         // StringResources
@@ -46,6 +44,12 @@ namespace ClipboardApp.ViewModel {
         }
 
         #endregion
+        // TextWrapping
+        public TextWrapping TextWrapping {
+            get {
+                return ClipboardAppConfig.Instance.TextWrapping;
+            }
+        }
 
         // Content
         public string Content {
@@ -96,16 +100,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // Tasks
-        public ObservableCollection<TaskItem> Tasks {
-            get {
-                return [.. ClipboardItem.Tasks];
-            }
-            set {
-                ClipboardItem.Tasks = [.. value];
-                OnPropertyChanged(nameof(Tasks));
-            }
-        }
         // Tags
         public HashSet<string> Tags {
             get {
@@ -171,37 +165,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // BackgroundInfoが空の場合はCollapsed,それ以外はVisible
-        public Visibility BackgroundInfoVisibility {
-            get {
-                if (string.IsNullOrEmpty(ClipboardItem.BackgroundInfo)) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
-        // Tasksが空の場合はCollapsed,それ以外はVisible
-        public Visibility TasksVisibility {
-            get {
-                if (ClipboardItem.Tasks.Count == 0) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
-
-        // サマリーが空の場合はCollapsed,それ以外はVisible
-        public Visibility SummaryVisibility {
-            get {
-                if (string.IsNullOrEmpty(ClipboardItem.Summary)) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
         // テキストタブの表示可否
         public Visibility TextTabVisibility {
             get {
@@ -380,13 +343,6 @@ namespace ClipboardApp.ViewModel {
             IsPinned = !IsPinned;
             // ピン留めの時は更新日時を変更しない
             SaveClipboardItemCommand.Execute(false);
-        });
-
-        // Tasksの削除
-        public SimpleDelegateCommand<TaskItem> DeleteTaskCommand => new((item) => {
-            ClipboardAppCommandExecute.DeleteTaskCommand(ClipboardItem, item);
-            OnPropertyChanged(nameof(Tasks));
-
         });
 
         #endregion

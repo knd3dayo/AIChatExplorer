@@ -507,10 +507,6 @@ namespace ClipboardApp {
                 LogWrapper.Error(e.Message);
             }
         }
-        // Tasksの削除
-        public static void DeleteTaskCommand(ClipboardItem contentItem, TaskItem TaskItem) {
-            contentItem.Tasks.Remove(TaskItem);
-        }
 
     }
 }

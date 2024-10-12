@@ -103,6 +103,33 @@ namespace PythonAILib.Model.Abstract {
                             collection.Update(item);
                         }
                     }
+                    // ClipboardItemにTaskItemがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                            // taskItemを削除
+                            item.Remove("Tasks");
+                            collection.Update(item);
+                        foreach (var col in item) {
+                            if (col.Value.ToString().Contains("TaskItem")) {
+                                item.Remove(col.Key);
+                                collection.Update(item);
+                            }
+                        }
+                    }
+                    // ClipboardItemにSummaryがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                        // taskItemを削除
+                        item.Remove("Summary");
+                        collection.Update(item);
+                    }
+                    // ClipboardItemにBackgroundInfoがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                        // taskItemを削除
+                        item.Remove("BackgroundInfo");
+                        collection.Update(item);
+                    }
 
                 } catch (Exception e) {
                     throw new Exception("データベースのオープンに失敗しました。" + e.Message);

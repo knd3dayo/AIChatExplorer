@@ -10,7 +10,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel"
-    d:DataContext="{d:DesignInstance Type=viewModel:EditItemWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewModel:ClipboardItemViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -27,7 +27,7 @@
         Name="Editor"
         Margin="10,3,10,3"
         FontSize="10pt"
-        Text="{Binding ItemViewModel.Content, UpdateSourceTrigger=PropertyChanged}"
+        Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
         TextWrapping="{Binding TextWrapping, Mode=OneWay}">
         <editorControl:MyTextBox.ContextMenu>
             <ContextMenu>

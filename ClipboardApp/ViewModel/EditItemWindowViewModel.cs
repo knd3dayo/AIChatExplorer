@@ -6,7 +6,6 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemView;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using QAChat.View.TagView;
 using WpfAppCommon.Model;
@@ -139,9 +138,6 @@ namespace ClipboardApp.ViewModel {
         }
         public int SelectedImageIndex { get; set; } = 0;
 
-        // SelectedTaskItem
-        public TaskItem? SelectedTaskItem { get; set; }
-
         public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
@@ -161,21 +157,16 @@ namespace ClipboardApp.ViewModel {
 
         }
 
-        // TextWrapping
-        public TextWrapping TextWrapping {
-            get {
-                return ClipboardAppConfig.Instance.TextWrapping;
-            }
-        }
-
-
         // TabItems 
         public ObservableCollection<TabItem> TabItems {
             get {
-                ObservableCollection<TabItem> tabItems = new();
+                if (ItemViewModel == null) {
+                    return [];
+                }
+                ObservableCollection<TabItem> tabItems = [];
                 // Content 
                 ContentPanel contentPanel = new() {
-                    DataContext = this,
+                    DataContext = ItemViewModel,
                 };
                 TabItem contentTabItem = new() {
                     Header = StringResources.Text,
@@ -204,63 +195,60 @@ namespace ClipboardApp.ViewModel {
                 };
                 tabItems.Add(fileTabItem);
 
-                // BackgroundInformation
-                BackgroundInfoPanel backgroundInformationPanel = new() {
-                    DataContext = this,
-                };
-                PromptItem item1 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration);
-
-                TabItem backgroundInformationTabItem = new() {
-                    Header = item1.Description,
-                    Content = backgroundInformationPanel,
-                    Height = Double.NaN,
-                    Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = ItemViewModel?.BackgroundInfoVisibility ?? Visibility.Collapsed
-                };
-                tabItems.Add(backgroundInformationTabItem);
-
-                // Tasks
-                TaskPanel TasksPanel = new() {
-                    DataContext = this,
-                };
-                PromptItem item2 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.TasksGeneration);
-
-
-                TabItem TasksTabItem = new() {
-                    Header = item2.Description,
-                    Content = TasksPanel,
-                    Height = Double.NaN,
-                    Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = ItemViewModel?.TasksVisibility ?? Visibility.Collapsed
-                };
-                tabItems.Add(TasksTabItem);
-                // Summary
-                SummaryPanel summaryPanel = new() {
-                    DataContext = this,
-                };
-
-                PromptItem item3 = PromptItem.GetSystemPromptItemByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration);
-
-                TabItem summaryTabItem = new() {
-                    Header = item3.Description,
-                    Content = summaryPanel,
-                    Height = Double.NaN,
-                    Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    Padding = new Thickness(0, 0, 0, 0),
-                    FontSize = 10,
-                    Visibility = ItemViewModel?.SummaryVisibility ?? Visibility.Collapsed
-                };
-                tabItems.Add(summaryTabItem);
+                // PromptResultのタブ
+                foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
+                    tabItems.Add(promptTabItem);
+                }
 
                 return tabItems;
             }
+        }
+
+        // システム定義のPromptItemの結果表示用のタブを作成
+        // TabItems 
+        private ObservableCollection<TabItem> SystemPromptResultTabItems {
+            get {
+                if (ItemViewModel == null) {
+                    return [];
+                }
+                ObservableCollection<TabItem> tabItems = [];
+                // PromptResultのタブ
+                List<PromptItem.SystemDefinedPromptNames> promptItems = [
+                    PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration,
+                    PromptItem.SystemDefinedPromptNames.TasksGeneration,
+                    PromptItem.SystemDefinedPromptNames.SummaryGeneration
+                    ];
+                foreach (PromptItem.SystemDefinedPromptNames promptName in promptItems) {
+                    PromptResultViewModel promptViewModel = new(ItemViewModel.ClipboardItem.PromptChatResult, promptName.ToString());
+                    PromptItem item = PromptItem.GetSystemPromptItemByName(promptName);
+
+                    object content = item.PromptResultType switch {
+                        PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
+                        PromptItem.PromptResultTypeEnum.ComplexContent => new PromptResultComplexPanel() { DataContext = promptViewModel },
+                        _ => ""
+                    };
+                    Visibility visibility = item.PromptResultType switch {
+                        PromptItem.PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
+                        PromptItem.PromptResultTypeEnum.ComplexContent => promptViewModel.ComplexContentVisibility,
+                        _ => Visibility.Collapsed
+                    };
+
+                    TabItem promptTabItem = new() {
+                        Header = item.Description,
+                        Content = content,
+                        Height = Double.NaN,
+                        Width = Double.NaN,
+                        Margin = new Thickness(0, 0, 0, 0),
+                        Padding = new Thickness(0, 0, 0, 0),
+                        FontSize = 10,
+                        Visibility = visibility
+                    };
+                    tabItems.Add(promptTabItem);
+                }
+
+                return tabItems;
+            }
+
         }
 
         // タグ追加ボタンのコマンド
@@ -309,25 +297,6 @@ namespace ClipboardApp.ViewModel {
             SaveCommand.Execute(null);
             // ウィンドウを閉じる
             window.Close();
-        });
-
-        // Tasksの削除
-        public SimpleDelegateCommand<object> DeleteTaskCommand => new((parameter) => {
-            if (SelectedTaskItem == null) {
-                return;
-            }
-            ItemViewModel?.DeleteTaskCommand.Execute(SelectedTaskItem);
-        });
-
-        // TasksのSelectionChangedイベント発生時の処理
-        public SimpleDelegateCommand<RoutedEventArgs> TaskItemSelectionChangedCommand => new((routedEventArgs) => {
-            // DataGridの場合
-            if (routedEventArgs.OriginalSource is DataGrid) {
-                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                TaskItem item = (TaskItem)dataGrid.SelectedItem;
-                SelectedTaskItem = item;
-            }
-
         });
 
 

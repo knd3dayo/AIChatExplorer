@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Windows.Forms.VisualStyles;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
@@ -12,10 +11,8 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
-using PythonAILib.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using static ClipboardApp.Model.Folder.ClipboardFolder;
 
 namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItem {
@@ -326,51 +323,6 @@ namespace ClipboardApp.Model {
             }
             return result;
         }
-
-
-        public void UpdateEmbedding(VectorDBUpdateMode mode) {
-            if (mode == VectorDBUpdateMode.delete) {
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // IPythonAIFunctions.ClipboardInfoを作成
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
-                // Embeddingを削除
-                folderVectorDBItem.DeleteIndex(clipboardInfo);
-                return;
-            }
-            if (mode == VectorDBUpdateMode.update) {
-                // IPythonAIFunctions.ClipboardInfoを作成
-                // タイトルとHeaderTextを追加
-                string content = Description + "\n" + HeaderText + "\n" + Content;
-
-                // 背景情報を含める場合
-                if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
-                    content += $"\n---{PythonAILibStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
-                }
-
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
-
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(clipboardInfo);
-            }
-        }
-
-        // Embeddingを更新する
-        public void UpdateEmbedding() {
-            UpdateEmbedding(VectorDBUpdateMode.update);
-        }
-
-        // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(bool IncludeBackgroundInfo) {
-            // VectorDBItemを取得
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            // CollectionNameを設定
-            vectorDBItem.CollectionName = CollectionId.ToString();
-            return VectorSearchCommandExecute(vectorDBItem, IncludeBackgroundInfo);
-        }
-
 
         // 自動でコンテキスト情報を付与するコマンド
         public void CreateAutoBackgroundInfo() {

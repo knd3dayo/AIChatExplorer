@@ -78,6 +78,7 @@ namespace PythonAILib.Model.Content {
         public PromptChatResult PromptChatResult { get; set; } = new();
 
         // 背景情報
+        [BsonIgnore]
         public string BackgroundInfo {
             get {
                 return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
@@ -88,6 +89,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // サマリー
+        [BsonIgnore]
         public string Summary {
             get {
                 return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
@@ -98,9 +100,10 @@ namespace PythonAILib.Model.Content {
         }
 
         // Tasks
-        public List<TaskItem> Tasks {
+        [BsonIgnore]
+        public List<Dictionary<string,string>> Tasks {
             get {
-                List<TaskItem>? tasks = PromptChatResult.GetComplexContent( PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                List<Dictionary<string, string>>? tasks = PromptChatResult.GetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
                 return tasks ?? [];
             }
             set {
@@ -132,6 +135,7 @@ namespace PythonAILib.Model.Content {
             return string.Join(",", Tags);
         }
 
+        [BsonIgnore]
         public string? HeaderText {
             get {
                 string header1 = "";
@@ -272,30 +276,72 @@ namespace PythonAILib.Model.Content {
             Description = "Image";
         }
 
-        // 自動でサマリーを付与するコマンド
-        public void CreateSummary() {
-
-
+        // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
+        public void CreateChatResult(PromptItem promptItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
+                OpenAIExecutionModeEnum.OpenAIRAG => [ libManager.DataFactory.GetSystemVectorDBItem()],
+                OpenAIExecutionModeEnum.LangChain => [libManager.DataFactory.GetSystemVectorDBItem()],
+                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => [ libManager.DataFactory.GetSystemVectorDBItem()],
+                _ => []
+            };
 
-            // システム定義のPromptItemを取得
-            PromptItem? promptItem = libManager.DataFactory.GetPromptTemplateByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
-            if (promptItem == null) {
-                throw new Exception("PromptItem not found");
-            }
-
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
+            // Contentがない場合は処理しない
+            if (string.IsNullOrEmpty(Content)) {
                 return;
             }
-            string result = ChatUtil.CreateTextChatResult(openAIProperties, [], promptItem, contentText);
-            if (string.IsNullOrEmpty(result) == false) {
-                Summary = result;
+            // ヘッダー情報とコンテンツ情報を結合
+            // ★TODO タグ情報を追加する
+            string contentText = HeaderText + "\n" + Content;
+            // PromptResultTypeがTextContentの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TextContent) {
+                string result = ChatUtil.CreateTextChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                if (string.IsNullOrEmpty(result) == false) {
+                    // PromptChatResultに結果を保存
+                    PromptChatResult.SetTextContent(promptItem.Name, result);
+                }
+                return;
+            }
+            // PromptResultTypeがComplexContentの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.ComplexContent) {
+                Dictionary<string, dynamic?> response = ChatUtil.CreateComplexChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                // resultからキー:resultを取得
+                if (response.ContainsKey("result") == false) {
+                    return;
+                }
+                dynamic? result = response["result"];
+                // resultがない場合は処理しない
+                if (result == null) {
+                    return;
+                }
+                if (result.Count > 0) {
+                    // PromptChatResultに結果を保存
+                    PromptChatResult.SetComplexContent(promptItem.Name, result);
+                }
+                return;
+            }
+            // PromptResultTypeがListの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.List) {
+                List<string> response = ChatUtil.CreateListChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                if (response.Count > 0) {
+                    // PromptChatResultに結果を保存
+                    PromptChatResult.SetListContent(promptItem.Name, response);
+                }
+                return;
             }
         }
 
+
+
+        // 自動でサマリーを付与するコマンド
+        public void CreateSummary() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            // システム定義のPromptItemを取得
+            PromptItem? promptItem = libManager.DataFactory.GetPromptTemplateByName(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString()) ?? throw new Exception("PromptItem not found");
+            // CreateChatResultを実行
+            CreateChatResult(promptItem);
+        }
 
         // 課題リストを作成する
         public void CreateTasks() {
@@ -329,34 +375,15 @@ namespace PythonAILib.Model.Content {
 
             foreach (var item in result) {
                 // todo と actionを取得
-                string todo = item["todo"];
-                string action = item["plan"];
-
-                TaskItem TaskItem = new() {
-                    Title = "",
-                    Content = todo,
-                    Action = action
-                };
-                // TaskItemを追加
-                Tasks.Add(TaskItem);
+                Tasks.Add(item);
             }
         }
 
         public string? CreateNormalBackgroundInfo() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            VectorDBItem vectorDBItem = libManager.DataFactory.GetSystemVectorDBItem();
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            vectorDBItem.CollectionName = CollectionId.ToString();
-            // ヘッダー情報とコンテンツ情報を結合
-            // ★TODO タグ情報を追加する
-            string contentText = HeaderText + "\n" + Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return null;
-            }
             PromptItem promptItem = PromptItem.GetPromptItemByName(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()) ?? throw new Exception("PromptItem not found");
-            string result = ChatUtil.CreateTextChatResult(openAIProperties, [vectorDBItem], promptItem, contentText);
-            return result; 
+            // CreateChatResultを実行
+            CreateChatResult(promptItem);
+            return BackgroundInfo;
         }
 
 
@@ -366,12 +393,6 @@ namespace PythonAILib.Model.Content {
             VectorDBItem vectorDBItem = libManager.DataFactory.GetSystemVectorDBItem();
             vectorDBItem.CollectionName = CollectionId.ToString();
 
-            string result;
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return null;
-            }
             // PromptItemの生成
             PromptItem promptItem = new PromptItem() {
                 Name = "AnalyzeJapaneseSentence",
@@ -379,12 +400,10 @@ namespace PythonAILib.Model.Content {
                 PromptResultType = PromptItem.PromptResultTypeEnum.TextContent,
                 ChatType = OpenAIExecutionModeEnum.OpenAIRAG
             };
-            string promptText = PromptStringResource.Instance.AnalyzeJapaneseSentenceRequest;
-            result = ChatUtil.CreateTextChatResult(libManager.ConfigParams.GetOpenAIProperties(), [vectorDBItem], promptItem, contentText);
-            if (string.IsNullOrEmpty(result) == false) {
-                BackgroundInfo += "\n" + result;
-            }
-            return result;
+            // CreateChatResultを実行
+            CreateChatResult(promptItem);
+            // "AnalyzeJapaneseSentence"の結果を返す
+            return PromptChatResult.GetTextContent("AnalyzeJapaneseSentence");
         }
 
         // QAを作成する
@@ -411,19 +430,13 @@ namespace PythonAILib.Model.Content {
                 BackgroundInfo += "\n" + result;
             }
             return result;
-
         }
 
-
         // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(VectorDBItem vectorDBItem, bool IncludeBackgroundInfo) {
+        public List<VectorSearchResult> VectorSearchCommandExecute(VectorDBItem vectorDBItem) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             string contentText = Content;
-            // IncludeBackgroundInfoInEmbeddingの場合はBackgroundInfoを含める
-            if (IncludeBackgroundInfo) {
-                contentText += $"\n---{PythonAILibStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
-            }
             // VectorSearchRequestを作成
             VectorSearchRequest request = new() {
                 Query = contentText,
@@ -434,6 +447,35 @@ namespace PythonAILib.Model.Content {
             // ベクトル検索を実行
             List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(openAIProperties, vectorDBItem, request);
             return results;
+        }
+        public void UpdateEmbedding(VectorDBUpdateMode mode) {
+
+            if (mode == VectorDBUpdateMode.delete) {
+                // VectorDBItemを取得
+                VectorDBItem folderVectorDBItem = GetVectorDBItem();
+                // IPythonAIFunctions.ClipboardInfoを作成
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                // Embeddingを削除
+                folderVectorDBItem.DeleteIndex(clipboardInfo);
+                return;
+            }
+            if (mode == VectorDBUpdateMode.update) {
+                // IPythonAIFunctions.ClipboardInfoを作成
+                // タイトルとHeaderTextを追加
+                string content = Description + "\n" + HeaderText + "\n" + Content;
+
+                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
+
+                // VectorDBItemを取得
+                VectorDBItem folderVectorDBItem = GetVectorDBItem();
+                // Embeddingを保存
+                folderVectorDBItem.UpdateIndex(clipboardInfo);
+            }
+        }
+
+        // Embeddingを更新する
+        public void UpdateEmbedding() {
+            UpdateEmbedding(VectorDBUpdateMode.update);
         }
 
 

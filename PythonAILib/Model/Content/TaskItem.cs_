@@ -1,5 +1,5 @@
 namespace PythonAILib.Model.Content {
-    public class TaskItem {
+    public class TaskItem_ {
 
         // タイトル
         public string Title { get; set; } = "";

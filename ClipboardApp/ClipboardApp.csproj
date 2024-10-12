@@ -51,10 +51,7 @@
     <Compile Update="Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ClipboardItemView\BackgroundInfoPanel.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\ClipboardItemView\SummaryPanel.xaml.cs">
+    <Compile Update="View\ClipboardItemView\PromptResultTextPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\ClipboardItemView\FilePanel.xaml.cs">
