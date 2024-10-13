@@ -302,18 +302,6 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoEmbedding {
-            get {
-                return ((bool)(this["AutoEmbedding"]));
-            }
-            set {
-                this["AutoEmbedding"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoFileExtract {
             get {
                 return ((bool)(this["AutoFileExtract"]));

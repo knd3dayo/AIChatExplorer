@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -101,9 +102,9 @@ namespace PythonAILib.Model.Content {
 
         // Tasks
         [BsonIgnore]
-        public List<Dictionary<string,string>> Tasks {
+        public List<Dictionary<string, object>> Tasks {
             get {
-                List<Dictionary<string, string>>? tasks = PromptChatResult.GetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                List <Dictionary<string, object>> tasks = PromptChatResult.GetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
                 return tasks ?? [];
             }
             set {
@@ -202,12 +203,34 @@ namespace PythonAILib.Model.Content {
 
         public virtual void Delete() {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.DeleteItem(this);
 
+            Task.Run(() => {
+                UpdateEmbedding(VectorDBUpdateMode.delete);
+            });
+
+            // ファイルが存在する場合は削除
+            foreach (var fileObjectId in FileObjectIds) {
+                ContentAttachedItem? file = libManager.DataFactory.GetAttachedItem(fileObjectId);
+                file?.Delete();
+            }
+            libManager.DataFactory.DeleteItem(this);
         }
+
 
         public virtual void Save(bool contentIsModified = true) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            if (contentIsModified) {
+                // ★TODO DBControllerに処理を移動する。
+                // ファイルを保存
+                SaveFiles();
+
+                // Embeddingを更新
+                Task.Run(() => {
+                    UpdateEmbedding();
+                });
+            }
+
             libManager.DataFactory.UpsertItem(this, contentIsModified);
 
         }
@@ -316,6 +339,11 @@ namespace PythonAILib.Model.Content {
                     return;
                 }
                 if (result.Count > 0) {
+                    // resultからDynamicDictionaryObjectを作成
+                    List<Dictionary<string, object>> resultDict = [];
+                    foreach (var item in result) {
+                        resultDict.Add(item);
+                    }
                     // PromptChatResultに結果を保存
                     PromptChatResult.SetComplexContent(promptItem.Name, result);
                 }
@@ -360,23 +388,26 @@ namespace PythonAILib.Model.Content {
             PromptItem promptItem = PromptItem.GetPromptItemByName(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString()) ?? throw new Exception("PromptItem not found");
             Dictionary<string, dynamic?> response = ChatUtil.CreateComplexChatResult(openAIProperties, [vectorDBItem], promptItem, contentText);
 
-            // TaskItemをクリア
-            Tasks.Clear();
-
             // resultからキー:resultを取得
             if (response.ContainsKey("result") == false) {
                 return;
             }
-            dynamic? result = response["result"] ;
+            List<object>? result = response["result"];
             // resultがない場合は処理しない
             if (result == null) {
                 return;
             }
-
-            foreach (var item in result) {
-                // todo と actionを取得
-                Tasks.Add(item);
+            List <Dictionary<string, object>> tasks = [];
+            foreach (var task in result) {
+                if (task is not Dictionary<string, object> dict) {
+                    continue;
+                }   
+                
+                tasks.Add(dict);
             }
+            // PromptChatResultに結果を保存
+            PromptChatResult.SetComplexContent(promptItem.Name, tasks);
+
         }
 
         public string? CreateNormalBackgroundInfo() {

@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PythonAILib.Utils;
 
 namespace PythonAILib.Model.Prompt {
     public class PromptChatResult() {
@@ -10,23 +6,36 @@ namespace PythonAILib.Model.Prompt {
         public Dictionary<string, object> Results { get; set; } = [];
 
         public string GetTextContent(string promptName) {
-            return Results.ContainsKey(promptName) ? (string)Results[promptName] : "";
+            return Results.TryGetValue(promptName, out object? value) ? (string)value : "";
         }
         public void SetTextContent(string promptName, string content) {
             Results[promptName] = content;
         }
 
         public List<string> GetListContent(string promptName) {
-            return Results.ContainsKey(promptName) ? (List<string>)Results[promptName] : [];
+            return Results.TryGetValue(promptName, out object? value) ? (List<string>)value : [];
         }
         public void SetListContent(string promptName, List<string> content) {
             Results[promptName] = content;
         }
 
-        public dynamic? GetComplexContent(string promptName) {
-            return Results.ContainsKey(promptName) ? Results[promptName]: null;
+        public List<Dictionary<string, object>> GetComplexContent(string promptName) {
+            Results.TryGetValue(promptName, out object? values);
+            if (values == null) {
+                return [];
+            }
+
+            if (values is List<Dictionary<string, object>> list) {
+                return list;
+            }
+            if (values is Object[] list2) {
+                return list2.Select(x => (Dictionary<string, object>)x).ToList();
+
+            }
+
+            return [];
         }
-        public void SetComplexContent(string promptName, dynamic content) {
+        public void SetComplexContent(string promptName, List<Dictionary<string, object>> content) {
             Results[promptName] = content;
         }
 

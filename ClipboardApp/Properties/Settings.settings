@@ -71,9 +71,6 @@
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoEmbedding" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="AutoFileExtract" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>

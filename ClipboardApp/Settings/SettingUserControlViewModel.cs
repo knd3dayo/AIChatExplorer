@@ -397,20 +397,6 @@ namespace ClipboardApp.Settings
             }
         }
 
-
-        // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
-        public bool AutoEmbedding {
-            get {
-                return ClipboardAppConfig.Instance.AutoEmbedding;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoEmbedding = value;
-                OnPropertyChanged(nameof(AutoEmbedding));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
         public bool AutoFileExtract {
             get {

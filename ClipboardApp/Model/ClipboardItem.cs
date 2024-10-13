@@ -47,6 +47,7 @@ namespace ClipboardApp.Model {
             return newItem;
 
         }
+
         public void CopyTo(ContentItem newItem) {
             if (newItem is not ClipboardItem) {
                 return;
@@ -168,38 +169,14 @@ namespace ClipboardApp.Model {
             return item;
 
         }
-        // ClipboardItemのListからContentsを取得して文字列として返す
-        public static string GetContentsString(List<ClipboardItem> items) {
-            StringBuilder sb = new();
-            foreach (var item in items) {
-                sb.AppendLine(item.Content);
-            }
-            return sb.ToString();
-        }
-
-        // 別コレクションのオブジェクトをLoadする
-        public void Load() {
-            LoadFiles();
-        }
 
         // 自分自身をDBに保存する
         public override void Save(bool contentIsModified = true) {
 
-            if (contentIsModified) {
-                // ★TODO DBControllerに処理を移動する。
-                // ファイルを保存
-                SaveFiles();
-            }
+            base.Save(contentIsModified);
+
             // 保存済みのアイテムを取得
             ClipboardItem? savedItem = (ClipboardItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetItem(this);
-
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
-
-            if (contentIsModified == false) {
-                // ピン留め変更のみの場合を想定。
-                return;
-            }
-
 
             // SaveContentがNullの場合、またはContentが変更されている場合はOS上のファイル更新とEmbedding更新を行う
             if (savedItem == null || savedItem.Content != Content) {
@@ -211,12 +188,6 @@ namespace ClipboardApp.Model {
                     }
                 });
 
-                // Embeddingを更新
-                Task.Run(() => {
-                    if (ClipboardAppConfig.Instance.AutoEmbedding) {
-                        UpdateEmbedding();
-                    }
-                });
             }
         }
 
@@ -268,19 +239,16 @@ namespace ClipboardApp.Model {
 
         // 自分自身をDBから削除する
         public override void Delete() {
-            // 保存先フォルダを取得
-            string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
-            // syncFolder/フォルダ名を取得
-            folderPath = Path.Combine(folderPath, FolderPath);
-            // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-            string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+            base.Delete();
 
+            Task.Run(() => {
+                // 保存先フォルダを取得
+                string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
+                // syncFolder/フォルダ名を取得
+                folderPath = Path.Combine(folderPath, FolderPath);
+                // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
+                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
 
-            // AutoEmbedding == Trueの場合はEmbeddingを削除
-            Task.Run(() => {
-                UpdateEmbedding(VectorDBUpdateMode.delete);
-            });
-            Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
                 if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
@@ -294,17 +262,8 @@ namespace ClipboardApp.Model {
                     }
                 }
                 LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
-
             });
-
-            // ファイルが存在する場合は削除
-            foreach (var fileObjectId in FileObjectIds) {
-                ClipboardItemFile? file = (ClipboardItemFile?)ClipboardAppFactory.Instance.GetClipboardDBController().GetAttachedItem(fileObjectId);
-                file?.Delete();
-            }
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
-
 
         // 自動処理を適用する処理
         public ClipboardItem? ApplyAutoProcess() {

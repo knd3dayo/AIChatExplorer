@@ -372,20 +372,6 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // AutoEmbedding
-        private bool? _autoEmbedding;
-        public bool AutoEmbedding {
-            get {
-                if (_autoEmbedding == null) {
-                    _autoEmbedding = Properties.Settings.Default.AutoEmbedding;
-                }
-                return _autoEmbedding.Value;
-            }
-            set {
-                _autoEmbedding = value;
-                Properties.Settings.Default.AutoEmbedding = value;
-            }
-        }
         // Embeddingの対象に背景情報を含める
         private bool? _includeBackgroundInfoInEmbedding;
 

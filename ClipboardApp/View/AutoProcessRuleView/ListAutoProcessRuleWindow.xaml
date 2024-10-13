@@ -256,17 +256,6 @@
                                 Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoMergeItemsBySourceApplicationTitle}" />
                             <TextBlock
-                                Grid.Row="7"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyEmbedding, Mode=OneTime}" />
-                            <CheckBox
-                                Grid.Row="7"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyEmbeddingWhenSavingClipboardItems, Mode=OneTime}"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoEmbedding}" />
-                            <TextBlock
                                 Grid.Row="8"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
