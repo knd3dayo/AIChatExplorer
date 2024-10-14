@@ -9,8 +9,14 @@ using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.PromptTemplateWindow {
     public class ListPromptTemplateWindowViewModel : QAChatViewModelBase {
-
         // 初期化
+
+        public enum ActionModeEum {
+            Edit,
+            Select,
+            Exec
+        }
+
         public ListPromptTemplateWindowViewModel(ActionModeEum actionMode, Action<PromptItemViewModel, OpenAIExecutionModeEnum> afterUpdate) {
             // PromptItemsを更新
             ReloadCommand.Execute();
@@ -48,12 +54,6 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
                 OnPropertyChanged(nameof(IsShowSystemPromptItems));
                 ReloadCommand.Execute();
             }
-        }
-
-        public enum ActionModeEum {
-            Edit,
-            Select,
-            Exec
         }
         private ActionModeEum ActionMode { get; set; } = ActionModeEum.Edit;
         // モード

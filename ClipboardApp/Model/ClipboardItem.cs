@@ -9,6 +9,7 @@ using ClipboardApp.Model.Folder;
 using LibGit2Sharp;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
@@ -292,38 +293,15 @@ namespace ClipboardApp.Model {
             }
             var task1 = Task.Run(() => {
                 // 標準背景情報を生成
-                string? normalBackgroundInfo = CreateNormalBackgroundInfo();
-                return normalBackgroundInfo;
-            });
-
-            var task2 = Task.Run(() => {
-                // 背景情報に日本語解析追加が有効になっている場合
-                if (ClipboardAppConfig.Instance.AnalyzeJapaneseSentence) {
-                    string? analyzedJapaneseSentence = CreateAnalyzedJapaneseSentence();
-                    return analyzedJapaneseSentence;
-                }
-                return null;
-            });
-            var task3 = Task.Run(() => {
-                // 背景情報に自動QA生成が有効になっている場合
-                if (ClipboardAppConfig.Instance.AutoGenerateQA) {
-                    string? generatedQA = CreateQA();
-                    return generatedQA;
-                }
-                return null;
+                CreateChatResult(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
             });
 
             // すべてのタスクが完了するまで待機
-            Task.WaitAll(task1, task2, task3);
+            Task.WaitAll(task1);
             // 背景情報を更新 taskの結果がNullでない場合は追加
             if (task1.Result != null) {
                 BackgroundInfo += task1.Result;
-            }
-            if (task2.Result != null) {
-                BackgroundInfo += task2.Result;
-            }
-            if (task3.Result != null) {
-                BackgroundInfo += task3.Result;
             }
         }
 

@@ -716,6 +716,32 @@ namespace WpfAppCommon.Model {
         // 説明
         public virtual string Description { get; } = "説明";
 
+        // 自動処理時の設定
+        public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
+
+        // Chatタイプ
+        public virtual string ChatType { get; } = "Chatタイプ";
+        // 出力形式
+        public virtual string OutputType { get; } = "出力形式";
+        // 文字列
+        public virtual string StringType { get; } = "文字列";
+        // リスト
+        public virtual string ListType { get; } = "リスト";
+        // テーブル
+        public virtual string TableType { get; } = "テーブル";
+        // 出力先
+        public virtual string OutputDestination { get; } = "出力先";
+        // 新規タブ
+        public virtual string NewTab { get; } = "新規タブ";
+        // 本文を上書き
+        public virtual string OverwriteContent { get; } = "本文を上書き";
+        // タイトルを上書き
+        public virtual string OverwriteTitle { get; } = "タイトルを上書き";
+
+
+
+
+
         // フォルダ選択
         public virtual string SelectFolder { get; } = "フォルダ選択";
 
@@ -997,6 +1023,8 @@ namespace WpfAppCommon.Model {
         // "タイトルを生成しました"
         public virtual string GeneratedTitleInformation { get; } = "タイトルを生成しました";
 
+
+
         // 背景情報
         public virtual string BackgroundInformation { get; } = "背景情報";
 
@@ -1020,6 +1048,9 @@ namespace WpfAppCommon.Model {
 
         // "課題リストを生成しました"
         public virtual string GeneratedTasks { get; } = "課題リストを生成しました";
+
+        // その他のプロンプト
+        public virtual string OtherPrompts { get; } = "その他のプロンプト";
 
         // ベクトルを生成します
         public virtual string GenerateVector2 { get; } = "ベクトルを生成します";
@@ -1642,6 +1673,9 @@ namespace WpfAppCommon.Model {
 
         // 抽出したテキスト
         public virtual string ExtractedText { get; } = "抽出したテキスト";
+
+        // タブ削除
+        public virtual string DeleteTab { get; } = "タブ削除";
 
     }
 }

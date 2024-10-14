@@ -62,26 +62,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // BackgroundInfo
-        public string BackgroundInfo {
-            get {
-                return ClipboardItem.BackgroundInfo;
-            }
-            set {
-                ClipboardItem.BackgroundInfo = value;
-                OnPropertyChanged(nameof(BackgroundInfo));
-            }
-        }
-        public string Summary {
-            get {
-                return ClipboardItem.Summary;
-            }
-            set {
-                ClipboardItem.Summary = value;
-                OnPropertyChanged(nameof(Summary));
-            }
-        }
-
         // Files
         public ObservableCollection<ContentAttachedItem> Files {
             get {

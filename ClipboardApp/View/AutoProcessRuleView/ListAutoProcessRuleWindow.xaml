@@ -316,18 +316,6 @@
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
                                 IsChecked="{Binding SettingUserControlViewModel.AutoBackgroundInfo}" />
-                            <CheckBox
-                                Grid.Row="14"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation, Mode=OneTime}"
-                                IsChecked="{Binding SettingUserControlViewModel.AnalyzeJapaneseSentence}" />
-                            <CheckBox
-                                Grid.Row="15"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyAddAutoQAResultsToBackgroundInformation, Mode=OneTime}"
-                                IsChecked="{Binding SettingUserControlViewModel.AutoGenerateQA}" />
                             <TextBlock
                                 Grid.Row="16"
                                 Grid.Column="0"

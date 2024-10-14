@@ -537,35 +537,6 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // AnalyzeJapaneseSentence 日本語文章の解析
-        private bool? _analyzeJapaneseSentence;
-        public bool AnalyzeJapaneseSentence {
-            get {
-                if (_analyzeJapaneseSentence == null) {
-                    _analyzeJapaneseSentence = Properties.Settings.Default.AnalyzeJapaneseSentence;
-                }
-                return _analyzeJapaneseSentence.Value;
-            }
-            set {
-                _analyzeJapaneseSentence = value;
-                Properties.Settings.Default.AnalyzeJapaneseSentence = value;
-            }
-        }
-        // 自動的にQAを生成する
-        private bool? _autoGenerateQA;
-        public bool AutoGenerateQA {
-            get {
-                if (_autoGenerateQA == null) {
-                    _autoGenerateQA = Properties.Settings.Default.AutoGenerateQA;
-                }
-                return _autoGenerateQA.Value;
-            }
-            set {
-                _autoGenerateQA = value;
-                Properties.Settings.Default.AutoGenerateQA = value;
-            }
-        }
-
         // 自動的にTasksを生成する
         private bool? _autoGenerateTasks;
         public bool AutoGenerateTasks {

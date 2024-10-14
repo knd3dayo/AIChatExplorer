@@ -346,6 +346,22 @@ namespace ClipboardApp {
             VersionWindow.OpenVersionWindow();
         });
 
+        // プロンプトテンプレートを実行
+        public SimpleDelegateCommand<ClipboardItemViewModel> SelectPromptTemplateCommand => new((itemViewModel) => {
+            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
+                // チャットを実行
+                Task.Run(() => {
+                    itemViewModel.ClipboardItem.CreateChatResult(promptTemplateWindowViewModel.PromptItem);
+                    //保存
+                    itemViewModel.ClipboardItem.Save();
+                    MainUITask.Run(() => {
+                        // フォルダ内のアイテムを再読み込み
+                        SelectedFolder?.LoadFolderCommand.Execute();
+                    });
+                });
+            });
+        });
+
 
     }
 }

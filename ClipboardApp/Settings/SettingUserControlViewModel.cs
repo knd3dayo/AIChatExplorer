@@ -342,32 +342,6 @@ namespace ClipboardApp.Settings
                 isPropertyChanged = true;
             }
         }
-        // AnalyzeJapaneseSentence
-        public bool AnalyzeJapaneseSentence {
-            get {
-                return ClipboardAppConfig.Instance.AnalyzeJapaneseSentence;
-            }
-            set {
-                ClipboardAppConfig.Instance.AnalyzeJapaneseSentence = value;
-                OnPropertyChanged(nameof(AnalyzeJapaneseSentence));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // AutoGenerateQA
-        public bool AutoGenerateQA {
-            get {
-                return ClipboardAppConfig.Instance.AutoGenerateQA;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoGenerateQA = value;
-                OnPropertyChanged(nameof(AutoGenerateQA));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoGenerateTasks
         public bool AutoGenerateTasks {
             get {

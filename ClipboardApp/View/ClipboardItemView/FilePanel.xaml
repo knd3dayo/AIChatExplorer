@@ -25,7 +25,7 @@
     </UserControl.Resources>
     <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
         <materialDesign:DrawerHost.LeftDrawerContent>
-            <Grid Width="200">
+            <Grid Width="200" Margin="10,10,10,10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>

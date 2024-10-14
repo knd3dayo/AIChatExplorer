@@ -349,5 +349,10 @@ namespace PythonAILib.Resource {
         //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
         public virtual string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
+        // プロンプトテンプレート[promptName]を実行します.
+        public virtual string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
+
+        // "プロンプトテンプレート[promptName]を実行しました."
+        public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
     }
 }

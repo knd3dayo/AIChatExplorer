@@ -4,11 +4,13 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.Model.Chat;
 using PythonAILib.Resource;
+using QAChat.View.PromptTemplateWindow;
+using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {
 
         // -- virtual
@@ -84,6 +86,9 @@ namespace ClipboardApp.ViewModel
             MenuItem promptMenuItem = new() {
                 Header = StringResources.PromptMenu,
             };
+            if (MainWindowViewModel.ActiveInstance == null) {
+                return promptMenuItem;
+            }
 
             // タイトルを生成
             MenuItem generateTitleMenuItem = new() {
@@ -120,6 +125,14 @@ namespace ClipboardApp.ViewModel
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(generateTasksMenuItem);
+
+            // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
+            MenuItem otherPromptMenuItem = new() {
+                Header = StringResources.OtherPrompts,
+                Command = MainWindowViewModel.ActiveInstance.SelectPromptTemplateCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(otherPromptMenuItem);
 
             return promptMenuItem;
         }

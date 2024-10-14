@@ -9,8 +9,8 @@ using ClipboardApp.Settings;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Prompt;
 using QAChat.Control;
 using QAChat.View.ImageChat;
 using QAChat.View.RAGWindow;
@@ -374,12 +374,13 @@ namespace ClipboardApp {
             LogWrapper.Info(CommonStringResources.Instance.GeneratedTitleInformation);
         }
 
-        // 背景情報を生成するコマンド
-        public static async void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object obj) {
-            LogWrapper.Info(CommonStringResources.Instance.GenerateBackgroundInformation);
+
+        // プロンプトテンプレートを実行するコマンド
+        public static async void ExecutePromptTemplateCommand(List<ClipboardItem> contentItem, object obj, string promptName) {
+            LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.CreateAutoBackgroundInfo();
+                    item.CreateChatResult(promptName);
                     // 保存
                     item.Save(false);
                 }
@@ -388,41 +389,26 @@ namespace ClipboardApp {
                     action();
                 }
             });
-            LogWrapper.Info(CommonStringResources.Instance.GeneratedBackgroundInformation);
+            LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecuted(promptName));
+        }
+
+
+        // 背景情報を生成するコマンド
+        public static void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object obj) {
+            string promptName = PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
+            ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // サマリーを生成するコマンド
-        public static async void GenerateSummaryCommand(List<ClipboardItem> contentItem, object obj) {
-            LogWrapper.Info(CommonStringResources.Instance.GenerateSummary2);
-            await Task.Run(() => {
-                foreach (var item in contentItem) {
-                    item.CreateSummary();
-                    // 保存
-                    item.Save(false);
-                }
-                // objectがActionの場合は実行
-                if (obj is Action action) {
-                    action();
-                }
-            });
-            LogWrapper.Info(CommonStringResources.Instance.GeneratedSummary);
+        public static void GenerateSummaryCommand(List<ClipboardItem> contentItem, object obj) {
+            string promptName = PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString();
+            ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // 課題リストを生成するコマンド
-        public static async void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj) {
-            LogWrapper.Info(CommonStringResources.Instance.GenerateTasks);
-            await Task.Run(() => {
-                foreach (var item in contentItem) {
-                    item.CreateTasks();
-                    // 保存
-                    item.Save(false);
-                }
-                // objectがActionの場合は実行
-                if (obj is Action action) {
-                    action();
-                }
-            });
-            LogWrapper.Info(CommonStringResources.Instance.GeneratedTasks);
+        public static void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj) {
+            string promptName = PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString();
+            ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // ベクトルを生成するコマンド

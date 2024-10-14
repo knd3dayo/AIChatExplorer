@@ -24,7 +24,6 @@
         </Style>
     </UserControl.Resources>
     <editorControl:MyTextBox
-        Name="Summary"
         Margin="10,3,10,3"
         FontSize="10pt"
         Text="{Binding TextContent, UpdateSourceTrigger=PropertyChanged}" />

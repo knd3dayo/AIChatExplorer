@@ -144,7 +144,7 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding TabItems}" />
+                ItemsSource="{Binding TabItems}" /> 
         </Grid>
         <Grid Grid.Row="2">
             <DockPanel HorizontalAlignment="Left">

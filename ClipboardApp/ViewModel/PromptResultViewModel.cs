@@ -1,18 +1,13 @@
-using ClipboardApp.Model;
+using System.Data;
 using System.Windows;
-using PythonAILib.Model.Prompt;
-using WpfAppCommon.Utils;
-using PythonAILib.Model.Content;
-using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model.Prompt;
 using WpfAppCommon.Model;
-using PythonAILib.Utils;
-using System.Dynamic;
-using System.Data;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
-    internal class PromptResultViewModel: ObservableObject {
+    internal class PromptResultViewModel : ObservableObject {
 
         public PromptResultViewModel(PromptChatResult promptChatResult, string promptName) {
 
@@ -22,7 +17,7 @@ namespace ClipboardApp.ViewModel {
         }
 
         public string PromptName { get; set; }
-        public PromptChatResult PromptChatResult { get; set; } 
+        public PromptChatResult PromptChatResult { get; set; }
 
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
         public string TextContent {

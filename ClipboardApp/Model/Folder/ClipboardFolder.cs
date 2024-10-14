@@ -9,6 +9,7 @@ using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
@@ -716,14 +717,14 @@ namespace ClipboardApp.Model.Folder {
                 // サマリー
                 if (ClipboardAppConfig.Instance.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    item.CreateSummary();
+                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
             var task5 = Task.Run(() => {
                 // Tasks
                 if (ClipboardAppConfig.Instance.AutoGenerateTasks) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateTaskList);
-                    item.CreateTasks();
+                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
 

@@ -228,6 +228,12 @@ namespace PythonAILib.Resource {
         public override string DeleteTextEmbeddingFromImage { get; } = "Delete Text Embedding from Image";
         public override string DeletedTextEmbeddingFromImage { get; } = "Deleted Text Embedding from Image";
         public override string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "General Vector DB for Searching Past Documents Based on User Questions";
+        // Execute the prompt template [promptName].
+        public override string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
+
+        // "The prompt template [promptName] has been executed."
+        public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
+
 
     }
 }

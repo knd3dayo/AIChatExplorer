@@ -1,4 +1,10 @@
+using System.Collections.ObjectModel;
 using System.Windows;
+using ClipboardApp.View.SelectVectorDBView;
+using PythonAILib.Model.VectorDB;
+using QAChat.Control;
+using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {
@@ -35,6 +41,40 @@ namespace ClipboardApp.ViewModel.Folder {
             FolderViewModel = folderViewModel;
 
         }
+
+        private bool isDrawerOpen = false;
+        public bool IsDrawerOpen {
+            get {
+                return isDrawerOpen;
+            }
+            set {
+                isDrawerOpen = value;
+                OnPropertyChanged(nameof(IsDrawerOpen));
+            }
+        }
+
+        private ObservableCollection<VectorDBItem> _vectorDBItemBases = [];
+        public ObservableCollection<VectorDBItem> VectorDBItems {
+            get {
+                return _vectorDBItemBases;
+            }
+            set {
+                _vectorDBItemBases = value;
+                OnPropertyChanged(nameof(VectorDBItems));
+            }
+        }
+
+        private VectorDBItem? _SelectedVectorDBItem = null;
+        public VectorDBItem? SelectedVectorDBItem {
+            get {
+                return _SelectedVectorDBItem;
+            }
+            set {
+                _SelectedVectorDBItem = value;
+                OnPropertyChanged(nameof(SelectedVectorDBItem));
+            }
+        }
+
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             if (FolderViewModel == null) {
                 LogWrapper.Error(StringResources.FolderNotSpecified);
@@ -53,6 +93,35 @@ namespace ClipboardApp.ViewModel.Folder {
             // ウィンドウを閉じる
             window.Close();
         });
+
+        // ベクトルDBをリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorDBItem != null) {
+                VectorDBItems.Remove(SelectedVectorDBItem);
+            }
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
+            // フォルダを選択
+            if (MainWindowViewModel.ActiveInstance == null) {
+                LogWrapper.Error("MainWindowViewModelがNullです");
+                return;
+            }
+            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, false, (selectedItems) => {
+                foreach (var item in selectedItems) {
+                    VectorDBItems.Add(item);
+                }
+            }); OnPropertyChanged(nameof(VectorDBItems));
+        });
+
+        // 選択したVectorDBItemの編集画面を開くコマンド
+        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                VectorDBItems.Add(selectedItem);
+            });
+        });
+
 
     }
 

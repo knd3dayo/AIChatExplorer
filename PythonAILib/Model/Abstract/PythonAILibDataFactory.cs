@@ -103,6 +103,34 @@ namespace PythonAILib.Model.Abstract {
                             collection.Update(item);
                         }
                     }
+                    // PromptItemのPromptResultTypeをTitleTextContentからTextContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "TitleTextContent") {
+                            item["PromptResultType"] = "TextContent";
+                            collection.Update(item);
+                        }
+                    }
+                    // PromptItemのPromptResultTypeをListからListContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "List") {
+                            item["PromptResultType"] = "ListContent";
+                            collection.Update(item);
+                        }
+                    }
+                    // PromptItemのPromptResultTypeをTextからTextContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "Text") {
+                            item["PromptResultType"] = "TextContent";
+                            collection.Update(item);
+                        }
+                    }
+
                     // ClipboardItemにTaskItemがある場合は削除
                     collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
                     foreach (var item in collection.FindAll()) {

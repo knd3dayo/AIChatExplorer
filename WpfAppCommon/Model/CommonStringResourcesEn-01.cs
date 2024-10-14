@@ -580,6 +580,27 @@ namespace WpfAppCommon.Model {
 
         public override string Description { get; } = "Description";
 
+        // 自動処理時の設定
+        public override string AutoProcessSetting { get; } = "Auto Process Setting";
+        // Chatタイプ
+        public override string ChatType { get; } = "Chat Type";
+        // 出力形式
+        public override string OutputType { get; } = "Output Type";
+        // 文字列
+        public override string StringType { get; } = "String";
+        // リスト
+        public override string ListType { get; } = "List";
+        // テーブル
+        public override string TableType { get; } = "Table";
+        // 出力先
+        public override string OutputDestination { get; } = "Output Destination";
+        // 新規タブ
+        public override string NewTab { get; } = "New Tab";
+        // 本文を上書き
+        public override string OverwriteContent { get; } = "Overwrite Content";
+        // タイトルを上書き
+        public override string OverwriteTitle { get; } = "Overwrite Title";
+
         public override string SelectFolder { get; } = "Select Folder";
 
         public override string SelectFile { get; } = "Select File";
@@ -706,6 +727,9 @@ namespace WpfAppCommon.Model {
         public override string GeneratedBackgroundInformation { get; } = "Generated background information";
         public override string GenerateSummary2 { get; } = "Generate summary";
         public override string GeneratedSummary { get; } = "Generated summary";
+
+        // Other prompts
+        public override string OtherPrompts { get; } = "Other Prompts";
         public override string GenerateVector2 { get; } = "Generate vector";
         public override string GeneratedVector { get; } = "Generated vector";
         public override string CannotExtractTextForNonImageContent { get; } = "Cannot extract text for non-image content";
@@ -951,6 +975,9 @@ namespace WpfAppCommon.Model {
         public override string ReloadContent { get; } = "Reload Content";
 
         public override string ExtractedText { get; } = "Extracted Text";
+
+        // タブ削除
+        public override string DeleteTab { get; } = "Delete Tab";
 
     }
 }

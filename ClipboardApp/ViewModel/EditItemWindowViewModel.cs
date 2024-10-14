@@ -213,14 +213,25 @@ namespace ClipboardApp.ViewModel {
                 }
                 ObservableCollection<TabItem> tabItems = [];
                 // PromptResultのタブ
-                List<PromptItem.SystemDefinedPromptNames> promptItems = [
-                    PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration,
-                    PromptItem.SystemDefinedPromptNames.TasksGeneration,
-                    PromptItem.SystemDefinedPromptNames.SummaryGeneration
+                List<string> promptNames = [
+                    PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
+                    PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString(),
+                    PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString()
                     ];
-                foreach (PromptItem.SystemDefinedPromptNames promptName in promptItems) {
-                    PromptResultViewModel promptViewModel = new(ItemViewModel.ClipboardItem.PromptChatResult, promptName.ToString());
-                    PromptItem item = PromptItem.GetSystemPromptItemByName(promptName);
+                // PromptChatResultのエントリからPromptItemの名前を取得
+                foreach ( string name in ItemViewModel.ClipboardItem.PromptChatResult.Results.Keys) {
+                    if (promptNames.Contains(name) || PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                        continue;
+                    }
+                    promptNames.Add(name);
+                }
+
+                foreach (string promptName in promptNames) {
+                    PromptResultViewModel promptViewModel = new(ItemViewModel.ClipboardItem.PromptChatResult, promptName);
+                    PromptItem? item = PromptItem.GetPromptItemByName(promptName);
+                    if (item == null) {
+                        continue;
+                    }
 
                     object content = item.PromptResultType switch {
                         PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
@@ -298,8 +309,6 @@ namespace ClipboardApp.ViewModel {
             // ウィンドウを閉じる
             window.Close();
         });
-
-
 
     }
 }
