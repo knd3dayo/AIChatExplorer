@@ -11,7 +11,7 @@ namespace ClipboardApp.ViewModel.Search {
             ClipboardFolder searchFolder, bool isSearchFolder,
             Action afterUpdate
             ) {
-            SearchConditionRule = searchConditionRule;
+            _searchConditionRule = searchConditionRule;
             _isSearchFolder = isSearchFolder;
 
             _afterUpdate = afterUpdate;
@@ -25,14 +25,12 @@ namespace ClipboardApp.ViewModel.Search {
             OnPropertyChanged(nameof(SearchTypeText));
             OnPropertyChanged(nameof(SearchFolderVisibility));
             OnPropertyChanged(nameof(NameVisibility));
-
         }
-
 
         public MainWindowViewModel? MainWindowViewModel { get; private set; }
 
-        private SearchRule? _searchConditionRule;
-        public SearchRule? SearchConditionRule {
+        private SearchRule _searchConditionRule;
+        public SearchRule SearchConditionRule {
             get {
                 return _searchConditionRule;
             }
@@ -142,7 +140,6 @@ namespace ClipboardApp.ViewModel.Search {
             // 検索条件をLiteDBに保存
             SearchConditionRule.Save();
 
-
             // 検索条件を適用後に実行する処理
             _afterUpdate?.Invoke();
 
@@ -153,12 +150,6 @@ namespace ClipboardApp.ViewModel.Search {
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            if (SearchConditionRule == null) {
-                LogWrapper.Error(StringResources.NoSearchConditions);
-                return;
-            }
-
-
             ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.SearchRootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolder = folderViewModel.ClipboardItemFolder;
@@ -166,25 +157,16 @@ namespace ClipboardApp.ViewModel.Search {
                 SearchFolderPath = folderViewModel.FolderPath;
                 OnPropertyChanged(nameof(SearchFolderPath));
             });
-
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            if (SearchConditionRule == null) {
-                LogWrapper.Error(StringResources.NoSearchConditions);
-                return;
-            }
-
             ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchConditionRule.TargetFolder = folderViewModel.ClipboardItemFolder;
                 TargetFolderPath = folderViewModel.FolderPath;
                 OnPropertyChanged(nameof(TargetFolderPath));
             });
-
         });
-
-
     }
 }
