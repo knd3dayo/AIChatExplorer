@@ -53,7 +53,7 @@ namespace PythonAILib.Model.Abstract {
         // get
         public IEnumerable<VectorDBItem> GetVectorDBItems();
 
-        public VectorDBItem GetSystemVectorDBItem();
+        public VectorDBItem GetMainVectorDBItem();
 
 
         //----  RAGSourceItem

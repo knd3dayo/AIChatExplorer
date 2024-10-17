@@ -80,7 +80,7 @@ namespace ClipboardApp.Model {
         }
 
         // ベクトルDBを返す。
-        public override VectorDBItem GetVectorDBItem() {
+        public override VectorDBItem GetMainVectorDBItem() {
             return GetFolder().GetVectorDBItem();
         }
 

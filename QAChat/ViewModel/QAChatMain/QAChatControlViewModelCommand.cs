@@ -82,7 +82,7 @@ namespace QAChat.ViewModel.QAChatMain {
             // ModeがNormal以外の場合は、VectorDBItemを取得
             VectorDBItems = [];
             if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                VectorDBItem? item = QAChatStartupProps.ContentItem.GetVectorDBItem();
+                VectorDBItem? item = QAChatStartupProps.ContentItem.GetMainVectorDBItem();
                 if (item != null) {
                     VectorDBItems.Add(item);
                 }

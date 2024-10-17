@@ -17,7 +17,7 @@ namespace ClipboardApp.Model
         
         public static VectorDBItem GetFolderVectorDBItem(ClipboardFolder folder) {
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            VectorDBItem systemVectorItem  = dbController.GetSystemVectorDBItem();
+            VectorDBItem systemVectorItem  = dbController.GetMainVectorDBItem();
             // systemVectorItemからコピーを作成
 
             ClipboardAppVectorDBItem item = new() {

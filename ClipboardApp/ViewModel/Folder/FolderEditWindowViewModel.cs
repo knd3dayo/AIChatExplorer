@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.View.SelectVectorDBView;
 using PythonAILib.Model.VectorDB;
-using QAChat.Control;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
@@ -10,16 +9,16 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Folder {
     public class FolderEditWindowViewModel : ClipboardAppViewModelBase {
 
-        private ClipboardFolderViewModel? _FolderViewModel = null;
-        public ClipboardFolderViewModel? FolderViewModel {
-            get {
-                return _FolderViewModel;
-            }
-            set {
-                _FolderViewModel = value;
-                OnPropertyChanged(nameof(FolderViewModel));
-            }
+        // 起動時の処理
+        public FolderEditWindowViewModel(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+            AfterUpdate = afterUpdate;
+            FolderViewModel = folderViewModel;
+            OnPropertyChanged(nameof(FolderViewModel));
         }
+        public ClipboardFolderViewModel FolderViewModel { get; set; }
+        // フォルダ作成後に実行するコマンド
+        private Action AfterUpdate { get; set; }
+
         // 検索条件を常時適用するかどうか
         private bool _alwaysApplySearchCondition = false;
         public bool AlwaysApplySearchCondition {
@@ -31,16 +30,17 @@ namespace ClipboardApp.ViewModel.Folder {
                 OnPropertyChanged(nameof(AlwaysApplySearchCondition));
             }
         }
-
-        // フォルダ作成後に実行するコマンド
-        private Action? _afterUpdate;
-
-        // 起動時の処理
-        public FolderEditWindowViewModel(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-            _afterUpdate = afterUpdate;
-            FolderViewModel = folderViewModel;
-
+        // IncludeInReferenceVectorDBItems
+        public bool IncludeInReferenceVectorDBItems {
+            get {
+                return FolderViewModel.ClipboardItemFolder.IncludeInReferenceVectorDBItems;
+            }
+            set {
+                FolderViewModel.ClipboardItemFolder.IncludeInReferenceVectorDBItems = value;
+                OnPropertyChanged(nameof(IncludeInReferenceVectorDBItems));
+            }
         }
+
 
         private bool isDrawerOpen = false;
         public bool IsDrawerOpen {
@@ -53,13 +53,21 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
-        private ObservableCollection<VectorDBItem> _vectorDBItemBases = [];
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
+                ObservableCollection<VectorDBItem> _vectorDBItemBases = new();
+                foreach (var item in FolderViewModel.ClipboardItemFolder.ReferenceVectorDBItems) {
+                    if (!_vectorDBItemBases.Contains(item)) {
+                        _vectorDBItemBases.Add(item);
+                    }
+                }
                 return _vectorDBItemBases;
             }
             set {
-                _vectorDBItemBases = value;
+                FolderViewModel.ClipboardItemFolder.ReferenceVectorDBItems.Clear();
+                foreach (var item in value) {
+                    FolderViewModel.ClipboardItemFolder.ReferenceVectorDBItems.Add(item);
+                }
                 OnPropertyChanged(nameof(VectorDBItems));
             }
         }
@@ -76,11 +84,6 @@ namespace ClipboardApp.ViewModel.Folder {
         }
 
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
-            if (FolderViewModel == null) {
-                LogWrapper.Error(StringResources.FolderNotSpecified);
-                return;
-            }
-
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
                 LogWrapper.Error(StringResources.EnterFolderName);
@@ -89,7 +92,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             FolderViewModel.SaveFolderCommand.Execute(null);
             // フォルダ作成後に実行するコマンドが設定されている場合
-            _afterUpdate?.Invoke();
+            AfterUpdate?.Invoke();
             // ウィンドウを閉じる
             window.Close();
         });
@@ -108,9 +111,10 @@ namespace ClipboardApp.ViewModel.Folder {
                 LogWrapper.Error("MainWindowViewModelがNullです");
                 return;
             }
-            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, false, (selectedItems) => {
+            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                 foreach (var item in selectedItems) {
-                    VectorDBItems.Add(item);
+                    // VectorDBItems.Add(item);
+                    FolderViewModel.ClipboardItemFolder.ReferenceVectorDBItems.Add(item);
                 }
             }); OnPropertyChanged(nameof(VectorDBItems));
         });
@@ -119,6 +123,8 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
                 VectorDBItems.Add(selectedItem);
+                OnPropertyChanged(nameof(VectorDBItems));
+
             });
         });
 

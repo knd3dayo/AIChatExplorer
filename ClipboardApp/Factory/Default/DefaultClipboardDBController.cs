@@ -125,7 +125,7 @@ namespace ClipboardApp.Factory.Default {
             }
             // itemsの最初の要素を取得
             var item = items.FirstOrDefault();
-            return GetFolder(item?.FolderId);
+            return GetFolder(item?.Id);
         }
 
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId) {
@@ -178,12 +178,14 @@ namespace ClipboardApp.Factory.Default {
                         Id = ObjectId.NewObjectId(),
                         FolderType = folder.FolderType
                     };
-                    rootFolderInfo.FolderId = rootFolderInfo.Id;
-                    rootFolderInfoCollection.Upsert(rootFolderInfo);
 
                     // ルートフォルダの作成
-                    folder.Id = rootFolderInfo.FolderId;
+                    folder.Id = rootFolderInfo.Id; ;
                     collection.Upsert(folder);
+
+                    // ルートフォルダ情報の作成
+                    rootFolderInfoCollection.Upsert(rootFolderInfo);
+
 
                 } else {
                     //　ルートフォルダの更新。folderにRootFolder.FolderIdを設定してUpsert 

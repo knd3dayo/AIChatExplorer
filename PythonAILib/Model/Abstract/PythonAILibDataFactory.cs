@@ -267,7 +267,7 @@ namespace PythonAILib.Model.Abstract {
         //--- -  VectorDBItem
         // update
 
-        public VectorDBItem GetSystemVectorDBItem() {
+        public VectorDBItem GetMainVectorDBItem() {
             // DBからベクトルDBを取得
             // GetItemsメソッドを呼び出して取得
             IEnumerable<VectorDBItem> items = GetVectorDBItems();

@@ -4,10 +4,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
-using PythonAILib.Model.Chat;
 using PythonAILib.Resource;
-using QAChat.View.PromptTemplateWindow;
-using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {

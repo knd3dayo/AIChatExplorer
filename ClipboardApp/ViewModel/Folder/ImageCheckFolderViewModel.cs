@@ -1,19 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.View.ClipboardItemFolderView;
-using WpfAppCommon.Model;
-using QAChat.View.ImageChat;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.View.ClipboardItemFolderView;
+using QAChat.View.ImageChat;
 
-namespace ClipboardApp.ViewModel.Folder
-{
-    public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder)
-    {
-        public override ObservableCollection<MenuItem> MenuItems
-        {
-            get
-            {
+namespace ClipboardApp.ViewModel.Folder {
+    public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+        public override ObservableCollection<MenuItem> MenuItems {
+            get {
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
                 // 新規作成
@@ -44,8 +39,7 @@ namespace ClipboardApp.ViewModel.Folder
                 backupRestoreMenuItem.Header = StringResources.BackupRestore;
 
                 // バックアップ
-                MenuItem backupMenuItem = new()
-                {
+                MenuItem backupMenuItem = new() {
                     Header = StringResources.BackupItem,
                     Command = BackupItemsFromFolderCommand,
                     CommandParameter = this
@@ -59,15 +53,11 @@ namespace ClipboardApp.ViewModel.Folder
             }
         }
 
-
         // LoadChildren
-        public override void LoadChildren()
-        {
+        public override void LoadChildren() {
             Children.Clear();
-            foreach (var child in ClipboardItemFolder.Children)
-            {
-                if (child == null)
-                {
+            foreach (var child in ClipboardItemFolder.Children) {
+                if (child == null) {
                     continue;
                 }
                 Children.Add(new ImageCheckFolderViewModel(MainWindowViewModel, child));
@@ -75,35 +65,28 @@ namespace ClipboardApp.ViewModel.Folder
 
         }
         // LoadItems
-        public override void LoadItems()
-        {
+        public override void LoadItems() {
             Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items)
-            {
+            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
                 Items.Add(new ClipboardItemViewModel(this, item));
             }
         }
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
-        public override void CreateItemCommandExecute()
-        {
+        public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
-            ImageChatMainWindow.OpenMainWindow(clipboardItem, () =>
-            {
+            ImageChatMainWindow.OpenMainWindow(clipboardItem, () => {
                 LoadFolderCommand.Execute();
             });
         }
-        public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel)
-        {
+        public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
             // 画像チェック画面を開く
-            ImageChatMainWindow.OpenMainWindow(itemViewModel.ClipboardItem, () =>
-            {
+            ImageChatMainWindow.OpenMainWindow(itemViewModel.ClipboardItem, () => {
                 LoadFolderCommand.Execute();
             });
         }
 
-        public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate)
-        {
+        public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");

@@ -20,7 +20,7 @@ namespace PythonAILib.Model.VectorDB {
         public static VectorDBItem SystemCommonVectorDB {
             get {
                 PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                return libManager.DataFactory.GetSystemVectorDBItem();
+                return libManager.DataFactory.GetMainVectorDBItem();
             }
         }
 

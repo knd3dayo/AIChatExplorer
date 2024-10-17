@@ -167,8 +167,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-
-
         public string UpdatedAtString {
             get {
                 return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
@@ -189,21 +187,27 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-
-        // 
         public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
 
-        public virtual VectorDBItem GetVectorDBItem() {
+        public virtual VectorDBItem GetMainVectorDBItem() {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            VectorDBItem item = libManager.DataFactory.GetSystemVectorDBItem();
+            VectorDBItem item = libManager.DataFactory.GetMainVectorDBItem();
             item.CollectionName = CollectionId.ToString();
             return item;
-
+        }
+        // 参照用のベクトルDBのリストのプロパティ
+        private List<VectorDBItem> _referenceVectorDBItems = [];
+        public List<VectorDBItem> ReferenceVectorDBItems {
+            get {
+                return _referenceVectorDBItems;
+            }
+            set {
+                _referenceVectorDBItems = value;
+            }
         }
 
         public virtual void Delete() {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-
             Task.Run(() => {
                 UpdateEmbedding(VectorDBUpdateMode.delete);
             });
@@ -215,7 +219,6 @@ namespace PythonAILib.Model.Content {
             }
             libManager.DataFactory.DeleteItem(this);
         }
-
 
         public virtual void Save(bool contentIsModified = true) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
@@ -230,14 +233,11 @@ namespace PythonAILib.Model.Content {
                     UpdateEmbedding();
                 });
             }
-
             libManager.DataFactory.UpsertItem(this, contentIsModified);
-
         }
 
         // OpenAIを使用してイメージからテキスト抽出する。
         public void ExtractImageWithOpenAI() {
-
             foreach (var file in ClipboardItemFiles) {
                 file.ExtractText();
             }
@@ -245,20 +245,16 @@ namespace PythonAILib.Model.Content {
 
         // テキストを抽出」を実行するコマンド
         public ContentItem ExtractTextCommandExecute() {
-
             foreach (var clipboardItemFile in ClipboardItemFiles) {
                 clipboardItemFile.ExtractText();
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
             }
             return this;
         }
-
         // OpenAIを使用してタイトルを生成する
         public void CreateAutoTitleWithOpenAI() {
-
             // ContentTypeがTextの場合
             if (ContentType == ContentTypes.ContentItemTypes.Text) {
-
                 CreateChatResult(PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString());
                 return;
             }
@@ -293,9 +289,9 @@ namespace PythonAILib.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
-                OpenAIExecutionModeEnum.OpenAIRAG => [ libManager.DataFactory.GetSystemVectorDBItem()],
-                OpenAIExecutionModeEnum.LangChain => [libManager.DataFactory.GetSystemVectorDBItem()],
-                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => [ libManager.DataFactory.GetSystemVectorDBItem()],
+                OpenAIExecutionModeEnum.OpenAIRAG => [ libManager.DataFactory.GetMainVectorDBItem()],
+                OpenAIExecutionModeEnum.LangChain => [libManager.DataFactory.GetMainVectorDBItem()],
+                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => [ libManager.DataFactory.GetMainVectorDBItem()],
                 _ => []
             };
 
@@ -352,7 +348,6 @@ namespace PythonAILib.Model.Content {
                 return;
             }
         }
-
         // ExecuteSystemDefinedPromptを実行する
         public void CreateChatResult(string promptName) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
@@ -384,7 +379,7 @@ namespace PythonAILib.Model.Content {
 
             if (mode == VectorDBUpdateMode.delete) {
                 // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = GetVectorDBItem();
+                VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
                 // IPythonAIFunctions.ClipboardInfoを作成
                 ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
                 // Embeddingを削除
@@ -399,7 +394,7 @@ namespace PythonAILib.Model.Content {
                 ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
 
                 // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = GetVectorDBItem();
+                VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
                 // Embeddingを保存
                 folderVectorDBItem.UpdateIndex(clipboardInfo);
             }

@@ -475,7 +475,7 @@ namespace ClipboardApp {
             } else {
                 vectorSearchWindowViewModel.InputText = contentItem.Content;
             }
-            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetVectorDBItem();
+            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
             vectorSearchWindowViewModel.InputText = contentItem.Content;
             // ベクトル検索を実行
             vectorSearchWindowViewModel.SendCommand.Execute(null);
