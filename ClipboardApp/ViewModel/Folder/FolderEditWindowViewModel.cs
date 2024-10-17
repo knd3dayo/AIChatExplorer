@@ -107,10 +107,6 @@ namespace ClipboardApp.ViewModel.Folder {
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            if (MainWindowViewModel.ActiveInstance == null) {
-                LogWrapper.Error("MainWindowViewModelがNullです");
-                return;
-            }
             SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                 foreach (var item in selectedItems) {
                     // VectorDBItems.Add(item);

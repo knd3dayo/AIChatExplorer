@@ -434,10 +434,6 @@ namespace ClipboardApp {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // ベクトルDBアイテムを選択したときのアクション
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                if (MainWindowViewModel.ActiveInstance == null) {
-                    LogWrapper.Error("MainWindowViewModelがNullです");
-                    return;
-                }
                 SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
                         vectorDBItems.Add(item);
@@ -458,10 +454,6 @@ namespace ClipboardApp {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // ベクトルDBアイテムを選択したときのアクション
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                if (MainWindowViewModel.ActiveInstance == null) {
-                    LogWrapper.Error("MainWindowViewModelがNullです");
-                    return;
-                }
                 SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
                         vectorDBItems.Add(item);

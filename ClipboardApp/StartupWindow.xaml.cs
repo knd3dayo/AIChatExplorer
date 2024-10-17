@@ -11,7 +11,11 @@ namespace ClipboardApp {
             // MainWindowを表示
             MainWindow mainWindow = new MainWindow();
             // DataContextにViewModelを設定
-            mainWindow.DataContext = new MainWindowViewModel();
+            MainWindowViewModel mainWindowViewModel = new ();
+            mainWindow.DataContext = mainWindowViewModel;
+            mainWindowViewModel.Init();
+
+
             mainWindow.Show();
 
             // このウィンドウを閉じる

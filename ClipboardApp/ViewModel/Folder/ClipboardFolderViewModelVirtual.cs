@@ -83,10 +83,6 @@ namespace ClipboardApp.ViewModel {
             MenuItem promptMenuItem = new() {
                 Header = StringResources.PromptMenu,
             };
-            if (MainWindowViewModel.ActiveInstance == null) {
-                return promptMenuItem;
-            }
-
             // タイトルを生成
             MenuItem generateTitleMenuItem = new() {
                 Header = StringResources.GenerateTitle,
@@ -137,9 +133,6 @@ namespace ClipboardApp.ViewModel {
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
-            if (MainWindowViewModel.ActiveInstance == null) {
-                return menuItems;
-            }
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,

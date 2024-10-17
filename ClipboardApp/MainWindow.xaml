@@ -14,12 +14,10 @@
     Title="{Binding StringResources.AppName, Mode=OneTime}"
     Width="800"
     Height="450"
+    d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
     mc:Ignorable="d">
-    <Window.DataContext>
-        <local:MainWindowViewModel />
-    </Window.DataContext>
     <Window.InputBindings>
         <!--  Exit application  -->
         <KeyBinding

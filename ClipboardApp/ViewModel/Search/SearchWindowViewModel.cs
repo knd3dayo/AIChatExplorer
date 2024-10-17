@@ -153,10 +153,6 @@ namespace ClipboardApp.ViewModel.Search {
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            if (MainWindowViewModel.ActiveInstance == null) {
-                LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
-                return;
-            }
             if (SearchConditionRule == null) {
                 LogWrapper.Error(StringResources.NoSearchConditions);
                 return;
@@ -175,10 +171,6 @@ namespace ClipboardApp.ViewModel.Search {
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            if (MainWindowViewModel.ActiveInstance == null) {
-                LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
-                return;
-            }
             if (SearchConditionRule == null) {
                 LogWrapper.Error(StringResources.NoSearchConditions);
                 return;

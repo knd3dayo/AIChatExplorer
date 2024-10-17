@@ -19,11 +19,8 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
-        public MainWindowViewModel() {
-            Init();
-
-        }
-        private void Init() {
+        public MainWindowViewModel() { }
+        public void Init() {
 
             ActiveInstance = this;
 
@@ -60,7 +57,7 @@ namespace ClipboardApp {
             OnPropertyChanged(nameof(ClipboardItemFolders));
         }
 
-        public static MainWindowViewModel? ActiveInstance { get; set; }
+        public static MainWindowViewModel ActiveInstance { get; set; } = new MainWindowViewModel();
 
         /// <summary>
         /// ウィンドウがアクティブになった時の処理
@@ -303,10 +300,6 @@ namespace ClipboardApp {
             QAChatStartupProps props = new(clipboardItem) {
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
-                    if (ActiveInstance == null) {
-                        LogWrapper.Error("MainWindowViewModelがNullです");
-                        return;
-                    }
                     SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, false, (selectedItems) => {
                         foreach (var item in selectedItems) {
                             vectorDBItems.Add(item);
@@ -316,10 +309,6 @@ namespace ClipboardApp {
                 },
                 // ペーストアクション
                 AddContentItemCommandAction = (action) => {
-                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
-                    if (ActiveInstance == null) {
-                        return;
-                    }
                     List<ClipboardItem> result = [];
                     ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
                         // newItemsをContentItemBaseに変換
@@ -329,10 +318,6 @@ namespace ClipboardApp {
                 },
                 // 選択中のアイテムを開くアクション
                 OpenSelectedItemCommand = (item) => {
-                    // MainWindowViewModel.ActiveInstanceがnullの場合は何もしない
-                    if (MainWindowViewModel.ActiveInstance == null) {
-                        return;
-                    }
                     clipboardItem = (ClipboardItem)item;
                     // item からClipboardFolderViewModelを取得
                     ClipboardFolderViewModel folderViewModel = new(MainWindowViewModel.ActiveInstance, clipboardItem.GetFolder());
