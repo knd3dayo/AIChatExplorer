@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Windows;
-using WpfAppCommon.Model;
 
 
 
@@ -18,6 +17,11 @@ namespace ClipboardApp {
 
         protected override void OnClosing(CancelEventArgs e) {
             base.OnClosing(e);
+        }
+        // Closedイベント
+        protected override void OnClosed(EventArgs e) {
+            base.OnClosed(e);
+            App.Current.Shutdown();
         }
     }
 
