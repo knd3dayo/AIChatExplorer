@@ -271,20 +271,31 @@ namespace ClipboardApp.Model.Folder {
         }
 
         //--------------------------------------------------------------------------------
+        // ReferenceVectorDBItemsからVectorDBItemを削除
+        public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
+            List<VectorDBItem> existingItems = new (ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            foreach (var item in existingItems) {
+                ReferenceVectorDBItems.Remove(item);
+            }
+        }
+        // ReferenceVectorDBItemsにVectorDBItemを追加
+        public void AddVectorDBItem(VectorDBItem vectorDBItem) {
+            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
+            if (existingItems == null) {
+                ReferenceVectorDBItems.Add(vectorDBItem);
+            }
+        }
+
+
         // 自分自身を保存
         public void Save() {
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
-                VectorDBItem vectorDBItem = GetVectorDBItem();
-                if (ReferenceVectorDBItems.Contains(vectorDBItem) == false) {
-                    ReferenceVectorDBItems.Add(vectorDBItem);
-                }
+                AddVectorDBItem( GetVectorDBItem());
             } else {
                 // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
-                ReferenceVectorDBItems.Remove(GetVectorDBItem());
+                RemoveVectorDBItem(GetVectorDBItem());
             }
-
-
 
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolder(this);

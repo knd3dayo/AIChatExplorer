@@ -7,6 +7,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using LibGit2Sharp;
+using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
@@ -34,6 +35,27 @@ namespace ClipboardApp.Model {
                     return "";
                 }
                 return folder.FolderPath;
+            }
+        }
+        // 背景情報
+        [BsonIgnore]
+        public string BackgroundInfo {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+            }
+        }
+
+        // サマリー
+        [BsonIgnore]
+        public string Summary {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
             }
         }
 

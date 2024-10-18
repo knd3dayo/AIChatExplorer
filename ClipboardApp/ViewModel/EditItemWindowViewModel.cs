@@ -17,6 +17,26 @@ namespace ClipboardApp.ViewModel {
     /// </summary>
     public class EditItemWindowViewModel : ClipboardAppViewModelBase {
 
+        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+
+            FolderViewModel = folderViewModel;
+            if (itemViewModel == null) {
+                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
+                // ReferenceVectorDBItemsを設定
+                clipboardItem.ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems;
+                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
+                Title = "新規アイテム";
+            } else {
+                Title = itemViewModel.ClipboardItem.Description;
+                ItemViewModel = itemViewModel;
+            }
+            // ClipboardItemFileがある場合はSelectedFileに設定
+            if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
+                SelectedFile = (ClipboardItemFile)ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
+            }
+            _afterUpdate = afterUpdate;
+
+        }
 
         private ClipboardItemViewModel? itemViewModel;
         public ClipboardItemViewModel? ItemViewModel {
@@ -137,25 +157,6 @@ namespace ClipboardApp.ViewModel {
             }
         }
         public int SelectedImageIndex { get; set; } = 0;
-
-        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
-
-            FolderViewModel = folderViewModel;
-            if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
-                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
-                Title = "新規アイテム";
-            } else {
-                Title = itemViewModel.ClipboardItem.Description;
-                ItemViewModel = itemViewModel;
-            }
-            // ClipboardItemFileがある場合はSelectedFileに設定
-            if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
-                SelectedFile = (ClipboardItemFile)ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
-            }
-            _afterUpdate = afterUpdate;
-
-        }
 
         // TabItems 
         public ObservableCollection<TabItem> TabItems {

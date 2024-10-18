@@ -78,39 +78,6 @@ namespace PythonAILib.Model.Content {
         #region プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult { get; set; } = new();
 
-        // 背景情報
-        [BsonIgnore]
-        public string BackgroundInfo {
-            get {
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-            }
-            set {
-                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
-            }
-        }
-
-        // サマリー
-        [BsonIgnore]
-        public string Summary {
-            get {
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
-            }
-            set {
-                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
-            }
-        }
-
-        // Tasks
-        [BsonIgnore]
-        public List<Dictionary<string, object>> Tasks {
-            get {
-                List <Dictionary<string, object>> tasks = PromptChatResult.GetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
-                return tasks ?? [];
-            }
-            set {
-                PromptChatResult.SetComplexContent(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString(), value);
-            }
-        }
 
         #endregion
 
@@ -289,9 +256,9 @@ namespace PythonAILib.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
-                OpenAIExecutionModeEnum.OpenAIRAG => [ libManager.DataFactory.GetMainVectorDBItem()],
-                OpenAIExecutionModeEnum.LangChain => [libManager.DataFactory.GetMainVectorDBItem()],
-                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => [ libManager.DataFactory.GetMainVectorDBItem()],
+                OpenAIExecutionModeEnum.OpenAIRAG => ReferenceVectorDBItems,
+                OpenAIExecutionModeEnum.LangChain => ReferenceVectorDBItems,
+                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => ReferenceVectorDBItems,
                 _ => []
             };
 

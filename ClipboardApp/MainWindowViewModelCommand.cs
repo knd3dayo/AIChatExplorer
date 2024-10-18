@@ -76,11 +76,6 @@ namespace ClipboardApp {
 
         });
 
-
-
-
-
-
         // ピン留めの切り替え処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> ChangePinCommand => new((parameter) => {
 

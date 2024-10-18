@@ -19,7 +19,8 @@ namespace QAChat.ViewModel.QAChatMain {
             QAChatStartupProps = props;
 
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            VectorDBItems.Add(props.ContentItem.GetMainVectorDBItem());
+            List<VectorDBItem> vectorDBItems = props.ContentItem.ReferenceVectorDBItems;
+            VectorDBItems = new(vectorDBItems);
 
             // InputTextを設定
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";

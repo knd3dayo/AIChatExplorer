@@ -100,7 +100,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
             if (SelectedVectorDBItem != null) {
-                VectorDBItems.Remove(SelectedVectorDBItem);
+                FolderViewModel.ClipboardItemFolder.RemoveVectorDBItem(SelectedVectorDBItem);
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
@@ -109,8 +109,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // フォルダを選択
             SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                 foreach (var item in selectedItems) {
-                    // VectorDBItems.Add(item);
-                    FolderViewModel.ClipboardItemFolder.ReferenceVectorDBItems.Add(item);
+                    FolderViewModel.ClipboardItemFolder.AddVectorDBItem(item);
                 }
             }); OnPropertyChanged(nameof(VectorDBItems));
         });
@@ -118,8 +117,6 @@ namespace ClipboardApp.ViewModel.Folder {
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                VectorDBItems.Add(selectedItem);
-                OnPropertyChanged(nameof(VectorDBItems));
 
             });
         });
