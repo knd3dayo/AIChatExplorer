@@ -319,11 +319,9 @@
                     ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
                     CopyItemCommand="{Binding CopyItemCommand}"
                     DeleteItemCommand="{Binding DeleteSelectedItemCommand}"
-                    ExecuteSelectedTextCommand="{Binding ExecuteSelectedTextCommand}"
                     ItemsSource="{Binding SelectedFolder.Items}"
                     OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
                     PreviewModeVisibility="{Binding PreviewModeVisibility}"
-                    SelectTextCommand="{Binding SelectTextCommand}"
                     SelectedItem="{Binding SelectedItem}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />

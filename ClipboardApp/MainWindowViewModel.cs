@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using System.Windows.Controls;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
@@ -14,7 +13,6 @@ using ClipboardApp.ViewModel.Search;
 using PythonAILib.Model.Content;
 using QAChat;
 using QAChat.Control;
-using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp {
@@ -47,11 +45,11 @@ namespace ClipboardApp {
         private void InitClipboardFolders() {
             RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
             ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(ClipboardFolder.ImageCheckRootFolder);
-
+            SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolder.SearchRootFolder);
+            ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolder.ChatRootFolder);
             ClipboardItemFolders.Add(RootFolderViewModel);
-            ClipboardItemFolders.Add(new SearchFolderViewModel(ClipboardFolder.SearchRootFolder));
-            ClipboardItemFolders.Add(new ChatFolderViewModel(ClipboardFolder.ChatRootFolder));
-
+            ClipboardItemFolders.Add(SearchRootFolderViewModel);
+            ClipboardItemFolders.Add(ChatRootFolderViewModel);
             ClipboardItemFolders.Add(ImageCheckRootFolderViewModel);
 
             OnPropertyChanged(nameof(ClipboardItemFolders));
@@ -59,14 +57,6 @@ namespace ClipboardApp {
 
         public static MainWindowViewModel ActiveInstance { get; set; } = new MainWindowViewModel();
 
-        /// <summary>
-        /// ウィンドウがアクティブになった時の処理
-        /// </summary>
-        public override void OnActivatedAction() {
-
-            ActiveInstance = this;
-
-        }
         // RootFolderのClipboardViewModel
         // Null非許容を無視
         [AllowNull]
@@ -77,11 +67,16 @@ namespace ClipboardApp {
         [AllowNull]
         public ImageCheckFolderViewModel ImageCheckRootFolderViewModel { get; private set; }
 
-        public void ReLoadRootFolders() {
-            foreach (var folder in ClipboardItemFolders) {
-                folder.LoadFolderCommand.Execute();
-            }
-        }
+        // 検索フォルダのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
+        public SearchFolderViewModel SearchRootFolderViewModel { get; private set; }
+
+        // チャットフォルダのClipboardViewModel
+        // Null非許容を無視
+        [AllowNull]
+        public ChatFolderViewModel ChatRootFolderViewModel { get; private set; }
+
 
         // ClipboardController
         public static ClipboardController ClipboardController { get; } = new();
@@ -190,6 +185,7 @@ namespace ClipboardApp {
             }
         }
 
+
         /// <summary>
         /// コピーされたアイテムのフォルダ
         /// </summary>
@@ -254,24 +250,6 @@ namespace ClipboardApp {
             OnPropertyChanged(propertyName);
         }
 
-        public TextSelector TextSelector { get; } = new();
-
-        // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
-        public SimpleDelegateCommand<TextBox> SelectTextCommand => new((textBox) => {
-
-            // テキスト選択
-            TextSelector.SelectText(textBox);
-            return;
-        });
-        // 選択中のテキストをプロセスとして実行
-        public SimpleDelegateCommand<TextBox> ExecuteSelectedTextCommand => new((textbox) => {
-
-            // 選択中のテキストをプロセスとして実行
-            TextSelector.ExecuteSelectedText(textbox);
-
-        });
-
-
         // 開発中の機能を有効にするかどうか
         public bool EnableDevFeatures {
             get {
@@ -293,7 +271,6 @@ namespace ClipboardApp {
         }
 
         public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
-
 
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 

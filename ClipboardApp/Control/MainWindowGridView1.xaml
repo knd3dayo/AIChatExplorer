@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -159,7 +160,7 @@
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
                     VerticalScrollBarVisibility="Auto">
-                    <TextBox
+                    <editorControl:MyTextBox
                         Name="clipboardText"
                         Margin="3,3,3,3"
                         HorizontalAlignment="Stretch"
@@ -168,20 +169,7 @@
                         BorderThickness="0"
                         FontSize="10pt"
                         IsReadOnly="True"
-                        Text="{Binding Path=SelectedItem.Content, ElementName=Root, Mode=OneWay}">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="A"
-                                Command="{Binding SelectTextCommand, ElementName=Root}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                            <KeyBinding
-                                Key="O"
-                                Command="{Binding ExecuteSelectedTextCommand, ElementName=Root}"
-                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
-                                Modifiers="Ctrl" />
-                        </TextBox.InputBindings>
-                    </TextBox>
+                        Text="{Binding Path=SelectedItem.Content, ElementName=Root, Mode=OneWay}" />
                 </ScrollViewer>
                 <Separator
                     Grid.Row="3"

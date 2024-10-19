@@ -17,7 +17,7 @@ namespace ClipboardApp.ViewModel {
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
 
         // 親フォルダ
-        public ClipboardFolderViewModel? ParentFolderViewModel { get; set; } 
+        public ClipboardFolderViewModel? ParentFolderViewModel { get; set; }
 
         // Description
         public string Description {
@@ -211,7 +211,6 @@ namespace ClipboardApp.ViewModel {
         public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
             MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
             try {
-
                 LoadChildren();
                 LoadItems();
 
