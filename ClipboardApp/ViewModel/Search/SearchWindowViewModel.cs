@@ -150,7 +150,7 @@ namespace ClipboardApp.ViewModel.Search {
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.SearchRootFolder);
+            SearchFolderViewModel? rootFolderViewModel = new(ClipboardFolder.SearchRootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolder = folderViewModel.ClipboardItemFolder;
                 SearchConditionRule.SearchFolder = folderViewModel.ClipboardItemFolder;
@@ -161,7 +161,7 @@ namespace ClipboardApp.ViewModel.Search {
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            ClipboardFolderViewModel? rootFolderViewModel = new(MainWindowViewModel.ActiveInstance, ClipboardFolder.RootFolder);
+            SearchFolderViewModel? rootFolderViewModel = new(ClipboardFolder.RootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchConditionRule.TargetFolder = folderViewModel.ClipboardItemFolder;
                 TargetFolderPath = folderViewModel.FolderPath;

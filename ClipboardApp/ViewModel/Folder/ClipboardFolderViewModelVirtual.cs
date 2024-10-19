@@ -12,7 +12,10 @@ namespace ClipboardApp.ViewModel {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public virtual ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
+            var childFolderViewModel = new ClipboardFolderViewModel(childFolder);
+            // 親フォルダとして自分自身を設定
+            childFolderViewModel.ParentFolderViewModel = this;
+            return childFolderViewModel;
         }
         // -- virtual
         public virtual ObservableCollection<MenuItem> MenuItems {
@@ -244,7 +247,7 @@ namespace ClipboardApp.ViewModel {
             // 子フォルダを作成する
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Normal;
-            ClipboardFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
+            ClipboardFolderViewModel childFolderViewModel = new(childFolder);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

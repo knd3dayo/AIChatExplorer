@@ -6,11 +6,14 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using QAChat.Control;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+    public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            return new ChatFolderViewModel(MainWindowViewModel, childFolder);
+            var chatFolderViewModel = new ChatFolderViewModel(childFolder);
+            // チャットフォルダの親フォルダにこのフォルダを追加
+            chatFolderViewModel.ParentFolderViewModel = this;
+            return chatFolderViewModel;
         }
 
         public override ObservableCollection<MenuItem> MenuItems {
@@ -77,8 +80,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
-            ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
-
+            ImageCheckFolderViewModel childFolderViewModel = new(childFolder);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

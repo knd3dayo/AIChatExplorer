@@ -32,8 +32,8 @@ namespace ClipboardApp {
             PythonAILibManager.Init(configParams);
             QAChatManager.Init(configParams);
             // フォルダの初期化
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
-            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
+            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(ClipboardFolder.ImageCheckRootFolder);
             InitClipboardFolders();
 
             // データベースのチェックポイント処理
@@ -45,12 +45,12 @@ namespace ClipboardApp {
         }
 
         private void InitClipboardFolders() {
-            RootFolderViewModel = new ClipboardFolderViewModel(this, ClipboardFolder.RootFolder);
-            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(this, ClipboardFolder.ImageCheckRootFolder);
+            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
+            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(ClipboardFolder.ImageCheckRootFolder);
 
             ClipboardItemFolders.Add(RootFolderViewModel);
-            ClipboardItemFolders.Add(new SearchFolderViewModel(this, ClipboardFolder.SearchRootFolder));
-            ClipboardItemFolders.Add(new ChatFolderViewModel(this, ClipboardFolder.ChatRootFolder));
+            ClipboardItemFolders.Add(new SearchFolderViewModel(ClipboardFolder.SearchRootFolder));
+            ClipboardItemFolders.Add(new ChatFolderViewModel(ClipboardFolder.ChatRootFolder));
 
             ClipboardItemFolders.Add(ImageCheckRootFolderViewModel);
 
@@ -320,7 +320,7 @@ namespace ClipboardApp {
                 OpenSelectedItemCommand = (item) => {
                     clipboardItem = (ClipboardItem)item;
                     // item からClipboardFolderViewModelを取得
-                    ClipboardFolderViewModel folderViewModel = new(MainWindowViewModel.ActiveInstance, clipboardItem.GetFolder());
+                    ClipboardFolderViewModel folderViewModel = new(clipboardItem.GetFolder());
                     // item からClipboardItemViewModelを取得
                     ClipboardItemViewModel itemViewModel = new(folderViewModel, clipboardItem);
                     EditItemWindow.OpenEditItemWindow(folderViewModel, itemViewModel, () => { });

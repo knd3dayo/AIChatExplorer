@@ -6,11 +6,14 @@ using ClipboardApp.View.ClipboardItemFolderView;
 using QAChat.View.ImageChat;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public class ImageCheckFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+    public class ImageCheckFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            return new ImageCheckFolderViewModel(MainWindowViewModel, childFolder);
+            var imageCheckFolderViewModel = new ImageCheckFolderViewModel(childFolder);
+            // 画像チェックの親フォルダにこのフォルダを追加
+            imageCheckFolderViewModel.ParentFolderViewModel = this;
+            return imageCheckFolderViewModel;
         }
 
         public override ObservableCollection<MenuItem> MenuItems {
@@ -78,7 +81,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
             childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
-            ImageCheckFolderViewModel childFolderViewModel = new(MainWindowViewModel, childFolder);
+            ImageCheckFolderViewModel childFolderViewModel = new(childFolder);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

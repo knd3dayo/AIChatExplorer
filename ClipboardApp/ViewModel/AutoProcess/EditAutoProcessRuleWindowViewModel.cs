@@ -293,11 +293,11 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             _AfterUpdate = afterUpdate;
 
             if (autoProcessRule?.TargetFolder != null) {
-                TargetFolder = new ClipboardFolderViewModel(MainWindowViewModel, autoProcessRule.TargetFolder);
+                TargetFolder = new ClipboardFolderViewModel(autoProcessRule.TargetFolder);
             }
 
             if (autoProcessRule?.DestinationFolder != null) {
-                DestinationFolder = new ClipboardFolderViewModel(MainWindowViewModel, autoProcessRule.DestinationFolder);
+                DestinationFolder = new ClipboardFolderViewModel(autoProcessRule.DestinationFolder);
             }
 
             // autoProcessRuleがNullでない場合は初期化
@@ -370,7 +370,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 // DestinationFolderが設定されている場合はFolderSelectionPanelEnabledをTrueにする
                 if (TargetAutoProcessRule.DestinationFolder != null) {
                     FolderSelectionPanelEnabled = true;
-                    DestinationFolder = new ClipboardFolderViewModel(MainWindowViewModel, TargetAutoProcessRule.DestinationFolder);
+                    DestinationFolder = new ClipboardFolderViewModel(TargetAutoProcessRule.DestinationFolder);
 
                 }
                 // PromptAutoProcessItemの場合

@@ -7,11 +7,14 @@ using ClipboardApp.View.SearchView;
 using ClipboardApp.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Search {
-    public class SearchFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+    public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            return new SearchFolderViewModel(MainWindowViewModel, childFolder);
+            var searchFolderViewModel = new SearchFolderViewModel(childFolder);
+            // 検索フォルダの親フォルダにこのフォルダを追加
+            searchFolderViewModel.ParentFolderViewModel = this;
+            return searchFolderViewModel;
         }
 
         public override ObservableCollection<MenuItem> MenuItems {
@@ -68,7 +71,7 @@ namespace ClipboardApp.ViewModel.Search {
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
-            SearchFolderViewModel searchFolderViewModel = new(MainWindowViewModel, clipboardFolder);
+            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder);
             SearchRule? searchConditionRule = new() {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = clipboardFolder

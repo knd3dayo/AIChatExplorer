@@ -11,12 +11,13 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
-    public partial class ClipboardFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
+    public partial class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
         // ClipboardFolder
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
-        // ImageChatMainWindowViewModel
-        protected MainWindowViewModel MainWindowViewModel { get; } = mainWindowViewModel;
+
+        // 親フォルダ
+        public ClipboardFolderViewModel? ParentFolderViewModel { get; set; } 
 
         // Description
         public string Description {
@@ -208,7 +209,7 @@ namespace ClipboardApp.ViewModel {
         // --------------------------------------------------------------
 
         public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            MainWindowViewModel.IsIndeterminate = true;
+            MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
             try {
 
                 LoadChildren();
@@ -216,7 +217,7 @@ namespace ClipboardApp.ViewModel {
 
                 UpdateStatusText();
             } finally {
-                MainWindowViewModel.IsIndeterminate = false;
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
             }
         });
 
@@ -228,7 +229,6 @@ namespace ClipboardApp.ViewModel {
         /// <param name="parameter"></param>        
         public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
-
             if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id
                 || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
                 LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
@@ -239,11 +239,15 @@ namespace ClipboardApp.ViewModel {
             if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
                 return;
             }
+            // 親フォルダを取得
+            ClipboardFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
+
             folderViewModel.ClipboardItemFolder.Delete();
 
-            // ルートフォルダを再読み込み
-            MainWindowViewModel.ReLoadRootFolders();
-
+            // 親フォルダが存在する場合は、親フォルダを再読み込み
+            if (parentFolderViewModel != null) {
+                parentFolderViewModel.LoadFolderCommand.Execute();
+            }
 
             LogWrapper.Info(StringResources.FolderDeleted);
         });
