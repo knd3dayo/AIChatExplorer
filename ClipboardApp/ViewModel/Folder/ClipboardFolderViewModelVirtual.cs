@@ -215,7 +215,7 @@ namespace ClipboardApp.ViewModel {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public void LoadChildren(int nestLevel=5) {
+        public void LoadChildren(int nestLevel = 5) {
             Children.Clear();
             foreach (var child in ClipboardItemFolder.Children) {
                 if (child == null) {
@@ -231,7 +231,7 @@ namespace ClipboardApp.ViewModel {
 
         }
         // LoadItems
-        public virtual void LoadItems() {
+        public void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
                 Items.Add(new ClipboardItemViewModel(this, item));

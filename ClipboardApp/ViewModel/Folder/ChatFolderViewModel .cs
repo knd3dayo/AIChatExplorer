@@ -61,14 +61,6 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
-        // LoadItems
-        public override void LoadItems() {
-            Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
-            }
-        }
-
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);

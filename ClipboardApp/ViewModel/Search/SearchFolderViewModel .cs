@@ -61,14 +61,6 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
 
-        // LoadItems
-        public override void LoadItems() {
-            Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
-            }
-        }
-
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
