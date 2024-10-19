@@ -4,9 +4,16 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.View.SearchView;
+using ClipboardApp.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+
+        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+            return new SearchFolderViewModel(MainWindowViewModel, childFolder);
+        }
+
         public override ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -54,17 +61,6 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
 
-        // LoadChildren
-        public override void LoadChildren() {
-            Children.Clear();
-            foreach (var child in ClipboardItemFolder.Children) {
-                if (child == null) {
-                    continue;
-                }
-                Children.Add(new SearchFolderViewModel(MainWindowViewModel, child));
-            }
-
-        }
         // LoadItems
         public override void LoadItems() {
             Items.Clear();

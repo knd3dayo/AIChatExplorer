@@ -7,6 +7,12 @@ using QAChat.Control;
 
 namespace ClipboardApp.ViewModel.Folder {
     public class ChatFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+
+        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+            return new ChatFolderViewModel(MainWindowViewModel, childFolder);
+        }
+
         public override ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -55,17 +61,6 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
-        // LoadChildren
-        public override void LoadChildren() {
-            Children.Clear();
-            foreach (var child in ClipboardItemFolder.Children) {
-                if (child == null) {
-                    continue;
-                }
-                Children.Add(new ChatFolderViewModel(MainWindowViewModel, child));
-            }
-
-        }
         // LoadItems
         public override void LoadItems() {
             Items.Clear();

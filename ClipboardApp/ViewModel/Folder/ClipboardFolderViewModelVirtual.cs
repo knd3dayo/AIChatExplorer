@@ -10,6 +10,10 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {
 
+        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        public virtual ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+            return new ClipboardFolderViewModel(MainWindowViewModel, childFolder);
+        }
         // -- virtual
         public virtual ObservableCollection<MenuItem> MenuItems {
             get {
@@ -209,13 +213,20 @@ namespace ClipboardApp.ViewModel {
 
 
         // LoadChildren
-        public virtual void LoadChildren() {
+        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
+        // 0を指定すると、子フォルダの子フォルダは読み込まない
+        public void LoadChildren(int nestLevel=5) {
             Children.Clear();
             foreach (var child in ClipboardItemFolder.Children) {
                 if (child == null) {
                     continue;
                 }
-                Children.Add(new ClipboardFolderViewModel(MainWindowViewModel, child));
+                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                if (nestLevel > 0) {
+                    childViewModel.LoadChildren(nestLevel - 1);
+                }
+                Children.Add(childViewModel);
             }
 
         }
