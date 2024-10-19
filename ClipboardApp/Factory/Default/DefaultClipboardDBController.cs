@@ -296,7 +296,7 @@ namespace ClipboardApp.Factory.Default {
 
             // folder内のアイテムを保持するコレクションを取得
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == folder.Id);
+            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == folder.Id).OrderByDescending(x => x.UpdatedAt);
             // Filterの結果を結果に追加
             result = Filter(clipboardItems, searchCondition);
 
