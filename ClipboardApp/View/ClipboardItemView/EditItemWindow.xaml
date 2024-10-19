@@ -2,7 +2,7 @@
     x:Class="ClipboardApp.View.ClipboardItemView.EditItemWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"
     xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
@@ -144,7 +144,7 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding TabItems}" /> 
+                ItemsSource="{Binding TabItems}" />
         </Grid>
         <Grid Grid.Row="2">
             <DockPanel HorizontalAlignment="Left">

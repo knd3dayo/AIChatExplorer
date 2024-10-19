@@ -1,10 +1,9 @@
 
-import os, json, sys
+import os, sys
 from telnetlib import DO
 from langchain_community.vectorstores import FAISS
 from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
-from langchain_community.callbacks import get_openai_callback
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient

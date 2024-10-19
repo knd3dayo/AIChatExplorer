@@ -1,12 +1,9 @@
 
-import os, json, sys, uuid
+import os, sys
 sys.path.append("python")
 
 from typing import Tuple, List
 from langchain_community.vectorstores import Chroma
-from langchain_core.vectorstores import VectorStore
-from langchain.docstore.document import Document
-from langchain_community.callbacks import get_openai_callback
 import chromadb
 
 from langchain_client import LangChainOpenAIClient

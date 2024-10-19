@@ -1445,6 +1445,9 @@ namespace WpfAppCommon.Model {
         // ログ
         public virtual string Log { get; } = "ログ";
 
+        // 統計
+        public virtual string Statistics { get; } = "統計";
+
         // --- AutoProcessRule.cs ---
         // RuleName + "は無効です"
         public virtual string RuleNameIsInvalid(string RuleName) {

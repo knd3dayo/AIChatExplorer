@@ -1,7 +1,5 @@
 import os, json
-from typing import Any
-from PIL import Image
-from io import StringIO
+from typing import Any, Tuple
 import tempfile
 import sys
 sys.path.append("python")
@@ -38,10 +36,10 @@ def extract_base64_to_text(base64_data:str) -> str:
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, request: dict) -> str:
+def run_openai_chat(openai_props: OpenAIProps, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
-    content = openai_client.run_openai_chat(request)
-    return content
+    content, total_tokens = openai_client.run_openai_chat(request)
+    return content, total_tokens
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)
@@ -59,7 +57,7 @@ def run_vector_search(openai_props:OpenAIProps, vector_db_item:VectorDBProps, qu
     result = langchain_util.run_vector_search(openai_props, vector_db_item, query, search_kwargs)
     return result
 
-def run_langchain_chat( openai_props:OpenAIProps, vector_db_props:list[VectorDBProps], prompt:str, chat_history: list[Any]):
+def run_langchain_chat( openai_props:OpenAIProps, vector_db_props:list[VectorDBProps], prompt:str, chat_history: list[Any]) -> dict:
     # langchan_chatを実行
     result = langchain_util.langchain_chat(openai_props, vector_db_props, prompt, chat_history)
     return result

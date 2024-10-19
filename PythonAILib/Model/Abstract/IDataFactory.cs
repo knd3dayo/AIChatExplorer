@@ -2,6 +2,7 @@ using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
@@ -79,6 +80,13 @@ namespace PythonAILib.Model.Abstract {
         public void UpsertScriptItem(ScriptItem scriptItem);
 
         public void DeleteScriptItem(ScriptItem scriptItem);
+
+        // --- Statistics
+        public void UpsertStatistics(MainStatistics statistics);
+
+        public void DeleteStatistics(MainStatistics statistics);
+
+        public MainStatistics GetStatistics();
 
     }
 }

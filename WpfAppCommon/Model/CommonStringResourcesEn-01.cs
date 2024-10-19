@@ -886,6 +886,9 @@ namespace WpfAppCommon.Model {
         public override string SettingsSaved { get; } = "Settings Saved";
         public override string Canceled { get; } = "Canceled";
         public override string Log { get; } = "Log";
+
+        public override string Statistics { get; } = "統計";
+
         public override string NoMatch { get; } = "No Match";
         public override string NoActionSet { get; } = "No Action Set";
         public override string Condition { get; } = "Condition";

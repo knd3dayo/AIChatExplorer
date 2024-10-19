@@ -2,7 +2,7 @@
     x:Class="QAChat.View.PythonScriptView.ListPythonScriptWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel.Script"

@@ -1,6 +1,4 @@
 from langchain_client import LangChainOpenAIClient
-from langchain.docstore.document import Document
-from langchain_community.callbacks import get_openai_callback
 import os
 from langchain_vector_db_chroma import LangChainVectorDBChroma
 if __name__ == "__main__":

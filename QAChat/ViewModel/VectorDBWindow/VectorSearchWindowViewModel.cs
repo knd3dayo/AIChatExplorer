@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
+using QAChat.Control.StatusBar;
 using QAChat.Model;
-using WpfAppCommon.Control;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDBWindow {
+namespace QAChat.ViewModel.VectorDBWindow
+{
     public class VectorSearchWindowViewModel : QAChatViewModelBase {
 
 

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace WpfCommonApp.Control.StatusMessage {
+namespace QAChat.Control.StatusMessage {
     public class StatusMessageWindowViewModel : ObservableObject{
         private string _message = string.Empty;
         public string Message {
@@ -17,6 +17,9 @@ namespace WpfCommonApp.Control.StatusMessage {
             // メッセージを初期化
             Message = string.Join("\n", StatusText.Messages);
         }
+        // クリアボタンのVisible
+        public Visibility ClearButtonVisibility { get; set; } = Visibility.Visible;
+
         // クリアボタンのコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             // メッセージをクリア

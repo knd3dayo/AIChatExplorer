@@ -2,6 +2,7 @@ using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
@@ -23,6 +24,9 @@ namespace PythonAILib.Model.Abstract {
         public const string RAGSourceItemCollectionName = "RAGSourceItem";
         // VectorDBItem
         public const string VectorDBItemCollectionName = "VectorDBItem";
+
+        // Statistics
+        public const string StatisticsCollectionName = "Statistics";
 
         private LiteDatabase? db;
 
@@ -389,5 +393,23 @@ namespace PythonAILib.Model.Abstract {
             collection.Delete(scriptItem.Id);
         }
 
+        //--- Statistics
+        public void UpsertStatistics(MainStatistics item) {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            collection.Upsert(item);
+        }
+        public void DeleteStatistics(MainStatistics item) {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            collection.Delete(item.Id);
+        }
+        public MainStatistics GetStatistics() {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            var item = collection.FindAll().FirstOrDefault();
+            if (item == null) {
+                item = new MainStatistics();
+                UpsertStatistics(item);
+            }
+            return item;
+        }
     }
 }

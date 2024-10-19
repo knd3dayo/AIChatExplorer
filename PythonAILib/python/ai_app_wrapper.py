@@ -62,9 +62,7 @@ def run_openai_chat(props_json: str, request_json: str):
         openai_client = OpenAIClient(openai_props)
         # request_jsonをdictに変換
         request = json.loads(request_json)
-        content = openai_client.run_openai_chat(request)
-        result = {}
-        result["content"] = content
+        result:dict = openai_client.run_openai_chat(request)
         return result
 
     # strout,stderrをキャプチャするラッパー関数を生成

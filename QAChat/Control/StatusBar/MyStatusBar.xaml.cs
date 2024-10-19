@@ -1,10 +1,6 @@
-using System.Windows;
 using System.Windows.Controls;
-using WpfAppCommon.Model;
-using WpfAppCommon.Utils;
-using WpfCommonApp.Control.StatusMessage;
 
-namespace WpfAppCommon.Control {
+namespace QAChat.Control.StatusBar {
     /// <summary>
     /// MyStatusBar.xaml の相互作用ロジック
     /// </summary>

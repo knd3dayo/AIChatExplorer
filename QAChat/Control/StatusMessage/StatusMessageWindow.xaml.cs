@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace WpfCommonApp.Control.StatusMessage {
+namespace QAChat.Control.StatusMessage {
     /// <summary>
     /// StatusMessageWindow.xaml の相互作用ロジック
     /// </summary>

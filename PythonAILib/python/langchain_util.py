@@ -10,7 +10,7 @@ from langchain.tools import Tool
 from langchain.docstore.document import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.retrievers.multi_vector import MultiVectorRetriever
-
+from langchain_community.callbacks.manager import get_openai_callback
 import langchain
 
 sys.path.append("python")
@@ -400,19 +400,20 @@ def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], pr
     RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
     ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
     
-    result = ChatAgentExecutorInstance.invoke(
-            {
-                "input": prompt,
-                "chat_history": chat_history,
-            }
-        )
-        
     result_dict = {}
-    result_dict["output"] = result.get("output", "")
-    page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
-    result_dict["page_content_list"] = page_conetnt_list
-    result_dict["page_source_list"] = page_source_list
-    result_dict["verbose"] = verbose_json
+    with get_openai_callback() as cb:
+        result = ChatAgentExecutorInstance.invoke(
+                {
+                    "input": prompt,
+                    "chat_history": chat_history,
+                }
+            )
+        result_dict["output"] = result.get("output", "")
+        page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
+        result_dict["page_content_list"] = page_conetnt_list
+        result_dict["page_source_list"] = page_source_list
+        result_dict["verbose"] = verbose_json
+        result_dict["total_tokens"] = cb.total_tokens
     return result_dict
 
 if __name__ == '__main__':

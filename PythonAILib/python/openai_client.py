@@ -1,3 +1,4 @@
+from typing import Tuple
 import json
 from openai import OpenAI, AzureOpenAI
 from openai_props import OpenAIProps, create_openai_chat_parameter_dict, create_openai_chat_with_vision_parameter_dict
@@ -58,7 +59,7 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
 
-    def run_openai_chat(self, input_dict: dict) -> str:
+    def run_openai_chat(self, input_dict: dict) -> dict:
         # OpenAIのchatを実行する
         client = self.get_completion_client()
         # AzureOpenAIの場合はmax_tokensとstream=Falseを設定する
@@ -69,15 +70,20 @@ class OpenAIClient:
         response = client.chat.completions.create(
             **input_dict
             )
-        return response.choices[0].message.content
+        # token情報を取得する
+        total_tokens = response.usage.total_tokens
+        # contentを取得する
+        content = response.choices[0].message.content
+        # dictにして返す
+        return {"content": content, "total_tokens": total_tokens}
     
-    def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None) -> str:
+    def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None) -> dict:
         # 入力パラメーターの設定
         model = self.props.OpenAICompletionModel
         params = create_openai_chat_parameter_dict(model, input_json, temperature, json_mode)
         return self.run_openai_chat(params)
 
-    def openai_chat_with_vision(self, prompt: str, image_file_name_list:list, temperature=None, json_mode=False):
+    def openai_chat_with_vision(self, prompt: str, image_file_name_list:list, temperature=None, json_mode=False) -> dict:
         
         # AzureOpenAIの場合はmax_tokensを設定する
         if self.props.AzureOpenAI:
