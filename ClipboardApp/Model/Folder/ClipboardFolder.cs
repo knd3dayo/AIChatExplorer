@@ -266,7 +266,6 @@ namespace ClipboardApp.Model.Folder {
 
         public ClipboardFolder CreateChild(string folderName) {
             ClipboardFolder child = new(this, folderName);
-            
             return child;
         }
 
@@ -283,10 +282,8 @@ namespace ClipboardApp.Model.Folder {
             var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
             if (existingItems == null) {
                 ReferenceVectorDBItems.Add(vectorDBItem);
-            }
+            }　
         }
-
-
         // 自分自身を保存
         public void Save() {
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加

@@ -137,7 +137,9 @@ namespace ClipboardApp.Factory.Default {
             }
             // objectIdに対応するフォルダをすべて取得して返す
             var collection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            var items = collection.FindAll().Where(x => x.ParentId == objectId);
+            // ParentIdが、objectIdのフォルダを取得。FolderNameでソートして返す
+            var items = collection.FindAll().Where(x => x.ParentId == objectId).OrderBy(x => x.FolderName).ToList();
+
             foreach (var i in items) {
                 result.Add(i);
             }
@@ -146,20 +148,15 @@ namespace ClipboardApp.Factory.Default {
 
 
         // 親フォルダのCollectionNameを指定して子フォルダのリストを取得する
-        private IEnumerable<ClipboardFolder> GetChildFolders(ObjectId folderObjectId) {
+        private List<ClipboardFolder> GetChildFolders(ObjectId folderObjectId) {
             List<ClipboardFolder> result = [];
             // 親フォルダを取得
             var parent = GetFolder(folderObjectId);
             if (parent == null) {
                 return result;
             }
-            foreach (var child in parent.Children) {
-                // nullの場合は、次のループへ
-                if (child == null) {
-                    continue;
-                }
-                result.Add(child);
-            }
+            // 子フォルダをFolderNameでソートして返す
+            result = parent.Children.OrderBy(x => x.FolderName).ToList();
             return result;
         }
 
