@@ -18,6 +18,7 @@ using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using ClipboardApp.Utils;
 
 namespace ClipboardApp {
     public class ClipboardAppCommandExecute {
@@ -347,13 +348,13 @@ namespace ClipboardApp {
         // ファイルを開くコマンド
         public static void OpenFileCommand(ClipboardItem contentItem) {
             // 選択中のアイテムを開く
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(contentItem, false);
+            ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
         }
 
         // ファイルを新規ファイルとして開くコマンド
         public static void OpenFileAsNewFileCommand(ClipboardItem contentItem) {
             // 選択中のアイテムを開く
-            ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemFile(contentItem, true);
+            ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
 
         // タイトルを生成するコマンド
@@ -480,7 +481,7 @@ namespace ClipboardApp {
         public static void OpenContentAsFileCommand(ClipboardItem contentItem) {
             try {
                 // 選択中のアイテムを開く
-                ClipboardAppFactory.Instance.GetClipboardProcessController().OpenClipboardItemContent(contentItem);
+                ClipboardProcessController.OpenClipboardItemContent(contentItem);
             } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }

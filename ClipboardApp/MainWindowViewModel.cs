@@ -5,6 +5,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
+using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
@@ -38,8 +39,7 @@ namespace ClipboardApp {
             ClipboardAppFactory.Instance.GetClipboardDBController().GetDatabase().Checkpoint();
 
             // DBのバックアップの取得
-            IBackupController backupController = ClipboardAppFactory.Instance.GetBackupController();
-            backupController.BackupNow();
+            BackupController.BackupNow();
         }
 
         private void InitClipboardFolders() {

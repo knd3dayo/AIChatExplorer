@@ -8,8 +8,6 @@ using PythonAILib.Model.Abstract;
 namespace ClipboardApp.Factory {
     public interface IClipboardDBController : IDataFactory {
 
-
-
         public IEnumerable<ClipboardItem> SearchItems(ClipboardFolder folder, SearchCondition searchCondition);
         public IEnumerable<ClipboardItem> GetItems(ClipboardFolder folder);
 
