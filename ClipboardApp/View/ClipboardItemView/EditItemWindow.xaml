@@ -82,7 +82,7 @@
                         <!--  フォルダを開く  -->
                         <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
                         <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
@@ -144,7 +144,8 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding TabItems}" />
+                ItemsSource="{Binding TabItems}"
+                SelectedIndex="{Binding SelectedTabIndex}" />
         </Grid>
         <Grid Grid.Row="2">
             <DockPanel HorizontalAlignment="Left">

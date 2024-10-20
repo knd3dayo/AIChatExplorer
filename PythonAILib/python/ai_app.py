@@ -8,6 +8,7 @@ from openai_props import OpenAIProps, VectorDBProps
 from openai_client import OpenAIClient
 import langchain_util
 import langchain_vector_db
+import base64
 
 import excel_util
 
@@ -19,13 +20,12 @@ def extract_text_from_file(filename:str) -> str:
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data:str) -> str:
     # base64データから一時ファイルを生成
-    with tempfile.NamedTemporaryFile(delete=False) as temp:
+    with tempfile.NamedTemporaryFile(mode="wb", delete=False) as temp:
         # base64からバイナリデータに変換
-        base64_data_bytes = base64_data.encode()
+        base64_data_bytes = base64.b64decode(base64_data)
         temp.write(base64_data_bytes)
         temp_path = temp.name
         temp.close()
-        
         import file_extractor
         # 一時ファイルからテキストを抽出
         text = file_extractor.extract_text_from_file(temp_path)

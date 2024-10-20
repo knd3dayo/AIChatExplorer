@@ -52,7 +52,7 @@
         <Grid Margin="10,0,10,0" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="600" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -60,7 +60,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -130,14 +130,19 @@
                 Grid.Row="5"
                 Grid.Column="0"
                 Margin="10,3,10,3"
-                VerticalAlignment="Center"
+                VerticalAlignment="Top"
                 Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
-            <editorControl:MyTextBox
+            <ScrollViewer
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="10,3,10,3"
-                IsReadOnly="True"
-                Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto">
+                <editorControl:MyTextBox
+                    Margin="10,3,10,3"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
+            </ScrollViewer>
 
         </Grid>
     </materialDesign:DrawerHost>

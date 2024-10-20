@@ -1,17 +1,13 @@
 import os, json
 from typing import Any
-from PIL import Image
 from io import StringIO
-import tempfile
 import sys
 sys.path.append("python")
 
 from openai_props import OpenAIProps, VectorDBProps
 from openai_client import OpenAIClient
 import langchain_util
-import langchain_vector_db
-
-import excel_util
+import ai_app
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -122,31 +118,18 @@ def run_vector_search(props_json: str, request_json: str):
 
 # vector db関連
 def update_file_index(props_json, request_json):
-    return __update_or_delete_file_index(props_json, request_json, "update")
+    def func () -> dict:
+        ai_app.update_file_index(props_json, request_json)
+        return {}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 def delete_file_index(props_json, request_json):
-    return __update_or_delete_file_index(props_json, request_json, "delete")
-
-
-def __update_or_delete_file_index(props_json, request_json, mode):
-
-    # update_indexを実行する関数を定義
     def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, mode, workdir, relative_path, urlを取得
-        openai_props, vector_db_props, document_root, relative_path, url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
-        # LangChainVectorDBを生成
-        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
-
-        # modeに応じて処理を分岐
-        if mode == "delete":
-            # delete_file_indexを実行
-            vector_db.delete_file_index(document_root, relative_path, url)
-        if mode == "update":
-            # update_file_indexを実行
-            vector_db.update_file_index(document_root, relative_path, url, description=description)
-
+        ai_app.delete_file_index(props_json, request_json)
         return {}
-    
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
@@ -154,30 +137,19 @@ def __update_or_delete_file_index(props_json, request_json, mode):
 
 # ベクトルDBのコンテンツインデックスを削除する
 def delete_content_index(props_json, request_json):
-    return __update_or_delete_content_index(props_json, request_json, "delete")
+    def func () -> dict:
+        ai_app.delete_content_index(props_json, request_json)
+        return {}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
 def update_content_index(props_json, request_json):
-    return __update_or_delete_content_index(props_json, request_json, "update")
-
-def __update_or_delete_content_index(props_json, request_json, mode):
-    # update_indexを実行する関数を定義
     def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
-
-        # LangChainVectorDBを生成
-        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
-        
-        if mode == "delete":
-            # delete_content_indexを実行
-            vector_db.delete_content_index(source)
-        if mode == "update":
-            # update_content_indexを実行
-            vector_db.update_content_index(text, source, source_url, description=description)
-
+        ai_app.update_content_index(props_json, request_json)
         return {}
-
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
@@ -185,33 +157,28 @@ def __update_or_delete_content_index(props_json, request_json, mode):
 
 # ベクトルDBの画像インデックスを削除する
 def delete_image_index(props_json, request_json):
-    return __update_or_delete_image_index(props_json, request_json, "delete")
-
-# ベクトルDBの画像インデックスを更新する
-def update_image_index(props_json, request_json):
-    return __update_or_delete_image_index(props_json, request_json, "update")
-
-def __update_or_delete_image_index(props_json, request_json, mode):
-    # update_indexを実行する関数を定義
+    # delete_indexを実行する関数を定義
     def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
-        # LangChainVectorDBを生成
-        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
-        
-        if mode == "delete":
-            # delete_image_indexを実行
-             vector_db.delete_image_index(source)
-        if mode == "update":
-            # update_image_indexを実行
-            vector_db.update_image_index(text,  source, source_url, description=description, image_url=image_url)
-            
+        ai_app.delete_image_index(props_json, request_json)
         return {}
-    
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
+
+# ベクトルDBの画像インデックスを更新する
+def update_image_index(props_json, request_json):
+    # update_indexを実行する関数を定義
+    def func () -> dict:
+        ai_app.update_image_index(props_json, request_json)
+        return {}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 
 ########################
 # ファイル関連
@@ -233,35 +200,17 @@ def extract_excel_sheet(filename, sheet_name):
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename):
-    import file_extractor
-    return file_extractor.extract_text_from_file(filename)
+    return ai_app.extract_text_from_file(filename)
 
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data):
-    # base64データから一時ファイルを生成
-    with tempfile.NamedTemporaryFile(delete=False) as temp:
-        # base64からバイナリデータに変換
-        base64_data = base64_data.encode()
-        temp.write(base64_data)
-        temp_path = temp.name
-        temp.close()
-        
-        import file_extractor
-        # 一時ファイルからテキストを抽出
-        text = file_extractor.extract_text_from_file(temp_path)
-        # 一時ファイルを削除
-        os.remove(temp_path)
-        return text
+    return ai_app.extract_base64_to_text(base64_data)
 
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):
     # export_to_excelを実行する関数を定義
     def func() -> dict:
-        # dataJsonをdictに変換
-        data = json.loads(dataJson)
-        # export_to_excelを実行
-        print(data)
-        excel_util.export_to_excel(filePath, data.get("rows",[]))
+        ai_app.export_to_excel(filePath, dataJson)
         # 結果用のdictを生成
         return {}
     
@@ -274,12 +223,7 @@ def export_to_excel(filePath, dataJson):
 def import_from_excel(filePath):
     # import_to_excelを実行する関数を定義
     def func() -> dict:
-        # import_to_excelを実行
-        data = excel_util.import_from_excel(filePath)
-        # 結果用のdictを生成
-        result = {}
-        result["rows"] = data
-        return result
+        return ai_app.import_from_excel(filePath)
     
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)

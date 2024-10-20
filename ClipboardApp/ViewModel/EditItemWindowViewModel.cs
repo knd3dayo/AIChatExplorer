@@ -159,6 +159,18 @@ namespace ClipboardApp.ViewModel {
         }
         public int SelectedImageIndex { get; set; } = 0;
 
+        // SelectedTabIndex
+        private int selectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return selectedTabIndex;
+            }
+            set {
+                selectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
         // TabItems 
         public ObservableCollection<TabItem> TabItems {
             get {
@@ -201,7 +213,11 @@ namespace ClipboardApp.ViewModel {
                 foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
                     tabItems.Add(promptTabItem);
                 }
-
+                // ClipboardItemのTypeがFileの場合はFileTabを選択
+                if (ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files 
+                    || ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
+                    SelectedTabIndex = 1;
+                }
                 return tabItems;
             }
         }
@@ -263,6 +279,19 @@ namespace ClipboardApp.ViewModel {
             }
 
         }
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
+            if (ItemViewModel == null) {
+                LogWrapper.Error("クリップボードアイテムが選択されていません");
+                return;
+            }
+            ClipboardAppCommandExecute.ExtractTextCommand(ItemViewModel.ClipboardItem);
+            int index = SelectedTabIndex;
+            OnPropertyChanged(nameof(TabItems));
+            SelectedTabIndex = index;
+            OnPropertyChanged(nameof(SelectedTabIndex));
+        });
 
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
