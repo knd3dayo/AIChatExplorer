@@ -138,17 +138,6 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        // AdditionalItems
-        public ObservableCollection<AdditionalItemViewModel> AdditionalItems {
-            get {
-                ObservableCollection<AdditionalItemViewModel> items = [];
-                foreach (var item in ChatController.AdditionalItems) {
-                    items.Add(new(this, item));
-                }
-                return items;
-            }
-        }
-
         // SelectedContextItem
         private ContentItem? _SelectedContextItem = null;
         public ContentItem? SelectedContextItem {

@@ -284,25 +284,6 @@ namespace ClipboardApp {
                     });
 
                 },
-                // ペーストアクション
-                AddContentItemCommandAction = (action) => {
-                    List<ClipboardItem> result = [];
-                    ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(ActiveInstance, false, (newItems) => {
-                        // newItemsをContentItemBaseに変換
-                        List<ContentItem> contentItemBases = [.. newItems];
-                        action(contentItemBases);
-                    });
-                },
-                // 選択中のアイテムを開くアクション
-                OpenSelectedItemCommand = (item) => {
-                    clipboardItem = (ClipboardItem)item;
-                    // item からClipboardFolderViewModelを取得
-                    ClipboardFolderViewModel folderViewModel = new(clipboardItem.GetFolder());
-                    // item からClipboardItemViewModelを取得
-                    ClipboardItemViewModel itemViewModel = new(folderViewModel, clipboardItem);
-                    EditItemWindow.OpenEditItemWindow(folderViewModel, itemViewModel, () => { });
-
-                },
                 // Saveアクション
                 SaveCommand = (item) => {
                     clipboardItem = (ClipboardItem)item;

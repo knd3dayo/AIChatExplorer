@@ -140,31 +140,9 @@ namespace QAChat.ViewModel.QAChatMain {
             });
         });
 
-        // クリップボードまたは他のクリップボードアイテムをペーストしたときの処理
-        public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
-
-            // ペースト処理を実行
-            QAChatStartupProps?.AddContentItemCommandAction((values) => {
-                MainUITask.Run(() => {
-                    // ペーストしたアイテムを追加する
-                    foreach (var item in values) {
-                        ChatController.AdditionalItems.Add(item);
-                    }
-                    OnPropertyChanged(nameof(AdditionalItems));
-                });
-            });
-        });
-        // 選択したアイテムを開くコマンド
-        public SimpleDelegateCommand<AdditionalItemViewModel> OpenSelectedItemCommand => new((item) => {
-            QAChatStartupProps?.OpenSelectedItemCommand(item.ContentItem);
-        });
-
         // Windowを閉じるコマンド
         public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
             window.Close();
         });
-
-
     }
-
 }

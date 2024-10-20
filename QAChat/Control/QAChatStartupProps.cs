@@ -13,10 +13,7 @@ namespace QAChat.Control
 
         public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (folders) => { };
 
-        public Action<Action<List<ContentItem>>> AddContentItemCommandAction { get; set; } = (items) => { };
-
-        public Action<ContentItem> OpenSelectedItemCommand { get; set; } = (item) => { };
-
+        
         public Action<ContentItem> SaveCommand { get; set; } = (item) => { };
     }
 

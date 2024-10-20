@@ -50,9 +50,13 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <TextBlock
+                Grid.Row="0"
+                Margin="10,0,10,5"
+                Text="{Binding StringResources.Setting, Mode=OneTime}" />
+            <Separator Grid.Row="1" />
+            <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -79,7 +83,7 @@
                 </ComboBox>
             </Grid>
             <StackPanel
-                Grid.Row="1"
+                Grid.Row="3"
                 HorizontalAlignment="Left"
                 Visibility="{Binding VectorDBItemVisibility}">
                 <ToggleButton
@@ -133,46 +137,6 @@
                                 </ListBox.ContextMenu>
                             </ListBox>
                         </Grid>
-                    </materialDesign:DrawerHost.BottomDrawerContent>
-                </materialDesign:DrawerHost>
-            </StackPanel>
-            <StackPanel Grid.Row="2">
-                <ToggleButton
-                    Width="200"
-                    Padding="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    IsChecked="{Binding IsAdditionalItemDrawerOpen}"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                    <DockPanel Width="200">
-                        <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.AdditionalItem, Mode=OneTime}" />
-                    </DockPanel>
-                </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsAdditionalItemDrawerOpen}" OpenMode="Standard">
-                    <!--  クリップボードアイテム  -->
-                    <materialDesign:DrawerHost.BottomDrawerContent>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <ListBox
-                                Name="ListBox0"
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Margin="0,0,10,0"
-                                HorizontalAlignment="Stretch"
-                                ItemsSource="{Binding AdditionalItems}"
-                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                SelectionMode="Extended"
-                                Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=Self}}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <qaChatControl:ContentItemPanel DataContext="{Binding}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </Grid>
-
                     </materialDesign:DrawerHost.BottomDrawerContent>
                 </materialDesign:DrawerHost>
             </StackPanel>
@@ -332,16 +296,6 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ToggleButton
-                    x:Name="MenuToggleButton"
-                    Grid.Column="0"
-                    Height="25"
-                    Margin="10,0,10,5"
-                    VerticalAlignment="Center"
-                    AutomationProperties.Name="HamburgerToggleButton"
-                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
-
                 <StackPanel
                     Grid.Column="3"
                     HorizontalAlignment="Right"
