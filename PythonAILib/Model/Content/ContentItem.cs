@@ -164,7 +164,7 @@ namespace PythonAILib.Model.Content {
         }
         // 参照用のベクトルDBのリストのプロパティ
         private List<VectorDBItem> _referenceVectorDBItems = [];
-        public List<VectorDBItem> ReferenceVectorDBItems {
+        public virtual List<VectorDBItem> ReferenceVectorDBItems {
             get {
                 return _referenceVectorDBItems;
             }

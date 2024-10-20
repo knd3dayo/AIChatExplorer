@@ -21,9 +21,10 @@ namespace ClipboardApp.ViewModel {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id);
-                // ReferenceVectorDBItemsを設定
-                clipboardItem.ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems;
+                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id) {
+                    // ReferenceVectorDBItemsを設定
+                    ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems
+                };
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 Title = "新規アイテム";
             } else {

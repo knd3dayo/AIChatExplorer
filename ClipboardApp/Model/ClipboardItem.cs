@@ -22,6 +22,7 @@ namespace ClipboardApp.Model {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             CollectionId = folderObjectId;
+
         }
 
         // プロパティ
@@ -55,6 +56,29 @@ namespace ClipboardApp.Model {
             }
             set {
                 PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+            }
+        }
+
+        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
+        public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
+
+        // ReferenceVectorDBItems
+        public override List<VectorDBItem> ReferenceVectorDBItems {
+
+            get {
+                // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
+                if (IsReferenceVectorDBItemsSynced) {
+                    return base.ReferenceVectorDBItems;
+                }
+                // folderを取得
+                ClipboardFolder folder = GetFolder();
+                base.ReferenceVectorDBItems =  new(folder.ReferenceVectorDBItems);
+                IsReferenceVectorDBItemsSynced = true;
+                return base.ReferenceVectorDBItems;
+
+            }
+            set {
+                base.ReferenceVectorDBItems = value;
             }
         }
 
@@ -196,6 +220,7 @@ namespace ClipboardApp.Model {
         public override void Save(bool contentIsModified = true) {
 
             base.Save(contentIsModified);
+
 
             // 保存済みのアイテムを取得
             ClipboardItem? savedItem = (ClipboardItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetItem(this);

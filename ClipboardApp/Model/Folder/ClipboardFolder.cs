@@ -298,6 +298,13 @@ namespace ClipboardApp.Model.Folder {
 
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolder(this);
+
+            // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
+            foreach (var item in Items) {
+                item.IsReferenceVectorDBItemsSynced = false;
+                item.Save(false);
+            }
+
         }
         // Delete
         public void Delete() {
