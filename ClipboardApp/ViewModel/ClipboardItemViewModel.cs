@@ -3,13 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model;
-using ClipboardApp.View.ClipboardItemView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Model.Prompt;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardItemViewModel : ObservableObject {

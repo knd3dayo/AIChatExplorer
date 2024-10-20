@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Prompt;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
     internal class PromptResultViewModel : ObservableObject {

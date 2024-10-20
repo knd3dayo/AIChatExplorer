@@ -3,6 +3,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using QAChat.View.PythonScriptView;
+using QAChat.Resource;
 
 namespace QAChat.ViewModel.Script {
     public class PythonCommands {

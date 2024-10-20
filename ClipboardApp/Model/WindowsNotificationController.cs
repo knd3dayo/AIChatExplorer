@@ -1,13 +1,12 @@
 using ClipboardApp.Model.Folder;
 using PythonAILib.PythonIF;
+using QAChat.Resource;
 using Windows.Foundation.Metadata;
 using Windows.UI.Notifications;
 using Windows.UI.Notifications.Management;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     public class WindowsNotificationController {
         private static bool _Enabled = false;
         public static void Start(ClipboardFolder clipboardFolder, Action<ClipboardItem> afterUpdate) {

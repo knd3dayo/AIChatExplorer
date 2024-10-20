@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.VectorDB;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
     public class SelectVectorDBItemWindowViewModel : ObservableObject {

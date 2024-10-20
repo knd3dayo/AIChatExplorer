@@ -1,5 +1,5 @@
-namespace WpfAppCommon.Model {
-    public partial class CommonStringResources {
+namespace QAChat.Resource {
+    public class CommonStringResources {
 
         private static CommonStringResources? _instance;
         public static CommonStringResources Instance {

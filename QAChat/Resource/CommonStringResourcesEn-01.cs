@@ -1,5 +1,7 @@
-namespace WpfAppCommon.Model {
-    public partial class CommonStringResourcesEn : CommonStringResources {
+using WpfAppCommon.Model;
+
+namespace QAChat.Resource {
+    public  class CommonStringResourcesEn : CommonStringResources {
 
         // -- SettingsUserControl.xaml --
         // Restart the application to apply the changes.

@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model;
@@ -6,11 +5,11 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.ViewModel;
+using QAChat.Resource;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.TagView;
 using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.Script;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
@@ -241,12 +240,12 @@ namespace ClipboardApp {
 
         // タイトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTitleCommand => new((parameter) => {
-            ClipboardAppCommandExecute.GenerateTitleCommand(SelectedItems.Select( x => x.ClipboardItem).ToList(), () => { 
-                    // フォルダ内のアイテムを再読み込み
-                    MainUITask.Run(() => {
-                        SelectedFolder?.LoadFolderCommand.Execute();
-                    });
+            ClipboardAppCommandExecute.GenerateTitleCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+                // フォルダ内のアイテムを再読み込み
+                MainUITask.Run(() => {
+                    SelectedFolder?.LoadFolderCommand.Execute();
                 });
+            });
         });
 
         // 背景情報を生成する処理 複数アイテム処理可

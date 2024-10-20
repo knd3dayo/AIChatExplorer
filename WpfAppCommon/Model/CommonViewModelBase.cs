@@ -4,11 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace WpfAppCommon.ViewModel {
+namespace QAChat.Resource {
     public abstract class CommonViewModelBase : ObservableObject {
-
-        // CommonStringResources
-        public abstract CommonStringResources StringResources { get; }
 
         public virtual void OnLoadedAction() { }
         public virtual void OnActivatedAction() { }

@@ -14,6 +14,8 @@ using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
+
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {

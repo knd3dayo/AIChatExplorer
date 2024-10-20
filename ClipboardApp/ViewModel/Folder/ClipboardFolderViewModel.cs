@@ -7,8 +7,9 @@ using ClipboardApp.Model.Search;
 using ClipboardApp.View.ExportImportView;
 using ClipboardApp.ViewModel.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
+
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {

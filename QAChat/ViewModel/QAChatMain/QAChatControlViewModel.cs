@@ -8,7 +8,7 @@ using PythonAILib.Model.VectorDB;
 using QAChat.Control;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 
 namespace QAChat.ViewModel.QAChatMain {
 

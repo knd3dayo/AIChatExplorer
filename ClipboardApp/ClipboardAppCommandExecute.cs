@@ -1,24 +1,23 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
-using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Settings;
+using ClipboardApp.Utils;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Control;
+using QAChat.Resource;
 using QAChat.View.ImageChat;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using ClipboardApp.Utils;
 
 namespace ClipboardApp {
     public class ClipboardAppCommandExecute {

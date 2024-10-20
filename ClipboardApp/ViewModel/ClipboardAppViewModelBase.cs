@@ -2,8 +2,8 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
     public class ClipboardAppViewModelBase : ObservableObject {

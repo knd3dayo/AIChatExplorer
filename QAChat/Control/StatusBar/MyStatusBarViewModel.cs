@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using QAChat.Control.StatusMessage;
+using QAChat.Resource;
 
 namespace QAChat.Control.StatusBar {
     public class MyStatusBarViewModel : ObservableObject {

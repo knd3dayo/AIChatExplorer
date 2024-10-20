@@ -7,11 +7,10 @@ using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
-namespace ClipboardApp.Settings
-{
+namespace ClipboardApp.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>

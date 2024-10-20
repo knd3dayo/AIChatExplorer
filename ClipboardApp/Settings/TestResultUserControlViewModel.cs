@@ -1,10 +1,10 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Settings {
-    internal class TestResultUserControlViewModel :ObservableObject{
+    internal class TestResultUserControlViewModel : ObservableObject {
         public TestResultUserControlViewModel(string logText) {
             LogText = logText;
         }

@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -12,9 +11,9 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
+
 
 namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItem {

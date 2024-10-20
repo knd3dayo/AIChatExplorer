@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.View.ClipboardItemFolderView;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {

@@ -1,4 +1,4 @@
-using WpfAppCommon.Model;
+using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
     public class VersionWindowViewModel : ClipboardAppViewModelBase {
