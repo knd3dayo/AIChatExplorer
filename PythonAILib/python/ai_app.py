@@ -63,14 +63,7 @@ def run_langchain_chat( openai_props:OpenAIProps, vector_db_props:list[VectorDBP
     return result
 
 # vector db関連
-def update_file_index(props_json, request_json):
-    return __update_or_delete_file_index(props_json, request_json, "update")
-
-def delete_file_index(props_json, request_json):
-    return __update_or_delete_file_index(props_json, request_json, "delete")
-
-
-def __update_or_delete_file_index(openai_props:OpenAIProps, vector_db_props:VectorDBProps, document_root:str, relative_path:str, url:str, description:str, mode:str):
+def update_or_delete_file_index(openai_props:OpenAIProps, vector_db_props:VectorDBProps, document_root:str, relative_path:str, source_url:str, description:str, mode:str):
 
     # LangChainVectorDBを生成
     vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
@@ -78,26 +71,18 @@ def __update_or_delete_file_index(openai_props:OpenAIProps, vector_db_props:Vect
     # modeに応じて処理を分岐
     if mode == "delete":
         # delete_file_indexを実行
-        vector_db.delete_file_index(document_root, relative_path, url)
+        vector_db.delete_file_index(document_root, relative_path, source_url)
     if mode == "update":
         # update_file_indexを実行
-        vector_db.update_file_index(document_root, relative_path, url, description=description)
+        vector_db.update_file_index(document_root, relative_path, source_url, description=description)
 
     # 結果用のdictを生成
     result: dict = {}
     return result
 
-# ベクトルDBのコンテンツインデックスを削除する
-def delete_content_index(props_json, request_json):
-    return __update_or_delete_content_index(props_json, request_json, "delete")
-
-# ベクトルDBのコンテンツインデックスを更新する
-def update_content_index(props_json, request_json):
-    return __update_or_delete_content_index(props_json, request_json, "update")
-
-def __update_or_delete_content_index(props_json, request_json, mode):
+def update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, mode):
     # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-    openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
+    # openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
 
     # LangChainVectorDBを生成
     vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
@@ -110,17 +95,9 @@ def __update_or_delete_content_index(props_json, request_json, mode):
         vector_db.update_content_index(text, source, source_url, description=description)
 
 
-# ベクトルDBの画像インデックスを削除する
-def delete_image_index(props_json, request_json):
-    return __update_or_delete_image_index(props_json, request_json, "delete")
-
-# ベクトルDBの画像インデックスを更新する
-def update_image_index(props_json, request_json):
-    return __update_or_delete_image_index(props_json, request_json, "update")
-
-def __update_or_delete_image_index(props_json, request_json, mode):
+def update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, mode):
     # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-    openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
+    # openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
     # LangChainVectorDBを生成
     vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
     

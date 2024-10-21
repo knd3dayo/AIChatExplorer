@@ -8,6 +8,7 @@ from openai_props import OpenAIProps, VectorDBProps
 from openai_client import OpenAIClient
 import langchain_util
 import ai_app
+import langchain_vector_db
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -119,7 +120,8 @@ def run_vector_search(props_json: str, request_json: str):
 # vector db関連
 def update_file_index(props_json, request_json):
     def func () -> dict:
-        ai_app.update_file_index(props_json, request_json)
+        openai_props, vector_db_props, document_root, relative_path, source_url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_file_index(openai_props, vector_db_props, document_root, relative_path, source_url, description, "update")
         return {}
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
@@ -128,7 +130,8 @@ def update_file_index(props_json, request_json):
 
 def delete_file_index(props_json, request_json):
     def func () -> dict:
-        ai_app.delete_file_index(props_json, request_json)
+        openai_props, vector_db_props, document_root, relative_path, source_url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_file_index(openai_props, vector_db_props, document_root, relative_path, source_url, description, "delete")
         return {}
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
@@ -138,8 +141,11 @@ def delete_file_index(props_json, request_json):
 # ベクトルDBのコンテンツインデックスを削除する
 def delete_content_index(props_json, request_json):
     def func () -> dict:
-        ai_app.delete_content_index(props_json, request_json)
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
+        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, "delete")
         return {}
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
@@ -148,8 +154,11 @@ def delete_content_index(props_json, request_json):
 # ベクトルDBのコンテンツインデックスを更新する
 def update_content_index(props_json, request_json):
     def func () -> dict:
-        ai_app.update_content_index(props_json, request_json)
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
+        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, "update")
         return {}
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
@@ -159,7 +168,9 @@ def update_content_index(props_json, request_json):
 def delete_image_index(props_json, request_json):
     # delete_indexを実行する関数を定義
     def func () -> dict:
-        ai_app.delete_image_index(props_json, request_json)
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
+        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, "delete")
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -171,7 +182,9 @@ def delete_image_index(props_json, request_json):
 def update_image_index(props_json, request_json):
     # update_indexを実行する関数を定義
     def func () -> dict:
-        ai_app.update_image_index(props_json, request_json)
+        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
+        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
+        ai_app.update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, "update")
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
