@@ -6,12 +6,10 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.Search;
-using PythonAILib.Model.Content;
 using QAChat;
 using QAChat.Control;
 
@@ -31,8 +29,6 @@ namespace ClipboardApp {
             PythonAILibManager.Init(configParams);
             QAChatManager.Init(configParams);
             // フォルダの初期化
-            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
-            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(ClipboardFolder.ImageCheckRootFolder);
             InitClipboardFolders();
 
             // データベースのチェックポイント処理
@@ -40,6 +36,12 @@ namespace ClipboardApp {
 
             // DBのバックアップの取得
             BackupController.BackupNow();
+
+            // ClipboardControllerのOnClipboardChangedに処理をセット
+            ClipboardController.OnClipboardChanged = (e) => {
+                // CopiedItemsをクリア
+                CopiedObjects.Clear();
+            };
         }
 
         private void InitClipboardFolders() {
@@ -120,16 +122,12 @@ namespace ClipboardApp {
         public ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
 
         // Cutフラグ
-        private bool _CutFlag = false;
-        public bool CutFlag {
-            get {
-                return _CutFlag;
-            }
-            set {
-                _CutFlag = value;
-                OnPropertyChanged(nameof(CutFlag));
-            }
+        public enum CutFlagEnum {
+            None,
+            Item,
+            Folder
         }
+        public CutFlagEnum CutFlag  {get; set;} = CutFlagEnum.None;
 
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
@@ -172,32 +170,21 @@ namespace ClipboardApp {
         /// <summary>
         /// コピーされたアイテム
         /// </summary>
-        // Ctrl + C or X が押された時のClipboardItem
-        private ObservableCollection<ClipboardItemViewModel> _copiedItems = [];
-        public ObservableCollection<ClipboardItemViewModel> CopiedItems {
-            get {
-                return _copiedItems;
-            }
-            set {
-                _copiedItems = value;
-                // MainWindowModelのCopiedItemsにもセット
-                OnPropertyChanged(nameof(CopiedItems));
-            }
-        }
-
-
+        // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
+        public List<object> CopiedObjects { get; set; } = [];
+        
         /// <summary>
         /// コピーされたアイテムのフォルダ
         /// </summary>
         // Ctrl + C or X  が押された時のClipboardItemFolder
-        private ClipboardFolderViewModel? _copiedItemFolder;
-        public ClipboardFolderViewModel? CopiedItemFolder {
+        private ClipboardFolderViewModel? _copiedFolder;
+        public ClipboardFolderViewModel? CopiedFolder {
             get {
-                return _copiedItemFolder;
+                return _copiedFolder;
             }
             set {
-                _copiedItemFolder = value;
-                OnPropertyChanged(nameof(CopiedItemFolder));
+                _copiedFolder = value;
+                OnPropertyChanged(nameof(CopiedFolder));
             }
         }
 

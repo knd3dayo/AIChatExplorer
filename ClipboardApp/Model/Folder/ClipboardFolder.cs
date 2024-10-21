@@ -286,6 +286,19 @@ namespace ClipboardApp.Model.Folder {
                 ReferenceVectorDBItems.Add(vectorDBItem);
             }　
         }
+
+        // フォルダを移動する
+        public void MoveTo(ClipboardFolder toFolder) {
+            // 自分自身を移動
+            ParentId = toFolder.Id;
+            Save();
+        }
+        // 名前を変更
+        public void Rename(string newName) {
+            FolderName = newName;
+            Save();
+        }
+
         // 自分自身を保存
         public void Save() {
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加

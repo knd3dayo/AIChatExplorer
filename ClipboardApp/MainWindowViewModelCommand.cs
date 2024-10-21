@@ -122,16 +122,27 @@ namespace ClipboardApp {
 
         }
 
-        // クリップボードアイテムを作成する。
-        // Ctrl + N が押された時の処理
-        // メニューの「アイテム作成」をクリックしたときの処理
-        public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            this.SelectedFolder.CreateItemCommandExecute();
+        // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListPythonScriptWindowCommand => new((parameter) => {
+            OpenListPythonScriptWindowCommandExecute(parameter);
+        });
+
+        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
+            OpenListPromptTemplateWindowCommandExecute(this);
+        });
+        // メニューの「自動処理ルールを編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
+            OpenListAutoProcessRuleWindowCommandExecute();
+        });
+        // メニューの「タグ編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
+            OpenTagWindowCommandExecute();
+        });
+
+        // バージョン情報画面を開く処理
+        public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
+            VersionWindow.OpenVersionWindow();
         });
 
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
@@ -169,18 +180,52 @@ namespace ClipboardApp {
             ClipboardAppCommandExecute.OpenVectorDBManagementWindowCommand();
         });
 
+        // メニューの「設定」をクリックしたときの処理
+        public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
+            ClipboardAppCommandExecute.SettingCommandExecute();
+        });
+
+
+        #region Window全体のInputBinding用のコマンド
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
             ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
             ClipboardAppCommandExecute.OpenSearchWindowCommand(folderViewModel.ClipboardItemFolder, () => { folderViewModel.LoadFolderCommand.Execute(); });
         });
 
+        #endregion
 
+        #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
             ClipboardAppCommandExecute.ReloadFolderCommand(this);
         });
 
+        // クリップボードアイテムを作成する。
+        // Ctrl + N が押された時の処理
+        // メニューの「アイテム作成」をクリックしたときの処理
+        public SimpleDelegateCommand<object> CreateItemCommand => new((parameter) => {
+            // 選択中のフォルダがない場合は処理をしない
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            this.SelectedFolder.CreateItemCommandExecute();
+        });
+
+        // Ctrl + V が押された時の処理
+        public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
+            ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(this);
+        });
+
+        // Ctrl + X が押された時の処理 複数アイテム処理可能
+        public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
+            ClipboardAppCommandExecute.CutFolderCommandExecute(this);
+        });
+
+        #endregion
+
+        #region クリップボードアイテムのInputBinding用のコマンド
         // Ctrl + Delete が押された時の処理 選択中のフォルダのアイテムを削除する
         public SimpleDelegateCommand<object> DeleteDisplayedItemCommand => new((parameter) => {
             if (SelectedFolder == null) {
@@ -215,19 +260,32 @@ namespace ClipboardApp {
             }
         });
 
-
-        // メニューの「設定」をクリックしたときの処理
-        public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            ClipboardAppCommandExecute.SettingCommandExecute();
+        // Ctrl + X が押された時の処理 複数アイテム処理可能
+        public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
+            ClipboardAppCommandExecute.CutItemCommandExecute(this);
+        });
+        // Ctrl + C が押された時の処理 複数アイテム処理可能
+        public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
+            ClipboardAppCommandExecute.CopyToClipboardCommandExecute(this);
+        });
+        // Ctrl + M が押された時の処理
+        public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
+            ClipboardAppCommandExecute.MergeItemCommandExecute(this);
         });
 
+        // Ctrl + Shift + M が押された時の処理
+        public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
+            ClipboardAppCommandExecute.MergeItemWithHeaderCommandExecute(this);
+        });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
             this.SelectedFolder?.OpenItemCommand.Execute(this.SelectedItem);
 
         });
+        #endregion
 
+        #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
             this.SelectedItem?.OpenContentAsFileCommand.Execute();
@@ -294,52 +352,6 @@ namespace ClipboardApp {
         });
 
 
-        // Ctrl + X が押された時の処理 複数アイテム処理可能
-        public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            ClipboardAppCommandExecute.CutItemCommandExecute(this);
-        });
-        // Ctrl + C が押された時の処理 複数アイテム処理可能
-        public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            ClipboardAppCommandExecute.CopyToClipboardCommandExecute(this);
-        });
-        // Ctrl + V が押された時の処理
-        public SimpleDelegateCommand<object> PasteItemCommand => new((parameter) => {
-            ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(this, true, (items) => { });
-        });
-
-        // Ctrl + M が押された時の処理
-        public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
-            ClipboardAppCommandExecute.MergeItemCommandExecute(this);
-        });
-
-        // Ctrl + Shift + M が押された時の処理
-        public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
-            ClipboardAppCommandExecute.MergeItemWithHeaderCommandExecute(this);
-        });
-
-        // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListPythonScriptWindowCommand => new((parameter) => {
-            OpenListPythonScriptWindowCommandExecute(parameter);
-        });
-
-        // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {
-            OpenListPromptTemplateWindowCommandExecute(this);
-        });
-        // メニューの「自動処理ルールを編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListAutoProcessRuleWindowCommand => new((parameter) => {
-            OpenListAutoProcessRuleWindowCommandExecute();
-        });
-        // メニューの「タグ編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
-            OpenTagWindowCommandExecute();
-        });
-
-        // バージョン情報画面を開く処理
-        public SimpleDelegateCommand<object> OpenVersionInfoCommand => new((parameter) => {
-            VersionWindow.OpenVersionWindow();
-        });
-
         // プロンプトテンプレートを実行
         public SimpleDelegateCommand<ClipboardItemViewModel> SelectPromptTemplateCommand => new((itemViewModel) => {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -356,6 +368,7 @@ namespace ClipboardApp {
             });
         });
 
+        #endregion
 
     }
 }

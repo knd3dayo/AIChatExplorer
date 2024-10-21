@@ -22,11 +22,9 @@ namespace ClipboardApp.Model {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             CollectionId = folderObjectId;
-
         }
 
         // プロパティ
-
         public string FolderPath {
             get {
                 // FolderObjectIdからClipboardFolderを取得
@@ -87,6 +85,18 @@ namespace ClipboardApp.Model {
         // インスタンスメソッド
         // -------------------------------------------------------------------
 
+        // 別フォルダに移動
+        public void MoveToFolder(ClipboardFolder folder) {
+            CollectionId = folder.Id;
+            Save();
+        }
+        // 別フォルダにコピー
+        public void CopyToFolder(ClipboardFolder folder) {
+            ClipboardItem newItem = Copy();
+            newItem.CollectionId = folder.Id;
+            newItem.Save();
+        }
+
         public ClipboardItem Copy() {
             ClipboardItem newItem = new(this.CollectionId);
             CopyTo(newItem);
@@ -108,10 +118,7 @@ namespace ClipboardApp.Model {
             clipboardItem.SourceApplicationPath = SourceApplicationPath;
             clipboardItem.Tags = new HashSet<string>(Tags);
             clipboardItem.Description = Description;
-            // 背景情報
-            clipboardItem.BackgroundInfo = BackgroundInfo;
-            // サマリー
-            clipboardItem.Summary = Summary;
+            clipboardItem.PromptChatResult = PromptChatResult;
 
             //-- ファイルがある場合はコピー
             foreach (var FileObjectId in FileObjectIds) {

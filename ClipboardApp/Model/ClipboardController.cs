@@ -20,6 +20,9 @@ namespace ClipboardApp.Model
             _clipboard.ClipboardChanged += ClipboardChanged;
 
         }
+        // ClipboardChangedが呼ばれたときの処理
+        public Action<ClipboardChangedEventArgs> OnClipboardChanged{ get ; set; } = (e) => { };
+
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
         private SharpClipboard _clipboard;
@@ -80,18 +83,20 @@ namespace ClipboardApp.Model
         private void ClipboardChanged(object? sender, ClipboardChangedEventArgs e) {
             LastClipboardChangedEventArgs = e;
 
+            // このアプリケーションのクリップボード操作は無視
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            if (e.SourceApplication.Name == assembly.Name + ".exe") {
+                return;
+            }
+            OnClipboardChanged(e);
+
+
             if (IsClipboardMonitorEnabled == false) {
                 // System.Windows.MessageBox.Show("Clipboard monitor disabled");
                 return;
             }
             // Determine if it is a target application for monitoring
             if (!IsMonitorTargetApp(e)) {
-                return;
-            }
-
-            // このアプリケーションのクリップボード操作は無視
-            var assembly = Assembly.GetExecutingAssembly().GetName();
-            if (e.SourceApplication.Name == assembly.Name + ".exe") {
                 return;
             }
 

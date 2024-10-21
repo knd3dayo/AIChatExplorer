@@ -300,18 +300,34 @@ namespace ClipboardApp.ViewModel {
         /// <param name="toFolder"></param>
         /// <returns></returns>
 
-        public virtual void PasteClipboardItemCommandExecute(bool CutFlag,
-            IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
+        public virtual void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag,
+            IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
-                ClipboardItemViewModel newItem = item.Copy();
-                toFolder.AddItemCommand.Execute(newItem);
-                // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                if (CutFlag) {
-                    fromFolder.DeleteItemCommand.Execute(item);
+                if (item is ClipboardItemViewModel itemViewModel) {
+                    ClipboardItem clipboardItem = itemViewModel.ClipboardItem;
+                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Item) {
+                        // Cutフラグが立っている場合はコピー元のアイテムを削除する
+                        clipboardItem.MoveToFolder(toFolder.ClipboardItemFolder);
+                    } else {
+                        clipboardItem.CopyToFolder(toFolder.ClipboardItemFolder);
+                    }
                 }
+                if (item is ClipboardFolderViewModel folderViewModel) {
+                    ClipboardFolder folder = folderViewModel.ClipboardItemFolder;
+                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Folder) {
+                        // Cutフラグが立っている場合はコピー元のフォルダを削除する
+                        folder.MoveTo(toFolder.ClipboardItemFolder);
+                    } 
+                }
+
             }
             // フォルダ内のアイテムを再読み込み
             toFolder.LoadFolderCommand.Execute();
+            // 親フォルダ構造を再読み込み
+            if (toFolder.ParentFolderViewModel != null) {
+                toFolder.ParentFolderViewModel.LoadFolderCommand.Execute();
+            }
+
             LogWrapper.Info(StringResources.Pasted);
         }
 

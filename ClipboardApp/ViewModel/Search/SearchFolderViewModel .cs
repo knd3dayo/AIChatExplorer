@@ -99,7 +99,7 @@ namespace ClipboardApp.ViewModel.Search {
 
         }
 
-        public override void PasteClipboardItemCommandExecute(bool CutFlag, IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
+        public override void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
 
         }

@@ -188,12 +188,27 @@ namespace ClipboardApp {
                 SelectedItems
                 );
         }
+        // フォルダのCtrl + X が押された時の処理
+        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
 
-        // Ctrl + X が押された時の処理 複数アイテム処理可能
+            // 選択中のフォルダがない場合は処理をしない
+            if (windowViewModel.SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
+            // Cut Flagを立てる
+            windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.Folder;
+            // CopiedFolderに選択中のフォルダをセット
+            windowViewModel.CopiedObjects = [windowViewModel.SelectedFolder];
+
+            LogWrapper.Info(CommonStringResources.Instance.Cut);
+        }
+
+        // クリップボードアイテムのCtrl + X が押された時の処理 複数アイテム処理可能
         public static void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
 
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems == null || SelectedItems.Count == 0) {
@@ -206,13 +221,13 @@ namespace ClipboardApp {
                 return;
             }
             // Cut Flagを立てる
-            windowViewModel.CutFlag = true;
+            windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.Item;
+            windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
             // CopiedItemsに選択中のアイテムをセット
-            CopiedItems.Clear();
+            windowViewModel.CopiedObjects.Clear();
             foreach (ClipboardItemViewModel item in SelectedItems) {
-                CopiedItems.Add(item);
+                windowViewModel.CopiedObjects.Add(item);
             }
-            windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
 
             LogWrapper.Info(CommonStringResources.Instance.Cut);
 
@@ -238,13 +253,14 @@ namespace ClipboardApp {
             }
 
             // Cutフラグをもとに戻す
-            windowViewModel.CutFlag = false;
+            windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
+
             // CopiedItemsに選択中のアイテムをセット
-            windowViewModel.CopiedItems.Clear();
+            windowViewModel.CopiedObjects.Clear();
             foreach (ClipboardItemViewModel item in SelectedItems) {
-                windowViewModel.CopiedItems.Add(item);
+                windowViewModel.CopiedObjects.Add(item);
             }
-            windowViewModel.CopiedItemFolder = windowViewModel.SelectedFolder;
+            windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
 
             try {
                 MainWindowViewModel.ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
@@ -256,39 +272,34 @@ namespace ClipboardApp {
             }
 
         }
+
         // Ctrl + V が押された時の処理
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel, bool saveToFolder, Action<List<ClipboardItem>> action) {
+        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            ObservableCollection<ClipboardItemViewModel> CopiedItems = windowViewModel.CopiedItems;
-            ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedItemFolder;
+            List<object> CopiedItems = windowViewModel.CopiedObjects;
+            ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedFolder;
 
             // 貼り付け先のフォルダがない場合は処理をしない
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
+            // コピー元のフォルダがない場合は処理をしない
+            if (CopiedItemFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
+                return;
+            }
 
             // コピー元のアイテムがアプリ内のものである場合
             if (CopiedItems.Count > 0) {
-                // コピー元のフォルダがない場合は処理をしない
-                if (CopiedItemFolder == null) {
-                    LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
-                    return;
-                }
-                // saveToFolderがTrueの場合はフォルダに保存
-                if (saveToFolder) {
-                    SelectedFolder.PasteClipboardItemCommandExecute(
-                        windowViewModel.CutFlag,
-                        CopiedItems,
-                        CopiedItemFolder,
-                        SelectedFolder
-                        );
-                }
-                // 貼り付け後の処理
-                action(CopiedItems.Select(x => x.ClipboardItem).ToList());
+                SelectedFolder.PasteClipboardItemCommandExecute(
+                    windowViewModel.CutFlag,
+                    CopiedItems,
+                    SelectedFolder
+                    );
 
                 // Cutフラグをもとに戻す
-                windowViewModel.CutFlag = false;
+                windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
                 // 貼り付け後にコピー選択中のアイテムをクリア
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
@@ -298,11 +309,8 @@ namespace ClipboardApp {
                         // クリップボードアイテムが追加された時の処理
                         await Task.Run(() => {
                             // saveToFolderがTrueの場合はフォルダに保存
-                            if (saveToFolder) {
-                                SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
-                            }
+                            SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                             // 貼り付け後の処理
-                            action([clipboardItem]);
                             MainUITask.Run(() => {
                                 windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                             });
