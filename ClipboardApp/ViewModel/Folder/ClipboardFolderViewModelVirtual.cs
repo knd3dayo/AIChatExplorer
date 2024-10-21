@@ -157,28 +157,6 @@ namespace ClipboardApp.ViewModel {
                 InputGestureText = "Ctrl+Shit+O"
             };
             menuItems.Add(openContentAsFileMenuItem);
-            // プロンプトメニュー
-            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
-            menuItems.Add(promptMenuItem);
-
-            // ベクトル生成
-            MenuItem generateVectorMenuItem = new() {
-                Header = StringResources.GenerateVector,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.GenerateVectorCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(generateVectorMenuItem);
-
-            // ベクトル検索
-            MenuItem vectorSearchMenuItem = new() {
-                Header = StringResources.VectorSearch,
-                // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.VectorSearchCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(vectorSearchMenuItem);
-
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
                 Header = PythonAILibStringResources.Instance.Pin,
@@ -206,6 +184,36 @@ namespace ClipboardApp.ViewModel {
                 InputGestureText = "Delete"
             };
             menuItems.Add(deleteMnuItem);
+
+            // プロンプトメニュー
+            MenuItem promptMenuItem = CreatePromptMenuItems(itemViewModel);
+            menuItems.Add(promptMenuItem);
+
+            // ベクトル生成
+            MenuItem generateVectorMenuItem = new() {
+                Header = StringResources.GenerateVector,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.GenerateVectorCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(generateVectorMenuItem);
+
+            // ベクトル検索
+            MenuItem vectorSearchMenuItem = new() {
+                Header = StringResources.VectorSearch,
+                // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.VectorSearchCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(vectorSearchMenuItem);
+
+            //  テキストを抽出
+            MenuItem extractTextMenuItem = new() {
+                Header = StringResources.ExtractText,
+                Command = itemViewModel.ExtractTextCommand,
+                CommandParameter = itemViewModel
+            };
+            menuItems.Add(extractTextMenuItem);
 
             return menuItems;
         }
