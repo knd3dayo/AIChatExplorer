@@ -5,6 +5,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.ViewModel;
+using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.TagView;
@@ -353,17 +354,17 @@ namespace ClipboardApp {
 
 
         // プロンプトテンプレートを実行
-        public SimpleDelegateCommand<ClipboardItemViewModel> SelectPromptTemplateCommand => new((itemViewModel) => {
-            ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
-                // チャットを実行
-                Task.Run(() => {
-                    itemViewModel.ClipboardItem.CreateChatResult(promptTemplateWindowViewModel.PromptItem);
-                    //保存
-                    itemViewModel.ClipboardItem.Save();
-                    MainUITask.Run(() => {
-                        // フォルダ内のアイテムを再読み込み
-                        SelectedFolder?.LoadFolderCommand.Execute();
-                    });
+        public SimpleDelegateCommand<Tuple<ClipboardItemViewModel, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
+            ClipboardItemViewModel itemViewModel = tuple.Item1;
+            PromptItem promptItem = tuple.Item2;
+            // チャットを実行
+            Task.Run(() => {
+                itemViewModel.ClipboardItem.CreateChatResult(promptItem);
+                //保存
+                itemViewModel.ClipboardItem.Save();
+                MainUITask.Run(() => {
+                    // フォルダ内のアイテムを再読み込み
+                    SelectedFolder?.LoadFolderCommand.Execute();
                 });
             });
         });

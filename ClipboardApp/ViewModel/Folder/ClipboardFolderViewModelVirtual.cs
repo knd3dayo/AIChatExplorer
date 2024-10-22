@@ -4,6 +4,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.ClipboardItemView;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
 using WpfAppCommon.Utils;
 
@@ -129,9 +130,18 @@ namespace ClipboardApp.ViewModel {
             // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
             MenuItem otherPromptMenuItem = new() {
                 Header = StringResources.OtherPrompts,
-                Command = MainWindowViewModel.ActiveInstance.SelectPromptTemplateCommand,
-                CommandParameter = itemViewModel
             };
+            // DBからプロンプトテンプレートを取得し、選択させる
+            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.UserDefined).ToList();
+            foreach (var promptItem in promptItems) {
+                MenuItem promptItemMenuItem = new() {
+                    Header = promptItem.Description,
+                    Command = MainWindowViewModel.ActiveInstance.ExecutePromptTemplateCommand,
+                    CommandParameter = new Tuple<ClipboardItemViewModel, PromptItem>(itemViewModel, promptItem)
+                };
+                otherPromptMenuItem.Items.Add(promptItemMenuItem);
+            }
+
             promptMenuItem.Items.Add(otherPromptMenuItem);
 
             return promptMenuItem;

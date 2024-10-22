@@ -91,6 +91,15 @@ namespace PythonAILib.Model.Prompt {
             }
             return item;
         }
+        // List<PromptItem>を取得
+        public static List<PromptItem> GetPromptItems() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            List<PromptItem> promptItems = [];
+            foreach (var item in libManager.DataFactory.GetAllPromptTemplates()) {
+                promptItems.Add(item);
+            }
+            return promptItems;
+        }
 
         // システム定義のPromptItemを取得
         public static void InitSystemPromptItems() {
