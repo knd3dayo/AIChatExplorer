@@ -258,7 +258,6 @@ namespace PythonAILib.Model.Content {
             List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
                 OpenAIExecutionModeEnum.OpenAIRAG => ReferenceVectorDBItems,
                 OpenAIExecutionModeEnum.LangChain => ReferenceVectorDBItems,
-                OpenAIExecutionModeEnum.AnalyzeAndDictionarize => ReferenceVectorDBItems,
                 _ => []
             };
 

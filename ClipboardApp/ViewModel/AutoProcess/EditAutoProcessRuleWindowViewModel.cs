@@ -640,8 +640,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.OpenAIRAG;
             } else if (selectedIndex == 2) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.LangChain;
-            } else if (selectedIndex == 3) {
-                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AnalyzeAndDictionarize;
             } else {
                 return;
             }

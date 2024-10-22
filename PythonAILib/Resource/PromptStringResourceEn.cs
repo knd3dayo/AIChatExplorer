@@ -12,11 +12,6 @@ namespace PythonAILib.Resource {
         // "Return the output as a list in the following JSON format. If there is no text to analyze or analysis is not possible, return an empty list\n" +
         // "{'result':[{'sentence':'Sentence containing undefined term','reason':'Reason for determining that the term is undefined'}]}"
 
-        public override string AnalyzeAndDictionarizeRequest { get; } = "Please analyze the following text and identify sentences containing undefined terms." +
-            "Undefined terms are those whose genus, specific difference, cause, purpose, function, or components are unclear." +
-            "Return the output as a list in the following JSON format. If there is no text to analyze or analysis is not possible, return an empty list\n" +
-            "{'result':[{'sentence':'Sentence containing undefined term','reason':'Reason for determining that the term is undefined'}]}";
-
         // For unclear sentences, please refer to the following explanation
         public override string UnknownContentDescription { get; } = "For unclear sentences, please refer to the following explanation";
 

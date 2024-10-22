@@ -205,10 +205,6 @@ namespace PythonAILib.Model.Chat {
                 // ChatModeがLangChainの場合は、LangChainChatを実行する。
                 return ExecuteChatLangChain(openAIProperties);
             }
-            if (ChatMode == OpenAIExecutionModeEnum.AnalyzeAndDictionarize) {
-                return ExecuteChatAnalyzeAndDictionarize(openAIProperties);
-            }
-
             return null;
         }
         private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
@@ -276,78 +272,6 @@ namespace PythonAILib.Model.Chat {
             ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
 
             return result;
-
-        }
-        private ChatResult? ExecuteChatAnalyzeAndDictionarize(OpenAIProperties openAIProperties) {
-            // 実験的機能1(文章解析+辞書生成+RAG)
-            // 新規のChatRequestを作成.ContentTextにはこのChatRequestのContentTextを設定する.
-            // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
-            string newRequestPrompt = PromptStringResource.Instance.AnalyzeAndDictionarizeRequest;
-
-            Chat newRequest = new() {
-                ContentText = ContentText,
-                PromptTemplateText = newRequestPrompt,
-                JsonMode = true,
-            };
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, newRequest);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultNull);
-            }
-            // レスポンスからJsonSerializerでDictionary<string,List<Dictionary<string, object>>>を取得
-            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(result.Response);
-            if (resultDict == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseInvalid);
-            }
-            // documents を取得
-            JsonElement? documentsObject = (JsonElement)resultDict["result"];
-            if (documentsObject == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseResultNotFound);
-            }
-            string documents = documentsObject.ToString() ?? "[]";
-            // documentsをList<Dictionary<string, object>>に変換
-            List<Dictionary<string, string>> jsonList = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(documents) ?? [];
-
-            // リストの要素毎にVectorSearchを実行
-            // 結果用のStringBuilderを作成
-            StringBuilder sb = new();
-            sb.AppendLine(PromptStringResource.Instance.UnknownContentDescription);
-            sb.AppendLine("----------------------------------------------------");
-            // ベクトル検索が存在するか否かのフラグ
-            bool hasVectorSearch = false;
-            foreach (var item in jsonList) {
-                string sentence = item["sentence"] as string ?? "";
-                if (string.IsNullOrEmpty(sentence)) {
-                    continue;
-                }
-                sb.AppendLine($"### {sentence} ###");
-                // VectorSearchRequestを作成. テスト用にFilterを設定
-                VectorSearchRequest request = new() {
-                    Query = sentence,
-                    SearchKWArgs = new Dictionary<string, object> {
-                        ["k"] = 10,
-                        // filter
-                        ["filter"] = new Dictionary<string, object> {
-                            ["content_type"] = "text"
-                        }
-                    }
-                };
-                // VectorSearchを実行
-                foreach (var vectorDBItem in VectorDBItems) {
-                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
-                    foreach (var vectorSearchResult in vectorSearchResults) {
-                        sb.AppendLine($"{vectorSearchResult.Content}");
-                        hasVectorSearch = true;
-                    }
-                }
-            }
-            if (hasVectorSearch) {
-                // 結果を元のContentTextに追加
-                ContentText += "\n" + sb.ToString();
-            }
-            // NormalChatを実行
-            return ExecuteChatNormal(openAIProperties);
 
         }
 
