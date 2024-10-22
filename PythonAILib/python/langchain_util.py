@@ -1,6 +1,5 @@
 
 import json, sys
-from re import search
 from langchain.prompts import PromptTemplate
 from langchain.agents import create_openai_tools_agent, AgentExecutor
 from langchain.tools import Tool
@@ -12,6 +11,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.callbacks.manager import get_openai_callback
 import langchain
+from langchain_core.runnables import chain
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
@@ -19,7 +19,42 @@ from openai_props import OpenAIProps, VectorDBProps
 from langchain_vector_db import get_vector_db
 
 from typing import Any
+from langchain_core.callbacks import (
+    CallbackManagerForRetrieverRun,
+)
+from collections import defaultdict
 
+class CustomMultiVectorRetriever(MultiVectorRetriever):
+    def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
+        """Get documents relevant to a query.
+        Args:
+            query: String to find relevant documents for
+            run_manager: The callbacks handler to use
+        Returns:
+            List of relevant documents
+        """
+        results = self.vectorstore.similarity_search_with_score(query, **self.search_kwargs)
+
+        # Map doc_ids to list of sub-documents, adding scores to metadata
+        id_to_doc = defaultdict(list)
+        for doc, score in results:
+            doc_id = doc.metadata.get("doc_id")
+            if doc_id:
+                doc.metadata["score"] = score
+                id_to_doc[doc_id].append(doc)
+
+        # Fetch documents corresponding to doc_ids, retaining sub_docs in metadata
+        docs = []
+        for _id, sub_docs in id_to_doc.items():
+            docstore_docs = self.docstore.mget([_id])
+            if docstore_docs:
+                docstore_doc: Optional[Document]= docstore_docs[0]
+                if docstore_doc is not None:
+                    docstore_doc.metadata["sub_docs"] = sub_docs
+                    docs.append(docstore_doc)
+
+        return docs
+            
 class RetrieverUtil:
     
     def __init__(self,  client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
@@ -39,7 +74,7 @@ class RetrieverUtil:
             print("Creating MultiVectorRetriever")
             
             langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
-            retriever = MultiVectorRetriever(
+            retriever = CustomMultiVectorRetriever(
                 vectorstore=langChainVectorDB.db,
                 docstore=langChainVectorDB.doc_store,
                 id_key="doc_id",
@@ -49,14 +84,22 @@ class RetrieverUtil:
         else:
             print("Creating a regular Retriever")
             langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
-            retriever = langChainVectorDB.db.as_retriever(
-                # search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
-                search_kwargs=search_kwargs
-            )
+            retriever = self.__create_decorated_retriever(langChainVectorDB.db, search_kwargs=search_kwargs)
          
         return retriever
 
+    def __create_decorated_retriever(self, vectorstore, **kwargs: Any):
+        # ベクトル検索の結果にスコアを追加する
+        @chain
+        def retriever(query: str) -> list[Document]:
+            result = []
+            docs, scores = zip(*vectorstore.similarity_search_with_score(query, kwargs))
+            for doc, score in zip(docs, scores):
+                doc.metadata["score"] = score
+                result.append(doc)
+            return result
 
+        return retriever
 
 class RetrievalQAUtil:
 
@@ -314,7 +357,19 @@ def run_vector_search( openai_props: OpenAIProps, vector_db_item : VectorDBProps
         content = doc.page_content
         source = doc.metadata.get("source", "")
         source_url = doc.metadata.get("source_url", "")
-        result.append({"content": content, "source": source, "source_url": source_url})
+        score = doc.metadata.get("score", 0.0)
+        sub_docs = doc.metadata.get("sub_docs", [])
+        # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
+        sub_docs_result = []
+        for sub_doc in sub_docs:
+            sub_content = sub_doc.page_content
+            sub_source = sub_doc.metadata.get("source", "")
+            sub_source_url = sub_doc.metadata.get("source_url", "")
+            sub_score = sub_doc.metadata.get("score", 0.0)
+            sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+
+
+        result.append({"content": content, "source": source, "source_url": source_url, "score": score, "sub_docs": sub_docs_result})
         
     return {"documents": result}
 

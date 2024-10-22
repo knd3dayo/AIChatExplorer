@@ -392,7 +392,7 @@ namespace PythonAILib.PythonIF {
 
         private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
-            List<VectorSearchResult> vectorSearchResults = new();
+            List<VectorSearchResult> vectorSearchResults = [];
 
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
@@ -409,13 +409,12 @@ namespace PythonAILib.PythonIF {
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
-                // documents を取得
-                JsonElement? documentsObject = (JsonElement)resultDict["documents"];
-                if (documentsObject == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                // documentsがある場合は取得
+                if (resultDict.ContainsKey("documents")) {
+                    JsonElement? documentsObject = (JsonElement)resultDict["documents"];
+                    // List<VectorSearchResult>に変換
+                    vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
                 }
-                // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
 
             });
             return vectorSearchResults;
