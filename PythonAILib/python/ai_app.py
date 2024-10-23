@@ -53,8 +53,8 @@ def list_openai_models(openai_props: OpenAIProps):
 # langchain関連
 ########################
 
-def run_vector_search(openai_props:OpenAIProps, vector_db_item:VectorDBProps, query:str, search_kwargs: dict):
-    result = langchain_util.run_vector_search(openai_props, vector_db_item, query, search_kwargs)
+def run_vector_search(openai_props:OpenAIProps, vector_db_items:list[VectorDBProps], query:str, search_kwargs: dict):
+    result = langchain_util.run_vector_search(openai_props, vector_db_items, query, search_kwargs)
     return result
 
 def run_langchain_chat( openai_props:OpenAIProps, vector_db_props:list[VectorDBProps], prompt:str, chat_history: list[Any]) -> dict:

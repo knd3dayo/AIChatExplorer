@@ -152,7 +152,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
                 // total_tokensを取得. total_tokensが存在しない場合は0を設定
-                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0")  : 0;
+                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
 
                 // ChatResultに設定
                 chatResult.Response = content;
@@ -175,7 +175,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_history_json}");
 
             //OpenAIChatExecuteを呼び出す
-            ChatResult result =  OpenAIChatExecute("run_openai_chat", (function_object) => {
+            ChatResult result = OpenAIChatExecute("run_openai_chat", (function_object) => {
                 return function_object(propsJson, chat_history_json);
             });
 
@@ -333,16 +333,16 @@ namespace PythonAILib.PythonIF {
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
-                // outputを取得
-                string? output = resultDict["output"]?.ToString();
-                if (output == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                // outputがある場合は取得
+                resultDict.TryGetValue("output", out object? output_value);
+                if (output_value != null) {
+                    string? output = output_value.ToString();
+                    // ChatResultに設定
+                    chatResult.Response = output ?? "";
                 }
-                // ChatResultに設定
-                chatResult.Response = output;
 
                 // page_content_listを取得
-                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? new();
+                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? [];
                 chatResult.ReferencedContents = page_content_list;
 
                 // page_source_listを取得
@@ -399,7 +399,7 @@ namespace PythonAILib.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
-                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
+                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列   
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
@@ -420,9 +420,9 @@ namespace PythonAILib.PythonIF {
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, VectorSearchRequest vectorSearchRequest) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, VectorSearchRequest vectorSearchRequest) {
             // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
-            openAIProperties.VectorDBItems = [vectorDBItem];
+            openAIProperties.VectorDBItems = vectorDBItems;
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
             // vectorSearchRequestをJSON文字列に変換

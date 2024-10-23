@@ -324,7 +324,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(VectorDBItem vectorDBItem) {
+        public List<VectorSearchResult> VectorSearchCommandExecute(List<VectorDBItem> vectorDBItems) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             string contentText = Content;
@@ -336,7 +336,7 @@ namespace PythonAILib.Model.Content {
                 }
             };
             // ベクトル検索を実行
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(openAIProperties, vectorDBItem, request);
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(openAIProperties, vectorDBItems, request);
             return results;
         }
 

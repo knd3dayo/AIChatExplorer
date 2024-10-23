@@ -108,8 +108,8 @@ def run_langchain_chat( props_json: str, request_prompt: str, request_json: str)
 def run_vector_search(props_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        openai_props, vector_db_item, query, search_kwargs = langchain_util.process_vector_search_parameter(props_json, request_json)
-        result = langchain_util.run_vector_search(openai_props, vector_db_item, query, search_kwargs)
+        openai_props, vector_db_items, query, search_kwargs = langchain_util.process_vector_search_parameter(props_json, request_json)
+        result = langchain_util.run_vector_search(openai_props, vector_db_items, query, search_kwargs)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

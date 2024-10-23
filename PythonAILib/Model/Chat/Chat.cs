@@ -208,6 +208,9 @@ namespace PythonAILib.Model.Chat {
             return null;
         }
         private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
+            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
+            AppendVectorSearchResult(openAIProperties);
+
             openAIProperties.VectorDBItems.AddRange(VectorDBItems);
             ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, this);
             if (result == null) {
@@ -233,8 +236,26 @@ namespace PythonAILib.Model.Chat {
 
             return result;
         }
+
         private ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties) {
-            // ContentTextの内容をベクトル検索する。
+            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
+            AppendVectorSearchResult(openAIProperties);
+
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
+            // リクエストをChatItemsに追加
+            if (result == null) {
+                return null;
+            }
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
+            return result;
+
+        }
+        // VectorSearchを実行してコンテキスト情報を生成する
+        private void AppendVectorSearchResult(OpenAIProperties openAIProperties) {
+            string result = "";
             StringBuilder sb = new();
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -249,30 +270,19 @@ namespace PythonAILib.Model.Chat {
                     }
                 }
             };
-            foreach (var vectorDBItem in VectorDBItems) {
-                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
-                foreach (var vectorSearchResult in results) {
-                    sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
-                    sb.AppendLine(vectorSearchResult.Content);
-                    hasVectorSearch = true;
-                }
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, VectorDBItems, request) ?? [];
+            foreach (var vectorSearchResult in results) {
+                sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
+                sb.AppendLine(vectorSearchResult.Content);
+                hasVectorSearch = true;
             }
+
             if (hasVectorSearch) {
                 // 結果をContentTextに追加
-                ContentText += "--- 本文 ----\n" + sb.ToString();
+                result = "\n--- 参考情報 ----\n" + sb.ToString();
+                // 結果をContentTextに追加
+                ContentText += result;
             }
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
-            return result;
-
         }
 
     }

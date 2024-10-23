@@ -1,18 +1,16 @@
 
 import json, sys
 from langchain.prompts import PromptTemplate
-from langchain.agents import create_openai_tools_agent, AgentExecutor
-from langchain.tools import Tool
+from langchain.agents import create_react_agent, AgentExecutor
 from langchain.docstore.document import Document
 from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain, BaseQAWithSourcesChain
-from langchain.tools import Tool
 from langchain.docstore.document import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.callbacks.manager import get_openai_callback
 import langchain
 from langchain_core.runnables import chain
-from langchain_core.tools import tool
+from langchain_core.tools.structured import StructuredTool
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
@@ -29,7 +27,6 @@ from pydantic import BaseModel, Field
 
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
-    summaries: str = Field(description="summaries")
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
@@ -115,157 +112,35 @@ class RetrievalQAUtil:
         self.vector_db_items = vector_db_items
 
         # ツールのリストを作成
-        self.load_tools = self.__create_tool_list()
-        self.tools = self.load_tools
-
-    def __create_tool_list(self):
-
-        tools = []
-
-        for item in self.vector_db_items:
-            tools.append(self.__create_tool(item))
-  
-        return tools
-
-    def __create_tool(self, vector_db_item:VectorDBProps):
-        '''
-        # 関数の説明
-        # ツールを追加する。
-        #
-        # 引数
-        # vector_db_item: VectorDBProps
-        # 戻り値
-        # tool: Tool
-        #   ツール
-        '''
-        
-        # TODO Nameが2バイト文字の場合、エラーが発生するので修正が必要
-        
-        # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
-        qa = self.__create_retrieval_qa(vector_db_item)
-
-        @tool("custom_tool", args_schema=CustomToolInput)
-        def custom_tool(question: str, summaries: str) -> dict:
-            '''
-            ユーザーの質問に回答する汎用的なツールです。
-            '''
-            return qa.invoke({"question": question, "summaries": summaries})
-
-        return custom_tool
-    
-
-    def __create_default_prompt_template(self):
-        '''
-        # 関数の説明
-        # デフォルトのプロンプトのテンプレートを作成する。
-        # 
-        # 引数
-        # なし
-        # 戻り値
-        # prompt_template_dict: str
-        #   プロンプトのテンプレート
-        # 例
-        # prompt_template_str = create_default_prompt_template()
-        '''
-        # デフォルトのプロンプトのテンプレート
-        # contextはベクトルDB検索用のRetrieverオブジェクトの検索結果のcontext
-        # questionはユーザーからの質問
-        prompt_template_str = """You are a helpful and kind assistant.
-            If the following information is not related to the information you are looking for, please answer with "unknown" only.
-            The output language is the same as the language of the question.
-
-            {summaries}
-
-            Question: {question}
-            Answer:"""
-        return prompt_template_str
-
-    
-    def __create_retrieval_qa(self, vector_db_props:VectorDBProps, prompt_template_str: str = "") -> BaseQAWithSourcesChain: 
-        '''
-        # 関数の説明
-        # prompt_template_strからPromptTemplateを作成する。
-        # PromptTemplateからchain_type_kwargsを作成する。
-        # vectorstore, llm, chain_type_kwargsからRetrievalQAを作成する。
-        # 引数:
-        # vectorstore: VectorStore
-        # prompt_template_str: str
-        #   プロンプトのテンプレート
-        # 戻り値:
-        # RetrievalQA
-        #   RetrievalQAオブジェクト
-        # 例:
-        # retrieval_qa = create_retrieval_qa(vectorstore, llm, prompt_template_str)
-        '''
-        if not prompt_template_str:
-            # デフォルトのプロンプトのテンプレート文字列を作成
-            # for stuff
-            prompt_template_str = self.__create_default_prompt_template()
-
-        # for refine
-        # prompt_template_str = "Answer the following question based on the retrieved document: {question}\n\n{context_str}"
-        prompt = PromptTemplate(
-                template=prompt_template_str, 
-                # for stuff 
-                input_variables=["question", "summaries"],
-                # output_variables=["answer", "source_documents"]
-                # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
-                # input_variables=["question", "context_str"],
-                # output_variables=["source_documents"]   
-        )
-        
-        # for stuff
-        chain_type_kwargs = {"prompt": prompt}
-
-        # Retrieverを作成
-        # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
-        # content_typeもvector_db_propsで指定できるようにする
-        search_kwargs = {"k": vector_db_props.MaxSearchResults, "filter":{"content_type": "text"}}
-
-        retriever = RetrieverUtil(self.client, vector_db_props).create_retriever(search_kwargs)
-            
-        # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
-        # langchainのエージェントはユーザーからの質問が来た場合、それがどのツールに対する質問なのかを判断する。
-        # 料理に関する質問が来た場合、料理に関する質問に答えるツールを呼び出す。
-        qa = RetrievalQAWithSourcesChain.from_chain_type(
-            llm=self.client.get_completion_client(),
-            # stuff , map_reduce , refine , map_relankなどを指定
-            # chain_type='refine',
-            chain_type='stuff',
-            retriever=retriever,
-            return_source_documents=True,
-            chain_type_kwargs=chain_type_kwargs,
-        )
-
-        return qa
-    
+        self.tools = create_vector_search_tools(self.client, self.vector_db_items)
 
     def create_agent_executor(self):
         '''
-        # 関数の説明
-        # chat_agentを作成する。
-        # chat_agentは、ユーザーからの質問に答える。
-        # 
-        # 引数
-        # なし
-        # 戻り値
-        # chat_agent: ChatAgent
-        #   チャットエージェント
-        # 例
-        # chat_agent = create_agent()
+        # see https://python.langchain.com/api_reference/langchain/agents/langchain.agents.react.agent.create_react_agent.html
         '''
-        from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+        template = '''Answer the following questions as best you can. You have access to the following tools:
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", "You are a helpful assistant"),
-                MessagesPlaceholder("chat_history", optional=True),
-                ("human", "{input}"),
-                MessagesPlaceholder("agent_scratchpad"),
-            ]
-        )
+            {tools}
+
+            Use the following format:
+
+            Question: the input question you must answer
+            Thought: Do I need to use a tool? (Yes or No)
+            Action: the action to take, should be one of [{tool_names}], if using a tool, otherwise answer on your own
+            Action Input: the input to the action
+            Observation: the result of the action
+            ... (this Thought/Action/Action Input/Observation can repeat N times)
+            Thought: I now know the final answer
+            Final Answer: the final answer to the original input question
+
+            Begin!
+
+            Question: {input}
+            Thought:{agent_scratchpad}'''
+
+        prompt = PromptTemplate.from_template(template)
         # ChatAgentオブジェクトを作成
-        chat_agent = create_openai_tools_agent(
+        chat_agent = create_react_agent(
                 self.client.get_completion_client(),
                 self.tools,
                 prompt
@@ -275,6 +150,8 @@ class RetrievalQAUtil:
             return_source_documents=True,
             return_intermediate_steps=True,
             stream_runnable=False,
+            verbose=True,
+            handle_parsing_errors = True
             )
         return agent_executor
 
@@ -295,12 +172,17 @@ class RetrievalQAUtil:
         page_source_list = []
         #  verbose情報
         verbose_list = []
-        
+        print(f"intermediate_steps:{intermediate_steps}")
+
         for step in intermediate_steps:
+            # 0: AgentAction, 1: Observation ( create_vector_search_toolsで作成したツールを使っている場合はlist[Document]が返る)
             observation = step[1]
-            source_documents = observation.get("source_documents",[])
-            for source_document in source_documents:
-                source_document: Document = source_document
+            if not isinstance(observation, list):
+                continue
+            # source, source_urlを取得
+            for source_document in observation:
+                if not isinstance(source_document, Document):
+                    continue
                 source = source_document.metadata.get("source","")
                 source_url = source_document.metadata.get("source_url","")
                 
@@ -322,8 +204,6 @@ class RetrievalQAUtil:
             "tool": step[0].tool,
             "tool_input": step[0].tool_input,
             "log": step[0].log,
-            "message_log": str(step[0].message_log),
-            "tool_call_id": step[0].tool_call_id,
             "output": str(step[1]),
         }
 
@@ -344,40 +224,79 @@ class RetrievalQAUtil:
         return langchain_chat_history
 
 # ベクトル検索を行う
-def run_vector_search( openai_props: OpenAIProps, vector_db_item : VectorDBProps, query : str, search_kwargs: dict):    
+def run_vector_search( openai_props: OpenAIProps, vector_db_props : list[VectorDBProps], query : str, search_kwargs: dict):    
 
     client = LangChainOpenAIClient(openai_props)
 
-    # デバッグ出力
-    print(f'検索条件: {query}')
-    print('ベクトルDBの設定')
-    print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-
-    retriever = RetrieverUtil(client, vector_db_item).create_retriever(search_kwargs=search_kwargs)
-    documents: list[Document] = retriever.invoke(query)
-
-    print(f"documents:\n{documents}")
     # documentsの要素からcontent, source, source_urlを取得
     result = []
-    for doc in documents:
-        content = doc.page_content
-        source = doc.metadata.get("source", "")
-        source_url = doc.metadata.get("source_url", "")
-        score = doc.metadata.get("score", 0.0)
-        sub_docs = doc.metadata.get("sub_docs", [])
-        # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
-        sub_docs_result = []
-        for sub_doc in sub_docs:
-            sub_content = sub_doc.page_content
-            sub_source = sub_doc.metadata.get("source", "")
-            sub_source_url = sub_doc.metadata.get("source_url", "")
-            sub_score = sub_doc.metadata.get("score", 0.0)
-            sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+    # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
+    for vector_db_item in vector_db_props:
+
+        # デバッグ出力
+        print(f'検索条件: {query}')
+        print('ベクトルDBの設定')
+        print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
 
 
-        result.append({"content": content, "source": source, "source_url": source_url, "score": score, "sub_docs": sub_docs_result})
+        retriever = RetrieverUtil(client, vector_db_item).create_retriever(search_kwargs=search_kwargs)
+        documents: list[Document] = retriever.invoke(query)
+
+        print(f"documents:\n{documents}")
+        for doc in documents:
+            content = doc.page_content
+            source = doc.metadata.get("source", "")
+            source_url = doc.metadata.get("source_url", "")
+            score = doc.metadata.get("score", 0.0)
+            sub_docs = doc.metadata.get("sub_docs", [])
+            # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
+            sub_docs_result = []
+            for sub_doc in sub_docs:
+                sub_content = sub_doc.page_content
+                sub_source = sub_doc.metadata.get("source", "")
+                sub_source_url = sub_doc.metadata.get("source_url", "")
+                sub_score = sub_doc.metadata.get("score", 0.0)
+                sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+
+
+            result.append({"content": content, "source": source, "source_url": source_url, "score": score, "sub_docs": sub_docs_result})
         
     return {"documents": result}
+
+# ベクトル検索結果を返すToolを作成する関数
+def create_vector_search_tools(client: LangChainOpenAIClient, vector_db_props: list[VectorDBProps]) -> list[Any]:
+    tools = []
+    for i in range(len(vector_db_props)):
+        item = vector_db_props[i]
+        # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
+        description = item.VectorDBDescription
+        if not description:
+            description = "ユーザーの質問に関連する情報をベクトルDBから検索するための汎用的なツールです。"
+
+        # ツールを作成
+        def vector_search_function(question: str) -> list[Document]:
+            # Retrieverを作成
+            # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
+            # content_typeもvector_db_propsで指定できるようにする
+            search_kwargs = {"k": item.MaxSearchResults, "filter":{"content_type": "text"}}
+
+            retriever = RetrieverUtil(client, item).create_retriever(search_kwargs)
+            docs: list[Document] = retriever.invoke(question)
+            # page_contentを取得
+            result_docs = []
+            for doc in docs:
+                result_docs.append(doc)
+            return result_docs
+
+        # StructuredTool.from_functionを使ってToolオブジェクトを作成
+        vector_search_tool = StructuredTool.from_function(
+            func=vector_search_function, name="vector_search_tool-" + str(i), description=description, args_schema=CustomToolInput  
+        )
+
+        tools.append(vector_search_tool)
+
+    return tools
+
 
 def process_vector_search_parameter(props_json: str, request_json: str):
     # OpenAIPorpsを生成
@@ -392,13 +311,13 @@ def process_vector_search_parameter(props_json: str, request_json: str):
     request = json.loads(request_json)
     query = request.get("query", "")
     
-    vector_db_item = vector_db_props[0]
+    vector_db_items = vector_db_props
     # MaxSearchResultsを取得
     max_search_results = vector_db_item.MaxSearchResults
 
     # search_kwargを取得
     search_kwarg = request.get("search_kwarg", {"k": max_search_results})
-    return openai_props, vector_db_item, query, search_kwarg
+    return openai_props, vector_db_items, query, search_kwarg
 
 def process_langchain_chat_parameter(props_json: str, prompt, request_json: str):
     # request_jsonをdictに変換

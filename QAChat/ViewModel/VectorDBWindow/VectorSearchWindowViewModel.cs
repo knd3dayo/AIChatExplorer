@@ -127,10 +127,11 @@ namespace QAChat.ViewModel.VectorDBWindow
             await Task.Run(() => {
                 List<VectorSearchResult> vectorSearchResults = [];
                 // ベクトル検索を実行
-                ContentItem contentItem = new();
-                contentItem.Content = InputText;
+                ContentItem contentItem = new() {
+                    Content = InputText
+                };
                 try {
-                    vectorSearchResults.AddRange(contentItem.VectorSearchCommandExecute(VectorDBItem));
+                    vectorSearchResults.AddRange(contentItem.VectorSearchCommandExecute([VectorDBItem]));
                 } finally {
                     IsIndeterminate = false;
                 }
