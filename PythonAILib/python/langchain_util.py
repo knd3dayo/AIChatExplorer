@@ -12,6 +12,7 @@ from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.callbacks.manager import get_openai_callback
 import langchain
 from langchain_core.runnables import chain
+from langchain_core.tools import tool
 
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
@@ -23,6 +24,12 @@ from langchain_core.callbacks import (
     CallbackManagerForRetrieverRun,
 )
 from collections import defaultdict
+
+from pydantic import BaseModel, Field
+
+class CustomToolInput(BaseModel):
+    question: str = Field(description="question")
+    summaries: str = Field(description="summaries")
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
@@ -133,20 +140,19 @@ class RetrievalQAUtil:
         '''
         
         # TODO Nameが2バイト文字の場合、エラーが発生するので修正が必要
-        # 暫定的にNameのhash値を使う
-        import hashlib
-        
-        tool_name = hashlib.md5(vector_db_item.Name.encode()).hexdigest()
         
         # RetrievalQAオブジェクトを作成して、Toolオブジェクトを作成
         qa = self.__create_retrieval_qa(vector_db_item)
-        tool = Tool(
-                name=tool_name,
-                func=qa,
-                description = vector_db_item.VectorDBDescription,
-                # description= ""
-            )
-        return tool
+
+        @tool("custom_tool", args_schema=CustomToolInput)
+        def custom_tool(question: str, summaries: str) -> dict:
+            '''
+            ユーザーの質問に回答する汎用的なツールです。
+            '''
+            return qa.invoke({"question": question, "summaries": summaries})
+
+        return custom_tool
+    
 
     def __create_default_prompt_template(self):
         '''
@@ -156,7 +162,7 @@ class RetrievalQAUtil:
         # 引数
         # なし
         # 戻り値
-        # prompt_template_str: str
+        # prompt_template_dict: str
         #   プロンプトのテンプレート
         # 例
         # prompt_template_str = create_default_prompt_template()
@@ -214,7 +220,7 @@ class RetrievalQAUtil:
         # Retrieverを作成
         # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
         # content_typeもvector_db_propsで指定できるようにする
-        search_kwargs = {"search_kwargs": {"k": vector_db_props.MaxSearchResults, "filter":{"content_type": "text"}}}
+        search_kwargs = {"k": vector_db_props.MaxSearchResults, "filter":{"content_type": "text"}}
 
         retriever = RetrieverUtil(self.client, vector_db_props).create_retriever(search_kwargs)
             
@@ -268,7 +274,7 @@ class RetrievalQAUtil:
             agent=chat_agent, tools=self.tools, 
             return_source_documents=True,
             return_intermediate_steps=True,
-            stream_runnable=False
+            stream_runnable=False,
             )
         return agent_executor
 
@@ -477,8 +483,9 @@ if __name__ == '__main__':
     props:OpenAIProps  = env_to_props()
     vector_db_item: VectorDBProps = get_vector_db_settings()
 
+
     question1 = input("Please enter your question:")
-    result1 = langchain_chat(props, [vector_db_item], question1)
+    result1 = langchain_chat(props, [vector_db_item], question1, [])
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])
