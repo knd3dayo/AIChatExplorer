@@ -284,11 +284,6 @@ namespace ClipboardApp {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
-            // コピー元のフォルダがない場合は処理をしない
-            if (CopiedItemFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.NoCopyFolder);
-                return;
-            }
 
             // コピー元のアイテムがアプリ内のものである場合
             if (CopiedItems.Count > 0) {
