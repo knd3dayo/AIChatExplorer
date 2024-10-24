@@ -247,6 +247,10 @@ namespace ClipboardApp.ViewModel {
                 if (nestLevel > 0) {
                     childViewModel.LoadChildren(nestLevel - 1);
                 }
+                // 既に、childViewModelがChildrenに含まれている場合は追加しない
+                if (Children.Contains(childViewModel)) {
+                    continue;
+                }
                 Children.Add(childViewModel);
             }
 
@@ -327,7 +331,7 @@ namespace ClipboardApp.ViewModel {
                     if (CutFlag == MainWindowViewModel.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
                         folder.MoveTo(toFolder.ClipboardItemFolder);
-                    } 
+                    }
                 }
 
             }

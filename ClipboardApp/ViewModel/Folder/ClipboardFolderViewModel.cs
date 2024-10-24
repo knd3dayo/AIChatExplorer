@@ -214,7 +214,6 @@ namespace ClipboardApp.ViewModel {
             try {
                 LoadChildren();
                 LoadItems();
-
                 UpdateStatusText();
             } finally {
                 MainWindowViewModel.ActiveInstance.IsIndeterminate = false;

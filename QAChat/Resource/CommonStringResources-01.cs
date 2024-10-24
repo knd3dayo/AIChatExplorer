@@ -1666,7 +1666,7 @@ namespace QAChat.Resource {
         public virtual string ExampleVectorDBLocationPostgres { get; } = "例：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
 
         // チャット履歴をクリア
-        public virtual string ClearChatHistory { get; } = "チャット履歴をクリア";
+        public virtual string ClearChatContents { get; } = "チャット内容をクリア";
 
         // 本文をクリア
         public virtual string ClearContent { get; } = "本文をクリア";

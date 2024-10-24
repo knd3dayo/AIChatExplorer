@@ -301,8 +301,8 @@
                         Content="{Binding StringResources.Send, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
-                        Command="{Binding ClearChatHistoryCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.ClearChatHistory, Mode=OneTime}" />
+                        Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.ClearChatContents, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearInputTextCommand, Mode=OneTime}"

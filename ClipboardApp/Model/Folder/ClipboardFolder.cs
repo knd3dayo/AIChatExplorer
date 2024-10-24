@@ -127,12 +127,12 @@ namespace ClipboardApp.Model.Folder {
 
 
         // 子フォルダ　LiteDBには保存しない。
-        [BsonIgnore]
+        [BsonIgnore]    
         public List<ClipboardFolder> Children {
             get {
                 // DBからParentIDが自分のIDのものを取得
                 return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
-            }
+                }
         }
 
         // アイテム LiteDBには保存しない。

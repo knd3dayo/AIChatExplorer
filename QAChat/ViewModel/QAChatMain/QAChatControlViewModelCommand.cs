@@ -52,7 +52,7 @@ namespace QAChat.ViewModel.QAChatMain {
         });
 
         // チャット履歴をクリアコマンド
-        public SimpleDelegateCommand<object> ClearChatHistoryCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
             // ClipboardItemがある場合は、ChatItemsをクリア
             QAChatStartupProps.ContentItem.ChatItems = [];
