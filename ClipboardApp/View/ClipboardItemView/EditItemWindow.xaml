@@ -148,15 +148,6 @@
                 SelectedIndex="{Binding SelectedTabIndex}" />
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel HorizontalAlignment="Left">
-                <ToggleButton
-                    x:Name="MenuToggleButton"
-                    Margin="10,10,10,10"
-                    AutomationProperties.Name="HamburgerToggleButton"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
-            </DockPanel>
             <DockPanel HorizontalAlignment="Right">
                 <Grid>
                     <Grid.ColumnDefinitions>

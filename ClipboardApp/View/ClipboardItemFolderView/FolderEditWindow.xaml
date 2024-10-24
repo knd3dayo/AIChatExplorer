@@ -66,11 +66,47 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <materialDesign:DrawerHost
+        <TabControl
             Grid.Row="1"
-            IsLeftDrawerOpen="{Binding IsDrawerOpen}"
-            OpenMode="Standard">
-            <materialDesign:DrawerHost.LeftDrawerContent>
+            Margin="10,10,10,10"
+            HorizontalContentAlignment="Left"
+            SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="基本設定">
+                <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Width="120"
+                        Margin="10,10,10,10"
+                        Text="{Binding StringResources.Name, Mode=OneTime}" />
+                    <TextBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="10,10,10,10"
+                        Text="{Binding FolderViewModel.FolderName}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="120"
+                        Margin="10,10,10,10"
+                        Text="{Binding StringResources.Description, Mode=OneTime}" />
+                    <editorControl:MyTextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,10,10,10"
+                        materialDesign:HintAssist.Hint="ここにフォルダの説明を入力"
+                        Text="{Binding FolderViewModel.Description}" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="詳細設定">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -82,16 +118,6 @@
                         Margin="10,10,10,10"
                         Content="自フォルダを参照先ベクトルDBに追加, Mode=OneTime}"
                         IsChecked="{Binding IncludeInReferenceVectorDBItems}" />
-                    <TextBlock
-                        Grid.Row="1"
-                        Margin="10,10,10,10"
-                        HorizontalAlignment="Left"
-                        FontSize="10"
-                        Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
-                        <TextBlock.InputBindings>
-                            <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
-                        </TextBlock.InputBindings>
-                    </TextBlock>
                     <ListBox
                         Grid.Row="2"
                         Margin="10,10,10,10"
@@ -114,52 +140,16 @@
                         </ListBox.ContextMenu>
                     </ListBox>
                 </Grid>
-            </materialDesign:DrawerHost.LeftDrawerContent>
-            <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Width="120"
-                    Margin="10,10,10,10"
-                    Text="{Binding StringResources.Name, Mode=OneTime}" />
-                <TextBox
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Margin="10,10,10,10"
-                    Text="{Binding FolderViewModel.FolderName}" />
-                <TextBlock
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Width="120"
-                    Margin="10,10,10,10"
-                    Text="{Binding StringResources.Description, Mode=OneTime}" />
-                <editorControl:MyTextBox
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Margin="10,10,10,10"
-                    materialDesign:HintAssist.Hint="ここにフォルダの説明を入力"
-                    Text="{Binding FolderViewModel.Description}" />
-            </Grid>
-        </materialDesign:DrawerHost>
+            </TabItem>
+        </TabControl>
         <Grid Grid.Row="2" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Left">
-                <ToggleButton
-                    x:Name="MenuToggleButton"
-                    Width="30"
-                    Height="30"
+                <Button
+                    Width="250"
                     Margin="10,0,10,0"
-                    AutomationProperties.Name="HamburgerToggleButton"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
+                    Command="{Binding AddVectorDBItemCommand, Mode=OneTime}"
+                    Content="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}"
+                    Visibility="{Binding VectorDBItemButtonVisibility}" />
             </DockPanel>
             <DockPanel HorizontalAlignment="Right">
                 <Button

@@ -313,9 +313,7 @@ namespace ClipboardApp {
 
                     });
             }
-
         }
-
 
         // フォルダを開くコマンド
         public static void OpenFolderCommand(ClipboardItem contentItem) {

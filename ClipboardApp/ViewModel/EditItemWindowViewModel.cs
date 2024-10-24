@@ -101,29 +101,6 @@ namespace ClipboardApp.ViewModel {
         // 更新後の処理
         private Action _afterUpdate = () => { };
 
-        // IsDrawerOpen
-        private bool isDrawerOpen = false;
-        public bool IsDrawerOpen {
-            get {
-                return isDrawerOpen;
-            }
-            set {
-                isDrawerOpen = value;
-                OnPropertyChanged(nameof(IsDrawerOpen));
-            }
-        }
-
-        // IsMenuDrawerOpen
-        private bool isMenuDrawerOpen = false;
-        public bool IsMenuDrawerOpen {
-            get {
-                return isMenuDrawerOpen;
-            }
-            set {
-                isMenuDrawerOpen = value;
-                OnPropertyChanged(nameof(IsMenuDrawerOpen));
-            }
-        }
         // SelectedFile
         private ClipboardItemFile? selectedFile;
         public ClipboardItemFile? SelectedFile {
@@ -221,7 +198,6 @@ namespace ClipboardApp.ViewModel {
                 return tabItems;
             }
         }
-
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
         private ObservableCollection<TabItem> SystemPromptResultTabItems {

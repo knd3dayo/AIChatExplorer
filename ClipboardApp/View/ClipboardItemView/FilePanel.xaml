@@ -23,33 +23,41 @@
             <Setter Property="Height" Value="25" />
         </Style>
     </UserControl.Resources>
-    <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding IsDrawerOpen}" OpenMode="Standard">
-        <materialDesign:DrawerHost.LeftDrawerContent>
-            <Grid Width="200" Margin="10,10,10,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <ListBox
-                    Grid.Row="0"
-                    Margin="10,3,10,3"
-                    ItemsSource="{Binding ItemViewModel.Files}"
-                    SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
-                    SelectionMode="Single">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Width="180"
-                                Margin="10,3,10,3"
-                                Text="{Binding FileName, Mode=OneWay}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </materialDesign:DrawerHost.LeftDrawerContent>
-
-        <Grid Margin="10,0,10,0" HorizontalAlignment="Stretch">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Column="0"
+            Width="200"
+            Margin="10,10,10,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ListBox
+                Grid.Row="0"
+                Margin="10,3,10,3"
+                ItemsSource="{Binding ItemViewModel.Files}"
+                SelectedItem="{Binding SelectedFile, UpdateSourceTrigger=PropertyChanged}"
+                SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Width="180"
+                            Margin="10,3,10,3"
+                            Text="{Binding FileName, Mode=OneWay}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        <Grid
+            Grid.Column="1"
+            Margin="10,0,10,0"
+            HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="*" />
@@ -143,8 +151,6 @@
                     IsReadOnly="True"
                     Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
             </ScrollViewer>
-
         </Grid>
-    </materialDesign:DrawerHost>
-
+    </Grid>
 </UserControl>

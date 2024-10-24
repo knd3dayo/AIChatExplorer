@@ -41,18 +41,6 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
-
-        private bool isDrawerOpen = false;
-        public bool IsDrawerOpen {
-            get {
-                return isDrawerOpen;
-            }
-            set {
-                isDrawerOpen = value;
-                OnPropertyChanged(nameof(IsDrawerOpen));
-            }
-        }
-
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
                 ObservableCollection<VectorDBItem> _vectorDBItemBases = new();
@@ -83,6 +71,22 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
+        private int _selectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return _selectedTabIndex;
+            }
+            set {
+                _selectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+        public Visibility VectorDBItemButtonVisibility {
+            get {
+                return SelectedTabIndex == 0 ? Visibility.Collapsed : Visibility.Visible;
+            }
+        }
+
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             // フォルダ名が空の場合はエラー
             if (FolderViewModel.FolderName == "") {
@@ -96,6 +100,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // ウィンドウを閉じる
             window.Close();
         });
+
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
