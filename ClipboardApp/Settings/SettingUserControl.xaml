@@ -31,7 +31,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="500" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -57,294 +57,604 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <ScrollViewer
-            Grid.Row="1"
-            Height="Auto"
-            VerticalScrollBarVisibility="Auto">
-            <Grid Margin="0,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="auto" />
-                </Grid.RowDefinitions>
+        <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
+            <TabItem Header="基本設定">
+                <ScrollViewer
+                    Grid.Row="1"
+                    Height="Auto"
+                    VerticalScrollBarVisibility="Auto">
+                    <Grid Margin="0,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
 
-                <!--  基本設定  -->
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="260" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.BasicSettings, Mode=OneTime}" />
+                        <!--  基本設定  -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.BasicSettings, Mode=OneTime}" />
 
-                    <!--  Language  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="Language" />
-                    <ComboBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        SelectedIndex="{Binding SelectedLanguage}">
-                        <ComboBoxItem Content="Default (The default value is Japanese if the system language is Japanese, otherwise English)" />
-                        <ComboBoxItem Content="Japanese" />
-                        <ComboBoxItem Content="English" />
-                    </ComboBox>
-                    <!--  Backup Generation  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
-                        Visibility="Collapsed" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
-                        Text="{Binding BackupGeneration}"
-                        Visibility="Collapsed" />
+                            <!--  Language  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="Language" />
+                            <ComboBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                SelectedIndex="{Binding SelectedLanguage}">
+                                <ComboBoxItem Content="Default (The default value is Japanese if the system language is Japanese, otherwise English)" />
+                                <ComboBoxItem Content="Japanese" />
+                                <ComboBoxItem Content="English" />
+                            </ComboBox>
+                            <!--  Backup Generation  -->
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
+                                Visibility="Collapsed" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
+                                Text="{Binding BackupGeneration}"
+                                Visibility="Collapsed" />
 
-                    <!--  PythonDLLPath  -->
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
-                        Text="{Binding PythonDllPath}" />
-                    <!--  PythonVenvPth  -->
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="3"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"
-                        Text="{Binding PythonVenvPath}" />
+                            <!--  PythonDLLPath  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
+                                Text="{Binding PythonDllPath}" />
+                            <!--  PythonVenvPth  -->
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"
+                                Text="{Binding PythonVenvPath}" />
 
-                </Grid>
-                <!--  OpenAI設定  -->
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="260" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <!--  OpenAI  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAISettings, Mode=OneTime}" />
-                    <!--  OpenAI  API Key  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAIKey, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIKey, Mode=OneTime}"
-                        Text="{Binding OpenAIKey}" />
+                        </Grid>
+                        <!--  OpenAI設定  -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <!--  OpenAI  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAISettings, Mode=OneTime}" />
+                            <!--  OpenAI  API Key  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAIKey, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIKey, Mode=OneTime}"
+                                Text="{Binding OpenAIKey}" />
 
-                    <!--  Azure OpenAI  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.UseAzureOpenAI, Mode=OneTime}"
-                        TextWrapping="Wrap" />
-                    <CheckBox
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        Content="{Binding StringResources.UseAzureOpenAIInsteadOfOpenAI, Mode=OneTime}"
-                        IsChecked="{Binding AzureOpenAI}" />
+                            <!--  Azure OpenAI  -->
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.UseAzureOpenAI, Mode=OneTime}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.UseAzureOpenAIInsteadOfOpenAI, Mode=OneTime}"
+                                IsChecked="{Binding AzureOpenAI}" />
 
-                    <!--  Azure OpenAI Endpoint  -->
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.AzureOpenAIEndpoint, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="2"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetAzureOpenAIEndpoint, Mode=OneTime}"
-                        Text="{Binding AzureOpenAIEndpoint}" />
+                            <!--  Azure OpenAI Endpoint  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AzureOpenAIEndpoint, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetAzureOpenAIEndpoint, Mode=OneTime}"
+                                Text="{Binding AzureOpenAIEndpoint}" />
 
-                    <!--  OpenAI Completion Model  -->
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAIModel, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="3"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIModel, Mode=OneTime}"
-                        Text="{Binding OpenAICompletionModel}" />
+                            <!--  OpenAI Completion Model  -->
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAIModel, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIModel, Mode=OneTime}"
+                                Text="{Binding OpenAICompletionModel}" />
 
-                    <!--  OpenAI Embedding Model  -->
-                    <TextBlock
-                        Grid.Row="4"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAIEmbeddingModel, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="4"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingModel, Mode=OneTime}"
-                        Text="{Binding OpenAIEmbeddingModel}" />
-                    <!--  OpenAI Complition Base URL  -->
-                    <TextBlock
-                        Grid.Row="5"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAIChatBaseURL, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="5"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIChatBaseURL, Mode=OneTime}"
-                        Text="{Binding OpenAICompletionBaseURL}" />
+                            <!--  OpenAI Embedding Model  -->
+                            <TextBlock
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAIEmbeddingModel, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingModel, Mode=OneTime}"
+                                Text="{Binding OpenAIEmbeddingModel}" />
+                            <!--  OpenAI Complition Base URL  -->
+                            <TextBlock
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAIChatBaseURL, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="5"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIChatBaseURL, Mode=OneTime}"
+                                Text="{Binding OpenAICompletionBaseURL}" />
 
-                    <!--  OpenAI Embedding Base URL  -->
-                    <TextBlock
-                        Grid.Row="6"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.OpenAIEmbeddingBaseURL, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="6"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingBaseURL, Mode=OneTime}"
-                        Text="{Binding OpenAIEmbeddingBaseURL}" />
-                </Grid>
+                            <!--  OpenAI Embedding Base URL  -->
+                            <TextBlock
+                                Grid.Row="6"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.OpenAIEmbeddingBaseURL, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="6"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingBaseURL, Mode=OneTime}"
+                                Text="{Binding OpenAIEmbeddingBaseURL}" />
+                        </Grid>
 
-                <!--  Spacy設定  -->
-                <Grid Grid.Row="2" Visibility="{Binding EnableDevFeaturesVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="260" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.PythonSpacySettings, Mode=OneTime}" />
-                    <!--  SpacyModel  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.SpacyModelName, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.SetSpacyModelName, Mode=OneTime}"
-                        Text="{Binding SpacyModel}" />
-                </Grid>
-                <!--  Python OCR設定  -->
-                <Grid Grid.Row="3" Visibility="{Binding EnableDevFeaturesVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="260" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.PythonOCRSettings, Mode=OneTime}" />
-                    <!--  TesseractExePath  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.TesseractPath, Mode=OneTime}" />
-                    <TextBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        Text="{Binding TesseractExePath}" />
-                </Grid>
-                <!--  その他  -->
-                <Grid Grid.Row="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="260" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.Other, Mode=OneTime}" />
+                        <!--  Spacy設定  -->
+                        <Grid Grid.Row="2" Visibility="{Binding EnableDevFeaturesVisibility}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.PythonSpacySettings, Mode=OneTime}" />
+                            <!--  SpacyModel  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.SpacyModelName, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SetSpacyModelName, Mode=OneTime}"
+                                Text="{Binding SpacyModel}" />
+                        </Grid>
+                        <!--  Python OCR設定  -->
+                        <Grid Grid.Row="3" Visibility="{Binding EnableDevFeaturesVisibility}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.PythonOCRSettings, Mode=OneTime}" />
+                            <!--  TesseractExePath  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.TesseractPath, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Text="{Binding TesseractExePath}" />
+                        </Grid>
+                        <!--  その他  -->
+                        <Grid Grid.Row="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="260" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.Other, Mode=OneTime}" />
 
-                    <!--  開発中機能を有効にする  -->
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,10,10,0"
-                        Text="{Binding StringResources.EnableDevelopmentFeatures, Mode=OneTime}" />
-                    <CheckBox
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        Margin="10,10,10,0"
-                        IsChecked="{Binding EnableDevFeatures}" />
-                </Grid>
-            </Grid>
-        </ScrollViewer>
+                            <!--  開発中機能を有効にする  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.EnableDevelopmentFeatures, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                IsChecked="{Binding EnableDevFeatures}" />
+                        </Grid>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="自動処理設定">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <!--  自動処理  -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <!--  MonitorTargetAppNames  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding StringResources.SourceApp, Mode=OneTime}" />
+
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                VerticalAlignment="Center"
+                                materialDesign:HintAssist.Hint="{Binding StringResources.SourceAppExample, Mode=OneTime}"
+                                Text="{Binding MonitorTargetAppNames}" />
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="10,0,10,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding StringResources.IgnoreTextLessOrEqualToSpecifiedLines, Mode=OneTime}"
+                                IsChecked="{Binding IgnoreLineCountChecked}" />
+
+                            <DockPanel
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                HorizontalAlignment="Left">
+                                <TextBox
+                                    Width="50"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding IgnoreLineCountText}" />
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding StringResources.LineOrLess, Mode=OneTime}" />
+                            </DockPanel>
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}" />
+                            <RadioButton
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
+                            <RadioButton
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescription}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <RadioButton
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescriptionWithOpenAI}" />
+                            <TextBlock
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyGenerateTags, Mode=OneTime}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <CheckBox
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent, Mode=OneTime}"
+                                IsChecked="{Binding AutoTag}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <TextBlock
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyMerge, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="6"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame, Mode=OneTime}"
+                                IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
+                            <TextBlock
+                                Grid.Row="8"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromFile, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="8"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
+                                IsChecked="{Binding AutoFileExtract}" />
+                            <!--  AutoExtractImageWithPyOCR  -->
+                            <TextBlock
+                                Grid.Row="9"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyExtractTextFromImage, Mode=OneTime}" />
+                            <RadioButton
+                                Grid.Row="9"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
+                                GroupName="AutoExtractImage"
+                                IsChecked="{Binding AutoExtractImageNone, Mode=OneWay}" />
+                            <RadioButton
+                                Grid.Row="10"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.ExtractTextUsingPyOCR, Mode=OneTime}"
+                                GroupName="AutoExtractImage"
+                                IsChecked="{Binding AutoExtractImageWithPyOCR}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <RadioButton
+                                Grid.Row="11"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.ExtractTextUsingOpenAI, Mode=OneTime}"
+                                GroupName="AutoExtractImage"
+                                IsChecked="{Binding AutoExtractImageWithOpenAI}" />
+                            <TextBlock
+                                Grid.Row="12"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.EmbeddingWhenExtractingTextFromImage, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="12"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
+                                IsChecked="{Binding EmbeddingWhenExtractingTextFromImage}" />
+                            <TextBlock
+                                Grid.Row="13"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="13"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
+                                IsChecked="{Binding AutoBackgroundInfo}" />
+                            <TextBlock
+                                Grid.Row="16"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="16"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
+                                IsChecked="{Binding IncludeBackgroundInfoInEmbedding}" />
+
+                            <TextBlock
+                                Grid.Row="17"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="17"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"
+                                IsChecked="{Binding AutoSummary}" />
+                            <TextBlock
+                                Grid.Row="18"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyGenerateTaskList, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="18"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.GenerateTaskListFromContent, Mode=OneTime}"
+                                IsChecked="{Binding AutoGenerateTasks}" />
+                        </Grid>
+                        <!--  その他の設定  -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <!--  クリップボードアイテムをOS上のフォルダと同期させる。  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOS, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOSDescription, Mode=OneTime}"
+                                IsChecked="{Binding SyncClipboardItemAndOSFolder}" />
+                            <!--  同期先のフォルダ名  -->
+                            <DockPanel
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                HorizontalAlignment="Left">
+                                <Label
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Content="{Binding StringResources.SyncTargetFolderName, Mode=OneTime}"
+                                    Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
+                                <TextBox
+                                    Margin="10,0,10,0"
+                                    VerticalAlignment="Center"
+                                    materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems, Mode=OneTime}"
+                                    Text="{Binding SyncFolderName}"
+                                    Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
+                            </DockPanel>
+                            <!--  同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットする。  -->
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated, Mode=OneTime}"
+                                IsChecked="{Binding AutoCommit}"
+                                Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
+                        </Grid>
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                            <!--  Extract Entity/Data Masking  -->
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.EntityExtractionDataMasking, Mode=OneTime}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent, Mode=OneTime}"
+                                IsChecked="{Binding UseSpacy}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.MaskPersonalInformationInDataSentToOpenAI, Mode=OneTime}"
+                                IsChecked="{Binding UserMaskedDataInOpenAI}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                        </Grid>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
         <Grid Grid.Row="2" Margin="10,10,10,10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

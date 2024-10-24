@@ -617,6 +617,48 @@ namespace ClipboardApp.Settings {
             return false;
 
         }
+        #region listAutoProcessRuleから移動した処理
+
+        // IgnoreLineCountChecked
+        public bool IgnoreLineCountChecked {
+            get {
+                // IgnoreLineCountが-1の場合はFalseを返す
+                if (IgnoreLineCount == -1) {
+                    return false;
+                }
+                return true;
+            }
+            set {
+                // Falseの場合はIgnoreLineCountを-1にする
+                if (!value) {
+                    IgnoreLineCountText = "";
+                }
+                OnPropertyChanged(nameof(IgnoreLineCountChecked));
+            }
+        }
+        // IgnoreLineCountText
+        public string IgnoreLineCountText {
+            get {
+                // IgnoreLineCountが-1の場合は空文字を返す
+                if (IgnoreLineCount == -1) {
+                    return "";
+                }
+                return IgnoreLineCount.ToString();
+            }
+            set {
+                // 空文字の場合は-1にする
+                if (value == "") {
+                        IgnoreLineCount = -1;
+                } else {
+                    IgnoreLineCount = int.Parse(value);
+                }
+                OnPropertyChanged(nameof(IgnoreLineCountText));
+            }
+        }
+
+        #endregion
+
+
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 
