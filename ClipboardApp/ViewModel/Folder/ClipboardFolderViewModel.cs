@@ -140,10 +140,6 @@ namespace ClipboardApp.ViewModel {
             });
         });
 
-
-        // FolderSelectWindowでFolderSelectWindowSelectFolderCommandが実行されたときの処理
-        public static SimpleDelegateCommand<object> FolderSelectWindowSelectFolderCommand => new(FolderSelectWindowViewModel.FolderSelectWindowSelectFolderCommandExecute);
-
         // フォルダ内のアイテムをJSON形式でバックアップする処理
         public SimpleDelegateCommand<object> BackupItemsFromFolderCommand => new((parameter) => {
             DirectoryInfo directoryInfo = new("export");
