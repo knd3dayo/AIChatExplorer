@@ -35,7 +35,7 @@ namespace ClipboardApp.ViewModel {
         public ObservableCollection<ClipboardItemViewModel> Items { get; } = [];
 
         // 子フォルダ
-        public ObservableCollection<ClipboardFolderViewModel> Children { get; } = [];
+        public ObservableCollection<ClipboardFolderViewModel> Children { get; set; } = [];
 
         public string FolderName {
             get {
@@ -66,6 +66,8 @@ namespace ClipboardApp.ViewModel {
                 return ClipboardItemFolder.IsRootFolder == false;
             }
         }
+        // フォルダ更新用のLockオブジェクト
+        private static object _folderUpdateLock = new();
 
         private void UpdateStatusText() {
             string message = $"{StringResources.Folder}[{FolderName}]";
@@ -195,29 +197,29 @@ namespace ClipboardApp.ViewModel {
             // ExportImportFolderWindowを開く
             ExportImportWindow.OpenExportImportFolderWindow(folderViewModel, () => {
                 // ファイルを再読み込み
-                ReloadCommandExecute(folderViewModel);
+                folderViewModel.LoadFolderCommand.Execute();
             });
         });
 
-        //フォルダを再読み込みする処理
-        public static void ReloadCommandExecute(ClipboardFolderViewModel clipboardItemFolder) {
-            clipboardItemFolder.LoadFolderCommand.Execute();
-            LogWrapper.Info(CommonStringResources.Instance.Reloaded);
-        }
+
 
         // --------------------------------------------------------------
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み
         // --------------------------------------------------------------
 
         public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
-            try {
-                LoadChildren();
-                LoadItems();
-                UpdateStatusText();
-            } finally {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
+            lock (_folderUpdateLock) {
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                try {
+                    LoadChildren();
+                    int count = Children.Count;
+                    LoadItems();
+                    UpdateStatusText();
+                } finally {
+                    MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
+                }
             }
+
         });
 
 

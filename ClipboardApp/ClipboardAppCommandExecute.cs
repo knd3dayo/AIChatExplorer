@@ -141,7 +141,8 @@ namespace ClipboardApp {
             // -- 処理完了までProgressIndicatorを表示
             try {
                 model.IsIndeterminate = true;
-                ClipboardFolderViewModel.ReloadCommandExecute(model.SelectedFolder);
+                model.SelectedFolder.LoadFolderCommand.Execute();
+                LogWrapper.Info(CommonStringResources.Instance.Reloaded);
             } finally {
                 model.IsIndeterminate = false;
             }

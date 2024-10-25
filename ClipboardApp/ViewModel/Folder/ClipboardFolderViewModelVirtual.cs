@@ -237,7 +237,12 @@ namespace ClipboardApp.ViewModel {
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public void LoadChildren(int nestLevel = 5) {
-            Children.Clear();
+            Children = [];
+
+            // Childrenがクリアされていない場合
+            if (Children.Count > 0) {
+                throw new Exception("Children is not cleared");
+            }
             foreach (var child in ClipboardItemFolder.Children) {
                 if (child == null) {
                     continue;
@@ -247,12 +252,9 @@ namespace ClipboardApp.ViewModel {
                 if (nestLevel > 0) {
                     childViewModel.LoadChildren(nestLevel - 1);
                 }
-                // 既に、childViewModelがChildrenに含まれている場合は追加しない
-                if (Children.Contains(childViewModel)) {
-                    continue;
-                }
                 Children.Add(childViewModel);
             }
+            OnPropertyChanged(nameof(Children));
 
         }
         // LoadItems
@@ -331,16 +333,13 @@ namespace ClipboardApp.ViewModel {
                     if (CutFlag == MainWindowViewModel.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
                         folder.MoveTo(toFolder.ClipboardItemFolder);
+                        // 元のフォルダの親フォルダを再読み込み
+                        folderViewModel.ParentFolderViewModel?.LoadFolderCommand.Execute();
                     }
                 }
 
             }
-            // フォルダ内のアイテムを再読み込み
             toFolder.LoadFolderCommand.Execute();
-            // 親フォルダ構造を再読み込み
-            if (toFolder.ParentFolderViewModel != null) {
-                toFolder.ParentFolderViewModel.LoadFolderCommand.Execute();
-            }
 
             LogWrapper.Info(StringResources.Pasted);
         }
