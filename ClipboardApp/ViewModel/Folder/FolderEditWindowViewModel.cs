@@ -79,6 +79,8 @@ namespace ClipboardApp.ViewModel.Folder {
             set {
                 _selectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
+                // ボタンの表示を更新
+                OnPropertyChanged(nameof(VectorDBItemButtonVisibility));
             }
         }
         public Visibility VectorDBItemButtonVisibility {
