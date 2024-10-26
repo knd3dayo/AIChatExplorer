@@ -12,9 +12,10 @@ namespace PythonAILib.PythonIF {
             Mode = mode;
             Id = id;
         }
-        public ImageInfo(VectorDBUpdateMode mode, string id, string base64String) {
+        public ImageInfo(VectorDBUpdateMode mode, string id, string content, string base64String) {
             Mode = mode;
             Id = id;
+            Content = content;
             ImageURL = base64String;
         }
 

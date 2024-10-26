@@ -54,103 +54,106 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <Grid
+        <ScrollViewer
             Grid.Column="1"
-            Margin="10,0,10,0"
-            HorizontalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Center"
-                Text="{Binding StringResources.FilePath, Mode=OneTime}" />
-            <editorControl:MyTextBox
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                IsReadOnly="True"
-                Text="{Binding SelectedFile.FilePath, Mode=OneWay}" />
-
-            <TextBlock
-                Grid.Row="1"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Center"
-                Text="{Binding StringResources.Folder, Mode=OneTime}" />
-
-            <editorControl:MyTextBox
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                IsReadOnly="True"
-                Text="{Binding SelectedFile.FolderName, Mode=OneWay}" />
-            <TextBlock
-                Grid.Row="2"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Center"
-                Text="{Binding StringResources.FileName, Mode=OneTime}" />
-            <editorControl:MyTextBox
-                Grid.Row="2"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                IsReadOnly="True"
-                Text="{Binding SelectedFile.FileName, Mode=OneWay}" />
-            <TextBlock
-                Grid.Row="3"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Center"
-                Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
-            <editorControl:MyTextBox
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                IsReadOnly="True"
-                Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
-            <TextBlock
-                Grid.Row="4"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Center"
-                Text="{Binding StringResources.Image, Mode=OneTime}"
-                Visibility="{Binding SelectedFileImageVisibility}" />
-            <Image
-                Grid.Row="4"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                Source="{Binding SelectedFile.BitmapImage, Mode=OneWay}"
-                Stretch="Uniform"
-                Visibility="{Binding SelectedFileImageVisibility}" />
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="0"
-                Margin="10,3,10,3"
-                VerticalAlignment="Top"
-                Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
-            <ScrollViewer
-                Grid.Row="5"
-                Grid.Column="1"
-                Margin="10,3,10,3"
-                HorizontalScrollBarVisibility="Auto"
-                VerticalScrollBarVisibility="Auto">
+            Margin="10,10,10,10"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Text="{Binding StringResources.FilePath, Mode=OneTime}" />
                 <editorControl:MyTextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
-            </ScrollViewer>
-        </Grid>
+                    Text="{Binding SelectedFile.FilePath, Mode=OneWay}" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Text="{Binding StringResources.Folder, Mode=OneTime}" />
+
+                <editorControl:MyTextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="10,3,10,3"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedFile.FolderName, Mode=OneWay}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Text="{Binding StringResources.FileName, Mode=OneTime}" />
+                <editorControl:MyTextBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="10,3,10,3"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedFile.FileName, Mode=OneWay}" />
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Center"
+                    Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
+                <editorControl:MyTextBox
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="10,3,10,3"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
+                <TextBlock
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Top"
+                    Text="{Binding StringResources.Image, Mode=OneTime}"
+                    Visibility="{Binding SelectedFileImageVisibility}" />
+                <Image
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="10,3,10,3"
+                    Source="{Binding SelectedFile.BitmapImage, Mode=OneWay}"
+                    Stretch="Uniform"
+                    Visibility="{Binding SelectedFileImageVisibility}" />
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Top"
+                    Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
+                <ScrollViewer
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="10,3,10,3"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+                    <editorControl:MyTextBox
+                        Margin="10,3,10,3"
+                        IsReadOnly="True"
+                        Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
+                </ScrollViewer>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </UserControl>

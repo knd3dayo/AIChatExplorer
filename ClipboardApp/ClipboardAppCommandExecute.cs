@@ -339,7 +339,7 @@ namespace ClipboardApp {
 
         // テキストを抽出するコマンド
         public static void ExtractTextCommand(ClipboardItem contentItem) {
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
+            if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
                 return;
             }

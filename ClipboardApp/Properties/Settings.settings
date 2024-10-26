@@ -69,16 +69,16 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoFileExtract" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="IgnoreLineCount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">-1</Value>
     </Setting>
     <Setting Name="AutoExtractImageWithOpenAI" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AutoBackgroundInfo" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

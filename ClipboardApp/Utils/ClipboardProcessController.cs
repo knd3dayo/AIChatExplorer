@@ -28,8 +28,9 @@ namespace ClipboardApp.Utils {
                     if (clipboardItemFile.BitmapImage != null) {
                         ProcessUtil.OpenBitmapImage(clipboardItemFile.BitmapImage);
                     }
+                } else { 
+                ProcessUtil.OpenFile(clipboardItemFile.FilePath, openAsNew);
                 }
-                ProcessUtil.OpenFile(clipboardItemFile.FilePath);
             }
         }
     }

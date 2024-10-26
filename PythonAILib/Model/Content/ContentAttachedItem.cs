@@ -13,34 +13,42 @@ namespace PythonAILib.Model.Content {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
-        // LiteDBで保存するためのBase64文字列
+        // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
+        private string _cachedBase64String = "";
+        public string CachedBase64String {
+            get {
+                return _cachedBase64String;
+            }
+            set {
+                if (value == null) {
+                    _cachedBase64String = string.Empty;
+                } else {
+                    _cachedBase64String = value;
+                }
+            }
+        }
+        // ファイルパス
+        public string FilePath { get; set; } = "";
+        // ファイルの最終更新日時
+        public long LastModified { get; set; } = 0;
+
         [BsonIgnore]
         public string Base64String {
             get {
-                // use cacheの場合はキャッシュを使用する
-                if (UseCache) {
-                    return CachedBase64String ?? "";
+
+                // FilePathがない場合はキャッシュを返す
+                if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
+                    return CachedBase64String;
                 }
-                // キャッシュがない場合はファイルから取得する
-                byte[] bytes = GetData();
-                return Convert.ToBase64String(bytes);
+                // FilePathがある場合はLastModifiedをチェックしてキャッシュを更新する
+                if (LastModified < new System.IO.FileInfo(FilePath).LastWriteTime.Ticks) {
+                    UpdateCache();
+                }
+                return CachedBase64String;
             }
         }
 
-        public string? CachedBase64String { get; set; }
-
-        // LiteDBで保存されたキャッシュを使用するか否か？
-        public bool UseCache { get; set; } = false;
-
-        // ファイルパス
-        public string FilePath { get; set; } = "";
-
-        // ファイルの一時的なデータ
-        [BsonIgnore]
-        public byte[]? TempData { get; set; }
-
         // 抽出したテキスト
-        [BsonIgnore]
         public string ExtractedText { get; set; } = "";
 
         // フォルダ名
@@ -61,7 +69,7 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public string FolderAndFileName {
             get {
-                return FolderName + "\n" + FileName;
+                return FolderName + Path.PathSeparator + FileName;
             }
         }
 
@@ -69,27 +77,28 @@ namespace PythonAILib.Model.Content {
         [BsonIgnore]
         public BitmapImage? BitmapImage {
             get {
-                byte[] imageBytes = GetData();
-                if (imageBytes == null || !ContentTypes.IsImageData(imageBytes)) {
+                if (!IsImage()) {
                     return null;
                 }
+                byte[] imageBytes = Convert.FromBase64String(Base64String);
                 return ContentTypes.GetBitmapImage(imageBytes);
             }
         }
         [BsonIgnore]
         public System.Drawing.Image? Image {
             get {
-                byte[] imageBytes = GetData();
-                if (imageBytes == null || !ContentTypes.IsImageData(imageBytes)) {
+                if (!IsImage()) {
                     return null;
                 }
-                return ContentTypes.GetImageFromBase64(Base64String ?? "");
+                return ContentTypes.GetImageFromBase64(Base64String);
             }
         }
 
         public bool IsImage() {
-            byte[] imageBytes = GetData();
-            return ContentTypes.IsImageData(imageBytes);
+            if (Base64String == null) {
+                return false;
+            }
+            return ContentTypes.IsImageData(Convert.FromBase64String(Base64String));
         }
 
         // キャッシュを更新する
@@ -97,26 +106,10 @@ namespace PythonAILib.Model.Content {
             if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
                 return;
             }
+            LastModified = new System.IO.FileInfo(FilePath).LastWriteTime.Ticks;
+
             byte[] bytes = System.IO.File.ReadAllBytes(FilePath);
             CachedBase64String = Convert.ToBase64String(bytes);
-        }
-        // キャッシュからファイルデータを取得する
-        public byte[] GetCachedData() {
-            if (CachedBase64String == null) {
-                return [];
-            }
-            return Convert.FromBase64String(CachedBase64String);
-        }
-        // ファイルまたはキャッシュからデータを取得する
-        public byte[] GetData() {
-            if (TempData != null) {
-                return TempData;
-            }
-            if (UseCache || FilePath == null || System.IO.File.Exists(FilePath) == false) {
-                return GetCachedData();
-            } else {
-                return System.IO.File.ReadAllBytes(FilePath);
-            }
         }
 
         // 削除
@@ -132,11 +125,13 @@ namespace PythonAILib.Model.Content {
 
         // テキストを抽出する
         public void ExtractText() {
+            // キャッシュを更新
+            UpdateCache();
 
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            byte[] data = GetData();
-            string base64 = Convert.ToBase64String(data);
+            string base64 = Base64String;
+
             try {
 
                 if (ContentTypes.IsImageData(base64)) {

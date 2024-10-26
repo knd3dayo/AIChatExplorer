@@ -11,8 +11,11 @@ namespace ClipboardApp.Model {
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
             ClipboardItemFile itemFile = new() {
                 ClipboardItem = clipboardItem,
-                FilePath = filePath
+                FilePath = filePath,
+                LastModified = new System.IO.FileInfo(filePath).LastWriteTime.Ticks
             };
+            // キャッシュを更新
+            itemFile.UpdateCache();
             return itemFile;
         }
         public static ClipboardItemFile Create(ClipboardItem clipboardItem, System.Drawing.Image image) {
@@ -51,10 +54,8 @@ namespace ClipboardApp.Model {
                 if (ClipboardAppConfig.Instance.AutoCommit) {
                     ClipboardItem?.GitCommit(syncFilePath);
                 }
-
             }
         }
-
 
         // 保存
         public override void Save() {
@@ -80,41 +81,28 @@ namespace ClipboardApp.Model {
                     ClipboardItem?.GitCommit(syncFilePath);
                 }
             }
-            // 一時データを削除
-            TempData = null;
         }
 
-        // Embeddingを生成
         // Embeddingを更新する
         public void UpdateEmbedding() {
             if (ClipboardItem == null) {
                 throw new Exception("ClipboardItem is null");
             }
-            string base64;
-            if (UseCache) {
-                base64 = Base64String ?? "";
-            } else {
-                byte[] bytes = System.IO.File.ReadAllBytes(FilePath);
-                base64 = System.Convert.ToBase64String(bytes);
-            }
-            if (ContentTypes.IsImageData(base64)) {
+
+            if (IsImage()) {
                 // 画像からテキスト抽出
-                ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), base64);
+                ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), ExtractedText, Base64String);
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
                 // Embeddingを保存
                 folderVectorDBItem.UpdateIndex(imageInfo);
             } else {
-                // 画像以外のデータからテキスト抽出
-                string content = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64);
-                ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), content);
+                ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), ExtractedText);
                 // VectorDBItemを取得
                 VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
                 // Embeddingを保存
                 folderVectorDBItem.UpdateIndex(contentInfo);
             }
         }
-
     }
-
 }
