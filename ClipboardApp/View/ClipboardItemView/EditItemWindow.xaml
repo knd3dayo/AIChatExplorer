@@ -148,23 +148,21 @@
                 SelectedIndex="{Binding SelectedTabIndex}" />
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel HorizontalAlignment="Right">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Width="120"
+                    Margin="10,10,10,10"
+                    Command="{Binding QAChatButtonCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
+                    DockPanel.Dock="Left" />
+                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                     <Button
-                        Grid.Column="0"
-                        Width="120"
-                        Margin="10,10,10,10"
-                        Command="{Binding QAChatButtonCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
-                        DockPanel.Dock="Right" />
-                    <Button
-                        Grid.Column="1"
                         Width="100"
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
@@ -172,15 +170,14 @@
                         Content="{Binding StringResources.OK, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                     <Button
-                        Grid.Column="2"
                         Width="100"
                         Margin="10,10,10,10"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                         Content="{Binding StringResources.Cancel, Mode=OneTime}"
                         DockPanel.Dock="Right" />
-                </Grid>
-            </DockPanel>
+                </DockPanel>
+            </Grid>
         </Grid>
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
 
