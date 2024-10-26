@@ -6,6 +6,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SelectVectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
@@ -127,7 +128,7 @@ namespace ClipboardApp {
             Item,
             Folder
         }
-        public CutFlagEnum CutFlag  {get; set;} = CutFlagEnum.None;
+        public CutFlagEnum CutFlag { get; set; } = CutFlagEnum.None;
 
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
@@ -172,7 +173,7 @@ namespace ClipboardApp {
         /// </summary>
         // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
         public List<object> CopiedObjects { get; set; } = [];
-        
+
         /// <summary>
         /// コピーされたアイテムのフォルダ
         /// </summary>
@@ -272,19 +273,46 @@ namespace ClipboardApp {
 
                 },
                 // Saveアクション
-                SaveCommand = (item) => {
+                SaveCommand = (item, saveChatHistory) => {
                     clipboardItem = (ClipboardItem)item;
                     // ClipboardItemを保存
                     clipboardItem.Save();
+                    if (saveChatHistory) {
+                        // チャット履歴用のItemの設定
+                        ClipboardFolder chatFolder = MainWindowViewModel.ActiveInstance.ChatRootFolderViewModel.ClipboardItemFolder;
+                        ClipboardItem chatHistoryItem = new(chatFolder.Id);
+                        clipboardItem.CopyTo(chatHistoryItem);
+                        // タイトルを日付 + 元のタイトルにする
+                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
+                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                        }
+                        chatHistoryItem.Save();
+                    }
 
-                    //ChatHistoryItemがある場合は保存
-                    // チャット履歴用のItemの設定
-                    // チャット履歴を保存する。チャット履歴に同一階層のフォルダを作成して、Itemをコピーする。
-                    ClipboardFolder chatFolder = ClipboardFolder.GetAnotherTreeFolder(clipboardItem.GetFolder(), ClipboardFolder.ChatRootFolder, true);
-                    ClipboardItem chatHistoryItem = new(chatFolder.Id);
+                },
+                // ExportChatアクション
+                ExportChatCommand = (chatHistory) => {
+                    ClipboardFolderViewModel? folderViewModel = MainWindowViewModel.ActiveInstance.SelectedFolder ?? MainWindowViewModel.ActiveInstance.RootFolderViewModel;
 
-                    clipboardItem.CopyTo(chatHistoryItem);
-                    chatHistoryItem.Save();
+                    FolderSelectWindow.OpenFolderSelectWindow(folderViewModel, (folder) => {
+                        ClipboardItem chatHistoryItem = new(folder.ClipboardItemFolder.Id);
+                        // タイトルを日付 + 元のタイトルにする
+                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
+                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                        }
+                        // chatHistoryItemの内容をテキスト化
+                        string chatHistoryText = "";
+                        foreach (var item in chatHistory) {
+                            chatHistoryText += $"--- {item.Role} ---\n";
+                            chatHistoryText += item.ContentWithSources + "\n\n";
+                        }
+                        chatHistoryItem.Content = chatHistoryText;
+                        chatHistoryItem.Save();
+
+                    });
+
                 }
             };
 

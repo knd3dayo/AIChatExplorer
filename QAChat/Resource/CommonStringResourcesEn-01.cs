@@ -983,6 +983,8 @@ namespace QAChat.Resource {
 
         // タブ削除
         public override string DeleteTab { get; } = "Delete Tab";
+        // Export all chat contents
+        public override string ExportAllChatContents { get; } = "Export All Chat Contents";
 
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 
@@ -10,11 +11,12 @@ namespace QAChat.Control
         }
         public ContentItem ContentItem { get; set; }
 
-
         public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (folders) => { };
-
         
-        public Action<ContentItem> SaveCommand { get; set; } = (item) => { };
+        public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
+
+        public Action<List<ChatHistoryItem>> ExportChatCommand { get; set; } = (chatHistory) => { };
+
     }
 
 

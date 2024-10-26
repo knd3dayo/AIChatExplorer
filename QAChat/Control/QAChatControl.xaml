@@ -167,6 +167,7 @@
                         <ListBox
                             Grid.Row="0"
                             ItemsSource="{Binding ChatHistory, Mode=OneWay}"
+                            ScrollViewer.CanContentScroll="False"
                             ScrollViewer.VerticalScrollBarVisibility="Auto"
                             SelectedItem="{Binding SelectedItem}">
                             <ListBox.ItemTemplate>
@@ -178,7 +179,7 @@
                                         <Grid Margin="0,0,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="auto" />
-                                                <RowDefinition Height="50" />
+                                                <RowDefinition Height="auto" />
                                             </Grid.RowDefinitions>
                                             <TextBlock
                                                 Grid.Row="0"
@@ -189,11 +190,13 @@
                                             <TextBlock
                                                 Grid.Row="1"
                                                 MinHeight="30"
+                                                MaxHeight="600"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
                                                 FontSize="8pt"
+                                                Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding ContentWithSources, Mode=OneWay}"
-                                                TextTrimming="CharacterEllipsis">
+                                                TextTrimming="WordEllipsis">
                                                 <TextBlock.InputBindings>
                                                     <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
                                                     <MouseBinding
@@ -201,7 +204,13 @@
                                                         CommandParameter="{Binding}"
                                                         MouseAction="LeftDoubleClick" />
                                                 </TextBlock.InputBindings>
+                                                <TextBlock.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Command="{Binding PlacementTarget.Tag.ExportChatCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.ExportAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                    </ContextMenu>
+                                                </TextBlock.ContextMenu>
                                             </TextBlock>
+
                                         </Grid>
                                     </materialDesign:Card>
                                 </DataTemplate>
@@ -317,6 +326,11 @@
                         Margin="10,0,10,5"
                         Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
                         Content="{Binding StringResources.ReloadContent, Mode=OneTime}" />
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding SaveCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{Binding StringResources.Save, Mode=OneTime}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"

@@ -167,14 +167,13 @@
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.OK, Mode=OneTime}"
-                        DockPanel.Dock="Right" />
+                        Content="{Binding StringResources.Save, Mode=OneTime}" />
                     <Button
                         Width="100"
                         Margin="10,10,10,10"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                        Content="{Binding StringResources.Close, Mode=OneTime}"
                         DockPanel.Dock="Right" />
                 </DockPanel>
             </Grid>

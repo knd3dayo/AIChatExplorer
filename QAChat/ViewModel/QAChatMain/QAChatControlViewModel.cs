@@ -1,18 +1,24 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
+using PythonAILib.Resource;
 using QAChat.Control;
-using QAChat.View.PromptTemplateWindow;
-using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.Resource;
+using QAChat.View.EditChatItemWindow;
+using QAChat.View.PromptTemplateWindow;
+using QAChat.View.VectorDBWindow;
+using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.VectorDBWindow;
+using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
 
-    public partial class QAChatControlViewModel : ObservableObject {
+    public class QAChatControlViewModel : ObservableObject {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 
@@ -162,42 +168,6 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        // 左側メニューのDrawer表示状態
-        private bool _IsDrawerOpen = true;
-        public bool IsDrawerOpen {
-            get {
-                return _IsDrawerOpen;
-            }
-            set {
-                _IsDrawerOpen = value;
-                OnPropertyChanged(nameof(IsDrawerOpen));
-            }
-        }
-
-        // 外部ベクトルDBのDrawer表示状態
-        private bool _IsVectorDBDrawerOpen = false;
-        public bool IsVectorDBDrawerOpen {
-            get {
-                return _IsVectorDBDrawerOpen;
-            }
-            set {
-                _IsVectorDBDrawerOpen = value;
-                OnPropertyChanged(nameof(IsVectorDBDrawerOpen));
-            }
-        }
-
-        // 画像アイテム用のDrawer表示状態
-        private bool _IsAdditionalItemDrawerOpen = false;
-        public bool IsAdditionalItemDrawerOpen {
-            get {
-                return _IsAdditionalItemDrawerOpen;
-            }
-            set {
-                _IsAdditionalItemDrawerOpen = value;
-                OnPropertyChanged(nameof(IsAdditionalItemDrawerOpen));
-            }
-        }
-
         //
         public Visibility VectorDBItemVisibility {
             get {
@@ -217,6 +187,160 @@ namespace QAChat.ViewModel.QAChatMain {
                 return QAChatManager.Instance.ConfigParams.GetTextWrapping();
             }
         }
+        // チャット履歴を保存するか否かのフラグ
+        private bool _SaveChatHistory = false;
+
+        // チャットを送信するコマンド
+        public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
+            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            // OpenAIにチャットを送信してレスポンスを受け取る
+            try {
+                ChatResult? result = null;
+                // プログレスバーを表示
+                IsIndeterminate = true;
+
+                await Task.Run(() => {
+
+                    // LangChainChat用。VectorDBItemsを設定
+                    List<VectorDBItem> items = [.. VectorDBItems];
+                    ChatController.VectorDBItems = items;
+
+                    // OpenAIChat or LangChainChatを実行
+                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
+                });
+
+                if (result == null) {
+                    LogWrapper.Error(StringResources.FailedToSendChat);
+                    return;
+                }
+                // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+                QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+                // inputTextをクリア
+                InputText = "";
+                OnPropertyChanged(nameof(ChatHistory));
+
+                // _SaveChatHistoryをTrueに設定
+                _SaveChatHistory = true;
+
+
+            } catch (Exception e) {
+                LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
+            } finally {
+                IsIndeterminate = false;
+            }
+
+        });
+
+        // チャット履歴をクリアコマンド
+        public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
+            ChatHistory = [];
+            // ClipboardItemがある場合は、ChatItemsをクリア
+            QAChatStartupProps.ContentItem.ChatItems = [];
+            OnPropertyChanged(nameof(ChatHistory));
+        });
+        // 本文を再読み込みコマンド
+        public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
+            InputText = QAChatStartupProps.ContentItem?.Content ?? "";
+            OnPropertyChanged(nameof(InputText));
+        });
+        // 本文をクリアコマンド
+        public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
+            InputText = "";
+            OnPropertyChanged(nameof(InputText));
+
+            PromptText = "";
+            OnPropertyChanged(nameof(PromptText));
+
+        });
+
+        // モードが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> ModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
+            // ModeがNormal以外の場合は、VectorDBItemを取得
+            VectorDBItems = [];
+            if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
+                List<VectorDBItem> items = QAChatStartupProps.ContentItem.ReferenceVectorDBItems;
+                foreach (var item in items) {
+                    VectorDBItems.Add(item);
+                }
+            }
+            // VectorDBItemVisibilityを更新
+            OnPropertyChanged(nameof(VectorDBItemVisibility));
+
+        });
+
+        // Tabが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // タブが変更されたときの処理
+                if (tabControl.SelectedIndex == 1) {
+                    // プレビュータブが選択された場合、プレビューテキストを更新
+                    OnPropertyChanged(nameof(PreviewText));
+                }
+                if (tabControl.SelectedIndex == 2) {
+                    // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
+                    OnPropertyChanged(nameof(PreviewJson));
+                }
+            }
+        });
+
+        // プロンプトテンプレート画面を開くコマンド
+        public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
+
+            PromptTemplateCommandExecute(parameter);
+
+        });
+
+        // チャットアイテムを編集するコマンド
+        public SimpleDelegateCommand<ChatHistoryItem> OpenChatItemCommand => new((chatItem) => {
+            EditChatItemWindow.OpenEditChatItemWindow(chatItem);
+        });
+
+        // チャット内容をエクスポートするコマンド
+        public SimpleDelegateCommand<object> ExportChatCommand => new((parameter) => {
+            QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
+        });
+
+        // ベクトルDBをリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorDBItem != null) {
+                // 元のVectorDBItemsから削除
+                QAChatStartupProps.ContentItem.ReferenceVectorDBItems.Remove(SelectedVectorDBItem);
+                // VectorDBItemsから削除
+                VectorDBItems.Remove(SelectedVectorDBItem);
+            }
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
+            // フォルダを選択
+            QAChatStartupProps.SelectVectorDBItemAction(VectorDBItems);
+            // 元のVectorDBItemsに追加
+            QAChatStartupProps.ContentItem.ReferenceVectorDBItems = [.. VectorDBItems];
+
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
+
+        // 選択したVectorDBItemの編集画面を開くコマンド
+        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+                VectorDBItems.Add(selectedItem);
+            });
+        });
+
+        public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
+            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, _SaveChatHistory);
+            window.Close();
+        });
+        // Windowを閉じるコマンド
+        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
+
+            window.Close();
+        });
+
     }
 
 }
