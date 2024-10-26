@@ -78,61 +78,67 @@
             </Grid>
             <StackPanel
                 Grid.Row="3"
+                Margin="10,20,0,10"
                 HorizontalAlignment="Left"
                 Visibility="{Binding VectorDBItemVisibility}">
-                <ToggleButton
-                    Width="200"
-                    Padding="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    IsChecked="{Binding IsVectorDBDrawerOpen}"
-                    Style="{StaticResource MaterialDesignFlatButton}">
-                    <DockPanel Width="200">
-                        <materialDesign:PackIcon Kind="Menu" />
-                        <TextBlock Text="{Binding StringResources.VectorDB, Mode=OneTime}" />
-                    </DockPanel>
-                </ToggleButton>
-                <materialDesign:DrawerHost IsBottomDrawerOpen="{Binding IsVectorDBDrawerOpen}" OpenMode="Standard">
-                    <materialDesign:DrawerHost.BottomDrawerContent>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                FontSize="10"
-                                Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
-                                <TextBlock.InputBindings>
-                                    <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
-                                </TextBlock.InputBindings>
-                            </TextBlock>
-                            <ListBox
-                                Grid.Row="1"
-                                Margin="10,10,10,10"
-                                ItemsSource="{Binding VectorDBItems}"
-                                SelectedItem="{Binding SelectedVectorDBItem}"
-                                Visibility="{Binding VectorDBItemVisibility}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseDoubleClick">
-                                        <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <ListBox.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
-                                    </ContextMenu>
-                                </ListBox.ContextMenu>
-                            </ListBox>
-                        </Grid>
-                    </materialDesign:DrawerHost.BottomDrawerContent>
-                </materialDesign:DrawerHost>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            VerticalAlignment="Center"
+                            FontWeight="Bold"
+                            Text="{Binding StringResources.VectorDB, Mode=OneTime}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="10"
+                            Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
+                            <TextBlock.InputBindings>
+                                <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
+                            </TextBlock.InputBindings>
+                        </TextBlock>
+                    </Grid>
+                    <ListBox
+                        Grid.Row="1"
+                        Margin="10,0,10,0"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        ItemsSource="{Binding VectorDBItems}"
+                        SelectedItem="{Binding SelectedVectorDBItem}"
+                        Visibility="{Binding VectorDBItemVisibility}">
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="Margin" Value="0,1,0,1" />
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
+                            </ContextMenu>
+                        </ListBox.ContextMenu>
+                    </ListBox>
+                </Grid>
             </StackPanel>
         </Grid>
         <GridSplitter Grid.Column="1" Width="5" />
