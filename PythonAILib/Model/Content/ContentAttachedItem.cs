@@ -33,6 +33,16 @@ namespace PythonAILib.Model.Content {
         public long LastModified { get; set; } = 0;
 
         [BsonIgnore]
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty(FileName)) {
+                    return "No Name";
+                }
+                return FileName;
+            }
+        }
+
+        [BsonIgnore]
         public string Base64String {
             get {
 

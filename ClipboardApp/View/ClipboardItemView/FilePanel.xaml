@@ -49,7 +49,7 @@
                             Grid.Column="1"
                             Width="180"
                             Margin="10,3,10,3"
-                            Text="{Binding FileName, Mode=OneWay}" />
+                            Text="{Binding DisplayName, Mode=OneWay}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
@@ -132,6 +132,7 @@
                 <Image
                     Grid.Row="4"
                     Grid.Column="1"
+                    MaxWidth="600"
                     Margin="10,3,10,3"
                     Source="{Binding SelectedFile.BitmapImage, Mode=OneWay}"
                     Stretch="Uniform"
