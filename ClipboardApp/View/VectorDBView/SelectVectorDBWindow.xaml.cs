@@ -1,8 +1,9 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.VectorDB;
 using PythonAILib.Model.VectorDB;
 
-namespace ClipboardApp.View.SelectVectorDBView
+namespace ClipboardApp.View.VectorDBView
 {
     /// <summary>
     /// SelectVectorDBWindow.xaml の相互作用ロジック

@@ -7,7 +7,7 @@ using ClipboardApp.Model.Search;
 using ClipboardApp.Settings;
 using ClipboardApp.Utils;
 using ClipboardApp.View.SearchView;
-using ClipboardApp.View.SelectVectorDBView;
+using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;

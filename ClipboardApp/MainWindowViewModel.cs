@@ -7,7 +7,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.SelectVectorDBView;
+using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.Search;
@@ -265,7 +265,7 @@ namespace ClipboardApp {
             QAChatStartupProps props = new(clipboardItem) {
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
-                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, false, (selectedItems) => {
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                         foreach (var item in selectedItems) {
                             vectorDBItems.Add(item);
                         }

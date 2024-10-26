@@ -2,14 +2,18 @@ using System.Windows;
 using ClipboardApp.View.ClipboardItemFolderView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.VectorDB;
+using QAChat.Resource;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
-using QAChat.Resource;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.VectorDB {
     public class SelectVectorDBItemWindowViewModel : ObservableObject {
-
+        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
+            Action = action;
+            FolderViewModel = rootFolderViewModel;
+            CloseAfterSelect = closeAfterSelect;
+        }
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public Action<List<VectorDBItem>> Action { get; set; }
@@ -17,11 +21,7 @@ namespace ClipboardApp.ViewModel {
         public bool CloseAfterSelect { get; set; }
 
         public ClipboardFolderViewModel FolderViewModel { get; set; }
-        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
-            Action = action;
-            FolderViewModel = rootFolderViewModel;
-            CloseAfterSelect = closeAfterSelect;
-        }
+
 
         private bool isFolder = true;
         public bool IsFolder {

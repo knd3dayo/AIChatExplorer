@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.View.SelectVectorDBView;
+using ClipboardApp.View.VectorDBView;
 using PythonAILib.Model.VectorDB;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;

@@ -1,10 +1,10 @@
 <Window
-    x:Class="ClipboardApp.View.SelectVectorDBView.SelectVectorDBWindow"
+    x:Class="ClipboardApp.View.VectorDBView.SelectVectorDBWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:ClipboardApp.View.SelectVectorDBView"
+    xmlns:local="clr-namespace:ClipboardApp.View.VectorDBView"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="SelectVectorDBWindow"
