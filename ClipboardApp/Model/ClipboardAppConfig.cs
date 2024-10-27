@@ -372,20 +372,6 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // AutoEmbedding
-        private bool? _autoEmbedding;
-        public bool AutoEmbedding {
-            get {
-                if (_autoEmbedding == null) {
-                    _autoEmbedding = Properties.Settings.Default.AutoEmbedding;
-                }
-                return _autoEmbedding.Value;
-            }
-            set {
-                _autoEmbedding = value;
-                Properties.Settings.Default.AutoEmbedding = value;
-            }
-        }
         // Embeddingの対象に背景情報を含める
         private bool? _includeBackgroundInfoInEmbedding;
 
@@ -446,7 +432,24 @@ namespace ClipboardApp.Model {
                 Properties.Settings.Default.TextWrapping = _textWrapping;
             }
         }
-
+        // AutoTextWrapping
+        private bool? _autoTextWrapping;
+        public bool AutoTextWrapping {
+            get {
+                if (_autoTextWrapping == null) {
+                    _autoTextWrapping = Properties.Settings.Default.AutoTextWrapping;
+                }
+                return _autoTextWrapping.Value;
+            }
+            set {
+                _autoTextWrapping = value;
+                // valueがTrueの場合はTextWrappingをWrapにする
+                if (value) {
+                    TextWrapping = System.Windows.TextWrapping.Wrap;
+                }
+                Properties.Settings.Default.AutoTextWrapping = value;
+            }
+        }
 
         // PreviewMode
         private bool? _previewMode;
@@ -551,47 +554,18 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // AnalyzeJapaneseSentence 日本語文章の解析
-        private bool? _analyzeJapaneseSentence;
-        public bool AnalyzeJapaneseSentence {
+        // 自動的にTasksを生成する
+        private bool? _autoGenerateTasks;
+        public bool AutoGenerateTasks {
             get {
-                if (_analyzeJapaneseSentence == null) {
-                    _analyzeJapaneseSentence = Properties.Settings.Default.AnalyzeJapaneseSentence;
+                if (_autoGenerateTasks == null) {
+                    _autoGenerateTasks = Properties.Settings.Default.AutoGenerateTasks;
                 }
-                return _analyzeJapaneseSentence.Value;
+                return _autoGenerateTasks.Value;
             }
             set {
-                _analyzeJapaneseSentence = value;
-                Properties.Settings.Default.AnalyzeJapaneseSentence = value;
-            }
-        }
-        // 自動的にQAを生成する
-        private bool? _autoGenerateQA;
-        public bool AutoGenerateQA {
-            get {
-                if (_autoGenerateQA == null) {
-                    _autoGenerateQA = Properties.Settings.Default.AutoGenerateQA;
-                }
-                return _autoGenerateQA.Value;
-            }
-            set {
-                _autoGenerateQA = value;
-                Properties.Settings.Default.AutoGenerateQA = value;
-            }
-        }
-
-        // 自動的にIssuesを生成する
-        private bool? _autoGenerateIssues;
-        public bool AutoGenerateIssues {
-            get {
-                if (_autoGenerateIssues == null) {
-                    _autoGenerateIssues = Properties.Settings.Default.AutoGenerateIssues;
-                }
-                return _autoGenerateIssues.Value;
-            }
-            set {
-                _autoGenerateIssues = value;
-                Properties.Settings.Default.AutoGenerateIssues = value;
+                _autoGenerateTasks = value;
+                Properties.Settings.Default.AutoGenerateTasks = value;
             }
         }
 

@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace ClipboardApp.View.ClipboardItemView {
     /// <summary>
-    /// IssuePanel.xaml の相互作用ロジック
+    /// TaskPanel.xaml の相互作用ロジック
     /// </summary>
     public partial class FilePanel : UserControl {
         public FilePanel() {

@@ -71,7 +71,7 @@ namespace WpfAppCommon.Utils {
             if (openAsNew) {
                 // item.Contentがディレクトリの場合はメッセージを表示して終了
                 if (Directory.Exists(contentFilePath)) {
-                    throw new Exception(CommonStringResources.Instance.CannotOpenDirectoryAsNewFile);
+                    throw new Exception("Cannot Open Directory As NewFile");
                 }
                 // item.Contentのファイル名を取得
                 string tempFilePath = Path.Combine(Path.GetTempPath(), Path.GetFileName(contentFilePath));

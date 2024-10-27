@@ -289,7 +289,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoDescriptionWithOpenAI {
             get {
                 return ((bool)(this["AutoDescriptionWithOpenAI"]));
@@ -301,19 +301,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoEmbedding {
-            get {
-                return ((bool)(this["AutoEmbedding"]));
-            }
-            set {
-                this["AutoEmbedding"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoFileExtract {
             get {
                 return ((bool)(this["AutoFileExtract"]));
@@ -337,7 +325,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoExtractImageWithOpenAI {
             get {
                 return ((bool)(this["AutoExtractImageWithOpenAI"]));
@@ -373,7 +361,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool TextWrapping {
             get {
                 return ((bool)(this["TextWrapping"]));
@@ -470,12 +458,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoGenerateIssues {
+        public bool AutoGenerateTasks {
             get {
-                return ((bool)(this["AutoGenerateIssues"]));
+                return ((bool)(this["AutoGenerateTasks"]));
             }
             set {
-                this["AutoGenerateIssues"] = value;
+                this["AutoGenerateTasks"] = value;
             }
         }
         
@@ -524,6 +512,18 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["SourceDocumentURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoTextWrapping {
+            get {
+                return ((bool)(this["AutoTextWrapping"]));
+            }
+            set {
+                this["AutoTextWrapping"] = value;
             }
         }
     }

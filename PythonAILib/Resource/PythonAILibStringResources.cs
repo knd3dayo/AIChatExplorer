@@ -79,7 +79,7 @@ namespace PythonAILib.Resource {
         public virtual string TemplateScript { get; } = "python/script_template.py";
 
         // OpenAI用のPythonスクリプト
-        public virtual string WpfAppCommonOpenAIScript { get; } = "python/ai_app.py";
+        public virtual string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
 
         // その他用のPythonスクリプト
         public virtual string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
@@ -349,5 +349,25 @@ namespace PythonAILib.Resource {
         //  "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
         public virtual string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。";
 
+        // プロンプトテンプレート[promptName]を実行します.
+        public virtual string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
+
+        // "プロンプトテンプレート[promptName]を実行しました."
+        public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+        #region 統計、ログ関連
+
+        // 日次トークン数
+        public virtual string DailyTokenCount { get; } = "日次トークン数";
+        // 総トークン数
+        public virtual string TotalTokenFormat(long tokens) {
+            return $"総トークン数: {tokens} トークン";
+        }
+        // トークン数
+        public virtual string TokenCount { get; } = "トークン数";
+
+        public virtual string DailyTokenFormat(string date, long totalTokens) {
+            return $"{date}のトークン数: {totalTokens} トークン";
+        }
+        #endregion
     }
 }

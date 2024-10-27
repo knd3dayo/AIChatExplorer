@@ -1,6 +1,6 @@
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {

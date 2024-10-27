@@ -1,10 +1,9 @@
 using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     internal class DevelopmentFeatures {
     }
 

@@ -2,14 +2,14 @@
     x:Class="QAChat.View.PromptTemplateWindow.EditPromptItemWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
-    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar"
+    xmlns:commonModel="clr-namespace:QAChat.Resource"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel.PromptTemplateWindow"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.EditPrompt}"
+    Title="{Binding StringResourcesTitle}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:EditPromptItemWindowViewModel}"
@@ -45,6 +45,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -91,7 +92,7 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{Binding StringResources.Name}" />
+                    Text="{Binding StringResourcesName}" />
                 <TextBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -104,7 +105,7 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{Binding StringResources.Description}" />
+                    Text="{Binding StringResourcesDescription}" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
@@ -124,22 +125,94 @@
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">
+            <DockPanel Margin="10,0,10,10" HorizontalAlignment="Left">
+                <TextBlock
+                    Width="100"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    FontSize="12"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="{Binding StringResourcesAutoProcessSetting}" />
+                <TextBlock
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Text="{Binding StringResourcesChatType}" />
+                <ComboBox
+                    Width="100"
+                    Margin="10,0,10,0"
+                    FontSize="12"
+                    SelectedIndex="{Binding ChatTypeIndex}">
+                    <ComboBoxItem Content="OpenAI" />
+                    <ComboBoxItem Content="OpenAI+RAG" />
+                    <ComboBoxItem Content="LangChain" />
+                    <ComboBoxItem Content="{Binding StringResources.ExperimentalFunction1, Mode=OneTime}" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ChatTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+                <TextBlock
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    FontSize="12"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="{Binding StringResourcesOutputType}" />
+                <ComboBox
+                    Width="100"
+                    Margin="10,0,10,0"
+                    FontSize="12"
+                    SelectedIndex="{Binding PromptResultTypeIndex}">
+                    <ComboBoxItem Content="{Binding StringResourcesStringType}" />
+                    <ComboBoxItem Content="{Binding StringResourcesListType}" />
+                    <ComboBoxItem Content="{Binding StringResourcesTableType}" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding PromptResultTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                </ComboBox>
+                <TextBlock
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Left"
+                    FontSize="12"
+                    Style="{StaticResource MaterialDesignBody1TextBlock}"
+                    Text="{Binding StringResourcesOutputDestination}" />
+                <ComboBox
+                    Width="100"
+                    Margin="10,0,10,0"
+                    FontSize="12"
+                    SelectedIndex="{Binding PromptOutputTypeIndex}">
+                    <ComboBoxItem Content="{Binding StringResourcesNewTab}" />
+                    <ComboBoxItem Content="{Binding StringResourcesOverwriteContent}" />
+                    <ComboBoxItem Content="{Binding StringResourcesOverwriteTitle}" />
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding PromptOutputTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ComboBox>
+            </DockPanel>
+        </Grid>
+        <Grid Grid.Row="3">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding OKButtonCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK}" />
+                    Content="{Binding StringResourcesOK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel}"
+                    Content="{Binding StringResourcesCancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

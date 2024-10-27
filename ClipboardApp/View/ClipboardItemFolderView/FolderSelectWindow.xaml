@@ -2,7 +2,7 @@
     x:Class="ClipboardApp.View.ClipboardItemFolderView.FolderSelectWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:ClipboardApp.ViewModel.Folder"
@@ -66,18 +66,39 @@
             </materialDesign:ColorZone>
         </StackPanel>
         <TreeView Grid.Row="1" ItemsSource="{Binding RootFolders}">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="Margin" Value="3,3,3,3" />
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="local:ClipboardItemFolder" ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding FolderName}">
-                        <TextBlock.InputBindings>
-                            <MouseBinding
-                                Command="{Binding FolderSelectWindowSelectFolderCommand}"
-                                CommandParameter="{Binding}"
-                                MouseAction="LeftClick" />
-                        </TextBlock.InputBindings>
-                    </TextBlock>
+                <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                            Kind="Folder" />
+                        <TextBlock
+                            Margin="0,3,0,0"
+                            DockPanel.Dock="Left"
+                            FontSize="12"
+                            Foreground="#616161"
+                            Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
+                            Text="{Binding FolderName}" />
+                        <DockPanel.ContextMenu>
+                            <!--  Folder context menu  -->
+                            <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
+                        </DockPanel.ContextMenu>
+                    </DockPanel>
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectedItemChanged">
+                    <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+
         </TreeView>
         <TextBlock
             Grid.Row="2"

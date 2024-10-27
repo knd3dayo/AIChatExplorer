@@ -1,6 +1,6 @@
-from magika import Magika
-import datetime
+from magika import Magika  # type: ignore
 import chardet
+import excel_util
 
 def identify_type(filename):
     m = Magika()
@@ -20,6 +20,10 @@ def identify_type(filename):
            
     return res, encoding
 
+def get_mime_type(filename):
+    res, encoding = identify_type(filename)
+    return res.output.mime_type
+
 def extract_text_from_file(filename):
     res, encoding = identify_type(filename)
     print(res.output.mime_type)
@@ -33,7 +37,7 @@ def extract_text_from_file(filename):
         
     # application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
     elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
-        return process_xlsx(filename)
+        return excel_util.extract_text_from_sheet(filename)
         
     # application/vnd.openxmlformats-officedocument.wordprocessingml.document
     elif res.output.mime_type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
@@ -46,37 +50,13 @@ def extract_text_from_file(filename):
         print("Unsupported file type: " + res.output.mime_type)
 
 
+
 # application/pdfのファイルを読み込んで文字列として返す関数
 def process_pdf(filename):
     from pdfminer.high_level import extract_text
     text = extract_text(filename)
     return text
 
-# application/vnd.openxmlformats-officedocument.spreadsheetml.sheetのファイルを読み込んで文字列として返す関数
-def process_xlsx(filename):
-    import openpyxl
-    from io import StringIO
-    # 出力用のストリームを作成
-    output = StringIO()
-    wb = openpyxl.load_workbook(filename)
-    for sheet in wb:
-        for row in sheet.iter_rows(values_only=True):
-            # 1行分のデータを格納するリスト
-            cells = []
-            for cell in row:
-                # cell.valueがNoneの場合はcontinue
-                if cell is None:
-                    continue
-                # cell.valueがdatetime.datetimeの場合はisoformat()で文字列に変換
-                if isinstance(cell, datetime.datetime):
-                    cells.append(cell.isoformat())
-                else:
-                    cells.append(str(cell))
-                
-            output.write("\t".join(cells))
-            output.write("\n")
-    
-    return output.getvalue()
 
 # application/vnd.openxmlformats-officedocument.wordprocessingml.documentのファイルを読み込んで文字列として返す関数
 def process_docx(filename):

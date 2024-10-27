@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PythonAILib.Resource
-{
-    public class PromptStringResource
-    {
+namespace PythonAILib.Resource {
+    public class PromptStringResource {
 
         // Instance
         public static PromptStringResource Instance { get; set; } = new();
@@ -23,14 +15,6 @@ namespace PythonAILib.Resource
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
         public virtual string SummaryGenerationPrompt { get; } = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
 
-        // 課題リスト生成
-        public virtual string IssuesGeneration { get; } = "課題リスト";
-
-        // "以下の文章から課題リストを生成してください。\n"
-        public virtual string IssuesGenerationPrompt { get; } = "以下の文章から課題リストを生成してください。\n";
-
-        // Json形式で文字列のリストを生成するプロンプト
-        public virtual string JsonStringListGenerationPrompt { get; } = "出力は箇条書きの形式として、JSON形式で{result:[箇条書きの項目]}でお願いします。\n";
 
         // BackgroundInformationGeneration
         public virtual string BackgroundInformationGeneration { get; } = "背景情報";
@@ -81,18 +65,24 @@ namespace PythonAILib.Resource
         public virtual string ExtractTextRequest { get; } = "この画像のテキストを抽出してください。\n";
 
         // 上記の文章の不明点については、以下の関連情報を参考にしてください
-        public virtual string RelatedInformation { get; } = "関連情報。不正確な情報が含まれる可能性がありますが、参考にしてください";
+        public virtual string RelatedInformation { get; } = "------\n 以下は参考情報です。不正確な情報が含まれる可能性がありますが、本文の背景や文脈を理解するための参考にしてください\n";
 
         // 以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
         // "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
         // "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
         // "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}"
 
-        public virtual string AnalyzeAndDictionarizeRequest { get; } = "以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
-            "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
-            "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
-            "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}";
+        // TODOリスト生成
+        public virtual string TasksGeneration { get; } = "TODOリスト";
 
+        // "以下の文章から課題リストを生成してください。\n"
+        public virtual string TasksGenerationPrompt { get; } = "以下の文章からTODOとアクションプランのリストを生成してください。" +
+            "なお参考情報がある場合には参考情報から得た背景や文脈を踏まえてTODOとアクションプランを具体的なものにしてください\n" +
+            "TODOには対応すべき優先順位をつけてください。本文とは関連度が低いTODOは除外してください。\n" +
+            "出力はJSON形式で{result:['todo': 'TODOの内容','plan': 'プランの内容']}でお願いします。\n";
+
+        // Json形式で文字列のリストを生成するプロンプト
+        public virtual string JsonStringListGenerationPrompt { get; } = "出力は文字列のリストとして、JSON形式で{result:[リストの項目]}でお願いします。\n";
 
     }
 }

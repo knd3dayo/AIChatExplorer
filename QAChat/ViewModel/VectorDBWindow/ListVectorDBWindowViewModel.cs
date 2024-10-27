@@ -19,7 +19,6 @@ namespace QAChat.ViewModel.VectorDBWindow {
 
         }
 
-
         public enum ActionModeEnum {
             Edit,
             Select,

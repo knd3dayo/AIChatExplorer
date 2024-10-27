@@ -2,6 +2,7 @@ using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
@@ -23,6 +24,9 @@ namespace PythonAILib.Model.Abstract {
         public const string RAGSourceItemCollectionName = "RAGSourceItem";
         // VectorDBItem
         public const string VectorDBItemCollectionName = "VectorDBItem";
+
+        // Statistics
+        public const string StatisticsCollectionName = "Statistics";
 
         private LiteDatabase? db;
 
@@ -68,6 +72,7 @@ namespace PythonAILib.Model.Abstract {
                         }
                     }
                     ***/
+                    /***
                     var collection = db.GetCollection(VectorDBItemCollectionName);
                     foreach (var item in collection.FindAll()) {
                         string typeString = item["_type"];
@@ -91,6 +96,71 @@ namespace PythonAILib.Model.Abstract {
                             }
                         }
 
+                    }
+                    ***/
+                    // PromptItemのChatTypeをRAGからOpenAIRAGに変更
+                    var collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string chatTypeString = item["ChatType"];
+                        if (chatTypeString == "RAG") {
+                            item["ChatType"] = "OpenAIRAG";
+                            collection.Update(item);
+                        }
+                    }
+                    // PromptItemのPromptResultTypeをTitleTextContentからTextContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "TitleTextContent") {
+                            item["PromptResultType"] = "TextContent";
+                            collection.Update(item);
+                        }
+                    }
+                    // PromptItemのPromptResultTypeをListからListContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "List") {
+                            item["PromptResultType"] = "ListContent";
+                            collection.Update(item);
+                        }
+                    }
+                    // PromptItemのPromptResultTypeをTextからTextContentに変更
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "Text") {
+                            item["PromptResultType"] = "TextContent";
+                            collection.Update(item);
+                        }
+                    }
+
+                    // ClipboardItemにTaskItemがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                            // taskItemを削除
+                            item.Remove("Tasks");
+                            collection.Update(item);
+                        foreach (var col in item) {
+                            if (col.Value.ToString().Contains("TaskItem")) {
+                                item.Remove(col.Key);
+                                collection.Update(item);
+                            }
+                        }
+                    }
+                    // ClipboardItemにSummaryがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                        // taskItemを削除
+                        item.Remove("Summary");
+                        collection.Update(item);
+                    }
+                    // ClipboardItemにBackgroundInfoがある場合は削除
+                    collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var item in collection.FindAll()) {
+                        // taskItemを削除
+                        item.Remove("BackgroundInfo");
+                        collection.Update(item);
                     }
 
                 } catch (Exception e) {
@@ -201,7 +271,7 @@ namespace PythonAILib.Model.Abstract {
         //--- -  VectorDBItem
         // update
 
-        public VectorDBItem GetSystemVectorDBItem() {
+        public VectorDBItem GetMainVectorDBItem() {
             // DBからベクトルDBを取得
             // GetItemsメソッドを呼び出して取得
             IEnumerable<VectorDBItem> items = GetVectorDBItems();
@@ -323,5 +393,23 @@ namespace PythonAILib.Model.Abstract {
             collection.Delete(scriptItem.Id);
         }
 
+        //--- Statistics
+        public void UpsertStatistics(MainStatistics item) {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            collection.Upsert(item);
+        }
+        public void DeleteStatistics(MainStatistics item) {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            collection.Delete(item.Id);
+        }
+        public MainStatistics GetStatistics() {
+            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
+            var item = collection.FindAll().FirstOrDefault();
+            if (item == null) {
+                item = new MainStatistics();
+                UpsertStatistics(item);
+            }
+            return item;
+        }
     }
 }

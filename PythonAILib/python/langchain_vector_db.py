@@ -3,7 +3,7 @@ import sys
 sys.path.append("python")
 
 import uuid, json, os
-from ast import Tuple
+from typing import Tuple, List
 
 from langchain_client import LangChainOpenAIClient
 from langchain_doc_store import SQLDocStore
@@ -31,7 +31,7 @@ class LangChainVectorDB:
         pass
 
     # document_idのリストとmetadataのリストを返す
-    def _get_document_ids_by_tag(self, name:str=None, value:str=None) -> Tuple(list, list):
+    def _get_document_ids_by_tag(self, name: str = "", value: str = "") -> Tuple[List, List]:
         # 未実装例外をスロー
         raise NotImplementedError("Not implemented")
 
@@ -72,7 +72,7 @@ class LangChainVectorDB:
         param.append((doc_id, source_document))
         self.doc_store.mset(param)
 
-    def __delete_multivector_document(self, source: str ) -> int:
+    def __delete_multivector_document(self, source: str ) :
         
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
         vector_ids, metadata_list = self._get_document_ids_by_tag("source", source)
@@ -168,7 +168,7 @@ class LangChainVectorDB:
         if os.path.getsize(absolute_file_path) == 0:
             return []
         # テキスト抽出
-        text = file_extractor.extract_text(absolute_file_path)
+        text = file_extractor.extract_text_from_file(absolute_file_path)
 
         # テキストを分割してDocumentのリストを返す
         return self._add_document_list(text, description, relative_path, source_url, chunk_size)
@@ -181,11 +181,12 @@ class LangChainVectorDB:
             chunk_size = self.vector_db_props.MultiVectorDocChunkSize
         else:
             chunk_size = self.vector_db_props.ChunkSize
-            
+    
+        document_list = []
+           
         if content_type == "text":
             # テキストの場合は入力テキストを分割してDocumentのリストを返す
             text_list = self._split_text(content_text, chunk_size=chunk_size)
-            document_list = []
             for text in text_list:
                 # text毎にdoc_idを生成
                 doc_id = str(uuid.uuid4())
@@ -196,7 +197,7 @@ class LangChainVectorDB:
             # 画像の場合はそのままDocumentのリストを返す
             # doc_idを生成
             doc_id = str(uuid.uuid4())
-            document = Document(page_content=text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type, "image_url": image_url})
+            document = Document(page_content=content_text, metadata={"source_url": source_url, "source": source, "doc_id": doc_id, "description": description_text, "content_type": content_type, "image_url": image_url})
             document_list.append(document)
 
         else:

@@ -5,10 +5,11 @@ python-pptx
 tiktoken
 beautifulsoup4
 chromadb
-openai==1.41.0
-langchain==0.2.14
-langchain-openai==0.1.22
-langchain-community==0.2.12
+openai==1.52.1
+langchain==0.3.4
+langchain-openai==0.2.3
+langchain-community==0.3.3
+langchain-postgres==0.0.12
 magika
 openpyxl
 markdown

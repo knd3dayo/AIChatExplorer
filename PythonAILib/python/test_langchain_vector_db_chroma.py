@@ -1,6 +1,4 @@
 from langchain_client import LangChainOpenAIClient
-from langchain.docstore.document import Document
-from langchain_community.callbacks import get_openai_callback
 import os
 from langchain_vector_db_chroma import LangChainVectorDBChroma
 if __name__ == "__main__":
@@ -12,18 +10,8 @@ if __name__ == "__main__":
     langchain_openai_client = LangChainOpenAIClient(props)
     langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
 
-    documents = [
-        Document(
-            page_content="ぽんちょろりん汁",
-            metadata={"source": "test1"}
-        ),
-        Document(
-            page_content="ぽこぽこ鉄",
-            metadata={"source": "test2"}
-        ),
-    ]
-
-    langchain_vector_db.add_documents(documents)
+    langchain_vector_db.update_content_index("ぽんちょろりん汁", "test1", "")
+    langchain_vector_db.update_content_index("ぽこぽこ鉄", "test2", "")
 
     print("Done")
     

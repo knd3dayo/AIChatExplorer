@@ -8,8 +8,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -206,13 +205,12 @@ namespace PythonAILib.Model.Chat
                 // ChatModeがLangChainの場合は、LangChainChatを実行する。
                 return ExecuteChatLangChain(openAIProperties);
             }
-            if (ChatMode == OpenAIExecutionModeEnum.AnalyzeAndDictionarize) {
-                return ExecuteChatAnalyzeAndDictionarize(openAIProperties);
-            }
-
             return null;
         }
         private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
+            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
+            AppendVectorSearchResult(openAIProperties);
+
             openAIProperties.VectorDBItems.AddRange(VectorDBItems);
             ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, this);
             if (result == null) {
@@ -238,8 +236,26 @@ namespace PythonAILib.Model.Chat
 
             return result;
         }
+
         private ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties) {
-            // ContentTextの内容をベクトル検索する。
+            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
+            AppendVectorSearchResult(openAIProperties);
+
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
+            // リクエストをChatItemsに追加
+            if (result == null) {
+                return null;
+            }
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
+            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
+
+            return result;
+
+        }
+        // VectorSearchを実行してコンテキスト情報を生成する
+        private void AppendVectorSearchResult(OpenAIProperties openAIProperties) {
+            string result = "";
             StringBuilder sb = new();
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -254,103 +270,19 @@ namespace PythonAILib.Model.Chat
                     }
                 }
             };
-            foreach (var vectorDBItem in VectorDBItems) {
-                List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
-                foreach (var vectorSearchResult in results) {
-                    sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
-                    sb.AppendLine("----------------------------------------------------");
-                    sb.AppendLine(vectorSearchResult.Content);
-                    hasVectorSearch = true;
-                }
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, VectorDBItems, request) ?? [];
+            foreach (var vectorSearchResult in results) {
+                sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
+                sb.AppendLine(vectorSearchResult.Content);
+                hasVectorSearch = true;
             }
+
             if (hasVectorSearch) {
                 // 結果をContentTextに追加
-                ContentText += "\n" + sb.ToString();
+                result = "\n--- 参考情報 ----\n" + sb.ToString();
+                // 結果をContentTextに追加
+                ContentText += result;
             }
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
-
-            return result;
-
-        }
-        private ChatResult? ExecuteChatAnalyzeAndDictionarize(OpenAIProperties openAIProperties) {
-            // 実験的機能1(文章解析+辞書生成+RAG)
-            // 新規のChatRequestを作成.ContentTextにはこのChatRequestのContentTextを設定する.
-            // PromptTemplateTextは、定義が不明なものや「それはなんであるか？」が不明なものを含む文章をJSON形式で返す指示を設定する。
-            string newRequestPrompt = PromptStringResource.Instance.AnalyzeAndDictionarizeRequest;
-
-            Chat newRequest = new() {
-                ContentText = ContentText,
-                PromptTemplateText = newRequestPrompt,
-                JsonMode = true,
-            };
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, newRequest);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultNull);
-            }
-            // レスポンスからJsonSerializerでDictionary<string,List<Dictionary<string, object>>>を取得
-            Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(result.Response);
-            if (resultDict == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseInvalid);
-            }
-            // documents を取得
-            JsonElement? documentsObject = (JsonElement)resultDict["result"];
-            if (documentsObject == null) {
-                throw new Exception(PythonAILibStringResources.Instance.ChatResultResponseResultNotFound);
-            }
-            string documents = documentsObject.ToString() ?? "[]";
-            // documentsをList<Dictionary<string, object>>に変換
-            List<Dictionary<string, string>> jsonList = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(documents) ?? [];
-
-            // リストの要素毎にVectorSearchを実行
-            // 結果用のStringBuilderを作成
-            StringBuilder sb = new();
-            sb.AppendLine(PromptStringResource.Instance.UnknownContentDescription);
-            sb.AppendLine("----------------------------------------------------");
-            // ベクトル検索が存在するか否かのフラグ
-            bool hasVectorSearch = false;
-            foreach (var item in jsonList) {
-                string sentence = item["sentence"] as string ?? "";
-                if (string.IsNullOrEmpty(sentence)) {
-                    continue;
-                }
-                sb.AppendLine($"### {sentence} ###");
-                // VectorSearchRequestを作成. テスト用にFilterを設定
-                VectorSearchRequest request = new() {
-                    Query = sentence,
-                    SearchKWArgs = new Dictionary<string, object> {
-                        ["k"] = 10,
-                        // filter
-                        ["filter"] = new Dictionary<string, object> {
-                            ["content_type"] = "text"
-                        }
-                    }
-                };
-                // VectorSearchを実行
-                foreach (var vectorDBItem in VectorDBItems) {
-                    List<VectorSearchResult> vectorSearchResults = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, vectorDBItem, request) ?? [];
-                    foreach (var vectorSearchResult in vectorSearchResults) {
-                        sb.AppendLine($"{vectorSearchResult.Content}");
-                        hasVectorSearch = true;
-                    }
-                }
-            }
-            if (hasVectorSearch) {
-                // 結果を元のContentTextに追加
-                ContentText += "\n" + sb.ToString();
-            }
-            // NormalChatを実行
-            return ExecuteChatNormal(openAIProperties);
-
         }
 
     }

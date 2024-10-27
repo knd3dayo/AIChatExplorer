@@ -1,21 +1,19 @@
 using System.IO;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Windows.Forms.VisualStyles;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using LibGit2Sharp;
+using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
-using PythonAILib.Resource;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
-using static ClipboardApp.Model.Folder.ClipboardFolder;
+
 
 namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItem {
@@ -27,7 +25,6 @@ namespace ClipboardApp.Model {
         }
 
         // プロパティ
-
         public string FolderPath {
             get {
                 // FolderObjectIdからClipboardFolderを取得
@@ -38,11 +35,67 @@ namespace ClipboardApp.Model {
                 return folder.FolderPath;
             }
         }
+        // 背景情報
+        [BsonIgnore]
+        public string BackgroundInfo {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+            }
+        }
+
+        // サマリー
+        [BsonIgnore]
+        public string Summary {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+            }
+        }
+
+        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
+        public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
+
+        // ReferenceVectorDBItems
+        public override List<VectorDBItem> ReferenceVectorDBItems {
+
+            get {
+                // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
+                if (IsReferenceVectorDBItemsSynced) {
+                    return base.ReferenceVectorDBItems;
+                }
+                // folderを取得
+                ClipboardFolder folder = GetFolder();
+                base.ReferenceVectorDBItems =  new(folder.ReferenceVectorDBItems);
+                IsReferenceVectorDBItemsSynced = true;
+                return base.ReferenceVectorDBItems;
+
+            }
+            set {
+                base.ReferenceVectorDBItems = value;
+            }
+        }
 
 
         // -------------------------------------------------------------------
         // インスタンスメソッド
         // -------------------------------------------------------------------
+
+        // 別フォルダに移動
+        public void MoveToFolder(ClipboardFolder folder) {
+            CollectionId = folder.Id;
+            Save();
+        }
+        // 別フォルダにコピー
+        public void CopyToFolder(ClipboardFolder folder) {
+            ClipboardItem newItem = Copy();
+            newItem.CollectionId = folder.Id;
+            newItem.Save();
+        }
 
         public ClipboardItem Copy() {
             ClipboardItem newItem = new(this.CollectionId);
@@ -50,6 +103,7 @@ namespace ClipboardApp.Model {
             return newItem;
 
         }
+
         public void CopyTo(ContentItem newItem) {
             if (newItem is not ClipboardItem) {
                 return;
@@ -64,10 +118,7 @@ namespace ClipboardApp.Model {
             clipboardItem.SourceApplicationPath = SourceApplicationPath;
             clipboardItem.Tags = new HashSet<string>(Tags);
             clipboardItem.Description = Description;
-            // 背景情報
-            clipboardItem.BackgroundInfo = BackgroundInfo;
-            // サマリー
-            clipboardItem.Summary = Summary;
+            clipboardItem.PromptChatResult = PromptChatResult;
 
             //-- ファイルがある場合はコピー
             foreach (var FileObjectId in FileObjectIds) {
@@ -81,7 +132,7 @@ namespace ClipboardApp.Model {
         }
 
         // ベクトルDBを返す。
-        public override VectorDBItem GetVectorDBItem() {
+        public override VectorDBItem GetMainVectorDBItem() {
             return GetFolder().GetVectorDBItem();
         }
 
@@ -171,38 +222,15 @@ namespace ClipboardApp.Model {
             return item;
 
         }
-        // ClipboardItemのListからContentsを取得して文字列として返す
-        public static string GetContentsString(List<ClipboardItem> items) {
-            StringBuilder sb = new();
-            foreach (var item in items) {
-                sb.AppendLine(item.Content);
-            }
-            return sb.ToString();
-        }
-
-        // 別コレクションのオブジェクトをLoadする
-        public void Load() {
-            LoadFiles();
-        }
 
         // 自分自身をDBに保存する
         public override void Save(bool contentIsModified = true) {
 
-            if (contentIsModified) {
-                // ★TODO DBControllerに処理を移動する。
-                // ファイルを保存
-                SaveFiles();
-            }
+            base.Save(contentIsModified);
+
+
             // 保存済みのアイテムを取得
             ClipboardItem? savedItem = (ClipboardItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetItem(this);
-
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertItem(this, contentIsModified);
-
-            if (contentIsModified == false) {
-                // ピン留め変更のみの場合を想定。
-                return;
-            }
-
 
             // SaveContentがNullの場合、またはContentが変更されている場合はOS上のファイル更新とEmbedding更新を行う
             if (savedItem == null || savedItem.Content != Content) {
@@ -214,12 +242,6 @@ namespace ClipboardApp.Model {
                     }
                 });
 
-                // Embeddingを更新
-                Task.Run(() => {
-                    if (ClipboardAppConfig.Instance.AutoEmbedding) {
-                        UpdateEmbedding();
-                    }
-                });
             }
         }
 
@@ -271,19 +293,16 @@ namespace ClipboardApp.Model {
 
         // 自分自身をDBから削除する
         public override void Delete() {
-            // 保存先フォルダを取得
-            string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
-            // syncFolder/フォルダ名を取得
-            folderPath = Path.Combine(folderPath, FolderPath);
-            // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-            string syncFilePath = Path.Combine(folderPath, Id + ".txt");
+            base.Delete();
 
+            Task.Run(() => {
+                // 保存先フォルダを取得
+                string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
+                // syncFolder/フォルダ名を取得
+                folderPath = Path.Combine(folderPath, FolderPath);
+                // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
+                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
 
-            // AutoEmbedding == Trueの場合はEmbeddingを削除
-            Task.Run(() => {
-                UpdateEmbedding(VectorDBUpdateMode.delete);
-            });
-            Task.Run(() => {
                 LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
                 // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
                 if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
@@ -297,17 +316,8 @@ namespace ClipboardApp.Model {
                     }
                 }
                 LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
-
             });
-
-            // ファイルが存在する場合は削除
-            foreach (var fileObjectId in FileObjectIds) {
-                ClipboardItemFile? file = (ClipboardItemFile?)ClipboardAppFactory.Instance.GetClipboardDBController().GetAttachedItem(fileObjectId);
-                file?.Delete();
-            }
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteItem(this);
         }
-
 
         // 自動処理を適用する処理
         public ClipboardItem? ApplyAutoProcess() {
@@ -327,51 +337,6 @@ namespace ClipboardApp.Model {
             return result;
         }
 
-
-        public void UpdateEmbedding(VectorDBUpdateMode mode) {
-            if (mode == VectorDBUpdateMode.delete) {
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // IPythonAIFunctions.ClipboardInfoを作成
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
-                // Embeddingを削除
-                folderVectorDBItem.DeleteIndex(clipboardInfo);
-                return;
-            }
-            if (mode == VectorDBUpdateMode.update) {
-                // IPythonAIFunctions.ClipboardInfoを作成
-                // タイトルとHeaderTextを追加
-                string content = Description + "\n" + HeaderText + "\n" + Content;
-
-                // 背景情報を含める場合
-                if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
-                    content += $"\n---{PythonAILibStringResources.Instance.BackgroundInformation}--\n{BackgroundInfo}";
-                }
-
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
-
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(GetFolder());
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(clipboardInfo);
-            }
-        }
-
-        // Embeddingを更新する
-        public void UpdateEmbedding() {
-            UpdateEmbedding(VectorDBUpdateMode.update);
-        }
-
-        // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(bool IncludeBackgroundInfo) {
-            // VectorDBItemを取得
-            VectorDBItem vectorDBItem = ClipboardAppVectorDBItem.SystemCommonVectorDB;
-            // CollectionNameを設定
-            vectorDBItem.CollectionName = CollectionId.ToString();
-            return VectorSearchCommandExecute(vectorDBItem, IncludeBackgroundInfo);
-        }
-
-
         // 自動でコンテキスト情報を付与するコマンド
         public void CreateAutoBackgroundInfo() {
             string contentText = Content;
@@ -381,38 +346,15 @@ namespace ClipboardApp.Model {
             }
             var task1 = Task.Run(() => {
                 // 標準背景情報を生成
-                string? normalBackgroundInfo = CreateNormalBackgroundInfo();
-                return normalBackgroundInfo;
-            });
-
-            var task2 = Task.Run(() => {
-                // 背景情報に日本語解析追加が有効になっている場合
-                if (ClipboardAppConfig.Instance.AnalyzeJapaneseSentence) {
-                    string? analyzedJapaneseSentence = CreateAnalyzedJapaneseSentence();
-                    return analyzedJapaneseSentence;
-                }
-                return null;
-            });
-            var task3 = Task.Run(() => {
-                // 背景情報に自動QA生成が有効になっている場合
-                if (ClipboardAppConfig.Instance.AutoGenerateQA) {
-                    string? generatedQA = CreateQA();
-                    return generatedQA;
-                }
-                return null;
+                CreateChatResult(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
             });
 
             // すべてのタスクが完了するまで待機
-            Task.WaitAll(task1, task2, task3);
+            Task.WaitAll(task1);
             // 背景情報を更新 taskの結果がNullでない場合は追加
             if (task1.Result != null) {
                 BackgroundInfo += task1.Result;
-            }
-            if (task2.Result != null) {
-                BackgroundInfo += task2.Result;
-            }
-            if (task3.Result != null) {
-                BackgroundInfo += task3.Result;
             }
         }
 

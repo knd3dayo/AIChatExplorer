@@ -2,8 +2,8 @@
     x:Class="ClipboardApp.View.ClipboardItemView.EditItemWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:WpfAppCommon.Control;assembly=WpfAppCommon"
-    xmlns:commonModel="clr-namespace:WpfAppCommon.Model;assembly=WpfAppCommon"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"
+    xmlns:commonModel="clr-namespace:QAChat.Resource;assembly=QAChat"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -82,7 +82,7 @@
                         <!--  フォルダを開く  -->
                         <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
                         <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
@@ -113,7 +113,7 @@
                     Grid.Column="0"
                     Width="100"
                     Margin="10,10,10,0"
-                    HorizontalContentAlignment="Center"
+                    VerticalAlignment="Center"
                     Content="{Binding StringResources.Title, Mode=OneTime}" />
                 <TextBox
                     Grid.Row="0"
@@ -124,14 +124,14 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
-                    Width="50"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Center"
-                    Content="タグ" />
+                    Width="100"
+                    Margin="10,10,10,0"
+                    VerticalAlignment="Center"
+                    Content="{Binding StringResources.Tag}" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="10,0,10,10"
+                    Margin="10,10,10,0"
                     materialDesign:HintAssist.Hint="{Binding StringResources.ClickHereToOpenTheTagEditScreen, Mode=OneTime}"
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
@@ -144,51 +144,39 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding TabItems}" />
+                ItemsSource="{Binding TabItems}"
+                SelectedIndex="{Binding SelectedTabIndex}" />
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel HorizontalAlignment="Left">
-                <ToggleButton
-                    x:Name="MenuToggleButton"
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Width="120"
                     Margin="10,10,10,10"
-                    AutomationProperties.Name="HamburgerToggleButton"
-                    DockPanel.Dock="Left"
-                    IsChecked="{Binding IsDrawerOpen, UpdateSourceTrigger=PropertyChanged}"
-                    Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Right">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                    Command="{Binding QAChatButtonCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
+                    DockPanel.Dock="Left" />
+                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                     <Button
-                        Grid.Column="0"
-                        Width="120"
-                        Margin="10,10,10,10"
-                        Command="{Binding QAChatButtonCommand, Mode=OneTime}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
-                        DockPanel.Dock="Right" />
-                    <Button
-                        Grid.Column="1"
                         Width="100"
                         Margin="10,10,10,10"
                         Command="{Binding OKButtonCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.OK, Mode=OneTime}"
-                        DockPanel.Dock="Right" />
+                        Content="{Binding StringResources.Save, Mode=OneTime}" />
                     <Button
-                        Grid.Column="2"
                         Width="100"
                         Margin="10,10,10,10"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                        Content="{Binding StringResources.Close, Mode=OneTime}"
                         DockPanel.Dock="Right" />
-                </Grid>
-            </DockPanel>
+                </DockPanel>
+            </Grid>
         </Grid>
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
 

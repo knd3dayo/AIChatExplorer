@@ -1,8 +1,7 @@
-using WpfAppCommon.Model;
+using QAChat.Resource;
 
-namespace ClipboardApp.ViewModel
-{
-    public class VersionWindowViewModel: ClipboardAppViewModelBase {
+namespace ClipboardApp.ViewModel {
+    public class VersionWindowViewModel : ClipboardAppViewModelBase {
 
         public string Version { get; set; }
 
@@ -12,7 +11,7 @@ namespace ClipboardApp.ViewModel
 
         public string Title { get; set; } = CommonStringResources.Instance.VersionInformation;
         public VersionWindowViewModel() {
-            Version = "0.2.0";
+            Version = "0.2.1";
             CopyRight = "© 2024 by knd3dayo";
             Url = "https://github.com/knd3dayo/ClipboardApp";
         }
@@ -23,6 +22,6 @@ namespace ClipboardApp.ViewModel
                 return $"{Title}\nVersion: {Version}\nCopyRight: {CopyRight}\nUrl: {Url}";
             }
         }
-        
+
     }
 }

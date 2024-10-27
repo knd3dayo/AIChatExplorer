@@ -6,40 +6,39 @@ namespace PythonAILib.Model.Prompt {
     public class PromptItem {
         public enum PromptTemplateTypeEnum {
             // ユーザー定義
-            UserDefined,
+            UserDefined = 0,
             // システム定義
-            SystemDefined,
+            SystemDefined = 1,
             // 変更を加えたシステム定義
-            ModifiedSystemDefined
+            ModifiedSystemDefined = 2
         }
         public enum SystemDefinedPromptNames {
             // タイトル生成
-            TitleGeneration,
+            TitleGeneration = 0,
             // 背景情報生成
-            BackgroundInformationGeneration,
+            BackgroundInformationGeneration = 1,
             // サマリー生成
-            SummaryGeneration,
+            SummaryGeneration = 2,
             // 課題リスト生成
-            IssuesGeneration,
+            TasksGeneration = 3,
         }
         public enum PromptResultTypeEnum {
             // テキスト
-            TextContent,
+            TextContent = 0,
             // リスト
-            ListContent,
-            // タイトルテキスト
-            TitleTextContent,
-            // 旧形式
-            Text,
+            ListContent = 1,
+            // 複雑なテキスト
+            ComplexContent = 2,
         }
-        public enum ChatTypeEnum {
-            // Normal
-            Normal,
-            // RAG,
-            RAG,
-            // Langchain
-            Langchain,
+        public enum PromptOutputTypeEnum {
+            // 新規作成
+            NewContent = 0,
+            // 本文を上書き
+            OverwriteContent = 1,
+            // タイトルを上書き
+            OverwriteTitle = 2,
         }
+
 
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -59,7 +58,10 @@ namespace PythonAILib.Model.Prompt {
         public PromptResultTypeEnum PromptResultType { get; set; } = PromptResultTypeEnum.TextContent;
 
         // チャットタイプ
-        public ChatTypeEnum ChatType { get; set; } = ChatTypeEnum.Normal;
+        public OpenAIExecutionModeEnum ChatType { get; set; } = OpenAIExecutionModeEnum.Normal;
+
+        // プロンプトの出力タイプ
+        public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
 
         // Save
         public void Save() {
@@ -89,6 +91,15 @@ namespace PythonAILib.Model.Prompt {
             }
             return item;
         }
+        // List<PromptItem>を取得
+        public static List<PromptItem> GetPromptItems() {
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            List<PromptItem> promptItems = [];
+            foreach (var item in libManager.DataFactory.GetAllPromptTemplates()) {
+                promptItems.Add(item);
+            }
+            return promptItems;
+        }
 
         // システム定義のPromptItemを取得
         public static void InitSystemPromptItems() {
@@ -97,20 +108,31 @@ namespace PythonAILib.Model.Prompt {
             // TitleGenerationをDBから取得
             PromptItem? titleGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.TitleGeneration.ToString());
 
+            if (titleGeneration != null) {
+                libManager.DataFactory.DeletePromptTemplate(titleGeneration);
+                titleGeneration = null;
+            }
+
             if (titleGeneration == null) {
                 titleGeneration = new PromptItem() {
                     Name = SystemDefinedPromptNames.TitleGeneration.ToString(),
                     Description = PromptStringResource.Instance.TitleGeneration,
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.TitleTextContent,
-                    ChatType = ChatTypeEnum.Normal
+                    PromptResultType = PromptResultTypeEnum.TextContent,
+                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
 
                 };
                 libManager.DataFactory.UpsertPromptTemplate(titleGeneration);
             }
             // BackgroundInformationGenerationをDBから取得
             PromptItem? backgroundInformationGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+
+            if (backgroundInformationGeneration != null) {
+                libManager.DataFactory.DeletePromptTemplate(backgroundInformationGeneration);
+                backgroundInformationGeneration = null;
+            }
 
             if (backgroundInformationGeneration == null) {
                 backgroundInformationGeneration = new PromptItem() {
@@ -119,12 +141,18 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = ChatTypeEnum.RAG
+                    ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                    PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
                 libManager.DataFactory.UpsertPromptTemplate(backgroundInformationGeneration);
             }
             // SummaryGenerationをDBから取得
             PromptItem? summaryGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.SummaryGeneration.ToString());
+
+            if (summaryGeneration != null) {
+                libManager.DataFactory.DeletePromptTemplate(summaryGeneration);
+                summaryGeneration = null;
+            }
 
             if (summaryGeneration == null) {
                 summaryGeneration = new PromptItem() {
@@ -133,25 +161,32 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = ChatTypeEnum.Normal
+                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
                 libManager.DataFactory.UpsertPromptTemplate(summaryGeneration);
             }
-            // IssuesGenerationをDBから取得
-            PromptItem? issuesGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.IssuesGeneration.ToString());
+            // TasksGenerationをDBから取得
+            PromptItem? TasksGeneration = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.TasksGeneration.ToString());
 
-            if (issuesGeneration == null) {
-                issuesGeneration = new PromptItem() {
-                    Name = SystemDefinedPromptNames.IssuesGeneration.ToString(),
-                    Description = PromptStringResource.Instance.IssuesGeneration,
-                    Prompt = PromptStringResource.Instance.IssuesGenerationPrompt,
+            if (TasksGeneration != null) {
+                libManager.DataFactory.DeletePromptTemplate(TasksGeneration);
+                TasksGeneration = null;
+            }
+
+            if (TasksGeneration == null) {
+                TasksGeneration = new PromptItem() {
+                    Name = SystemDefinedPromptNames.TasksGeneration.ToString(),
+                    Description = PromptStringResource.Instance.TasksGeneration,
+                    Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.ListContent,
-                    ChatType = ChatTypeEnum.RAG
+                    PromptResultType = PromptResultTypeEnum.ComplexContent,
+                    ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                    PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
-                libManager.DataFactory.UpsertPromptTemplate(issuesGeneration);
+                libManager.DataFactory.UpsertPromptTemplate(TasksGeneration);
             }
 
 

@@ -95,7 +95,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                LogWrapper.Info($"{CommonStringResources.Instance.FailedToRunFile} {CommonStringResources.Instance.OpenAsTextFile}" + ex.Message);
+                LogWrapper.Info($"Fail to run file:{ex.Message}");
                 OpenTextFile(selectedText);
             }
         }
@@ -211,7 +211,7 @@ namespace WpfAppCommon.Utils {
             try {
                 p.Start();
             } catch (Exception ex) {
-                LogWrapper.Error($"{CommonStringResources.Instance.FailedToRunFile}: {ex.Message}");
+                LogWrapper.Error($"Fail to run file: {ex.Message}");
             }
         }
     }

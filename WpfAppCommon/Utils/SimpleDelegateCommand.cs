@@ -24,7 +24,7 @@ namespace WpfAppCommon.Utils
         public void Execute(object? parameter)
         {
             // System.Windows.MessageBox.Show("Execute");
-            _executeDelegate((T?)parameter);
+                _executeDelegate((T?)parameter);
         }
 
         public bool CanExecute(object? parameter) { return true; }

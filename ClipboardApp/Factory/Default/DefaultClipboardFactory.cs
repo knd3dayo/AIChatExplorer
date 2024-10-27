@@ -9,19 +9,5 @@ namespace ClipboardApp.Factory.Default {
             }
             return _clipboardDBController;
         }
-        private IBackupController? _backupController;
-        public IBackupController GetBackupController() {
-            if (_backupController == null) {
-                _backupController = new DefaultBackupController();
-            }
-            return _backupController;
-        }
-        private IClipboardProcessController? _clipboardProcessController;
-        public IClipboardProcessController GetClipboardProcessController() { 
-                   if (_clipboardProcessController == null) {
-                _clipboardProcessController = new DefaultClipboardProcessController();
-            }
-            return _clipboardProcessController;
-        }
     }
 }

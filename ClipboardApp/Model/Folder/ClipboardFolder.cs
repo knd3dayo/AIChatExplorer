@@ -4,20 +4,22 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
-using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
+
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public class ClipboardFolder : ContentCollection{
+    public class ClipboardFolder : ContentCollection {
 
         public enum FolderTypeEnum {
             Normal,
@@ -30,8 +32,6 @@ namespace ClipboardApp.Model.Folder {
 
             public string FolderName { get; set; } = "";
             public ObjectId Id { get; set; } = ObjectId.Empty;
-
-            public ObjectId FolderId { get; set; } = ObjectId.Empty;
 
             public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
@@ -85,6 +85,65 @@ namespace ClipboardApp.Model.Folder {
                 imageCheckRootFolder.Save();
             }
 
+        }
+
+        // プロパティ
+        // 親フォルダのID
+        public ObjectId ParentId { get; set; } = ObjectId.Empty;
+
+        // フォルダの種類
+        public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
+
+        // ルートフォルダか否か
+        public bool IsRootFolder { get; set; } = false;
+
+        // AutoProcessを有効にするかどうか
+        public bool IsAutoProcessEnabled { get; set; } = true;
+
+        // AutoProcessRuleのIdのリスト
+        public List<ObjectId> AutoProcessRuleIds { get; set; } = [];
+        // フォルダの参照用のベクトルDBのリストに含めるかどうかを示すプロパティ名を変更
+        public bool IncludeInReferenceVectorDBItems { get; set; } = true;
+
+
+
+        // フォルダの絶対パス ファイルシステム用
+        public string FolderPath {
+            get {
+                ClipboardFolder? parent = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
+                if (parent == null) {
+                    return FolderName;
+                }
+                return ConcatenateFileSystemPath(parent.FolderPath, FolderName);
+            }
+        }
+
+        //　フォルダ名
+        public string FolderName { get; set; } = "";
+
+
+        // Description
+        public string Description { get; set; } = "";
+
+
+        // 子フォルダ　LiteDBには保存しない。
+        [BsonIgnore]    
+        public List<ClipboardFolder> Children {
+            get {
+                // DBからParentIDが自分のIDのものを取得
+                return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
+                }
+        }
+
+        // アイテム LiteDBには保存しない。
+        [BsonIgnore]
+        public List<ClipboardItem> Items {
+            get {
+                if (FolderType == FolderTypeEnum.Search) {
+                    return GetSearchFolderItems();
+                }
+                return GetNormalFolderItems();
+            }
         }
 
         // アプリ共通の検索条件
@@ -169,65 +228,6 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-
-
-        // プロパティ
-        // LiteDBのID
-        public ObjectId Id { get; set; } = ObjectId.Empty;
-
-        // 親フォルダのID
-        public ObjectId ParentId { get; set; } = ObjectId.Empty;
-
-
-        // フォルダの種類
-        public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
-
-        // ルートフォルダか否か
-        public bool IsRootFolder { get; set; } = false;
-
-        // AutoProcessを有効にするかどうか
-        public bool IsAutoProcessEnabled { get; set; } = true;
-
-
-        // フォルダの絶対パス ファイルシステム用
-        public string FolderPath {
-            get {
-                ClipboardFolder? parent = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
-                if (parent == null) {
-                    return FolderName;
-                }
-                return ConcatenateFileSystemPath(parent.FolderPath, FolderName);
-            }
-        }
-
-        //　フォルダ名
-        public string FolderName { get; set; } = "";
-
-
-        // Description
-        public string Description { get; set; } = "";
-
-
-        // 子フォルダ　LiteDBには保存しない。
-        [BsonIgnore]
-        public List<ClipboardFolder> Children {
-            get {
-                // DBからParentIDが自分のIDのものを取得
-                return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
-            }
-        }
-
-        // アイテム LiteDBには保存しない。
-        [BsonIgnore]
-        public List<ClipboardItem> Items {
-            get {
-                if (FolderType == FolderTypeEnum.Search) {
-                    return GetSearchFolderItems();
-                }
-                return GetNormalFolderItems();
-            }
-        }
-
         private List<ClipboardItem> GetNormalFolderItems() {
             List<ClipboardItem> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
@@ -260,9 +260,6 @@ namespace ClipboardApp.Model.Folder {
             return _items;
         }
 
-        // AutoProcessRuleのIdのリスト
-        public List<ObjectId> AutoProcessRuleIds { get; set; } = [];
-
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
         public void DeleteChild(ClipboardFolder child) {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
@@ -275,10 +272,52 @@ namespace ClipboardApp.Model.Folder {
         }
 
         //--------------------------------------------------------------------------------
+        // ReferenceVectorDBItemsからVectorDBItemを削除
+        public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
+            List<VectorDBItem> existingItems = new (ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            foreach (var item in existingItems) {
+                ReferenceVectorDBItems.Remove(item);
+            }
+        }
+        // ReferenceVectorDBItemsにVectorDBItemを追加
+        public void AddVectorDBItem(VectorDBItem vectorDBItem) {
+            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
+            if (existingItems == null) {
+                ReferenceVectorDBItems.Add(vectorDBItem);
+            }　
+        }
+
+        // フォルダを移動する
+        public void MoveTo(ClipboardFolder toFolder) {
+            // 自分自身を移動
+            ParentId = toFolder.Id;
+            Save();
+        }
+        // 名前を変更
+        public void Rename(string newName) {
+            FolderName = newName;
+            Save();
+        }
+
         // 自分自身を保存
         public void Save() {
+            // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
+            if (IncludeInReferenceVectorDBItems) {
+                AddVectorDBItem( GetVectorDBItem());
+            } else {
+                // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
+                RemoveVectorDBItem(GetVectorDBItem());
+            }
+
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             ClipboardDatabaseController.UpsertFolder(this);
+
+            // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
+            foreach (var item in Items) {
+                item.IsReferenceVectorDBItemsSynced = false;
+                item.Save(false);
+            }
+
         }
         // Delete
         public void Delete() {
@@ -295,6 +334,9 @@ namespace ClipboardApp.Model.Folder {
 
             // CollectionNameを設定
             item.CollectionId = Id;
+
+            // ReferenceVectorDBItemsを設定
+            item.ReferenceVectorDBItems = ReferenceVectorDBItems;
 
             // 自動処理を適用
             ClipboardItem? result = item;
@@ -554,9 +596,10 @@ namespace ClipboardApp.Model.Folder {
 
             // Execute in a separate thread
             Task.Run(() => {
-                string oldReadyText = Tools.StatusText.ReadyText;
+                StatusText statusText = Tools.StatusText;
                 MainUITask.Run(() => {
-                    Tools.StatusText.ReadyText = CommonStringResources.Instance.AutoProcessing;
+                    statusText.InProgressText = CommonStringResources.Instance.AutoProcessing;
+                    statusText.IsInProgress = true;
                 });
                 try {
                     // Apply automatic processing
@@ -570,9 +613,10 @@ namespace ClipboardApp.Model.Folder {
 
                 } catch (Exception ex) {
                     LogWrapper.Error($"{CommonStringResources.Instance.AddItemFailed}\n{ex.Message}\n{ex.StackTrace}");
+
                 } finally {
                     MainUITask.Run(() => {
-                        Tools.StatusText.ReadyText = oldReadyText;
+                        statusText.IsInProgress = false;
                     });
                 }
             });
@@ -717,14 +761,14 @@ namespace ClipboardApp.Model.Folder {
                 // サマリー
                 if (ClipboardAppConfig.Instance.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    item.CreateSummary();
+                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
             var task5 = Task.Run(() => {
-                // Issues
-                if (ClipboardAppConfig.Instance.AutoGenerateIssues) {
-                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateIssueList);
-                    item.CreateIssues();
+                // Tasks
+                if (ClipboardAppConfig.Instance.AutoGenerateTasks) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCreateTaskList);
+                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
 

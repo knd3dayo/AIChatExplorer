@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfAppCommon.Utils;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows;
+using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.Editor {
-    public  class MyTextBox: TextBox {
+    public class MyTextBox : TextBox {
+        // TextWrappingMode : 0 = NoWrap, 1 = Wrap, 2 = 閾値より小さい場合はWrap, 閾値以上の場合はNoWrap
+        public enum TextWrappingModeEnum {
+            NoWrap = 1,
+            Wrap = 2,
+            WrapWithThreshold = 3
+        }
 
         public MyTextBox() {
             // TextSelectorの初期化
@@ -17,29 +18,41 @@ namespace WpfAppCommon.Control.Editor {
 
             // 各種設定
             SetSettings();
-
-            // Loadedイベント
-            Loaded += MyTextBox_Loaded;
+            SetInputBindings();
+            UpdateTextWrapping();
 
         }
 
-
         // DependencyProperties
-        public static readonly DependencyProperty TextSelectorProperty 
+        // TextWrappingMode
+        public static readonly DependencyProperty TextWrappingModeProperty
+            = DependencyProperty.Register("TextWrappingMode", typeof(TextWrappingModeEnum), typeof(MyTextBox), new PropertyMetadata(TextWrappingModeEnum.Wrap));
+        public TextWrappingModeEnum TextWrappingMode {
+            get { return (TextWrappingModeEnum)GetValue(TextWrappingModeProperty); }
+            set { SetValue(TextWrappingModeProperty, value); }
+        }
+
+        protected void UpdateTextWrapping() {
+            switch (TextWrappingMode) {
+                case TextWrappingModeEnum.NoWrap:
+                    TextWrapping = TextWrapping.NoWrap;
+                    break;
+                case TextWrappingModeEnum.Wrap:
+                    TextWrapping = TextWrapping.Wrap;
+                    break;
+                case TextWrappingModeEnum.WrapWithThreshold:
+                    TextWrapping = TextWrapping.WrapWithOverflow;
+                    break;
+            }
+        }
+
+        // TextSelector
+        public static readonly DependencyProperty TextSelectorProperty
             = DependencyProperty.Register("TextSelector", typeof(TextSelector), typeof(MyTextBox), new PropertyMetadata(new TextSelector()));
         public TextSelector TextSelector {
             get { return (TextSelector)GetValue(TextSelectorProperty); }
             set { SetValue(TextSelectorProperty, value); }
         }
-
-        // MyTextBox_Loadedイベント
-        private void MyTextBox_Loaded(object sender, RoutedEventArgs e) {
-            // Loadedイベント時の処理
-            SetInputBindings();
-            SetContextMenu();
-
-        }
-
 
         // 各種設定
         public void SetSettings() {
@@ -76,18 +89,7 @@ namespace WpfAppCommon.Control.Editor {
             // InputBindings.Add(new KeyBinding(RemoveTabCommand, new KeyGesture(Key.Tab, ModifierKeys.Shift)));
         }
 
-        // コンテキストメニューの設定
-        public void SetContextMenu() {
-            // コンテキストメニューの設定
-            
-            ContextMenu = this.ContextMenu ?? new ContextMenu();
-            // テキスト選択
-            ContextMenu.Items.Add(new MenuItem() { Header = "Select", Command = SelectTextCommand });
-            // 選択中のテキストをプロセスとして実行
-            ContextMenu.Items.Add(new MenuItem() { Header = "Execute", Command = ExecuteSelectedTextCommand });
-        }
 
-        
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand<object> SelectTextCommand => new((parameter) => {
 

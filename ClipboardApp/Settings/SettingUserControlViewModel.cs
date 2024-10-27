@@ -7,11 +7,10 @@ using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using QAChat.Resource;
 
-namespace ClipboardApp.Settings
-{
+namespace ClipboardApp.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
@@ -342,40 +341,14 @@ namespace ClipboardApp.Settings
                 isPropertyChanged = true;
             }
         }
-        // AnalyzeJapaneseSentence
-        public bool AnalyzeJapaneseSentence {
+        // AutoGenerateTasks
+        public bool AutoGenerateTasks {
             get {
-                return ClipboardAppConfig.Instance.AnalyzeJapaneseSentence;
+                return ClipboardAppConfig.Instance.AutoGenerateTasks;
             }
             set {
-                ClipboardAppConfig.Instance.AnalyzeJapaneseSentence = value;
-                OnPropertyChanged(nameof(AnalyzeJapaneseSentence));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // AutoGenerateQA
-        public bool AutoGenerateQA {
-            get {
-                return ClipboardAppConfig.Instance.AutoGenerateQA;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoGenerateQA = value;
-                OnPropertyChanged(nameof(AutoGenerateQA));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // AutoGenerateIssues
-        public bool AutoGenerateIssues {
-            get {
-                return ClipboardAppConfig.Instance.AutoGenerateIssues;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoGenerateIssues = value;
-                OnPropertyChanged(nameof(AutoGenerateIssues));
+                ClipboardAppConfig.Instance.AutoGenerateTasks = value;
+                OnPropertyChanged(nameof(AutoGenerateTasks));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -397,20 +370,6 @@ namespace ClipboardApp.Settings
             }
         }
 
-
-        // クリップボードアイテム保存時に自動的にEmbeddingを行うかどうか
-        public bool AutoEmbedding {
-            get {
-                return ClipboardAppConfig.Instance.AutoEmbedding;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoEmbedding = value;
-                OnPropertyChanged(nameof(AutoEmbedding));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
         public bool AutoFileExtract {
             get {
@@ -658,6 +617,48 @@ namespace ClipboardApp.Settings
             return false;
 
         }
+        #region listAutoProcessRuleから移動した処理
+
+        // IgnoreLineCountChecked
+        public bool IgnoreLineCountChecked {
+            get {
+                // IgnoreLineCountが-1の場合はFalseを返す
+                if (IgnoreLineCount == -1) {
+                    return false;
+                }
+                return true;
+            }
+            set {
+                // Falseの場合はIgnoreLineCountを-1にする
+                if (!value) {
+                    IgnoreLineCountText = "";
+                }
+                OnPropertyChanged(nameof(IgnoreLineCountChecked));
+            }
+        }
+        // IgnoreLineCountText
+        public string IgnoreLineCountText {
+            get {
+                // IgnoreLineCountが-1の場合は空文字を返す
+                if (IgnoreLineCount == -1) {
+                    return "";
+                }
+                return IgnoreLineCount.ToString();
+            }
+            set {
+                // 空文字の場合は-1にする
+                if (value == "") {
+                        IgnoreLineCount = -1;
+                } else {
+                    IgnoreLineCount = int.Parse(value);
+                }
+                OnPropertyChanged(nameof(IgnoreLineCountText));
+            }
+        }
+
+        #endregion
+
+
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
 

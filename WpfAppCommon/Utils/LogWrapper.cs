@@ -1,24 +1,36 @@
 using System.Text.RegularExpressions;
 using NLog;
+using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
     public class LogWrapper {
 
         public static CustomLogger Logger { get; } = LogManager.LogFactory.GetCurrentClassLogger<CustomLogger>();
 
+        public static List<StatusText> TemporaryStatusText { get; set; } = new();
+
         public static void Info(string message) {
             message = MaskAPIKey(message);
             Logger.Info(message);
+            foreach (StatusText statusText in TemporaryStatusText) {
+                statusText.Text = message;
+            }
         }
 
         public static void Warn(string message) {
             message = MaskAPIKey(message);
             Logger.Warn(message);
+            foreach (StatusText statusText in TemporaryStatusText) {
+                statusText.Text = message;
+            }
         }
 
         public static void Error(string message) {
             message = MaskAPIKey(message);
             Logger.Error(message);
+            foreach (StatusText statusText in TemporaryStatusText) {
+                statusText.Text = message;
+            }
         }
         // OpenAIKey, api_key, OPENAI_API_KEYはログに出力しないよう、messageに含まれている場合はマスクする
         // 大文字小文字を区別しない

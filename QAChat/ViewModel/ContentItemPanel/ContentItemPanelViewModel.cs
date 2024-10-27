@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PythonAILib.Model.Content;
-using WpfAppCommon.Model;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ContentItemPanel
-{
+namespace QAChat.ViewModel.ContentItemPanel {
     public abstract class ContentItemPanelViewModel(ContentItem contentItemBase) {
 
         public static CommonStringResources StringResources { get; } = CommonStringResources.Instance;

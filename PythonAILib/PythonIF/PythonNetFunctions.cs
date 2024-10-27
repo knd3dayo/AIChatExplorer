@@ -1,31 +1,30 @@
-using System.Drawing;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Windows.Shapes;
 using Python.Runtime;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Statistics;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
 
 
-namespace PythonAILib.PythonIF
-{
-    public class PythonTask(Action action) : Task(action) {
+namespace PythonAILib.PythonIF {
 
-        public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
-
-    }
     public class PythonNetFunctions : IPythonAIFunctions {
 
         private readonly Dictionary<string, PyModule> PythonModules = [];
 
-
         private static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
+
+        private static readonly JsonSerializerOptions jsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
 
         public PyModule GetPyModule(string scriptPath) {
             if (PythonModules.TryGetValue(scriptPath, out PyModule? value)) {
@@ -146,21 +145,18 @@ namespace PythonAILib.PythonIF
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
-                var op = new JsonSerializerOptions {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true
-                };
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
-                if (resultDict == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
-                }
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
                 // contentを取得
                 string? content = resultDict["content"]?.ToString();
                 if (content == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
+                // total_tokensを取得. total_tokensが存在しない場合は0を設定
+                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
+
                 // ChatResultに設定
                 chatResult.Response = content;
+                chatResult.TotalTokens = totalTokens;
 
             });
             return chatResult;
@@ -171,7 +167,7 @@ namespace PythonAILib.PythonIF
         // 通常のOpenAIChatを実行する
         public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
 
-            string chat_history_json =chatRequest.CreateOpenAIRequestJSON(props);
+            string chat_history_json = chatRequest.CreateOpenAIRequestJSON(props);
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -179,9 +175,15 @@ namespace PythonAILib.PythonIF
             LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_history_json}");
 
             //OpenAIChatExecuteを呼び出す
-            return OpenAIChatExecute("run_openai_chat", (function_object) => {
+            ChatResult result = OpenAIChatExecute("run_openai_chat", (function_object) => {
                 return function_object(propsJson, chat_history_json);
             });
+
+            // StatisticManagerにトークン数を追加
+            MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, props.OpenAICompletionModel);
+
+            return result;
+
         }
 
         // テスト用
@@ -217,7 +219,7 @@ namespace PythonAILib.PythonIF
                 }
             });
         }
-                    
+
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
 
             // modeがUpdateでItem.Contentが空の場合は何もしない
@@ -327,30 +329,30 @@ namespace PythonAILib.PythonIF
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
-                var op = new JsonSerializerOptions {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true
-                };
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
-                // outputを取得
-                string? output = resultDict["output"]?.ToString();
-                if (output == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                // outputがある場合は取得
+                resultDict.TryGetValue("output", out object? output_value);
+                if (output_value != null) {
+                    string? output = output_value.ToString();
+                    // ChatResultに設定
+                    chatResult.Response = output ?? "";
                 }
-                // ChatResultに設定
-                chatResult.Response = output;
 
                 // page_content_listを取得
-                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? new();
+                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? [];
                 chatResult.ReferencedContents = page_content_list;
 
                 // page_source_listを取得
                 List<string> page_source_list = resultDict["page_source_list"] as List<string> ?? new();
-
                 chatResult.ReferencedFilePath = page_source_list;
+
+                // total_tokensを取得. total_tokensが存在しない場合は0を設定
+                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
+                chatResult.TotalTokens = totalTokens;
+
 
             });
             return chatResult;
@@ -380,51 +382,47 @@ namespace PythonAILib.PythonIF
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, prompt , chatHistoryJson);
+                string resultString = function_object(propsJson, prompt, chatHistoryJson);
                 return resultString;
             });
-
+            // StatisticManagerにトークン数を追加
+            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, openAIProperties.OpenAICompletionModel);
             return chatResult;
         }
 
         private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
-            List<VectorSearchResult> vectorSearchResults = new();
+            List<VectorSearchResult> vectorSearchResults = [];
 
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
-                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
+                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列   
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
-                var op = new JsonSerializerOptions {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true
-                };
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
-                // documents を取得
-                JsonElement? documentsObject = (JsonElement)resultDict["documents"];
-                if (documentsObject == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                // documentsがある場合は取得
+                if (resultDict.ContainsKey("documents")) {
+                    JsonElement? documentsObject = (JsonElement)resultDict["documents"];
+                    // List<VectorSearchResult>に変換
+                    vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
                 }
-                // List<VectorSearchResult>に変換
-                vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
 
             });
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, VectorDBItem vectorDBItem, VectorSearchRequest vectorSearchRequest) {
+        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, VectorSearchRequest vectorSearchRequest) {
             // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
-            openAIProperties.VectorDBItems = [vectorDBItem];
+            openAIProperties.VectorDBItems = vectorDBItems;
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
             // vectorSearchRequestをJSON文字列に変換
@@ -460,7 +458,7 @@ namespace PythonAILib.PythonIF
         // ImportFromExcelを実行する
         public CommonDataTable ImportFromExcel(string filePath) {
             // ResultContainerを作成
-            CommonDataTable  result = new([]);
+            CommonDataTable result = new([]);
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
@@ -471,11 +469,7 @@ namespace PythonAILib.PythonIF
                 // resultStringをログに出力
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
                 // resultStringからDictionaryに変換する。
-                var op = new JsonSerializerOptions {
-                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                    WriteIndented = true
-                };
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, op);
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
                 if (resultDict == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }

@@ -125,7 +125,7 @@ namespace ClipboardApp.Factory.Default {
             }
             // itemsの最初の要素を取得
             var item = items.FirstOrDefault();
-            return GetFolder(item?.FolderId);
+            return GetFolder(item?.Id);
         }
 
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId) {
@@ -137,7 +137,9 @@ namespace ClipboardApp.Factory.Default {
             }
             // objectIdに対応するフォルダをすべて取得して返す
             var collection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            var items = collection.FindAll().Where(x => x.ParentId == objectId);
+            // ParentIdが、objectIdのフォルダを取得。FolderNameでソートして返す
+            var items = collection.FindAll().Where(x => x.ParentId == objectId).OrderBy(x => x.FolderName).ToList();
+
             foreach (var i in items) {
                 result.Add(i);
             }
@@ -146,20 +148,15 @@ namespace ClipboardApp.Factory.Default {
 
 
         // 親フォルダのCollectionNameを指定して子フォルダのリストを取得する
-        private IEnumerable<ClipboardFolder> GetChildFolders(ObjectId folderObjectId) {
+        private List<ClipboardFolder> GetChildFolders(ObjectId folderObjectId) {
             List<ClipboardFolder> result = [];
             // 親フォルダを取得
             var parent = GetFolder(folderObjectId);
             if (parent == null) {
                 return result;
             }
-            foreach (var child in parent.Children) {
-                // nullの場合は、次のループへ
-                if (child == null) {
-                    continue;
-                }
-                result.Add(child);
-            }
+            // 子フォルダをFolderNameでソートして返す
+            result = parent.Children.OrderBy(x => x.FolderName).ToList();
             return result;
         }
 
@@ -178,12 +175,14 @@ namespace ClipboardApp.Factory.Default {
                         Id = ObjectId.NewObjectId(),
                         FolderType = folder.FolderType
                     };
-                    rootFolderInfo.FolderId = rootFolderInfo.Id;
-                    rootFolderInfoCollection.Upsert(rootFolderInfo);
 
                     // ルートフォルダの作成
-                    folder.Id = rootFolderInfo.FolderId;
+                    folder.Id = rootFolderInfo.Id; ;
                     collection.Upsert(folder);
+
+                    // ルートフォルダ情報の作成
+                    rootFolderInfoCollection.Upsert(rootFolderInfo);
+
 
                 } else {
                     //　ルートフォルダの更新。folderにRootFolder.FolderIdを設定してUpsert 
@@ -297,7 +296,7 @@ namespace ClipboardApp.Factory.Default {
 
             // folder内のアイテムを保持するコレクションを取得
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == folder.Id);
+            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == folder.Id).OrderByDescending(x => x.UpdatedAt);
             // Filterの結果を結果に追加
             result = Filter(clipboardItems, searchCondition);
 

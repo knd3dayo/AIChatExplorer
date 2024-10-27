@@ -42,42 +42,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 OnPropertyChanged(nameof(SaveSystemCommonSettingButtonVisibility));
             }
         }
-        // IgnoreLineCountChecked
-        public bool IgnoreLineCountChecked {
-            get {
-                // IgnoreLineCountが-1の場合はFalseを返す
-                if (SettingUserControlViewModel.IgnoreLineCount == -1) {
-                    return false;
-                }
-                return true;
-            }
-            set {
-                // Falseの場合はIgnoreLineCountを-1にする
-                if (!value) {
-                    IgnoreLineCountText = "";
-                }
-                OnPropertyChanged(nameof(IgnoreLineCountChecked));
-            }
-        }
-        // IgnoreLineCountText
-        public string IgnoreLineCountText {
-            get {
-                // IgnoreLineCountが-1の場合は空文字を返す
-                if (SettingUserControlViewModel.IgnoreLineCount == -1) {
-                    return "";
-                }
-                return SettingUserControlViewModel.IgnoreLineCount.ToString();
-            }
-            set {
-                // 空文字の場合は-1にする
-                if (value == "") {
-                    SettingUserControlViewModel.IgnoreLineCount = -1;
-                } else {
-                    SettingUserControlViewModel.IgnoreLineCount = int.Parse(value);
-                }
-                OnPropertyChanged(nameof(IgnoreLineCountText));
-            }
-        }
 
 
         // AutoProcessRule用のButtonのVisibility

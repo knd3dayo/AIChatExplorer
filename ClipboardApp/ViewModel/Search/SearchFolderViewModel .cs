@@ -4,9 +4,19 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.View.SearchView;
+using ClipboardApp.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Search {
-    public class SearchFolderViewModel(MainWindowViewModel mainWindowViewModel, ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(mainWindowViewModel, clipboardItemFolder) {
+    public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+
+        // 子フォルダのClipboardFolderViewModelを作成するメソッド
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+            var searchFolderViewModel = new SearchFolderViewModel(childFolder);
+            // 検索フォルダの親フォルダにこのフォルダを追加
+            searchFolderViewModel.ParentFolderViewModel = this;
+            return searchFolderViewModel;
+        }
+
         public override ObservableCollection<MenuItem> MenuItems {
             get {
                 // MenuItemのリストを作成
@@ -54,25 +64,6 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
 
-        // LoadChildren
-        public override void LoadChildren() {
-            Children.Clear();
-            foreach (var child in ClipboardItemFolder.Children) {
-                if (child == null) {
-                    continue;
-                }
-                Children.Add(new SearchFolderViewModel(MainWindowViewModel, child));
-            }
-
-        }
-        // LoadItems
-        public override void LoadItems() {
-            Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
-            }
-        }
-
 
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
@@ -80,13 +71,13 @@ namespace ClipboardApp.ViewModel.Search {
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
-            SearchFolderViewModel searchFolderViewModel = new(MainWindowViewModel, clipboardFolder);
+            SearchFolderViewModel searchFolderViewModel = new(clipboardFolder);
             SearchRule? searchConditionRule = new() {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = clipboardFolder
             };
 
-            SearchWindow.OpenSearchWindow(searchConditionRule, searchFolderViewModel, true, () => {
+            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, true, () => {
                 // 保存と再読み込み
                 searchFolderViewModel.SaveFolderCommand.Execute(null);
                 // 親フォルダを保存
@@ -104,11 +95,11 @@ namespace ClipboardApp.ViewModel.Search {
                 Type = SearchRule.SearchType.SearchFolder,
                 SearchFolder = ClipboardItemFolder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, this, true, afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, this.ClipboardItemFolder, true, afterUpdate);
 
         }
 
-        public override void PasteClipboardItemCommandExecute(bool CutFlag, IEnumerable<ClipboardItemViewModel> items, ClipboardFolderViewModel fromFolder, ClipboardFolderViewModel toFolder) {
+        public override void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
 
         }

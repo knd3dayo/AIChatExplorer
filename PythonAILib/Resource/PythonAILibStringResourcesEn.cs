@@ -46,7 +46,7 @@ namespace PythonAILib.Resource {
         public override string TemplateScript { get; } = "python/script_template.py";
 
         // Python script for OpenAI
-        public override string WpfAppCommonOpenAIScript { get; } = "python/ai_app.py";
+        public override string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
 
         // Python script for miscellaneous
         public override string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
@@ -228,6 +228,27 @@ namespace PythonAILib.Resource {
         public override string DeleteTextEmbeddingFromImage { get; } = "Delete Text Embedding from Image";
         public override string DeletedTextEmbeddingFromImage { get; } = "Deleted Text Embedding from Image";
         public override string GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions { get; } = "General Vector DB for Searching Past Documents Based on User Questions";
+        // Execute the prompt template [promptName].
+        public override string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
+
+        // "The prompt template [promptName] has been executed."
+        public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
+
+        #region Statistics and Logging
+
+        // Daily token count
+        public override string DailyTokenCount { get; } = "Daily Token Count";
+        // Total token count
+        public override string TotalTokenFormat(long tokens) {
+            return $"Total Token Count: {tokens} tokens";
+        }
+        // Token count
+        public override string TokenCount { get; } = "Token Count";
+
+        public override string DailyTokenFormat(string date, long totalTokens) {
+            return $"Token count for {date}: {totalTokens} tokens";
+        }
+        #endregion
 
     }
 }

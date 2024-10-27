@@ -2,8 +2,7 @@ using System.Windows;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
 
-namespace QAChat.ViewModel.VectorDBWindow
-{
+namespace QAChat.ViewModel.VectorDBWindow {
     public class VectorDBItemViewModel(VectorDBItem item) : QAChatViewModelBase {
         public VectorDBItem Item { get; private set; } = item;
 

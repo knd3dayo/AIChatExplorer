@@ -41,10 +41,9 @@ namespace ClipboardApp {
         }
 
         public string GetDBPath() {
-
-            /// AppDataフォルダーパスを取得
+            /// Get AppData folder path
             string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
-            // データベースファイルのパスを作成
+            // Create database file path
             string dbPath = Path.Combine(appDataPath, "clipboard.db");
 
             return dbPath;
@@ -58,9 +57,6 @@ namespace ClipboardApp {
         public string GetSystemDocDBPath() {
             string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
             return docDBPath;
-
         }
-
-
     }
 }
