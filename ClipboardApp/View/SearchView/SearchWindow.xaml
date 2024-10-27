@@ -89,7 +89,7 @@
             <Button
                 Margin="10,10,10,0"
                 Command="{Binding OpenSelectTargetFolderWindowCommand, Mode=OneTime}"
-                Content="選択" />
+                Content="{Binding StringResources.Select}" />
             <TextBox
                 Margin="10,10,10,0"
                 IsEnabled="False"
