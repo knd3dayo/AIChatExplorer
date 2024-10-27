@@ -3,10 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ClipboardApp.ViewModel;
-using WpfAppCommon.Model;
 
-namespace ClipboardApp.Control
-{
+namespace ClipboardApp.Control {
     /// <summary>
     /// MainWindowListView1.xaml の相互作用ロジック
     /// </summary>

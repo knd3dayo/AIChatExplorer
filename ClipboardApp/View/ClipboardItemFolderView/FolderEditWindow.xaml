@@ -71,7 +71,7 @@
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
             SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="基本設定">
+            <TabItem Header="{Binding StringResources.BasicSettings}">
                 <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -102,11 +102,11 @@
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,10"
-                        materialDesign:HintAssist.Hint="ここにフォルダの説明を入力"
+                        materialDesign:HintAssist.Hint="{Binding StringResources.InputDescriptionOfThisFolder, Mode=OneTime}"
                         Text="{Binding FolderViewModel.Description}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="詳細設定">
+            <TabItem Header="{Binding StringResources.DetailSettings}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -116,7 +116,7 @@
                     <CheckBox
                         Grid.Row="0"
                         Margin="10,10,10,10"
-                        Content="自フォルダを参照先ベクトルDBに追加, Mode=OneTime}"
+                        Content="{Binding StringResources.AddMyFolderToTargetVectorDB, Mode=OneTime}"
                         IsChecked="{Binding IncludeInReferenceVectorDBItems}" />
                     <ListBox
                         Grid.Row="2"

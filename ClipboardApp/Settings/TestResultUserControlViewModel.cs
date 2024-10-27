@@ -9,6 +9,8 @@ namespace ClipboardApp.Settings {
             LogText = logText;
         }
 
+        public static CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
+
         private string logText = "";
         public string LogText {
             get {

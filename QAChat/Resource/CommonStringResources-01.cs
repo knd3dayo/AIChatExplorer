@@ -1,5 +1,5 @@
 namespace QAChat.Resource {
-    public class CommonStringResources {
+    public partial class CommonStringResources {
 
         private static CommonStringResources? _instance;
         public static CommonStringResources Instance {
@@ -37,6 +37,10 @@ namespace QAChat.Resource {
 
         // 基本設定
         public virtual string BasicSettings { get; } = "基本設定";
+
+        // 詳細設定
+        public virtual string DetailSettings { get; } = "詳細設定";
+
         // Pythonインストール先のpython3**.dllを指定
         public virtual string SpecifyPython3Dll { get; } = "Pythonインストール先のpython3**.dllを指定";
 

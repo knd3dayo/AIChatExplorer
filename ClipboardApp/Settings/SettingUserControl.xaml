@@ -58,7 +58,7 @@
             </materialDesign:ColorZone>
         </StackPanel>
         <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
-            <TabItem Header="基本設定">
+            <TabItem Header="{Binding StringResources.BasicSettings, Mode=OneTime}">
                 <ScrollViewer
                     Grid.Row="1"
                     Height="Auto"
@@ -348,7 +348,7 @@
                     </Grid>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="自動処理設定">
+            <TabItem Header="{Binding StringResources.DetailSettings}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>

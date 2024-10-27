@@ -6,7 +6,11 @@ namespace QAChat.Control.StatusBar {
     /// </summary>
     public partial class MyStatusBar : UserControl {
         public MyStatusBar() {
+            // DataContextにViewModelを設定
+            MyStatusBarViewModel myStatusBarViewModel = new();
+            DataContext = myStatusBarViewModel;
             InitializeComponent();
+
         }
     }
 }

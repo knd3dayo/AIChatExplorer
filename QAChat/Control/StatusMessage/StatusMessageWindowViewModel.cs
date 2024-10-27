@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using QAChat.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -12,6 +13,7 @@ namespace QAChat.Control.StatusMessage {
             set { _message = value; OnPropertyChanged(nameof(Message)); }
         }
 
+        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public StatusMessageWindowViewModel() {
             // メッセージを初期化

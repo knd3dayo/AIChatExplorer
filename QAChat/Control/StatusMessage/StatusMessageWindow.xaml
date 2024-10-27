@@ -67,7 +67,7 @@
                 HorizontalAlignment="Right"
                 Command="{Binding ClearCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="クリア"
+                Content="{Binding StringResources.Clear, Mode=OneTime}"
                 Visibility="{Binding ClearButtonVisibility}" />
             <Button
                 Width="100"
@@ -75,7 +75,7 @@
                 HorizontalAlignment="Right"
                 Command="{Binding CloseCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="閉じる"
+                Content="{Binding StringResources.Close, Mode=OneTime}"
                 DockPanel.Dock="Right" />
         </DockPanel>
     </Grid>

@@ -1,7 +1,7 @@
 using WpfAppCommon.Model;
 
 namespace QAChat.Resource {
-    public  class CommonStringResourcesEn : CommonStringResources {
+    public  partial class CommonStringResourcesEn : CommonStringResources {
 
         // -- SettingsUserControl.xaml --
         // Restart the application to apply the changes.
@@ -9,6 +9,11 @@ namespace QAChat.Resource {
 
         // Basic Settings
         public override string BasicSettings { get; } = "Basic Settings";
+
+        // 詳細設定
+        public override string DetailSettings { get; } = "Detail Settings";
+
+
         // Specify the python3**.dll location for Python installation
         public override string SpecifyPython3Dll { get; } = "Specify the python3**.dll location for Python installation";
 
@@ -889,7 +894,7 @@ namespace QAChat.Resource {
         public override string Canceled { get; } = "Canceled";
         public override string Log { get; } = "Log";
 
-        public override string Statistics { get; } = "統計";
+        public override string Statistics { get; } = "Statistics";
 
         public override string NoMatch { get; } = "No Match";
         public override string NoActionSet { get; } = "No Action Set";

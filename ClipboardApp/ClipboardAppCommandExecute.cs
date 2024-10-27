@@ -22,92 +22,88 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp {
     public class ClipboardAppCommandExecute {
 
-        // アプリケーション終了コマンド
+        /// <summary>
+        /// Application exit command
+        /// </summary>
         public static void ExitCommand() {
-            // 終了確認ダイアログを表示。Yesならアプリケーションを終了
+            // Display exit confirmation dialog. If Yes, exit the application
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
                 Application.Current.Shutdown();
             }
         }
-        // クリップボード監視を開始/停止するコマンド
+        // Command to start/stop clipboard monitoring
         public static void StartStopClipboardMonitorCommand(MainWindowViewModel model) {
             model.IsClipboardMonitor = !model.IsClipboardMonitor;
             if (model.IsClipboardMonitor) {
                 MainWindowViewModel.ClipboardController.Start(async (clipboardItem) => {
-                    // クリップボードアイテムが追加された時の処理
+                    // Process when a clipboard item is added
                     await Task.Run(() => {
                         model.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, clipboardItem));
                     });
-
                     MainUITask.Run(() => {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
-
                 LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
             } else {
                 MainWindowViewModel.ClipboardController.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
-            // 通知
+            // Notification
             model.NotifyPropertyChanged(nameof(model.IsClipboardMonitor));
-            // ボタンのテキストを変更
+            // Change button text
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
-
-
         }
-        //  Windows通知監視開始終了フラグを反転させる
+
+        // Toggle flag to start/stop Windows notification monitoring
         public static void StartStopWindowsNotificationMonitorCommand(MainWindowViewModel model) {
             model.IsWindowsNotificationMonitor = !model.IsWindowsNotificationMonitor;
             if (model.IsWindowsNotificationMonitor) {
                 WindowsNotificationController.Start(model.RootFolderViewModel.ClipboardItemFolder, (item) => {
-                    // クリップボードアイテムが追加された時の処理
+                    // Process when a clipboard item is added
                     model.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, item));
                     MainUITask.Run(() => {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
-
             } else {
                 MainWindowViewModel.ClipboardController.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
             }
-            // 通知
+            // Notification
             model.NotifyPropertyChanged(nameof(model.IsWindowsNotificationMonitor));
-            // ボタンのテキストを変更
+            // Change button text
             model.NotifyPropertyChanged(nameof(model.WindowsNotificationMonitorButtonText));
         }
 
-        // OpenAI Chatを開くコマンド
+        // Command to open OpenAI Chat
         public static void OpenOpenAIChatWindowCommand(ClipboardItem item) {
             QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(item);
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
-        // 画像チャットを開くコマンド
+        // Command to open Image Chat
         public static void OpenImageChatWindowCommand(ClipboardItem item, Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
 
-
-        // メニューの「RAG管理」をクリックしたときの処理
+        // Process when "RAG Management" is clicked in the menu
         public static void OpenRAGManagementWindowCommand() {
-            // RARManagementWindowを開く
+            // Open RARManagementWindow
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
 
-
-
-        // メニューの「ベクトルDB管理」をクリックしたときの処理
+        // Process when "Vector DB Management" is clicked in the menu
         public static void OpenVectorDBManagementWindowCommand() {
-            // VectorDBManagementWindowを開く
+            // Open VectorDBManagementWindow
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, (vectorDBItem) => { });
         }
-        // メニューの「設定」をクリックしたときの処理
+
+        // Process when "Settings" is clicked in the menu
         public static void SettingCommandExecute() {
-            // UserControlの設定ウィンドウを開く
+            // Open UserControl settings window
             SettingsUserControl settingsControl = new();
             Window window = new() {
                 SizeToContent = SizeToContent.Height,
@@ -115,12 +111,12 @@ namespace ClipboardApp {
                 Content = settingsControl
             };
             window.ShowDialog();
-
         }
-        // 検索ウィンドウを表示する処理
+
+        // Process to display the search window
         public static void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
             SearchRule? searchConditionRule;
-            // 選択されたフォルダが検索フォルダの場合
+            // If the selected folder is a search folder
             if (folder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folder);
                 searchConditionRule ??= new() {
@@ -133,12 +129,12 @@ namespace ClipboardApp {
             SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
         }
 
-        // フォルダをリロードするコマンド
+        // Command to reload the folder
         public static void ReloadFolderCommand(MainWindowViewModel model) {
             if (model.SelectedFolder == null) {
                 return;
             }
-            // -- 処理完了までProgressIndicatorを表示
+            // Display ProgressIndicator until processing is complete
             try {
                 model.IsIndeterminate = true;
                 model.SelectedFolder.LoadFolderCommand.Execute();
@@ -147,183 +143,163 @@ namespace ClipboardApp {
                 model.IsIndeterminate = false;
             }
         }
-        // Ctrl + Shift + M が押された時の処理
+
+        // Process when Ctrl + Shift + M is pressed
         public static void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-
-            // 選択中のアイテムがない場合は処理をしない
+            // Do not process if no items are selected
             if (SelectedItems == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            // 選択中のフォルダがない場合は処理をしない
+            // Do not process if no folder is selected
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems
-                );
+            );
         }
-        // Ctrl + M が押された時の処理
+        // Process when Ctrl + M is pressed
         public static void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-
-            // 選択中のアイテムがない場合は処理をしない
+            // Do not process if no items are selected
             if (SelectedItems == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            // 選択中のフォルダがない場合は処理をしない
+            // Do not process if no folder is selected
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-
             SelectedFolder.MergeItemCommandExecute(
                 SelectedFolder,
                 SelectedItems
-                );
+            );
         }
-        // フォルダのCtrl + X が押された時の処理
-        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
 
-            // 選択中のフォルダがない場合は処理をしない
+        // Process when Ctrl + X is pressed on a folder
+        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
+            // Do not process if no folder is selected
             if (windowViewModel.SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
-            // Cut Flagを立てる
+            // Set Cut Flag
             windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.Folder;
-            // CopiedFolderに選択中のフォルダをセット
+            // Set the selected folder to CopiedFolder
             windowViewModel.CopiedObjects = [windowViewModel.SelectedFolder];
-
             LogWrapper.Info(CommonStringResources.Instance.Cut);
         }
 
-        // クリップボードアイテムのCtrl + X が押された時の処理 複数アイテム処理可能
+        // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
         public static void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-
-            // 選択中のアイテムがない場合は処理をしない
+            // Do not process if no items are selected
             if (SelectedItems == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            // 選択中のフォルダがない場合は処理をしない
+            // Do not process if no folder is selected
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-            // Cut Flagを立てる
+            // Set Cut Flag
             windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.Item;
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
-            // CopiedItemsに選択中のアイテムをセット
+            // Set the selected items to CopiedItems
             windowViewModel.CopiedObjects.Clear();
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 windowViewModel.CopiedObjects.Add(item);
             }
-
             LogWrapper.Info(CommonStringResources.Instance.Cut);
-
         }
-        // Ctrl + C が押された時の処理
+
+        // Process when Ctrl + C is pressed
         public static void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItem == null) {
+            // Do not process if no items are selected
+            if (SelectedItem == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            if (SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // 選択中のフォルダがない場合は処理をしない
+            // Do not process if no folder is selected
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
-
-            // Cutフラグをもとに戻す
+            // Reset Cut flag
             windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
-
-            // CopiedItemsに選択中のアイテムをセット
+            // Set the selected items to CopiedItems
             windowViewModel.CopiedObjects.Clear();
             foreach (ClipboardItemViewModel item in SelectedItems) {
                 windowViewModel.CopiedObjects.Add(item);
             }
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
-
             try {
                 MainWindowViewModel.ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
-
             } catch (Exception e) {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
-
         }
 
-        // Ctrl + V が押された時の処理
+        // Process when Ctrl + V is pressed
         public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<object> CopiedItems = windowViewModel.CopiedObjects;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedFolder;
-
-            // 貼り付け先のフォルダがない場合は処理をしない
+            // Do not process if no folder is selected
             if (SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
-
-            // コピー元のアイテムがアプリ内のものである場合
+            // If the source items are from within the app
             if (CopiedItems.Count > 0) {
                 SelectedFolder.PasteClipboardItemCommandExecute(
                     windowViewModel.CutFlag,
                     CopiedItems,
                     SelectedFolder
-                    );
-
-                // Cutフラグをもとに戻す
+                );
+                // Reset Cut flag
                 windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
-                // 貼り付け後にコピー選択中のアイテムをクリア
+                // Clear selected items after pasting
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
-                // コピー元のアイテムがない場合はシステムのクリップボードアイテムから貼り付け
+                // If there are no source items, paste from the system clipboard
                 SelectedFolder.ClipboardItemFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
-                        // クリップボードアイテムが追加された時の処理
+                        // Process when a clipboard item is added
                         await Task.Run(() => {
-                            // saveToFolderがTrueの場合はフォルダに保存
+                            // Save to folder if saveToFolder is true
                             SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
-                            // 貼り付け後の処理
+                            // Process after pasting
                             MainUITask.Run(() => {
                                 windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                             });
                         });
-
                     });
             }
         }
-
-        // フォルダを開くコマンド
+        // Command to open a folder
         public static void OpenFolderCommand(ClipboardItem contentItem) {
-            // ContentTypeがFileの場合のみフォルダを開く
+            // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
-            // Process.Startでフォルダを開く
+            // Open the folder with Process.Start
             foreach (var item in contentItem.ClipboardItemFiles) {
                 string? folderPath = item.FolderName;
                 if (folderPath != null) {
@@ -337,7 +313,7 @@ namespace ClipboardApp {
             }
         }
 
-        // テキストを抽出するコマンド
+        // Command to extract text
         public static void ExtractTextCommand(ClipboardItem contentItem) {
             if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
@@ -346,47 +322,45 @@ namespace ClipboardApp {
             contentItem.ExtractTextCommandExecute();
         }
 
-        // ファイルを開くコマンド
+        // Command to open a file
         public static void OpenFileCommand(ClipboardItem contentItem) {
-            // 選択中のアイテムを開く
+            // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
         }
 
-        // ファイルを新規ファイルとして開くコマンド
+        // Command to open a file as a new file
         public static void OpenFileAsNewFileCommand(ClipboardItem contentItem) {
-            // 選択中のアイテムを開く
+            // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
 
-        // タイトルを生成するコマンド
+        // Command to generate titles
         public static async void GenerateTitleCommand(List<ClipboardItem> contentItem, object obj) {
             LogWrapper.Info(CommonStringResources.Instance.GenerateTitleInformation);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
                     item.CreateAutoTitleWithOpenAI();
-                    // 保存
+                    // Save
                     item.Save(false);
                 }
-                // objectがActionの場合は実行
+                // Execute if obj is an Action
                 if (obj is Action action) {
                     action();
                 }
-
             });
             LogWrapper.Info(CommonStringResources.Instance.GeneratedTitleInformation);
         }
 
-
-        // プロンプトテンプレートを実行するコマンド
+        // Command to execute a prompt template
         public static async void ExecutePromptTemplateCommand(List<ClipboardItem> contentItem, object obj, string promptName) {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {
                 foreach (var item in contentItem) {
                     item.CreateChatResult(promptName);
-                    // 保存
+                    // Save
                     item.Save(false);
                 }
-                // objectがActionの場合は実行
+                // Execute if obj is an Action
                 if (obj is Action action) {
                     action();
                 }
@@ -394,35 +368,33 @@ namespace ClipboardApp {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecuted(promptName));
         }
 
-
-        // 背景情報を生成するコマンド
+        // Command to generate background information
         public static void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object obj) {
             string promptName = PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
-        // サマリーを生成するコマンド
+        // Command to generate a summary
         public static void GenerateSummaryCommand(List<ClipboardItem> contentItem, object obj) {
             string promptName = PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
-        // 課題リストを生成するコマンド
+        // Command to generate a task list
         public static void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj) {
             string promptName = PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
-
-        // ベクトルを生成するコマンド
+        // Command to generate vectors
         public static async void GenerateVectorCommand(List<ClipboardItem> contentItem, object obj) {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
                     item.UpdateEmbedding();
-                    // 保存
+                    // Save
                     item.Save(false);
                 }
-                // objectがActionの場合は実行
+                // Execute if obj is an Action
                 if (obj is Action action) {
                     action();
                 }
@@ -430,11 +402,11 @@ namespace ClipboardApp {
             LogWrapper.Info(CommonStringResources.Instance.GeneratedVector);
         }
 
-        // ベクトル検索を実行するコマンド
+        // Command to perform vector search
         public static void OpenVectorSearchWindowCommand(ClipboardFolder folder) {
-            // ベクトル検索結果ウィンドウを開く
+            // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // ベクトルDBアイテムを選択したときのアクション
+            // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
                 SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
@@ -442,19 +414,15 @@ namespace ClipboardApp {
                     }
                 });
             };
-
             vectorSearchWindowViewModel.VectorDBItem = folder.GetVectorDBItem();
-
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-
         }
 
-        // ベクトル検索を実行するコマンド
+        // Command to perform vector search
         public static void OpenVectorSearchWindowCommand(ClipboardItem contentItem) {
-
-            // ベクトル検索結果ウィンドウを開く
+            // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // ベクトルDBアイテムを選択したときのアクション
+            // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
                 SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
@@ -462,8 +430,6 @@ namespace ClipboardApp {
                     }
                 });
             };
-
-
             if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
                 vectorSearchWindowViewModel.InputText = contentItem.Content + "\n" + contentItem.BackgroundInfo;
             } else {
@@ -471,22 +437,18 @@ namespace ClipboardApp {
             }
             vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
             vectorSearchWindowViewModel.InputText = contentItem.Content;
-            // ベクトル検索を実行
+            // Execute vector search
             vectorSearchWindowViewModel.SendCommand.Execute(null);
-
-
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
-
-        // テキストをファイルとして開くコマンド
+        // Command to open text content as a file
         public static void OpenContentAsFileCommand(ClipboardItem contentItem) {
             try {
-                // 選択中のアイテムを開く
+                // Open the selected item
                 ClipboardProcessController.OpenClipboardItemContent(contentItem);
             } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }
         }
-
     }
 }

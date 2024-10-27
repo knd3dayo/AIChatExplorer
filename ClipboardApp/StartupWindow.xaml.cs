@@ -1,4 +1,6 @@
 using System.Windows;
+using ClipboardApp.Model;
+using QAChat.Resource;
 
 namespace ClipboardApp {
     /// <summary>
@@ -7,14 +9,17 @@ namespace ClipboardApp {
     public partial class StartupWindow : Window {
         public StartupWindow() {
             InitializeComponent();
+            // 言語設定
+            // 文字列リソースの言語設定
+            CommonStringResources.Lang = ClipboardAppConfig.Instance.ActualLang;
 
-            // MainWindowを表示
-            MainWindow mainWindow = new MainWindow();
             // DataContextにViewModelを設定
-            MainWindowViewModel mainWindowViewModel = new ();
-            mainWindow.DataContext = mainWindowViewModel;
+            MainWindowViewModel mainWindowViewModel = new();
+            // MainWindowを表示
+            MainWindow mainWindow = new() {
+                DataContext = mainWindowViewModel
+            };
             mainWindowViewModel.Init();
-
 
             mainWindow.Show();
 

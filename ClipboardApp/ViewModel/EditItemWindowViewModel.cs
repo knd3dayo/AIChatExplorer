@@ -26,7 +26,8 @@ namespace ClipboardApp.ViewModel {
                     ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems
                 };
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
-                Title = "新規アイテム";
+                Title = StringResources.NewItem;
+
             } else {
                 Title = itemViewModel.ClipboardItem.Description;
                 ItemViewModel = itemViewModel;

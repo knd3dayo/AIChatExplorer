@@ -9,16 +9,18 @@ using QAChat.Resource;
 namespace QAChat.Control.StatusBar {
     public class MyStatusBarViewModel : ObservableObject {
 
-        // 文字列リソース
-        public CommonStringResources StringResources { get; } = CommonStringResources.Instance;
         // ステータスバーのテキスト
         public StatusText StatusText { get; set; } = Tools.StatusText;
 
+        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
+
+
         // ステータスメッセージのログ画面を表示する。
         public static SimpleDelegateCommand<object> OpenStatusMessageWindowCommand => new((parameter) => {
-            StatusMessageWindow userControl = new StatusMessageWindow();
-            StatusMessageWindowViewModel statusMessageWindowViewModel = new StatusMessageWindowViewModel();
-            userControl.DataContext = statusMessageWindowViewModel;
+            StatusMessageWindowViewModel statusMessageWindowViewModel = new();
+            StatusMessageWindow userControl = new() {
+                DataContext = statusMessageWindowViewModel
+            };
             Window window = new() {
                 Title = CommonStringResources.Instance.Log,
                 Content = userControl,
@@ -45,9 +47,12 @@ namespace QAChat.Control.StatusBar {
 
         // ロード時の処理
         public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
-            UserControl userControl = (UserControl)routedEventArgs.Source;
-            Window window = Window.GetWindow(userControl);
-            OnPropertyChanged(nameof(StatusText));
+            // UserControl userControl = (UserControl)routedEventArgs.Source;
+            // Window window = Window.GetWindow(userControl);
+            StringResources = CommonStringResources.Instance;
+            string statistics = CommonStringResources.Instance.Statistics;
+            OnPropertyChanged(nameof(StringResources));
+
         });
 
     }

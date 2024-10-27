@@ -113,7 +113,7 @@
                     Grid.Column="0"
                     Width="100"
                     Margin="10,10,10,0"
-                    HorizontalContentAlignment="Center"
+                    VerticalAlignment="Center"
                     Content="{Binding StringResources.Title, Mode=OneTime}" />
                 <TextBox
                     Grid.Row="0"
@@ -124,14 +124,14 @@
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
-                    Width="50"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Center"
-                    Content="タグ" />
+                    Width="100"
+                    Margin="10,10,10,0"
+                    VerticalAlignment="Center"
+                    Content="{Binding StringResources.Tag}" />
                 <TextBox
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="10,0,10,10"
+                    Margin="10,10,10,0"
                     materialDesign:HintAssist.Hint="{Binding StringResources.ClickHereToOpenTheTagEditScreen, Mode=OneTime}"
                     IsReadOnly="True"
                     Text="{Binding TagsString}">
