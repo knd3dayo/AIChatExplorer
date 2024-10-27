@@ -31,6 +31,90 @@ namespace QAChat.Resource {
             }
         }
 
+        #region 共通
+        // ファイル
+        public virtual string File { get; } = "ファイル";
+
+        // ファイル/画像
+        public virtual string FileOrImage { get; } = "ファイル/画像";
+        // 作成
+        public virtual string Create { get; } = "作成";
+        // アイテム作成
+        public virtual string CreateItem { get; } = "アイテム作成";
+        // 終了
+        public virtual string Exit { get; } = "終了";
+        // 編集
+        public virtual string Edit { get; } = "編集";
+
+        #region プロンプトメニュー
+
+        public virtual string PromptMenu { get; } = "プロンプトメニュー";
+        // タイトルを生成
+        public virtual string GenerateTitle { get; } = "タイトルを生成";
+
+        // 背景情報を生成
+        public virtual string GenerateBackgroundInfo { get; } = "背景情報を生成";
+
+        // サマリーを生成
+        public virtual string GenerateSummary { get; } = "サマリーを生成";
+
+        // ベクトル生成
+        public virtual string GenerateVector { get; } = "ベクトル生成";
+
+        #endregion
+
+        //ベクトル検索
+        public virtual string VectorSearch { get; } = "ベクトル検索";
+
+        // 開始
+        public virtual string Start { get; } = "開始";
+        // 停止
+        public virtual string Stop { get; } = "停止";
+        // 選択
+        public virtual string Select { get; } = "選択";
+        // ヘルプ
+        public virtual string Help { get; } = "ヘルプ";
+        // バージョン情報
+        public virtual string VersionInfo { get; } = "バージョン情報";
+
+        // 表示
+        public virtual string View { get; } = "表示";
+
+        // 検索
+        public virtual string Search { get; } = "検索";
+        // 設定
+        public virtual string Setting { get; } = "設定";
+        // 削除
+        public virtual string Delete { get; } = "削除";
+        // 追加
+        public virtual string Add { get; } = "追加";
+        // OK
+        public virtual string OK { get; } = "OK";
+        // キャンセル
+        public virtual string Cancel { get; } = "キャンセル";
+        // 閉じる
+        public virtual string Close { get; } = "閉じる";
+
+        // ExportImport
+        public virtual string ExportImport { get; } = "エクスポート/インポート";
+
+        // Export
+        public virtual string Export { get; } = "エクスポート";
+        // Import
+        public virtual string Import { get; } = "インポート";
+
+        // モード
+        public virtual string Mode { get; } = "モード";
+
+        // バックアップ/リストア
+        public virtual string BackupRestore { get; } = "バックアップ/リストア";
+
+        // アイテムのバックアップ
+        public virtual string BackupItem { get; } = "アイテムのバックアップ";
+        // アイテムのリストア
+        public virtual string RestoreItem { get; } = "アイテムのリストア";
+
+        #endregion
         // -- SettingsUserControl.xaml --
         // -- 設定を反映させるためにアプリケーションの再起動を行ってください。
         public virtual string RestartAppToApplyChanges { get; } = "設定を反映させるためにアプリケーションの再起動を行ってください。";
@@ -129,86 +213,6 @@ namespace QAChat.Resource {
         public virtual string CheckSettings { get; } = "設定のチェック";
 
         public virtual string AppName { get; } = "RAG Clipboard";
-        // ファイル
-        public virtual string File { get; } = "ファイル";
-
-        // ファイル/画像
-        public virtual string FileOrImage { get; } = "ファイル/画像";
-        // 作成
-        public virtual string Create { get; } = "作成";
-        // アイテム作成
-        public virtual string CreateItem { get; } = "アイテム作成";
-        // 終了
-        public virtual string Exit { get; } = "終了";
-        // 編集
-        public virtual string Edit { get; } = "編集";
-
-        #region プロンプトメニュー
-
-        public virtual string PromptMenu { get; } = "プロンプトメニュー";
-        // タイトルを生成
-        public virtual string GenerateTitle { get; } = "タイトルを生成";
-
-        // 背景情報を生成
-        public virtual string GenerateBackgroundInfo { get; } = "背景情報を生成";
-
-        // サマリーを生成
-        public virtual string GenerateSummary { get; } = "サマリーを生成";
-
-        // ベクトル生成
-        public virtual string GenerateVector { get; } = "ベクトル生成";
-
-        #endregion
-
-        //ベクトル検索
-        public virtual string VectorSearch { get; } = "ベクトル検索";
-
-        // 開始
-        public virtual string Start { get; } = "開始";
-        // 停止
-        public virtual string Stop { get; } = "停止";
-        // 選択
-        public virtual string Select { get; } = "選択";
-        // ヘルプ
-        public virtual string Help { get; } = "ヘルプ";
-        // バージョン情報
-        public virtual string VersionInfo { get; } = "バージョン情報";
-
-        // 表示
-        public virtual string View { get; } = "表示";
-
-        // 検索
-        public virtual string Search { get; } = "検索";
-        // 設定
-        public virtual string Setting { get; } = "設定";
-        // 削除
-        public virtual string Delete { get; } = "削除";
-        // 追加
-        public virtual string Add { get; } = "追加";
-        // OK
-        public virtual string OK { get; } = "OK";
-        // キャンセル
-        public virtual string Cancel { get; } = "キャンセル";
-        // 閉じる
-        public virtual string Close { get; } = "閉じる";
-
-        // ExportImport
-        public virtual string ExportImport { get; } = "エクスポート/インポート";
-
-        // Export
-        public virtual string Export { get; } = "エクスポート";
-        // Import
-        public virtual string Import { get; } = "インポート";
-
-
-        // バックアップ/リストア
-        public virtual string BackupRestore { get; } = "バックアップ/リストア";
-
-        // アイテムのバックアップ
-        public virtual string BackupItem { get; } = "アイテムのバックアップ";
-        // アイテムのリストア
-        public virtual string RestoreItem { get; } = "アイテムのリストア";
-
         // 自動処理ルール一覧
         public virtual string ListAutoProcessRule { get; } = "自動処理ルール一覧";
         // Pythonスクリプト一覧

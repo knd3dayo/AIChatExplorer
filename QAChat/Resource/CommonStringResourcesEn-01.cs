@@ -184,6 +184,9 @@ namespace QAChat.Resource {
         // Import
         public override string Import { get; } = "Import";
 
+        // Mode
+        public override string Mode { get; } = "Mode";
+
         // Backup/Restore
         public override string BackupRestore { get; } = "Backup/Restore";
 
