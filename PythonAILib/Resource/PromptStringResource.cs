@@ -83,5 +83,6 @@ namespace PythonAILib.Resource {
 
         // Json形式で文字列のリストを生成するプロンプト
         public virtual string JsonStringListGenerationPrompt { get; } = "出力は文字列のリストとして、JSON形式で{result:[リストの項目]}でお願いします。\n";
+
     }
 }

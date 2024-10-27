@@ -354,5 +354,20 @@ namespace PythonAILib.Resource {
 
         // "プロンプトテンプレート[promptName]を実行しました."
         public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+        #region 統計、ログ関連
+
+        // 日次トークン数
+        public virtual string DailyTokenCount { get; } = "日次トークン数";
+        // 総トークン数
+        public virtual string TotalTokenFormat(long tokens) {
+            return $"総トークン数: {tokens} トークン";
+        }
+        // トークン数
+        public virtual string TokenCount { get; } = "トークン数";
+
+        public virtual string DailyTokenFormat(string date, long totalTokens) {
+            return $"{date}のトークン数: {totalTokens} トークン";
+        }
+        #endregion
     }
 }

@@ -234,6 +234,21 @@ namespace PythonAILib.Resource {
         // "The prompt template [promptName] has been executed."
         public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
 
+        #region Statistics and Logging
+
+        // Daily token count
+        public override string DailyTokenCount { get; } = "Daily Token Count";
+        // Total token count
+        public override string TotalTokenFormat(long tokens) {
+            return $"Total Token Count: {tokens} tokens";
+        }
+        // Token count
+        public override string TokenCount { get; } = "Token Count";
+
+        public override string DailyTokenFormat(string date, long totalTokens) {
+            return $"Token count for {date}: {totalTokens} tokens";
+        }
+        #endregion
 
     }
 }
