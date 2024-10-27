@@ -432,7 +432,24 @@ namespace ClipboardApp.Model {
                 Properties.Settings.Default.TextWrapping = _textWrapping;
             }
         }
-
+        // AutoTextWrapping
+        private bool? _autoTextWrapping;
+        public bool AutoTextWrapping {
+            get {
+                if (_autoTextWrapping == null) {
+                    _autoTextWrapping = Properties.Settings.Default.AutoTextWrapping;
+                }
+                return _autoTextWrapping.Value;
+            }
+            set {
+                _autoTextWrapping = value;
+                // valueがTrueの場合はTextWrappingをWrapにする
+                if (value) {
+                    TextWrapping = System.Windows.TextWrapping.Wrap;
+                }
+                Properties.Settings.Default.AutoTextWrapping = value;
+            }
+        }
 
         // PreviewMode
         private bool? _previewMode;

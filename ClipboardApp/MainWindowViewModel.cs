@@ -13,6 +13,8 @@ using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.Search;
 using QAChat;
 using QAChat.Control;
+using QAChat.Resource;
+using WpfAppCommon.Control.Editor;
 
 
 namespace ClipboardApp {
@@ -203,6 +205,37 @@ namespace ClipboardApp {
                 // Save
                 ClipboardAppConfig.Instance.Save();
                 OnPropertyChanged(nameof(TextWrapping));
+                if (TextWrapping) {
+                    CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
+                } else {
+                    if (value) {
+                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
+                    } else {
+                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
+                    }
+                }
+            }
+        }
+        // AutoTextWrapping
+        public bool AutoTextWrapping {
+            get {
+                return ClipboardAppConfig.Instance.AutoTextWrapping;
+            }
+            set {
+                ClipboardAppConfig.Instance.AutoTextWrapping = value;
+                // Save
+                ClipboardAppConfig.Instance.Save();
+                OnPropertyChanged(nameof(AutoTextWrapping));
+                // CommonViewModelBaseのTextWrappingModeを更新
+                if (value) {
+                    CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.WrapWithThreshold;
+                } else {
+                    if (TextWrapping) {
+                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
+                    } else { 
+                        CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
+                    }
+                }
             }
         }
 

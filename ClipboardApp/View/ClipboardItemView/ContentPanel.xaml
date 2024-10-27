@@ -28,7 +28,7 @@
         Margin="10,3,10,3"
         FontSize="10pt"
         Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
-        TextWrapping="{Binding TextWrapping, Mode=OneWay}">
+        TextWrappingMode="{Binding TextWrappingMode}">
         <editorControl:MyTextBox.ContextMenu>
             <ContextMenu>
                 <MenuItem Command="ApplicationCommands.Copy" />

@@ -1,12 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model;
-using CommunityToolkit.Mvvm.ComponentModel;
-using WpfAppCommon.Utils;
 using QAChat.Resource;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
-    public class ClipboardAppViewModelBase : ObservableObject {
+    public class ClipboardAppViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
         public CommonStringResources StringResources {

@@ -161,50 +161,6 @@ namespace QAChat.Resource {
         // View
         public override string View { get; } = "View";
 
-        // Start Clipboard Watch
-        public override string StartClipboardWatch { get; } = "Start Clipboard Watch";
-        // Stop Clipboard Watch
-        public override string StopClipboardWatch { get; } = "Stop Clipboard Watch";
-        // Start Notification Watch
-        public override string StartNotificationWatch { get; } = "Start Notification Watch";
-        // Stop Notification Watch
-        public override string StopNotificationWatch { get; } = "Stop Notification Watch";
-
-        // Started Clipboard Watch
-        public override string StartClipboardWatchMessage { get; } = "Started Clipboard Watch";
-        // Stopped Clipboard Watch
-        public override string StopClipboardWatchMessage { get; } = "Stopped Clipboard Watch";
-        // Started Notification Watch
-        public override string StartNotificationWatchMessage { get; } = "Started Notification Watch";
-        // Stopped Notification Watch
-        public override string StopNotificationWatchMessage { get; } = "Stopped Notification Watch";
-
-        // Edit Tag
-        public override string EditTag { get; } = "Edit Tag";
-        // Edit Auto Process Rule
-        public override string EditAutoProcessRule { get; } = "Edit Auto Process Rule";
-        // Edit Python Script
-        public override string EditPythonScript { get; } = "Edit Python Script";
-        // Edit Prompt Template
-        public override string EditPromptTemplate { get; } = "Edit Prompt Template";
-        // Edit Git RAG Source
-        public override string EditGitRagSource { get; } = "Edit Git RAG Source";
-
-        // -- View Menu --
-        // Wrap text at the right edge
-        public override string TextWrapping { get; } = "Wrap text at the right edge";
-        // Enable Preview Mode
-        public override string PreviewMode { get; } = "Enable Preview Mode";
-        // Enable Compact Mode
-        public override string CompactMode { get; } = "Enable Compact Mode";
-
-        // Tool
-        public override string Tool { get; } = "Tool";
-        // OpenAI Chat
-        public override string OpenAIChat { get; } = "OpenAI Chat";
-        // BitmapImage Chat
-        public override string ImageChat { get; } = "Image Chat";
-
         // Search
         public override string Search { get; } = "Search";
         // Setting

@@ -361,7 +361,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool TextWrapping {
             get {
                 return ((bool)(this["TextWrapping"]));
@@ -512,6 +512,18 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["SourceDocumentURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoTextWrapping {
+            get {
+                return ((bool)(this["AutoTextWrapping"]));
+            }
+            set {
+                this["AutoTextWrapping"] = value;
             }
         }
     }

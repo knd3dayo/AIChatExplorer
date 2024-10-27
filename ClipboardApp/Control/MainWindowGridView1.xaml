@@ -50,17 +50,17 @@
             VirtualizingStackPanel.IsVirtualizing="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand, ElementName=Root, Mode=OneTime}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand, ElementName=Root}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.InputBindings>
                 <!--  Open selected item window by double-clicking  -->
-                <MouseBinding Command="{Binding OpenSelectedItemCommand, ElementName=Root, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                <MouseBinding Command="{Binding OpenSelectedItemCommand, ElementName=Root}" MouseAction="LeftDoubleClick" />
                 <KeyBinding
                     Key="C"
-                    Command="{Binding CopyItemCommand, ElementName=Root, Mode=OneTime}"
+                    Command="{Binding CopyItemCommand, ElementName=Root}"
                     Modifiers="Ctrl" />
-                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, ElementName=Root, Mode=OneTime}" />
+                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, ElementName=Root}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <!--  ContentType  -->

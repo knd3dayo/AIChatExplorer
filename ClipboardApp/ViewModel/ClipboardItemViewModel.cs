@@ -10,7 +10,7 @@ using WpfAppCommon.Utils;
 using QAChat.Resource;
 
 namespace ClipboardApp.ViewModel {
-    public partial class ClipboardItemViewModel : ObservableObject {
+    public partial class ClipboardItemViewModel : CommonViewModelBase {
 
         // コンストラクタ
         public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItem clipboardItem) {

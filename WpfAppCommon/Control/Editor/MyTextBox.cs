@@ -5,6 +5,12 @@ using WpfAppCommon.Utils;
 
 namespace WpfAppCommon.Control.Editor {
     public class MyTextBox : TextBox {
+        // TextWrappingMode : 0 = NoWrap, 1 = Wrap, 2 = 閾値より小さい場合はWrap, 閾値以上の場合はNoWrap
+        public enum TextWrappingModeEnum {
+            NoWrap = 1,
+            Wrap = 2,
+            WrapWithThreshold = 3
+        }
 
         public MyTextBox() {
             // TextSelectorの初期化
@@ -13,11 +19,34 @@ namespace WpfAppCommon.Control.Editor {
             // 各種設定
             SetSettings();
             SetInputBindings();
+            UpdateTextWrapping();
 
         }
 
-
         // DependencyProperties
+        // TextWrappingMode
+        public static readonly DependencyProperty TextWrappingModeProperty
+            = DependencyProperty.Register("TextWrappingMode", typeof(TextWrappingModeEnum), typeof(MyTextBox), new PropertyMetadata(TextWrappingModeEnum.Wrap));
+        public TextWrappingModeEnum TextWrappingMode {
+            get { return (TextWrappingModeEnum)GetValue(TextWrappingModeProperty); }
+            set { SetValue(TextWrappingModeProperty, value); }
+        }
+
+        protected void UpdateTextWrapping() {
+            switch (TextWrappingMode) {
+                case TextWrappingModeEnum.NoWrap:
+                    TextWrapping = TextWrapping.NoWrap;
+                    break;
+                case TextWrappingModeEnum.Wrap:
+                    TextWrapping = TextWrapping.Wrap;
+                    break;
+                case TextWrappingModeEnum.WrapWithThreshold:
+                    TextWrapping = TextWrapping.WrapWithOverflow;
+                    break;
+            }
+        }
+
+        // TextSelector
         public static readonly DependencyProperty TextSelectorProperty
             = DependencyProperty.Register("TextSelector", typeof(TextSelector), typeof(MyTextBox), new PropertyMetadata(new TextSelector()));
         public TextSelector TextSelector {

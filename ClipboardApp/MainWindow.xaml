@@ -150,6 +150,12 @@
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding StringResources.AutoTextWrapping, Mode=OneTime}"
+                                IsCheckable="True"
+                                IsChecked="{Binding AutoTextWrapping}" />
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding StringResources.PreviewMode, Mode=OneTime}"
                                 IsCheckable="True"
                                 IsChecked="{Binding PreviewMode}" />

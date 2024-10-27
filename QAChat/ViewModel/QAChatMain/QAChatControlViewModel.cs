@@ -18,7 +18,7 @@ using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
 
-    public class QAChatControlViewModel : ObservableObject {
+    public class QAChatControlViewModel : CommonViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 

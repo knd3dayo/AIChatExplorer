@@ -83,7 +83,8 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding SelectedFile.FilePath, Mode=OneWay}" />
+                    Text="{Binding SelectedFile.FilePath, Mode=OneWay}"
+                    TextWrappingMode="{Binding TextWrappingMode}" />
 
                 <TextBlock
                     Grid.Row="1"
@@ -97,7 +98,8 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding SelectedFile.FolderName, Mode=OneWay}" />
+                    Text="{Binding SelectedFile.FolderName, Mode=OneWay}"
+                    TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="2"
                     Grid.Column="0"
@@ -109,7 +111,8 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding SelectedFile.FileName, Mode=OneWay}" />
+                    Text="{Binding SelectedFile.FileName, Mode=OneWay}"
+                    TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="3"
                     Grid.Column="0"
@@ -121,7 +124,8 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}" />
+                    Text="{Binding SelectedFile.FolderAndFileName, Mode=OneWay}"
+                    TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="4"
                     Grid.Column="0"
@@ -152,7 +156,8 @@
                     <editorControl:MyTextBox
                         Margin="10,3,10,3"
                         IsReadOnly="True"
-                        Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}" />
+                        Text="{Binding SelectedFile.ExtractedText, Mode=OneWay}"
+                        TextWrappingMode="{Binding TextWrappingMode}" />
                 </ScrollViewer>
             </Grid>
         </ScrollViewer>

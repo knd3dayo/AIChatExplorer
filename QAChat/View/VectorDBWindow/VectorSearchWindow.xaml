@@ -120,7 +120,7 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                                         Text="{Binding Content}"
-                                        TextWrapping="Wrap" />
+                                        TextWrappingMode="{Binding TextWrappingMode}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -170,7 +170,7 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                                         Text="{Binding Content}"
-                                        TextWrapping="Wrap" />
+                                        TextWrappingMode="{Binding TextWrappingMode}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -216,7 +216,7 @@
                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                                         Text="{Binding Content}"
-                                        TextWrapping="Wrap" />
+                                        TextWrappingMode="{Binding TextWrappingMode}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -234,7 +234,8 @@
                 Margin="10,0,10,0"
                 materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
                 AcceptsReturn="True"
-                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                TextWrappingMode="{Binding TextWrappingMode}" />
         </ScrollViewer>
         <DockPanel Grid.Row="3" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
