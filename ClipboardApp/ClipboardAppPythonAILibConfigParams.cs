@@ -19,6 +19,10 @@ namespace ClipboardApp {
         public string GetPathToVirtualEnv() {
             return ClipboardAppConfig.Instance.PythonVenvPath;
         }
+        public string GetAppDataPath() {
+            return ClipboardAppConfig.Instance.AppDataFolder;
+        }
+
         public IDataFactory GetDataFactory() {
             return ClipboardAppFactory.Instance.GetClipboardDBController();
         }

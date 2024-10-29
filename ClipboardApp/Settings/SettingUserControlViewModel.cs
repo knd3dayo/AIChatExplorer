@@ -542,7 +542,7 @@ namespace ClipboardApp.Settings {
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
             try {
                 // ChatControllerを作成
                 Chat chatController = new();

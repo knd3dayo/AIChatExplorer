@@ -45,12 +45,6 @@ namespace PythonAILib.Resource {
         // Custom Python script template file
         public override string TemplateScript { get; } = "python/script_template.py";
 
-        // Python script for OpenAI
-        public override string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
-
-        // Python script for miscellaneous
-        public override string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
-
         // Template file not found
         public override string TemplateScriptNotFound { get; } = "Template file not found";
 

@@ -18,6 +18,10 @@ namespace ImageChat {
         public string GetPathToVirtualEnv() {
             return ImageChatConfig.Instance.PythonVenvPath;
         }
+        public string GetAppDataPath() {
+            return ImageChatConfig.Instance.AppDataFolder;
+        }
+
         public IDataFactory GetDataFactory() {
             return ImageChatDataFactory.Instance;
         }

@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using Python.Runtime;
 using PythonAILib.Resource;
 using PythonAILib.Utils;
-
 namespace PythonAILib.PythonIF {
     public class PythonExecutor {
         // String definition instance
@@ -14,14 +13,27 @@ namespace PythonAILib.PythonIF {
         public static string TemplateScript { get; } = StringResources.TemplateScript;
 
         // Python script for OpenAI
-        public static string WpfAppCommonOpenAIScript { get; } = StringResources.WpfAppCommonOpenAIScript;
-        // Python script for Misc
-        public static string WpfAppCommonMiscScript { get; } = StringResources.WpfAppCommonMiscScript;
+        public static string WpfAppCommonOpenAIScript {
+            get {
+                string path = Path.Combine(PythonAILibPath, "ai_app_wrapper.py");
+                return path;
+            }
+        }
 
+        // Python script for Misc
+        public static string WpfAppCommonMiscScript {
+            get {
+                string devPath = Path.Combine(PythonAILibPath, "dev");
+                string path = Path.Combine(devPath, "misc_app.py");
+                return path;
+            }
+        }
 
         public static string? PythonPath { get; set; }
 
         private static string PathToVirtualEnv { get; set; } = "";
+
+        private static string PythonAILibPath { get; set; } = "python";
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
@@ -54,10 +66,19 @@ namespace PythonAILib.PythonIF {
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv = "") {
+        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot = "") {
 
             PythonPath = pythonPath;
             PathToVirtualEnv = pathToVirtualEnv;
+            if (!string.IsNullOrEmpty(pythonAILibPathRoot)) { 
+
+                PythonAILibPath = Path.Combine(pythonAILibPathRoot,"python");
+                // Check if the PythonAILibPath exists
+                if (!Directory.Exists(PythonAILibPath)) {
+                    // ./pythonディレクトリをPythonAILibPathRootへコピーする
+                    Tools.CopyDirectory("python", PythonAILibPath, true);
+                }
+            }
         }
 
 

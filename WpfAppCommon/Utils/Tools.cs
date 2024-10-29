@@ -1,3 +1,4 @@
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using NLog;
@@ -55,6 +56,7 @@ namespace WpfAppCommon.Utils {
             // それ以外はNullを返す。
             return null;
         }
+
 
         [GeneratedRegex(@"<[^>]+>")]
         private static partial Regex MyRegex();

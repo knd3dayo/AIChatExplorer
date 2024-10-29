@@ -17,6 +17,8 @@ namespace PythonAILib.Model.Abstract {
 
         public string GetPathToVirtualEnv();
 
+        public string GetAppDataPath();
+
         public IDataFactory GetDataFactory();
 
         public OpenAIProperties GetOpenAIProperties();
