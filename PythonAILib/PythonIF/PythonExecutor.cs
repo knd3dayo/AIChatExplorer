@@ -33,7 +33,7 @@ namespace PythonAILib.PythonIF {
 
         private static string PathToVirtualEnv { get; set; } = "";
 
-        private static string PythonAILibPath { get; set; } = "python";
+        private static string PythonAILibPath { get; set; } = "python_ai_lib";
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
@@ -74,11 +74,11 @@ namespace PythonAILib.PythonIF {
             }
             if (!string.IsNullOrEmpty(pythonAILibPathRoot)) { 
 
-                PythonAILibPath = Path.Combine(pythonAILibPathRoot,"python");
+                PythonAILibPath = Path.Combine(pythonAILibPathRoot,"python_ai_lib");
                 // Check if the PythonAILibPath exists
                 if (!Directory.Exists(PythonAILibPath)) {
                     // ./pythonディレクトリをPythonAILibPathRootへコピーする
-                    Tools.CopyDirectory("python", PythonAILibPath, true);
+                    Tools.CopyDirectory("python_ai_lib", PythonAILibPath, true);
                 }
             }
         }
@@ -142,7 +142,7 @@ namespace PythonAILib.PythonIF {
                         // been loaded by the interpreter (but not run yet)
                         site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
 
-                        // set pythonAILibPath to  sys.path
+                        // set the path to pythonAILib
                         site.addsitedir(pythonAILibPath);
 
                         // Run site path modification with tweaked prefixes
