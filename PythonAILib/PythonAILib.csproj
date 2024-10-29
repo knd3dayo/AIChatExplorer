@@ -36,6 +36,7 @@
     <None Remove="python\test_langchain_vector_db_postgres.py" />
     <None Remove="python\test_openai_client.py" />
     <None Remove="python\tools.json" />
+    <None Remove="python\__init__.py" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="python\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python\ai_app_wrapper.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

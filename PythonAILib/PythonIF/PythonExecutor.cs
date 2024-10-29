@@ -43,7 +43,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.PythonDLLNotFound);
                 }
                 if (_pythonAIFunctions == null) {
-                    InitPythonNet(PythonPath, PathToVirtualEnv);
+                    InitPythonNet(PythonPath, PathToVirtualEnv, PythonAILibPath);
                     _pythonAIFunctions = new PythonNetFunctions();
                 }
                 return _pythonAIFunctions;
@@ -66,10 +66,12 @@ namespace PythonAILib.PythonIF {
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot = "") {
+        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot) {
 
             PythonPath = pythonPath;
-            PathToVirtualEnv = pathToVirtualEnv;
+            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                PathToVirtualEnv = pathToVirtualEnv;
+            }
             if (!string.IsNullOrEmpty(pythonAILibPathRoot)) { 
 
                 PythonAILibPath = Path.Combine(pythonAILibPathRoot,"python");
@@ -82,7 +84,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv = "") {
+        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath) {
             // Pythonスクリプトを実行するための準備
 
             // 既に初期化されている場合は初期化しない
@@ -135,9 +137,14 @@ namespace PythonAILib.PythonIF {
                         sys.exec_prefix = pathToVirtualEnv;
 
                         dynamic site = Py.Import("site");
+
                         // This has to be overwritten because site module may already have 
                         // been loaded by the interpreter (but not run yet)
                         site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
+
+                        // set pythonAILibPath to  sys.path
+                        site.addsitedir(pythonAILibPath);
+
                         // Run site path modification with tweaked prefixes
                         site.main();
 

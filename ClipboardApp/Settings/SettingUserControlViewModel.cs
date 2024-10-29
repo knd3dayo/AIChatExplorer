@@ -523,7 +523,7 @@ namespace ClipboardApp.Settings {
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
