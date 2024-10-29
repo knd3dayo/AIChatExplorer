@@ -569,6 +569,34 @@ namespace ClipboardApp.Model {
             }
         }
 
+        // ProxyURL
+        private string? _proxyURL;
+        public string ProxyURL {
+            get {
+                if (_proxyURL == null) {
+                    _proxyURL = Properties.Settings.Default.ProxyURL;
+                }
+                return _proxyURL;
+            }
+            set {
+                _proxyURL = value;
+                Properties.Settings.Default.ProxyURL = value;
+            }
+        }
+        // NoProxyList
+        private string? _noProxyList;
+        public string NoProxyList {
+            get {
+                if (_noProxyList == null) {
+                    _noProxyList = Properties.Settings.Default.NoProxyList;
+                }
+                return _noProxyList;
+            }
+            set {
+                _noProxyList = value;
+                Properties.Settings.Default.NoProxyList = value;
+            }
+        }
 
         #endregion
 

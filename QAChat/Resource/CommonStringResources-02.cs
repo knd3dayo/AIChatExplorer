@@ -65,6 +65,11 @@ namespace QAChat.Resource {
 
         #endregion
 
-
+        #region SettingWindow
+        // ProxyURL
+        public virtual string ProxyURL { get; } = "ProxyサーバーのURL";
+        // NoProxyList
+        public virtual string NoProxyList { get; } = "Proxy除外リスト";
+        #endregion
     }
 }

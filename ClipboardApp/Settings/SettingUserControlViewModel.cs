@@ -409,6 +409,33 @@ namespace ClipboardApp.Settings {
             }
         }
 
+        // ProxyURL
+        public string ProxyURL {
+            get {
+                return ClipboardAppConfig.Instance.ProxyURL;
+            }
+            set {
+                ClipboardAppConfig.Instance.ProxyURL = value;
+                OnPropertyChanged(nameof(ProxyURL));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+        // NoProxyList
+        public string NoProxyList {
+            get {
+                return ClipboardAppConfig.Instance.NoProxyList;
+            }
+            set {
+                ClipboardAppConfig.Instance.NoProxyList = value;
+                OnPropertyChanged(nameof(NoProxyList));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // 設定をチェックする処理
         private void Log(StringBuilder stringBuilder, string message) {
             stringBuilder.AppendLine(message);

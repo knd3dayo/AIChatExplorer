@@ -526,5 +526,29 @@ namespace ClipboardApp.Properties {
                 this["AutoTextWrapping"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ProxyURL {
+            get {
+                return ((string)(this["ProxyURL"]));
+            }
+            set {
+                this["ProxyURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NoProxyList {
+            get {
+                return ((string)(this["NoProxyList"]));
+            }
+            set {
+                this["NoProxyList"] = value;
+            }
+        }
     }
 }

@@ -84,6 +84,8 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <TextBlock
                                 Grid.Row="0"
@@ -106,15 +108,38 @@
                                 <ComboBoxItem Content="Japanese" />
                                 <ComboBoxItem Content="English" />
                             </ComboBox>
-                            <!--  Backup Generation  -->
+                            <!--  ProxyURL  -->
                             <TextBlock
                                 Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.ProxyURL, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Text="{Binding ProxyURL}" />
+                            <!--  NoProxyList  -->
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.NoProxyList, Mode=OneTime}" />
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Text="{Binding NoProxyList}" />
+
+                            <!--  Backup Generation  -->
+                            <TextBlock
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
                                 Visibility="Collapsed" />
                             <TextBox
-                                Grid.Row="1"
+                                Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
@@ -123,24 +148,24 @@
 
                             <!--  PythonDLLPath  -->
                             <TextBlock
-                                Grid.Row="2"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
                             <TextBox
-                                Grid.Row="2"
+                                Grid.Row="4"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
                                 Text="{Binding PythonDllPath}" />
                             <!--  PythonVenvPth  -->
                             <TextBlock
-                                Grid.Row="3"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
                             <TextBox
-                                Grid.Row="3"
+                                Grid.Row="5"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"

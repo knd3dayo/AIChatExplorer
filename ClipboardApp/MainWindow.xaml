@@ -29,6 +29,11 @@
             Key="F"
             Command="{Binding SearchCommand, Mode=OneTime}"
             Modifiers="Control" />
+        <!--  Create new item  -->
+        <KeyBinding
+            Key="N"
+            Command="{Binding CreateItemCommand, Mode=OneTime}"
+            Modifiers="Control" />
     </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -262,11 +267,6 @@
                         <KeyBinding
                             Key="R"
                             Command="{Binding ReloadCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Create new item  -->
-                        <KeyBinding
-                            Key="N"
-                            Command="{Binding CreateItemCommand, Mode=OneTime}"
                             Modifiers="Control" />
                         <!--  Paste items into selected folder  -->
                         <KeyBinding

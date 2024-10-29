@@ -24,6 +24,16 @@ namespace ClipboardApp {
 
             ActiveInstance = this;
 
+            //　環境変数HTTP_PROXY,HTTPS_PROXYの設定
+            if (!string.IsNullOrEmpty(ClipboardAppConfig.Instance.ProxyURL)) {
+                Environment.SetEnvironmentVariable("HTTP_PROXY", ClipboardAppConfig.Instance.ProxyURL);
+                Environment.SetEnvironmentVariable("HTTPS_PROXY", ClipboardAppConfig.Instance.ProxyURL);
+            }
+            // 環境変数NO_PROXYの設定
+            if (!string.IsNullOrEmpty(ClipboardAppConfig.Instance.NoProxyList)) {
+                Environment.SetEnvironmentVariable("NO_PROXY", ClipboardAppConfig.Instance.NoProxyList);
+            }
+
             // ProgressIndicatorの表示更新用のアクションをセット
             UpdateProgressCircleVisibility = (visible) => {
                 IsIndeterminate = visible;
