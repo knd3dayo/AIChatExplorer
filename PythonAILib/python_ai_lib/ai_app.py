@@ -38,8 +38,7 @@ def extract_base64_to_text(base64_data:str) -> str:
 ########################
 def run_openai_chat(openai_props: OpenAIProps, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
-    content, total_tokens = openai_client.run_openai_chat(request)
-    return content, total_tokens
+    return openai_client.run_openai_chat(request)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)

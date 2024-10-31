@@ -72,9 +72,9 @@ namespace PythonAILib.PythonIF {
             if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                 PathToVirtualEnv = pathToVirtualEnv;
             }
-            if (!string.IsNullOrEmpty(pythonAILibPathRoot)) { 
+            if (!string.IsNullOrEmpty(pythonAILibPathRoot)) {
 
-                PythonAILibPath = Path.Combine(pythonAILibPathRoot,"python_ai_lib");
+                PythonAILibPath = Path.Combine(pythonAILibPathRoot, "python_ai_lib");
                 // Check if the PythonAILibPath exists
                 if (!Directory.Exists(PythonAILibPath)) {
                     // ./pythonディレクトリをPythonAILibPathRootへコピーする
@@ -125,30 +125,28 @@ namespace PythonAILib.PythonIF {
                 PythonEngine.Initialize();
                 PythonEngine.BeginAllowThreads();
 
-                if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
 
-                    // sys.prefix、sys.exec_prefixを venvのパスに変更
+                // sys.prefix、sys.exec_prefixを venvのパスに変更
 
-                    using (Py.GIL()) {
-                        // fix the prefixes to point to our venv
-                        // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
-                        dynamic sys = Py.Import("sys");
+                using (Py.GIL()) {
+                    // fix the prefixes to point to our venv
+                    // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
+                    dynamic sys = Py.Import("sys");
+                    dynamic site = Py.Import("site");
+
+                    if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                         sys.prefix = pathToVirtualEnv;
                         sys.exec_prefix = pathToVirtualEnv;
-
-                        dynamic site = Py.Import("site");
 
                         // This has to be overwritten because site module may already have 
                         // been loaded by the interpreter (but not run yet)
                         site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
-
-                        // set the path to pythonAILib
-                        site.addsitedir(pythonAILibPath);
-
-                        // Run site path modification with tweaked prefixes
-                        site.main();
-
                     }
+                    // set the path to pythonAILib
+                    site.addsitedir(pythonAILibPath);
+
+                    // Run site path modification with tweaked prefixes
+                    site.main();
                 }
 
             } catch (TypeInitializationException e) {
