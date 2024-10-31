@@ -21,6 +21,9 @@ namespace PythonAILib.Model.Prompt {
             SummaryGeneration = 2,
             // 課題リスト生成
             TasksGeneration = 3,
+            // 文章の信頼度判定
+            DocumentReliabilityCheck = 4
+
         }
         public enum PromptResultTypeEnum {
             // テキスト
@@ -67,7 +70,6 @@ namespace PythonAILib.Model.Prompt {
         public void Save() {
 
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-
             libManager.DataFactory.UpsertPromptTemplate(this);
         }
 
@@ -189,6 +191,27 @@ namespace PythonAILib.Model.Prompt {
                 libManager.DataFactory.UpsertPromptTemplate(TasksGeneration);
             }
 
+            // DocumentReliabilityCheckをDBから取得
+
+            PromptItem? DocumentReliabilityCheck = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            if (DocumentReliabilityCheck != null) {
+                libManager.DataFactory.DeletePromptTemplate(DocumentReliabilityCheck);
+                DocumentReliabilityCheck = null;
+            }
+
+            if (DocumentReliabilityCheck == null) {
+                DocumentReliabilityCheck = new PromptItem() {
+                    Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
+                    Description = PromptStringResource.Instance.DocumentReliability,
+                    Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
+                    PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
+                    PromptResultType = PromptResultTypeEnum.TextContent,
+                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    PromptOutputType = PromptOutputTypeEnum.NewContent
+
+                };
+                libManager.DataFactory.UpsertPromptTemplate(DocumentReliabilityCheck);
+            }
 
         }
     }

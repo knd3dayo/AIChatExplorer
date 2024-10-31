@@ -56,6 +56,18 @@ namespace ClipboardApp.Model {
                 PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
             }
         }
+        // 文章の信頼度
+        [BsonIgnore]
+        public string InformationReliability {
+            get {
+                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
+            }
+        }
+
+
 
         // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
         public bool IsReferenceVectorDBItemsSynced { get; set; } = false;

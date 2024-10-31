@@ -374,6 +374,13 @@ namespace QAChat.Resource {
         // 自動サマリー作成処理を実行します
         public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
         // サマリー作成処理が失敗しました
+
+        // 自動文書信頼度チェック処理を実行します
+        public virtual string AutoCheckDocumentReliability { get; } = "自動文書信頼度チェック処理を実行します";
+        // 文書信頼度チェック処理が失敗しました
+        public virtual string CheckDocumentReliabilityFailed { get; } = "文書信頼度チェック処理が失敗しました";
+
+
         public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
 
         // 自動課題リスト作成処理を実行します
@@ -639,6 +646,9 @@ namespace QAChat.Resource {
 
         // コンテンツから課題リストを生成します。
         public virtual string GenerateTaskListFromContent { get; } = "コンテンツから課題リストを生成します。";
+
+        // コンテンツの文書信頼度をチェックします。
+        public virtual string CheckDocumentReliabilityOfContent { get; } = "コンテンツの文書信頼度をチェックします。";
 
         // クリップボードアイテムをOS上のフォルダと同期させる
         public virtual string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
@@ -1012,6 +1022,13 @@ namespace QAChat.Resource {
 
         // "課題リストを生成しました"
         public virtual string GeneratedTasks { get; } = "課題リストを生成しました";
+
+        // 文書信頼度をチェックします
+        public virtual string CheckDocumentReliability { get; } = "文書信頼度をチェックします";
+
+        // "文書信頼度をチェックしました"
+        public virtual string CheckedDocumentReliability { get; } = "文書信頼度をチェックしました";
+
 
         // その他のプロンプト
         public virtual string OtherPrompts { get; } = "その他のプロンプト";

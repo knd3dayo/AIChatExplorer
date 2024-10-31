@@ -771,8 +771,15 @@ namespace ClipboardApp.Model.Folder {
                     item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
+            var task6 = Task.Run(() => {
+                // Tasks
+                if (ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck) {
+                    LogWrapper.Info(CommonStringResources.Instance.AutoCheckDocumentReliability);
+                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                }
+            });
 
-            await Task.WhenAll(task1, task2, task3, task4, task5);
+            await Task.WhenAll(task1, task2, task3, task4, task5, task6);
 
             return item;
         }

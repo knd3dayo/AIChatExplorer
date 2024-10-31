@@ -127,6 +127,15 @@ namespace ClipboardApp.ViewModel {
             };
             promptMenuItem.Items.Add(generateTasksMenuItem);
 
+            // 文書信頼度をチェック
+            MenuItem checkDocumentTrustMenuItem = new() {
+                Header = StringResources.CheckDocumentReliability,
+                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
+                Command = MainWindowViewModel.ActiveInstance.CheckDocumentReliabilityCommand,
+                CommandParameter = itemViewModel
+            };
+            promptMenuItem.Items.Add(checkDocumentTrustMenuItem);
+
             // その他のプロンプト(プロンプトテンプレート一覧画面を開く)
             MenuItem otherPromptMenuItem = new() {
                 Header = StringResources.OtherPrompts,

@@ -682,17 +682,26 @@ namespace ClipboardApp.Settings {
                 OnPropertyChanged(nameof(IgnoreLineCountText));
             }
         }
+        // AutoDocumentReliabilityCheck
+        public bool AutoDocumentReliabilityCheck {
+            get {
+                return ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck;
+            }
+            set {
+                ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck = value;
+                OnPropertyChanged(nameof(AutoDocumentReliabilityCheck));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         #endregion
 
-
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-
             if (Save()) {
                 //追加設定.言語を変更
                 ClipboardFolder.ChangeRootFolderNames(CommonStringResources.Instance);
-
                 LogWrapper.Info(StringResources.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);

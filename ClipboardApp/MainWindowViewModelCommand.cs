@@ -336,6 +336,16 @@ namespace ClipboardApp {
                 });
             });
         });
+        // 文書の信頼度を判定する処理 複数アイテム処理可
+        public SimpleDelegateCommand<object> CheckDocumentReliabilityCommand => new((parameter) => {
+            ClipboardAppCommandExecute.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+                // フォルダ内のアイテムを再読み込み
+                MainUITask.Run(() => {
+                    SelectedFolder?.LoadFolderCommand.Execute();
+                });
+            });
+        });
+
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {

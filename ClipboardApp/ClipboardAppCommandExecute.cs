@@ -385,6 +385,12 @@ namespace ClipboardApp {
             string promptName = PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
+        // Command to check the reliability of the document
+        public static void CheckDocumentReliabilityCommand(List<ClipboardItem> contentItem, object obj) {
+            string promptName = PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
+            ExecutePromptTemplateCommand(contentItem, obj, promptName);
+        }
+
         // Command to generate vectors
         public static async void GenerateVectorCommand(List<ClipboardItem> contentItem, object obj) {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);

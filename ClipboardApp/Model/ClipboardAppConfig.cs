@@ -597,6 +597,20 @@ namespace ClipboardApp.Model {
                 Properties.Settings.Default.NoProxyList = value;
             }
         }
+        // AutoDocumentReliabilityCheck
+        private bool? _autoDocumentReliabilityCheck;
+        public bool AutoDocumentReliabilityCheck {
+            get {
+                if (_autoDocumentReliabilityCheck == null) {
+                    _autoDocumentReliabilityCheck = Properties.Settings.Default.AutoDocumentReliabilityCheck;
+                }
+                return _autoDocumentReliabilityCheck.Value;
+            }
+            set {
+                _autoDocumentReliabilityCheck = value;
+                Properties.Settings.Default.AutoDocumentReliabilityCheck = value;
+            }
+        }
 
         #endregion
 

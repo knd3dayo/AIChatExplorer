@@ -134,10 +134,15 @@ namespace QAChat.Resource {
         public override string TasksList { get; } = "Task List";
 
         // "Generate the list of Tasks"
-        public virtual string GenerateTTasks { get; } = "Generate the list of Tasks";
+        public override string GenerateTasks { get; } = "Generate the list of Tasks";
 
         // "The list of Tasks has been generated"
-        public virtual string GeneratedTTasks { get; } = "The list of Tasks has been generated";
+        public override string GeneratedTasks { get; } = "The list of Tasks has been generated";
+
+        // Checks the document reliability
+        public override string CheckDocumentReliability { get; } = "Checks the document reliability";
+        // "Checked the document reliability"
+        public override string CheckedDocumentReliability { get; } = "Checked the document reliability";
 
         #endregion
 
@@ -345,6 +350,12 @@ namespace QAChat.Resource {
         public override string AddBackgroundInfoFailed { get; } = "Failed to add background information";
 
         public override string AutoCreateSummary { get; } = "Executing auto summary creation process";
+
+        // Execute automatic document reliability check process
+        public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
+        // Document reliability check process failed
+        public override string CheckDocumentReliabilityFailed { get; } = "Document reliability check process failed";
+
         public override string CreateSummaryFailed { get; } = "Failed to create summary";
 
         // 自動課題リスト作成処理を実行します
@@ -519,6 +530,11 @@ namespace QAChat.Resource {
 
         // Generate Task list from content
         public override string GenerateTaskListFromContent { get; } = "Generate Task list from content";
+
+        // Checks the document reliability of the content.
+        public override string CheckDocumentReliabilityOfContent { get; } = "Checks the document reliability of the content.";
+
+
         public override string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "Synchronize clipboard items with folders on the OS";
 
         public override string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "Synchronize clipboard items with folders on the OS";

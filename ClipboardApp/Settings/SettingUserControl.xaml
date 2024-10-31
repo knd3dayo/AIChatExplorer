@@ -382,23 +382,13 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
-                        <!--  自動処理  -->
+                        <!--  自動処理 モニタリング/Embedding  -->
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="300" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
@@ -450,79 +440,39 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}" />
-                            <RadioButton
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
-                                GroupName="AutoDescription"
-                                IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
-                            <RadioButton
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}"
-                                GroupName="AutoDescription"
-                                IsChecked="{Binding AutoDescription}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
-                            <RadioButton
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI, Mode=OneTime}"
-                                GroupName="AutoDescription"
-                                IsChecked="{Binding AutoDescriptionWithOpenAI}" />
-                            <TextBlock
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyGenerateTags, Mode=OneTime}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
-                            <CheckBox
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent, Mode=OneTime}"
-                                IsChecked="{Binding AutoTag}"
-                                Visibility="{Binding EnableDevFeaturesVisibility}" />
-                            <TextBlock
-                                Grid.Row="6"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyMerge, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="6"
+                                Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame, Mode=OneTime}"
                                 IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
                             <TextBlock
-                                Grid.Row="8"
+                                Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyExtractTextFromFile, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="8"
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
                                 IsChecked="{Binding AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock
-                                Grid.Row="9"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyExtractTextFromImage, Mode=OneTime}" />
                             <RadioButton
-                                Grid.Row="9"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.DoNot, Mode=OneTime}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding AutoExtractImageNone, Mode=OneWay}" />
                             <RadioButton
-                                Grid.Row="10"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.ExtractTextUsingPyOCR, Mode=OneTime}"
@@ -530,73 +480,140 @@
                                 IsChecked="{Binding AutoExtractImageWithPyOCR}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
                             <RadioButton
-                                Grid.Row="11"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.ExtractTextUsingOpenAI, Mode=OneTime}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding AutoExtractImageWithOpenAI}" />
                             <TextBlock
-                                Grid.Row="12"
+                                Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.EmbeddingWhenExtractingTextFromImage, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="12"
+                                Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
                                 IsChecked="{Binding EmbeddingWhenExtractingTextFromImage}" />
                             <TextBlock
-                                Grid.Row="13"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
-                            <CheckBox
-                                Grid.Row="13"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.GenerateBackgroundInformationFromItemsInTheSameFolder, Mode=OneTime}"
-                                IsChecked="{Binding AutoBackgroundInfo}" />
-                            <TextBlock
-                                Grid.Row="16"
+                                Grid.Row="8"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="16"
+                                Grid.Row="8"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
                                 IsChecked="{Binding IncludeBackgroundInfoInEmbedding}" />
-
+                        </Grid>
+                        <!--  自動処理 プロンプト実行  -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="300" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
                             <TextBlock
-                                Grid.Row="17"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}" />
+                            <RadioButton
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
+                            <RadioButton
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescription}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <RadioButton
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI, Mode=OneTime}"
+                                GroupName="AutoDescription"
+                                IsChecked="{Binding AutoDescriptionWithOpenAI}" />
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyGenerateTags, Mode=OneTime}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <CheckBox
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent, Mode=OneTime}"
+                                IsChecked="{Binding AutoTag}"
+                                Visibility="{Binding EnableDevFeaturesVisibility}" />
+                            <TextBlock
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.GenerateBackgroundInformation, Mode=OneTime}"
+                                IsChecked="{Binding AutoSummary}" />
+                            <TextBlock
+                                Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="17"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"
                                 IsChecked="{Binding AutoSummary}" />
                             <TextBlock
-                                Grid.Row="18"
+                                Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 Text="{Binding StringResources.AutomaticallyGenerateTaskList, Mode=OneTime}" />
                             <CheckBox
-                                Grid.Row="18"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.GenerateTaskListFromContent, Mode=OneTime}"
                                 IsChecked="{Binding AutoGenerateTasks}" />
+                            <TextBlock
+                                Grid.Row="7"
+                                Grid.Column="0"
+                                Margin="10,10,10,0"
+                                Text="{Binding StringResources.AutoCheckDocumentReliability, Mode=OneTime}" />
+                            <CheckBox
+                                Grid.Row="7"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
+                                Content="{Binding StringResources.CheckDocumentReliabilityOfContent, Mode=OneTime}"
+                                IsChecked="{Binding AutoGenerateTasks}" />
                         </Grid>
                         <!--  その他の設定  -->
-                        <Grid Grid.Row="1">
+                        <Grid Grid.Row="2">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="230" />
+                                <ColumnDefinition Width="300" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
@@ -643,7 +660,7 @@
                                 IsChecked="{Binding AutoCommit}"
                                 Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
                         </Grid>
-                        <Grid Grid.Row="2">
+                        <Grid Grid.Row="3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="230" />
                                 <ColumnDefinition Width="*" />
