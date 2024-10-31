@@ -133,7 +133,18 @@ namespace PythonAILib.Model.Content {
                 }
             }
         }
-
+        [BsonIgnore]
+        public string ChatItemsText {
+            get {
+                // chatHistoryItemの内容をテキスト化
+                string chatHistoryText = "";
+                foreach (var item in ChatItems) {
+                    chatHistoryText += $"--- {item.Role} ---\n";
+                    chatHistoryText += item.ContentWithSources + "\n\n";
+                }
+                return chatHistoryText;
+            }
+        }
         public string UpdatedAtString {
             get {
                 return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");

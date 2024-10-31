@@ -51,6 +51,9 @@
     <Compile Update="Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\ClipboardItemView\ChatItemsTextPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\ClipboardItemView\PromptResultTextPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

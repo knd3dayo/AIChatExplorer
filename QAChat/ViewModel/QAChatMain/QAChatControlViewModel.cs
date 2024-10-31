@@ -17,7 +17,6 @@ using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
-
     public class QAChatControlViewModel : CommonViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
@@ -333,11 +332,6 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, _SaveChatHistory);
-            window.Close();
-        });
-        // Windowを閉じるコマンド
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
-
             window.Close();
         });
 

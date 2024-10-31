@@ -37,6 +37,9 @@ namespace QAChat.Resource {
 
         // ファイル/画像
         public virtual string FileOrImage { get; } = "ファイル/画像";
+
+        // チャット内容
+        public virtual string ChatContent { get; } = "チャット内容";
         // 作成
         public virtual string Create { get; } = "作成";
         // アイテム作成

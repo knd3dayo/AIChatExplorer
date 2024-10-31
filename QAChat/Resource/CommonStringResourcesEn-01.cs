@@ -107,6 +107,10 @@ namespace QAChat.Resource {
 
         // File / Image
         public override string FileOrImage { get; } = "File/Image";
+
+        // チャット内容
+        public override string ChatContent { get; } = "Chat Content";
+
         // Create
         public override string Create { get; } = "Create";
         // Create Item

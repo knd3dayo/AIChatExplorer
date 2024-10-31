@@ -66,7 +66,12 @@ namespace ClipboardApp.ViewModel {
                 return [.. ClipboardItem.ClipboardItemFiles];
             }
         }
-
+        // ChatItemsText
+        public string ChatItemsText {
+            get {
+                return ClipboardItem.ChatItemsText;
+            }
+        }
         // Description
         public string Description {
             get {
@@ -132,6 +137,17 @@ namespace ClipboardApp.ViewModel {
                 }
             }
         }
+        // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
+        public Visibility ChatItemsTextTabVisibility {
+            get {
+                if (string.IsNullOrEmpty(ClipboardItem.ChatItemsText) == false) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+
         // ClipboardItemFilesが空でない場合はVisible,それ以外はCollapsed
         public Visibility FileOrImageVisibility {
             get {
@@ -157,6 +173,7 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
+        
         public string DescriptionText {
             get {
                 string result = "";

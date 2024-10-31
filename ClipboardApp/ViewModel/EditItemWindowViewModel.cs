@@ -185,7 +185,19 @@ namespace ClipboardApp.ViewModel {
                     FontSize = 10,
                     Visibility = ItemViewModel?.FileTabVisibility ?? Visibility.Collapsed
                 };
-                tabItems.Add(fileTabItem);
+                // ChatItemsTextのタブ
+                TabItem chatItemsText = new() {
+                    Header = StringResources.ChatContent,
+                    Content = new ChatItemsTextPanel() { DataContext = ItemViewModel },
+                    Height = Double.NaN,
+                    Width = Double.NaN,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ItemViewModel?.ChatItemsTextTabVisibility ?? Visibility.Collapsed
+                };
+
+                tabItems.Add(chatItemsText);
 
                 // PromptResultのタブ
                 foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
