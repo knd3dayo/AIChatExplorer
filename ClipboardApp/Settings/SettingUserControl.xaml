@@ -608,7 +608,7 @@
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.CheckDocumentReliabilityOfContent, Mode=OneTime}"
-                                IsChecked="{Binding AutoGenerateTasks}" />
+                                IsChecked="{Binding AutoDocumentReliabilityCheck}" />
                         </Grid>
                         <!--  その他の設定  -->
                         <Grid Grid.Row="2">
