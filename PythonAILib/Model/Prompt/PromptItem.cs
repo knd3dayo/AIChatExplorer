@@ -31,7 +31,9 @@ namespace PythonAILib.Model.Prompt {
             // リスト
             ListContent = 1,
             // 複雑なテキスト
-            ComplexContent = 2,
+            TableContent = 2,
+            // Dictionary
+            DictionaryContent = 3
         }
         public enum PromptOutputTypeEnum {
             // 新規作成
@@ -183,7 +185,7 @@ namespace PythonAILib.Model.Prompt {
                     Description = PromptStringResource.Instance.TasksGeneration,
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
-                    PromptResultType = PromptResultTypeEnum.ComplexContent,
+                    PromptResultType = PromptResultTypeEnum.TableContent,
                     ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
@@ -207,7 +209,7 @@ namespace PythonAILib.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatType = OpenAIExecutionModeEnum.Normal,
-                    PromptOutputType = PromptOutputTypeEnum.NewContent
+                    PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };
                 libManager.DataFactory.UpsertPromptTemplate(DocumentReliabilityCheck);

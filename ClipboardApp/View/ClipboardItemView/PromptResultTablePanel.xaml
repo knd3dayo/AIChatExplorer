@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="ClipboardApp.View.ClipboardItemView.PromptResultComplexPanel"
+    x:Class="ClipboardApp.View.ClipboardItemView.PromptResultTablePanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:QAChat.Resource;assembly=QAChat"
@@ -35,7 +35,7 @@
         CanUserResizeColumns="True"
         CanUserResizeRows="False"
         CanUserSortColumns="True"
-        ItemsSource="{Binding ComplexContent}"
+        ItemsSource="{Binding TableContent}"
         RowHeaderWidth="0"
         SelectionMode="Single"
         SelectionUnit="FullRow"

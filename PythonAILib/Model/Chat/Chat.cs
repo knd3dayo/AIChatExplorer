@@ -134,14 +134,12 @@ namespace PythonAILib.Model.Chat {
             // ImageURLとAdditionalImageURLsを結合したリストを作成
             List<string> additionalImageURLs = [];
             foreach (ContentItem item in AdditionalItems) {
-                foreach (var imageItem in item.ClipboardItemFiles) {
-                    if (imageItem.IsImage()) {
-                        string? base64String = imageItem.Base64String;
-                        if (base64String == null) {
-                            continue;
-                        }
-                        additionalImageURLs.Add(CreateImageURL(base64String));
+                if (item.IsImage()) {
+                    string? base64String = item.Base64String;
+                    if (base64String == null) {
+                        continue;
                     }
+                    additionalImageURLs.Add(CreateImageURL(base64String));
                 }
             }
 

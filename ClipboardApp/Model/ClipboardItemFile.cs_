@@ -6,10 +6,10 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 
 namespace ClipboardApp.Model {
-    public class ClipboardItemFile : ContentAttachedItem {
+    public class ClipboardItemFile_ {
 
-        public static ClipboardItemFile Create(ClipboardItem clipboardItem, string filePath) {
-            ClipboardItemFile itemFile = new() {
+        public static ClipboardItemFile_ Create(ClipboardItem clipboardItem, string filePath) {
+            ClipboardItemFile_ itemFile = new() {
                 ClipboardItem = clipboardItem,
                 FilePath = filePath,
                 LastModified = new System.IO.FileInfo(filePath).LastWriteTime.Ticks
@@ -18,15 +18,15 @@ namespace ClipboardApp.Model {
             itemFile.UpdateCache();
             return itemFile;
         }
-        public static ClipboardItemFile Create(ClipboardItem clipboardItem, System.Drawing.Image image) {
-            ClipboardItemFile itemFile = new() {
+        public static ClipboardItemFile_ Create(ClipboardItem clipboardItem, System.Drawing.Image image) {
+            ClipboardItemFile_ itemFile = new() {
                 ClipboardItem = clipboardItem,
                 CachedBase64String = ContentTypes.GetBase64StringFromImage(image)
             };
             return itemFile;
         }
-        public static ClipboardItemFile CreateFromBase64(ClipboardItem clipboardItem, string base64string) {
-            ClipboardItemFile itemFile = new() {
+        public static ClipboardItemFile_ CreateFromBase64(ClipboardItem clipboardItem, string base64string) {
+            ClipboardItemFile_ itemFile = new() {
                 ClipboardItem = clipboardItem,
                 CachedBase64String = base64string
             };
@@ -38,7 +38,7 @@ namespace ClipboardApp.Model {
         public ClipboardItem? ClipboardItem { get; set; }
 
         // 削除
-        public override void Delete() {
+        public  void Delete() {
             ClipboardAppFactory.Instance.GetClipboardDBController().DeleteAttachedItem(this);
             // クリップボードアイテムとファイルを同期する
             if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
@@ -58,7 +58,7 @@ namespace ClipboardApp.Model {
         }
 
         // 保存
-        public override void Save() {
+        public  void Save(bool contentIsModified = true) {
 
             ClipboardAppFactory.Instance.GetClipboardDBController().UpsertAttachedItem(this);
             // クリップボードアイテムとファイルを同期する
@@ -83,26 +83,5 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // Embeddingを更新する
-        public void UpdateEmbedding() {
-            if (ClipboardItem == null) {
-                throw new Exception("ClipboardItem is null");
-            }
-
-            if (IsImage()) {
-                // 画像からテキスト抽出
-                ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), ExtractedText, Base64String);
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(imageInfo);
-            } else {
-                ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), ExtractedText);
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = ClipboardAppVectorDBItem.GetFolderVectorDBItem(ClipboardItem.GetFolder());
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(contentInfo);
-            }
-        }
     }
 }

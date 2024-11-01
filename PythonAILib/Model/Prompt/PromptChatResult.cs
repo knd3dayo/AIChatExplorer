@@ -19,7 +19,7 @@ namespace PythonAILib.Model.Prompt {
             Results[promptName] = content;
         }
 
-        public List<Dictionary<string, object>> GetComplexContent(string promptName) {
+        public List<Dictionary<string, object>> GetTableContent(string promptName) {
             Results.TryGetValue(promptName, out object? values);
             if (values == null) {
                 return [];
@@ -35,7 +35,7 @@ namespace PythonAILib.Model.Prompt {
 
             return [];
         }
-        public void SetComplexContent(string promptName, List<Dictionary<string, object>> content) {
+        public void SetTableContent(string promptName, List<Dictionary<string, object>> content) {
             Results[promptName] = content;
         }
 

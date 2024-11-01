@@ -137,23 +137,16 @@
                     FontSize="10pt"
                     IsReadOnly="True"
                     Text="{Binding SelectedItem.DescriptionText, ElementName=Root, Mode=OneWay}" />
-                <ListBox
+                <Image
                     Grid.Row="1"
+                    Width="100"
+                    Height="100"
                     MinHeight="0"
                     MaxHeight="100"
                     Margin="10,10,10,10"
                     HorizontalAlignment="Left"
-                    ItemsSource="{Binding SelectedItem.Images, ElementName=Root}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Image
-                                Width="100"
-                                Height="100"
-                                Source="{Binding}"
-                                Stretch="Uniform" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    Source="{Binding SelectedItem.Image, ElementName=Root}"
+                    Stretch="Uniform" />
                 <ScrollViewer
                     Grid.Row="2"
                     Margin="3,3,3,3"

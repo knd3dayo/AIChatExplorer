@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System.IO;
+using System.Windows.Media.Imaging;
 using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -17,43 +18,6 @@ namespace PythonAILib.Model.Content {
 
         // ClipboardFolderのObjectId
         public ObjectId CollectionId { get; set; } = ObjectId.Empty;
-
-
-        // ファイルのObjectId
-        public List<ObjectId> FileObjectIds { get; set; } = [];
-
-
-        // ファイル
-        // LiteDBの別コレクションで保存されているオブジェクト。LiteDBからはLoad**メソッドで取得する。Saveメソッドで保存する
-        protected List<ContentAttachedItem> _attachedItems = [];
-        public List<ContentAttachedItem> AttachedItems {
-            get {
-                if (_attachedItems.Count() == 0) {
-                    LoadFiles();
-                }
-                return _attachedItems;
-            }
-        }
-        protected void LoadFiles() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            foreach (var fileObjectId in FileObjectIds) {
-                ContentAttachedItem? file = libManager.DataFactory.GetAttachedItem(fileObjectId);
-                if (file != null) {
-                    _attachedItems.Add(file);
-                }
-            }
-        }
-
-        protected void SaveFiles() {
-            //Fileを保存
-            FileObjectIds = [];
-            foreach (ContentAttachedItem file in _attachedItems) {
-                file.Save();
-                // ClipboardItemFileをSaveした後にIdが設定される。そのあとでFileObjectIdsに追加
-                FileObjectIds.Add(file.Id);
-            }
-        }
-
 
         // 生成日時
         public DateTime CreatedAt { get; set; }
@@ -97,6 +61,11 @@ namespace PythonAILib.Model.Content {
         public string? SourceApplicationPath { get; set; }
         // ピン留め
         public bool IsPinned { get; set; }
+
+        // 文書の信頼度(0-100)
+        public int DocumentReliability { get; set; }
+        // 文書の信頼度の判定理由
+        public string DocumentReliabilityReason { get; set; } = "";
 
         // タグ表示用の文字列
         public string TagsString() {
@@ -165,7 +134,142 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-        public virtual List<ContentAttachedItem> ClipboardItemFiles { get; set; } = [];
+
+        #region ファイル/画像関連
+        // LiteDBに保存するためのBase64文字列. 元ファイルまたは画像データをBase64エンコードした文字列
+        private string _cachedBase64String = "";
+        public string CachedBase64String {
+            get {
+                return _cachedBase64String;
+            }
+            set {
+                if (value == null) {
+                    _cachedBase64String = string.Empty;
+                } else {
+                    _cachedBase64String = value;
+                }
+            }
+        }
+        // ファイルパス
+        public string FilePath { get; set; } = "";
+        // ファイルの最終更新日時
+        public long LastModified { get; set; } = 0;
+
+        [BsonIgnore]
+        public string DisplayName {
+            get {
+                if (string.IsNullOrEmpty(FileName)) {
+                    return "No Name";
+                }
+                return FileName;
+            }
+        }
+
+        [BsonIgnore]
+        public string Base64String {
+            get {
+
+                // FilePathがない場合はキャッシュを返す
+                if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
+                    return CachedBase64String;
+                }
+                // FilePathがある場合はLastModifiedをチェックしてキャッシュを更新する
+                if (LastModified < new System.IO.FileInfo(FilePath).LastWriteTime.Ticks) {
+                    UpdateCache();
+                }
+                return CachedBase64String;
+            }
+        }
+
+        // フォルダ名
+        [BsonIgnore]
+        public string FolderName {
+            get {
+                return Path.GetDirectoryName(FilePath) ?? "";
+            }
+        }
+        // ファイル名
+        [BsonIgnore]
+        public string FileName {
+            get {
+                return Path.GetFileName(FilePath) ?? "";
+            }
+        }
+        // フォルダ名 + \n + ファイル名
+        [BsonIgnore]
+        public string FolderAndFileName {
+            get {
+                return FolderName + Path.PathSeparator + FileName;
+            }
+        }
+
+        // 画像イメージ
+        [BsonIgnore]
+        public BitmapImage? BitmapImage {
+            get {
+                if (!IsImage()) {
+                    return null;
+                }
+                byte[] imageBytes = Convert.FromBase64String(Base64String);
+                return ContentTypes.GetBitmapImage(imageBytes);
+            }
+        }
+        [BsonIgnore]
+        public System.Drawing.Image? Image {
+            get {
+                if (!IsImage()) {
+                    return null;
+                }
+                return ContentTypes.GetImageFromBase64(Base64String);
+            }
+        }
+
+        public bool IsImage() {
+            if (Base64String == null) {
+                return false;
+            }
+            return ContentTypes.IsImageData(Convert.FromBase64String(Base64String));
+        }
+
+        // キャッシュを更新する
+        public void UpdateCache() {
+            if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
+                return;
+            }
+            LastModified = new System.IO.FileInfo(FilePath).LastWriteTime.Ticks;
+
+            byte[] bytes = System.IO.File.ReadAllBytes(FilePath);
+            CachedBase64String = Convert.ToBase64String(bytes);
+        }
+
+        // テキストを抽出する
+        public void ExtractText() {
+            // キャッシュを更新
+            UpdateCache();
+
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            string base64 = Base64String;
+
+            try {
+
+                if (ContentTypes.IsImageData(base64)) {
+                    string result = ChatUtil.ExtractTextFromImage(openAIProperties, [base64]);
+                    if (string.IsNullOrEmpty(result) == false) {
+                        Content = result;
+                    }
+                } else {
+                    string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64);
+                    Content = text;
+                }
+
+            } catch (UnsupportedFileTypeException) {
+                LogWrapper.Info(PythonAILibStringResources.Instance.UnsupportedFileType);
+            }
+        }
+
+        #endregion
+
 
         public virtual VectorDBItem GetMainVectorDBItem() {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
@@ -189,12 +293,6 @@ namespace PythonAILib.Model.Content {
             Task.Run(() => {
                 UpdateEmbedding(VectorDBUpdateMode.delete);
             });
-
-            // ファイルが存在する場合は削除
-            foreach (var fileObjectId in FileObjectIds) {
-                ContentAttachedItem? file = libManager.DataFactory.GetAttachedItem(fileObjectId);
-                file?.Delete();
-            }
             libManager.DataFactory.DeleteItem(this);
         }
 
@@ -202,10 +300,6 @@ namespace PythonAILib.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
 
             if (contentIsModified) {
-                // ★TODO DBControllerに処理を移動する。
-                // ファイルを保存
-                SaveFiles();
-
                 // Embeddingを更新
                 Task.Run(() => {
                     UpdateEmbedding();
@@ -215,22 +309,18 @@ namespace PythonAILib.Model.Content {
         }
 
         // OpenAIを使用してイメージからテキスト抽出する。
-        public void ExtractImageWithOpenAI() {
-            foreach (var file in ClipboardItemFiles) {
-                file.ExtractText();
-            }
+        public virtual void ExtractImageWithOpenAI() {
+            ExtractText();
         }
 
         // テキストを抽出」を実行するコマンド
-        public ContentItem ExtractTextCommandExecute() {
-            foreach (var clipboardItemFile in ClipboardItemFiles) {
-                clipboardItemFile.ExtractText();
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
-            }
+        public virtual ContentItem ExtractTextCommandExecute() {
+            ExtractText();
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.TextExtracted}");
             return this;
         }
         // OpenAIを使用してタイトルを生成する
-        public void CreateAutoTitleWithOpenAI() {
+        public virtual void CreateAutoTitleWithOpenAI() {
             // ContentTypeがTextの場合
             if (ContentType == ContentTypes.ContentItemTypes.Text) {
                 CreateChatResult(PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString());
@@ -238,18 +328,8 @@ namespace PythonAILib.Model.Content {
             }
             // ContentTypeがFiles,の場合
             if (ContentType == ContentTypes.ContentItemTypes.Files) {
-                // FileObjectIdsがない場合は処理しない
-                if (ClipboardItemFiles.Count == 0) {
-                    return;
-                }
-                foreach (var clipboardItemFile in ClipboardItemFiles) {
-                    string path = clipboardItemFile.FilePath;
-                    if (string.IsNullOrEmpty(path)) {
-                        continue;
-                    }
-                    // ファイルのフルパスをタイトルとして使用
-                    Description += path + " ";
-                }
+                // ファイルのフルパスをタイトルとして使用
+                Description += FilePath;
                 return;
             }
             // ContentTypeがImageの場合
@@ -275,6 +355,7 @@ namespace PythonAILib.Model.Content {
             // ヘッダー情報とコンテンツ情報を結合
             // ★TODO タグ情報を追加する
             string contentText = HeaderText + "\n" + Content;
+
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TextContent) {
                 string result = ChatUtil.CreateTextChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
@@ -292,9 +373,10 @@ namespace PythonAILib.Model.Content {
                 }
                 return;
             }
-            // PromptResultTypeがComplexContentの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.ComplexContent) {
-                Dictionary<string, dynamic?> response = ChatUtil.CreateComplexChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+
+            // PromptResultTypeがTableContentの場合
+            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TableContent) {
+                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
                 // resultからキー:resultを取得
                 if (response.ContainsKey("result") == false) {
                     return;
@@ -306,12 +388,12 @@ namespace PythonAILib.Model.Content {
                 }
                 if (result.Count > 0) {
                     // resultからDynamicDictionaryObjectを作成
-                    List<Dictionary<string, object>> resultDict = [];
+                    List<Dictionary<string, object>> resultDictList = [];
                     foreach (var item in result) {
-                        resultDict.Add(item);
+                        resultDictList.Add(item);
                     }
                     // PromptChatResultに結果を保存
-                    PromptChatResult.SetComplexContent(promptItem.Name, result);
+                    PromptChatResult.SetTableContent(promptItem.Name, resultDictList);
                 }
                 return;
             }
@@ -334,8 +416,41 @@ namespace PythonAILib.Model.Content {
             CreateChatResult(promptItem);
         }
 
+        // 文章の信頼度を判定する
+        public void CheckDocumentReliability() {
+
+            CreateChatResult(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得
+            string result = PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            // resultがない場合は処理しない
+            if (string.IsNullOrEmpty(result)) {
+                return;
+            }
+            // ChatUtl.CreateDictionaryChatResultを実行
+            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            Dictionary<string, string> response = ChatUtil.CreateDictionaryChatResult(openAIProperties, [], new PromptItem() {
+                ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                Prompt = PromptStringResource.Instance.DocumentReliabilityDictonaryPrompt
+            }, result);
+            // responseからキー：reliabilityを取得
+            if (response.ContainsKey("reliability") == false) {
+                return;
+            }
+            string reliability = response["reliability"];
+            // DocumentReliabilityにreliabilityを設定
+            DocumentReliability = int.Parse(reliability);
+            // responseからキー：reasonを取得
+            if (response.ContainsKey("reason") == false) {
+                return;
+            }
+            string reason = response["reason"];
+            // DocumentReliabilityReasonにreasonを設定
+            DocumentReliabilityReason = reason;
+        }
+
         // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearchCommandExecute(List<VectorDBItem> vectorDBItems) {
+        public List<VectorSearchResult> VectorSearch(List<VectorDBItem> vectorDBItems) {
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             string contentText = Content;
@@ -352,28 +467,53 @@ namespace PythonAILib.Model.Content {
         }
 
         // ベクトルを更新する
-        public void UpdateEmbedding(VectorDBUpdateMode mode) {
+        public virtual void UpdateEmbedding(VectorDBUpdateMode mode) {
+
+            // VectorDBItemを取得
+            VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
 
             if (mode == VectorDBUpdateMode.delete) {
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
-                // IPythonAIFunctions.ClipboardInfoを作成
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
-                // Embeddingを削除
-                folderVectorDBItem.DeleteIndex(clipboardInfo);
-                return;
+                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                    // IPythonAIFunctions.ClipboardInfoを作成
+                    ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content);
+                    // Embeddingを削除
+                    folderVectorDBItem.DeleteIndex(clipboardInfo);
+                    return;
+                } else {
+                    if (IsImage()) {
+                        // 画像からテキスト抽出
+                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, Base64String);
+                        // Embeddingを保存
+                        folderVectorDBItem.DeleteIndex(imageInfo);
+                    } else {
+                        ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content);
+                        // Embeddingを保存
+                        folderVectorDBItem.DeleteIndex(contentInfo);
+                    }
+                }
             }
             if (mode == VectorDBUpdateMode.update) {
-                // IPythonAIFunctions.ClipboardInfoを作成
                 // タイトルとHeaderTextを追加
                 string content = Description + "\n" + HeaderText + "\n" + Content;
+                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                    // IPythonAIFunctions.ClipboardInfoを作成
+                    ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
+                    // Embeddingを保存
+                    folderVectorDBItem.UpdateIndex(clipboardInfo);
+                    return;
+                } else {
+                    if (IsImage()) {
+                        // 画像からテキスト抽出
+                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), content, Base64String);
+                        // Embeddingを保存
+                        folderVectorDBItem.UpdateIndex(imageInfo);
+                    } else {
+                        ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), content);
+                        // Embeddingを保存
+                        folderVectorDBItem.UpdateIndex(contentInfo);
+                    }
+                }
 
-                ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), content);
-
-                // VectorDBItemを取得
-                VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
-                // Embeddingを保存
-                folderVectorDBItem.UpdateIndex(clipboardInfo);
             }
         }
 

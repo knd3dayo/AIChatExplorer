@@ -18,7 +18,6 @@ namespace ClipboardApp.ViewModel {
             FolderViewModel = folderViewModel;
 
             OnPropertyChanged(nameof(Content));
-            OnPropertyChanged(nameof(Files));
             OnPropertyChanged(nameof(TextTabVisibility));
             OnPropertyChanged(nameof(FileTabVisibility));
 
@@ -60,12 +59,7 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
-        // Files
-        public ObservableCollection<ContentAttachedItem> Files {
-            get {
-                return [.. ClipboardItem.ClipboardItemFiles];
-            }
-        }
+
         // ChatItemsText
         public string ChatItemsText {
             get {
@@ -117,41 +111,11 @@ namespace ClipboardApp.ViewModel {
                 }
             }
         }
-        // 分類がFileの場合はVisible,それ以外はCollapsed
-        public Visibility FileVisibility {
-            get {
-                if (ClipboardItem.ContentType == ContentTypes.ContentItemTypes.Files) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-        // Contentが空でない場合はVisible,それ以外はCollapsed
-        public Visibility TextVisibility {
-            get {
-                if (string.IsNullOrEmpty(ClipboardItem.Content) == false) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+
         // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
         public Visibility ChatItemsTextTabVisibility {
             get {
                 if (string.IsNullOrEmpty(ClipboardItem.ChatItemsText) == false) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
-
-        // ClipboardItemFilesが空でない場合はVisible,それ以外はCollapsed
-        public Visibility FileOrImageVisibility {
-            get {
-                if (ClipboardItem.ClipboardItemFiles.Count > 0) {
                     return Visibility.Visible;
                 } else {
                     return Visibility.Collapsed;
@@ -172,8 +136,13 @@ namespace ClipboardApp.ViewModel {
                 return (ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+        // ImageVisibility
+        public Visibility ImageVisibility {
+            get {
+                return ClipboardItem.IsImage() ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
-        
         public string DescriptionText {
             get {
                 string result = "";
@@ -190,15 +159,9 @@ namespace ClipboardApp.ViewModel {
         }
 
         // Images
-        public ObservableCollection<BitmapImage> Images {
+        public BitmapImage? Image {
             get {
-                ObservableCollection<BitmapImage> images = [];
-                foreach (var file in ClipboardItem.ClipboardItemFiles) {
-                    if (file.BitmapImage != null) {
-                        images.Add(file.BitmapImage);
-                    }
-                }
-                return images;
+                return ClipboardItem.BitmapImage;
             }
         }
 

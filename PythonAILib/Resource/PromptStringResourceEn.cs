@@ -72,6 +72,12 @@ namespace PythonAILib.Resource {
             "  * Information that can be determined to be somewhat correct based on general sociological laws, customs, etc. should have the middle value of reliability within the level." +
             "  * Information for which correctness cannot be determined and verification is required should have the lower limit of reliability within the level." +
             "" +
-            "Based on the above, please determine the reliability level of the following text.";
+            "\"Based on the above, please determine the reliability level of the following text and output the reliability score (0-100) along with the reason for the reliability determination.";
+
+        // Prompt to get reliability from the document reliability check result
+        public override string DocumentReliabilityDictonaryPrompt { get; } = "The following text is the result of determining the reliability of a document. Please output the final reliability score (0-100)." +
+            "Please format the output in the following JSON format: {\"reliability\": reliability score, \"reason\": \"reason for the reliability score\"}";
+
+
     }
 }

@@ -20,7 +20,7 @@ namespace PythonAILib.Model.Chat {
                 ChatMode = promptText.ChatType,
                 PromptTemplateText = promptText.Prompt,
                 ContentText = content,
-                VectorDBItems = vectorDBItems
+                VectorDBItems = vectorDBItems,
             };
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
@@ -72,9 +72,27 @@ namespace PythonAILib.Model.Chat {
             }
             return [];
         }
+        // CHatを実行してDictionary<string, string>の結果を取得する
+        public static Dictionary<string, string> CreateDictionaryChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
+            Chat chatController = new() {
+                // OpenAI+RAG Chatを実行
+                ChatMode = promptItem.ChatType,
+                PromptTemplateText = promptItem.Prompt,
+                ContentText = content,
+                VectorDBItems = vectorDBItems,
+                JsonMode = true
+            };
+
+            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            if (result != null && !string.IsNullOrEmpty(result.Response)) {
+                return JsonSerializer.Deserialize<Dictionary<string, string>>(result.Response, options) ?? [];
+            }
+            return [];
+        }
+
 
         // Chatを実行して複雑な結果を取得する
-        public static Dictionary<string, dynamic?> CreateComplexChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
+        public static Dictionary<string, dynamic?> CreateTableChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
             Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = promptItem.ChatType,

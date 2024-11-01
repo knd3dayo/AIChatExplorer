@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Model\Content\TaskItem.cs_" />
     <None Remove="python_ai_lib\ai_app.py" />
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
@@ -37,10 +36,6 @@
     <None Remove="python_ai_lib\test_openai_client.py" />
     <None Remove="python_ai_lib\tools.json" />
     <None Remove="python_ai_lib\__init__.py" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Model\Content\TaskItem.cs_" />
   </ItemGroup>
 
   <ItemGroup>

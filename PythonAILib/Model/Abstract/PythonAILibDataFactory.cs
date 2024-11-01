@@ -36,7 +36,7 @@ namespace PythonAILib.Model.Abstract {
                     PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
 
                     db = new LiteDatabase(libManager.ConfigParams.GetDBPath());
-
+                    #region バージョンアップ後の暫定処理
                     // WpfAppCommon.Model.ClipboardItemをClipboardApp.Model.ClipboardItemに変更
                     /*** クラスの場所変更時の暫定的な処理
                     var collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
@@ -97,7 +97,6 @@ namespace PythonAILib.Model.Abstract {
                         }
 
                     }
-                    ***/
                     // PromptItemのChatTypeをRAGからOpenAIRAGに変更
                     var collection = db.GetCollection(PromptTemplateCollectionName);
                     foreach (var item in collection.FindAll()) {
@@ -162,6 +161,19 @@ namespace PythonAILib.Model.Abstract {
                         item.Remove("BackgroundInfo");
                         collection.Update(item);
                     }
+                    ***/
+                    // PromptItemのPromptResultTypeをComplexContentからTableContentに変更
+                    var collection = db.GetCollection(PromptTemplateCollectionName);
+                    collection = db.GetCollection(PromptTemplateCollectionName);
+                    foreach (var item in collection.FindAll()) {
+                        string promptResultTypeString = item["PromptResultType"];
+                        if (promptResultTypeString == "ComplexContent") {
+                            item["PromptResultType"] = "TableContent";
+                            collection.Update(item);
+                        }
+                    }
+
+                    #endregion
 
                 } catch (Exception e) {
                     throw new Exception("データベースのオープンに失敗しました。" + e.Message);
@@ -182,11 +194,6 @@ namespace PythonAILib.Model.Abstract {
 
         // アイテムをDBから削除する
         public abstract void DeleteItem(ContentItem item);
-
-        //-- AttachedItems  
-        public abstract void UpsertAttachedItem(ContentAttachedItem item);
-        public abstract void DeleteAttachedItem(ContentAttachedItem item);
-        public abstract ContentAttachedItem? GetAttachedItem(ObjectId id);
 
         // Prompt
         // create

@@ -11,11 +11,10 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using QAChat.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using QAChat.Resource;
-
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
@@ -127,12 +126,12 @@ namespace ClipboardApp.Model.Folder {
 
 
         // 子フォルダ　LiteDBには保存しない。
-        [BsonIgnore]    
+        [BsonIgnore]
         public List<ClipboardFolder> Children {
             get {
                 // DBからParentIDが自分のIDのものを取得
                 return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
-                }
+            }
         }
 
         // アイテム LiteDBには保存しない。
@@ -274,7 +273,7 @@ namespace ClipboardApp.Model.Folder {
         //--------------------------------------------------------------------------------
         // ReferenceVectorDBItemsからVectorDBItemを削除
         public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
-            List<VectorDBItem> existingItems = new (ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
             foreach (var item in existingItems) {
                 ReferenceVectorDBItems.Remove(item);
             }
@@ -284,7 +283,7 @@ namespace ClipboardApp.Model.Folder {
             var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
             if (existingItems == null) {
                 ReferenceVectorDBItems.Add(vectorDBItem);
-            }　
+            }
         }
 
         // フォルダを移動する
@@ -303,7 +302,7 @@ namespace ClipboardApp.Model.Folder {
         public void Save() {
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
-                AddVectorDBItem( GetVectorDBItem());
+                AddVectorDBItem(GetVectorDBItem());
             } else {
                 // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
                 RemoveVectorDBItem(GetVectorDBItem());
@@ -576,14 +575,12 @@ namespace ClipboardApp.Model.Folder {
         public void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
 
             // Get the cut/copied text.
-            ClipboardItem? item = CreateClipboardItem(this, e);
+            List<ClipboardItem> items = CreateClipboardItem(this, e);
 
-            if (item == null) {
-                return;
+            foreach (var item in items) {
+                // Process clipboard item
+                ProcessClipboardItem(item, _afterClipboardChanged);
             }
-
-            ProcessClipboardItem(item, _afterClipboardChanged);
-
         }
 
         /// Process clipboard item 
@@ -624,8 +621,10 @@ namespace ClipboardApp.Model.Folder {
 
 
         /// Create ContentItem
-        public static ClipboardItem? CreateClipboardItem(
+        public static List<ClipboardItem> CreateClipboardItem(
             ClipboardFolder clipboardFolder, ClipboardChangedEventArgs e) {
+
+            List<ClipboardItem> result = [];
 
             PythonAILib.Model.File.ContentTypes.ContentItemTypes contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text;
             if (e.ContentType == SharpClipboard.ContentTypes.Text) {
@@ -635,38 +634,52 @@ namespace ClipboardApp.Model.Folder {
             } else if (e.ContentType == SharpClipboard.ContentTypes.Image) {
                 contentTypes = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image;
             } else if (e.ContentType == SharpClipboard.ContentTypes.Other) {
-                return null;
+                return result;
             } else {
-                return null;
+                return result;
             }
 
-            ClipboardItem item = new(clipboardFolder.Id) {
-                ContentType = contentTypes
-            };
-            SetApplicationInfo(item, e);
             // If ContentType is Text, set text data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
+                ClipboardItem item = new(clipboardFolder.Id) {
+                    ContentType = contentTypes
+                };
+                SetApplicationInfo(item, e);
                 item.Content = (string)e.Content;
+                result.Add(item);
+                return result;
             }
+
             // If ContentType is BitmapImage, set image data
             if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
+                ClipboardItem item = new(clipboardFolder.Id) {
+                    ContentType = contentTypes
+                };
+                SetApplicationInfo(item, e);
                 System.Drawing.Image image = (System.Drawing.Image)e.Content;
                 // byte
-                ClipboardItemFile imageItem = ClipboardItemFile.Create(item, image);
-                item.ClipboardItemFiles.Add(imageItem);
+                item.CachedBase64String = PythonAILib.Model.File.ContentTypes.GetBase64StringFromImage(image);
+                result.Add(item);
+                return result;
             }
+
             // If ContentType is Files, set file data
-            else if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
+            if (contentTypes == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 string[] files = (string[])e.Content;
 
                 // Get the cut/copied file/files.
                 for (int i = 0; i < files.Length; i++) {
-                    ClipboardItemFile clipboardItemFile = ClipboardItemFile.Create(item, files[i]);
-                    item.ClipboardItemFiles.Add(clipboardItemFile);
+                    ClipboardItem item = new(clipboardFolder.Id) {
+                        ContentType = contentTypes
+                    };
+                    SetApplicationInfo(item, e);
+                    item.FilePath = files[i];
+                    item.LastModified = new System.IO.FileInfo(item.FilePath).LastWriteTime.Ticks;
+                    result.Add(item);
                 }
+                return result;
             }
-            return item;
-
+            return result;
         }
 
         /// <summary>
@@ -701,28 +714,19 @@ namespace ClipboardApp.Model.Folder {
                 RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
             }
             // If AutoFileExtract is set, extract files
-            if (ClipboardAppConfig.Instance.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files && item.ClipboardItemFiles != null) {
-                LogWrapper.Info(CommonStringResources.Instance.ExecuteAutoFileExtract);
-                foreach (var fileItem in item.ClipboardItemFiles) {
-                    string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileItem.FilePath);
-                    item.Content += "\n" + text;
-                }
+            if (ClipboardAppConfig.Instance.AutoFileExtract && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
+                string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);
+                item.Content += "\n" + text;
             }
             // ★TODO Implement processing based on automatic processing rules.
             // If AutoExtractImageWithPyOCR is set, perform OCR
             if (ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR) {
-                // ClipboardItemFilesがnullの場合は何もしない
-                if (item.ClipboardItemFiles == null) {
-                    return item;
-                }
-                foreach (var imageItem in item.ClipboardItemFiles) {
-                    if (imageItem.Image == null) {
-                        continue;
-                    }
-                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(imageItem.Image, ClipboardAppConfig.Instance.TesseractExePath);
+                if (item.Image != null) {
+
+                    string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(item.Image, ClipboardAppConfig.Instance.TesseractExePath);
                     item.Content += "\n" + extractImageText;
+                    LogWrapper.Info(CommonStringResources.Instance.OCR);
                 }
-                LogWrapper.Info(CommonStringResources.Instance.OCR);
 
             } else if (ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI) {
 

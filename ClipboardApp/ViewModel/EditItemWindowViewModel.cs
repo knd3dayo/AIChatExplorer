@@ -32,10 +32,6 @@ namespace ClipboardApp.ViewModel {
                 Title = itemViewModel.ClipboardItem.Description;
                 ItemViewModel = itemViewModel;
             }
-            // ClipboardItemFileがある場合はSelectedFileに設定
-            if (ItemViewModel.ClipboardItem.ClipboardItemFiles.Count > 0) {
-                SelectedFile = (ClipboardItemFile)ItemViewModel.ClipboardItem.ClipboardItemFiles[0];
-            }
             _afterUpdate = afterUpdate;
 
         }
@@ -102,28 +98,6 @@ namespace ClipboardApp.ViewModel {
         // 更新後の処理
         private Action _afterUpdate = () => { };
 
-        // SelectedFile
-        private ClipboardItemFile? selectedFile;
-        public ClipboardItemFile? SelectedFile {
-            get {
-                return selectedFile;
-            }
-            set {
-                selectedFile = value;
-                OnPropertyChanged(nameof(SelectedFile));
-                OnPropertyChanged(nameof(SelectedFileImageVisibility));
-            }
-        }
-        // 選択したファイルの画像のVisible. SelectedFileがNull、Imageがnullの場合はCollapsed
-        public Visibility SelectedFileImageVisibility {
-            get {
-                if (SelectedFile == null || SelectedFile.BitmapImage == null) {
-                    return Visibility.Collapsed;
-                }
-                return Visibility.Visible;
-            }
-        }
-
         // SelectedImage
         private ImageSource? selectedImage;
         public ImageSource? SelectedImage {
@@ -165,7 +139,7 @@ namespace ClipboardApp.ViewModel {
                     Content = contentPanel,
                     Height = Double.NaN,
                     Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
                     Visibility = ItemViewModel?.TextTabVisibility ?? Visibility.Visible
@@ -173,25 +147,26 @@ namespace ClipboardApp.ViewModel {
                 tabItems.Add(contentTabItem);
                 // FileOrImage
                 FilePanel filePanel = new() {
-                    DataContext = this,
+                    DataContext = ItemViewModel,
                 };
                 TabItem fileTabItem = new() {
                     Header = StringResources.FileOrImage,
                     Content = filePanel,
                     Height = Double.NaN,
                     Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
                     Visibility = ItemViewModel?.FileTabVisibility ?? Visibility.Collapsed
                 };
+                tabItems.Add(fileTabItem);
                 // ChatItemsTextのタブ
                 TabItem chatItemsText = new() {
                     Header = StringResources.ChatContent,
                     Content = new ChatItemsTextPanel() { DataContext = ItemViewModel },
                     Height = Double.NaN,
                     Width = Double.NaN,
-                    Margin = new Thickness(0, 0, 0, 0),
+                    Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
                     Visibility = ItemViewModel?.ChatItemsTextTabVisibility ?? Visibility.Collapsed
@@ -242,12 +217,12 @@ namespace ClipboardApp.ViewModel {
 
                     object content = item.PromptResultType switch {
                         PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
-                        PromptItem.PromptResultTypeEnum.ComplexContent => new PromptResultComplexPanel() { DataContext = promptViewModel },
+                        PromptItem.PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
                         _ => ""
                     };
                     Visibility visibility = item.PromptResultType switch {
                         PromptItem.PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
-                        PromptItem.PromptResultTypeEnum.ComplexContent => promptViewModel.ComplexContentVisibility,
+                        PromptItem.PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
                         _ => Visibility.Collapsed
                     };
 
@@ -256,7 +231,7 @@ namespace ClipboardApp.ViewModel {
                         Content = content,
                         Height = Double.NaN,
                         Width = Double.NaN,
-                        Margin = new Thickness(0, 0, 0, 0),
+                        Margin = new Thickness(3, 0, 3, 0),
                         Padding = new Thickness(0, 0, 0, 0),
                         FontSize = 10,
                         Visibility = visibility

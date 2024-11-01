@@ -8,9 +8,6 @@ namespace QAChat.ViewModel.ContentItemPanel {
         public static CommonStringResources StringResources { get; } = CommonStringResources.Instance;
         public ContentItem ContentItem { get; set; } = contentItemBase;
 
-        // 選択中のContentAttachedItemBase
-        public ContentAttachedItem? SelectedFile { get; set; }
-
         // 選択中のContentItemBaseを開く
         public abstract void OpenContentItem();
 

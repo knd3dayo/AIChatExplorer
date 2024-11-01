@@ -21,16 +21,14 @@ namespace ClipboardApp.Utils {
 
         public static void OpenClipboardItemFile(ClipboardItem item, bool openAsNew = false) {
 
-            foreach (var clipboardItemFile in item.ClipboardItemFiles) {
-                // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
-                if (string.IsNullOrEmpty(clipboardItemFile.FilePath)) {
-                    // BitmapImageがNullでない場合はファイルを開く
-                    if (clipboardItemFile.BitmapImage != null) {
-                        ProcessUtil.OpenBitmapImage(clipboardItemFile.BitmapImage);
-                    }
-                } else { 
-                ProcessUtil.OpenFile(clipboardItemFile.FilePath, openAsNew);
+            // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
+            if (string.IsNullOrEmpty(item.FilePath)) {
+                // BitmapImageがNullでない場合はファイルを開く
+                if (item.BitmapImage != null) {
+                    ProcessUtil.OpenBitmapImage(item.BitmapImage);
                 }
+            } else {
+                ProcessUtil.OpenFile(item.FilePath, openAsNew);
             }
         }
     }

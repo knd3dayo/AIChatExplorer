@@ -300,16 +300,14 @@ namespace ClipboardApp {
                 return;
             }
             // Open the folder with Process.Start
-            foreach (var item in contentItem.ClipboardItemFiles) {
-                string? folderPath = item.FolderName;
-                if (folderPath != null) {
-                    var p = new Process {
-                        StartInfo = new ProcessStartInfo(folderPath) {
-                            UseShellExecute = true
-                        }
-                    };
-                    p.Start();
-                }
+            string? folderPath = contentItem.FolderName;
+            if (folderPath != null) {
+                var p = new Process {
+                    StartInfo = new ProcessStartInfo(folderPath) {
+                        UseShellExecute = true
+                    }
+                };
+                p.Start();
             }
         }
 

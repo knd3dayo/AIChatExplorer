@@ -132,12 +132,6 @@ namespace ClipboardApp.Model {
             clipboardItem.Description = Description;
             clipboardItem.PromptChatResult = PromptChatResult;
 
-            //-- ファイルがある場合はコピー
-            foreach (var FileObjectId in FileObjectIds) {
-                ClipboardItemFile? file = (ClipboardItemFile?)ClipboardAppFactory.Instance.GetClipboardDBController().GetAttachedItem(FileObjectId);
-                ClipboardItemFile newFile = ClipboardItemFile.Create(clipboardItem, file?.FilePath ?? string.Empty);
-                clipboardItem.FileObjectIds.Add(newFile.Id);
-            }
             //-- ChatItemsをコピー
             newItem.ChatItems = new List<ChatHistoryItem>(ChatItems);
 
@@ -164,20 +158,6 @@ namespace ClipboardApp.Model {
                 }
                 // Contentを追加
                 mergeText += item.Content + "\n";
-                // itemのAttachmentsを追加
-                foreach (var fileObjectId in item.FileObjectIds) {
-                    ClipboardItemFile? file = (ClipboardItemFile?)ClipboardAppFactory.Instance.GetClipboardDBController().GetAttachedItem(fileObjectId);
-                    if (file != null) {
-                        if (file.IsImage() && file.Base64String != null) {
-                            // 画像の場合は新しいファイルを作成
-                            ClipboardItemFile imageFile = ClipboardItemFile.CreateFromBase64(this, file.Base64String);
-                            _attachedItems.Add(imageFile);
-                        } else {
-                            ClipboardItemFile newFile = ClipboardItemFile.Create(this, file.FilePath);
-                            _attachedItems.Add(newFile);
-                        }
-                    }
-                }
             }
             // mergeTextをContentに追加
             Content += mergeText;

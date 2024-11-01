@@ -3,8 +3,7 @@ using ClipboardApp.Model.Folder;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -21,7 +20,7 @@ namespace ClipboardApp.Model
 
         }
         // ClipboardChangedが呼ばれたときの処理
-        public Action<ClipboardChangedEventArgs> OnClipboardChanged{ get ; set; } = (e) => { };
+        public Action<ClipboardChangedEventArgs> OnClipboardChanged { get; set; } = (e) => { };
 
         // Clipboard monitoring enable/disable flag
         public bool IsClipboardMonitorEnabled { get; set; } = false;
@@ -62,10 +61,7 @@ namespace ClipboardApp.Model
             // If ContentType is Files, copy files to clipboard
             else if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 // FilePathの取得
-                System.Collections.Specialized.StringCollection strings = new();
-                foreach (var itemFile in item.ClipboardItemFiles) {
-                    strings.Add(itemFile.FilePath);
-                }
+                System.Collections.Specialized.StringCollection strings = [item.FilePath];
                 // Stringsが空の場合は何もしない
                 if (strings.Count == 0) {
                     return;

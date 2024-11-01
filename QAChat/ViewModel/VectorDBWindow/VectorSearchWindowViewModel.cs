@@ -131,7 +131,7 @@ namespace QAChat.ViewModel.VectorDBWindow
                     Content = InputText
                 };
                 try {
-                    vectorSearchResults.AddRange(contentItem.VectorSearchCommandExecute([VectorDBItem]));
+                    vectorSearchResults.AddRange(contentItem.VectorSearch([VectorDBItem]));
                 } finally {
                     IsIndeterminate = false;
                 }

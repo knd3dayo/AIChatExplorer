@@ -18,12 +18,6 @@ namespace PythonAILib.Model.Abstract {
         public void UpsertItem(ContentItem item, bool contentIsModified = true);
         public void DeleteItem(ContentItem item);
 
-        //-- AttachedItems
-        public void UpsertAttachedItem(ContentAttachedItem item);
-        public void DeleteAttachedItem(ContentAttachedItem item);
-        public ContentAttachedItem? GetAttachedItem(ObjectId id);
-
-
         // Prompt
         // create
         public PromptItem CreatePromptItem();

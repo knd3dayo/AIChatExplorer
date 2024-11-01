@@ -75,9 +75,9 @@ namespace QAChat.Resource {
         public override string ImageChat { get; } = "Image Chat";
 
         // ProxyURL
-        public virtual string ProxyURL { get; } = "Proxy Server URL";
+        public override string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList
-        public virtual string NoProxyList { get; } = "Proxy Exclusion List";
+        public override string NoProxyList { get; } = "Proxy Exclusion List";
         #endregion
 
     }

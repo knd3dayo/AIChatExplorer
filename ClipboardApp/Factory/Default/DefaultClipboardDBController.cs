@@ -35,10 +35,6 @@ namespace ClipboardApp.Factory.Default {
             if (updateModifiedTime) {
                 item.UpdatedAt = DateTime.Now;
             }
-            // ファイルがある場合は、追加または更新
-            foreach (var file in item.ClipboardItemFiles) {
-                UpsertAttachedItem(file);
-            }
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
             collection.Upsert(clipboardItem);
         }
@@ -55,34 +51,6 @@ namespace ClipboardApp.Factory.Default {
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(clipboardItem.Id);
         }
-
-        //-- AttachedItems  
-        public override void UpsertAttachedItem(ContentAttachedItem item) {
-            if (item is not ClipboardItemFile clipboardItemFile) {
-                throw new Exception("item is not ContentAttachedItem");
-            }
-
-            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            collection.Upsert(clipboardItemFile);
-        }
-        public override void DeleteAttachedItem(ContentAttachedItem item) {
-            if (item is not ClipboardItemFile clipboardItemFile) {
-                throw new Exception("item is not ContentAttachedItem");
-            }
-            if (item.Id == null) {
-                return;
-            }
-            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            collection.Delete(clipboardItemFile.Id);
-        }
-        public override ContentAttachedItem? GetAttachedItem(ObjectId id) {
-            var collection = GetDatabase().GetCollection<ClipboardItemFile>(CONTENT_ATTACHED_ITEM_COLLECTION_NAME);
-            var item = collection.FindById(id);
-            return item;
-        }
-
-
-
 
 
         #region フォルダー関連
