@@ -18,54 +18,6 @@ namespace ClipboardApp.ViewModel.Search {
             return searchFolderViewModel;
         }
 
-        public override ObservableCollection<MenuItem> MenuItems {
-            get {
-                // MenuItemのリストを作成
-                ObservableCollection<MenuItem> menuItems = [];
-                // 新規作成
-                MenuItem createMenuItem = new();
-                createMenuItem.Header = StringResources.Create;
-                createMenuItem.Command = CreateFolderCommand;
-                createMenuItem.CommandParameter = this;
-                menuItems.Add(createMenuItem);
-
-                // 編集
-                MenuItem editMenuItem = new();
-                editMenuItem.Header = StringResources.Edit;
-                editMenuItem.Command = EditFolderCommand;
-                editMenuItem.IsEnabled = IsEditVisible;
-                editMenuItem.CommandParameter = this;
-                menuItems.Add(editMenuItem);
-
-                // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = IsDeleteVisible;
-                deleteMenuItem.CommandParameter = this;
-                menuItems.Add(deleteMenuItem);
-
-                // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new();
-                backupRestoreMenuItem.Header = StringResources.BackupRestore;
-
-                // バックアップ
-                MenuItem backupMenuItem = new() {
-                    Header = StringResources.BackupItem,
-                    Command = BackupItemsFromFolderCommand,
-                    CommandParameter = this
-                };
-                backupRestoreMenuItem.Items.Add(backupMenuItem);
-
-                menuItems.Add(backupRestoreMenuItem);
-
-
-                return menuItems;
-
-            }
-        }
-
-
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
             ClipboardFolder clipboardFolder = ClipboardItemFolder.CreateChild("新規フォルダ");

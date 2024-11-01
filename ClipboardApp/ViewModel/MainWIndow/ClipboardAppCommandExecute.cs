@@ -20,34 +20,45 @@ using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 using ClipboardApp.ViewModel.ClipboardItemView;
 
-namespace ClipboardApp {
-    public class ClipboardAppCommandExecute {
+namespace ClipboardApp.ViewModel.MainWIndow
+{
+    public class ClipboardAppCommandExecute
+    {
 
         /// <summary>
         /// Application exit command
         /// </summary>
-        public static void ExitCommand() {
+        public static void ExitCommand()
+        {
             // Display exit confirmation dialog. If Yes, exit the application
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
+            if (result == MessageBoxResult.Yes)
+            {
                 Application.Current.Shutdown();
             }
         }
         // Command to start/stop clipboard monitoring
-        public static void StartStopClipboardMonitorCommand(MainWindowViewModel model) {
+        public static void StartStopClipboardMonitorCommand(MainWindowViewModel model)
+        {
             model.IsClipboardMonitor = !model.IsClipboardMonitor;
-            if (model.IsClipboardMonitor) {
-                MainWindowViewModel.ClipboardController.Start(async (clipboardItem) => {
+            if (model.IsClipboardMonitor)
+            {
+                MainWindowViewModel.ClipboardController.Start(async (clipboardItem) =>
+                {
                     // Process when a clipboard item is added
-                    await Task.Run(() => {
+                    await Task.Run(() =>
+                    {
                         model.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, clipboardItem));
                     });
-                    MainUITask.Run(() => {
+                    MainUITask.Run(() =>
+                    {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
-            } else {
+            }
+            else
+            {
                 MainWindowViewModel.ClipboardController.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
@@ -58,18 +69,24 @@ namespace ClipboardApp {
         }
 
         // Toggle flag to start/stop Windows notification monitoring
-        public static void StartStopWindowsNotificationMonitorCommand(MainWindowViewModel model) {
+        public static void StartStopWindowsNotificationMonitorCommand(MainWindowViewModel model)
+        {
             model.IsWindowsNotificationMonitor = !model.IsWindowsNotificationMonitor;
-            if (model.IsWindowsNotificationMonitor) {
-                WindowsNotificationController.Start(model.RootFolderViewModel.ClipboardItemFolder, (item) => {
+            if (model.IsWindowsNotificationMonitor)
+            {
+                WindowsNotificationController.Start(model.RootFolderViewModel.ClipboardItemFolder, (item) =>
+                {
                     // Process when a clipboard item is added
                     model.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, item));
-                    MainUITask.Run(() => {
+                    MainUITask.Run(() =>
+                    {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
                     });
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
-            } else {
+            }
+            else
+            {
                 MainWindowViewModel.ClipboardController.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
             }
@@ -80,33 +97,39 @@ namespace ClipboardApp {
         }
 
         // Command to open OpenAI Chat
-        public static void OpenOpenAIChatWindowCommand(ClipboardItem item) {
+        public static void OpenOpenAIChatWindowCommand(ClipboardItem item)
+        {
             QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(item);
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
         // Command to open Image Chat
-        public static void OpenImageChatWindowCommand(ClipboardItem item, Action action) {
+        public static void OpenImageChatWindowCommand(ClipboardItem item, Action action)
+        {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
 
         // Process when "RAG Management" is clicked in the menu
-        public static void OpenRAGManagementWindowCommand() {
+        public static void OpenRAGManagementWindowCommand()
+        {
             // Open RARManagementWindow
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
 
         // Process when "Vector DB Management" is clicked in the menu
-        public static void OpenVectorDBManagementWindowCommand() {
+        public static void OpenVectorDBManagementWindowCommand()
+        {
             // Open VectorDBManagementWindow
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, (vectorDBItem) => { });
         }
 
         // Process when "Settings" is clicked in the menu
-        public static void SettingCommandExecute() {
+        public static void SettingCommandExecute()
+        {
             // Open UserControl settings window
             SettingsUserControl settingsControl = new();
-            Window window = new() {
+            Window window = new()
+            {
                 SizeToContent = SizeToContent.Height,
                 Title = CommonStringResources.Instance.SettingWindowTitle,
                 Content = settingsControl
@@ -115,47 +138,60 @@ namespace ClipboardApp {
         }
 
         // Process to display the search window
-        public static void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
+        public static void OpenSearchWindowCommand(ClipboardFolder folder, Action action)
+        {
             SearchRule? searchConditionRule;
             // If the selected folder is a search folder
-            if (folder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
+            if (folder.FolderType == ClipboardFolder.FolderTypeEnum.Search)
+            {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folder);
-                searchConditionRule ??= new() {
+                searchConditionRule ??= new()
+                {
                     Type = SearchRule.SearchType.SearchFolder,
                     SearchFolder = folder
                 };
-            } else {
+            }
+            else
+            {
                 searchConditionRule = ClipboardFolder.GlobalSearchCondition;
             }
             SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
         }
 
         // Command to reload the folder
-        public static void ReloadFolderCommand(MainWindowViewModel model) {
-            if (model.SelectedFolder == null) {
+        public static void ReloadFolderCommand(MainWindowViewModel model)
+        {
+            if (model.SelectedFolder == null)
+            {
                 return;
             }
             // Display ProgressIndicator until processing is complete
-            try {
+            try
+            {
                 model.IsIndeterminate = true;
                 model.SelectedFolder.LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.Reloaded);
-            } finally {
+            }
+            finally
+            {
                 model.IsIndeterminate = false;
             }
         }
 
         // Process when Ctrl + Shift + M is pressed
-        public static void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel)
+        {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
+            if (SelectedItems == null || SelectedItems.Count == 0)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // Do not process if no folder is selected
-            if (SelectedFolder == null) {
+            if (SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
@@ -165,16 +201,19 @@ namespace ClipboardApp {
             );
         }
         // Process when Ctrl + M is pressed
-        public static void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void MergeItemCommandExecute(MainWindowViewModel windowViewModel)
+        {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
+            if (SelectedItems == null || SelectedItems.Count == 0)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // Do not process if no folder is selected
-            if (SelectedFolder == null) {
+            if (SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
@@ -185,9 +224,11 @@ namespace ClipboardApp {
         }
 
         // Process when Ctrl + X is pressed on a folder
-        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel)
+        {
             // Do not process if no folder is selected
-            if (windowViewModel.SelectedFolder == null) {
+            if (windowViewModel.SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
@@ -200,16 +241,19 @@ namespace ClipboardApp {
         }
 
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
-        public static void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void CutItemCommandExecute(MainWindowViewModel windowViewModel)
+        {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
+            if (SelectedItems == null || SelectedItems.Count == 0)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // Do not process if no folder is selected
-            if (SelectedFolder == null) {
+            if (SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
@@ -218,24 +262,28 @@ namespace ClipboardApp {
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
             // Set the selected items to CopiedItems
             windowViewModel.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
+            foreach (ClipboardItemViewModel item in SelectedItems)
+            {
                 windowViewModel.CopiedObjects.Add(item);
             }
             LogWrapper.Info(CommonStringResources.Instance.Cut);
         }
 
         // Process when Ctrl + C is pressed
-        public static void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel)
+        {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
-            if (SelectedItem == null || SelectedItems.Count == 0) {
+            if (SelectedItem == null || SelectedItems.Count == 0)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
             // Do not process if no folder is selected
-            if (SelectedFolder == null) {
+            if (SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
                 return;
             }
@@ -243,31 +291,38 @@ namespace ClipboardApp {
             windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
             // Set the selected items to CopiedItems
             windowViewModel.CopiedObjects.Clear();
-            foreach (ClipboardItemViewModel item in SelectedItems) {
+            foreach (ClipboardItemViewModel item in SelectedItems)
+            {
                 windowViewModel.CopiedObjects.Add(item);
             }
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
-            try {
+            try
+            {
                 MainWindowViewModel.ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
                 LogWrapper.Error(message);
             }
         }
 
         // Process when Ctrl + V is pressed
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel)
+        {
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<object> CopiedItems = windowViewModel.CopiedObjects;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedFolder;
             // Do not process if no folder is selected
-            if (SelectedFolder == null) {
+            if (SelectedFolder == null)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.NoPasteFolder);
                 return;
             }
             // If the source items are from within the app
-            if (CopiedItems.Count > 0) {
+            if (CopiedItems.Count > 0)
+            {
                 SelectedFolder.PasteClipboardItemCommandExecute(
                     windowViewModel.CutFlag,
                     CopiedItems,
@@ -277,16 +332,21 @@ namespace ClipboardApp {
                 windowViewModel.CutFlag = MainWindowViewModel.CutFlagEnum.None;
                 // Clear selected items after pasting
                 CopiedItems.Clear();
-            } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
+            }
+            else if (ClipboardController.LastClipboardChangedEventArgs != null)
+            {
                 // If there are no source items, paste from the system clipboard
                 SelectedFolder.ClipboardItemFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
-                    async (clipboardItem) => {
+                    async (clipboardItem) =>
+                    {
                         // Process when a clipboard item is added
-                        await Task.Run(() => {
+                        await Task.Run(() =>
+                        {
                             // Save to folder if saveToFolder is true
                             SelectedFolder?.AddItemCommand.Execute(new ClipboardItemViewModel(SelectedFolder, clipboardItem));
                             // Process after pasting
-                            MainUITask.Run(() => {
+                            MainUITask.Run(() =>
+                            {
                                 windowViewModel.SelectedFolder?.LoadFolderCommand.Execute();
                             });
                         });
@@ -294,17 +354,22 @@ namespace ClipboardApp {
             }
         }
         // Command to open a folder
-        public static void OpenFolderCommand(ClipboardItem contentItem) {
+        public static void OpenFolderCommand(ClipboardItem contentItem)
+        {
             // Open the folder only if the ContentType is File
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
+            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
             // Open the folder with Process.Start
             string? folderPath = contentItem.FolderName;
-            if (folderPath != null) {
-                var p = new Process {
-                    StartInfo = new ProcessStartInfo(folderPath) {
+            if (folderPath != null)
+            {
+                var p = new Process
+                {
+                    StartInfo = new ProcessStartInfo(folderPath)
+                    {
                         UseShellExecute = true
                     }
                 };
@@ -313,8 +378,10 @@ namespace ClipboardApp {
         }
 
         // Command to extract text
-        public static void ExtractTextCommand(ClipboardItem contentItem) {
-            if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
+        public static void ExtractTextCommand(ClipboardItem contentItem)
+        {
+            if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text)
+            {
                 LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
                 return;
             }
@@ -322,28 +389,34 @@ namespace ClipboardApp {
         }
 
         // Command to open a file
-        public static void OpenFileCommand(ClipboardItem contentItem) {
+        public static void OpenFileCommand(ClipboardItem contentItem)
+        {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
         }
 
         // Command to open a file as a new file
-        public static void OpenFileAsNewFileCommand(ClipboardItem contentItem) {
+        public static void OpenFileAsNewFileCommand(ClipboardItem contentItem)
+        {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
 
         // Command to generate titles
-        public static async void GenerateTitleCommand(List<ClipboardItem> contentItem, object obj) {
+        public static async void GenerateTitleCommand(List<ClipboardItem> contentItem, object obj)
+        {
             LogWrapper.Info(CommonStringResources.Instance.GenerateTitleInformation);
-            await Task.Run(() => {
-                foreach (var item in contentItem) {
+            await Task.Run(() =>
+            {
+                foreach (var item in contentItem)
+                {
                     item.CreateAutoTitleWithOpenAI();
                     // Save
                     item.Save(false);
                 }
                 // Execute if obj is an Action
-                if (obj is Action action) {
+                if (obj is Action action)
+                {
                     action();
                 }
             });
@@ -351,16 +424,20 @@ namespace ClipboardApp {
         }
 
         // Command to execute a prompt template
-        public static async void ExecutePromptTemplateCommand(List<ClipboardItem> contentItem, object obj, string promptName) {
+        public static async void ExecutePromptTemplateCommand(List<ClipboardItem> contentItem, object obj, string promptName)
+        {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
-            await Task.Run(() => {
-                foreach (var item in contentItem) {
+            await Task.Run(() =>
+            {
+                foreach (var item in contentItem)
+                {
                     item.CreateChatResult(promptName);
                     // Save
                     item.Save(false);
                 }
                 // Execute if obj is an Action
-                if (obj is Action action) {
+                if (obj is Action action)
+                {
                     action();
                 }
             });
@@ -368,39 +445,47 @@ namespace ClipboardApp {
         }
 
         // Command to generate background information
-        public static void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object obj) {
+        public static void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object obj)
+        {
             string promptName = PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // Command to generate a summary
-        public static void GenerateSummaryCommand(List<ClipboardItem> contentItem, object obj) {
+        public static void GenerateSummaryCommand(List<ClipboardItem> contentItem, object obj)
+        {
             string promptName = PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // Command to generate a task list
-        public static void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj) {
+        public static void GenerateTasksCommand(List<ClipboardItem> contentItem, object obj)
+        {
             string promptName = PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
         // Command to check the reliability of the document
-        public static void CheckDocumentReliabilityCommand(List<ClipboardItem> contentItem, object obj) {
+        public static void CheckDocumentReliabilityCommand(List<ClipboardItem> contentItem, object obj)
+        {
             string promptName = PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
             ExecutePromptTemplateCommand(contentItem, obj, promptName);
         }
 
         // Command to generate vectors
-        public static async void GenerateVectorCommand(List<ClipboardItem> contentItem, object obj) {
+        public static async void GenerateVectorCommand(List<ClipboardItem> contentItem, object obj)
+        {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
-            await Task.Run(() => {
-                foreach (var item in contentItem) {
+            await Task.Run(() =>
+            {
+                foreach (var item in contentItem)
+                {
                     item.UpdateEmbedding();
                     // Save
                     item.Save(false);
                 }
                 // Execute if obj is an Action
-                if (obj is Action action) {
+                if (obj is Action action)
+                {
                     action();
                 }
             });
@@ -408,13 +493,17 @@ namespace ClipboardApp {
         }
 
         // Command to perform vector search
-        public static void OpenVectorSearchWindowCommand(ClipboardFolder folder) {
+        public static void OpenVectorSearchWindowCommand(ClipboardFolder folder)
+        {
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
-                    foreach (var item in selectedItems) {
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) =>
+            {
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) =>
+                {
+                    foreach (var item in selectedItems)
+                    {
                         vectorDBItems.Add(item);
                     }
                 });
@@ -424,20 +513,27 @@ namespace ClipboardApp {
         }
 
         // Command to perform vector search
-        public static void OpenVectorSearchWindowCommand(ClipboardItem contentItem) {
+        public static void OpenVectorSearchWindowCommand(ClipboardItem contentItem)
+        {
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
-                    foreach (var item in selectedItems) {
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) =>
+            {
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) =>
+                {
+                    foreach (var item in selectedItems)
+                    {
                         vectorDBItems.Add(item);
                     }
                 });
             };
-            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
+            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding)
+            {
                 vectorSearchWindowViewModel.InputText = contentItem.Content + "\n" + contentItem.BackgroundInfo;
-            } else {
+            }
+            else
+            {
                 vectorSearchWindowViewModel.InputText = contentItem.Content;
             }
             vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
@@ -447,11 +543,15 @@ namespace ClipboardApp {
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
         // Command to open text content as a file
-        public static void OpenContentAsFileCommand(ClipboardItem contentItem) {
-            try {
+        public static void OpenContentAsFileCommand(ClipboardItem contentItem)
+        {
+            try
+            {
                 // Open the selected item
                 ClipboardProcessController.OpenClipboardItemContent(contentItem);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 LogWrapper.Error(e.Message);
             }
         }

@@ -63,7 +63,7 @@
                 <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, ElementName=Root}" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <!--  ContentType  -->
+                <!--  IsPinned  -->
                 <DataGridCheckBoxColumn
                     Width="100"
                     Binding="{Binding IsPinned}"

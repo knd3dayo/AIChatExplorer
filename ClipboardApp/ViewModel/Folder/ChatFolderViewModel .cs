@@ -17,54 +17,6 @@ namespace ClipboardApp.ViewModel.Folder {
             return chatFolderViewModel;
         }
 
-        public override ObservableCollection<MenuItem> MenuItems {
-            get {
-                // MenuItemのリストを作成
-                ObservableCollection<MenuItem> menuItems = [];
-                // 新規作成
-                MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
-                    Command = CreateFolderCommand,
-                    CommandParameter = this
-                };
-                menuItems.Add(createMenuItem);
-
-                // 編集
-                MenuItem editMenuItem = new() {
-                    Header = StringResources.Edit,
-                    Command = EditFolderCommand,
-                    IsEnabled = IsEditVisible,
-                    CommandParameter = this
-                };
-                menuItems.Add(editMenuItem);
-
-                // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = IsDeleteVisible;
-                deleteMenuItem.CommandParameter = this;
-                menuItems.Add(deleteMenuItem);
-
-                // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new();
-                backupRestoreMenuItem.Header = StringResources.BackupRestore;
-
-                // バックアップ
-                MenuItem backupMenuItem = new() {
-                    Header = StringResources.BackupItem,
-                    Command = BackupItemsFromFolderCommand,
-                    CommandParameter = this
-                };
-                backupRestoreMenuItem.Items.Add(backupMenuItem);
-
-                menuItems.Add(backupRestoreMenuItem);
-
-                return menuItems;
-
-            }
-        }
-
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
@@ -80,8 +32,8 @@ namespace ClipboardApp.ViewModel.Folder {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
-            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.ImageCheck;
-            ImageCheckFolderViewModel childFolderViewModel = new(childFolder);
+            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Chat;
+            ChatFolderViewModel childFolderViewModel = new(childFolder);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
 

@@ -101,24 +101,9 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Top"
-                    Text="{Binding StringResources.Image, Mode=OneTime}"
-                    Visibility="{Binding ImageVisibility}" />
-                <Image
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    MaxWidth="600"
-                    Margin="10,3,10,3"
-                    Source="{Binding ClipboardItem.BitmapImage, Mode=OneWay}"
-                    Stretch="Uniform"
-                    Visibility="{Binding ImageVisibility}" />
-                <TextBlock
-                    Grid.Row="5"
-                    Grid.Column="0"
-                    Margin="10,3,10,3"
-                    VerticalAlignment="Top"
                     Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
                 <ScrollViewer
-                    Grid.Row="5"
+                    Grid.Row="4"
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     HorizontalScrollBarVisibility="Auto"
@@ -129,6 +114,21 @@
                         Text="{Binding ClipboardItem.Content, Mode=OneWay}"
                         TextWrappingMode="{Binding TextWrappingMode}" />
                 </ScrollViewer>
+                <TextBlock
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    Margin="10,3,10,3"
+                    VerticalAlignment="Top"
+                    Text="{Binding StringResources.Image, Mode=OneTime}"
+                    Visibility="{Binding ImageVisibility}" />
+                <Image
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    MaxWidth="600"
+                    Margin="10,3,10,3"
+                    Source="{Binding ClipboardItem.BitmapImage, Mode=OneWay}"
+                    Stretch="Uniform"
+                    Visibility="{Binding ImageVisibility}" />
             </Grid>
         </ScrollViewer>
     </Grid>

@@ -1,11 +1,13 @@
 using System.Windows;
 using System.Windows.Media;
 using ClipboardApp.Model;
+using ClipboardApp.ViewModel.MainWIndow;
 using QAChat.View.TagView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.ClipboardItemView {
+namespace ClipboardApp.ViewModel.ClipboardItemView
+{
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>

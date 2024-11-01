@@ -4,12 +4,14 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemView;
+using ClipboardApp.ViewModel.MainWIndow;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.ClipboardItemView {
+namespace ClipboardApp.ViewModel.ClipboardItemView
+{
     public partial class ClipboardItemViewModel : CommonViewModelBase {
 
         // コンストラクタ
@@ -36,7 +38,8 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
 
         public ObservableCollection<MenuItem> MenuItems {
             get {
-                return FolderViewModel.CreateItemContextMenuItems(this);
+                ClipboardItemMenu clipboardItemMenu = new(this.FolderViewModel);
+                return clipboardItemMenu.CreateItemContextMenuItems(this);
             }
         }
 

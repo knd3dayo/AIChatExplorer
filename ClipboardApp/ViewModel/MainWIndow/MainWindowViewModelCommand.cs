@@ -13,8 +13,10 @@ using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.MainWIndow;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel {
         // アプリケーションを終了する。
         // Ctrl + Q が押された時の処理
@@ -147,23 +149,19 @@ namespace ClipboardApp {
             VersionWindow.OpenVersionWindow();
         });
 
-        // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。選択中のアイテムは無視
+        // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
+        // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
-            ClipboardItem dummyItem = new ClipboardItem(folderViewModel.ClipboardItemFolder.Id);
+            ClipboardItem dummyItem = new (ChatRootFolderViewModel.ClipboardItemFolder.Id);
             ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(dummyItem);
         });
+
         // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
-            // 選択中のフォルダがない場合 or 画像フォルダでない場合は画像ルートフォルダのアイテムを新規作成
-            ClipboardItem item;
-            if (SelectedFolder == null || SelectedFolder.ClipboardItemFolder.FolderType != ClipboardFolder.FolderTypeEnum.ImageCheck) {
-                item = new ClipboardItem(ImageCheckRootFolderViewModel.ClipboardItemFolder.Id);
-            } else {
-                item = new ClipboardItem(SelectedFolder.ClipboardItemFolder.Id);
-            }
-            ClipboardAppCommandExecute.OpenImageChatWindowCommand(item, () => {
-                SelectedFolder?.LoadFolderCommand.Execute();
+            // チャット履歴フォルダーに新規作成
+            ClipboardItem dummyItem = new(ChatRootFolderViewModel.ClipboardItemFolder.Id);
+            ClipboardAppCommandExecute.OpenImageChatWindowCommand(dummyItem, () => {
+                ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
         });
 

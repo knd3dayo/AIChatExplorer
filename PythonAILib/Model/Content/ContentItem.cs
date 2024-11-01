@@ -63,7 +63,7 @@ namespace PythonAILib.Model.Content {
         public bool IsPinned { get; set; }
 
         // 文書の信頼度(0-100)
-        public int DocumentReliability { get; set; }
+        public int DocumentReliability { get; set; } = 50;
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason { get; set; } = "";
 

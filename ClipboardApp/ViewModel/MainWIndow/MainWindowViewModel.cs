@@ -16,9 +16,11 @@ using QAChat.Control;
 using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.MainWIndow;
 
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
@@ -60,13 +62,11 @@ namespace ClipboardApp {
 
         private void InitClipboardFolders() {
             RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
-            ImageCheckRootFolderViewModel = new ImageCheckFolderViewModel(ClipboardFolder.ImageCheckRootFolder);
             SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolder.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolder.ChatRootFolder);
             ClipboardItemFolders.Add(RootFolderViewModel);
             ClipboardItemFolders.Add(SearchRootFolderViewModel);
             ClipboardItemFolders.Add(ChatRootFolderViewModel);
-            ClipboardItemFolders.Add(ImageCheckRootFolderViewModel);
 
             OnPropertyChanged(nameof(ClipboardItemFolders));
         }
@@ -77,11 +77,6 @@ namespace ClipboardApp {
         // Null非許容を無視
         [AllowNull]
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
-
-        // 画像チェックフォルダのClipboardViewModel
-        // Null非許容を無視
-        [AllowNull]
-        public ImageCheckFolderViewModel ImageCheckRootFolderViewModel { get; private set; }
 
         // 検索フォルダのClipboardViewModel
         // Null非許容を無視
@@ -321,7 +316,8 @@ namespace ClipboardApp {
                     clipboardItem = (ClipboardItem)item;
                     // ClipboardItemを保存
                     clipboardItem.Save();
-                    if (saveChatHistory) {
+                    // チャット履歴を保存するフラグが立っている場合で、チャット履歴以外のフォルダの場合
+                    if (saveChatHistory && clipboardItem.GetFolder().FolderType != ClipboardFolder.FolderTypeEnum.Chat) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = MainWindowViewModel.ActiveInstance.ChatRootFolderViewModel.ClipboardItemFolder;
                         ClipboardItem chatHistoryItem = new(chatFolder.Id);

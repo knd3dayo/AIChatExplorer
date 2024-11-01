@@ -1,33 +1,32 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
-using ClipboardApp.Model;
-using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.ClipboardItemView;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using PythonAILib.Model.Prompt;
+using System.Windows.Controls;
 using PythonAILib.Resource;
-using WpfAppCommon.Utils;
-using ClipboardApp.ViewModel.ClipboardItemView;
 
-namespace ClipboardApp.ViewModel {
-    public partial class ClipboardFolderViewModel {
+namespace ClipboardApp.ViewModel.ClipboardItemView {
+    public  class ClipboardItemMenu : ClipboardAppViewModelBase{
 
-        // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public virtual ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            var childFolderViewModel = new ClipboardFolderViewModel(childFolder);
-            // 親フォルダとして自分自身を設定
-            childFolderViewModel.ParentFolderViewModel = this;
-            return childFolderViewModel;
+        public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
+
+        public ClipboardItemMenu(ClipboardFolderViewModel clipboardFolderViewModel) {
+            ClipboardFolderViewModel = clipboardFolderViewModel;
         }
+
         // -- virtual
-        public virtual ObservableCollection<MenuItem> MenuItems {
+        public ObservableCollection<MenuItem> MenuItems {
             get {
+                #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
                 // 新規作成
                 MenuItem createMenuItem = new() {
                     Header = StringResources.Create,
-                    Command = CreateFolderCommand,
+                    Command = ClipboardFolderViewModel.CreateFolderCommand,
                     CommandParameter = this
                 };
                 menuItems.Add(createMenuItem);
@@ -35,8 +34,8 @@ namespace ClipboardApp.ViewModel {
                 // 編集
                 MenuItem editMenuItem = new() {
                     Header = StringResources.Edit,
-                    Command = EditFolderCommand,
-                    IsEnabled = IsEditVisible,
+                    Command = ClipboardFolderViewModel.EditFolderCommand,
+                    IsEnabled = ClipboardFolderViewModel.IsEditVisible,
                     CommandParameter = this
                 };
                 menuItems.Add(editMenuItem);
@@ -44,15 +43,15 @@ namespace ClipboardApp.ViewModel {
                 // 削除
                 MenuItem deleteMenuItem = new();
                 deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = IsDeleteVisible;
+                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
                 deleteMenuItem.CommandParameter = this;
                 menuItems.Add(deleteMenuItem);
 
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {
                     Header = StringResources.ExportImport,
-                    Command = ExportImportFolderCommand,
+                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
                     CommandParameter = this
                 };
                 menuItems.Add(exportImportMenuItem);
@@ -66,7 +65,7 @@ namespace ClipboardApp.ViewModel {
                 // バックアップ
                 MenuItem backupMenuItem = new() {
                     Header = StringResources.BackupItem,
-                    Command = BackupItemsFromFolderCommand,
+                    Command = ClipboardFolderViewModel.BackupItemsFromFolderCommand,
                     CommandParameter = this
                 };
                 backupRestoreMenuItem.Items.Add(backupMenuItem);
@@ -75,7 +74,7 @@ namespace ClipboardApp.ViewModel {
                 // リストア
                 MenuItem restoreMenuItem = new() {
                     Header = StringResources.RestoreItem,
-                    Command = RestoreItemsToFolderCommand,
+                    Command = ClipboardFolderViewModel.RestoreItemsToFolderCommand,
                     CommandParameter = this
                 };
                 backupRestoreMenuItem.Items.Add(restoreMenuItem);
@@ -84,6 +83,7 @@ namespace ClipboardApp.ViewModel {
 
                 return menuItems;
 
+                #endregion
             }
         }
 
@@ -157,13 +157,14 @@ namespace ClipboardApp.ViewModel {
             return promptMenuItem;
         }
 
+
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
-                Command = OpenItemCommand,
+                Command = ClipboardFolderViewModel.OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
             };
@@ -242,131 +243,5 @@ namespace ClipboardApp.ViewModel {
             return CreateBasicItemContextMenuItems(itemViewModel);
         }
 
-
-        // LoadChildren
-        // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
-        // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public void LoadChildren(int nestLevel = 5) {
-            Children = [];
-
-            // Childrenがクリアされていない場合
-            if (Children.Count > 0) {
-                throw new Exception("Children is not cleared");
-            }
-            foreach (var child in ClipboardItemFolder.Children) {
-                if (child == null) {
-                    continue;
-                }
-                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                if (nestLevel > 0) {
-                    childViewModel.LoadChildren(nestLevel - 1);
-                }
-                Children.Add(childViewModel);
-            }
-            OnPropertyChanged(nameof(Children));
-
-        }
-        // LoadItems
-        public void LoadItems() {
-            Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                Items.Add(new ClipboardItemViewModel(this, item));
-            }
-        }
-
-
-        // フォルダ作成コマンドの実装
-        public virtual void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-            // 子フォルダを作成する
-            ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
-            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Normal;
-            ClipboardFolderViewModel childFolderViewModel = new(childFolder);
-
-            FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
-
-        }
-
-        /// <summary>
-        ///  フォルダ編集コマンド
-        ///  フォルダ編集ウィンドウを表示する処理
-        ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
-        /// </summary>
-        /// <param name="parameter"></param>
-        public virtual void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-
-            FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
-
-        }
-
-        public virtual void CreateItemCommandExecute() {
-            EditItemWindow.OpenEditItemWindow(this, null, () => {
-                // フォルダ内のアイテムを再読み込み
-                LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.Added);
-            });
-        }
-        public virtual void OpenItemCommandExecute(ClipboardItemViewModel item) {
-            EditItemWindow.OpenEditItemWindow(this, item, () => {
-                // フォルダ内のアイテムを再読み込み
-                LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.Edited);
-            });
-        }
-
-        /// <summary>
-        /// Ctrl + V が押された時の処理
-        /// コピー中のアイテムを選択中のフォルダにコピー/移動する
-        /// 貼り付け後にフォルダ内のアイテムを再読み込む
-        /// 
-        /// </summary>
-        /// <param name="Instance"></param>
-        /// <param name="item"></param>
-        /// <param name="fromFolder"></param>
-        /// <param name="toFolder"></param>
-        /// <returns></returns>
-
-        public virtual void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag,
-            IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
-            foreach (var item in items) {
-                if (item is ClipboardItemViewModel itemViewModel) {
-                    ClipboardItem clipboardItem = itemViewModel.ClipboardItem;
-                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Item) {
-                        // Cutフラグが立っている場合はコピー元のアイテムを削除する
-                        clipboardItem.MoveToFolder(toFolder.ClipboardItemFolder);
-                    } else {
-                        clipboardItem.CopyToFolder(toFolder.ClipboardItemFolder);
-                    }
-                }
-                if (item is ClipboardFolderViewModel folderViewModel) {
-                    ClipboardFolder folder = folderViewModel.ClipboardItemFolder;
-                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Folder) {
-                        // Cutフラグが立っている場合はコピー元のフォルダを削除する
-                        folder.MoveTo(toFolder.ClipboardItemFolder);
-                        // 元のフォルダの親フォルダを再読み込み
-                        folderViewModel.ParentFolderViewModel?.LoadFolderCommand.Execute();
-                    }
-                }
-
-            }
-            toFolder.LoadFolderCommand.Execute();
-
-            LogWrapper.Info(StringResources.Pasted);
-        }
-
-        public virtual void MergeItemCommandExecute(
-            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems) {
-
-            if (selectedItems.Count < 2) {
-                LogWrapper.Error(StringResources.SelectTwoItemsToMerge);
-                return;
-            }
-            selectedItems[0].MergeItems([.. selectedItems]);
-
-            // フォルダ内のアイテムを再読み込み
-            folderViewModel.LoadFolderCommand.Execute();
-            LogWrapper.Info(StringResources.Merged);
-
-        }
     }
 }
