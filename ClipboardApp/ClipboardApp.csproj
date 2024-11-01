@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Control\MainWindowGridView1.xaml.cs">
+    <Compile Update="Control\MainPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Misc.Designer.cs">

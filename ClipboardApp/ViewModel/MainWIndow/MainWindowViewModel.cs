@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using ClipboardApp.Control;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
@@ -9,20 +10,18 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.ClipboardItemView;
 using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.ViewModel.MainWIndow;
 using ClipboardApp.ViewModel.Search;
 using QAChat;
 using QAChat.Control;
 using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
-using ClipboardApp.ViewModel.ClipboardItemView;
-using ClipboardApp.ViewModel.MainWIndow;
-using ClipboardApp.Control;
 
 
-namespace ClipboardApp
-{
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase , IMainWindowGridView1ModelImplementer {
+namespace ClipboardApp {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IMainWindowGridView1ModelImplementer {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -65,11 +64,11 @@ namespace ClipboardApp
             RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
             SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolder.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolder.ChatRootFolder);
-            ClipboardItemFolders.Add(RootFolderViewModel);
-            ClipboardItemFolders.Add(SearchRootFolderViewModel);
-            ClipboardItemFolders.Add(ChatRootFolderViewModel);
+            FolderViewModels.Add(RootFolderViewModel);
+            FolderViewModels.Add(SearchRootFolderViewModel);
+            FolderViewModels.Add(ChatRootFolderViewModel);
 
-            OnPropertyChanged(nameof(ClipboardItemFolders));
+            OnPropertyChanged(nameof(FolderViewModels));
         }
 
         public static MainWindowViewModel ActiveInstance { get; set; } = new MainWindowViewModel();
@@ -129,7 +128,7 @@ namespace ClipboardApp
 
         // ClipboardFolder
 
-        public ObservableCollection<ClipboardFolderViewModel> ClipboardItemFolders { get; set; } = [];
+        public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
 
         // Cutフラグ
         public enum CutFlagEnum {
@@ -239,7 +238,7 @@ namespace ClipboardApp
                 } else {
                     if (TextWrapping) {
                         CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;
-                    } else { 
+                    } else {
                         CommonViewModelBase.TextWrappingMode = MyTextBox.TextWrappingModeEnum.NoWrap;
                     }
                 }

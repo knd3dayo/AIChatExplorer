@@ -10,6 +10,11 @@ namespace ClipboardApp.Control {
         public Visibility PreviewModeVisibility { get; }
         public ClipboardItemViewModel SelectedItem { get; set; }
         public ClipboardFolderViewModel SelectedFolder { get; set; }
+        // FolderViewModels
+        public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; }
+
+
+        // Item
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand { get; }
         public SimpleDelegateCommand<object> OpenSelectedItemCommand { get; }
         public SimpleDelegateCommand<object> OpenContentAsFileCommand { get; }
@@ -23,5 +28,8 @@ namespace ClipboardApp.Control {
         public SimpleDelegateCommand<object> DeleteItemCommand { get; }
         // CutItemCommand
         public SimpleDelegateCommand<object> CutItemCommand { get; }
+
+        // Folder
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand { get; }
     }
 }

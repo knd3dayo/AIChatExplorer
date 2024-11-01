@@ -8,8 +8,8 @@ namespace ClipboardApp.Control {
     /// <summary>
     /// MainWindowListView1.xaml の相互作用ロジック
     /// </summary>
-    public partial class MainWindowGridView1 : UserControl {
-        public MainWindowGridView1() {
+    public partial class MainPanel : UserControl {
+        public MainPanel() {
             InitializeComponent();
         }
     }

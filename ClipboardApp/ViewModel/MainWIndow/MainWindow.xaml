@@ -210,89 +210,11 @@
                     </Menu>
                 </materialDesign:ColorZone>
             </StackPanel>
-            <Grid Grid.Row="1">
-                <!--  TreeView, ListBox  -->
-                <Grid.ColumnDefinitions>
-                    <!--  1. TreeView, 2. GridSplitter, 3. ListBox  -->
-                    <!--  Insert GridSplitter between TreeView and ListBox  -->
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <!--  Folder TreeView  -->
-                <TreeView
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    ItemsSource="{Binding ClipboardItemFolders}">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="Margin" Value="3,3,3,3" />
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
-                            <!--  Tree item  -->
-                            <!--  Set HorizontalAlignment to Stretch to match the outer size on the left and right  -->
-                            <DockPanel HorizontalAlignment="Stretch">
-                                <materialDesign:PackIcon
-                                    Width="18"
-                                    Height="18"
-                                    Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
-                                    Kind="Folder" />
-                                <TextBlock
-                                    Margin="0,3,0,0"
-                                    DockPanel.Dock="Left"
-                                    FontSize="12"
-                                    Foreground="#616161"
-                                    Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
-                                    Text="{Binding FolderName}" />
-                                <DockPanel.InputBindings>
-                                    <!--  Open folder on left click  -->
-                                    <!-- <MouseBinding  MouseAction="LeftClick" Command="{Binding OpenFolderCommand}" CommandParameter="{Binding}"/> -->
-                                </DockPanel.InputBindings>
-                                <DockPanel.ContextMenu>
-                                    <!--  Folder context menu  -->
-                                    <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
-                                </DockPanel.ContextMenu>
-                            </DockPanel>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectedItemChanged">
-                            <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <TreeView.InputBindings>
-                        <!--  Reload items from LiteDB  -->
-                        <KeyBinding
-                            Key="R"
-                            Command="{Binding ReloadCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Paste items into selected folder  -->
-                        <KeyBinding
-                            Key="V"
-                            Command="{Binding PasteCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Cut Folder  -->
-                        <KeyBinding
-                            Key="X"
-                            Command="{Binding CutFolderCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                    </TreeView.InputBindings>
-                </TreeView>
-                <GridSplitter
-                    Grid.Column="1"
-                    Width="5"
-                    HorizontalAlignment="Stretch" />
-                <!--  Clipboard ListBox  -->
-
-                <lc:MainWindowGridView1
-                    x:Name="MainWindowGridView1"
-                    Grid.Row="0"
-                    Grid.Column="2"
-                    HorizontalAlignment="Stretch"
-                    DataContext="{Binding}" />
-            </Grid>
+            <lc:MainPanel
+                x:Name="MainPanel"
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                DataContext="{Binding}" />
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar
                 Grid.Row="1"

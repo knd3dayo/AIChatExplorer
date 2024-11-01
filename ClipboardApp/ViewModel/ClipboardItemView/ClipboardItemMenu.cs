@@ -27,7 +27,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 MenuItem createMenuItem = new() {
                     Header = StringResources.Create,
                     Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = this
+                    CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(createMenuItem);
 
@@ -36,7 +36,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                     Header = StringResources.Edit,
                     Command = ClipboardFolderViewModel.EditFolderCommand,
                     IsEnabled = ClipboardFolderViewModel.IsEditVisible,
-                    CommandParameter = this
+                    CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(editMenuItem);
 
@@ -52,7 +52,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 MenuItem exportImportMenuItem = new() {
                     Header = StringResources.ExportImport,
                     Command = ClipboardFolderViewModel.ExportImportFolderCommand,
-                    CommandParameter = this
+                    CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(exportImportMenuItem);
 
@@ -66,7 +66,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 MenuItem backupMenuItem = new() {
                     Header = StringResources.BackupItem,
                     Command = ClipboardFolderViewModel.BackupItemsFromFolderCommand,
-                    CommandParameter = this
+                    CommandParameter = ClipboardFolderViewModel
                 };
                 backupRestoreMenuItem.Items.Add(backupMenuItem);
 
@@ -75,7 +75,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 MenuItem restoreMenuItem = new() {
                     Header = StringResources.RestoreItem,
                     Command = ClipboardFolderViewModel.RestoreItemsToFolderCommand,
-                    CommandParameter = this
+                    CommandParameter = ClipboardFolderViewModel
                 };
                 backupRestoreMenuItem.Items.Add(restoreMenuItem);
 
