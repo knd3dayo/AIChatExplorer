@@ -200,7 +200,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
             MenuItem deleteMnuItem = new() {
                 Header = StringResources.Delete,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.ActiveInstance.DeleteSelectedItemCommand,
+                Command = MainWindowViewModel.ActiveInstance.DeleteItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Delete"
             };

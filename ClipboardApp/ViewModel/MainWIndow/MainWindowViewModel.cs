@@ -17,11 +17,12 @@ using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.Control;
 
 
 namespace ClipboardApp
 {
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase , IMainWindowGridView1ModelImplementer {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -246,7 +247,7 @@ namespace ClipboardApp
         }
 
         // プレビューモード　プレビューを表示するかどうか
-        public static Visibility PreviewModeVisibility {
+        public Visibility PreviewModeVisibility {
             get {
                 return ClipboardAppConfig.Instance.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
             }

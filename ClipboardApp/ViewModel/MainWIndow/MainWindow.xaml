@@ -291,55 +291,7 @@
                     Grid.Row="0"
                     Grid.Column="2"
                     HorizontalAlignment="Stretch"
-                    ClipboardItemSelectionChangedCommand="{Binding ClipboardItemSelectionChangedCommand}"
-                    CopyItemCommand="{Binding CopyItemCommand}"
-                    DeleteItemCommand="{Binding DeleteSelectedItemCommand}"
-                    ItemsSource="{Binding SelectedFolder.Items}"
-                    OpenSelectedItemCommand="{Binding OpenSelectedItemCommand}"
-                    PreviewModeVisibility="{Binding PreviewModeVisibility}"
-                    SelectedItem="{Binding SelectedItem}">
-                    <lc:MainWindowGridView1.InputBindings>
-                        <!--  Open selected item window by double-clicking  -->
-                        <MouseBinding Command="{Binding OpenSelectedItemCommand}" MouseAction="LeftDoubleClick" />
-                        <!--  Open selected item  -->
-                        <KeyBinding
-                            Key="O"
-                            Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Open selected item as file  -->
-                        <KeyBinding
-                            Key="O"
-                            Command="{Binding OpenContentAsFileCommand, Mode=OneTime}"
-                            Modifiers="Control+Shift" />
-                        <!--  Merge items into selected item  -->
-                        <KeyBinding
-                            Key="M"
-                            Command="{Binding MergeItemCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Merge items into selected item with header  -->
-                        <KeyBinding
-                            Key="M"
-                            Command="{Binding MergeItemWithHeaderCommand, Mode=OneTime}"
-                            Modifiers="Control+Shift" />
-                        <!--  Copy selected item to clipboard  -->
-                        <KeyBinding
-                            Key="C"
-                            Command="{Binding CopyItemCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Copy selected item to clipboard with Cut flag set to True  -->
-                        <KeyBinding
-                            Key="X"
-                            Command="{Binding CutItemCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                        <!--  Delete selected item  -->
-                        <KeyBinding Key="Delete" Command="{Binding DeleteSelectedItemCommand, Mode=OneTime}" />
-                        <!--  Delete displayed item  -->
-                        <KeyBinding
-                            Key="Delete"
-                            Command="{Binding DeleteDisplayedItemCommand, Mode=OneTime}"
-                            Modifiers="Control" />
-                    </lc:MainWindowGridView1.InputBindings>
-                </lc:MainWindowGridView1>
+                    DataContext="{Binding}" />
             </Grid>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar

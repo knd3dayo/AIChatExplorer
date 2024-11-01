@@ -236,7 +236,7 @@ namespace ClipboardApp
         });
 
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
-        public SimpleDelegateCommand<object> DeleteSelectedItemCommand => new((parameter) => {
+        public SimpleDelegateCommand<object> DeleteItemCommand => new((parameter) => {
             // 選択中のアイテムがない場合は処理をしない
             if (SelectedItems == null || SelectedItems.Count == 0) {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);

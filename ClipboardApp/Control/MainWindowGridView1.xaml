@@ -8,8 +8,9 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel"
+    xmlns:viewModel="clr-namespace:ClipboardApp.Control"
     x:Name="Root"
+    d:DataContext="{d:DesignInstance Type=viewModel:IMainWindowGridView1ModelImplementer}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
@@ -41,7 +42,7 @@
             CanUserResizeColumns="True"
             CanUserResizeRows="False"
             CanUserSortColumns="True"
-            ItemsSource="{Binding ItemsSource, ElementName=Root}"
+            ItemsSource="{Binding SelectedFolder.Items}"
             RowHeaderWidth="0"
             SelectionMode="Extended"
             SelectionUnit="FullRow"
@@ -50,17 +51,43 @@
             VirtualizingStackPanel.IsVirtualizing="True">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
-                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand, ElementName=Root}" PassEventArgsToCommand="True" />
+                    <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <DataGrid.InputBindings>
                 <!--  Open selected item window by double-clicking  -->
-                <MouseBinding Command="{Binding OpenSelectedItemCommand, ElementName=Root}" MouseAction="LeftDoubleClick" />
+                <MouseBinding Command="{Binding OpenSelectedItemCommand}" MouseAction="LeftDoubleClick" />
+                <!--  Open selected item  -->
                 <KeyBinding
-                    Key="C"
-                    Command="{Binding CopyItemCommand, ElementName=Root}"
-                    Modifiers="Ctrl" />
-                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, ElementName=Root}" />
+                    Key="O"
+                    Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Open selected item as file  -->
+                <KeyBinding
+                    Key="O"
+                    Command="{Binding OpenContentAsFileCommand, Mode=OneTime}"
+                    Modifiers="Control+Shift" />
+                <!--  Merge items into selected item  -->
+                <KeyBinding
+                    Key="M"
+                    Command="{Binding MergeItemCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Merge items into selected item with header  -->
+                <KeyBinding
+                    Key="M"
+                    Command="{Binding MergeItemWithHeaderCommand, Mode=OneTime}"
+                    Modifiers="Control+Shift" />
+                <KeyBinding
+                    Key="X"
+                    Command="{Binding CutItemCommand, Mode=OneTime}"
+                    Modifiers="Control" />
+                <!--  Delete selected item  -->
+                <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, Mode=OneTime}" />
+                <!--  Delete displayed item  -->
+                <KeyBinding
+                    Key="Delete"
+                    Command="{Binding DeleteDisplayedItemCommand, Mode=OneTime}"
+                    Modifiers="Control" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <!--  IsPinned  -->
@@ -112,14 +139,14 @@
             Height="5"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            Visibility="{Binding PreviewModeVisibility, ElementName=Root}" />
+            Visibility="{Binding PreviewModeVisibility}" />
         <materialDesign:Card
             Grid.Row="2"
             Margin="3,3,3,3"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
             materialDesign:ElevationAssist.Elevation="Dp8"
-            Visibility="{Binding PreviewModeVisibility, ElementName=Root}">
+            Visibility="{Binding PreviewModeVisibility}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -134,7 +161,7 @@
                     VerticalAlignment="Top"
                     FontSize="10pt"
                     IsReadOnly="True"
-                    Text="{Binding SelectedItem.DescriptionText, ElementName=Root, Mode=OneWay}" />
+                    Text="{Binding SelectedItem.DescriptionText, Mode=OneWay}" />
                 <TextBlock
                     Name="headerText"
                     Grid.Row="1"
@@ -153,7 +180,7 @@
             <materialDesign:Card.InputBindings>
                 <!--  Open selected item window by double-clicking  -->
                 <MouseBinding
-                    Command="{Binding OpenSelectedItemCommand, ElementName=Root}"
+                    Command="{Binding OpenSelectedItemCommand}"
                     CommandParameter="{Binding}"
                     MouseAction="LeftDoubleClick" />
             </materialDesign:Card.InputBindings>
