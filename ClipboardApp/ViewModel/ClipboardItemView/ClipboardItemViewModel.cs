@@ -3,11 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model;
-using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model.Content;
+using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Model.File;
-using WpfAppCommon.Utils;
+using PythonAILib.Model.Prompt;
 using QAChat.Resource;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.ClipboardItemView {
     public partial class ClipboardItemViewModel : CommonViewModelBase {
@@ -226,6 +226,137 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
         public ClipboardItemViewModel Copy() {
             return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.Copy());
         }
+
+        // TabItems 
+        public ObservableCollection<TabItem> TabItems {
+            get {
+                ObservableCollection<TabItem> tabItems = [];
+                // Content 
+                ContentPanel contentPanel = new() {
+                    DataContext = this,
+                };
+                TabItem contentTabItem = new() {
+                    Header = StringResources.Text,
+                    Content = contentPanel,
+                    Height = double.NaN,
+                    Width = double.NaN,
+                    Margin = new Thickness(3, 0, 3, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = TextTabVisibility
+                };
+                tabItems.Add(contentTabItem);
+                // FileOrImage
+                FilePanel filePanel = new() {
+                    DataContext = this,
+                };
+                TabItem fileTabItem = new() {
+                    Header = StringResources.FileOrImage,
+                    Content = filePanel,
+                    Height = double.NaN,
+                    Width = double.NaN,
+                    Margin = new Thickness(3, 0, 3, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = FileTabVisibility
+                };
+                tabItems.Add(fileTabItem);
+                // ChatItemsTextのタブ
+                TabItem chatItemsText = new() {
+                    Header = StringResources.ChatContent,
+                    Content = new ChatItemsTextPanel() { DataContext = this },
+                    Height = double.NaN,
+                    Width = double.NaN,
+                    Margin = new Thickness(3, 0, 3, 0),
+                    Padding = new Thickness(0, 0, 0, 0),
+                    FontSize = 10,
+                    Visibility = ChatItemsTextTabVisibility
+                };
+
+                tabItems.Add(chatItemsText);
+
+                // PromptResultのタブ
+                foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
+                    tabItems.Add(promptTabItem);
+                }
+                // ClipboardItemのTypeがFileの場合はFileTabを選択
+                if (ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files
+                    || ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
+                    SelectedTabIndex = 1;
+                }
+                return tabItems;
+            }
+
+        }
+
+        // システム定義のPromptItemの結果表示用のタブを作成
+        // TabItems 
+        private ObservableCollection<TabItem> SystemPromptResultTabItems {
+            get {
+                ObservableCollection<TabItem> tabItems = [];
+                // PromptResultのタブ
+                List<string> promptNames = [
+                    PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
+                    PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString(),
+                    PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString()
+                    ];
+                // PromptChatResultのエントリからPromptItemの名前を取得
+                foreach (string name in ClipboardItem.PromptChatResult.Results.Keys) {
+                    if (promptNames.Contains(name) || PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                        continue;
+                    }
+                    promptNames.Add(name);
+                }
+
+                foreach (string promptName in promptNames) {
+                    PromptResultViewModel promptViewModel = new(ClipboardItem.PromptChatResult, promptName);
+                    PromptItem? item = PromptItem.GetPromptItemByName(promptName);
+                    if (item == null) {
+                        continue;
+                    }
+
+                    object content = item.PromptResultType switch {
+                        PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
+                        PromptItem.PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                        _ => ""
+                    };
+                    Visibility visibility = item.PromptResultType switch {
+                        PromptItem.PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
+                        PromptItem.PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
+                        _ => Visibility.Collapsed
+                    };
+
+                    TabItem promptTabItem = new() {
+                        Header = item.Description,
+                        Content = content,
+                        Height = double.NaN,
+                        Width = double.NaN,
+                        Margin = new Thickness(3, 0, 3, 0),
+                        Padding = new Thickness(0, 0, 0, 0),
+                        FontSize = 10,
+                        Visibility = visibility
+                    };
+                    tabItems.Add(promptTabItem);
+                }
+
+                return tabItems;
+            }
+
+        }
+
+
+        // SelectedTabIndex
+        private int selectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return selectedTabIndex;
+            }
+            set {
+                selectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
 
         #region コマンド
         // アイテム保存

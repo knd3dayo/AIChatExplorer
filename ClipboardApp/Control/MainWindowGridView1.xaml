@@ -26,9 +26,9 @@
     <Grid>
         <!--  DataGrid, GridSplitter, Preview  -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="0.4*" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="0.6*" />
         </Grid.RowDefinitions>
         <DataGrid
             Grid.Row="0"
@@ -125,8 +125,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBox
                     Name="DescriptionText"
@@ -137,47 +135,20 @@
                     FontSize="10pt"
                     IsReadOnly="True"
                     Text="{Binding SelectedItem.DescriptionText, ElementName=Root, Mode=OneWay}" />
-                <Image
-                    Grid.Row="1"
-                    Width="100"
-                    Height="100"
-                    MinHeight="0"
-                    MaxHeight="100"
-                    Margin="10,10,10,10"
-                    HorizontalAlignment="Left"
-                    Source="{Binding SelectedItem.Image, ElementName=Root}"
-                    Stretch="Uniform" />
-                <ScrollViewer
-                    Grid.Row="2"
-                    Margin="3,3,3,3"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top"
-                    VerticalScrollBarVisibility="Auto">
-                    <editorControl:MyTextBox
-                        Name="clipboardText"
-                        Margin="3,3,3,3"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Top"
-                        materialDesign:TextFieldAssist.DecorationVisibility="Hidden"
-                        BorderThickness="0"
-                        FontSize="10pt"
-                        IsReadOnly="True"
-                        Text="{Binding Path=SelectedItem.Content, ElementName=Root, Mode=OneWay}" />
-                </ScrollViewer>
-                <Separator
-                    Grid.Row="3"
-                    Margin="10,0,10,0"
-                    Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                    BorderThickness="1"
-                    Style="{StaticResource MaterialDesignLightSeparator}" />
                 <TextBlock
                     Name="headerText"
-                    Grid.Row="4"
+                    Grid.Row="1"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Stretch"
                     FontSize="6pt"
                     Text="{Binding Path=SelectedItem.HeaderText}"
                     TextTrimming="None" />
+                <TabControl
+                    Grid.Row="2"
+                    Margin="10,3,10,3"
+                    HorizontalContentAlignment="Left"
+                    ItemsSource="{Binding SelectedItem.TabItems}"
+                    SelectedIndex="{Binding SelectedItem.SelectedTabIndex}" />
             </Grid>
             <materialDesign:Card.InputBindings>
                 <!--  Open selected item window by double-clicking  -->

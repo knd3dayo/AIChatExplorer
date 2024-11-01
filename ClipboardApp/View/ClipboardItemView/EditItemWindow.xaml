@@ -144,8 +144,8 @@
                 Grid.Row="1"
                 Margin="10,3,10,3"
                 HorizontalContentAlignment="Left"
-                ItemsSource="{Binding TabItems}"
-                SelectedIndex="{Binding SelectedTabIndex}" />
+                ItemsSource="{Binding ItemViewModel.TabItems}"
+                SelectedIndex="{Binding ItemViewModel.SelectedTabIndex}" />
         </Grid>
         <Grid Grid.Row="2">
             <Grid>
