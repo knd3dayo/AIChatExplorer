@@ -9,6 +9,7 @@ using ClipboardApp.ViewModel.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 
 namespace ClipboardApp.ViewModel {

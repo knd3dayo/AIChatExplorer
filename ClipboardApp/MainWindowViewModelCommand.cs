@@ -12,6 +12,7 @@ using QAChat.View.TagView;
 using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 namespace ClipboardApp {
     public partial class MainWindowViewModel {

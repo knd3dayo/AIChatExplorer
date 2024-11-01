@@ -3,17 +3,17 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Prompt;
-using WpfAppCommon.Utils;
 using QAChat.Resource;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.ClipboardItemView {
     internal class PromptResultViewModel : ObservableObject {
 
         public PromptResultViewModel(PromptChatResult promptChatResult, string promptName) {
 
-            this.PromptName = promptName;
-            this.PromptChatResult = promptChatResult;
-            this.TableContent = ListToDataTable(PromptChatResult.GetTableContent(promptName));
+            PromptName = promptName;
+            PromptChatResult = promptChatResult;
+            TableContent = ListToDataTable(PromptChatResult.GetTableContent(promptName));
         }
 
         public string PromptName { get; set; }

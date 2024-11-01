@@ -11,24 +11,31 @@ using QAChat.View.TagView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.ClipboardItemView
+{
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : ClipboardAppViewModelBase {
+    public class EditItemWindowViewModel : ClipboardAppViewModelBase
+    {
 
-        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate)
+        {
 
             FolderViewModel = folderViewModel;
-            if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id) {
+            if (itemViewModel == null)
+            {
+                ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id)
+                {
                     // ReferenceVectorDBItemsを設定
                     ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems
                 };
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 Title = StringResources.NewItem;
 
-            } else {
+            }
+            else
+            {
                 Title = itemViewModel.ClipboardItem.Description;
                 ItemViewModel = itemViewModel;
             }
@@ -37,11 +44,14 @@ namespace ClipboardApp.ViewModel {
         }
 
         private ClipboardItemViewModel? itemViewModel;
-        public ClipboardItemViewModel? ItemViewModel {
-            get {
+        public ClipboardItemViewModel? ItemViewModel
+        {
+            get
+            {
                 return itemViewModel;
             }
-            set {
+            set
+            {
                 itemViewModel = value;
                 TagsString = string.Join(",", itemViewModel?.Tags ?? []);
 
@@ -49,18 +59,23 @@ namespace ClipboardApp.ViewModel {
             }
         }
         private ClipboardFolderViewModel? _folderViewModel;
-        public ClipboardFolderViewModel? FolderViewModel {
-            get {
+        public ClipboardFolderViewModel? FolderViewModel
+        {
+            get
+            {
                 return _folderViewModel;
             }
-            set {
+            set
+            {
                 _folderViewModel = value;
                 OnPropertyChanged(nameof(FolderViewModel));
             }
         }
 
-        public override void OnActivatedAction() {
-            if (FolderViewModel == null) {
+        public override void OnActivatedAction()
+        {
+            if (FolderViewModel == null)
+            {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
@@ -69,12 +84,16 @@ namespace ClipboardApp.ViewModel {
         }
 
         private string title = "";
-        public string Title {
-            get {
+        public string Title
+        {
+            get
+            {
                 return title;
             }
-            set {
-                if (value == null) {
+            set
+            {
+                if (value == null)
+                {
                     return;
                 }
                 title = value;
@@ -85,11 +104,14 @@ namespace ClipboardApp.ViewModel {
 
         //Tagを文字列に変換したもの
         private string _tagsString = "";
-        public string TagsString {
-            get {
+        public string TagsString
+        {
+            get
+            {
                 return _tagsString;
             }
-            set {
+            set
+            {
                 _tagsString = value;
                 OnPropertyChanged(nameof(TagsString));
             }
@@ -100,11 +122,14 @@ namespace ClipboardApp.ViewModel {
 
         // SelectedImage
         private ImageSource? selectedImage;
-        public ImageSource? SelectedImage {
-            get {
+        public ImageSource? SelectedImage
+        {
+            get
+            {
                 return selectedImage;
             }
-            set {
+            set
+            {
                 selectedImage = value;
                 OnPropertyChanged(nameof(SelectedImage));
             }
@@ -113,32 +138,40 @@ namespace ClipboardApp.ViewModel {
 
         // SelectedTabIndex
         private int selectedTabIndex = 0;
-        public int SelectedTabIndex {
-            get {
+        public int SelectedTabIndex
+        {
+            get
+            {
                 return selectedTabIndex;
             }
-            set {
+            set
+            {
                 selectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
 
         // TabItems 
-        public ObservableCollection<TabItem> TabItems {
-            get {
-                if (ItemViewModel == null) {
+        public ObservableCollection<TabItem> TabItems
+        {
+            get
+            {
+                if (ItemViewModel == null)
+                {
                     return [];
                 }
                 ObservableCollection<TabItem> tabItems = [];
                 // Content 
-                ContentPanel contentPanel = new() {
+                ContentPanel contentPanel = new()
+                {
                     DataContext = ItemViewModel,
                 };
-                TabItem contentTabItem = new() {
+                TabItem contentTabItem = new()
+                {
                     Header = StringResources.Text,
                     Content = contentPanel,
-                    Height = Double.NaN,
-                    Width = Double.NaN,
+                    Height = double.NaN,
+                    Width = double.NaN,
                     Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
@@ -146,14 +179,16 @@ namespace ClipboardApp.ViewModel {
                 };
                 tabItems.Add(contentTabItem);
                 // FileOrImage
-                FilePanel filePanel = new() {
+                FilePanel filePanel = new()
+                {
                     DataContext = ItemViewModel,
                 };
-                TabItem fileTabItem = new() {
+                TabItem fileTabItem = new()
+                {
                     Header = StringResources.FileOrImage,
                     Content = filePanel,
-                    Height = Double.NaN,
-                    Width = Double.NaN,
+                    Height = double.NaN,
+                    Width = double.NaN,
                     Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
@@ -161,11 +196,12 @@ namespace ClipboardApp.ViewModel {
                 };
                 tabItems.Add(fileTabItem);
                 // ChatItemsTextのタブ
-                TabItem chatItemsText = new() {
+                TabItem chatItemsText = new()
+                {
                     Header = StringResources.ChatContent,
                     Content = new ChatItemsTextPanel() { DataContext = ItemViewModel },
-                    Height = Double.NaN,
-                    Width = Double.NaN,
+                    Height = double.NaN,
+                    Width = double.NaN,
                     Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
@@ -175,12 +211,14 @@ namespace ClipboardApp.ViewModel {
                 tabItems.Add(chatItemsText);
 
                 // PromptResultのタブ
-                foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
+                foreach (TabItem promptTabItem in SystemPromptResultTabItems)
+                {
                     tabItems.Add(promptTabItem);
                 }
                 // ClipboardItemのTypeがFileの場合はFileTabを選択
-                if (ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files 
-                    || ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
+                if (ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files
+                    || ItemViewModel?.ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image)
+                {
                     SelectedTabIndex = 1;
                 }
                 return tabItems;
@@ -188,9 +226,12 @@ namespace ClipboardApp.ViewModel {
         }
         // システム定義のPromptItemの結果表示用のタブを作成
         // TabItems 
-        private ObservableCollection<TabItem> SystemPromptResultTabItems {
-            get {
-                if (ItemViewModel == null) {
+        private ObservableCollection<TabItem> SystemPromptResultTabItems
+        {
+            get
+            {
+                if (ItemViewModel == null)
+                {
                     return [];
                 }
                 ObservableCollection<TabItem> tabItems = [];
@@ -201,36 +242,43 @@ namespace ClipboardApp.ViewModel {
                     PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString()
                     ];
                 // PromptChatResultのエントリからPromptItemの名前を取得
-                foreach ( string name in ItemViewModel.ClipboardItem.PromptChatResult.Results.Keys) {
-                    if (promptNames.Contains(name) || PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                foreach (string name in ItemViewModel.ClipboardItem.PromptChatResult.Results.Keys)
+                {
+                    if (promptNames.Contains(name) || PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name))
+                    {
                         continue;
                     }
                     promptNames.Add(name);
                 }
 
-                foreach (string promptName in promptNames) {
+                foreach (string promptName in promptNames)
+                {
                     PromptResultViewModel promptViewModel = new(ItemViewModel.ClipboardItem.PromptChatResult, promptName);
                     PromptItem? item = PromptItem.GetPromptItemByName(promptName);
-                    if (item == null) {
+                    if (item == null)
+                    {
                         continue;
                     }
 
-                    object content = item.PromptResultType switch {
+                    object content = item.PromptResultType switch
+                    {
                         PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
                         PromptItem.PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
                         _ => ""
                     };
-                    Visibility visibility = item.PromptResultType switch {
+                    Visibility visibility = item.PromptResultType switch
+                    {
                         PromptItem.PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
                         PromptItem.PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
                         _ => Visibility.Collapsed
                     };
 
-                    TabItem promptTabItem = new() {
+                    TabItem promptTabItem = new()
+                    {
                         Header = item.Description,
                         Content = content,
-                        Height = Double.NaN,
-                        Width = Double.NaN,
+                        Height = double.NaN,
+                        Width = double.NaN,
                         Margin = new Thickness(3, 0, 3, 0),
                         Padding = new Thickness(0, 0, 0, 0),
                         FontSize = 10,
@@ -245,8 +293,10 @@ namespace ClipboardApp.ViewModel {
         }
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            if (ItemViewModel == null) {
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) =>
+        {
+            if (ItemViewModel == null)
+            {
                 LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
@@ -258,36 +308,45 @@ namespace ClipboardApp.ViewModel {
         });
 
         // タグ追加ボタンのコマンド
-        public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
+        public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) =>
+        {
 
-            if (ItemViewModel == null) {
+            if (ItemViewModel == null)
+            {
                 LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
+            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () =>
+            {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
         });
 
         // QAChatButtonCommand
-        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
+        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) =>
+        {
             // QAChatControlのDrawerを開く
             ItemViewModel?.OpenOpenAIChatWindowCommand.Execute();
         });
 
         // Saveコマンド
-        public SimpleDelegateCommand<object> SaveCommand => new((obj) => {
+        public SimpleDelegateCommand<object> SaveCommand => new((obj) =>
+        {
             // TitleとContentの更新を反映
-            if (ItemViewModel == null) {
+            if (ItemViewModel == null)
+            {
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行
             ClipboardItem? item = ItemViewModel.ClipboardItem.ApplyAutoProcess();
             // ClipboardItemを更新
-            if (item != null) {
+            if (item != null)
+            {
                 item.Save();
-            } else {
+            }
+            else
+            {
                 // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
                 LogWrapper.Info("自動処理に失敗しました");
             }
@@ -296,7 +355,8 @@ namespace ClipboardApp.ViewModel {
 
         });
         // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) =>
+        {
 
             // SaveCommandを実行
             SaveCommand.Execute(null);

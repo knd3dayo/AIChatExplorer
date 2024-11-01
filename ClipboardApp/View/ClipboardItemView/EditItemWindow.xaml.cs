@@ -1,7 +1,9 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
-namespace ClipboardApp.View.ClipboardItemView {
+namespace ClipboardApp.View.ClipboardItemView
+{
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

@@ -4,6 +4,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
 using QAChat.View.ImageChat;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 namespace ClipboardApp.ViewModel.Folder {
     public class ImageCheckFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

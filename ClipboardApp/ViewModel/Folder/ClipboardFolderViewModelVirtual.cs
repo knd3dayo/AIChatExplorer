@@ -7,6 +7,7 @@ using ClipboardApp.View.ClipboardItemView;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
 using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel {

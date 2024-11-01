@@ -1,6 +1,6 @@
 using QAChat.Resource;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.Help {
     public class VersionWindowViewModel : ClipboardAppViewModelBase {
 
         public string Version { get; set; }

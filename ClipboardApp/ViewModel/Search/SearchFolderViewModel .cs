@@ -5,6 +5,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

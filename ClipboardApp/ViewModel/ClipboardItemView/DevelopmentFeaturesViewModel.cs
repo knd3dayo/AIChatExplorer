@@ -4,7 +4,7 @@ using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.Script;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.ClipboardItemView {
 
     public partial class ClipboardItemViewModel {
 

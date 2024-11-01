@@ -15,6 +15,7 @@ using QAChat;
 using QAChat.Control;
 using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 
 namespace ClipboardApp {

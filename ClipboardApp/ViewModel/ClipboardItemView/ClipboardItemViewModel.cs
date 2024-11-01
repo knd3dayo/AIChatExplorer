@@ -9,7 +9,7 @@ using PythonAILib.Model.File;
 using WpfAppCommon.Utils;
 using QAChat.Resource;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel.ClipboardItemView {
     public partial class ClipboardItemViewModel : CommonViewModelBase {
 
         // コンストラクタ

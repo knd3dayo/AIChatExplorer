@@ -18,6 +18,7 @@ using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.ClipboardItemView;
 
 namespace ClipboardApp {
     public class ClipboardAppCommandExecute {
