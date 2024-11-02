@@ -19,6 +19,8 @@ namespace ClipboardApp.Model {
     public partial class ClipboardItem : ContentItem {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {
+
+
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             CollectionId = folderObjectId;

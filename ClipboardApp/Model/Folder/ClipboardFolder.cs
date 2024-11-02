@@ -718,20 +718,19 @@ namespace ClipboardApp.Model.Folder {
                 string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);
                 item.Content += "\n" + text;
             }
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AutoExtractImageWithPyOCR is set, perform OCR
-            if (ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR) {
-                if (item.Image != null) {
-
+            if (item.IsImage()) {
+                // ★TODO Implement processing based on automatic processing rules.
+                // If AutoExtractImageWithPyOCR is set, perform OCR
+                if (ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR) {
                     string extractImageText = PythonExecutor.PythonMiscFunctions.ExtractTextFromImage(item.Image, ClipboardAppConfig.Instance.TesseractExePath);
                     item.Content += "\n" + extractImageText;
                     LogWrapper.Info(CommonStringResources.Instance.OCR);
+
+                } else if (ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI) {
+
+                    LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
+                    item.ExtractImageWithOpenAI();
                 }
-
-            } else if (ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI) {
-
-                LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
-                item.ExtractImageWithOpenAI();
             }
 
             // ★TODO Implement processing based on automatic processing rules.
@@ -779,7 +778,7 @@ namespace ClipboardApp.Model.Folder {
                 // Tasks
                 if (ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCheckDocumentReliability);
-                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                    item.CheckDocumentReliability();
                 }
             });
 

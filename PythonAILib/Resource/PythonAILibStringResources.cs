@@ -226,6 +226,9 @@ namespace PythonAILib.Resource {
         // ピン留め
         public virtual string Pin { get; } = "ピン留め";
 
+        // 文章の信頼度
+        public virtual string DocumentReliability { get; } = "文章の信頼度";
+
         // 種別
         public virtual string Type { get; } = "種別";
 

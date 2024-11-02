@@ -154,6 +154,9 @@ namespace PythonAILib.Resource {
         public override string SourceTitle { get; } = "Source Title";
         public override string Pin { get; } = "Pin";
 
+        // Document reliability
+        public override string DocumentReliability { get; } = "Document reliability";
+
         public override string Type { get; } = "Type";
 
         public override string CreationDateTime { get; } = "Creation Date Time";

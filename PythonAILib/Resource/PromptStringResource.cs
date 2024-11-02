@@ -86,7 +86,7 @@ namespace PythonAILib.Resource {
 
         // 文書の信頼度判定結果の文章から信頼度を取得するプロンプト
         public virtual string DocumentReliabilityDictonaryPrompt { get; } = "以下の文章は、ある文章の信頼度を判定して結果です。最終的な信頼度の数値(0-100)を出力してください。" +
-            "出力は次のJSON形式でお願いします。 {\"reliablity\": 信頼度の数値, \"reason\": \"信頼度の判定理由\"}";
+            "出力は次のJSON形式でお願いします。 {\"reliability\": 信頼度の数値, \"reason\": \"信頼度の判定理由\"}";
 
     }
 }

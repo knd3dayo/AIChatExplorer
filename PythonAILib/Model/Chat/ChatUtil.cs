@@ -72,8 +72,8 @@ namespace PythonAILib.Model.Chat {
             }
             return [];
         }
-        // CHatを実行してDictionary<string, string>の結果を取得する
-        public static Dictionary<string, string> CreateDictionaryChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
+        // CHatを実行してDictionary<string, object>の結果を取得する
+        public static Dictionary<string, dynamic?> CreateDictionaryChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
             Chat chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = promptItem.ChatType,
@@ -85,7 +85,7 @@ namespace PythonAILib.Model.Chat {
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null && !string.IsNullOrEmpty(result.Response)) {
-                return JsonSerializer.Deserialize<Dictionary<string, string>>(result.Response, options) ?? [];
+                return JsonUtil.ParseJson(result.Response);
             }
             return [];
         }

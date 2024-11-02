@@ -222,8 +222,8 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBox
                         Name="DescriptionText"
@@ -234,20 +234,20 @@
                         FontSize="10pt"
                         IsReadOnly="True"
                         Text="{Binding SelectedItem.DescriptionText, Mode=OneWay}" />
-                    <TextBlock
-                        Name="headerText"
-                        Grid.Row="1"
-                        Margin="10,0,10,10"
-                        HorizontalAlignment="Stretch"
-                        FontSize="6pt"
-                        Text="{Binding Path=SelectedItem.HeaderText}"
-                        TextTrimming="None" />
                     <TabControl
-                        Grid.Row="2"
+                        Grid.Row="1"
                         Margin="10,3,10,3"
                         HorizontalContentAlignment="Left"
                         ItemsSource="{Binding SelectedItem.TabItems}"
                         SelectedIndex="{Binding SelectedItem.SelectedTabIndex}" />
+                    <TextBlock
+                        Name="headerText"
+                        Grid.Row="2"
+                        Margin="10,0,10,10"
+                        HorizontalAlignment="Stretch"
+                        FontSize="8pt"
+                        Text="{Binding Path=SelectedItem.HeaderText}"
+                        TextTrimming="None" />
                 </Grid>
                 <materialDesign:Card.InputBindings>
                     <!--  Open selected item window by double-clicking  -->

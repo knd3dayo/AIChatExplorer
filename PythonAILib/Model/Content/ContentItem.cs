@@ -14,6 +14,13 @@ using QAChat;
 namespace PythonAILib.Model.Content {
     public class ContentItem {
 
+        // コンストラクタ
+        public ContentItem() {
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
+        
+        }
+
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
         // ClipboardFolderのObjectId
@@ -39,11 +46,8 @@ namespace PythonAILib.Model.Content {
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
         public List<ChatHistoryItem> ChatItems { get; set; } = [];
 
-        #region プロンプトテンプレートに基づくチャットの結果
+        // プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult { get; set; } = new();
-
-
-        #endregion
 
         //Tags
         public HashSet<string> Tags { get; set; } = [];
@@ -63,7 +67,7 @@ namespace PythonAILib.Model.Content {
         public bool IsPinned { get; set; }
 
         // 文書の信頼度(0-100)
-        public int DocumentReliability { get; set; } = 50;
+        public int DocumentReliability { get; set; } = 0;
         // 文書の信頼度の判定理由
         public string DocumentReliabilityReason { get; set; } = "";
 
@@ -84,22 +88,26 @@ namespace PythonAILib.Model.Content {
                 header1 += $"[{PythonAILibStringResources.Instance.SourceAppName}]" + SourceApplicationName + "\n";
                 // 貼り付け元のアプリケーションのタイトルを追加
                 header1 += $"[{PythonAILibStringResources.Instance.SourceTitle}]" + SourceApplicationTitle + "\n";
+
+                if (ContentType == ContentTypes.ContentItemTypes.Text) {
+                    header1 += $"[{PythonAILibStringResources.Instance.Type}]Text";
+                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
+                    header1 += $"[{PythonAILibStringResources.Instance.Type}]File";
+                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
+                    header1 += $"[{PythonAILibStringResources.Instance.Type}]Image";
+                } else {
+                    header1 += $"[{PythonAILibStringResources.Instance.Type}]Unknown";
+                }
+                // 文書の信頼度
+                header1 += $"\n[{PythonAILibStringResources.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
+
                 // Tags
                 header1 += $"[{PythonAILibStringResources.Instance.Tag}]" + TagsString() + "\n";
                 // ピン留め中かどうか
                 if (IsPinned) {
                     header1 += $"[{PythonAILibStringResources.Instance.Pinned}]\n";
                 }
-
-                if (ContentType == ContentTypes.ContentItemTypes.Text) {
-                    return header1 + $"[{PythonAILibStringResources.Instance.Type}]Text";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Files) {
-                    return header1 + $"[{PythonAILibStringResources.Instance.Type}]File";
-                } else if (ContentType == ContentTypes.ContentItemTypes.Image) {
-                    return header1 + $"[{PythonAILibStringResources.Instance.Type}]Image";
-                } else {
-                    return header1 + $"[{PythonAILibStringResources.Instance.Type}]Unknown";
-                }
+                return header1;
             }
         }
         [BsonIgnore]
@@ -429,7 +437,7 @@ namespace PythonAILib.Model.Content {
             // ChatUtl.CreateDictionaryChatResultを実行
             PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            Dictionary<string, string> response = ChatUtil.CreateDictionaryChatResult(openAIProperties, [], new PromptItem() {
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(openAIProperties, [], new PromptItem() {
                 ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
                 Prompt = PromptStringResource.Instance.DocumentReliabilityDictonaryPrompt
             }, result);
@@ -437,16 +445,18 @@ namespace PythonAILib.Model.Content {
             if (response.ContainsKey("reliability") == false) {
                 return;
             }
-            string reliability = response["reliability"];
+            dynamic? reliability = response["reliability"];
+            
+            int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
+
             // DocumentReliabilityにreliabilityを設定
-            DocumentReliability = int.Parse(reliability);
+            DocumentReliability = reliabilityValue;
             // responseからキー：reasonを取得
-            if (response.ContainsKey("reason") == false) {
-                return;
+            if (response.ContainsKey("reason") ) {
+                dynamic? reason = response["reason"];
+                // DocumentReliabilityReasonにreasonを設定
+                DocumentReliabilityReason = reason.ToString() ?? "";
             }
-            string reason = response["reason"];
-            // DocumentReliabilityReasonにreasonを設定
-            DocumentReliabilityReason = reason;
         }
 
         // ベクトル検索を実行する

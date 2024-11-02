@@ -194,13 +194,11 @@ namespace PythonAILib.Model.Prompt {
             }
 
             // DocumentReliabilityCheckをDBから取得
-
             PromptItem? DocumentReliabilityCheck = libManager.DataFactory.GetSystemPromptTemplateByName(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             if (DocumentReliabilityCheck != null) {
                 libManager.DataFactory.DeletePromptTemplate(DocumentReliabilityCheck);
                 DocumentReliabilityCheck = null;
             }
-
             if (DocumentReliabilityCheck == null) {
                 DocumentReliabilityCheck = new PromptItem() {
                     Name = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(),
@@ -214,7 +212,6 @@ namespace PythonAILib.Model.Prompt {
                 };
                 libManager.DataFactory.UpsertPromptTemplate(DocumentReliabilityCheck);
             }
-
         }
     }
 }
