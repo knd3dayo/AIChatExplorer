@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.Model.Content {
-    public  class ContentCollection {
+    public class ContentFolder {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
-        
+
         public string Name { get; set; } = "";
 
         // 参照用のベクトルDBのリストのプロパティ
@@ -22,6 +17,17 @@ namespace PythonAILib.Model.Content {
                 _referenceVectorDBItems = value;
             }
         }
+
+        // フォルダの絶対パス ファイルシステム用
+        public virtual string FolderPath { get; } = "";
+
+        //　フォルダ名
+        public virtual string FolderName { get; set; } = "";
+
+
+        // Description
+        public virtual string Description { get; set; } = "";
+
 
     }
 }

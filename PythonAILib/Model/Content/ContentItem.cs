@@ -100,6 +100,12 @@ namespace PythonAILib.Model.Content {
                 }
                 // 文書の信頼度
                 header1 += $"\n[{PythonAILibStringResources.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
+                // ★TODO フォルダーの説明を文章のカテゴリーの説明として追加
+                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                ContentFolder? folder = libManager.DataFactory.GetFolder(CollectionId);
+                if (folder != null && ! string.IsNullOrEmpty(folder.Description)) {
+                    header1 += $"[{PythonAILibStringResources.Instance.DocumentCategorySummary}]" + folder.Description + "\n";
+                }
 
                 // Tags
                 header1 += $"[{PythonAILibStringResources.Instance.Tag}]" + TagsString() + "\n";

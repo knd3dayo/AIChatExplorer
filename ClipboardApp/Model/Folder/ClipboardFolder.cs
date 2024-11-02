@@ -18,7 +18,7 @@ using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public class ClipboardFolder : ContentCollection {
+    public class ClipboardFolder : ContentFolder {
 
         public enum FolderTypeEnum {
             Normal,
@@ -44,8 +44,7 @@ namespace ClipboardApp.Model.Folder {
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder() {
-        }
+        public ClipboardFolder() { }
 
         protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
 
@@ -83,7 +82,6 @@ namespace ClipboardApp.Model.Folder {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
                 imageCheckRootFolder.Save();
             }
-
         }
 
         // プロパティ
@@ -104,26 +102,16 @@ namespace ClipboardApp.Model.Folder {
         // フォルダの参照用のベクトルDBのリストに含めるかどうかを示すプロパティ名を変更
         public bool IncludeInReferenceVectorDBItems { get; set; } = true;
 
-
-
         // フォルダの絶対パス ファイルシステム用
-        public string FolderPath {
+        public override string FolderPath {
             get {
-                ClipboardFolder? parent = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
+                ClipboardFolder? parent = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
                 if (parent == null) {
                     return FolderName;
                 }
                 return ConcatenateFileSystemPath(parent.FolderPath, FolderName);
             }
         }
-
-        //　フォルダ名
-        public string FolderName { get; set; } = "";
-
-
-        // Description
-        public string Description { get; set; } = "";
-
 
         // 子フォルダ　LiteDBには保存しない。
         [BsonIgnore]
@@ -525,7 +513,7 @@ namespace ClipboardApp.Model.Folder {
 
         // 親フォルダを取得する
         public ClipboardFolder? GetParentFolder() {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
+            return (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
         }
 
 

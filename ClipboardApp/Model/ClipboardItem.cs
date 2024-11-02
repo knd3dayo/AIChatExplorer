@@ -30,7 +30,7 @@ namespace ClipboardApp.Model {
         public string FolderPath {
             get {
                 // FolderObjectIdからClipboardFolderを取得
-                ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
+                ClipboardFolder? folder = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
                 if (folder == null) {
                     return "";
                 }
@@ -84,7 +84,7 @@ namespace ClipboardApp.Model {
                 }
                 // folderを取得
                 ClipboardFolder folder = GetFolder();
-                base.ReferenceVectorDBItems =  new(folder.ReferenceVectorDBItems);
+                base.ReferenceVectorDBItems = new(folder.ReferenceVectorDBItems);
                 IsReferenceVectorDBItemsSynced = true;
                 return base.ReferenceVectorDBItems;
 
@@ -182,7 +182,7 @@ namespace ClipboardApp.Model {
 
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder GetFolder(Type? objectType = null) {
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
+            ClipboardFolder? folder = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
             return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
         }
 

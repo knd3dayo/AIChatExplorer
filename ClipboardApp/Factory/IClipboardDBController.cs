@@ -13,15 +13,8 @@ namespace ClipboardApp.Factory {
 
         //-- ClipboardFolder
 
-        public ClipboardFolder? GetFolder(ObjectId? objectId);
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId);
-
-
         public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType);
-
-        public void DeleteFolder(ClipboardFolder folder);
-        public void UpsertFolder(ClipboardFolder folder);
-
 
         // public void DeleteItems(List<ContentItem> items);
 

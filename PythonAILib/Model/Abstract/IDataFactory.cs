@@ -18,6 +18,12 @@ namespace PythonAILib.Model.Abstract {
         public void UpsertItem(ContentItem item, bool contentIsModified = true);
         public void DeleteItem(ContentItem item);
 
+        // ContentFolder
+        public void DeleteFolder(ContentFolder folder);
+        public void UpsertFolder(ContentFolder folder);
+
+        public ContentFolder? GetFolder(ObjectId objectId);
+
         // Prompt
         // create
         public PromptItem CreatePromptItem();

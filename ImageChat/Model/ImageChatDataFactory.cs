@@ -1,10 +1,6 @@
-using System.IO;
 using LiteDB;
 using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Model.Tag;
-using PythonAILib.Model.VectorDB;
 
 namespace ImageChat.Model {
     internal class ImageChatDataFactory : PythonAILibDataFactory {
@@ -65,6 +61,15 @@ namespace ImageChat.Model {
             // System.Windows.MessageBox.Show(item.CollectionName);
             collection.Delete(imageChatContentItem.Id);
         }
-
+        // ContentFolder
+        public override void DeleteFolder(ContentFolder folder) { 
+            throw new NotImplementedException();
+        }
+        public override void UpsertFolder(ContentFolder folder) {
+            throw new NotImplementedException();
+        }
+        public override ContentFolder? GetFolder(ObjectId objectId) {
+            throw new NotImplementedException();
+        }
     }
 }

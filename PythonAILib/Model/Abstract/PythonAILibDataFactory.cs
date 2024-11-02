@@ -195,6 +195,12 @@ namespace PythonAILib.Model.Abstract {
         // アイテムをDBから削除する
         public abstract void DeleteItem(ContentItem item);
 
+        //-- ContentFolder
+        public abstract void DeleteFolder(ContentFolder folder);
+        public abstract void UpsertFolder(ContentFolder folder);
+        public abstract ContentFolder? GetFolder(ObjectId objectId);
+
+
         // Prompt
         // create
         public PromptItem CreatePromptItem() {

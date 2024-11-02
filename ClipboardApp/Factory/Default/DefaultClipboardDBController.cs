@@ -55,10 +55,62 @@ namespace ClipboardApp.Factory.Default {
 
         #region フォルダー関連
         //---- フォルダー関連 ----------------------------------------------
+
+        // ClipboardItemFolderをLiteDBに追加または更新する
+        public override void UpsertFolder(ContentFolder contentFolder) {
+            if (contentFolder is not ClipboardFolder clipboardFolder) {
+                throw new Exception("folder is not ClipboardFolder");
+            }
+            var collection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
+            // フォルダの親フォルダのIdをチェック
+            if (clipboardFolder.ParentId == null || clipboardFolder.ParentId == ObjectId.Empty) {
+                // 親フォルダのIDが存在しない場合は、ルートフォルダか否かをチェックする。GetRootFolderを呼び出す
+                var rootFolder = GetRootFolderByType(clipboardFolder.FolderType);
+                // ルートフォルダが存在しない場合は、新規作成
+                if (rootFolder == null) {
+                    var rootFolderInfoCollection = GetDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
+                    var rootFolderInfo = new ClipboardFolder.RootFolderInfo {
+                        FolderName = clipboardFolder.FolderName,
+                        Id = ObjectId.NewObjectId(),
+                        FolderType = clipboardFolder.FolderType
+                    };
+
+                    // ルートフォルダの作成
+                    clipboardFolder.Id = rootFolderInfo.Id; ;
+                    collection.Upsert(clipboardFolder);
+
+                    // ルートフォルダ情報の作成
+                    rootFolderInfoCollection.Upsert(rootFolderInfo);
+
+
+                } else {
+                    //　ルートフォルダの更新。folderにRootFolder.FolderIdを設定してUpsert 
+                    clipboardFolder.Id = rootFolder.Id;
+                    collection.Upsert(clipboardFolder);
+                }
+
+            } else {
+                // 親フォルダが存在する場合は、ParentIdとFolderNameが位置するフォルダを取得する
+                var childFolders = GetChildFolders(clipboardFolder.ParentId);
+                var targetFolder = childFolders.FirstOrDefault(x => x.FolderName == clipboardFolder.FolderName);
+                // 存在しない場合は、新規作成
+                if (targetFolder == null) {
+                    collection.Upsert(clipboardFolder);
+                } else {
+                    // 存在する場合は、folderのIdを設定してUpsert
+                    clipboardFolder.Id = targetFolder.Id;
+                    collection.Upsert(clipboardFolder);
+                }
+            }
+
+        }
         // フォルダーを削除する
-        public void DeleteFolder(ClipboardFolder folder) {
+        public override void DeleteFolder(ContentFolder contentFolder) {
+            if (contentFolder is not ClipboardFolder clipboardFolder) {
+                throw new Exception("folder is not ClipboardFolder");
+            }
             // folderの子フォルダを再帰的に削除
-            foreach (var child in folder.Children) {
+            foreach (var child in clipboardFolder.Children) {
                 if (child != null) {
                     DeleteFolder(child);
                 }
@@ -66,14 +118,14 @@ namespace ClipboardApp.Factory.Default {
 
             // Itemsを削除
             var collection = GetDatabase().GetCollection<ClipboardItem>(CONTENT_ITEM_COLLECTION_NAME);
-            collection.FindAll().Where(x => x.CollectionId == folder.Id).ToList().ForEach(x => DeleteItem(x));
+            collection.FindAll().Where(x => x.CollectionId == clipboardFolder.Id).ToList().ForEach(x => DeleteItem(x));
             // folderを削除
             var folderCollection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            folderCollection.Delete(folder.Id);
+            folderCollection.Delete(clipboardFolder.Id);
 
         }
 
-        public ClipboardFolder? GetFolder(ObjectId? objectId) {
+        public override ClipboardFolder? GetFolder(ObjectId? objectId) {
             if (objectId == null) return null;
             ClipboardFolder? result = null;
             var collection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
@@ -126,52 +178,6 @@ namespace ClipboardApp.Factory.Default {
             // 子フォルダをFolderNameでソートして返す
             result = parent.Children.OrderBy(x => x.FolderName).ToList();
             return result;
-        }
-
-        // ClipboardItemFolderをLiteDBに追加または更新する
-        public void UpsertFolder(ClipboardFolder folder) {
-            var collection = GetDatabase().GetCollection<ClipboardFolder>(CLIPBOARD_FOLDERS_COLLECTION_NAME);
-            // フォルダの親フォルダのIdをチェック
-            if (folder.ParentId == null || folder.ParentId == ObjectId.Empty) {
-                // 親フォルダのIDが存在しない場合は、ルートフォルダか否かをチェックする。GetRootFolderを呼び出す
-                var rootFolder = GetRootFolderByType(folder.FolderType);
-                // ルートフォルダが存在しない場合は、新規作成
-                if (rootFolder == null) {
-                    var rootFolderInfoCollection = GetDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
-                    var rootFolderInfo = new ClipboardFolder.RootFolderInfo {
-                        FolderName = folder.FolderName,
-                        Id = ObjectId.NewObjectId(),
-                        FolderType = folder.FolderType
-                    };
-
-                    // ルートフォルダの作成
-                    folder.Id = rootFolderInfo.Id; ;
-                    collection.Upsert(folder);
-
-                    // ルートフォルダ情報の作成
-                    rootFolderInfoCollection.Upsert(rootFolderInfo);
-
-
-                } else {
-                    //　ルートフォルダの更新。folderにRootFolder.FolderIdを設定してUpsert 
-                    folder.Id = rootFolder.Id;
-                    collection.Upsert(folder);
-                }
-
-            } else {
-                // 親フォルダが存在する場合は、ParentIdとFolderNameが位置するフォルダを取得する
-                var childFolders = GetChildFolders(folder.ParentId);
-                var targetFolder = childFolders.FirstOrDefault(x => x.FolderName == folder.FolderName);
-                // 存在しない場合は、新規作成
-                if (targetFolder == null) {
-                    collection.Upsert(folder);
-                } else {
-                    // 存在する場合は、folderのIdを設定してUpsert
-                    folder.Id = targetFolder.Id;
-                    collection.Upsert(folder);
-                }
-            }
-
         }
         # endregion
 

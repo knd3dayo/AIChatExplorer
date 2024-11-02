@@ -228,6 +228,9 @@ namespace PythonAILib.Resource {
 
         // 文章の信頼度
         public virtual string DocumentReliability { get; } = "文章の信頼度";
+        
+        // 文章カテゴリ概要
+        public virtual string DocumentCategorySummary { get; } = "文章カテゴリ概要";
 
         // 種別
         public virtual string Type { get; } = "種別";
@@ -351,6 +354,9 @@ namespace PythonAILib.Resource {
 
         // "プロンプトテンプレート[promptName]を実行しました."
         public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+
+
+
         #region 統計、ログ関連
 
         // 日次トークン数

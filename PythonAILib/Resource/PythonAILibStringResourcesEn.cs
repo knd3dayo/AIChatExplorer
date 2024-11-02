@@ -157,6 +157,9 @@ namespace PythonAILib.Resource {
         // Document reliability
         public override string DocumentReliability { get; } = "Document reliability";
 
+        // Document category summary
+        public override string DocumentCategorySummary { get; } = "Document category summary";
+
         public override string Type { get; } = "Type";
 
         public override string CreationDateTime { get; } = "Creation Date Time";
