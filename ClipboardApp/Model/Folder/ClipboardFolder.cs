@@ -6,11 +6,13 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Search;
 using LiteDB;
+using PythonAILib.Model;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using QAChat;
 using QAChat.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
@@ -84,10 +86,6 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-        // プロパティ
-        // 親フォルダのID
-        public ObjectId ParentId { get; set; } = ObjectId.Empty;
-
         // フォルダの種類
         public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
@@ -109,7 +107,7 @@ namespace ClipboardApp.Model.Folder {
                 if (parent == null) {
                     return FolderName;
                 }
-                return ConcatenateFileSystemPath(parent.FolderPath, FolderName);
+                return Tools.ConcatenateFileSystemPath(parent.FolderPath, FolderName);
             }
         }
 
@@ -171,27 +169,6 @@ namespace ClipboardApp.Model.Folder {
                 // 既にSearchRootFolder作成済みの環境のための措置
                 searchRootFolder.IsRootFolder = true;
                 searchRootFolder.FolderType = FolderTypeEnum.Search;
-                return searchRootFolder;
-            }
-        }
-
-
-        public static ClipboardFolder ImageCheckRootFolder {
-            get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
-                if (searchRootFolder == null) {
-                    searchRootFolder = new ClipboardFolder {
-                        FolderName = IMAGECHECK_ROOT_FOLDER_NAME,
-                        FolderType = FolderTypeEnum.ImageCheck,
-                        IsRootFolder = true,
-                        // 自動処理を無効にする
-                        IsAutoProcessEnabled = false
-
-                    };
-                    searchRootFolder.Save();
-                }
-                // 既にSearchRootFolder作成済みの環境のための措置
-                searchRootFolder.IsRootFolder = true;
                 return searchRootFolder;
             }
         }
@@ -274,20 +251,9 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-        // フォルダを移動する
-        public void MoveTo(ClipboardFolder toFolder) {
-            // 自分自身を移動
-            ParentId = toFolder.Id;
-            Save();
-        }
-        // 名前を変更
-        public void Rename(string newName) {
-            FolderName = newName;
-            Save();
-        }
 
         // 自分自身を保存
-        public void Save() {
+        public override void Save() {
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
                 AddVectorDBItem(GetVectorDBItem());
@@ -355,8 +321,6 @@ namespace ClipboardApp.Model.Folder {
             // LiteDBに保存
             item.Delete();
         }
-
-
 
         // フォルダ内のアイテムをJSON形式でExport
         public void ExportItemsToJson(string fileName) {
@@ -500,63 +464,17 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-        //------------
-        // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
-        private string ConcatenateFileSystemPath(string parentPath, string childPath) {
-            if (string.IsNullOrEmpty(parentPath))
-                return childPath;
-            if (string.IsNullOrEmpty(childPath))
-                return parentPath;
-            return Path.Combine(parentPath, childPath);
-        }
-
-
-        // 親フォルダを取得する
-        public ClipboardFolder? GetParentFolder() {
-            return (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
-        }
-
-
-        // 指定したFilePath名のフォルダを取得する。
-        public static ClipboardFolder? GetAnotherTreeFolderRecursive(ClipboardFolder rootFolder, string filePath, bool create = false) {
-
-            string[] pathList = filePath.Split(Path.DirectorySeparatorChar);
-
-            // pathListの1から最後までを取得
-            for (int i = 1; i < pathList.Length; i++) {
-                string folderName = pathList[i];
-                // 子フォルダのリストを取得
-                List<ClipboardFolder> children = rootFolder.Children;
-                // folderNameと一致するフォルダを取得
-                ClipboardFolder? folder = children.FirstOrDefault(x => x.FolderName == folderName);
-                if (folder == null) {
-                    if (create) {
-                        folder = rootFolder.CreateChild(folderName);
-                        rootFolder.Save();
-                        folder.Save();
-                    } else {
-                        return null;
-                    }
-                }
-                rootFolder = folder;
-            }
-            return rootFolder;
-        }
-
-        public static ClipboardFolder GetAnotherTreeFolder(ClipboardFolder fromFolder, ClipboardFolder toRootFolder, bool create = false) {
-
-            ClipboardFolder? toFolder = GetAnotherTreeFolderRecursive(toRootFolder, fromFolder.FolderPath, create);
-            // chatFolderがnullの場合は、ChatRootFolderを返す
-            if (toFolder == null) {
-                return toRootFolder;
-            }
-            return toFolder;
-
-        }
-
         // SystemCommonVectorDBを取得する。
         public VectorDBItem GetVectorDBItem() {
             return ClipboardAppVectorDBItem.GetFolderVectorDBItem(this);
+        }
+
+        // フォルダに設定されたVectorDBのコレクションを削除
+        public void DeleteVectorDBCollection() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+
+            VectorDBItem vectorDBItem = GetVectorDBItem();
+            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItem);
         }
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理

@@ -218,7 +218,7 @@ namespace PythonAILib.Model.VectorDB {
         }
 
         public UpdateIndexResult UpdateIndex(File.FileStatus fileStatus, UpdateIndexResult result, string description, int reliability) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
 
             if (VectorDBItem == null) {
                 throw new Exception(PythonAILibStringResources.Instance.NoVectorDBSet);
@@ -232,7 +232,7 @@ namespace PythonAILib.Model.VectorDB {
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
                     mode = VectorDBUpdateMode.delete;
                 }
-                GitFileInfo gitFileInfo = new GitFileInfo(mode, fileStatus.Path, WorkingDirectory, SourceURL, description, reliability);
+                GitFileInfo gitFileInfo = new (mode, fileStatus.Path, WorkingDirectory, SourceURL, description, reliability);
                 PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(libManager.ConfigParams.GetOpenAIProperties(), gitFileInfo, VectorDBItem);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合

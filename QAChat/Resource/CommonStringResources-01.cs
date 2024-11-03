@@ -1310,7 +1310,5 @@ namespace QAChat.Resource {
         // タブ削除
         public virtual string DeleteTab { get; } = "タブ削除";
 
-        // 全チャット内容をエクスポート
-        public virtual string ExportAllChatContents { get; } = "全チャット内容をエクスポート";
     }
 }

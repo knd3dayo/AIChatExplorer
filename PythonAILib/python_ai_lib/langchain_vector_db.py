@@ -13,11 +13,31 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import file_extractor
 from openai_props import OpenAIProps, VectorDBProps
 
+class VectorSearchParameter:
+    def __init__(self, openai_props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
+
+        # OpenAIPorpsを生成
+        props = json.loads(openai_props_json)
+        self.openai_props = OpenAIProps(props)
+
+        # VectorDBPropsのリストを取得
+        vector_db_items = json.loads(vector_db_items_json)
+        self.vector_db_props = [VectorDBProps(item) for item in vector_db_items]
+
+        #  openai_props, vector_db_items, query, search_kwargを設定する
+        request = json.loads(request_json)
+        self.query = request.get("query", "")
+        self.search_kwarg = request.get("search_kwarg", {})
+
 class ContentUpdateOrDeleteRequestParams:
-    def __init__(self, props_json: str, request_json: str):
+    def __init__(self, props_json: str, vector_db_items_json: str, request_json: str):
         self.props = json.loads(props_json)
         self.openai_props = OpenAIProps(self.props)
-        self.vector_db_props = self.openai_props.VectorDBItems[0]
+
+        vector_db_items = json.loads(vector_db_items_json)
+        self.vector_db_props_list = []
+        for vector_db_item in vector_db_items:
+            self.vector_db_props_list.append(VectorDBProps(vector_db_item))
         
         # request_jsonをdictに変換
         self.request = json.loads(request_json)
@@ -29,10 +49,14 @@ class ContentUpdateOrDeleteRequestParams:
         self.mode = self.request.get("mode", "")
 
 class ImageUpdateOrDeleteRequestParams:
-    def __init__(self, props_json: str, request_json: str):
+    def __init__(self, props_json: str, vector_db_items_json: str, request_json: str):
         self.props = json.loads(props_json)
         self.openai_props = OpenAIProps(self.props)
-        self.vector_db_props = self.openai_props.VectorDBItems[0]
+
+        vector_db_items = json.loads(vector_db_items_json)
+        self.vector_db_props_list = []
+        for vector_db_item in vector_db_items:
+            self.vector_db_props_list.append(VectorDBProps(vector_db_item))
         
         # request_jsonをdictに変換
         self.request = json.loads(request_json)
@@ -45,10 +69,14 @@ class ImageUpdateOrDeleteRequestParams:
         self.mode = self.request.get("mode", "")
 
 class FileUpdateOrDeleteRequestParams:
-    def __init__(self, props_json: str, request_json: str):
+    def __init__(self, props_json: str, vector_db_items_json: str, request_json: str):
         self.props = json.loads(props_json)
         self.openai_props = OpenAIProps(self.props)
-        self.vector_db_props = self.openai_props.VectorDBItems[0]
+
+        vector_db_items = json.loads(vector_db_items_json)
+        self.vector_db_props_list = []
+        for vector_db_item in vector_db_items:
+            self.vector_db_props_list.append(VectorDBProps(vector_db_item))
         
         # request_jsonをdictに変換
         self.request = json.loads(request_json)
@@ -85,6 +113,10 @@ class LangChainVectorDB:
         raise NotImplementedError("Not implemented")
 
     def _delete(self, doc_ids:list=[]):
+        # 未実装例外をスロー
+        raise NotImplementedError("Not implemented")
+
+    def _delete_collection(self):
         # 未実装例外をスロー
         raise NotImplementedError("Not implemented")
 
@@ -157,6 +189,10 @@ class LangChainVectorDB:
 
         return answers
 
+    def delete_collection(self):
+        # ベクトルDB固有の削除メソッドを呼び出してコレクションを削除
+        self._delete_collection()
+
     def delete_content_index(self, source: str):
         # MultiVectorRetrieverの場合
         if self.vector_db_props.IsUseMultiVectorRetriever:
@@ -166,41 +202,34 @@ class LangChainVectorDB:
             # DBからsourceを指定して既存ドキュメントを削除
             self.__delete_document(source)
     
-    def update_content_index(self, text: str, source: str, source_url: str, description="", reliability=0):
+    def update_content_index(self, params: ContentUpdateOrDeleteRequestParams):
         
         # 既に存在するドキュメントを削除
-        self.delete_content_index(source)
+        self.delete_content_index(params.source)
         # ドキュメントを格納する。
-        self._add_document_list(text, description, source, source_url, reliability=reliability)
+        self._add_document_list(params.text, params.description, params.source, params.source_url, params.reliability)
 
-
-    def delete_image_index(self, source: str):
-        # ★TODO *_content_indexと同じ処理になっているので、共通化する
-        self.delete_content_index(source)
-            
-    def update_image_index(self, text: str, source: str, source_url: str, image_url:str = "", description:str = "", reliability=0):
+    def update_image_index(self, params: ImageUpdateOrDeleteRequestParams):
         # 既に存在するドキュメントを削除
-        self.delete_image_index(source)
+        self.delete_content_index(params.source)
         # ドキュメントを取得
-        self._add_document_list(text, description, source_url, source, content_type="image", image_url=image_url , reliability=reliability)
+        self._add_document_list(params.text, params.description, params.source_url, params.source, 
+                                content_type="image", image_url=params.image_url , reliability=params.reliability)
         
-    def delete_file_index(self, source: str):
-        self.delete_content_index(source)
-
-    def update_file_index(self, document_root: str, relative_path: str, source_url: str, description:str="", reliability=0):
+    def update_file_index(self, params: FileUpdateOrDeleteRequestParams):
 
         # ★TODO *_content_indexと同じ処理になっているので、共通化する
         # 既に存在するドキュメントを削除
-        self.delete_file_index(relative_path)
+        self.delete_file_index(params)
 
         # ファイルの存在チェック
-        file_path = os.path.join(document_root, relative_path)
+        file_path = os.path.join(params.document_root, params.relative_path)
         if not os.path.exists(file_path):
             print("ファイルが存在しません。", file=sys.stderr)
             return
 
         # ドキュメントを格納
-        self._add_file(document_root, relative_path, source_url, description=description, reliability=reliability)
+        self._add_file(params.document_root, params.relative_path, params.source_url, description=params.description, reliability=params.reliability)
 
     def _add_file(self, document_root: str, relative_path: str, source_url: str ,description:str="", reliability=0):
 

@@ -1,11 +1,8 @@
-using System.IO;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
 using PythonAILib.Model.VectorDB;
-using WpfAppCommon.Model;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Model {
 
     /// <summary>
     /// VectorDBのアイテム
@@ -14,10 +11,10 @@ namespace ClipboardApp.Model
 
         public ClipboardAppVectorDBItem() { }
 
-        
+
         public static VectorDBItem GetFolderVectorDBItem(ClipboardFolder folder) {
             IClipboardDBController dbController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            VectorDBItem systemVectorItem  = dbController.GetMainVectorDBItem();
+            VectorDBItem systemVectorItem = dbController.GetMainVectorDBItem();
             // systemVectorItemからコピーを作成
 
             ClipboardAppVectorDBItem item = new() {

@@ -10,14 +10,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel="clr-namespace:ClipboardApp.Control"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:IMainWindowGridView1ModelImplementer}"
+    d:DataContext="{d:DesignInstance Type=viewModel:IIMainPanelImplementer}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
         <ContextMenu
             x:Key="GridRowContextMenu"
             FontSize="12"
-            ItemsSource="{Binding MenuItems}" />
+            ItemsSource="{Binding ContentItemMenuItems}" />
         <Style x:Key="SingleLineTextBlock" TargetType="{x:Type TextBlock}">
             <Setter Property="Height" Value="15" />
             <Setter Property="TextWrapping" Value="NoWrap" />
@@ -63,7 +63,7 @@
                         </DockPanel.InputBindings>
                         <DockPanel.ContextMenu>
                             <!--  Folder context menu  -->
-                            <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
+                            <ContextMenu FontSize="12" ItemsSource="{Binding FolderMenuItems}" />
                         </DockPanel.ContextMenu>
                     </DockPanel>
                 </HierarchicalDataTemplate>

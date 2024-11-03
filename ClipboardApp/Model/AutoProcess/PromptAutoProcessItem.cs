@@ -47,7 +47,7 @@ namespace ClipboardApp.Model.AutoProcess
                 return clipboardItem;
             }
             // ClipboardItemのContentにレスポンスを設定
-            clipboardItem.Content = result.Response;
+            clipboardItem.Content = result.Output;
             // レスポンスをClipboardItemに設定
             clipboardItem.ChatItems = chatController.ChatHistory;
             return clipboardItem;

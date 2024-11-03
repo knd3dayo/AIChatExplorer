@@ -60,4 +60,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         self.db._collection.delete(ids=doc_ids)
 
         return len(doc_ids)    
- 
+    
+    def _delete_collection(self):
+        self.db.delete_collection(self.vector_db_props.CollectionName)
+

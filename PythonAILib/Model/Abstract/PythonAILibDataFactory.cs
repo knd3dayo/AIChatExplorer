@@ -33,7 +33,7 @@ namespace PythonAILib.Model.Abstract {
         public LiteDatabase GetDatabase() {
             if (db == null) {
                 try {
-                    PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                    PythonAILibManager libManager = PythonAILibManager.Instance;
 
                     db = new LiteDatabase(libManager.ConfigParams.GetDBPath());
                     #region バージョンアップ後の暫定処理
@@ -291,7 +291,7 @@ namespace PythonAILib.Model.Abstract {
             var item = items.FirstOrDefault(item => item.IsSystem && item.Name == VectorDBItem.SystemCommonVectorDBName);
 
             if (item == null) {
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+                PythonAILibManager libManager = PythonAILibManager.Instance;
 
                 string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
                 string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();

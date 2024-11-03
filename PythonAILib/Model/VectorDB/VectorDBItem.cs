@@ -23,6 +23,11 @@ namespace PythonAILib.Model.VectorDB {
                 return libManager.DataFactory.GetMainVectorDBItem();
             }
         }
+        private  static JsonSerializerOptions JsonSerializerOptions  { get; } = new JsonSerializerOptions {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
@@ -83,19 +88,11 @@ namespace PythonAILib.Model.VectorDB {
 
         // Json文字列化する
         public static string ToJson(IEnumerable<VectorDBItem> items) {
-            var options = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize(items, options);
+            return JsonSerializer.Serialize(items, JsonSerializerOptions);
         }
         // Json文字列化する
         public static string ToJson(VectorDBItem item) {
-            var options = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize(item, options);
+            return JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
         public static IEnumerable<VectorDBItem> GetItems() {

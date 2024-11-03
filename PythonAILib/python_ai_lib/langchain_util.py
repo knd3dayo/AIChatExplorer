@@ -3,8 +3,6 @@ import json, sys
 from langchain.prompts import PromptTemplate
 from langchain.agents import create_react_agent, AgentExecutor
 from langchain.docstore.document import Document
-from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain, BaseQAWithSourcesChain
-from langchain.docstore.document import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_community.callbacks.manager import get_openai_callback
@@ -15,7 +13,7 @@ from langchain_core.tools.structured import StructuredTool
 sys.path.append("python")
 from langchain_client import LangChainOpenAIClient
 from openai_props import OpenAIProps, VectorDBProps
-from langchain_vector_db import get_vector_db
+from langchain_vector_db import get_vector_db, VectorSearchParameter
 
 from typing import Any
 from langchain_core.callbacks import (
@@ -26,19 +24,47 @@ from collections import defaultdict
 from pydantic import BaseModel, Field
 
 
-class VectorSearchParameter:
-    def __init__(self, props_json: str, request_json: str):
-        self.props_json = props_json
-        self.request_json = request_json
+class LangChainChatParameter:
+    def __init__(self, props_json: str ="{}", request_json: str ="{}"):
         # OpenAIPorpsを生成
         props = json.loads(props_json)
+        # OpenAIPorpsを生成
         self.openai_props = OpenAIProps(props)
-
-        #  openai_props, vector_db_items, query, search_kwargを設定する
-        request = json.loads(request_json)
-        self.query = request.get("query", "")
         self.vector_db_items = self.openai_props.VectorDBItems
-        self.search_kwarg = request.get("search_kwarg", {})
+
+
+        #  openai_props, vector_db_items, prompt, chat_historyを設定する
+        request = json.loads(request_json)
+        # messagesを取得
+        messages = request.get("messages", [])
+        # messagesのlengthが0の場合はエラーを返す
+        if len(messages) == 0:
+            self.prompt = ""
+        else:
+            # messagesの最後のメッセージを取得
+            last_message = messages[-1]
+            # contentを取得
+            content = last_message.get("content", {})
+            # contentのうちtype: textのもののtextを取得
+            prompt_array = [ c["text"] for c in content if c["type"] == "text"]
+            # prpmpt_arrayのlengthが0の場合はエラーを返す
+            if len(prompt_array) > 0:
+                # promptを取得
+                self.prompt = prompt_array[0]
+                # messagesから最後のメッセージを削除
+                messages.pop()
+            else:
+                raise ValueError("prompt is empty")
+
+        # messagesをjson文字列に変換
+        chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
+        self.chat_history = RetrievalQAUtil.convert_to_langchain_chat_history(chat_history_json)
+        # デバッグ出力
+        print(f'prompt: {self.prompt}')
+        print(f'chat_history: {self.chat_history}')
+        print('vector db')
+        for item in self.vector_db_items:
+            print(f'Name:{item.Name} VectorDBDescription:{item.VectorDBDescription} VectorDBTypeString:{item.VectorDBTypeString} VectorDBURL:{item.VectorDBURL} CollectionName:{item.CollectionName}')
 
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
@@ -245,10 +271,11 @@ def run_vector_search( params: VectorSearchParameter):
     # documentsの要素からcontent, source, source_urlを取得
     result = []
     # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-    for vector_db_item in params.vector_db_items:
+    for vector_db_item in params.vector_db_props:
 
         # デバッグ出力
-        print(f'検索条件: {params.query}')
+        print(f'検索文字列: {params.query}')
+        print(f'検索条件: {params.search_kwarg}')
         print('ベクトルDBの設定')
         print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
         retriever = RetrieverUtil(client, vector_db_item).create_retriever(params.search_kwarg)
@@ -315,75 +342,23 @@ def create_vector_search_tools(client: LangChainOpenAIClient, vector_db_props: l
 
     return tools
 
-
-
-def process_langchain_chat_parameter(props_json: str, prompt, request_json: str):
-    # request_jsonをdictに変換
-    request = json.loads(request_json)
-    # messagesを取得
-    messages = request.get("messages", [])
-    
-
-    # messagesのlengthが0の場合はエラーを返す
-    if len(messages) == 0:
-        raise Exception("messages is empty")
-    
-    # messagesの最後のメッセージを取得
-    last_message = messages[-1]
-
-    # contentを取得
-    content = last_message.get("content", {})
-    # contentのうちtype: textのもののtextを取得
-    prompt_array = [ c["text"] for c in content if c["type"] == "text"]
-    # prpmpt_arrayのlengthが0の場合はエラーを返す
-    if len(prompt_array) == 0:
-        raise Exception("prompt is empty")
-    
-    # promptを取得
-    prompt = prompt_array[0]
-
-    # promptが空の場合はエラーを返す
-    if prompt == "":
-        raise Exception("prompt is empty")
-    
-    # messagesから最後のメッセージを削除
-    messages.pop()
-    # messagesをjson文字列に変換
-    chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
-    chat_history = RetrievalQAUtil.convert_to_langchain_chat_history(chat_history_json)
-
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    vector_db_props = openai_props.VectorDBItems
-
-    # デバッグ出力
-    print(f'prompt: {prompt}')
-    print(f'chat_history: {chat_history}')
-    print('vector db')
-    for item in vector_db_props:
-        print(f'Name:{item.Name} VectorDBDescription:{item.VectorDBDescription} VectorDBTypeString:{item.VectorDBTypeString} VectorDBURL:{item.VectorDBURL} CollectionName:{item.CollectionName}')
-        
-    return openai_props, vector_db_props, prompt, chat_history
-
-
 from typing import Optional
 
-def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], prompt: str, chat_history: Optional[list[Any]] = None):
+def langchain_chat(params: LangChainChatParameter):
 
     # langchainのログを出力する
     langchain.verbose = True
         
     client = LangChainOpenAIClient(props)
-    RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
+    RetrievalQAUtilInstance = RetrievalQAUtil(client, params.vector_db_items)
     ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
     
     result_dict = {}
     with get_openai_callback() as cb:
         result = ChatAgentExecutorInstance.invoke(
                 {
-                    "input": prompt,
-                    "chat_history": chat_history,
+                    "input": params.prompt,
+                    "chat_history": params.chat_history,
                 }
             )
         result_dict["output"] = result.get("output", "")
@@ -396,13 +371,19 @@ def langchain_chat( props: OpenAIProps, vector_db_items: list[VectorDBProps], pr
 
 if __name__ == '__main__':
 
+    question1 = input("Please enter your question:")
+
     from openai_props import OpenAIProps, VectorDBProps, env_to_props, get_vector_db_settings
     props:OpenAIProps  = env_to_props()
     vector_db_item: VectorDBProps = get_vector_db_settings()
 
+    params: LangChainChatParameter = LangChainChatParameter()
+    params.chat_history = []
+    params.openai_props = props
+    params.vector_db_items = [vector_db_item]
 
-    question1 = input("Please enter your question:")
-    result1 = langchain_chat(props, [vector_db_item], question1, [])
+    params.prompt = question1
+    result1 = langchain_chat(params)
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])

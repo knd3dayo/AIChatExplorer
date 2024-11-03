@@ -9,7 +9,7 @@ namespace PythonAILib.Model.Chat {
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換
-        private static JsonSerializerOptions options = new() {
+        private static readonly JsonSerializerOptions options = new() {
             PropertyNameCaseInsensitive = true
         };
 
@@ -25,7 +25,7 @@ namespace PythonAILib.Model.Chat {
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
-                return result.Response;
+                return result.Output;
             }
             return "";
         }
@@ -43,7 +43,7 @@ namespace PythonAILib.Model.Chat {
 
                 ChatResult? result = chatController.ExecuteChat(openAIProperties);
                 if (result != null) {
-                    resultString = result.Response;
+                    resultString = result.Output;
                 }
             }
             return resultString;
@@ -63,9 +63,9 @@ namespace PythonAILib.Model.Chat {
             };
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
-            if (result != null && !string.IsNullOrEmpty(result.Response)) {
+            if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
-                Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Response, options) ?? [];
+                Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
                 if (jsonResult.TryGetValue("result", out List<string>? value)) {
                     return value;
                 }
@@ -84,8 +84,8 @@ namespace PythonAILib.Model.Chat {
             };
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
-            if (result != null && !string.IsNullOrEmpty(result.Response)) {
-                return JsonUtil.ParseJson(result.Response);
+            if (result != null && !string.IsNullOrEmpty(result.Output)) {
+                return JsonUtil.ParseJson(result.Output);
             }
             return [];
         }
@@ -103,9 +103,9 @@ namespace PythonAILib.Model.Chat {
             };
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
-            if (result != null && !string.IsNullOrEmpty(result.Response)) {
+            if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
-                return JsonUtil.ParseJson(result.Response);
+                return JsonUtil.ParseJson(result.Output);
             }
             return [];
         }
@@ -126,7 +126,7 @@ namespace PythonAILib.Model.Chat {
 
             ChatResult? result = chatController.ExecuteChat(openAIProperties);
             if (result != null) {
-                return result.Response;
+                return result.Output;
             }
             return "";
         }

@@ -36,10 +36,10 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
         #region PromptItemsに依存する処理
         // Context Menu
 
-        public ObservableCollection<MenuItem> MenuItems {
+        public ObservableCollection<MenuItem> ContentItemMenuItems {
             get {
-                ClipboardItemMenu clipboardItemMenu = new(this.FolderViewModel);
-                return clipboardItemMenu.CreateItemContextMenuItems(this);
+                ClipboardItemMenu clipboardItemMenu = new(this);
+                return clipboardItemMenu.ContentItemMenuItems;
             }
         }
 
@@ -388,6 +388,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
         public SimpleDelegateCommand<object> OpenFileCommand => new((obj) => {
             ClipboardAppCommandExecute.OpenFileCommand(ClipboardItem);
         });
+
 
         // ファイルを新規ファイルとして開くコマンド
         public SimpleDelegateCommand<object> OpenFileAsNewFileCommand => new((obj) => {

@@ -198,8 +198,10 @@ namespace QAChat.ViewModel.QAChatMain {
                 // プログレスバーを表示
                 IsIndeterminate = true;
 
-                await Task.Run(() => {
+                // チャット内容を更新
+                UpdateChatHistoryList();
 
+                await Task.Run(() => {
                     // LangChainChat用。VectorDBItemsを設定
                     List<VectorDBItem> items = [.. VectorDBItems];
                     ChatController.VectorDBItems = items;
@@ -212,11 +214,11 @@ namespace QAChat.ViewModel.QAChatMain {
                     LogWrapper.Error(StringResources.FailedToSendChat);
                     return;
                 }
-                // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-                QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+                // チャット内容を更新
+                UpdateChatHistoryList();
+
                 // inputTextをクリア
                 InputText = "";
-                OnPropertyChanged(nameof(ChatHistory));
 
                 // _SaveChatHistoryをTrueに設定
                 _SaveChatHistory = true;
@@ -229,6 +231,20 @@ namespace QAChat.ViewModel.QAChatMain {
             }
 
         });
+        // チャット内容のリストを更新するメソッド
+        public void UpdateChatHistoryList() {
+            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+            QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+            OnPropertyChanged(nameof(ChatHistory));
+
+            // ListBoxの一番最後のアイテムに移動
+            ListBox? listBox = (ListBox?)ThisWindow?.FindName("ChatContentList");
+            if (listBox != null) {
+                listBox.SelectedIndex = listBox.Items.Count - 1;
+                listBox.ScrollIntoView(listBox.SelectedItem);
+            }
+        }
+
 
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
@@ -302,6 +318,20 @@ namespace QAChat.ViewModel.QAChatMain {
         public SimpleDelegateCommand<object> ExportChatCommand => new((parameter) => {
             QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
         });
+        // 選択したチャット内容をクリップボードにコピーするコマンド
+        public SimpleDelegateCommand<ChatHistoryItem> CopySelectedChatItemCommand => new((item) => {
+            string text = $"{item.Role}:\n{item.Content}";
+            Clipboard.SetText(text);
+
+        });
+        // 全てのチャット内容をクリップボードにコピーするコマンド
+        public SimpleDelegateCommand<object> CopyAllChatItemCommand => new((parameter) => {
+            string text = "";
+            foreach (var item in ChatHistory) {
+                text += $"{item.Role}:\n{item.Content}\n";
+            }
+            Clipboard.SetText(text);
+        });
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
@@ -313,6 +343,7 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
+
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択

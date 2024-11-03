@@ -135,10 +135,29 @@ namespace PythonAILib.Resource {
         // Property information
         public override string PropertyInfo { get; } = "Property information";
 
+        public override string VectorDBItems { get; } = "Vector DB Items";
+
+        // ベクトル検索リクエスト
+        public override string VectorSearchRequest { get; } = "Vector Search Request";
+
+        // Excelへのエクスポートを実行します
+        public override string ExportToExcelExecute { get; } = "Export to Excel Execute";
+        // Excelへのエクスポートが失敗しました
+        public override string ExportToExcelFailed { get; } = "Export to Excel Failed";
+        // Excelへのエクスポートが成功しました
+        public override string ExportToExcelSuccess { get; } = "Export to Excel Success";
+
+        // ファイルパス
+        public override string FilePath { get; } = "ファイルパス";
+        // データ
+        public override string Data { get; } = "データ";
+
+
+
         // Text
         public override string Text { get; } = "Text";
 
-        // Response
+        // Output
         public override string Response { get; } = "Response";
 
         // Execute OpenAI
@@ -146,6 +165,14 @@ namespace PythonAILib.Resource {
 
         // Chat history
         public override string ChatHistory { get; } = "Chat history";
+
+        // UpdateVectorDBIndex実行
+        public override string UpdateVectorDBIndexExecute { get; } = "Execute UpdateVectorDBIndex";
+
+        // ベクトルDBのコレクション削除を実行
+        public override string DeleteVectorDBCollectionExecute { get; } = "Execute DeleteVectorDBCollection";
+
+
         public override string TextExtracted { get; } = "Extracted Text";
 
         public override string UpdateDate { get; } = "Update Date";

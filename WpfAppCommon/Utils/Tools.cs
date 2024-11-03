@@ -56,6 +56,15 @@ namespace WpfAppCommon.Utils {
             // それ以外はNullを返す。
             return null;
         }
+        //------------
+        // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
+        public static string ConcatenateFileSystemPath(string parentPath, string childPath) {
+            if (string.IsNullOrEmpty(parentPath))
+                return childPath;
+            if (string.IsNullOrEmpty(childPath))
+                return parentPath;
+            return Path.Combine(parentPath, childPath);
+        }
 
 
         [GeneratedRegex(@"<[^>]+>")]

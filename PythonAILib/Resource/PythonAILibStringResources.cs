@@ -184,6 +184,9 @@ namespace PythonAILib.Resource {
         // UpdateVectorDBIndex実行
         public virtual string UpdateVectorDBIndexExecute { get; } = "UpdateVectorDBIndex実行";
 
+        // ベクトルDBのコレクション削除を実行
+        public virtual string DeleteVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション削除を実行";
+
         // モードが不正です
         public virtual string InvalidMode { get; } = "モードが不正です";
 
@@ -197,6 +200,9 @@ namespace PythonAILib.Resource {
 
         // VectorSearch実行
         public virtual string VectorSearchExecute { get; } = "VectorSearch実行";
+
+        // ベクトルDB
+        public virtual string VectorDBItems { get; } = "ベクトルDBアイテム";
 
         // ベクトル検索リクエスト
         public virtual string VectorSearchRequest { get; } = "ベクトル検索リクエスト";

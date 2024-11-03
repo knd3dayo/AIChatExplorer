@@ -165,6 +165,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <ListBox
+                            x:Name="ChatContentList"
                             Grid.Row="0"
                             ItemsSource="{Binding ChatHistory, Mode=OneWay}"
                             ScrollViewer.CanContentScroll="False"
@@ -207,6 +208,11 @@
                                                 <TextBlock.ContextMenu>
                                                     <ContextMenu>
                                                         <MenuItem Command="{Binding PlacementTarget.Tag.ExportChatCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.ExportAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                        <MenuItem
+                                                            Command="{Binding PlacementTarget.Tag.CopySelectedChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
+                                                            CommandParameter="{Binding}"
+                                                            Header="{Binding PlacementTarget.Tag.StringResources.CopySelectedChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                        <MenuItem Command="{Binding PlacementTarget.Tag.CopyAllChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.CopyAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
                                                     </ContextMenu>
                                                 </TextBlock.ContextMenu>
                                             </TextBlock>

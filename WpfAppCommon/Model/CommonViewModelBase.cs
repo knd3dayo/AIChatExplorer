@@ -17,13 +17,14 @@ namespace QAChat.Resource {
         public virtual void OnLoadedAction() { }
         public virtual void OnActivatedAction() { }
 
-        public Window? ActiveWindow { get; set; }
+        public Window? ThisWindow { get; set; }
 
         // Loaded時の処理
         public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
             if (routedEventArgs.Source is Window) {
                 Window window = (Window)routedEventArgs.Source;
-                Tools.ActiveWindow = window;
+                ThisWindow = window;
+                Tools.ActiveWindow = ThisWindow;
                 // 追加処理
                 OnLoadedAction();
                 return;
@@ -31,7 +32,8 @@ namespace QAChat.Resource {
             if (routedEventArgs.Source is UserControl) {
                 UserControl userControl = (UserControl)routedEventArgs.Source;
                 Window window = Window.GetWindow(userControl);
-                Tools.ActiveWindow = window;
+                ThisWindow = window;
+                Tools.ActiveWindow = ThisWindow;
                 // 追加処理
                 OnLoadedAction();
                 return;
@@ -40,8 +42,8 @@ namespace QAChat.Resource {
 
         // Activated時の処理
         public SimpleDelegateCommand<object> ActivatedCommand => new((parameter) => {
-            if (ActiveWindow == null) return;
-            Tools.ActiveWindow = ActiveWindow;
+            if (ThisWindow == null) return;
+            Tools.ActiveWindow = ThisWindow;
             // 追加処理
             OnActivatedAction();
         });

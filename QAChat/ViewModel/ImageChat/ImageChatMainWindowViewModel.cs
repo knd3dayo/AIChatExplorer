@@ -175,7 +175,7 @@ namespace QAChat.ViewModel.ImageChat {
                     LogWrapper.Error(StringResources.ErrorOccurred);
                     return;
                 }
-                ResultText = result.Response;
+                ResultText = result.Output;
 
 
             } catch (Exception e) {

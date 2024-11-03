@@ -74,7 +74,13 @@ namespace PythonAILib.PythonIF {
             }
             if (!string.IsNullOrEmpty(pythonAILibPathRoot)) {
 
-                PythonAILibPath = Path.Combine(pythonAILibPathRoot, "python_ai_lib");
+                // ★TODO Pythonスクリプトをアプリケーション用ディレクトリにコピーする処理
+                // バージョンアップ時には、アプリケーション用ディレクトリにコピーする処理が必要となるが、
+                // 未実装のため、一旦コメントアウトしておく
+                // PythonAILibPath = Path.Combine(pythonAILibPathRoot, "python_ai_lib");
+
+                PythonAILibPath = "python_ai_lib";
+
                 // Check if the PythonAILibPath exists
                 if (!Directory.Exists(PythonAILibPath)) {
                     // ./pythonディレクトリをPythonAILibPathRootへコピーする

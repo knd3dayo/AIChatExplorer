@@ -75,7 +75,7 @@ class OpenAIClient:
         # contentを取得する
         content = response.choices[0].message.content
         # dictにして返す
-        return {"content": content, "total_tokens": total_tokens}
+        return {"output": content, "total_tokens": total_tokens}
     
     def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None) -> dict:
         # 入力パラメーターの設定

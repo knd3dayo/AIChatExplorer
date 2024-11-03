@@ -13,7 +13,6 @@ namespace PythonAILib.PythonIF
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 
-
         public ChatResult OpenAIChat(OpenAIProperties props, Chat chatController);
 
 
@@ -22,6 +21,7 @@ namespace PythonAILib.PythonIF
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);
 
+        public void DeleteVectorDBCollection(OpenAIProperties props, VectorDBItem vectorDBItem);
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);

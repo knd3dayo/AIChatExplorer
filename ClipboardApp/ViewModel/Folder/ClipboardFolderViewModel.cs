@@ -10,8 +10,6 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : Folder.ClipboardFolderBase(clipboardItemFolder) {
-
-
         public override ClipboardItemViewModel CreateItemViewModel(ClipboardItem item) {
             return new ClipboardItemViewModel(this, item);
         }
@@ -25,9 +23,9 @@ namespace ClipboardApp.ViewModel {
         }
 
         // -- virtual
-        public override ObservableCollection<MenuItem> MenuItems {
+        public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                ClipboardItemMenu clipboardItemMenu = new(this);
+                ClipboardFolderMenu clipboardItemMenu = new(this);
                 return clipboardItemMenu.MenuItems;
             }
         }
@@ -50,9 +48,7 @@ namespace ClipboardApp.ViewModel {
         /// </summary>
         /// <param name="parameter"></param>
         public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
-
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
-
         }
 
         public override void CreateItemCommandExecute() {

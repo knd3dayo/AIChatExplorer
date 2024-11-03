@@ -89,6 +89,22 @@ namespace PythonAILib.PythonIF {
             });
             return result;
         }
+
+        // テスト用
+        public string HelloWorld() {
+            string result = "";
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "hello_world";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // hello_world関数を呼び出す
+                result = function_object();
+            });
+            return result;
+        }
+
+
         public string ExtractBase64ToText(string base64) {
 
             // ResultContainerを作成
@@ -138,7 +154,7 @@ namespace PythonAILib.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
-                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列
+                // run_openai_chat関数を呼び出す。戻り値は{ "output": "レスポンス" , "log": "ログ" }の形式のJSON文字列
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
@@ -147,7 +163,7 @@ namespace PythonAILib.PythonIF {
                 // JSON文字列からDictionaryに変換する。
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
                 // contentを取得
-                string? content = resultDict["content"]?.ToString();
+                string? content = resultDict["output"]?.ToString();
                 if (content == null) {
                     throw new Exception(StringResources.OpenAIResponseEmpty);
                 }
@@ -155,7 +171,7 @@ namespace PythonAILib.PythonIF {
                 long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
 
                 // ChatResultに設定
-                chatResult.Response = content;
+                chatResult.Output = content;
                 chatResult.TotalTokens = totalTokens;
 
             });
@@ -163,10 +179,10 @@ namespace PythonAILib.PythonIF {
 
         }
 
-
         // 通常のOpenAIChatを実行する
         public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
 
+            // ChatHistoryとContentなどからリクエストを作成
             string chat_history_json = chatRequest.CreateOpenAIRequestJSON(props);
             string propsJson = props.ToJson();
 
@@ -178,142 +194,11 @@ namespace PythonAILib.PythonIF {
             ChatResult result = OpenAIChatExecute("run_openai_chat", (function_object) => {
                 return function_object(propsJson, chat_history_json);
             });
-
             // StatisticManagerにトークン数を追加
             MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, props.OpenAICompletionModel);
 
             return result;
 
-        }
-
-        // テスト用
-        public string HelloWorld() {
-            string result = "";
-            // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "hello_world";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // hello_world関数を呼び出す
-                result = function_object();
-            });
-            return result;
-        }
-        private void UpdateVectorDBIndexExecute(string function_name, Func<dynamic, string> pythonFunction) {
-            // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                // update_vector_db_index関数を呼び出す
-                try {
-                    string resultString = pythonFunction(function_object);
-                    LogWrapper.Info(resultString);
-                } catch (PythonException e) {
-                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
-                    if (e.Message.Contains("Unsupported file type")) {
-                        throw new UnsupportedFileTypeException(e.Message);
-                    }
-                    LogWrapper.Info(e.Message);
-                    LogWrapper.Info(e.StackTrace);
-                    throw;
-                }
-            });
-        }
-
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
-
-            // modeがUpdateでItem.Contentが空の場合は何もしない
-            if (contentInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(contentInfo.Content)) {
-                return;
-            }
-            // modeがDeleteで、Item.Idが空の場合は何もしない
-            if (contentInfo.Mode == VectorDBUpdateMode.delete && string.IsNullOrEmpty(contentInfo.Id)) {
-                return;
-            }
-            // propsにVectorDBURLを追加
-            props.VectorDBItems = [vectorDBItem];
-            string propJson = props.ToJson();
-            // ContentInfoをJSON文字列に変換
-            string contentInfoJson = contentInfo.ToJson();
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
-            string function_name = "";
-
-            if (contentInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_content_index";
-            } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_content_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
-            // UpdateVectorDBIndexExecuteを呼び出す
-            UpdateVectorDBIndexExecute(function_name, (function_object) => {
-                return function_object(propJson, contentInfoJson);
-            });
-        }
-
-
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
-
-            // modeがUpdateでItem.Contentが空の場合は何もしない
-            if (imageInfo.Mode == VectorDBUpdateMode.update && string.IsNullOrEmpty(imageInfo.ImageURL)) {
-                return;
-            }
-            // modeがDeleteで、Item.Idが空の場合は何もしない
-            if (imageInfo.Mode == VectorDBUpdateMode.delete && string.IsNullOrEmpty(imageInfo.Id)) {
-                return;
-            }
-            // propsにVectorDBURLを追加
-            props.VectorDBItems = [vectorDBItem];
-            string propJson = props.ToJson();
-            // ContentInfoをJSON文字列に変換
-            string contentInfoJson = imageInfo.ToJson();
-
-            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndex);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
-
-            string function_name = "";
-            if (imageInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_image_index";
-            } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_image_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
-            // UpdateVectorDBIndexExecuteを呼び出す
-            UpdateVectorDBIndexExecute(function_name, (function_object) => {
-                return function_object(propJson, contentInfoJson);
-            });
-        }
-
-
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
-
-            // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
-            if (!File.Exists(gitFileInfo.AbsolutePath)) {
-                LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
-            }
-            // propsにVectorDBURLを追加
-            props.VectorDBItems = [vectorDBItem];
-
-            string propJson = props.ToJson();
-            // GitFileInfoをJSON文字列に変換
-            string gitFileInfoJson = gitFileInfo.ToJson();
-
-            string function_name = "";
-            if (gitFileInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_file_index";
-            } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_file_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
-
-            // UpdateVectorDBIndexExecuteを呼び出す
-            UpdateVectorDBIndexExecute(function_name, (function_object) => {
-                return function_object(propJson, gitFileInfoJson);
-            });
         }
 
         private ChatResult LangChainChatExecute(string functionName, Func<dynamic, string> pythonFunction) {
@@ -338,16 +223,16 @@ namespace PythonAILib.PythonIF {
                 if (output_value != null) {
                     string? output = output_value.ToString();
                     // ChatResultに設定
-                    chatResult.Response = output ?? "";
+                    chatResult.Output = output ?? "";
                 }
 
                 // page_content_listを取得
                 List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? [];
-                chatResult.ReferencedContents = page_content_list;
+                chatResult.PageContentList = page_content_list;
 
                 // page_source_listを取得
                 List<string> page_source_list = resultDict["page_source_list"] as List<string> ?? new();
-                chatResult.ReferencedFilePath = page_source_list;
+                chatResult.PageSourceList = page_source_list;
 
                 // total_tokensを取得. total_tokensが存在しない場合は0を設定
                 long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
@@ -365,13 +250,6 @@ namespace PythonAILib.PythonIF {
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
-            // VectorDBItemsのサイズが0の場合は例外をスロー
-            if (!chatRequest.VectorDBItems.Any()) {
-                throw new Exception(StringResources.VectorDBItemsEmpty);
-            }
-            // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
-            openAIProperties.VectorDBItems = chatRequest.VectorDBItems;
-
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
 
@@ -382,7 +260,7 @@ namespace PythonAILib.PythonIF {
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, prompt, chatHistoryJson);
+                string resultString = function_object(propsJson, chatHistoryJson);
                 return resultString;
             });
             // StatisticManagerにトークン数を追加
@@ -399,7 +277,6 @@ namespace PythonAILib.PythonIF {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
-                // run_openai_chat関数を呼び出す。戻り値は{ "content": "レスポンス" , "log": "ログ" }の形式のJSON文字列   
                 string resultString = pythonFunction(function_object);
 
                 // resultStringをログに出力
@@ -421,21 +298,122 @@ namespace PythonAILib.PythonIF {
         }
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, VectorSearchRequest vectorSearchRequest) {
-            // openAIPropertiesのVectorDBItemsにVectorDBItemを追加
-            openAIProperties.VectorDBItems = vectorDBItems;
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
+            // vectorDBItemsをJSON文字列に変換
+            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
             // vectorSearchRequestをJSON文字列に変換
             string vectorSearchRequestJson = vectorSearchRequest.ToJson();
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorDBItems}:{vectorDBItemsJson}");
             LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("run_vector_search", (function_object) => {
-                string resultString = function_object(propsJson, vectorSearchRequestJson);
+                string resultString = function_object(propsJson, vectorDBItemsJson, vectorSearchRequestJson);
                 return resultString;
             });
+        }
+
+        private void ExecutePythonScriptWrapper(string function_name, Func<dynamic, string> pythonFunction, PythonScriptResult result) {
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // update_vector_db_index関数を呼び出す
+                try {
+                    string resultString = pythonFunction(function_object);
+                    LogWrapper.Info(resultString);
+                    // resultStringからDictionaryに変換する。
+                    result.LoadFromJson(resultString);
+
+                } catch (PythonException e) {
+                    // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
+                    if (e.Message.Contains("Unsupported file type")) {
+                        throw new UnsupportedFileTypeException(e.Message);
+                    }
+                    LogWrapper.Error($"{e.Message}\n{e.StackTrace}");
+                }
+            });
+        }
+        // 指定されたベクトルDBのインデックスを削除する
+        public void DeleteVectorDBCollection(OpenAIProperties props, VectorDBItem vectorDBItem) {
+            // OpenAIPropertiesをJSON文字列に変換
+            string propJson = props.ToJson();
+            // VectorDBItemをJSON文字列に変換
+            string vectorDBItemJson = VectorDBItem.ToJson([vectorDBItem]);
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
+            // DeleteVectorDBIndexExecuteを呼び出す
+            PythonScriptResult result = new();
+            ExecutePythonScriptWrapper("delete_collection", (function_object) => {
+                return function_object(propJson, vectorDBItemJson);
+            }, result);
+        }
+        public void UpdateVectorDBIndex(OpenAIProperties props, UpdateVectorDBInfo contentInfo, VectorDBItem vectorDBItem, string function_name) {
+
+            // OpenAIPropertiesをJSON文字列に変換
+            string propJson = props.ToJson();
+            // VectorDBItemをJSON文字列に変換
+            string vectorDBItemJson = VectorDBItem.ToJson([vectorDBItem]);
+            // ContentInfoをJSON文字列に変換
+            string contentInfoJson = contentInfo.ToJson();
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
+            // UpdateVectorDBIndexExecuteを呼び出す
+            PythonScriptResult result = new();
+            ExecutePythonScriptWrapper(function_name, (function_object) => {
+                return function_object(propJson, vectorDBItemJson, contentInfoJson);
+            }, result);
+
+        }
+
+        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
+            string function_name = "";
+            if (contentInfo.Mode == VectorDBUpdateMode.update) {
+                function_name = "update_content_index";
+            } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
+                function_name = "delete_content_index";
+            } else {
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
+            }
+            UpdateVectorDBIndex(props, contentInfo, vectorDBItem, function_name);
+        }
+
+
+        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
+            string function_name = "";
+            if (imageInfo.Mode == VectorDBUpdateMode.update) {
+                function_name = "update_image_index";
+            } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
+                function_name = "delete_content_index";
+            } else {
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
+            }
+            UpdateVectorDBIndex(props, imageInfo, vectorDBItem, function_name);
+        }
+
+
+        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
+
+            // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
+            if (File.Exists(gitFileInfo.AbsolutePath)) {
+                LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
+                throw new FileNotFoundException(StringResources.FileNotFound + gitFileInfo.AbsolutePath);
+            }
+            string function_name = "";
+            if (gitFileInfo.Mode == VectorDBUpdateMode.update) {
+                function_name = "update_file_index";
+            } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
+                function_name = "delete_content_index";
+            } else {
+                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
+            }
+            UpdateVectorDBIndex(props, gitFileInfo, vectorDBItem, function_name);
         }
 
         // ExportToExcelを実行する

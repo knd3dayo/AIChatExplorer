@@ -217,7 +217,7 @@ namespace PythonAILib.Model.Chat {
             // リクエストをChatItemsに追加
             ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
             return result;
 
         }
@@ -230,7 +230,7 @@ namespace PythonAILib.Model.Chat {
             }
             ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
 
             return result;
         }
@@ -246,22 +246,20 @@ namespace PythonAILib.Model.Chat {
             }
             ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
             // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Response, result.ReferencedFilePath));
+            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
 
             return result;
 
         }
         // VectorSearchを実行してコンテキスト情報を生成する
         private void GenerateVectorSearchResult(OpenAIProperties openAIProperties) {
-            string result;
-            StringBuilder sb = new();
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
             // VectorSearchRequestを作成. テスト用にFilterを設定
             VectorSearchRequest request = new() {
                 Query = ContentText,
                 SearchKWArgs = new Dictionary<string, object> {
-                    ["k"] = 10,
+                    ["k"] = 4,
                     // filter
                     ["filter"] = new Dictionary<string, object> {
                         ["content_type"] = "text"
@@ -269,9 +267,13 @@ namespace PythonAILib.Model.Chat {
                 }
             };
 
+            StringBuilder sb = new();
             List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, VectorDBItems, request) ?? [];
-            sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
-            foreach (var vectorSearchResult in results) {
+            sb.AppendLine();
+            for (int i = 0; i < results.Count; i++) {
+                VectorSearchResult vectorSearchResult = results[i];
+                sb.AppendLine($"## 参考情報:{i + 1} ##");
+                sb.AppendLine("--------");
                 sb.AppendLine(vectorSearchResult.Description);
                 sb.AppendLine($"** {PromptStringResource.Instance.DocumentReliability}: {vectorSearchResult.Reliability}% **");
                 sb.AppendLine(vectorSearchResult.Content);
@@ -280,7 +282,8 @@ namespace PythonAILib.Model.Chat {
 
             if (hasVectorSearch) {
                 // 結果をContentTextに追加
-                result = "\n--- 参考情報 ----\n" + sb.ToString();
+                string result = PromptStringResource.Instance.RelatedInformation;
+                result += sb.ToString();
                 // 結果をContentTextに追加
                 ContentText += result;
             }

@@ -42,7 +42,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public abstract ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder);
 
-        public abstract ObservableCollection<MenuItem> MenuItems { get; }
+        public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
         #endregion
 
 

@@ -9,7 +9,15 @@ using PythonAILib.Utils;
 namespace QAChat {
     public class PythonAILibManager {
 
-        public static PythonAILibManager? Instance { get; private set; }
+        private static PythonAILibManager? _instance;
+        public static PythonAILibManager Instance {
+            get {
+                return _instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            }
+            private set {
+                _instance = value;
+            }
+        }
 
         public IPythonAILibConfigParams ConfigParams { get; private set; }
 
