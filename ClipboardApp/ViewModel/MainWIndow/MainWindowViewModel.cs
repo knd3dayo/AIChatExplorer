@@ -21,7 +21,7 @@ using WpfAppCommon.Control.Editor;
 
 
 namespace ClipboardApp {
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IMainWindowGridView1ModelImplementer {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IIMainPanelImplementer {
         public MainWindowViewModel() { }
         public void Init() {
 

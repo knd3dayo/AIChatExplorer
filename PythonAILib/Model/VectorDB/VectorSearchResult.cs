@@ -23,6 +23,14 @@ namespace PythonAILib.Model.VectorDB {
         [JsonPropertyName("score")]
         public double Score { get; set; } = 0.0;
 
+        // Description
+        [JsonPropertyName("description")]
+        public string Description { get; set; } = string.Empty;
+
+        // Reliability
+        [JsonPropertyName("reliability")]
+        public int Reliability { get; set; } = 0;
+
         // sub_docs
         [JsonPropertyName("sub_docs")]
         public List<VectorSearchResult> SubDocs { get; set; } = [];

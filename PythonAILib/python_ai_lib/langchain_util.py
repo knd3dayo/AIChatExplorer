@@ -25,6 +25,21 @@ from collections import defaultdict
 
 from pydantic import BaseModel, Field
 
+
+class VectorSearchParameter:
+    def __init__(self, props_json: str, request_json: str):
+        self.props_json = props_json
+        self.request_json = request_json
+        # OpenAIPorpsを生成
+        props = json.loads(props_json)
+        self.openai_props = OpenAIProps(props)
+
+        #  openai_props, vector_db_items, query, search_kwargを設定する
+        request = json.loads(request_json)
+        self.query = request.get("query", "")
+        self.vector_db_items = self.openai_props.VectorDBItems
+        self.search_kwarg = request.get("search_kwarg", {})
+
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
 
@@ -65,13 +80,12 @@ class RetrieverUtil:
         self.client = client
         self.vector_db_props = vector_db_props
 
-    def create_retriever(self, search_kwargs={"k": 10}):
-        vector_db_props = self.vector_db_props
-        # for refine 2024/06/08 Error Raised: 2 validation errors for RefineDocumentsChain
-        # chain_type_kwargs = {"prompt": prompt,  "existing_answer": ""}
-
+    def create_retriever(self, search_kwargs: dict[str, Any] = {}) -> Any:
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
-        # vector_db_type_stringが"Faiss"の場合、FaissVectorDBオブジェクトを作成
+
+        vector_db_props = self.vector_db_props
+        if not search_kwargs:
+            search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
         if vector_db_props.IsUseMultiVectorRetriever:
@@ -224,23 +238,21 @@ class RetrievalQAUtil:
         return langchain_chat_history
 
 # ベクトル検索を行う
-def run_vector_search( openai_props: OpenAIProps, vector_db_props : list[VectorDBProps], query : str, search_kwargs: dict):    
+def run_vector_search( params: VectorSearchParameter):    
 
-    client = LangChainOpenAIClient(openai_props)
+    client = LangChainOpenAIClient(params.openai_props)
 
     # documentsの要素からcontent, source, source_urlを取得
     result = []
     # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-    for vector_db_item in vector_db_props:
+    for vector_db_item in params.vector_db_items:
 
         # デバッグ出力
-        print(f'検索条件: {query}')
+        print(f'検索条件: {params.query}')
         print('ベクトルDBの設定')
         print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-
-
-        retriever = RetrieverUtil(client, vector_db_item).create_retriever(search_kwargs=search_kwargs)
-        documents: list[Document] = retriever.invoke(query)
+        retriever = RetrieverUtil(client, vector_db_item).create_retriever(params.search_kwarg)
+        documents: list[Document] = retriever.invoke(params.query)
 
         print(f"documents:\n{documents}")
         for doc in documents:
@@ -248,6 +260,10 @@ def run_vector_search( openai_props: OpenAIProps, vector_db_props : list[VectorD
             source = doc.metadata.get("source", "")
             source_url = doc.metadata.get("source_url", "")
             score = doc.metadata.get("score", 0.0)
+            # description, reliabilityを取得
+            description = doc.metadata.get("description", "")
+            reliability = doc.metadata.get("reliability", 0)
+
             sub_docs = doc.metadata.get("sub_docs", [])
             # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
             sub_docs_result = []
@@ -256,10 +272,12 @@ def run_vector_search( openai_props: OpenAIProps, vector_db_props : list[VectorD
                 sub_source = sub_doc.metadata.get("source", "")
                 sub_source_url = sub_doc.metadata.get("source_url", "")
                 sub_score = sub_doc.metadata.get("score", 0.0)
+                
                 sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
 
-
-            result.append({"content": content, "source": source, "source_url": source_url, "score": score, "sub_docs": sub_docs_result})
+            result.append(
+                {"content": content, "source": source, "source_url": source_url, "score": score, 
+                 "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
         
     return {"documents": result}
 
@@ -298,26 +316,6 @@ def create_vector_search_tools(client: LangChainOpenAIClient, vector_db_props: l
     return tools
 
 
-def process_vector_search_parameter(props_json: str, request_json: str):
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    vector_db_props = openai_props.VectorDBItems
-    # vector_db_propsが空の場合はエラーを返す
-    if len(vector_db_props) == 0:
-        raise Exception("vector_db_props is empty")
-
-    # queryを取得
-    request = json.loads(request_json)
-    query = request.get("query", "")
-    
-    vector_db_items = vector_db_props
-    # MaxSearchResultsを取得
-    max_search_results = vector_db_item.MaxSearchResults
-
-    # search_kwargを取得
-    search_kwarg = request.get("search_kwarg", {"k": max_search_results})
-    return openai_props, vector_db_items, query, search_kwarg
 
 def process_langchain_chat_parameter(props_json: str, prompt, request_json: str):
     # request_jsonをdictに変換

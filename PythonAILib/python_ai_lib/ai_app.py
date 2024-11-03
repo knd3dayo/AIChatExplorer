@@ -9,6 +9,7 @@ from openai_client import OpenAIClient
 import langchain_util
 import langchain_vector_db
 import base64
+from langchain_vector_db import ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
 
 import excel_util
 
@@ -62,55 +63,60 @@ def run_langchain_chat( openai_props:OpenAIProps, vector_db_props:list[VectorDBP
     return result
 
 # vector db関連
-def update_or_delete_file_index(openai_props:OpenAIProps, vector_db_props:VectorDBProps, document_root:str, relative_path:str, source_url:str, description:str, mode:str):
+def update_or_delete_file_index(params: FileUpdateOrDeleteRequestParams):
 
     # LangChainVectorDBを生成
-    vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
+    vector_db = langchain_vector_db.get_vector_db(params.openai_props, params.vector_db_props)
 
     # modeに応じて処理を分岐
-    if mode == "delete":
+    if params.mode == "delete":
         # delete_file_indexを実行
-        vector_db.delete_file_index(document_root, relative_path, source_url)
-    if mode == "update":
+        vector_db.delete_file_index(params.document_root, params.relative_path, params.source_url)
+    elif params.mode == "update":
         # update_file_indexを実行
-        vector_db.update_file_index(document_root, relative_path, source_url, description=description)
-
+        vector_db.update_file_index(params.document_root, params.relative_path, params.source_url, description=params.description, reliability=params.reliability)
+    else:
+        raise Exception("mode is invalid")
+    
     # 結果用のdictを生成
     result: dict = {}
     return result
 
-def update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, mode):
+def update_or_delete_content_index(params: ContentUpdateOrDeleteRequestParams):
     # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
     # openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
 
     # LangChainVectorDBを生成
-    vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
+    vector_db = langchain_vector_db.get_vector_db(params.openai_props, params.vector_db_props)
     
-    if mode == "delete":
+    if params.mode == "delete":
         # delete_content_indexを実行
-        vector_db.delete_content_index(source)
-    if mode == "update":
+        vector_db.delete_content_index(params.source)
+    elif params.mode == "update":
         # update_content_indexを実行
-        vector_db.update_content_index(text, source, source_url, description=description)
+        vector_db.update_content_index(params.text, params.source, params.source_url, description=params.description, reliability=params.reliability)
+    else:
+        raise Exception("mode is invalid")
 
-
-def update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, mode):
+def update_or_delete_image_index(params: ImageUpdateOrDeleteRequestParams):
     # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
     # openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
     # LangChainVectorDBを生成
-    vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
+    vector_db = langchain_vector_db.get_vector_db(params.openai_props, params.vector_db_props)
     
     # 初期化
     update_count = 0
     delete_count = 0
     
-    if mode == "delete":
+    if params.mode == "delete":
         # delete_image_indexを実行
-            vector_db.delete_image_index(source)
-    if mode == "update":
+            vector_db.delete_image_index(params.source)
+    elif params.mode == "update":
         # update_image_indexを実行
-        vector_db.update_image_index(text,  source, source_url, description=description, image_url=image_url)
-
+        vector_db.update_image_index(params.text, params.source, params.source_url, image_url=params.image_url, description=params.description, reliability=params.reliability)
+    else:
+        raise Exception("mode is invalid")
+    
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):
     # dataJsonをdictに変換

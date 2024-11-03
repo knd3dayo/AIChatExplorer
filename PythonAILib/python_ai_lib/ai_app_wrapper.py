@@ -106,8 +106,9 @@ def run_langchain_chat( props_json: str, request_prompt: str, request_json: str)
 def run_vector_search(props_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        openai_props, vector_db_items, query, search_kwargs = langchain_util.process_vector_search_parameter(props_json, request_json)
-        result = langchain_util.run_vector_search(openai_props, vector_db_items, query, search_kwargs)
+        from langchain_util import VectorSearchParameter
+        params:VectorSearchParameter = VectorSearchParameter(props_json, request_json)
+        result = langchain_util.run_vector_search(params)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -116,32 +117,13 @@ def run_vector_search(props_json: str, request_json: str):
     return wrapper()
 
 # vector db関連
-def update_file_index(props_json, request_json):
-    def func () -> dict:
-        openai_props, vector_db_props, document_root, relative_path, source_url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_file_index(openai_props, vector_db_props, document_root, relative_path, source_url, description, "update")
-        return {}
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-def delete_file_index(props_json, request_json):
-    def func () -> dict:
-        openai_props, vector_db_props, document_root, relative_path, source_url, description = langchain_vector_db.process_file_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_file_index(openai_props, vector_db_props, document_root, relative_path, source_url, description, "delete")
-        return {}
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
 # ベクトルDBのコンテンツインデックスを削除する
 def delete_content_index(props_json, request_json):
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, "delete")
+        from langchain_vector_db import ContentUpdateOrDeleteRequestParams
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_content_index(params)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -153,8 +135,9 @@ def delete_content_index(props_json, request_json):
 def update_content_index(props_json, request_json):
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_content_index(openai_props, vector_db_props, text, source, source_url, description, "update")
+        from langchain_vector_db import ContentUpdateOrDeleteRequestParams
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_content_index(params)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -167,8 +150,9 @@ def delete_image_index(props_json, request_json):
     # delete_indexを実行する関数を定義
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, "delete")
+        from langchain_vector_db import ImageUpdateOrDeleteRequestParams
+        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_image_index(params)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -180,15 +164,38 @@ def delete_image_index(props_json, request_json):
 def update_image_index(props_json, request_json):
     # update_indexを実行する関数を定義
     def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
-        ai_app.update_or_delete_image_index(openai_props, vector_db_props, text, source, source_url, description, image_url, "update")
+        from langchain_vector_db import ImageUpdateOrDeleteRequestParams
+        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_image_index(params)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
+
+def update_file_index(props_json, request_json):
+    def func () -> dict:
+        from langchain_vector_db import FileUpdateOrDeleteRequestParams
+        params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_file_index(params)
+        return {}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def delete_file_index(props_json, request_json):
+    def func () -> dict:
+        from langchain_vector_db import FileUpdateOrDeleteRequestParams
+        params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams(props_json, request_json)
+        ai_app.update_or_delete_file_index(params)
+        return {}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 
 
 ########################

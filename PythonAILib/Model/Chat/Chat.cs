@@ -207,7 +207,7 @@ namespace PythonAILib.Model.Chat {
         }
         private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            AppendVectorSearchResult(openAIProperties);
+            GenerateVectorSearchResult(openAIProperties);
 
             openAIProperties.VectorDBItems.AddRange(VectorDBItems);
             ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, this);
@@ -237,7 +237,7 @@ namespace PythonAILib.Model.Chat {
 
         private ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            AppendVectorSearchResult(openAIProperties);
+            GenerateVectorSearchResult(openAIProperties);
 
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
             // リクエストをChatItemsに追加
@@ -252,8 +252,8 @@ namespace PythonAILib.Model.Chat {
 
         }
         // VectorSearchを実行してコンテキスト情報を生成する
-        private void AppendVectorSearchResult(OpenAIProperties openAIProperties) {
-            string result = "";
+        private void GenerateVectorSearchResult(OpenAIProperties openAIProperties) {
+            string result;
             StringBuilder sb = new();
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
@@ -268,9 +268,12 @@ namespace PythonAILib.Model.Chat {
                     }
                 }
             };
+
             List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, VectorDBItems, request) ?? [];
+            sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
             foreach (var vectorSearchResult in results) {
-                sb.AppendLine(PromptStringResource.Instance.RelatedInformation);
+                sb.AppendLine(vectorSearchResult.Description);
+                sb.AppendLine($"** {PromptStringResource.Instance.DocumentReliability}: {vectorSearchResult.Reliability}% **");
                 sb.AppendLine(vectorSearchResult.Content);
                 hasVectorSearch = true;
             }

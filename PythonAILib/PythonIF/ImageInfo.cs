@@ -8,25 +8,27 @@ namespace PythonAILib.PythonIF {
     public class ImageInfo {
         // = ChatRequest.CreateImageURL(base64String);
 
-        public ImageInfo(VectorDBUpdateMode mode, string id) {
-            Mode = mode;
-            Id = id;
-        }
-        public ImageInfo(VectorDBUpdateMode mode, string id, string content, string base64String) {
+
+        public ImageInfo(VectorDBUpdateMode mode, string id, string content,  string base64String, string description, int reliability) {
             Mode = mode;
             Id = id;
             Content = content;
             ImageURL = base64String;
+            Description = description;
+            Reliability = reliability;
         }
 
         [JsonPropertyName("id")]
         public string Id { get; set; } 
 
         [JsonPropertyName("content")]
-        public string Content { get; set; } = "";
+        public string Content { get; set; }
 
         [JsonPropertyName("description")]
-        public string Description { get; set; } = "";
+        public string Description { get; set; }
+
+        [JsonPropertyName("reliability")]
+        public int Reliability { get; set; }
 
         [JsonPropertyName("image_url")]
         public string ImageURL { get; set; } = "";
@@ -36,6 +38,7 @@ namespace PythonAILib.PythonIF {
 
         public string ToJson() {
             var options = new JsonSerializerOptions {
+                Converters = { new JsonStringEnumConverter() },
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };

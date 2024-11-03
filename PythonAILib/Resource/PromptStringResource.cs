@@ -13,7 +13,7 @@ namespace PythonAILib.Resource {
         public virtual string SummaryGeneration { get; } = "サマリー";
 
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
-        public virtual string SummaryGenerationPrompt { get; } = "以下の文章から100～200文字程度のサマリーを生成してください。\n";
+        public virtual string SummaryGenerationPrompt { get; } = "以下の文章から最大400文字程度のサマリーを生成してください。\n";
 
 
         // BackgroundInformationGeneration
@@ -37,12 +37,13 @@ namespace PythonAILib.Resource {
         public virtual string ExtractTextRequest { get; } = "この画像のテキストを抽出してください。\n";
 
         // 上記の文章の不明点については、以下の関連情報を参考にしてください
-        public virtual string RelatedInformation { get; } = "------\n 以下は参考情報です。不正確な情報が含まれる可能性がありますが、本文の背景や文脈を理解するための参考にしてください\n";
-
-        // 以下の文章を解析して、定義が不明な言葉を含む文を洗い出してください。" +
-        // "定義が不明な言葉とはその言葉の類と種差、原因、目的、機能、構成要素が不明確な言葉です。" +
-        // "出力は以下のJSON形式のリストで返してください。解析対象の文章がない場合や解析不能な場合は空のリストを返してください\n" +
-        // "{'result':[{'sentence':'定義が不明な言葉を含む文','reason':'定義が不明な言葉を含むと判断した理由'}]}"
+        public virtual string RelatedInformation { 
+            get {
+                return "------ 以下は参考情報です。---\n情報には信頼度が設定されている場合があります。信頼度の定義は次の通りです。\n" + 
+                    DocumentReliabilityDefinition  + "\n " +
+                    "ユーザーに情報の信頼度を伝えるために、回答とともに使用した参考情報を信頼度毎に教えてください\n ------";
+            }
+        } 
 
         // TODOリスト生成
         public virtual string TasksGeneration { get; } = "TODOリスト";
@@ -61,10 +62,7 @@ namespace PythonAILib.Resource {
 
         // 文章の信頼度を判定するプロンプト
         public virtual string DocumentReliabilityCheckPrompt { get; } = "# 文章の信頼度判定\r\nその文章を別の文章の根拠としてよいかのレベル。" +
-            "## 概要\r\nその文章を別の文章の根拠としてよいかのレベル。" +
-            "このレベルにより、" +
-            "##  どうやって判断するか？" +
-            "まずは大まかな機銃として次の指標を置く。" +
+            "次の指標により判定する。" +
             "### 文章作成元・公開範囲による判定" +
             "* 権威ある組織や機関、人が書いたもので、一般に公開された情報の場合は信頼レベル高(信頼度：90～100%)  " +
             "  ただし、今後、信頼度高にあたるサイトの分類が必要。" +
@@ -85,8 +83,20 @@ namespace PythonAILib.Resource {
             "以上を踏まえて、次の文章の信頼レベルを判定して、信頼度の数値(0-100)と信頼度の判定理由を出力してください。";
 
         // 文書の信頼度判定結果の文章から信頼度を取得するプロンプト
-        public virtual string DocumentReliabilityDictonaryPrompt { get; } = "以下の文章は、ある文章の信頼度を判定して結果です。最終的な信頼度の数値(0-100)を出力してください。" +
+        public virtual string DocumentReliabilityDictionaryPrompt { get; } = "以下の文章は、ある文章の信頼度を判定して結果です。最終的な信頼度の数値(0-100)を出力してください。" +
             "出力は次のJSON形式でお願いします。 {\"reliability\": 信頼度の数値, \"reason\": \"信頼度の判定理由\"}";
 
+        // 文章の信頼度の定義
+        public virtual string DocumentReliabilityDefinition { get; } = "文章の信頼度とは、その文章を別の文章の根拠としてよいかのレベルを示す指標です。\n" +
+            "### 文章作成元・公開範囲による判定\n" +
+            "* 権威ある組織や機関、人が書いたもので、一般に公開された情報の場合は信頼レベル高(信頼度：90～100%)\n" +
+            "* Wikipediaなど、信頼ある情報の掲載が求められるサイトの情報は信頼レベル中～高(信頼度：70～90%)\n" +
+            "* 社内の組織や人が書いたもので、公開範囲が組織に限定された情報の場合は信頼レベル低～高(信頼度：40～90%) " +
+            "* 公開範囲の想定が不明または個人間のやり取り、と思われる文章は信頼レベル低(信頼度：10%～30%)\n" +
+            "## 内容による判定\n" +
+            "* 各信頼レベルの文章はその内容により、信頼度が上下する。\n" +
+            "  *  既存の論理、数学的な法則、自然科学的法則により正しいと判定可能な情報は信頼度をレベル内での上限値にする。\n" +
+            "  *  一般的な社会学的法則、慣習などによりある程度正しいと判定可能は情報は信頼度をレベル内での中間値にする。\n" +
+            "  * 正しさが判断できない、検証が必要な情報は信頼度をレベル内での下限値にする。\n";
     }
 }

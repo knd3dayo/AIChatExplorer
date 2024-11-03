@@ -5,15 +5,13 @@ using ClipboardApp.ViewModel.ClipboardItemView;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Control {
-    public interface IMainWindowGridView1ModelImplementer {
+    public interface IIMainPanelImplementer {
 
         public Visibility PreviewModeVisibility { get; }
-        public ClipboardItemViewModel SelectedItem { get; set; }
-        public ClipboardFolderViewModel SelectedFolder { get; set; }
+        public ClipboardItemViewModel? SelectedItem { get; set; }
+        public ClipboardFolderViewModel? SelectedFolder { get; set; }
         // FolderViewModels
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; }
-
-
         // Item
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand { get; }
         public SimpleDelegateCommand<object> OpenSelectedItemCommand { get; }
@@ -22,13 +20,10 @@ namespace ClipboardApp.Control {
         public SimpleDelegateCommand<object> MergeItemCommand { get; }
         // MergeItemWithHeaderCommand
         public SimpleDelegateCommand<object> MergeItemWithHeaderCommand { get; }
-
         public SimpleDelegateCommand<object> CopyItemCommand { get; }
-
         public SimpleDelegateCommand<object> DeleteItemCommand { get; }
         // CutItemCommand
         public SimpleDelegateCommand<object> CutItemCommand { get; }
-
         // Folder
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand { get; }
     }

@@ -706,7 +706,7 @@ namespace ClipboardApp.Model.Folder {
                 string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);
                 item.Content += "\n" + text;
             }
-            if (item.IsImage()) {
+            if (item.IsImage() && item.Image != null) {
                 // ★TODO Implement processing based on automatic processing rules.
                 // If AutoExtractImageWithPyOCR is set, perform OCR
                 if (ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR) {

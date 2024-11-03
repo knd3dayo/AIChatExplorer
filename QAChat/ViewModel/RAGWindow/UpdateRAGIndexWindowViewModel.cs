@@ -21,6 +21,11 @@ namespace QAChat.ViewModel.RAGWindow {
 
         // Taskキャンセル用のトークン
         private CancellationTokenSource tokenSource = new();
+        // Description
+        public string Description { get; set; } = "";
+        // Reliability
+        public int Reliability { get; set; } = 50;
+
 
         // LastProcessedCommit
         public string LastIndexCommitHash {
@@ -283,7 +288,7 @@ namespace QAChat.ViewModel.RAGWindow {
                                     Thread.Sleep(1000);
                                 }
                             });
-                            itemViewModel.Item.UpdateIndex(file, result);
+                            itemViewModel.Item.UpdateIndex(file, result, Description, Reliability);
                             totalTokenCount += result?.TokenCount ?? 0;
                         });
                         task.Start();

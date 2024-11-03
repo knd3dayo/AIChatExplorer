@@ -2,7 +2,13 @@ namespace PythonAILib.Resource {
     public class PromptStringResourceEn : PromptStringResource {
 
         // For any unclear points about the above text, please refer to the following related information
-        public override string RelatedInformation { get; } = "Related information. Please note that it may contain inaccurate information.";
+        public override string RelatedInformation {
+            get {
+                return "------ The following is reference information.---\nInformation may have a reliability score assigned. The definition of reliability is as follows:\n" +
+                    DocumentReliabilityDefinition + "\n " +
+                    "To inform the user of the reliability of the information, please provide the reference information used with the response, sorted by reliability score\n ------";
+            }
+        }
 
         // Please analyze the following text and identify sentences containing undefined terms. " +
         // "Undefined terms are those whose genus, specific difference, cause, purpose, function, or components are unclear." +
@@ -75,9 +81,20 @@ namespace PythonAILib.Resource {
             "\"Based on the above, please determine the reliability level of the following text and output the reliability score (0-100) along with the reason for the reliability determination.";
 
         // Prompt to get reliability from the document reliability check result
-        public override string DocumentReliabilityDictonaryPrompt { get; } = "The following text is the result of determining the reliability of a document. Please output the final reliability score (0-100)." +
+        public override string DocumentReliabilityDictionaryPrompt { get; } = "The following text is the result of determining the reliability of a document. Please output the final reliability score (0-100)." +
             "Please format the output in the following JSON format: {\"reliability\": reliability score, \"reason\": \"reason for the reliability score\"}";
 
+        public override string DocumentReliabilityDefinition { get; } = "Document reliability indicates the level at which a document can be considered as a basis for another document.\n" +
+            "### Determination based on document origin and publication scope\n" +
+            "* High reliability level (reliability: 90-100%) if the document is written by authoritative organizations or individuals and publicly available information.\n" +
+            "* Medium to high reliability level (reliability: 70-90%) if the information is from sites like Wikipedia where reliable information is required.\n" +
+            "* Low to high reliability level (reliability: 40-90%) if the document is written by internal organizations or individuals and the scope of publication is limited to the organization.\n" +
+            "* Low reliability level (reliability: 10-30%) if the publication scope is unclear or if the document is believed to be personal communication.\n" +
+            "## Determination based on content\n" +
+            "* The reliability of documents at each level can vary based on their content.\n" +
+            "  * Information that can be determined to be correct based on existing logical, mathematical, or natural scientific laws is assigned the upper limit of reliability within the level.\n" +
+            "  * Information that can be somewhat reliably determined based on general sociological laws or customs is assigned the middle value of reliability within the level.\n" +
+            "  * Information whose accuracy cannot be determined and requires verification is assigned the lower limit of reliability within the level.\n";
 
     }
 }
