@@ -4,7 +4,7 @@ namespace PythonAILib.Resource {
         // For any unclear points about the above text, please refer to the following related information
         public override string RelatedInformation {
             get {
-                return "------ The following is reference information.---\nInformation may have a reliability score assigned. The definition of reliability is as follows:\n" +
+                return "------ The following is reference information.---\nInformation may have a reliability score assigned. If there is conflicting content in the reference information, please prioritize the information with the higher reliability. The definition of reliability is as follows:\n" +
                     DocumentReliabilityDefinition + "\n " +
                     "To inform the user of the reliability of the information, please provide the reference information used with the response, sorted by reliability score\n ------";
             }
