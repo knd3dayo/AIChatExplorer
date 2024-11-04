@@ -372,23 +372,6 @@ namespace ClipboardApp.Model {
             }
         }
 
-        // Embeddingの対象に背景情報を含める
-        private bool? _includeBackgroundInfoInEmbedding;
-
-        public bool IncludeBackgroundInfoInEmbedding {
-            get {
-                if (_includeBackgroundInfoInEmbedding == null) {
-                    _includeBackgroundInfoInEmbedding = Properties.Settings.Default.IncludeBackgroundInfoInEmbedding;
-                }
-                return _includeBackgroundInfoInEmbedding.Value;
-            }
-            set {
-                _includeBackgroundInfoInEmbedding = value;
-                Properties.Settings.Default.IncludeBackgroundInfoInEmbedding = value;
-            }
-        }
-
-
         // AutoFileExtract
         private bool? _autoFileExtract;
         public bool AutoFileExtract {

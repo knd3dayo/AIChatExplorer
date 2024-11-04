@@ -441,11 +441,6 @@ namespace ClipboardApp.ViewModel.MainWIndow {
                     }
                 });
             };
-            if (ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding) {
-                vectorSearchWindowViewModel.InputText = contentItem.Content + "\n" + contentItem.BackgroundInfo;
-            } else {
-                vectorSearchWindowViewModel.InputText = contentItem.Content;
-            }
             vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
             vectorSearchWindowViewModel.InputText = contentItem.Content;
             // Execute vector search

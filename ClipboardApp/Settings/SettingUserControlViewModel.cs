@@ -230,20 +230,6 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // IncludeBackgroundInfoInEmbedding
-        public bool IncludeBackgroundInfoInEmbedding {
-            get {
-                return ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding;
-            }
-            set {
-                ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding = value;
-                OnPropertyChanged(nameof(IncludeBackgroundInfoInEmbedding));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
         // -------------------------------------
         // その他の設定
         // -------------------------------------

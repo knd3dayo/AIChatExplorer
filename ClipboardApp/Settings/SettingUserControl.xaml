@@ -497,17 +497,6 @@
                                 Margin="10,10,10,0"
                                 Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
                                 IsChecked="{Binding EmbeddingWhenExtractingTextFromImage}" />
-                            <TextBlock
-                                Grid.Row="8"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{Binding StringResources.IncludeBackgroundInformationInEmbedding, Mode=OneTime}" />
-                            <CheckBox
-                                Grid.Row="8"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.IncludeBackgroundInformationInEmbeddingTargetText, Mode=OneTime}"
-                                IsChecked="{Binding IncludeBackgroundInfoInEmbedding}" />
                         </Grid>
                         <!--  自動処理 プロンプト実行  -->
                         <Grid Grid.Row="1">
