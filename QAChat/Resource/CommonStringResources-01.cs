@@ -117,6 +117,9 @@ namespace QAChat.Resource {
         // アイテムのリストア
         public virtual string RestoreItem { get; } = "アイテムのリストア";
 
+        // ベクトルDBのリフレッシュ
+        public virtual string RefreshVectorDB { get; } = "ベクトルDBのリフレッシュ";
+
         #endregion
 
         // 自動処理ルール一覧

@@ -353,27 +353,26 @@ namespace PythonAILib.PythonIF {
                 return function_object(propJson, vectorDBItemJson);
             }, result);
         }
-        public void UpdateVectorDBIndex(OpenAIProperties props, UpdateVectorDBInfo contentInfo, VectorDBItem vectorDBItem, string function_name) {
+        public void UpdateVectorDBIndex(OpenAIProperties props, VectorDBItem vectorDBItem, string vectorTargetJson, string function_name) {
 
             // OpenAIPropertiesをJSON文字列に変換
             string propJson = props.ToJson();
             // VectorDBItemをJSON文字列に変換
             string vectorDBItemJson = VectorDBItem.ToJson([vectorDBItem]);
-            // ContentInfoをJSON文字列に変換
-            string contentInfoJson = contentInfo.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo}:{vectorTargetJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
-                return function_object(propJson, vectorDBItemJson, contentInfoJson);
+                return function_object(propJson, vectorDBItemJson, vectorTargetJson);
             }, result);
 
         }
 
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
-            string function_name = "";
+            string function_name;
             if (contentInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
             } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
@@ -381,7 +380,9 @@ namespace PythonAILib.PythonIF {
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
-            UpdateVectorDBIndex(props, contentInfo, vectorDBItem, function_name);
+            // contentInfoをJSON文字列に変換
+            string contentInfoJson = contentInfo.ToJson();
+            UpdateVectorDBIndex(props, vectorDBItem, contentInfoJson, function_name);
         }
 
 
@@ -394,7 +395,9 @@ namespace PythonAILib.PythonIF {
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
-            UpdateVectorDBIndex(props, imageInfo, vectorDBItem, function_name);
+            // imageInfoをJSON文字列に変換
+            string imageInfoJson = imageInfo.ToJson();
+            UpdateVectorDBIndex(props, vectorDBItem, imageInfoJson, function_name);
         }
 
 
@@ -413,7 +416,9 @@ namespace PythonAILib.PythonIF {
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
-            UpdateVectorDBIndex(props, gitFileInfo, vectorDBItem, function_name);
+            // gitFileInfoをJSON文字列に変換
+            string gitFileInfoJson = gitFileInfo.ToJson();
+            UpdateVectorDBIndex(props, vectorDBItem, gitFileInfoJson, function_name);
         }
 
         // ExportToExcelを実行する

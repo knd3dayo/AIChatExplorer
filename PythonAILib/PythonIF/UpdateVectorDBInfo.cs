@@ -18,13 +18,6 @@ namespace PythonAILib.PythonIF {
         // 文書の信頼度
         [JsonPropertyName("reliability")]
         public int Reliability { get; set; } = reliability;
-        public string ToJson() {
-            var options = new JsonSerializerOptions {
-                Converters = { new JsonStringEnumConverter() },
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize(this, options);
-        }
+
     }
 }

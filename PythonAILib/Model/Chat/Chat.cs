@@ -207,7 +207,7 @@ namespace PythonAILib.Model.Chat {
         }
         private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            GenerateVectorSearchResult(openAIProperties);
+            // GenerateVectorSearchResult(openAIProperties);
 
             openAIProperties.VectorDBItems.AddRange(VectorDBItems);
             ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, this);

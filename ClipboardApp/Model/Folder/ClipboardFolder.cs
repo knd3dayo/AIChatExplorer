@@ -476,6 +476,16 @@ namespace ClipboardApp.Model.Folder {
             VectorDBItem vectorDBItem = GetVectorDBItem();
             PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItem);
         }
+        // フォルダに設定されたVectorDBのインデックスを更新
+        public void RefreshVectorDBCollection() {
+            // ベクトルを全削除
+            DeleteVectorDBCollection();
+            // ベクトルを再作成
+            // フォルダ内のアイテムを取得して、ベクトルを作成
+            foreach (var item in Items) {
+                item.UpdateEmbedding();
+            }
+        }
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
         public void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {

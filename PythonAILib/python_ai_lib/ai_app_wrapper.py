@@ -105,7 +105,11 @@ def delete_collection(props_json: str, vector_db_items_json: str):
         props = json.loads(props_json)
         openai_props = OpenAIProps(props)
         vector_db_items = json.loads(vector_db_items_json)
-        ai_app.delete_collection(openai_props, vector_db_items)
+
+        # vector_db_itemsからVectorDBPropsを取得
+        vector_db_props = [VectorDBProps(item) for item in vector_db_items]
+        
+        ai_app.delete_collection(openai_props, vector_db_props)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成

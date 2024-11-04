@@ -226,7 +226,10 @@ namespace ClipboardApp.ViewModel.Folder {
             });
         });
 
-
+        // ベクトルのリフレッシュ
+        public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
+            ClipboardItemFolder.RefreshVectorDBCollection();
+        });
 
         // --------------------------------------------------------------
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み

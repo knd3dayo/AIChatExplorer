@@ -14,6 +14,13 @@ namespace PythonAILib.PythonIF {
 
         [JsonPropertyName("image_url")]
         public string ImageURL { get; set; } = base64String;
-
+        public string ToJson() {
+            var options = new JsonSerializerOptions {
+                Converters = { new JsonStringEnumConverter() },
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return JsonSerializer.Serialize(this, options);
+        }
     }
 }

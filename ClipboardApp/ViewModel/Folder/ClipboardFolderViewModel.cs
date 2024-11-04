@@ -16,9 +16,10 @@ namespace ClipboardApp.ViewModel {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
-            var childFolderViewModel = new ClipboardFolderViewModel(childFolder);
-            // 親フォルダとして自分自身を設定
-            childFolderViewModel.ParentFolderViewModel = this;
+            var childFolderViewModel = new ClipboardFolderViewModel(childFolder) {
+                // 親フォルダとして自分自身を設定
+                ParentFolderViewModel = this
+            };
             return childFolderViewModel;
         }
 

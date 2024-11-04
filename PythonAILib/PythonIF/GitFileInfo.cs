@@ -20,5 +20,13 @@ namespace PythonAILib.PythonIF {
                 return System.IO.Path.Combine(WorkDirectory, RelativePath);
             }
         }
+        public string ToJson() {
+            var options = new JsonSerializerOptions {
+                Converters = { new JsonStringEnumConverter() },
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            return JsonSerializer.Serialize(this, options);
+        }
     }
 }

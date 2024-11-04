@@ -40,7 +40,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 deleteMenuItem.Header = StringResources.Delete;
                 deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
                 deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = this;
+                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
                 menuItems.Add(deleteMenuItem);
 
                 // エクスポート/インポート
@@ -75,6 +75,14 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 backupRestoreMenuItem.Items.Add(restoreMenuItem);
 
                 menuItems.Add(backupRestoreMenuItem);
+
+                // ベクトルのリフレッシュ
+                MenuItem refreshMenuItem = new() {
+                    Header = StringResources.RefreshVectorDB,
+                    Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(refreshMenuItem);
 
                 return menuItems;
 

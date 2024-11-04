@@ -207,7 +207,7 @@ class LangChainVectorDB:
         # 既に存在するドキュメントを削除
         self.delete_content_index(params.source)
         # ドキュメントを格納する。
-        self._add_document_list(params.text, params.description, params.source, params.source_url, params.reliability)
+        self._add_document_list(params.text, params.description, params.source, params.source_url, reliability=params.reliability)
 
     def update_image_index(self, params: ImageUpdateOrDeleteRequestParams):
         # 既に存在するドキュメントを削除
@@ -257,8 +257,9 @@ class LangChainVectorDB:
             chunk_size = self.vector_db_props.ChunkSize
     
         document_list = []
-           
-        if content_type == "text":
+        print("content_type:", content_type)
+
+        if not content_type or content_type == "text":
             # テキストの場合は入力テキストを分割してDocumentのリストを返す
             text_list = self._split_text(content_text, chunk_size=chunk_size)
             for text in text_list:

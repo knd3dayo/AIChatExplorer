@@ -60,6 +60,7 @@ class LangChainChatParameter:
         chat_history_json = json.dumps(messages, ensure_ascii=False, indent=4)
         self.chat_history = RetrievalQAUtil.convert_to_langchain_chat_history(chat_history_json)
         # デバッグ出力
+        print ("LangChainChatParameter, __init__")
         print(f'prompt: {self.prompt}')
         print(f'chat_history: {self.chat_history}')
         print('vector db')
@@ -323,7 +324,7 @@ def create_vector_search_tools(client: LangChainOpenAIClient, vector_db_props: l
             # Retrieverを作成
             # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
             # content_typeもvector_db_propsで指定できるようにする
-            search_kwargs = {"k": item.MaxSearchResults, "filter":{"content_type": "text"}}
+            search_kwargs = {"k": 1, "filter":{"content_type": "text"}}
 
             retriever = RetrieverUtil(client, item).create_retriever(search_kwargs)
             docs: list[Document] = retriever.invoke(question)
@@ -348,10 +349,11 @@ def langchain_chat(params: LangChainChatParameter):
 
     # langchainのログを出力する
     langchain.verbose = True
-        
-    client = LangChainOpenAIClient(props)
+    print("langchain_chat:start")
+    client = LangChainOpenAIClient(params.openai_props)
     RetrievalQAUtilInstance = RetrievalQAUtil(client, params.vector_db_items)
     ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
+    print("langchain_chat:init done")
     
     result_dict = {}
     with get_openai_callback() as cb:
@@ -367,6 +369,9 @@ def langchain_chat(params: LangChainChatParameter):
         result_dict["page_source_list"] = page_source_list
         result_dict["verbose"] = verbose_json
         result_dict["total_tokens"] = cb.total_tokens
+
+    print("langchain_chat:end")
+
     return result_dict
 
 if __name__ == '__main__':

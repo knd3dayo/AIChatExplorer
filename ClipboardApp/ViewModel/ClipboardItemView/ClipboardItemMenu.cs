@@ -11,7 +11,12 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
         public ClipboardItemMenu(ClipboardItemViewModel clipboardItemViewModel) {
             ClipboardItemViewModel = clipboardItemViewModel;
         }
-
+        // Itemのコンテキストメニュー
+        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
+            get {
+                return CreateBasicItemContextMenuItems(ClipboardItemViewModel);
+            }
+        }
 
         public MenuItem CreatePromptMenuItems(ClipboardItemViewModel itemViewModel) {
             // プロンプトメニュー
@@ -170,12 +175,6 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
             menuItems.Add(checkDocumentTrustMenuItem);
             return menuItems;
         }
-        // Itemのコンテキストメニュー
-        public virtual ObservableCollection<MenuItem> ContentItemMenuItems {
-            get {
-                return CreateBasicItemContextMenuItems(ClipboardItemViewModel);
-            }
-        }
-
+ 
     }
 }
