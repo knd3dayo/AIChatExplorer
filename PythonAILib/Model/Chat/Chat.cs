@@ -1,33 +1,76 @@
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.PythonIF;
 using PythonAILib.Resource;
+using PythonAILib.Utils.Python;
+using QAChat;
 
 namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class Chat {
+    public class Chat{
+
+        public Chat() {
+            OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties();
+        }
+
+        protected OpenAIProperties OpenAIProperties { get; private set; }
+
+        //Encode設定
+        private static JsonSerializerOptions JsonSerializerOptions = new() {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
+        [JsonPropertyName("model")]
+        protected string Model {
+            get {
+                return OpenAIProperties.OpenAICompletionModel;
+            }
+        }
+        [JsonPropertyName("messages")]
+        protected List<Dictionary<string, object>> Messages {
+            get {
+                return CreateOpenAIMessagesList();
+            }
+        }
+        // temperature
+        [JsonPropertyName("temperature")]
+        protected double Temperature { get; set; } = 0.5;
+        // response_format
+        [JsonPropertyName("response_format")]
+        protected Dictionary<string, string> ResponseFormat {
+            get {
+                if (JsonMode) {
+                    return new Dictionary<string, string> {
+                        ["type"] = "json_object"
+                    };
+                }
+                return new Dictionary<string, string>();
+            }
+        }
+        // max_tokens
+        [JsonPropertyName("max_tokens")]
+        protected int MaxTokens { get; set; } = 0;
+
+
 
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
-        public List<ChatHistoryItem> ChatHistory { get; set; } = [];
+        public List<ChatContentItem> ChatHistory { get; set; } = [];
 
         public string PromptTemplateText { get; set; } = "";
         public string ContentText { get; set; } = "";
 
         public List<string> ImageURLs { get; set; } = [];
 
-        // リクエスト時の調整用のパラメーター
-        public double Temperature { get; set; } = 0.5;
         public bool JsonMode { get; set; } = false;
-        public int MaxTokens { get; set; } = 0;
 
 
         public List<ContentItem> AdditionalItems { get; set; } = [];
@@ -35,15 +78,15 @@ namespace PythonAILib.Model.Chat {
         public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
-        public ChatHistoryItem? GetLastSendItem() {
+        public ChatContentItem? GetLastSendItem() {
             // ChatItemsのうち、ユーザー発言の最後のものを取得
-            var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatHistoryItem.UserRole);
+            var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatContentItem.UserRole);
             return lastUserChatItem;
         }
 
-        public ChatHistoryItem? GetLastResponseItem() {
+        public ChatContentItem? GetLastResponseItem() {
             // ChatItemsのうち、アシスタント発言の最後のものを取得
-            var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatHistoryItem.AssistantRole);
+            var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatContentItem.AssistantRole);
             return lastAssistantChatItem;
         }
         public string CreatePromptText() {
@@ -146,7 +189,7 @@ namespace PythonAILib.Model.Chat {
             List<string> imageURLs = [.. ImageURLs, .. additionalImageURLs];
 
             var dc = new Dictionary<string, object> {
-                ["role"] = ChatHistoryItem.UserRole,
+                ["role"] = ChatContentItem.UserRole,
                 ["content"] = CreateOpenAIContentList(CreatePromptText(), imageURLs)
             };
             messages.Add(dc);
@@ -179,114 +222,15 @@ namespace PythonAILib.Model.Chat {
                 dc["max_tokens"] = MaxTokens;
             }
 
-            //Encode設定
-            var op = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
+
             //jsonに変換する
-            string json = JsonSerializer.Serialize(dc, op);
+            string json = JsonSerializer.Serialize(dc, JsonSerializerOptions);
             return json;
         }
 
-        // OpenAIChatを実行する。
+        // Chatを実行する
         public ChatResult? ExecuteChat(OpenAIProperties openAIProperties) {
-            if (ChatMode == OpenAIExecutionModeEnum.Normal) {
-                // 通常のChatを実行する。
-                return ExecuteChatNormal(openAIProperties);
-            }
-            if (ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
-                // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
-                return ExecuteChatOpenAIRAG(openAIProperties);
-            }
-            if (ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                // ChatModeがLangChainの場合は、LangChainChatを実行する。
-                return ExecuteChatLangChain(openAIProperties);
-            }
-            return null;
-        }
-        private ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties) {
-            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            // GenerateVectorSearchResult(openAIProperties);
-
-            openAIProperties.VectorDBItems.AddRange(VectorDBItems);
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, this);
-            if (result == null) {
-                return null;
-            }
-            // リクエストをChatItemsに追加
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
-            return result;
-
-        }
-
-        private ChatResult? ExecuteChatNormal(OpenAIProperties openAIProperties) {
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
-
-            return result;
-        }
-
-        private ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties) {
-            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            GenerateVectorSearchResult(openAIProperties);
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, this);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.UserRole, CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            ChatHistory.Add(new ChatHistoryItem(ChatHistoryItem.AssistantRole, result.Output, result.PageSourceList));
-
-            return result;
-
-        }
-        // VectorSearchを実行してコンテキスト情報を生成する
-        private void GenerateVectorSearchResult(OpenAIProperties openAIProperties) {
-            // ベクトル検索が存在するか否かのフラグ
-            bool hasVectorSearch = false;
-            // VectorSearchRequestを作成. テスト用にFilterを設定
-            VectorSearchRequest request = new() {
-                Query = ContentText,
-                SearchKWArgs = new Dictionary<string, object> {
-                    ["k"] = 4,
-                    // filter
-                    ["filter"] = new Dictionary<string, object> {
-                        ["content_type"] = "text"
-                    }
-                }
-            };
-
-            StringBuilder sb = new();
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(openAIProperties, VectorDBItems, request) ?? [];
-            sb.AppendLine();
-            for (int i = 0; i < results.Count; i++) {
-                VectorSearchResult vectorSearchResult = results[i];
-                sb.AppendLine($"## 参考情報:{i + 1} ##");
-                sb.AppendLine("--------");
-                sb.AppendLine(vectorSearchResult.Description);
-                sb.AppendLine($"** {PromptStringResource.Instance.DocumentReliability}: {vectorSearchResult.Reliability}% **");
-                sb.AppendLine(vectorSearchResult.Content);
-                hasVectorSearch = true;
-            }
-
-            if (hasVectorSearch) {
-                // 結果をContentTextに追加
-                string result = PromptStringResource.Instance.RelatedInformation;
-                result += sb.ToString();
-                // 結果をContentTextに追加
-                ContentText += result;
-            }
+            return ChatUtil.ExecuteChat(openAIProperties, this);
         }
 
     }

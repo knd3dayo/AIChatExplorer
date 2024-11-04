@@ -4,9 +4,10 @@ using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
+using PythonAILib.Utils.Common;
 
-namespace QAChat {
+namespace QAChat
+{
     public class PythonAILibManager {
 
         private static PythonAILibManager? _instance;

@@ -1,16 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using System.Threading.Tasks;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Model
-{
+namespace PythonAILib.Model {
     public class OpenAIProperties {
 
         [JsonPropertyName("OpenAIKey")]
@@ -33,17 +27,13 @@ namespace PythonAILib.Model
         [JsonPropertyName("OpenAIEmbeddingBaseURL")]
         public string? OpenAIEmbeddingBaseURL { get; set; } = null;
 
-        [JsonPropertyName("VectorDBItems")]
-        public List<VectorDBItem> VectorDBItems { get; set; } = [];
-
-
         public string ToJson() {
             // option
             var options = new JsonSerializerOptions {
                 WriteIndented = true,
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
             };
-            return JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this, options);
         }
     }
 }

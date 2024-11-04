@@ -2,8 +2,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Python.Runtime;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
-namespace PythonAILib.PythonIF {
+using PythonAILib.Utils.Common;
+namespace PythonAILib.PythonIF
+{
     public class PythonExecutor {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;

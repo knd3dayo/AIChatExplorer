@@ -1,5 +1,3 @@
-using PythonAILib.Utils;
-
 namespace PythonAILib.Model.Prompt {
     public class PromptChatResult() {
 

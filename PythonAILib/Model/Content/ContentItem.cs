@@ -8,10 +8,12 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
+using PythonAILib.Utils.Common;
+using PythonAILib.Utils.Python;
 using QAChat;
 
-namespace PythonAILib.Model.Content {
+namespace PythonAILib.Model.Content
+{
     public class ContentItem {
 
         // コンストラクタ
@@ -44,7 +46,7 @@ namespace PythonAILib.Model.Content {
 
         // OpenAIチャットのChatItemコレクション
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
-        public List<ChatHistoryItem> ChatItems { get; set; } = [];
+        public List<ChatContentItem> ChatItems { get; set; } = [];
 
         // プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult { get; set; } = new();

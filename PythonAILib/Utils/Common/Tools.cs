@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace PythonAILib.Utils {
+namespace PythonAILib.Utils.Common {
     internal class Tools {
 
         public static void CopyDirectory(string sourceDir, string destinationDir, bool recursive) {

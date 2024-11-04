@@ -9,10 +9,11 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
+using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
 
     public class PythonNetFunctions : IPythonAIFunctions {
 
@@ -253,6 +254,9 @@ namespace PythonAILib.PythonIF {
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
 
+            // vectorDBItemsをJSON文字列に変換
+            string vectorDBItemsJson = VectorDBItem.ToJson(chatRequest.VectorDBItems);
+
             LogWrapper.Info(PythonAILibStringResources.Instance.LangChainExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
             LogWrapper.Info($"{PythonAILibStringResources.Instance.Prompt}:{prompt}");
@@ -260,8 +264,7 @@ namespace PythonAILib.PythonIF {
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                string resultString = function_object(propsJson, chatHistoryJson);
-                return resultString;
+                return  function_object(propsJson, vectorDBItemsJson, chatHistoryJson);
             });
             // StatisticManagerにトークン数を追加
             MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, openAIProperties.OpenAICompletionModel);

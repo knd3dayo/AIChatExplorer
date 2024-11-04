@@ -25,13 +25,15 @@ from pydantic import BaseModel, Field
 
 
 class LangChainChatParameter:
-    def __init__(self, props_json: str ="{}", request_json: str ="{}"):
+    def __init__(self, props_json: str ="{}", vector_db_items_json:str = "{}", request_json: str ="{}"):
         # OpenAIPorpsを生成
         props = json.loads(props_json)
         # OpenAIPorpsを生成
         self.openai_props = OpenAIProps(props)
-        self.vector_db_items = self.openai_props.VectorDBItems
 
+        # VectorDBPropsを生成
+        vector_db_items = json.loads(vector_db_items_json)
+        self.vector_db_items = [VectorDBProps(item) for item in vector_db_items]
 
         #  openai_props, vector_db_items, prompt, chat_historyを設定する
         request = json.loads(request_json)

@@ -1,6 +1,7 @@
-using PythonAILib.Utils;
+using PythonAILib.Utils.Common;
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
     public class PythonScriptResult {
         public string Output { get; set; } = "";
         public string Log { get; set; } = "";

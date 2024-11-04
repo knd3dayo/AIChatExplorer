@@ -4,10 +4,11 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
+using PythonAILib.Utils.Common;
 using QAChat;
 
-namespace PythonAILib.Model.VectorDB {
+namespace PythonAILib.Model.VectorDB
+{
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>

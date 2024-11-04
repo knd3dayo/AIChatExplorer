@@ -15,7 +15,7 @@ namespace QAChat.Control
         
         public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 
-        public Action<List<ChatHistoryItem>> ExportChatCommand { get; set; } = (chatHistory) => { };
+        public Action<List<ChatContentItem>> ExportChatCommand { get; set; } = (chatHistory) => { };
 
     }
 

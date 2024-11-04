@@ -135,7 +135,7 @@ namespace ClipboardApp.Model {
             clipboardItem.PromptChatResult = PromptChatResult;
 
             //-- ChatItemsをコピー
-            newItem.ChatItems = new List<ChatHistoryItem>(ChatItems);
+            newItem.ChatItems = new List<ChatContentItem>(ChatItems);
 
         }
 

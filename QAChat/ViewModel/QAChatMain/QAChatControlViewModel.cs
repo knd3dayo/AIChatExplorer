@@ -85,9 +85,9 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        public static ChatHistoryItem? SelectedItem { get; set; }
+        public static ChatContentItem? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatHistoryItem> ChatHistory {
+        public ObservableCollection<ChatContentItem> ChatHistory {
             get {
                 return [.. ChatController.ChatHistory];
             }
@@ -314,7 +314,7 @@ namespace QAChat.ViewModel.QAChatMain {
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatHistoryItem> OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatContentItem> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
@@ -323,7 +323,7 @@ namespace QAChat.ViewModel.QAChatMain {
             QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
         });
         // 選択したチャット内容をクリップボードにコピーするコマンド
-        public SimpleDelegateCommand<ChatHistoryItem> CopySelectedChatItemCommand => new((item) => {
+        public SimpleDelegateCommand<ChatContentItem> CopySelectedChatItemCommand => new((item) => {
             string text = $"{item.Role}:\n{item.Content}";
             Clipboard.SetText(text);
 

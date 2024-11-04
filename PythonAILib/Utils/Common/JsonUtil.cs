@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace PythonAILib.Utils {
+namespace PythonAILib.Utils.Common {
     public class JsonUtil {
 
         // JSON文字列をDictionary<string, dynamic>型に変換するメソッド

@@ -5,7 +5,7 @@ using System.Text.Unicode;
 using PythonAILib.Resource;
 
 namespace PythonAILib.Model.Chat {
-    public class ChatHistoryItem {
+    public class ChatContentItem {
 
         public static string SystemRole { get; } = "system";
         public static string AssistantRole { get; } = "assistant";
@@ -45,17 +45,17 @@ namespace PythonAILib.Model.Chat {
             }
         }
 
-        public ChatHistoryItem(string role, string text) {
+        public ChatContentItem(string role, string text) {
             Role = role;
             Content = text;
         }
-        public ChatHistoryItem(string role, string text, List<string> sources) {
+        public ChatContentItem(string role, string text, List<string> sources) {
             Role = role;
             Content = text;
             Sources = sources;
         }
         // ChatItemsをJSON文字列に変換する
-        public static string ToJson(IEnumerable<ChatHistoryItem> items) {
+        public static string ToJson(IEnumerable<ChatContentItem> items) {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true

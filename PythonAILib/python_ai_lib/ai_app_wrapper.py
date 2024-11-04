@@ -80,13 +80,13 @@ def list_openai_models(props_json: str):
 # langchain関連
 ########################
 
-def run_langchain_chat( props_json: str, request_json: str):
+def run_langchain_chat( props_json: str, vector_db_items_json:str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
         from langchain_util import LangChainChatParameter
-        params:LangChainChatParameter = LangChainChatParameter(props_json, request_json)
+        params:LangChainChatParameter = LangChainChatParameter(props_json, vector_db_items_json, request_json)
         # langchan_chatを実行
         result = ai_app.run_langchain_chat(params)
         return result

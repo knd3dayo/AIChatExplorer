@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PythonAILib.Utils {
+namespace PythonAILib.Utils.Common {
     public class LogWrapper {
 
         private static Action<string> InfoAction = (message) => { };

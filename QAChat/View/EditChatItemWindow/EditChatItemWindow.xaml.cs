@@ -13,7 +13,7 @@ namespace QAChat.View.EditChatItemWindow
             InitializeComponent();
         }
 
-        public static void OpenEditChatItemWindow(ChatHistoryItem chatItem) {
+        public static void OpenEditChatItemWindow(ChatContentItem chatItem) {
             var window = new EditChatItemWindow();
             window.DataContext = new EditChatItemWindowViewModel(chatItem);
             window.Show();
