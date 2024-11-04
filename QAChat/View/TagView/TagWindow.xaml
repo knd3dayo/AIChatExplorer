@@ -122,8 +122,16 @@
             Grid.Row="3"
             HorizontalAlignment="Left"
             Orientation="Horizontal">
-            <TextBlock Margin="10" Text="{Binding StringResources.NewTag, Mode=OneTime}" />
-            <TextBox
+            <Button
+                Width="100"
+                Height="Auto"
+                Margin="10"
+                HorizontalAlignment="Right"
+                Command="{Binding AddTagCommand, Mode=OneTime}"
+                CommandParameter="{Binding NewTag}"
+                Content="{Binding StringResources.NewTag, Mode=OneTime}"
+                FontSize="12" />
+                <TextBox
                 Width="300"
                 Margin="10"
                 Text="{Binding NewTag}" />
@@ -133,15 +141,6 @@
             Grid.Row="3"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
-            <Button
-                Width="100"
-                Height="Auto"
-                Margin="10"
-                HorizontalAlignment="Right"
-                Command="{Binding AddTagCommand, Mode=OneTime}"
-                CommandParameter="{Binding NewTag}"
-                Content="{Binding StringResources.Add, Mode=OneTime}"
-                FontSize="12" />
             <Button
                 Width="100"
                 Height="Auto"
