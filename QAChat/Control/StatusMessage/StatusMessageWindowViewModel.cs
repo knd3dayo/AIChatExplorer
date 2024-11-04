@@ -18,6 +18,9 @@ namespace QAChat.Control.StatusMessage {
         public StatusMessageWindowViewModel() {
             // メッセージを初期化
             Message = string.Join("\n", StatusText.Messages);
+            // メッセージ内のエスケープ済みの改行コードを復元
+            Message = Message.Replace("\\n", "\n");
+
         }
         // クリアボタンのVisible
         public Visibility ClearButtonVisibility { get; set; } = Visibility.Visible;
@@ -27,7 +30,7 @@ namespace QAChat.Control.StatusMessage {
             // メッセージをクリア
             StatusText.Messages.Clear();
             // メッセージを初期化
-            Message = string.Join("\n", StatusText.Messages);
+            Message = "";
         });
 
         public SimpleDelegateCommand<Window> CloseCommand => new ((window) => {
