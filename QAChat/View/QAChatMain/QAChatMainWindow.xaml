@@ -67,7 +67,10 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <qc:QAChatControl Grid.Row="1" DataContext="{Binding QAChatControlViewModel}" />
+        <qc:QAChatControl
+            x:Name="QAChtControl"
+            Grid.Row="1"
+            DataContext="{Binding QAChatControlViewModel}" />
         <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

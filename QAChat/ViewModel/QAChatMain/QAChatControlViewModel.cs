@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -199,7 +198,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 IsIndeterminate = true;
 
                 // チャット内容を更新
-                UpdateChatHistoryList();
+                // UpdateChatHistoryList();
 
                 await Task.Run(() => {
                     // LangChainChat用。VectorDBItemsを設定
@@ -238,12 +237,17 @@ namespace QAChat.ViewModel.QAChatMain {
             OnPropertyChanged(nameof(ChatHistory));
 
             // ListBoxの一番最後のアイテムに移動
-            ListBox? listBox = (ListBox?)ThisWindow?.FindName("ChatContentList");
-            if (listBox != null) {
-                listBox.SelectedIndex = listBox.Items.Count - 1;
-                listBox.ScrollIntoView(listBox.SelectedItem);
+            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
+            if (userControl != null) {
+
+                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
+                if (listBox != null) {
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
+                    listBox.ScrollIntoView(listBox.SelectedItem);
+                }
             }
         }
+
 
 
         // チャット履歴をクリアコマンド
