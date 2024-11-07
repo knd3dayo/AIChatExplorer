@@ -153,6 +153,11 @@
                         Key="X"
                         Command="{Binding CutItemCommand, Mode=OneTime}"
                         Modifiers="Control" />
+                    <!--  Paste items into selected folder  -->
+                    <KeyBinding
+                        Key="V"
+                        Command="{Binding PasteCommand, Mode=OneTime}"
+                        Modifiers="Control" />
                     <!--  Delete selected item  -->
                     <KeyBinding Key="Delete" Command="{Binding DeleteItemCommand, Mode=OneTime}" />
                     <!--  Delete displayed item  -->

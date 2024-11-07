@@ -7,6 +7,7 @@ using ClipboardApp.Model.Search;
 using ClipboardApp.Settings;
 using ClipboardApp.Utils;
 using ClipboardApp.View.SearchView;
+using ClipboardApp.View.Settings;
 using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using PythonAILib.Model.File;
@@ -117,7 +118,7 @@ namespace ClipboardApp.ViewModel.MainWIndow {
         public static void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
             SearchRule? searchConditionRule;
             // If the selected folder is a search folder
-            if (folder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
+            if (folder.FolderType == FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folder);
                 searchConditionRule ??= new() {
                     Type = SearchRule.SearchType.SearchFolder,
@@ -256,7 +257,8 @@ namespace ClipboardApp.ViewModel.MainWIndow {
         }
 
         // Process when Ctrl + V is pressed
-        public static void PasteFromClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public static void PasteFromClipboardCommandExecute() {
+            MainWindowViewModel windowViewModel = MainWindowViewModel.ActiveInstance;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<object> CopiedItems = windowViewModel.CopiedObjects;
             ClipboardFolderViewModel? CopiedItemFolder = windowViewModel.CopiedFolder;

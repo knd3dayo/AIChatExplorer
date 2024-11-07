@@ -111,7 +111,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             // folderが検索フォルダの場合
             SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
-            if (ClipboardItemFolder.FolderType == ClipboardFolder.FolderTypeEnum.Search) {
+            if (ClipboardItemFolder.FolderType == FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             }
             SearchCondition? searchCondition = searchConditionRule?.SearchCondition;

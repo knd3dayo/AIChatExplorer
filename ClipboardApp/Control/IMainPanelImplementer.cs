@@ -5,7 +5,7 @@ using ClipboardApp.ViewModel.ClipboardItemView;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Control {
-    public interface IIMainPanelImplementer {
+    public interface IMainPanelImplementer {
 
         public Visibility PreviewModeVisibility { get; }
         public ClipboardItemViewModel? SelectedItem { get; set; }
@@ -24,6 +24,9 @@ namespace ClipboardApp.Control {
         public SimpleDelegateCommand<object> DeleteItemCommand { get; }
         // CutItemCommand
         public SimpleDelegateCommand<object> CutItemCommand { get; }
+        
+        // PasteCommand
+        public SimpleDelegateCommand<object> PasteCommand { get; }
         // Folder
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand { get; }
     }

@@ -45,10 +45,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="Settings\SettingUserControl.xaml.cs">
+    <Compile Update="View\SettingsView\SettingUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Settings\TestResultUserControl.xaml.cs">
+    <Compile Update="View\SettingsView\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\ClipboardItemView\ChatItemsTextPanel.xaml.cs">

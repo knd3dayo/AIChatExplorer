@@ -68,8 +68,8 @@ namespace ClipboardApp.Factory.Default {
                 var rootFolder = GetRootFolderByType(clipboardFolder.FolderType);
                 // ルートフォルダが存在しない場合は、新規作成
                 if (rootFolder == null) {
-                    var rootFolderInfoCollection = GetDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
-                    var rootFolderInfo = new ClipboardFolder.RootFolderInfo {
+                    var rootFolderInfoCollection = GetDatabase().GetCollection<RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
+                    var rootFolderInfo = new RootFolderInfo {
                         FolderName = clipboardFolder.FolderName,
                         Id = ObjectId.NewObjectId(),
                         FolderType = clipboardFolder.FolderType
@@ -136,8 +136,8 @@ namespace ClipboardApp.Factory.Default {
             return result;
         }
 
-        public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType) {
-            var collection = GetDatabase().GetCollection<ClipboardFolder.RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
+        public ClipboardFolder? GetRootFolderByType(FolderTypeEnum folderType) {
+            var collection = GetDatabase().GetCollection<RootFolderInfo>(CLIPBOARD_ROOT_FOLDERS_COLLECTION_NAME);
             // Debug FolderName = folderNameのアイテムが複数ある時はエラー
             var items = collection.FindAll().Where(x => x.FolderType == folderType);
             if (items.Count() > 1) {

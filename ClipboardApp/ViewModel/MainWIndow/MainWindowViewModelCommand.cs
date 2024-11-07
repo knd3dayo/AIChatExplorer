@@ -215,7 +215,7 @@ namespace ClipboardApp
 
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
-            ClipboardAppCommandExecute.PasteFromClipboardCommandExecute(this);
+            ClipboardAppCommandExecute.PasteFromClipboardCommandExecute();
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能

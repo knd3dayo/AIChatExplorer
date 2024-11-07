@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using QAChat.Resource;
 
-namespace ClipboardApp.Settings {
+namespace ClipboardApp.View.Settings {
     /// <summary>
     /// SimpleSettingWindow.xaml の相互作用ロジック
     /// </summary>

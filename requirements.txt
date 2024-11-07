@@ -18,3 +18,5 @@ chardet
 SQLAlchemy
 langchain_postgres
 psycopg-binary
+autogenstudio==0.1.5
+pyautogen==0.3.1

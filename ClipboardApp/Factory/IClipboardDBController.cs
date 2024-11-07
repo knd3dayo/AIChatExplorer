@@ -14,7 +14,7 @@ namespace ClipboardApp.Factory {
         //-- ClipboardFolder
 
         public List<ClipboardFolder> GetFoldersByParentId(ObjectId? objectId);
-        public ClipboardFolder? GetRootFolderByType(ClipboardFolder.FolderTypeEnum folderType);
+        public ClipboardFolder? GetRootFolderByType(FolderTypeEnum folderType);
 
         // public void DeleteItems(List<ContentItem> items);
 

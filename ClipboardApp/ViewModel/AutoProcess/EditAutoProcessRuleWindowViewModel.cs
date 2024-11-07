@@ -555,7 +555,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                 return;
             }// コピーor移動先が標準のフォルダ以外の場合はエラー
-            if (folder.ClipboardItemFolder.FolderType != ClipboardFolder.FolderTypeEnum.Normal) {
+            if (folder.ClipboardItemFolder.FolderType != FolderTypeEnum.Normal) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToNonStandardFolders);
                 return;
             }

@@ -1,5 +1,5 @@
 <UserControl
-    x:Class="ClipboardApp.Settings.SettingsUserControl"
+    x:Class="ClipboardApp.View.Settings.SettingsUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:control="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"

@@ -20,23 +20,7 @@ using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
-    public class ClipboardFolder : ContentFolder {
-
-        public enum FolderTypeEnum {
-            Normal,
-            Search,
-            ImageCheck,
-            Chat,
-        }
-
-        public class RootFolderInfo {
-
-            public string FolderName { get; set; } = "";
-            public ObjectId Id { get; set; } = ObjectId.Empty;
-
-            public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
-
-        }
+    public partial class ClipboardFolder : ContentFolder {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;

@@ -21,7 +21,7 @@ using WpfAppCommon.Control.Editor;
 
 
 namespace ClipboardApp {
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IIMainPanelImplementer {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IMainPanelImplementer {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -172,7 +172,11 @@ namespace ClipboardApp {
                 return _selectedFolder;
             }
             set {
-                _selectedFolder = value;
+                if (value == null) {
+                    _selectedFolder = null;
+                } else {
+                    _selectedFolder = value;
+                }
                 OnPropertyChanged(nameof(SelectedFolder));
             }
         }
@@ -317,7 +321,7 @@ namespace ClipboardApp {
                     // ClipboardItemを保存
                     clipboardItem.Save();
                     // チャット履歴を保存するフラグが立っている場合で、チャット履歴以外のフォルダの場合
-                    if (saveChatHistory && clipboardItem.GetFolder().FolderType != ClipboardFolder.FolderTypeEnum.Chat) {
+                    if (saveChatHistory && clipboardItem.GetFolder().FolderType != FolderTypeEnum.Chat) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = MainWindowViewModel.ActiveInstance.ChatRootFolderViewModel.ClipboardItemFolder;
                         ClipboardItem chatHistoryItem = new(chatFolder.Id);

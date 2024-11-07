@@ -32,7 +32,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
-            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Chat;
+            childFolder.FolderType = FolderTypeEnum.Chat;
             ChatFolderViewModel childFolderViewModel = new(childFolder);
             // TODO チャット履歴作成画面を開くようにする。フォルダ名とRAGソースのリストを選択可能にする。
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);

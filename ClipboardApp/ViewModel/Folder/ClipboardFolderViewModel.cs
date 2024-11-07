@@ -35,7 +35,7 @@ namespace ClipboardApp.ViewModel {
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             ClipboardFolder childFolder = ClipboardItemFolder.CreateChild("");
-            childFolder.FolderType = ClipboardFolder.FolderTypeEnum.Normal;
+            childFolder.FolderType = FolderTypeEnum.Normal;
             ClipboardFolderViewModel childFolderViewModel = new(childFolder);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
