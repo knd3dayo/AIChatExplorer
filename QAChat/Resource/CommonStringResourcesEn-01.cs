@@ -223,11 +223,6 @@ namespace QAChat.Resource {
         public override string EditVectorDB { get; } = "Edit Vector DB";
 
         // --- ToolTip ---
-        // Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.
-        public override string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.";
-
-        // Start: Start Notification Watch. Stop: Stop Notification Watch.
-        public override string ToggleNotificationWatchToolTop { get; } = "Start: Start Notification Watch. Stop: Stop Notification Watch.";
 
         // Create items in the selected folder.
         public override string CreateItemToolTip { get; } = "Create items in the selected folder.";

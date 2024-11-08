@@ -34,9 +34,10 @@ namespace ClipboardApp.ViewModel.MainWIndow {
             }
         }
         // Command to start/stop clipboard monitoring
-        public static void StartStopClipboardMonitorCommand(MainWindowViewModel model) {
-            model.IsClipboardMonitor = !model.IsClipboardMonitor;
-            if (model.IsClipboardMonitor) {
+        public static void StartStopClipboardMonitorCommand() {
+            MainWindowViewModel model = MainWindowViewModel.ActiveInstance;
+            model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
+            if (model.IsClipboardMonitoringActive) {
                 MainWindowViewModel.ClipboardController.Start(async (clipboardItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {
@@ -52,15 +53,16 @@ namespace ClipboardApp.ViewModel.MainWIndow {
                 LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
             // Notification
-            model.NotifyPropertyChanged(nameof(model.IsClipboardMonitor));
+            model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
             // Change button text
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
         }
 
         // Toggle flag to start/stop Windows notification monitoring
-        public static void StartStopWindowsNotificationMonitorCommand(MainWindowViewModel model) {
-            model.IsWindowsNotificationMonitor = !model.IsWindowsNotificationMonitor;
-            if (model.IsWindowsNotificationMonitor) {
+        public static void StartStopWindowsNotificationMonitorCommand() {
+            MainWindowViewModel model = MainWindowViewModel.ActiveInstance;
+            model.IsWindowsNotificationMonitorActive = !model.IsWindowsNotificationMonitorActive;
+            if (model.IsWindowsNotificationMonitorActive) {
                 WindowsNotificationController.Start(model.RootFolderViewModel.ClipboardItemFolder, (item) => {
                     // Process when a clipboard item is added
                     model.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, item));
@@ -74,10 +76,27 @@ namespace ClipboardApp.ViewModel.MainWIndow {
                 LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
             }
             // Notification
-            model.NotifyPropertyChanged(nameof(model.IsWindowsNotificationMonitor));
+            model.NotifyPropertyChanged(nameof(model.IsWindowsNotificationMonitorActive));
             // Change button text
             model.NotifyPropertyChanged(nameof(model.WindowsNotificationMonitorButtonText));
         }
+        // Start/Stop AutoGenStudio
+        public static void StartStopAutoGenStudioCommand() {
+            MainWindowViewModel model = MainWindowViewModel.ActiveInstance;
+            model.IsAutoGenStudioRunning = !model.IsAutoGenStudioRunning;
+            if (model.IsAutoGenStudioRunning) {
+                LogWrapper.Info(CommonStringResources.Instance.StartAutoGenStudioMessage);
+                AutoGenProcessController.StartAutoGenStudio();
+            } else {
+                LogWrapper.Info(CommonStringResources.Instance.StopAutoGenStudioMessage);
+                AutoGenProcessController.StopAutoGenStudio();
+            }
+            // Notification
+            model.NotifyPropertyChanged(nameof(model.IsAutoGenStudioRunning));
+            // Change button text
+            model.NotifyPropertyChanged(nameof(model.AutoGenStudioIsRunningButtonText));
+        }
+
 
         // Command to open OpenAI Chat
         public static void OpenOpenAIChatWindowCommand(ClipboardItem item) {

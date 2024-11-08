@@ -12,6 +12,7 @@
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
+    <None Remove="python_ai_lib\autogen_props.py" />
     <None Remove="python_ai_lib\excel_util.py" />
     <None Remove="python_ai_lib\file_extractor.py" />
     <None Remove="python_ai_lib\flask_app.py" />
@@ -39,6 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="python_ai_lib\autogen_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>

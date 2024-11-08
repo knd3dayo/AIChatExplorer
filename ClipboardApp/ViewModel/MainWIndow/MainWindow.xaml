@@ -84,6 +84,14 @@
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                                 Header="{Binding WindowsNotificationMonitorButtonText}"
                                 ToolTip="{Binding StringResources.ToggleNotificationWatchToolTop}" />
+                            <!--  Toggle AutoGen Studio is Runnning  -->
+                            <MenuItem
+                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                                Command="{Binding ToggleAutoGenStudioIsRunning, Mode=OneTime}"
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                                Header="{Binding AutoGenStudioIsRunningButtonText}"
+                                ToolTip="{Binding StringResources.ToggleAutoGenStudioIsRunningToolTip}" />
+
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"

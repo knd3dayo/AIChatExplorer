@@ -108,27 +108,39 @@ namespace ClipboardApp {
             }
         }
 
+        // クリップボード監視が実行中であるかどうか
+        public bool IsClipboardMonitoringActive { get; set; } = false;
+
         // クリップボード監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string ClipboardMonitorButtonText {
             get {
-                return IsClipboardMonitor ? StringResources.StopClipboardWatch : StringResources.StartClipboardWatch;
+                return IsClipboardMonitoringActive ? StringResources.StopClipboardWatch : StringResources.StartClipboardWatch;
             }
         }
-        // クリップボード監視を開始、終了するフラグ
-        public bool IsClipboardMonitor { get; set; } = false;
 
         // Windows通知監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
         public string WindowsNotificationMonitorButtonText {
             get {
-                return IsWindowsNotificationMonitor ? StringResources.StopNotificationWatch : StringResources.StartNotificationWatch;
+                return IsWindowsNotificationMonitorActive ? StringResources.StopNotificationWatch : StringResources.StartNotificationWatch;
             }
         }
-        // Windows通知監視が開始、終了するフラグ
-        public bool IsWindowsNotificationMonitor { get; set; } = false;
+        // Windows通知監視が実行中であるかどうか
+        public bool IsWindowsNotificationMonitorActive { get; set; } = false;
+
+        // AutoGen Studioが実行中であるかどうか
+        public bool IsAutoGenStudioRunning { get; set; } = false;
+        // AutoGen Studioが実行中の場合は「停止」、停止されている場合は「開始」を返す
+        public string AutoGenStudioIsRunningButtonText {
+            get {
+                return IsAutoGenStudioRunning ? StringResources.StopAutoGenStudio : StringResources.StartAutoGenStudio;
+            }
+        }
+
 
         // ClipboardFolder
 
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
+
 
         // Cutフラグ
         public enum CutFlagEnum {

@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModel="clr-namespace:ClipboardApp.Control"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:IIMainPanelImplementer}"
+    d:DataContext="{d:DesignInstance Type=viewModel:IMainPanelImplementer}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />

@@ -323,7 +323,19 @@ namespace QAChat.Resource {
 
         #endregion
 
+        #region ToolTip
+        // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
+        public virtual string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
+
+        // 開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.
+        public virtual string ToggleNotificationWatchToolTop { get; } = "開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.";
+        // 開始：AutoGenStudioを開始します。停止：AutoGenStudioを停止します.
+        public virtual string ToggleAutoGenStudioIsRunningToolTip { get; } = "開始：AutoGenStudioを開始します。停止：AutoGenStudioを停止します.";
+
+        #endregion
+
         #region イベント
+
 
         // クリップボード監視を開始しました
         public virtual string StartClipboardWatchMessage { get; } = "クリップボード監視を開始しました";
@@ -333,6 +345,11 @@ namespace QAChat.Resource {
         public virtual string StartNotificationWatchMessage { get; } = "Windows通知監視を開始しました";
         // Windows通知監視を停止しました
         public virtual string StopNotificationWatchMessage { get; } = "Windows通知監視を停止しました";
+
+        // AutoGenStudioを開始しました
+        public virtual string StartAutoGenStudioMessage { get; } = "AutoGenStudioを開始しました";
+        // AutoGenStudioを停止しました
+        public virtual string StopAutoGenStudioMessage { get; } = "AutoGenStudioを停止しました";
 
         public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
         // クリップボードアイテムを処理
@@ -418,6 +435,11 @@ namespace QAChat.Resource {
         public virtual string StartNotificationWatch { get; } = "Windows通知監視開始";
         // Windows通知監視停止
         public virtual string StopNotificationWatch { get; } = "Windows通知監視停止";
+        // AutoGen Studio起動
+        public virtual string StartAutoGenStudio { get; } = "AutoGen Studio起動";
+        // AutoGen Studio終了
+        public virtual string StopAutoGenStudio { get; } = "AutoGen Studio終了";
+
         // タグ編集
         public virtual string EditTag { get; } = "タグ編集";
         // 自動処理ルール編集

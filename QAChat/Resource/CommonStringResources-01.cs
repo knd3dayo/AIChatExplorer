@@ -141,12 +141,6 @@ namespace QAChat.Resource {
         public virtual string EditVectorDB { get; } = "ベクトルDB編集";
 
         // --- ToolTip ---
-        // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
-        public virtual string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
-
-        // 開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.
-        public virtual string ToggleNotificationWatchToolTop { get; } = "開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.";
-
         // 選択中のフォルダにアイテムを作成します。
         public virtual string CreateItemToolTip { get; } = "選択中のフォルダにアイテムを作成します。";
 

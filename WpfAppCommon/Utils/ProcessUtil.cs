@@ -12,7 +12,37 @@ namespace WpfAppCommon.Utils {
         // Processとクローズ後の処理を保持するハッシュテーブル
         private static readonly Hashtable processAfterCloseHashTable = [];
 
+        public static Process? StartProcess(string fileName, string arguments, Action<Process> afterOpen, Action<string> afterClose) {
+            ProcessStartInfo procInfo = new() {
+                UseShellExecute = true,
+                FileName = fileName,
+                Arguments = arguments
+            };
+            if (procInfo == null) {
+                return null;
+            }
+            Process? process = Process.Start(procInfo);
+            if (process == null) {
+                return null;
+            }
+            // 事後処理を実行
+            processAfterCloseHashTable.Add(process, afterClose);
+            afterOpen(process);
+            return process;
+        }
 
+        public static void StopProcess(Process process) {
+            // プロセス終了
+            process.Kill();
+            // プロセス終了時の事後処理を取得
+            Action<string>? processAfterClose = (Action<string>?)processAfterCloseHashTable[process];
+            if (processAfterClose == null) {
+                return;
+            }
+            // 事後処理を実行
+            processAfterClose("");
+
+        }
         public static void OpenTempTextFile(string content, Action<Process> afterOpen, Action<string> afterClose) {
             // テンポラリディレクトリにランダムな名前のファイルを作成
             string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");

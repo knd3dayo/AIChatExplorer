@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
+using ClipboardApp.Utils;
 
 
 
@@ -21,6 +22,9 @@ namespace ClipboardApp {
         // Closedイベント
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
+            // AutoGenStudioプロセスを終了
+            AutoGenProcessController.StopAutoGenStudio();
+
             App.Current.Shutdown();
         }
     }

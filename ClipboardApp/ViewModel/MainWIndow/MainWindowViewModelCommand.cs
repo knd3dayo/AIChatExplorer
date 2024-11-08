@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Folder;
 using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.MainWIndow;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.PromptTemplateWindow;
@@ -12,11 +13,8 @@ using QAChat.View.TagView;
 using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
-using ClipboardApp.ViewModel.ClipboardItemView;
-using ClipboardApp.ViewModel.MainWIndow;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel {
         // アプリケーションを終了する。
         // Ctrl + Q が押された時の処理
@@ -30,15 +28,19 @@ namespace ClipboardApp
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            ClipboardAppCommandExecute.StartStopClipboardMonitorCommand(this);
+            ClipboardAppCommandExecute.StartStopClipboardMonitorCommand();
         });
 
         // Windows通知監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
-            ClipboardAppCommandExecute.StartStopWindowsNotificationMonitorCommand(this);
+            ClipboardAppCommandExecute.StartStopWindowsNotificationMonitorCommand();
         });
-
+        // AutoGenStudio開始終了フラグを反転させる
+        // メニューの「開始」、「停止」をクリックしたときの処理
+        public SimpleDelegateCommand<object> ToggleAutoGenStudioIsRunning => new((parameter) => {
+            ClipboardAppCommandExecute.StartStopAutoGenStudioCommand();
+        });
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
@@ -87,18 +89,11 @@ namespace ClipboardApp
                 LogWrapper.Error(StringResources.NoItemSelected);
                 return;
             }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                LogWrapper.Error(StringResources.FolderNotSelected);
-                return;
-            }
-
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
                 clipboardItemViewModel.ChangePinCommand.Execute();
             }
-
             // フォルダ内のアイテムを再読み込み
-            SelectedFolder.LoadFolderCommand.Execute();
+            SelectedFolder?.LoadFolderCommand.Execute();
         });
 
 
@@ -152,7 +147,7 @@ namespace ClipboardApp
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-            ClipboardItem dummyItem = new (ChatRootFolderViewModel.ClipboardItemFolder.Id);
+            ClipboardItem dummyItem = new(ChatRootFolderViewModel.ClipboardItemFolder.Id);
             ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(dummyItem);
         });
 
@@ -242,11 +237,6 @@ namespace ClipboardApp
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            // 選択中のフォルダがない場合は処理をしない
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedItems, StringResources.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
@@ -255,7 +245,7 @@ namespace ClipboardApp
                     item.DeleteItemCommand.Execute();
                 }
                 // フォルダ内のアイテムを再読み込む
-                SelectedFolder.LoadFolderCommand.Execute();
+                SelectedFolder?.LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.Deleted);
             }
         });
