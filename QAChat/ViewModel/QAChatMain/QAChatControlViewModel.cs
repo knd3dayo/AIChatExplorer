@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model;
@@ -8,6 +10,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using QAChat.Control;
 using QAChat.Resource;
+using QAChat.Utils;
 using QAChat.View.EditChatItemWindow;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.View.VectorDBWindow;
@@ -199,20 +202,24 @@ namespace QAChat.ViewModel.QAChatMain {
 
                 // チャット内容を更新
                 // UpdateChatHistoryList();
+                if (ChatController.ChatMode == OpenAIExecutionModeEnum.AutoGen) {
+                    StartAutoGenGroupChaCommandExecute();
 
-                await Task.Run(() => {
-                    // LangChainChat用。VectorDBItemsを設定
-                    List<VectorDBItem> items = [.. VectorDBItems];
-                    ChatController.VectorDBItems = items;
+                } else {
 
-                    // OpenAIChat or LangChainChatを実行
-                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
-                });
+                    await Task.Run(() => {
+                        // LangChainChat用。VectorDBItemsを設定
+                        List<VectorDBItem> items = [.. VectorDBItems];
+                        ChatController.VectorDBItems = items;
 
-                if (result == null) {
-                    LogWrapper.Error(StringResources.FailedToSendChat);
-                    return;
-                }
+                        // OpenAIChat or LangChainChatを実行
+                        result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
+                    });
+
+                    if (result == null) {
+                        LogWrapper.Error(StringResources.FailedToSendChat);
+                        return;
+                    }
                 // チャット内容を更新
                 UpdateChatHistoryList();
 
@@ -222,6 +229,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 // _SaveChatHistoryをTrueに設定
                 _SaveChatHistory = true;
 
+                }
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
@@ -230,6 +238,51 @@ namespace QAChat.ViewModel.QAChatMain {
             }
 
         });
+
+        // AutoGenのGroupChatを実行するコマンド
+        private void StartAutoGenGroupChaCommandExecute() {
+            // OpenAIPropertiesを取得
+            OpenAIProperties openAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties();
+            // VectorDBItemsを取得
+            List<VectorDBItem> vectorDBItems = [.. VectorDBItems];
+            // メッセージを取得
+            string message = InputText;
+            // AutoGenGroupChatTest1を実行
+            AutoGenProcessController.StartAutoGenGroupChatTest1(openAIProperties, vectorDBItems, message, (responseJson) => {
+                MainUITask.Run(() => {
+                    // ChatHistoryに追加
+                    ChatContentItem chatItem1 = new(ChatContentItem.UserRole, InputText);
+                    ChatController.ChatHistory.Add(chatItem1);
+                    // ChatHistoryに追加
+                    StringBuilder sb = new();
+                    // responseJsonはJsonElementのリスト
+                    List<JsonElement> jsonElements = JsonSerializer.Deserialize<List<JsonElement>>(responseJson) ?? [];
+                    foreach (var jsonElement in jsonElements) {
+                        Dictionary<string, dynamic?>? dic = PythonAILib.Utils.Common.JsonUtil.ParseJson(jsonElement.ToString());
+                        // role, name , contentを取得
+                        string role = dic?["role"] ?? "";
+                        string name = dic?["name"] ?? "";
+                        string content = dic?["content"] ?? "";
+                        // roleがuserまたはassistantの場合はrole, name, contentをStringBuiderに追加
+                        if (role == "user" || role == "assistant") {
+                            sb.Append($"{role} {name}:\n{content}\n");
+                        }
+                    }
+
+                    ChatContentItem chatItem2 = new(ChatContentItem.AssistantRole, sb.ToString());
+                    ChatController.ChatHistory.Add(chatItem2);
+
+                    // チャット内容を更新
+                    UpdateChatHistoryList();
+                    // inputTextをクリア
+                    InputText = "";
+                    // _SaveChatHistoryをTrueに設定
+                    _SaveChatHistory = true;
+                });
+
+            }, QAChatStartupProps.VenvPath);
+        }
+
         // チャット内容のリストを更新するメソッド
         public void UpdateChatHistoryList() {
             // ClipboardItemがある場合はClipboardItemのChatItemsを更新

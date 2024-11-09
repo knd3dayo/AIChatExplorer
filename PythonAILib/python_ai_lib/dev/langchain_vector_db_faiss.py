@@ -6,9 +6,9 @@ from langchain_core.vectorstores import VectorStore
 from langchain.docstore.document import Document
 
 sys.path.append("python")
-from langchain_client import LangChainOpenAIClient
+from ai_app_langchain_util import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
-from openai_props import VectorDBProps
+from ai_app_vector_db_util import VectorDBProps
 
 class LangChainVectorDBFaiss(LangChainVectorDB):
 
@@ -37,7 +37,7 @@ class LangChainVectorDBFaiss(LangChainVectorDB):
                 allow_dangerous_deserialization=True
                 )  
 
-    def _get_metadata_by_source(self, sources:str=None) -> (list, list):
+    def _get_metadata_by_source(self, sources:str=None) -> tuple[list, list]:
         doc_ids = []
         metadata = []
         for _id, doc in self.db.docstore._dict.items():

@@ -7,7 +7,7 @@ using PythonAILib.Model.Abstract;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.MainWIndow
+namespace ClipboardApp.ViewModel.MainWindow
 {
     public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams
     {

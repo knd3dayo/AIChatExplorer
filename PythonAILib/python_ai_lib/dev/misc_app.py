@@ -1,7 +1,7 @@
 import sys,io,os
 sys.path.append("python")
 from PIL import Image
-import pyocr
+import pyocr #type: ignore
 from unittest import result
 import sqlite3
 from io import StringIO
@@ -121,7 +121,7 @@ def update_text_int_table(ent_label: str):
 def mask_data(textList: list, props = {}):
     global nlp
     if (nlp is None):
-        import spacy
+        import spacy #type: ignore
         model_name = props.get("SpacyModel", None)
         if model_name is None:
             raise Exception("SpacyModel is not set.")
@@ -178,7 +178,7 @@ def extract_entity(text, props = {}):
 
     global nlp
     if (nlp is None):
-        import spacy
+        import spacy #type: ignore
         model_name = props.get("SpacyModel", None)
         if model_name is None:
             return result_set

@@ -11,9 +11,10 @@ from sqlalchemy.sql import text
 
 
 sys.path.append("python")
-from langchain_client import LangChainOpenAIClient
+from ai_app_langchain_util import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
-from openai_props import VectorDBProps
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
 
 class LangChainVectorDBPGVector(LangChainVectorDB):
 

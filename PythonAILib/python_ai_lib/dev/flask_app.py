@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify # type: ignore
 import os
 import importlib
 import json
-import spacy
+import spacy # type: ignore
 
 import ai_app
 

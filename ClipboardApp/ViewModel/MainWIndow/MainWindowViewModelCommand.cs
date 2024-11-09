@@ -5,7 +5,7 @@ using ClipboardApp.View.AutoProcessRuleView;
 using ClipboardApp.View.HelpView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.ClipboardItemView;
-using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.ViewModel.MainWindow;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.PromptTemplateWindow;

@@ -1,21 +1,20 @@
 
-from pydub import AudioSegment
+from pydub import AudioSegment #type: ignore
+from moviepy.editor import VideoFileClip #type: ignore
 import numpy as np
 import tempfile
 import json
 import sys
-from speechbrain.inference.classifiers import EncoderClassifier
-from sklearn.cluster import AgglomerativeClustering
-from openai_props import OpenAIProps
-from openai_client import OpenAIClient
-import torch
+from speechbrain.inference.classifiers import EncoderClassifier #type: ignore
+from sklearn.cluster import AgglomerativeClustering #type: ignore
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
+import torch #type: ignore
 
 sys.path.append("..")
 
 import os
 import sys
-from pydub import AudioSegment
-from moviepy.editor import VideoFileClip
 
 
 def split_audio_file(audio_file_path, audio_format="mp3", length=1800, output_dir_path="."):
@@ -225,10 +224,10 @@ class Transcriber:
 if __name__ == "__main__":
     # テストコード
     import os
-    from openai_props import OpenAIProps, env_to_props
-    from openai_client import OpenAIClient
+    from ai_app_openai_util import OpenAIProps, OpenAIClient 
+    from ai_app_vector_db_util import VectorDBProps
 
-    props = env_to_props()
+    props = OpenAIProps.env_to_props()
     props.AzureOpenAI = False
     props.OpenAIWhisperModel = "whisper-1"
     

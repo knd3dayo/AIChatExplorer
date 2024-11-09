@@ -46,8 +46,8 @@ class LlamaIndexVectorDBChroma(LlamaIndexVectorDB):
 if __name__ == "__main__":
 
     # clipboard_app_props
-    import openai_props
-    props = openai_props.env_to_props()
+    from openai_props import OpenAIProps
+    props = OpenAIProps.env_to_props()
 
     llhamaindex_client = LlamaIndexClient(props)
     vector_db_url = "vector_db"

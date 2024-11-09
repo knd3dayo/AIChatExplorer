@@ -17,6 +17,7 @@ namespace QAChat.Control
 
         public Action<List<ChatContentItem>> ExportChatCommand { get; set; } = (chatHistory) => { };
 
+        public string VenvPath { get; set; } = "";
     }
 
 

@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Media;
 using ClipboardApp.Model;
-using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.ViewModel.MainWindow;
 using QAChat.View.TagView;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

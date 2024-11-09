@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Windows;
-using ClipboardApp.Utils;
+using QAChat.Utils;
 
 
 

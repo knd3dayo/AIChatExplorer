@@ -1,11 +1,13 @@
-from langchain_client import LangChainOpenAIClient
+from ai_app_langchain_util import LangChainOpenAIClient
 import os
 from langchain_vector_db_chroma import LangChainVectorDBChroma
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
+
 if __name__ == "__main__":
     # clipboard_app_props
-    import openai_props
-    props = openai_props.env_to_props()
-    vector_db_props = openai_props.get_vector_db_settings()
+    props = OpenAIProps.env_to_props()
+    vector_db_props = VectorDBProps.get_vector_db_settings()
 
     langchain_openai_client = LangChainOpenAIClient(props)
     langchain_vector_db = LangChainVectorDBChroma(langchain_openai_client, vector_db_props)

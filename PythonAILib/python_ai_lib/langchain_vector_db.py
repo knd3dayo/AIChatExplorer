@@ -1,163 +1,16 @@
 
 import sys
-sys.path.append("python")
 
 import uuid, json, os
 from typing import Tuple, List
 
-from langchain_client import LangChainOpenAIClient
 from langchain_doc_store import SQLDocStore
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-import file_extractor
-from openai_props import OpenAIProps, VectorDBProps
-
-class VectorSearchParameter:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props: list[VectorDBProps] = None, query: str = "", search_kwarg: dict = {}):
-
-        # OpenAIPorpsを生成
-        self.openai_props = openai_props
-
-        # VectorDBPropsのリストを取得
-        self.vector_db_props = vector_db_props
-
-        #  openai_props, vector_db_items, query, search_kwargを設定する
-        self.query = query
-        self.search_kwarg = search_kwarg
-
-    @classmethod
-    def from_json(cls, openai_props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params:VectorSearchParameter = VectorSearchParameter()
-        # OpenAIPorpsを生成
-        props = json.loads(openai_props_json)
-        params.openai_props = OpenAIProps(props)
-
-        # VectorDBPropsのリストを取得
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props = [VectorDBProps(item) for item in vector_db_items]
-
-        #  openai_props, vector_db_items, query, search_kwargを設定する
-        request: dict = json.loads(request_json)
-        params.query = request.get("query", "")
-        params.search_kwarg = request.get("search_kwarg", {})
-
-        return params
-
-class ContentUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props_list: list[VectorDBProps] =[], 
-                 text: str = "", source: str = "", source_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
-        self.openai_props = openai_props
-
-        self.vector_db_props_list = vector_db_props_list
-
-        self.text = text
-        self.source = source
-        self.source_url = source_url
-        self.description = description
-        self.reliability = reliability
-        self.mode = mode
-
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams()
-        props = json.loads(props_json)
-        params.openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            params.vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        # request_jsonをdictに変換
-        request: dict = json.loads(request_json)
-        params.text = request["content"]
-        params.source = request["id"]
-        params.source_url = ""
-        params.description = request.get("description", "")
-        params.reliability = request.get("reliability", 0)
-        params.mode = request.get("mode", "")
-
-        return params
-        
-class ImageUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props_list: list[VectorDBProps] = [], 
-                    text: str = "", source: str = "", source_url: str = "", image_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
-
-        self.openai_props = openai_props
-
-        self.vector_db_props_list = vector_db_props_list
-        
-        # request_jsonをdictに変換
-        self.text = text
-        self.source = source
-        self.source_url = source_url
-        self.image_url = image_url
-        self.description = description
-        self.reliability = reliability
-        self.mode = mode
-
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams()
-        props = json.loads(props_json)
-        params.openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            params.vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        # request_jsonをdictに変換
-        request: dict= json.loads(request_json)
-        params.text = request["content"]
-        params.source = request["id"]
-        params.source_url = ""
-        params.image_url = request["image_url"]
-        params.description = request.get("description", "")
-        params.reliability = request.get("reliability", 0)
-        params.mode = request.get("mode", "")
-
-        return params
-
-class FileUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props_list: list[VectorDBProps] = [], 
-                    document_root: str = "", relative_path: str = "", source_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
-        
-        self.openai_props = openai_props
-
-        self.vector_db_props_list = vector_db_props_list
-        
-        # request_jsonをdictに変換
-        self.document_root = document_root
-        self.relative_path = relative_path
-        self.source_url = source_url
-        self.description = description
-        self.reliability = reliability
-        self.mode = mode
-    
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params: FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams()
-
-        props = json.loads(props_json)
-        params.openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            props.vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        # request_jsonをdictに変換
-        request: dict = json.loads(request_json)
-        params.document_root = request["WorkDirectory"]
-        params.relative_path = request["RelativePath"]
-        params.source_url = request["RepositoryURL"]
-        params.description = request.get("description", "")
-        params.reliability = request.get("reliability", 0)
-        params.mode = request.get("mode", "")
-
-        return params
+from ai_app_file_util import FileUtil
+from ai_app_vector_db_util import VectorDBProps, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_langchain_util import LangChainOpenAIClient
 
 class LangChainVectorDB:
 
@@ -314,7 +167,7 @@ class LangChainVectorDB:
         if os.path.getsize(absolute_file_path) == 0:
             return []
         # テキスト抽出
-        text = file_extractor.extract_text_from_file(absolute_file_path)
+        text = FileUtil.extract_text_from_file(absolute_file_path)
 
         # テキストを分割してDocumentのリストを返す
         return self._add_document_list(text, description, relative_path, source_url, chunk_size, reliability=reliability)
@@ -374,19 +227,4 @@ class LangChainVectorDB:
             text_list.append(text[i:i + chunk_size])
         return text_list
 
-def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
-
-    langchain_openai_client = LangChainOpenAIClient(openai_props)
-    # ベクトルDBのタイプがChromaの場合
-    if vector_db_props.VectorDBTypeString == "Chroma":
-        from langchain_vector_db_chroma import LangChainVectorDBChroma
-        return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
-    # ベクトルDBのタイプがPostgresの場合
-    elif vector_db_props.VectorDBTypeString == "PGVector":
-        from langchain_vector_db_pgvector import LangChainVectorDBPGVector
-        return LangChainVectorDBPGVector(langchain_openai_client, vector_db_props)
-    else:
-        # それ以外の場合は例外
-        raise ValueError("VectorDBType is invalid")
-        
     

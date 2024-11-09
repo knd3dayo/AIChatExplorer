@@ -1,9 +1,9 @@
 import sys
 sys.path.append('..')
-from common.open_ai_util import OpenAIUtil
-from transcribe import transcribe_util, audio_util
+from common.open_ai_util import OpenAIUtil #type: ignore
+from transcribe import transcribe_util, audio_util #type: ignore
 
-from pydub import AudioSegment
+from pydub import AudioSegment #type: ignore
 import tempfile
 import os
 

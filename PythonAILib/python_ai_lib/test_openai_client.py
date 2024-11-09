@@ -1,5 +1,3 @@
-from openai_client import OpenAIClient
-
 if __name__ == "__main__":
     
     # テスト用のjson
@@ -29,9 +27,10 @@ if __name__ == "__main__":
     """
     
     
-    import openai_props
+    from ai_app_openai_util import OpenAIProps, OpenAIClient
+
     # envファイルからpropsを取得する
-    props = openai_props.env_to_props()
+    props = OpenAIProps.env_to_props()
     openai_client = OpenAIClient(props)
 
     # chatを実行

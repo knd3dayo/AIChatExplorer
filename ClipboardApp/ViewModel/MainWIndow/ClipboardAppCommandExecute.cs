@@ -4,7 +4,6 @@ using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
-using ClipboardApp.Settings;
 using ClipboardApp.Utils;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.Settings;
@@ -13,6 +12,7 @@ using ClipboardApp.ViewModel.ClipboardItemView;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Control;
+using QAChat.Utils;
 using QAChat.Resource;
 using QAChat.View.ImageChat;
 using QAChat.View.RAGWindow;
@@ -20,7 +20,7 @@ using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.MainWIndow {
+namespace ClipboardApp.ViewModel.MainWindow {
     public class ClipboardAppCommandExecute {
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace ClipboardApp.ViewModel.MainWIndow {
             model.IsAutoGenStudioRunning = !model.IsAutoGenStudioRunning;
             if (model.IsAutoGenStudioRunning) {
                 LogWrapper.Info(CommonStringResources.Instance.StartAutoGenStudioMessage);
-                AutoGenProcessController.StartAutoGenStudio();
+                AutoGenProcessController.StartAutoGenStudio(ClipboardAppConfig.Instance.PythonVenvPath);
             } else {
                 LogWrapper.Info(CommonStringResources.Instance.StopAutoGenStudioMessage);
                 AutoGenProcessController.StopAutoGenStudio();

@@ -12,7 +12,7 @@ using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using ClipboardApp.ViewModel.Folder;
-using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.ViewModel.MainWindow;
 using ClipboardApp.ViewModel.Search;
 using QAChat;
 using QAChat.Control;
@@ -318,6 +318,8 @@ namespace ClipboardApp {
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChatStartupProps props = new(clipboardItem) {
+                // VenvPath
+                VenvPath = ClipboardAppConfig.Instance.PythonVenvPath,
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
                     SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, true, (selectedItems) => {

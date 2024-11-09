@@ -9,19 +9,20 @@
 
   <ItemGroup>
     <None Remove="python_ai_lib\ai_app.py" />
+    <None Remove="python_ai_lib\ai_app_autogen_group_chat_test.py" />
+    <None Remove="python_ai_lib\ai_app_autogen_util.py" />
+    <None Remove="python_ai_lib\ai_app_file_util.py" />
+    <None Remove="python_ai_lib\ai_app_langchain_util.py" />
+    <None Remove="python_ai_lib\ai_app_openai_util.py" />
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
+    <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
-    <None Remove="python_ai_lib\autogen_props.py" />
-    <None Remove="python_ai_lib\excel_util.py" />
-    <None Remove="python_ai_lib\file_extractor.py" />
     <None Remove="python_ai_lib\flask_app.py" />
-    <None Remove="python_ai_lib\langchain_client.py" />
     <None Remove="python_ai_lib\langchain_doc_store.py" />
     <None Remove="python_ai_lib\langchain_doc_store_postgres.py" />
     <None Remove="python_ai_lib\langchain_file_processor.py" />
     <None Remove="python_ai_lib\langchain_object_processor.py" />
-    <None Remove="python_ai_lib\langchain_util.py" />
     <None Remove="python_ai_lib\langchain_vector_db.py" />
     <None Remove="python_ai_lib\langchain_vector_db_chroma.py" />
     <None Remove="python_ai_lib\langchain_vector_db_faiss.py" />
@@ -29,8 +30,6 @@
     <None Remove="python_ai_lib\llamaindex_client.py" />
     <None Remove="python_ai_lib\llamaindex_vector_db.py" />
     <None Remove="python_ai_lib\llamaindex_vector_db_chroma.py" />
-    <None Remove="python_ai_lib\openai_client.py" />
-    <None Remove="python_ai_lib\openai_props.py" />
     <None Remove="python_ai_lib\script_template.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_chroma.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_postgres.py" />
@@ -40,16 +39,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="python_ai_lib\autogen_props.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen_group_chat_test.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_wrapper.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\excel_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -61,13 +63,10 @@
     <EmbeddedResource Include="python_ai_lib\dev\misc_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\file_extractor.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_file_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\dev\flask_app.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\langchain_doc_store_postgres.py">
@@ -76,7 +75,7 @@
     <EmbeddedResource Include="python_ai_lib\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\langchain_vector_db.py">
@@ -100,10 +99,7 @@
     <EmbeddedResource Include="python_ai_lib\dev\llamaindex_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\openai_client.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\openai_props.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_openai_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\dev\script_template.py">
@@ -128,6 +124,10 @@
     <PackageReference Include="LiteDB" Version="5.0.17" />
     <PackageReference Include="pythonnet" Version="3.1.0-preview2024-06-03" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utils\AutoGen\" />
   </ItemGroup>
 
 </Project>

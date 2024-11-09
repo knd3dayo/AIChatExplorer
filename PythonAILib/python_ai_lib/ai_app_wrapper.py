@@ -4,11 +4,9 @@ from io import StringIO
 import sys
 sys.path.append("python")
 
-from openai_props import OpenAIProps, VectorDBProps
-from openai_client import OpenAIClient
-import langchain_util
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
 import ai_app
-import langchain_vector_db
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
 if "HTTPS_PROXY" not in os.environ:
@@ -87,7 +85,7 @@ def run_langchain_chat( props_json: str, vector_db_items_json:str, request_json:
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
-        from langchain_util import LangChainChatParameter
+        from ai_app_langchain_util import LangChainChatParameter
         params:LangChainChatParameter = LangChainChatParameter(props_json, vector_db_items_json, request_json)
         # langchan_chatを実行
         result = ai_app.run_langchain_chat(params)
@@ -122,7 +120,7 @@ def delete_collection(props_json: str, vector_db_items_json: str):
 def run_vector_search(openai_props_json: str, vector_db_items_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        from langchain_vector_db import VectorSearchParameter
+        from ai_app_vector_db_util import VectorSearchParameter
         params:VectorSearchParameter = VectorSearchParameter.from_json(openai_props_json, vector_db_items_json, request_json)
         result = ai_app.run_vector_search(params)
         return result
@@ -219,18 +217,18 @@ def delete_file_index(props_json: str, vector_db_items_json: str, request_json: 
 ########################
 # ファイルのMimeTypeを取得する
 def get_mime_type(filename):
-    import file_extractor
-    return file_extractor.get_mime_type(filename)
+    import ai_app_file_util
+    return ai_app_file_util.get_mime_type(filename)
 
 # Excelのシート名一覧を取得する
 def get_excel_sheet_names(filename):
-    import excel_util
-    return excel_util.get_excel_sheet_names(filename)
+    import ai_app_file_util
+    return ai_app_file_util.get_excel_sheet_names(filename)
 
 # Excelのシートのデータを取得する
 def extract_excel_sheet(filename, sheet_name):
-    import excel_util
-    return excel_util.extract_text_from_sheet(filename, sheet_name)
+    import ai_app_file_util
+    return ai_app_file_util.extract_text_from_sheet(filename, sheet_name)
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename):

@@ -4,20 +4,17 @@ import tempfile
 import sys
 sys.path.append("python")
 
-from openai_props import OpenAIProps, VectorDBProps
-from openai_client import OpenAIClient
-import langchain_util
-import langchain_vector_db
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
 import base64
-from langchain_vector_db import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
-from langchain_util import LangChainChatParameter
-
-import excel_util
+from ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_langchain_util import LangChainChatParameter, LangChainUtil
+from ai_app_file_util import ExcelUtil
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename:str) -> str:
-    import file_extractor
-    return file_extractor.extract_text_from_file(filename)
+    from ai_app_file_util import FileUtil
+    return FileUtil.extract_text_from_file(filename)
 
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data:str) -> str:
@@ -28,9 +25,9 @@ def extract_base64_to_text(base64_data:str) -> str:
         temp.write(base64_data_bytes)
         temp_path = temp.name
         temp.close()
-        import file_extractor
+        from ai_app_file_util import FileUtil
         # 一時ファイルからテキストを抽出
-        text = file_extractor.extract_text_from_file(temp_path)
+        text = FileUtil.extract_text_from_file(temp_path)
         # 一時ファイルを削除
         os.remove(temp_path)
         return text
@@ -55,12 +52,12 @@ def list_openai_models(openai_props: OpenAIProps):
 ########################
 
 def run_vector_search(params:VectorSearchParameter) -> dict:
-    result = langchain_util.run_vector_search(params)
+    result = LangChainUtil.run_vector_search(params)
     return result
 
 def run_langchain_chat(params:LangChainChatParameter) -> dict:
     # langchan_chatを実行
-    result = langchain_util.langchain_chat(params)
+    result = LangChainUtil.langchain_chat(params)
     return result
 
 # vector db関連
@@ -68,7 +65,7 @@ def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBP
     # vector_db_itemsからVectorDBPropsを取得
     # LangChainVectorDBを生成
     for vector_db_props in vector_db_items:
-        vector_db = langchain_vector_db.get_vector_db(openai_props, vector_db_props)
+        vector_db = LangChainUtil.get_vector_db(openai_props, vector_db_props)
         # delete_collectionを実行
         vector_db.delete_collection()
 
@@ -78,7 +75,7 @@ def update_or_delete_content_index(params: ContentUpdateOrDeleteRequestParams):
 
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
-    vector_db = langchain_vector_db.get_vector_db(params.openai_props, vector_db_props)
+    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
     
     if params.mode == "delete":
         # delete_content_indexを実行
@@ -94,7 +91,7 @@ def update_or_delete_image_index(params: ImageUpdateOrDeleteRequestParams):
     # openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
-    vector_db = langchain_vector_db.get_vector_db(params.openai_props, vector_db_props)
+    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
 
     if params.mode == "delete":
         # delete_image_indexを実行
@@ -109,7 +106,7 @@ def update_or_delete_file_index(params: FileUpdateOrDeleteRequestParams):
 
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
-    vector_db = langchain_vector_db.get_vector_db(params.openai_props, vector_db_props)
+    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
 
     # modeに応じて処理を分岐
     if params.mode == "delete":
@@ -131,12 +128,12 @@ def export_to_excel(filePath, dataJson):
     data = json.loads(dataJson)
     # export_to_excelを実行
     print(data)
-    excel_util.export_to_excel(filePath, data.get("rows",[]))
+    ExcelUtil.export_to_excel(filePath, data.get("rows",[]))
 
 # import_from_excelを実行する
 def import_from_excel(filePath) -> dict:
     # import_to_excelを実行
-    data = excel_util.import_from_excel(filePath)
+    data = ExcelUtil.import_from_excel(filePath)
     # 結果用のdictを生成
     result = {}
     result["rows"] = data

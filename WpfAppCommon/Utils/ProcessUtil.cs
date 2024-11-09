@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Windows.Media.Imaging;
 using WpfAppCommon.Model;
 
@@ -25,15 +26,16 @@ namespace WpfAppCommon.Utils {
             if (process == null) {
                 return null;
             }
-            // 事後処理を実行
             processAfterCloseHashTable.Add(process, afterClose);
+            // 事後処理を実行
             afterOpen(process);
             return process;
         }
 
         public static void StopProcess(Process process) {
-            // プロセス終了
-            process.Kill();
+            // プロセスとサブプロセスを終了
+            process.Kill(true);
+
             // プロセス終了時の事後処理を取得
             Action<string>? processAfterClose = (Action<string>?)processAfterCloseHashTable[process];
             if (processAfterClose == null) {
@@ -43,6 +45,99 @@ namespace WpfAppCommon.Utils {
             processAfterClose("");
 
         }
+
+        public static Process? StartWindowsBackgroundCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen, Action<string> afterClose) {
+
+            string cmd = "cmd";
+
+            ProcessStartInfo procInfo = new() {
+                RedirectStandardOutput = true,
+                RedirectStandardInput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                FileName = cmd,
+            };
+            if (string.IsNullOrEmpty(workingDirectory)) {
+                procInfo.WorkingDirectory = workingDirectory;
+            }
+
+            Process? process = Process.Start(procInfo);
+            if (process == null) {
+                return null;
+            }
+
+            using var sw = process.StandardInput;
+            if (sw.BaseStream.CanWrite) {
+                foreach (var command in commands) {
+                    sw.WriteLine(command);
+                }
+                sw.Flush();
+                sw.Close();
+            }
+            process.EnableRaisingEvents = true;
+            process.Exited += new EventHandler(ProcessExited);
+            processAfterCloseHashTable.Add(process, afterClose);
+            // 事後処理を実行
+            afterOpen(process);
+
+            return process;
+        }
+
+        public static Process? StartWindowsCommandLine(List<string> commands, string workingDirectory, Action<Process> afterOpen, Action<string> afterClose) {
+
+            string cmd = "cmd";
+            // テンポラリファイルにコマンドを書き込む.拡張値は.bat
+            string tempFileName = Path.GetTempFileName();
+            tempFileName = Path.ChangeExtension(tempFileName, ".bat");
+            File.WriteAllLines(tempFileName, commands);
+            string arguments = $"/c {tempFileName}";
+            ProcessStartInfo procInfo = new(cmd, arguments) {
+                UseShellExecute = true,
+            };
+            if (string.IsNullOrEmpty(workingDirectory)) {
+                procInfo.WorkingDirectory = workingDirectory;
+            }
+
+            Process? process = Process.Start(procInfo);
+            if (process == null) {
+                return null;
+            }
+            // プロセスとファイル名の対応を保持
+            processOpenedFileHashTable.Add(process, tempFileName);
+
+            process.EnableRaisingEvents = true;
+            process.Exited += new EventHandler(ProcessExited);
+            processAfterCloseHashTable.Add(process, afterClose);
+            // 事後処理を実行
+            afterOpen(process);
+
+            return process;
+        }
+
+
+        // プロセス終了イベントを処理する
+        private static void ProcessExited(object? sender, EventArgs e) {
+            // System.Windows.MessageBox.Show("プロセス終了");
+            if (sender == null) {
+                return;
+            }
+            // プロセス終了時にItemに開いた内容を保存
+            Process? process = (Process)sender;
+
+            // ファイル名を取得
+            string? tempFileName = (string?)processOpenedFileHashTable[process];
+            if (tempFileName != null) {
+                // テンポラリファイルを削除
+                File.Delete(tempFileName);
+                // ハッシュテーブルから削除
+                processOpenedFileHashTable.Remove(process);
+            }
+            // 事後処理を実行
+            ((Action<string>?)processAfterCloseHashTable[process])?.Invoke("");
+        }
+
+
         public static void OpenTempTextFile(string content, Action<Process> afterOpen, Action<string> afterClose) {
             // テンポラリディレクトリにランダムな名前のファイルを作成
             string tempFileName = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".txt");
@@ -71,6 +166,7 @@ namespace WpfAppCommon.Utils {
             }
 
         }
+
         // 「開く」で開いたプロセス終了イベントを処理する
         private static void ContentProcessExited(object? sender, EventArgs e) {
             // System.Windows.MessageBox.Show("プロセス終了");
@@ -95,6 +191,7 @@ namespace WpfAppCommon.Utils {
             ((Action<string>?)processAfterCloseHashTable[process])?.Invoke(content);
 
         }
+
         public static void OpenFile(string contentFilePath, bool openAsNew = false) {
 
             // 新規として開く場合はテンポラリディレクトリにファイルをコピーする

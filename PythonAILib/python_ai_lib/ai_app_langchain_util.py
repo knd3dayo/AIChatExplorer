@@ -9,11 +9,12 @@ from langchain_community.callbacks.manager import get_openai_callback
 import langchain
 from langchain_core.runnables import chain
 from langchain_core.tools.structured import StructuredTool
+from typing import Optional
+from langchain_openai import AzureOpenAIEmbeddings
+from langchain_openai import AzureChatOpenAI
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 
-sys.path.append("python")
-from langchain_client import LangChainOpenAIClient
-from openai_props import OpenAIProps, VectorDBProps
-from langchain_vector_db import get_vector_db, VectorSearchParameter
 
 from typing import Any
 from langchain_core.callbacks import (
@@ -23,6 +24,51 @@ from collections import defaultdict
 
 from pydantic import BaseModel, Field
 
+
+from ai_app_openai_util import OpenAIProps
+from ai_app_vector_db_util import VectorSearchParameter, VectorDBProps
+
+class LangChainOpenAIClient:
+    def __init__(self, props: OpenAIProps):
+        
+        self.props: OpenAIProps = props
+
+    def get_completion_client(self):
+        
+        if (self.props.AzureOpenAI):
+            params = self.props.create_azure_openai_completion_dict()
+            # modelを設定する。
+            params["model"] = self.props.OpenAICompletionModel
+            llm = AzureChatOpenAI(
+                **params
+            )
+
+        else:
+            params =self.props.create_openai_completion_dict()
+            # modelを設定する。
+            params["model"] = self.props.OpenAICompletionModel
+            llm = ChatOpenAI(
+                **params
+            )
+        return llm
+        
+    def get_embedding_client(self):
+        if (self.props.AzureOpenAI):
+            params = self.props.create_azure_openai_embedding_dict()
+            # modelを設定する。
+            params["model"] = self.props.OpenAIEmbeddingModel
+            embeddings = AzureOpenAIEmbeddings(
+                **params
+            )
+        else:
+            params =self.props.create_openai_embedding_dict()
+            # modelを設定する。
+            params["model"] = self.props.OpenAIEmbeddingModel
+            embeddings = OpenAIEmbeddings(
+                **params
+            )
+        return embeddings
+        
 
 class LangChainChatParameter:
     def __init__(self, props_json: str ="{}", vector_db_items_json:str = "{}", request_json: str ="{}"):
@@ -120,7 +166,7 @@ class RetrieverUtil:
         if vector_db_props.IsUseMultiVectorRetriever:
             print("Creating MultiVectorRetriever")
             
-            langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
+            langChainVectorDB = LangChainUtil.get_vector_db(self.client.props, vector_db_props)
             retriever = CustomMultiVectorRetriever(
                 vectorstore=langChainVectorDB.db,
                 docstore=langChainVectorDB.doc_store,
@@ -130,7 +176,7 @@ class RetrieverUtil:
 
         else:
             print("Creating a regular Retriever")
-            langChainVectorDB = get_vector_db(self.client.props, vector_db_props)
+            langChainVectorDB = LangChainUtil.get_vector_db(self.client.props, vector_db_props)
             retriever = self.__create_decorated_retriever(langChainVectorDB.db, search_kwargs=search_kwargs)
          
         return retriever
@@ -155,7 +201,7 @@ class RetrievalQAUtil:
         self.vector_db_items = vector_db_items
 
         # ツールのリストを作成
-        self.tools = create_vector_search_tools(self.client, self.vector_db_items)
+        self.tools = self.create_vector_search_tools(self.client, self.vector_db_items)
 
     def create_agent_executor(self):
         '''
@@ -266,123 +312,144 @@ class RetrievalQAUtil:
                 langchain_chat_history.append(AIMessage(content))
         return langchain_chat_history
 
-# ベクトル検索を行う
-def run_vector_search( params: VectorSearchParameter):    
+    # ベクトル検索結果を返すToolを作成する関数
+    def create_vector_search_tools(self, client: LangChainOpenAIClient, vector_db_props: list[VectorDBProps]) -> list[Any]:
+        tools = []
+        for i in range(len(vector_db_props)):
+            item = vector_db_props[i]
+            # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
+            description = item.VectorDBDescription
+            if not description:
+                description = "ユーザーの質問に関連する情報をベクトルDBから検索するための汎用的なツールです。"
 
-    client = LangChainOpenAIClient(params.openai_props)
+            # ツールを作成
+            def vector_search_function(question: str) -> list[Document]:
+                # Retrieverを作成
+                # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
+                # content_typeもvector_db_propsで指定できるようにする
+                search_kwargs = {"k": 1, "filter":{"content_type": "text"}}
 
-    # documentsの要素からcontent, source, source_urlを取得
-    result = []
-    # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-    for vector_db_item in params.vector_db_props:
+                retriever = RetrieverUtil(client, item).create_retriever(search_kwargs)
+                docs: list[Document] = retriever.invoke(question)
+                # page_contentを取得
+                result_docs = []
+                for doc in docs:
+                    result_docs.append(doc)
+                return result_docs
 
-        # デバッグ出力
-        print(f'検索文字列: {params.query}')
-        print(f'検索条件: {params.search_kwarg}')
-        print('ベクトルDBの設定')
-        print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-        retriever = RetrieverUtil(client, vector_db_item).create_retriever(params.search_kwarg)
-        documents: list[Document] = retriever.invoke(params.query)
-
-        print(f"documents:\n{documents}")
-        for doc in documents:
-            content = doc.page_content
-            source = doc.metadata.get("source", "")
-            source_url = doc.metadata.get("source_url", "")
-            score = doc.metadata.get("score", 0.0)
-            # description, reliabilityを取得
-            description = doc.metadata.get("description", "")
-            reliability = doc.metadata.get("reliability", 0)
-
-            sub_docs = doc.metadata.get("sub_docs", [])
-            # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
-            sub_docs_result = []
-            for sub_doc in sub_docs:
-                sub_content = sub_doc.page_content
-                sub_source = sub_doc.metadata.get("source", "")
-                sub_source_url = sub_doc.metadata.get("source_url", "")
-                sub_score = sub_doc.metadata.get("score", 0.0)
-                
-                sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
-
-            result.append(
-                {"content": content, "source": source, "source_url": source_url, "score": score, 
-                 "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
-        
-    return {"documents": result}
-
-# ベクトル検索結果を返すToolを作成する関数
-def create_vector_search_tools(client: LangChainOpenAIClient, vector_db_props: list[VectorDBProps]) -> list[Any]:
-    tools = []
-    for i in range(len(vector_db_props)):
-        item = vector_db_props[i]
-        # description item.VectorDBDescriptionが空の場合はデフォルトの説明を設定
-        description = item.VectorDBDescription
-        if not description:
-            description = "ユーザーの質問に関連する情報をベクトルDBから検索するための汎用的なツールです。"
-
-        # ツールを作成
-        def vector_search_function(question: str) -> list[Document]:
-            # Retrieverを作成
-            # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
-            # content_typeもvector_db_propsで指定できるようにする
-            search_kwargs = {"k": 1, "filter":{"content_type": "text"}}
-
-            retriever = RetrieverUtil(client, item).create_retriever(search_kwargs)
-            docs: list[Document] = retriever.invoke(question)
-            # page_contentを取得
-            result_docs = []
-            for doc in docs:
-                result_docs.append(doc)
-            return result_docs
-
-        # StructuredTool.from_functionを使ってToolオブジェクトを作成
-        vector_search_tool = StructuredTool.from_function(
-            func=vector_search_function, name="vector_search_tool-" + str(i), description=description, args_schema=CustomToolInput  
-        )
-
-        tools.append(vector_search_tool)
-
-    return tools
-
-from typing import Optional
-
-def langchain_chat(params: LangChainChatParameter):
-
-    # langchainのログを出力する
-    langchain.verbose = True
-    print("langchain_chat:start")
-    client = LangChainOpenAIClient(params.openai_props)
-    RetrievalQAUtilInstance = RetrievalQAUtil(client, params.vector_db_items)
-    ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
-    print("langchain_chat:init done")
-    
-    result_dict = {}
-    with get_openai_callback() as cb:
-        result = ChatAgentExecutorInstance.invoke(
-                {
-                    "input": params.prompt,
-                    "chat_history": params.chat_history,
-                }
+            # StructuredTool.from_functionを使ってToolオブジェクトを作成
+            vector_search_tool = StructuredTool.from_function(
+                func=vector_search_function, name="vector_search_tool-" + str(i), description=description, args_schema=CustomToolInput  
             )
-        result_dict["output"] = result.get("output", "")
-        page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
-        result_dict["page_content_list"] = page_conetnt_list
-        result_dict["page_source_list"] = page_source_list
-        result_dict["verbose"] = verbose_json
-        result_dict["total_tokens"] = cb.total_tokens
 
-    print("langchain_chat:end")
+            tools.append(vector_search_tool)
 
-    return result_dict
+        return tools
+
+
+class LangChainUtil:
+
+    @staticmethod
+    def get_vector_db(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
+
+        langchain_openai_client = LangChainOpenAIClient(openai_props)
+        # ベクトルDBのタイプがChromaの場合
+        if vector_db_props.VectorDBTypeString == "Chroma":
+            from langchain_vector_db_chroma import LangChainVectorDBChroma
+            return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
+        # ベクトルDBのタイプがPostgresの場合
+        elif vector_db_props.VectorDBTypeString == "PGVector":
+            from langchain_vector_db_pgvector import LangChainVectorDBPGVector
+            return LangChainVectorDBPGVector(langchain_openai_client, vector_db_props)
+        else:
+            # それ以外の場合は例外
+            raise ValueError("VectorDBType is invalid")
+
+    # ベクトル検索を行う
+    @staticmethod
+    def run_vector_search( params: VectorSearchParameter):    
+
+        client = LangChainOpenAIClient(params.openai_props)
+
+        # documentsの要素からcontent, source, source_urlを取得
+        result = []
+        # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
+        for vector_db_item in params.vector_db_props:
+
+            # デバッグ出力
+            print(f'検索文字列: {params.query}')
+            print(f'検索条件: {params.search_kwarg}')
+            print('ベクトルDBの設定')
+            print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+            retriever = RetrieverUtil(client, vector_db_item).create_retriever(params.search_kwarg)
+            documents: list[Document] = retriever.invoke(params.query)
+
+            print(f"documents:\n{documents}")
+            for doc in documents:
+                content = doc.page_content
+                source = doc.metadata.get("source", "")
+                source_url = doc.metadata.get("source_url", "")
+                score = doc.metadata.get("score", 0.0)
+                # description, reliabilityを取得
+                description = doc.metadata.get("description", "")
+                reliability = doc.metadata.get("reliability", 0)
+
+                sub_docs = doc.metadata.get("sub_docs", [])
+                # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
+                sub_docs_result = []
+                for sub_doc in sub_docs:
+                    sub_content = sub_doc.page_content
+                    sub_source = sub_doc.metadata.get("source", "")
+                    sub_source_url = sub_doc.metadata.get("source_url", "")
+                    sub_score = sub_doc.metadata.get("score", 0.0)
+                    
+                    sub_docs_result.append({"content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+
+                result.append(
+                    {"content": content, "source": source, "source_url": source_url, "score": score, 
+                    "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
+            
+        return {"documents": result}
+
+
+    @staticmethod
+    def langchain_chat(params: LangChainChatParameter):
+
+        # langchainのログを出力する
+        langchain.verbose = True
+        print("langchain_chat:start")
+        client = LangChainOpenAIClient(params.openai_props)
+        RetrievalQAUtilInstance = RetrievalQAUtil(client, params.vector_db_items)
+        ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
+        print("langchain_chat:init done")
+        
+        result_dict = {}
+        with get_openai_callback() as cb:
+            result = ChatAgentExecutorInstance.invoke(
+                    {
+                        "input": params.prompt,
+                        "chat_history": params.chat_history,
+                    }
+                )
+            result_dict["output"] = result.get("output", "")
+            page_conetnt_list, page_source_list, verbose_json = RetrievalQAUtilInstance.process_intermadiate_steps(result.get("intermediate_steps",[]))
+            result_dict["page_content_list"] = page_conetnt_list
+            result_dict["page_source_list"] = page_source_list
+            result_dict["verbose"] = verbose_json
+            result_dict["total_tokens"] = cb.total_tokens
+
+        print("langchain_chat:end")
+
+        return result_dict
 
 if __name__ == '__main__':
 
     question1 = input("Please enter your question:")
 
-    from openai_props import OpenAIProps, VectorDBProps, env_to_props, get_vector_db_settings
-    props:OpenAIProps  = env_to_props()
-    vector_db_item: VectorDBProps = get_vector_db_settings()
+    from ai_app_openai_util import OpenAIProps
+    from ai_app_vector_db_util import VectorDBProps
+    props:OpenAIProps  = OpenAIProps.env_to_props()
+    vector_db_item: VectorDBProps = VectorDBProps.get_vector_db_settings()
 
     params: LangChainChatParameter = LangChainChatParameter()
     params.chat_history = []
@@ -390,7 +457,7 @@ if __name__ == '__main__':
     params.vector_db_items = [vector_db_item]
 
     params.prompt = question1
-    result1 = langchain_chat(params)
+    result1 = LangChainUtil.langchain_chat(params)
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])
@@ -402,5 +469,4 @@ if __name__ == '__main__':
     
     verbose = result1.get("verbose", "")
     print(verbose)
-
 

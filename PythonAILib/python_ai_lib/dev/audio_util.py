@@ -1,8 +1,8 @@
 
 import os
 import sys
-from pydub import AudioSegment
-from moviepy.editor import VideoFileClip
+from pydub import AudioSegment #type: ignore
+from moviepy.editor import VideoFileClip #type: ignore
 
 
 def split_audio_file(audio_file_path, audio_format="mp3", length=1800, output_dir_path="."):

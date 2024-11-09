@@ -9,8 +9,9 @@ from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor # type: ignore
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from openai_props import OpenAIProps, env_to_props
-from autogen_props import AutoGenProps
+from ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db_util import VectorDBProps
+from ai_app_autogen_util import AutoGenProps
 
 # Create a temporary directory to store the code files.
 temp_dir = tempfile.TemporaryDirectory()
@@ -21,7 +22,7 @@ executor = LocalCommandLineCodeExecutor(
     work_dir=temp_dir.name,  # Use the temporary directory to store the code files.
 )
 
-openAIProps: OpenAIProps = env_to_props()
+openAIProps: OpenAIProps = OpenAIProps.env_to_props()
 autogenProps: AutoGenProps = AutoGenProps(openAIProps)
 
 llm_config =autogenProps.llm_config

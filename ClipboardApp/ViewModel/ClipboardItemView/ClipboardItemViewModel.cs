@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.ViewModel.MainWindow;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
