@@ -2,9 +2,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Model {
+namespace PythonAILib.Model.Chat {
     public class OpenAIProperties {
 
         [JsonPropertyName("OpenAIKey")]

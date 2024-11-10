@@ -3,14 +3,14 @@ using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using WpfAppCommon.Utils;
 using QAChat.Resource;
 
-namespace ClipboardApp.Settings {
+namespace ClipboardApp.Settings
+{
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
@@ -531,7 +531,7 @@ namespace ClipboardApp.Settings {
             PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
             try {
                 // ChatControllerを作成
-                Chat chatController = new();
+                ChatRequest chatController = new();
                 List<ChatContentItem> chatItems = [];
                 // ChatItemを追加
                 ChatContentItem chatItem = new(ChatContentItem.UserRole, "Hello");
@@ -557,7 +557,7 @@ namespace ClipboardApp.Settings {
         // TestLangChain
         private void TestLangChain() {
             try {
-                Chat chatController = new();
+                ChatRequest chatController = new();
                 List<ChatContentItem> chatItems = [new ChatContentItem(ChatContentItem.UserRole, "Hello")];
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;

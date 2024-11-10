@@ -1,12 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Common;
 using PythonAILib.Model.Script;
 using PythonAILib.Resource;
 using QAChat.Model;
 using QAChat.View.PythonScriptView;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Script {
+namespace QAChat.ViewModel.Script
+{
     public class ListPythonScriptWindowViewModel : QAChatViewModelBase {
 
         public enum ActionModeEnum {
@@ -51,9 +53,10 @@ namespace QAChat.ViewModel.Script {
             this.afterSelect = afterSelect;
 
             ScriptItems.Clear();
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetScriptCollection<ScriptItem>();
 
-            foreach (var item in libManager.DataFactory.GetScriptItems()) {
+            foreach (var item in collection.FindAll()) {
                 ScriptItems.Add(item);
             }
             OnPropertyChanged(nameof(ScriptItems));

@@ -1,10 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Common;
+using PythonAILib.Model.VectorDB;
+using QAChat.Model;
 using QAChat.View.RAGWindow;
 using WpfAppCommon.Utils;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.RAGWindow {
+namespace QAChat.ViewModel.RAGWindow
+{
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
@@ -13,11 +16,9 @@ namespace QAChat.ViewModel.RAGWindow {
         public ListRAGSourceWindowViewModel() {
             // RagSourceItemのリストを初期化
             RagSourceItems.Clear();
-            var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
-            if (items != null) {
-                foreach (var item in items) {
-                    RagSourceItems.Add(new RAGSourceItemViewModel(item));
-                }
+            var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+            foreach (var item in collection.FindAll()) {
+                RagSourceItems.Add(new RAGSourceItemViewModel(item));
             }
             OnPropertyChanged(nameof(RagSourceItems));
         }
@@ -40,21 +41,15 @@ namespace QAChat.ViewModel.RAGWindow {
         // RAG Sourceの追加
         public SimpleDelegateCommand<object> AddRagSourceCommand => new((parameter) => {
             // SelectRAGSourceItemを設定
-            var item = PythonAILibManager.Instance?.DataFactory.CreateRAGSourceItem();
-            if (item == null) {
-                return;
-            }
-            SelectedRagSourceItem = new RAGSourceItemViewModel(item);
+            SelectedRagSourceItem = new RAGSourceItemViewModel(new RAGSourceItem());
 
             // RAG Sourceの編集Windowを開く
             EditRAGSourceWindow.OpenEditRAGSourceWindow(SelectedRagSourceItem, (afterUpdate) => {
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
-                if (items != null) {
-                    foreach (var item in items) {
-                        RagSourceItems.Add(new RAGSourceItemViewModel(item));
-                    }
+                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+                foreach (var item in collection.FindAll()) {
+                    RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
             });
@@ -71,11 +66,9 @@ namespace QAChat.ViewModel.RAGWindow {
 
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
-                if (items != null) {
-                    foreach (var item in items) {
-                        RagSourceItems.Add(new RAGSourceItemViewModel(item));
-                    }
+                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+                foreach (var item in collection.FindAll()) {
+                    RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
                 OnPropertyChanged(nameof(RagSourceItems));
             });
@@ -95,11 +88,9 @@ namespace QAChat.ViewModel.RAGWindow {
                 SelectedRagSourceItem.Item.Delete();
                 // リストを更新
                 RagSourceItems.Clear();
-                var items = PythonAILibManager.Instance?.DataFactory.GetRAGSourceItems();
-                if (items != null) {
-                    foreach (var item in items) {
-                        RagSourceItems.Add(new RAGSourceItemViewModel(item));
-                    }
+                var collection = PythonAILibManager.Instance.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+                foreach (var item in collection.FindAll()) {
+                    RagSourceItems.Add(new RAGSourceItemViewModel(item));
                 }
             }
         });

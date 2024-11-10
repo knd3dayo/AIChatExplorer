@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
+using PythonAILib.Common;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
 
-namespace QAChat.ViewModel.RAGWindow {
+namespace QAChat.ViewModel.RAGWindow
+{
     public class RAGSourceItemViewModel : QAChatViewModelBase {
 
         public RAGSourceItemViewModel(RAGSourceItem item) {
@@ -49,7 +51,8 @@ namespace QAChat.ViewModel.RAGWindow {
         // ComboBoxの選択肢
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
-                var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems().Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+                var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+                var items = collection.FindAll().Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
                 if (items == null) {
                     return new();
                 }

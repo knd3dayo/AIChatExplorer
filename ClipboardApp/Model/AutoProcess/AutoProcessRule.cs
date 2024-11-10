@@ -181,17 +181,20 @@ namespace ClipboardApp.Model.AutoProcess {
             if (Priority == -1) {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
-            ClipboardAppFactory.Instance.GetClipboardDBController().UpsertAutoProcessRule(this);
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            collection.Upsert(this);
         }
         // 削除
         public void Delete() {
-            ClipboardAppFactory.Instance.GetClipboardDBController().DeleteAutoProcessRule(this);
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            collection.Delete(Id);
             // 削除後はIdをNullにする
             Id = ObjectId.Empty;
         }
         // 取得
         public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
-            return ClipboardAppFactory.Instance.GetClipboardDBController().GetAllAutoProcessRules();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            return collection.FindAll().OrderBy(x => x.Priority);
         }
 
 

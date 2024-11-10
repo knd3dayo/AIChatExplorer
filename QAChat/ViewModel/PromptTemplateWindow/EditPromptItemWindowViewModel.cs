@@ -1,11 +1,12 @@
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 using QAChat.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.PromptTemplateWindow {
+namespace QAChat.ViewModel.PromptTemplateWindow
+{
     public class EditPromptItemWindowViewModel : QAChatViewModelBase {
 
         // 文字列リソース

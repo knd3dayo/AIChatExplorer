@@ -319,7 +319,7 @@ namespace ClipboardApp.ViewModel.Folder {
             if (Children.Count > 0) {
                 throw new Exception("Children is not cleared");
             }
-            foreach (var child in ClipboardItemFolder.Children) {
+            foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
                 if (child == null) {
                     continue;
                 }

@@ -3,18 +3,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using PythonAILib.Model;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
-using PythonAILib.Resource;
+using PythonAILib.Utils.Python;
 using QAChat.Model;
 using QAChat.View.ImageChat;
 using QAChat.View.PromptTemplateWindow;
 using QAChat.ViewModel.PromptTemplateWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat {
+namespace QAChat.ViewModel.ImageChat
+{
     public class ImageChatMainWindowViewModel : QAChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
@@ -30,7 +31,7 @@ namespace QAChat.ViewModel.ImageChat {
         public ContentItem ClipboardItem { get; set; }
 
         // Chat
-        public Chat ChatController { get; set; }
+        public ChatRequest ChatController { get; set; }
 
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
@@ -139,7 +140,7 @@ namespace QAChat.ViewModel.ImageChat {
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
-            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
 
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
@@ -160,7 +161,7 @@ namespace QAChat.ViewModel.ImageChat {
                     List<string> imageFileNames = ImageFiles.Select(image => image.ScreenShotImage.
                     ImagePath).ToList();
                     // Base64に変換
-                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => Chat.CreateImageURLFromFilePath(imageFileName)).ToList();
+                    List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatUtil.CreateImageURLFromFilePath(imageFileName)).ToList();
 
                     ChatController.ChatMode = OpenAIExecutionModeEnum.Normal;
                     ChatController.ImageURLs = imageBase64Strings;

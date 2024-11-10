@@ -1,13 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Prompt;
 using QAChat.Model;
 using QAChat.View.PromptTemplateWindow;
 using WpfAppCommon.Utils;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 
-namespace QAChat.ViewModel.PromptTemplateWindow {
+namespace QAChat.ViewModel.PromptTemplateWindow
+{
     public class ListPromptTemplateWindowViewModel : QAChatViewModelBase {
         // 初期化
 
@@ -96,7 +97,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
 
             // PromptItemsを更新
             PromptItems.Clear();
-            foreach (var item in clipboardDBController.GetAllPromptTemplates()) {
+            foreach (var item in clipboardDBController.GetPromptCollection<PromptItem>().FindAll()) {
                 // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
                 if (!IsShowSystemPromptItems &&
                     (item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined ||
@@ -124,7 +125,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow {
         // プロンプトテンプレート処理を追加する処理
         public SimpleDelegateCommand<object> AddPromptItemCommand => new((parameter) => {
             IDataFactory clipboardDBController = PythonAILibManager.Instance?.DataFactory ?? throw new NullReferenceException();
-            PromptItem item = clipboardDBController.CreatePromptItem();
+            PromptItem item = new();
 
             PromptItemViewModel itemViewModel = new(item);
             EditPromptItemWindow.OpenEditPromptItemWindow(itemViewModel, (PromptItemViewModel) => {

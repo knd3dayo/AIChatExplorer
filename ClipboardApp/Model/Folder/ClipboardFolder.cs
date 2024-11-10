@@ -6,13 +6,12 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Search;
 using LiteDB;
-using PythonAILib.Model;
+using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
-using QAChat;
 using QAChat.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
@@ -45,25 +44,26 @@ namespace ClipboardApp.Model.Folder {
         // 言語変更時にルートフォルダ名を変更する
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
             // ClipboardRootFolder
-            ClipboardFolder? clipboardRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
+            ClipboardFolder? clipboardRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
                 clipboardRootFolder.Save();
             }
             // SearchRootFolder
-            ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
+            ClipboardFolder? searchRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
                 searchRootFolder.Save();
             }
             // ChatRootFolder
-            ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
+            ClipboardFolder? chatRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
             if (chatRootFolder != null) {
                 chatRootFolder.FolderName = toRes.ChatHistory;
                 chatRootFolder.Save();
             }
             // ImageCheckRootFolder
-            ClipboardFolder? imageCheckRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.ImageCheck);
+            ClipboardFolder? imageCheckRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
                 imageCheckRootFolder.Save();
@@ -87,20 +87,11 @@ namespace ClipboardApp.Model.Folder {
         // フォルダの絶対パス ファイルシステム用
         public override string FolderPath {
             get {
-                ClipboardFolder? parent = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(ParentId);
+                ClipboardFolder? parent = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(ParentId);
                 if (parent == null) {
                     return FolderName;
                 }
                 return Tools.ConcatenateFileSystemPath(parent.FolderPath, FolderName);
-            }
-        }
-
-        // 子フォルダ　LiteDBには保存しない。
-        [BsonIgnore]
-        public List<ClipboardFolder> Children {
-            get {
-                // DBからParentIDが自分のIDのものを取得
-                return ClipboardAppFactory.Instance.GetClipboardDBController().GetFoldersByParentId(Id);
             }
         }
 
@@ -121,25 +112,27 @@ namespace ClipboardApp.Model.Folder {
         //--------------------------------------------------------------------------------
         public static ClipboardFolder RootFolder {
             get {
-                ClipboardFolder? rootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Normal);
-                if (rootFolder == null) {
-                    rootFolder = new() {
+                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
+                ClipboardFolder? clipboardRootFolder = collection.FindAll().Where(x => x.ParentId == ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
+                if (clipboardRootFolder == null) {
+                    clipboardRootFolder = new() {
                         FolderName = CLIPBOARD_ROOT_FOLDER_NAME,
                         IsRootFolder = true,
                         IsAutoProcessEnabled = true,
                         FolderType = FolderTypeEnum.Normal
                     };
-                    rootFolder.Save();
+                    clipboardRootFolder.Save();
                 }
                 // 既にRootFolder作成済みの環境のための措置
-                rootFolder.IsRootFolder = true;
-                return rootFolder;
+                clipboardRootFolder.IsRootFolder = true;
+                return clipboardRootFolder;
             }
         }
 
         public static ClipboardFolder SearchRootFolder {
             get {
-                ClipboardFolder? searchRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Search);
+                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
+                ClipboardFolder? searchRootFolder = collection.FindAll().Where(x => x.ParentId == ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
                         FolderName = SEARCH_ROOT_FOLDER_NAME,
@@ -159,7 +152,8 @@ namespace ClipboardApp.Model.Folder {
 
         public static ClipboardFolder ChatRootFolder {
             get {
-                ClipboardFolder? chatRootFolder = ClipboardAppFactory.Instance.GetClipboardDBController().GetRootFolderByType(FolderTypeEnum.Chat);
+                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
+                ClipboardFolder? chatRootFolder = collection.FindAll().Where(x => x.ParentId == ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
                 if (chatRootFolder == null) {
                     chatRootFolder = new ClipboardFolder {
                         FolderName = CHAT_ROOT_FOLDER_NAME,
@@ -183,11 +177,11 @@ namespace ClipboardApp.Model.Folder {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
             if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                _items = [.. ClipboardDatabaseController.SearchItems(this, GlobalSearchCondition.SearchCondition)];
+                _items = [.. SearchItems(GlobalSearchCondition.SearchCondition)];
 
             } else {
                 // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                _items = [.. ClipboardDatabaseController.GetItems(this)];
+                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().FindAll().Where(x => x.CollectionId == this.Id)];
             }
             return _items;
         }
@@ -201,23 +195,112 @@ namespace ClipboardApp.Model.Folder {
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
                 // 検索対象フォルダのアイテムを検索する。
-                _items = [.. ClipboardDatabaseController.SearchItems(searchConditionRule.TargetFolder, searchConditionRule.SearchCondition)];
+                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition)];
 
             }
             // 検索対象フォルダパスがない場合は何もしない。
             return _items;
         }
 
+
+
+
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
         public void DeleteChild(ClipboardFolder child) {
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            ClipboardDatabaseController.DeleteFolder(child);
+            DeleteFolder<ClipboardFolder, ClipboardItem>(child);
         }
 
         public ClipboardFolder CreateChild(string folderName) {
             ClipboardFolder child = new(this, folderName);
             return child;
         }
+
+
+
+        // ClipboardItemを検索する。
+        public IEnumerable<ClipboardItem> SearchItems(SearchCondition searchCondition) {
+            // 結果を格納するIEnumerable<ContentItem>を作成
+            IEnumerable<ClipboardItem> result = [];
+            // 検索条件が空の場合は、結果を返す
+            if (searchCondition.IsEmpty()) {
+                return result;
+            }
+
+            // folder内のアイテムを保持するコレクションを取得
+            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ClipboardItem>();
+            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt);
+            // Filterの結果を結果に追加
+            result = Filter(clipboardItems, searchCondition);
+
+            // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
+            if (searchCondition.IsIncludeSubFolder) {
+                // 対象フォルダの子フォルダを取得
+                var folderCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
+                var childFolders = folderCollection.FindAll().Where(x => x.ParentId == this.Id).OrderBy(x => x.FolderName);
+                foreach (var childFolder in childFolders) {
+                    // サブフォルダのアイテムを検索
+                    var subFolderResult = childFolder.SearchItems(searchCondition);
+                    // Filterの結果を結果に追加
+                    result = result.Concat(subFolderResult);
+                }
+            }
+            return result;
+        }
+
+        public IEnumerable<ClipboardItem> Filter(IEnumerable<ClipboardItem> liteCollection, SearchCondition searchCondition) {
+            if (searchCondition.IsEmpty()) {
+                return liteCollection;
+            }
+
+            var results = liteCollection;
+            // SearchConditionの内容に従ってフィルタリング
+            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
+                if (searchCondition.ExcludeDescription) {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
+                } else {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
+                if (searchCondition.ExcludeContent) {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
+                } else {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
+                if (searchCondition.ExcludeTags) {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
+                } else {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
+                if (searchCondition.ExcludeSourceApplicationName) {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
+                if (searchCondition.ExcludeSourceApplicationTitle) {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
+                }
+            }
+            if (searchCondition.EnableStartTime) {
+                results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
+            }
+            if (searchCondition.EnableEndTime) {
+                results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
+            }
+            results = results.OrderByDescending(x => x.UpdatedAt);
+
+            return results;
+        }
+
+
 
         //--------------------------------------------------------------------------------
         // ReferenceVectorDBItemsからVectorDBItemを削除
@@ -247,7 +330,7 @@ namespace ClipboardApp.Model.Folder {
             }
 
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            ClipboardDatabaseController.UpsertFolder(this);
+            ClipboardDatabaseController.GetFolderCollection<ClipboardFolder>().Upsert(this);
 
             // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
             foreach (var item in Items) {
@@ -258,8 +341,7 @@ namespace ClipboardApp.Model.Folder {
         }
         // Delete
         public void Delete() {
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            ClipboardDatabaseController.DeleteFolder(this);
+            DeleteFolder<ClipboardFolder, ClipboardItem>(this);
         }
 
         // アイテムを追加する処理

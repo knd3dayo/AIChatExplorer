@@ -2,8 +2,10 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
 using PythonAILib.PythonIF;
 using PythonAILib.Model.Script;
+using PythonAILib.Common;
 
-namespace ClipboardApp.Model.AutoProcess {
+namespace ClipboardApp.Model.AutoProcess
+{
     public class ScriptAutoProcessItem : SystemAutoProcessItem {
         public ScriptItem? ScriptItem { get; set; }
 
@@ -21,7 +23,8 @@ namespace ClipboardApp.Model.AutoProcess {
         public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems() {
 
             // DBからスクリプトのScriptItemを取得
-            List<ScriptItem> items = [.. ClipboardAppFactory.Instance.GetClipboardDBController().GetScriptItems()];
+            var collection = PythonAILibManager.Instance.DataFactory.GetScriptCollection<ScriptItem>();
+            List<ScriptItem> items = [.. collection.FindAll()];
             List<ScriptAutoProcessItem> result = [];
             foreach (var item in items) {
                 result.Add(new ScriptAutoProcessItem(item));

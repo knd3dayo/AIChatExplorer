@@ -1,8 +1,9 @@
 
 using System.IO;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 
-namespace ImageChat.Model {
+namespace ImageChat.Model
+{
     public class ImageChatConfig {
 
         private static ImageChatConfig? _instance;

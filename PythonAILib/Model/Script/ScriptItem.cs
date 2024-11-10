@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using LiteDB;
 using PythonAILib.Resource;
-using QAChat;
+using PythonAILib.Common;
 
-namespace PythonAILib.Model.Script {
+namespace PythonAILib.Model.Script
+{
     public enum ScriptType {
         Python,
         PowerShell,
@@ -29,18 +30,20 @@ namespace PythonAILib.Model.Script {
         }
         public static ObservableCollection<ScriptItem> ScriptItems {
             get {
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                var collection = libManager.DataFactory.GetScriptItems();
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                var collection = libManager.DataFactory.GetScriptCollection<ScriptItem>().FindAll();
                 return new ObservableCollection<ScriptItem>(collection);
             }
         }
         public static void SaveScriptItem(ScriptItem scriptItem) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.UpsertScriptItem(scriptItem);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetScriptCollection<ScriptItem>();
+            collection.Upsert(scriptItem);
         }
         public static void DeleteScriptItem(ScriptItem scriptItem) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.DeleteScriptItem(scriptItem);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetScriptCollection<ScriptItem>();
+            collection.Delete(scriptItem.Id);
         }
     }
 }

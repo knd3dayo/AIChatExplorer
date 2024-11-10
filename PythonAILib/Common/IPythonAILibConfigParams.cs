@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PythonAILib.Model.Chat;
 
-namespace PythonAILib.Model.Abstract {
-    public  interface IPythonAILibConfigParams {
+namespace PythonAILib.Common
+{
+    public interface IPythonAILibConfigParams {
 
         public string GetLang();
         public string GetPythonDllPath();

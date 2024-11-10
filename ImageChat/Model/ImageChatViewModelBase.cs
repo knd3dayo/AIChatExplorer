@@ -1,7 +1,8 @@
-using QAChat;
+using PythonAILib.Common;
 using QAChat.Resource;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class ImageChatViewModelBase : CommonViewModelBase {
 
         /// <summary>

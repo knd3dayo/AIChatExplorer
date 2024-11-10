@@ -1,14 +1,15 @@
 using System.Text;
 using System.Text.Json;
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Utils.Python {
+namespace PythonAILib.Utils.Python
+{
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換
@@ -18,7 +19,7 @@ namespace PythonAILib.Utils.Python {
 
         // Chatを実行して文字列の結果を取得する
         public static string CreateTextChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptText, string content) {
-            Chat chatController = new() {
+            ChatRequest chatController = new() {
                 // NormalChat, OpenAI+RAG Chat, LangChainChatを実行
                 ChatMode = promptText.ChatType,
                 PromptTemplateText = promptText.Prompt,
@@ -37,7 +38,7 @@ namespace PythonAILib.Utils.Python {
         public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
-                Chat chatController = new() {
+                ChatRequest chatController = new() {
                     ChatMode = chatMode,
                     PromptTemplateText = prompt,
                     ContentText = resultString,
@@ -56,7 +57,7 @@ namespace PythonAILib.Utils.Python {
         public static List<string> CreateListChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
 
             string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
-            Chat chatController = new() {
+            ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = promptItem.ChatType,
                 PromptTemplateText = promptText,
@@ -77,7 +78,7 @@ namespace PythonAILib.Utils.Python {
         }
         // CHatを実行してDictionary<string, object>の結果を取得する
         public static Dictionary<string, dynamic?> CreateDictionaryChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
-            Chat chatController = new() {
+            ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = promptItem.ChatType,
                 PromptTemplateText = promptItem.Prompt,
@@ -96,7 +97,7 @@ namespace PythonAILib.Utils.Python {
 
         // Chatを実行して複雑な結果を取得する
         public static Dictionary<string, dynamic?> CreateTableChatResult(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, PromptItem promptItem, string content) {
-            Chat chatController = new() {
+            ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
                 ChatMode = promptItem.ChatType,
                 PromptTemplateText = promptItem.Prompt,
@@ -115,12 +116,12 @@ namespace PythonAILib.Utils.Python {
 
         // 画像からテキストを抽出する
         public static string ExtractTextFromImage(OpenAIProperties openAIProperties, List<string> ImageBase64List) {
-            Chat chatController = new();
+            ChatRequest chatController = new();
             // Normal Chatを実行
             chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
             chatController.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
             chatController.ContentText = "";
-            chatController.ImageURLs = ImageBase64List.Select(Chat.CreateImageURL).ToList();
+            chatController.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
             if (chatController.ImageURLs.Count == 0) {
                 return "";
             }
@@ -169,7 +170,7 @@ namespace PythonAILib.Utils.Python {
             return "";
         }
         // OpenAIChatを実行する。
-        public static ChatResult? ExecuteChat(OpenAIProperties openAIProperties, Chat chat) {
+        public static ChatResult? ExecuteChat(OpenAIProperties openAIProperties, ChatRequest chat) {
             if (chat.ChatMode == OpenAIExecutionModeEnum.Normal) {
                 // 通常のChatを実行する。
                 return ExecuteChatNormal(openAIProperties, chat);
@@ -184,7 +185,7 @@ namespace PythonAILib.Utils.Python {
             }
             return null;
         }
-        public static ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties, Chat chat) {
+        public static ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties, ChatRequest chat) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
             // GenerateVectorSearchResult(openAIProperties);
 
@@ -200,7 +201,7 @@ namespace PythonAILib.Utils.Python {
 
         }
 
-        public static ChatResult? ExecuteChatNormal(OpenAIProperties openAIProperties, Chat chat) {
+        public static ChatResult? ExecuteChatNormal(OpenAIProperties openAIProperties, ChatRequest chat) {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, chat);
             // リクエストをChatItemsに追加
             if (result == null) {
@@ -213,7 +214,7 @@ namespace PythonAILib.Utils.Python {
             return result;
         }
 
-        public static ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties, Chat chat) {
+        public static ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties, ChatRequest chat) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
             chat.ContentText += ChatUtil.GenerateVectorSearchResult(openAIProperties, chat.VectorDBItems, chat.ContentText);
             chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, chat.ContentText));
@@ -230,6 +231,59 @@ namespace PythonAILib.Utils.Python {
 
             return result;
 
+        }
+
+
+
+        public static string CreateImageURLFromFilePath(string filePath) {
+            // filePathから画像のBase64文字列を作成
+            byte[] imageBytes = System.IO.File.ReadAllBytes(filePath);
+            string result = CreateImageURL(imageBytes);
+            return result;
+        }
+
+        public static string CreateImageURL(string base64String) {
+
+            ContentTypes.ImageType imageType = ContentTypes.GetImageTypeFromBase64(base64String);
+            if (imageType == ContentTypes.ImageType.unknown) {
+                return "";
+            }
+            string formatText = imageType.ToString();
+
+            // Base64文字列から画像のURLを作成
+            string result = $"data:image/{formatText};base64,{base64String}";
+            return result;
+        }
+
+        public static string CreateImageURL(byte[] imageBytes) {
+            // filePathから画像のBase64文字列を作成
+            string base64String = Convert.ToBase64String(imageBytes);
+            string result = CreateImageURL(base64String);
+            return result;
+        }
+
+        public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
+
+            //OpenAIのリクエストパラメーターのContent部分のデータを作成
+            List<Dictionary<string, object>> parameters = [];
+            // Contentを作成
+            var dc = new Dictionary<string, object> {
+                ["type"] = "text",
+                ["text"] = content
+            };
+            parameters.Add(dc);
+
+            foreach (var imageURL in imageURLs) {
+                // ImageURLプロパティを追加
+                dc = new Dictionary<string, object> {
+                    ["type"] = "image_url",
+                    ["image_url"] = new Dictionary<string, object> {
+                        ["url"] = imageURL
+                    }
+                };
+                parameters.Add(dc);
+            }
+            return parameters;
         }
 
     }

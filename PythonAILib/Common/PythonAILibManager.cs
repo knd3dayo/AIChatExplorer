@@ -1,12 +1,9 @@
-using LiteDB.Engine;
-using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace QAChat
+namespace PythonAILib.Common
 {
     public class PythonAILibManager {
 
@@ -19,6 +16,19 @@ namespace QAChat
                 _instance = value;
             }
         }
+
+        /// <summary>
+        /// PythonAILibManagerの初期化
+        /// IPythonAILibConfigPramsを実装したクラスを引数に渡す
+        /// </summary>
+        /// <param name="parmas"></param>
+        public static void Init(IPythonAILibConfigParams parmas) {
+
+            Instance = new PythonAILibManager(parmas);
+            // PromptItemの初期化
+            PromptItem.InitSystemPromptItems();
+        }
+
 
         public IPythonAILibConfigParams ConfigParams { get; private set; }
 
@@ -40,14 +50,9 @@ namespace QAChat
 
         }
 
-        public static void Init(IPythonAILibConfigParams parmas) {
-
-            Instance = new PythonAILibManager(parmas);
-            // PromptItemの初期化
-            PromptItem.InitSystemPromptItems();
-        }
-
         public IDataFactory DataFactory { get; set; }
+
+
 
     }
 }

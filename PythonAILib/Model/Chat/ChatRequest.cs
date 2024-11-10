@@ -2,20 +2,19 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using PythonAILib.Common;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
-using QAChat;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Model.Chat
+{
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
-    public class Chat{
-
-        public Chat() {
+    public class ChatRequest {
+        public ChatRequest() {
             OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties();
         }
 
@@ -59,9 +58,8 @@ namespace PythonAILib.Model.Chat {
         protected int MaxTokens { get; set; } = 0;
 
 
-
-
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
+
 
         public List<ChatContentItem> ChatHistory { get; set; } = [];
 
@@ -111,97 +109,12 @@ namespace PythonAILib.Model.Chat {
             return promptText;
         }
 
-        public static string CreateImageURLFromFilePath(string filePath) {
-            // filePathから画像のBase64文字列を作成
-            byte[] imageBytes = System.IO.File.ReadAllBytes(filePath);
-            string result = CreateImageURL(imageBytes);
-            return result;
-        }
-
-        public static string CreateImageURL(string base64String) {
-
-            ContentTypes.ImageType imageType = ContentTypes.GetImageTypeFromBase64(base64String);
-            if (imageType == ContentTypes.ImageType.unknown) {
-                return "";
-            }
-            string formatText = imageType.ToString();
-
-            // Base64文字列から画像のURLを作成
-            string result = $"data:image/{formatText};base64,{base64String}";
-            return result;
-        }
-
-        private static string CreateImageURL(byte[] imageBytes) {
-            // filePathから画像のBase64文字列を作成
-            string base64String = Convert.ToBase64String(imageBytes);
-            string result = CreateImageURL(base64String);
-            return result;
-        }
-
-        private static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
-
-            //OpenAIのリクエストパラメーターのContent部分のデータを作成
-            List<Dictionary<string, object>> parameters = [];
-            // Contentを作成
-            var dc = new Dictionary<string, object> {
-                ["type"] = "text",
-                ["text"] = content
-            };
-            parameters.Add(dc);
-
-            foreach (var imageURL in imageURLs) {
-                // ImageURLプロパティを追加
-                dc = new Dictionary<string, object> {
-                    ["type"] = "image_url",
-                    ["image_url"] = new Dictionary<string, object> {
-                        ["url"] = imageURL
-                    }
-                };
-                parameters.Add(dc);
-            }
-            return parameters;
-        }
-
-        private List<Dictionary<string, object>> CreateOpenAIMessagesList() {
-            //OpenAIのリクエストパラメーターのMessage部分のデータを作成
-            // Messages部分はRoleとContentからなるDictionaryのリスト
-            List<Dictionary<string, object>> messages = [];
-            foreach (var item in ChatHistory) {
-                var itemDict = new Dictionary<string, object> {
-                    ["role"] = item.Role,
-                    ["content"] = CreateOpenAIContentList(item.Content, item.ImageURLs)
-                };
-                messages.Add(itemDict);
-            }
-            // このオブジェクトのプロパティを基にしたContentを作成
-            // ImageURLとAdditionalImageURLsを結合したリストを作成
-            List<string> additionalImageURLs = [];
-            foreach (ContentItem item in AdditionalItems) {
-                if (item.IsImage()) {
-                    string? base64String = item.Base64String;
-                    if (base64String == null) {
-                        continue;
-                    }
-                    additionalImageURLs.Add(CreateImageURL(base64String));
-                }
-            }
-
-            List<string> imageURLs = [.. ImageURLs, .. additionalImageURLs];
-
-            var dc = new Dictionary<string, object> {
-                ["role"] = ChatContentItem.UserRole,
-                ["content"] = CreateOpenAIContentList(CreatePromptText(), imageURLs)
-            };
-            messages.Add(dc);
-            return messages;
-        }
-
-        public string CreateOpenAIRequestJSON(OpenAIProperties openAIProperties) {
+        public string ToJson() {
             // OpenAIのAPIに送信するJSONを作成
 
             // ClipboardAppConfigの設定を取得
             // ChatModel
-            string model = openAIProperties.OpenAICompletionModel;
+            string model = OpenAIProperties.OpenAICompletionModel;
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {
@@ -233,5 +146,38 @@ namespace PythonAILib.Model.Chat {
             return ChatUtil.ExecuteChat(openAIProperties, this);
         }
 
+
+        private List<Dictionary<string, object>> CreateOpenAIMessagesList() {
+            //OpenAIのリクエストパラメーターのMessage部分のデータを作成
+            // Messages部分はRoleとContentからなるDictionaryのリスト
+            List<Dictionary<string, object>> messages = [];
+            foreach (var item in ChatHistory) {
+                var itemDict = new Dictionary<string, object> {
+                    ["role"] = item.Role,
+                    ["content"] = ChatUtil.CreateOpenAIContentList(item.Content, item.ImageURLs)
+                };
+                messages.Add(itemDict);
+            }
+            // このオブジェクトのプロパティを基にしたContentを作成
+            // ImageURLとAdditionalImageURLsを結合したリストを作成
+            List<string> additionalImageURLs = [];
+            foreach (ContentItem item in AdditionalItems) {
+                if (item.IsImage()) {
+                    string? base64String = item.Base64String;
+                    if (base64String == null) {
+                        continue;
+                    }
+                    additionalImageURLs.Add(ChatUtil.CreateImageURL(base64String));
+                }
+            }
+            List<string> imageURLs = [.. ImageURLs, .. additionalImageURLs];
+
+            var dc = new Dictionary<string, object> {
+                ["role"] = ChatContentItem.UserRole,
+                ["content"] = ChatUtil.CreateOpenAIContentList(CreatePromptText(), imageURLs)
+            };
+            messages.Add(dc);
+            return messages;
+        }
     }
 }

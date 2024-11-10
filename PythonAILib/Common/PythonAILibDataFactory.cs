@@ -5,15 +5,18 @@ using PythonAILib.Model.Script;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.Resource;
-using QAChat;
 
-namespace PythonAILib.Model.Abstract {
-    public abstract class PythonAILibDataFactory : IDataFactory {
+namespace PythonAILib.Common
+{
+    public class PythonAILibDataFactory : IDataFactory {
 
         public const string CHAT_SESSION_COLLECTION_NAME = "chat_session";
         public const string CONTENT_ITEM_COLLECTION_NAME = "clipboard_item";
         public const string CONTENT_ATTACHED_ITEM_COLLECTION_NAME = "clipboard_file";
+
+        public const string CONTENT_FOLDERS_COLLECTION_NAME = "folders";
+        public const string ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
+
         public const string TAG_COLLECTION_NAME = "tags";
         public const string SCRIPT_COLLECTION_NAME = "scripts";
 
@@ -185,244 +188,51 @@ namespace PythonAILib.Model.Abstract {
 
 
         //-- ContentItem
+        public ILiteCollection<T> GetItemCollection<T>() where T : ContentItem {
+            var collection = GetDatabase().GetCollection<T>(CONTENT_ITEM_COLLECTION_NAME);
+            return collection;
+        }
 
-        // ClipboardItemを取得する。
-        public abstract ContentItem? GetItem(ContentItem item);
-
-        // ClipboardItemをLiteDBに追加または更新する
-        public abstract void UpsertItem(ContentItem item, bool updateModifiedTime = true);
-
-        // アイテムをDBから削除する
-        public abstract void DeleteItem(ContentItem item);
 
         //-- ContentFolder
-        public abstract void DeleteFolder(ContentFolder folder);
-        public abstract void UpsertFolder(ContentFolder folder);
-        public abstract ContentFolder? GetFolder(ObjectId objectId);
-
-
-        // Prompt
-        // create
-        public PromptItem CreatePromptItem() {
-            return new PromptItem();
+        public ILiteCollection<T> GetFolderCollection<T>() where T : ContentFolder {
+            var collection = GetDatabase().GetCollection<T>(CONTENT_FOLDERS_COLLECTION_NAME);
+            return collection;
         }
-
-        public void UpsertPromptTemplate(PromptItem item) {
-            var db = GetDatabase();
-
-            var col = db.GetCollection<PromptItem>(PromptTemplateCollectionName);
-            col.Upsert(item);
+        // -- PromptItem
+        public ILiteCollection<T> GetPromptCollection<T>() where T : PromptItem {
+            var collection = GetDatabase().GetCollection<T>(PromptTemplateCollectionName);
+            return collection;
         }
-
-        // プロンプトテンプレートを取得する
-        public PromptItem GetPromptTemplate(ObjectId objectId) {
-            var col = GetDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            return col.FindById(objectId);
-        }
-        // プロンプトテンプレートを名前で取得する
-        public PromptItem? GetPromptTemplateByName(string name) {
-            var col = GetDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            return col.FindOne(x => x.Name == name);
-        }
-        // システム定義のPromptItemを取得する
-        public PromptItem? GetSystemPromptTemplateByName(string name) {
-            var col = GetDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            var item = col.FindOne(x => x.Name == name);
-            if (item != null &&
-                (item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined
-                    || item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.ModifiedSystemDefined)) {
-                return item;
-            }
-            return null;
-        }
-
-        // 引数として渡されたプロンプトテンプレートを削除する
-        public void DeletePromptTemplate(PromptItem item) {
-
-            var col = GetDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            col.Delete(item.Id);
-        }
-
-        // プロンプトテンプレートを全て取得する
-        public ICollection<PromptItem> GetAllPromptTemplates() {
-            ICollection<PromptItem> collation = [];
-            var col = GetDatabase().GetCollection<PromptItem>(PromptTemplateCollectionName);
-            foreach (var item in col.FindAll()) {
-                collation.Add(item);
-            }
-            return collation;
-        }
-
 
         //----  RAGSourceItem
-
-        public RAGSourceItem CreateRAGSourceItem() {
-            return new RAGSourceItem();
+        public ILiteCollection<T> GetRAGSourceCollection<T>() where T : RAGSourceItem {
+            var collection = GetDatabase().GetCollection<T>(RAGSourceItemCollectionName);
+            return collection;
         }
-        // update
-        public void UpsertRAGSourceItem(RAGSourceItem item) {
-            // RAGSourceItemコレクションに、itemを追加または更新
-            var collection = GetDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
-            collection.Upsert(item);
-
-        }
-        // delete
-        public void DeleteRAGSourceItem(RAGSourceItem item) {
-            // RAGSourceItemコレクションから、itemを削除
-            var collection = GetDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
-            collection.Delete(item.Id);
-        }
-
-        // get
-        public IEnumerable<RAGSourceItem> GetRAGSourceItems() {
-            // RAGSourceItemコレクションから、すべてのアイテムを取得
-            var collection = GetDatabase().GetCollection<RAGSourceItem>(RAGSourceItemCollectionName);
-            return collection.FindAll();
-        }
-
-
         //--- -  VectorDBItem
-        // update
-
-        public VectorDBItem GetMainVectorDBItem() {
-            // DBからベクトルDBを取得
-            // GetItemsメソッドを呼び出して取得
-            IEnumerable<VectorDBItem> items = GetVectorDBItems();
-            var item = items.FirstOrDefault(item => item.IsSystem && item.Name == VectorDBItem.SystemCommonVectorDBName);
-
-            if (item == null) {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-
-                string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
-                string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
-                item = new VectorDBItem() {
-                    Id = ObjectId.Empty,
-                    Name = VectorDBItem.SystemCommonVectorDBName,
-                    Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
-                    Type = VectorDBTypeEnum.Chroma,
-                    VectorDBURL = vectorDBPath,
-                    DocStoreURL = $"sqlite:///{docDBPath}",
-                    IsUseMultiVectorRetriever = true,
-                    IsEnabled = true,
-                    IsSystem = true
-                };
-                item.Save();
-            }
-            // IsSystemフラグ導入前のバージョンへの対応
-            item.IsSystem = true;
-            return item;
-
-        }
-
-
-        // -- VectorDBItem
-
-        public void UpsertVectorDBItem(VectorDBItem item) {
-
-            // VectorDBItemコレクションに、itemを追加または更新
-            var collection = GetDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
-            collection.Upsert(item);
-
-        }
-        // delete
-        public void DeleteVectorDBItem(VectorDBItem item) {
-            // VectorDBItemコレクションから、itemを削除
-            var collection = GetDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
-            collection.Delete(item.Id);
-        }
-        // get
-        public IEnumerable<VectorDBItem> GetVectorDBItems() {
-            // VectorDBItemコレクションから、すべてのアイテムを取得
-            var collection = GetDatabase().GetCollection<VectorDBItem>(VectorDBItemCollectionName);
-            return collection.FindAll();
-        }
-
-        // -- VectorDBItem
-        public VectorDBItem CreateVectorDBItem() {
-            return new VectorDBItem();
+        public ILiteCollection<T> GetVectorDBCollection<T>() where T : VectorDBItem {
+            var collection = GetDatabase().GetCollection<T>(VectorDBItemCollectionName);
+            return collection;
         }
 
 
         // --- TagItem関連 ----------------------------------------------
-        // タグを取得する
-        public IEnumerable<TagItem> GetTagList() {
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var items = collection.FindAll();
-            return items;
+        public ILiteCollection<T> GetTagCollection<T>() where T : TagItem {
+            var collection = GetDatabase().GetCollection<T>(TAG_COLLECTION_NAME);
+            return collection;
         }
 
-        // 名前を指定してタグを検索する
-        public IEnumerable<TagItem> SearchTag(TagItem tag) {
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            var tags = collection.FindAll().Where(x => x.Tag != null && x.Tag.Contains(tag.Tag));
-            return tags;
-
-        }
-        public IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
-            if (string.IsNullOrEmpty(tag)) {
-                return GetTagList();
-            }
-            if (exclude) {
-                return GetTagList().Where(x => x.Tag.Contains(tag) == false);
-            } else {
-                return GetTagList().Where(x => x.Tag.Contains(tag));
-            }
-
-        }
-        // タグを削除する
-        public void DeleteTag(TagItem tag) {
-            if (tag.Id == null) {
-                return;
-            }
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            collection.Delete(tag.Id);
-        }
-
-        // タグを追加する
-        public void UpsertTag(TagItem tag) {
-            // すでに存在するかチェック
-            var tags = SearchTag(tag);
-            foreach (var i in tags) {
-                if (i.Tag == tag.Tag) {
-                    return;
-                }
-            }
-            var collection = GetDatabase().GetCollection<TagItem>(TAG_COLLECTION_NAME);
-            collection.Insert(tag);
-        }
         // --- ScriptItem関連 ----------------------------------------------
-        public IEnumerable<ScriptItem> GetScriptItems() {
-            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
-            var items = collection.FindAll();
-            return items.ToList();
-        }
-        public void UpsertScriptItem(ScriptItem scriptItem) {
-            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
-            collection.Upsert(scriptItem);
-        }
-
-        public void DeleteScriptItem(ScriptItem scriptItem) {
-            var collection = GetDatabase().GetCollection<ScriptItem>(SCRIPT_COLLECTION_NAME);
-            collection.Delete(scriptItem.Id);
+        public ILiteCollection<T> GetScriptCollection<T>() where T : ScriptItem {
+            var collection = GetDatabase().GetCollection<T>(SCRIPT_COLLECTION_NAME);
+            return collection;
         }
 
         //--- Statistics
-        public void UpsertStatistics(MainStatistics item) {
-            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
-            collection.Upsert(item);
-        }
-        public void DeleteStatistics(MainStatistics item) {
-            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
-            collection.Delete(item.Id);
-        }
-        public MainStatistics GetStatistics() {
-            var collection = GetDatabase().GetCollection<MainStatistics>(StatisticsCollectionName);
-            var item = collection.FindAll().FirstOrDefault();
-            if (item == null) {
-                item = new MainStatistics();
-                UpsertStatistics(item);
-            }
-            return item;
+        public ILiteCollection<T> GetStatisticsCollection<T>() where T : MainStatistics {
+            var collection = GetDatabase().GetCollection<T>(StatisticsCollectionName);
+            return collection;
         }
     }
 }

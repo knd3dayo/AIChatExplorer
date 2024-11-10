@@ -1,8 +1,9 @@
 using System.Windows;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using QAChat.ViewModel.PromptTemplateWindow;
 
-namespace QAChat.View.PromptTemplateWindow {
+namespace QAChat.View.PromptTemplateWindow
+{
     /// <summary>
     /// ListAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>

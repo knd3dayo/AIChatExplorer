@@ -2,8 +2,8 @@ using System.IO;
 using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
-using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 

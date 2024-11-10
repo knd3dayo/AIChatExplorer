@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using PythonAILib.Model;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
@@ -18,7 +18,8 @@ using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain {
+namespace QAChat.ViewModel.QAChatMain
+{
     public class QAChatControlViewModel : CommonViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
@@ -58,7 +59,7 @@ namespace QAChat.ViewModel.QAChatMain {
         public ObservableCollection<ContentItem> ClipboardItems { get; set; } = new();
 
 
-        public Chat ChatController { get; set; } = new();
+        public ChatRequest ChatController { get; set; } = new();
 
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -158,8 +159,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILib.Resource.PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                return ChatController.CreateOpenAIRequestJSON(libManager.ConfigParams.GetOpenAIProperties());
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                return ChatController.ToJson();
             }
         }
 
@@ -193,7 +194,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
-            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 ChatResult? result = null;

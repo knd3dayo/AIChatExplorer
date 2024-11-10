@@ -30,7 +30,7 @@ namespace ClipboardApp.Model {
         public string FolderPath {
             get {
                 // FolderObjectIdからClipboardFolderを取得
-                ClipboardFolder? folder = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
+                ClipboardFolder? folder = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(CollectionId);
                 if (folder == null) {
                     return "";
                 }
@@ -182,7 +182,7 @@ namespace ClipboardApp.Model {
 
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder GetFolder(Type? objectType = null) {
-            ClipboardFolder? folder = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolder(CollectionId);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection< ClipboardFolder>().FindById(CollectionId);
             return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
         }
 
@@ -224,7 +224,7 @@ namespace ClipboardApp.Model {
 
 
             // 保存済みのアイテムを取得
-            ClipboardItem? savedItem = (ClipboardItem?)ClipboardAppFactory.Instance.GetClipboardDBController().GetItem(this);
+            ClipboardItem? savedItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>().FindAll().FirstOrDefault(x => x.Id == Id);
 
             // SaveContentがNullの場合、またはContentが変更されている場合はOS上のファイル更新とEmbedding更新を行う
             if (savedItem == null || savedItem.Content != Content) {

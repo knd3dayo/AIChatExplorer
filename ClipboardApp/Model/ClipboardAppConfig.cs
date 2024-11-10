@@ -1,8 +1,9 @@
 
 using System.IO;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     public class ClipboardAppConfig {
 
         private static ClipboardAppConfig? _instance;

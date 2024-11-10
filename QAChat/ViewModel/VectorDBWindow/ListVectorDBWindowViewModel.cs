@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
 using QAChat.View.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDBWindow {
+namespace QAChat.ViewModel.VectorDBWindow
+{
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
@@ -71,10 +73,8 @@ namespace QAChat.ViewModel.VectorDBWindow {
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
             // VectorDBItemのリストを初期化
             VectorDBItems.Clear();
-            var items = PythonAILibManager.Instance?.DataFactory.GetVectorDBItems();
-            if (items == null) {
-                return;
-            }
+            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            var items = collection.FindAll();
             if (!IsShowSystemCommonVectorDB) {
                 items = items.Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
             }
@@ -86,12 +86,7 @@ namespace QAChat.ViewModel.VectorDBWindow {
 
         // VectorDB Sourceの追加
         public SimpleDelegateCommand<object> AddVectorDBCommand => new((parameter) => {
-            // SelectVectorDBItemを設定
-            var item = PythonAILibManager.Instance?.DataFactory.CreateVectorDBItem();
-            if (item == null) {
-                return;
-            }
-            SelectedVectorDBItem = new VectorDBItemViewModel(item);
+            SelectedVectorDBItem = new VectorDBItemViewModel(new VectorDBItem());
             // ベクトルDBの編集Windowを開く
             EditVectorDBWindow.OpenEditVectorDBWindow(SelectedVectorDBItem, (afterUpdate) => {
                 // リストを更新

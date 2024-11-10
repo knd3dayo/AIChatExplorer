@@ -1,12 +1,13 @@
 using System.Windows;
-using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 using ImageChat.Model;
 using System.IO;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 
-namespace ImageChat {
+namespace ImageChat
+{
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
         public string GetLang() {

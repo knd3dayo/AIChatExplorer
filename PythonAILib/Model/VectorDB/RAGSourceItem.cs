@@ -2,9 +2,10 @@ using LibGit2Sharp;
 using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using QAChat;
+using PythonAILib.Common;
 
-namespace PythonAILib.Model.VectorDB {
+namespace PythonAILib.Model.VectorDB
+{
     public class RAGSourceItem {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
@@ -19,23 +20,22 @@ namespace PythonAILib.Model.VectorDB {
         public string LastIndexCommitHash { get; set; } = "";
         // Get
         public static IEnumerable<RAGSourceItem> GetItems() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            // GetItemsメソッドを呼び出して取得
-            IEnumerable<RAGSourceItem> items = libManager.DataFactory.GetRAGSourceItems();
-            return items.Cast<RAGSourceItem>();
+            PythonAILibManager libManager = PythonAILibManager.Instance ;
+            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+            return collection.FindAll();
         }
 
         public void Save() {
 
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            // UpsertItemメソッドを呼び出して保存
-            libManager.DataFactory.UpsertRAGSourceItem(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance ;
+            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+            collection.Upsert(this);
 
         }
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            // DeleteItemメソッドを呼び出して削除
-            libManager.DataFactory.DeleteRAGSourceItem(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetRAGSourceCollection<RAGSourceItem>();
+            collection.Delete(Id);
 
         }
 

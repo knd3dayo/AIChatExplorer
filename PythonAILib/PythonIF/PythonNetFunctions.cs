@@ -3,7 +3,6 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Statistics;
@@ -181,10 +180,10 @@ namespace PythonAILib.PythonIF
         }
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatRequest) {
+        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatRequest) {
 
             // ChatHistoryとContentなどからリクエストを作成
-            string chat_history_json = chatRequest.CreateOpenAIRequestJSON(props);
+            string chat_history_json = chatRequest.ToJson();
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -244,10 +243,10 @@ namespace PythonAILib.PythonIF
             return chatResult;
 
         }
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties, Chat chatRequest) {
+        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatRequest chatRequest) {
 
             string prompt = chatRequest.CreatePromptText();
-            string chatHistoryJson = chatRequest.CreateOpenAIRequestJSON(openAIProperties);
+            string chatHistoryJson = chatRequest.ToJson();
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 

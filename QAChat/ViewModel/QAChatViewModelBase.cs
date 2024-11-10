@@ -1,7 +1,8 @@
+using PythonAILib.Common;
 using QAChat.Resource;
-using WpfAppCommon.Model;
 
-namespace QAChat.Model {
+namespace QAChat.Model
+{
     public class QAChatViewModelBase : CommonViewModelBase {
 
         // CommonStringResources

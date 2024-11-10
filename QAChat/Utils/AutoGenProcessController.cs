@@ -1,10 +1,11 @@
 using System.Diagnostics;
 using System.IO;
-using PythonAILib.Model;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Utils {
+namespace QAChat.Utils
+{
     public class AutoGenProcessController {
 
         public static Process? AutoGenStudioProcess { get; set; }

@@ -1,4 +1,3 @@
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -13,10 +12,10 @@ namespace PythonAILib.PythonIF
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 
-        public ChatResult OpenAIChat(OpenAIProperties props, Chat chatController);
+        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
 
 
-        public ChatResult LangChainChat(OpenAIProperties props, Chat chatController);
+        public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
 
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);

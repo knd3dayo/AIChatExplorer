@@ -1,6 +1,7 @@
 using System.IO;
 using System.Windows.Media.Imaging;
 using LiteDB;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Image;
@@ -10,7 +11,6 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
-using QAChat;
 
 namespace PythonAILib.Model.Content
 {
@@ -20,7 +20,7 @@ namespace PythonAILib.Model.Content
         public ContentItem() {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
-        
+
         }
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -103,9 +103,9 @@ namespace PythonAILib.Model.Content
                 // 文書の信頼度
                 header1 += $"\n[{PythonAILibStringResources.Instance.DocumentReliability}]" + DocumentReliability + "%\n";
                 // ★TODO フォルダーの説明を文章のカテゴリーの説明として追加
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                ContentFolder? folder = libManager.DataFactory.GetFolder(CollectionId);
-                if (folder != null && ! string.IsNullOrEmpty(folder.Description)) {
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                ContentFolder? folder = libManager.DataFactory.GetFolderCollection<ContentFolder>().FindById(CollectionId);
+                if (folder != null && !string.IsNullOrEmpty(folder.Description)) {
                     header1 += $"[{PythonAILibStringResources.Instance.DocumentCategorySummary}]" + folder.Description + "\n";
                 }
 
@@ -263,7 +263,7 @@ namespace PythonAILib.Model.Content
             // キャッシュを更新
             UpdateCache();
 
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             string base64 = Base64String;
 
@@ -288,8 +288,7 @@ namespace PythonAILib.Model.Content
 
 
         public virtual VectorDBItem GetMainVectorDBItem() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            VectorDBItem item = libManager.DataFactory.GetMainVectorDBItem();
+            VectorDBItem item = VectorDBItem.SystemCommonVectorDB;
             item.CollectionName = CollectionId.ToString();
             return item;
         }
@@ -305,23 +304,25 @@ namespace PythonAILib.Model.Content
         }
 
         public virtual void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             Task.Run(() => {
                 UpdateEmbedding(VectorDBUpdateMode.delete);
             });
-            libManager.DataFactory.DeleteItem(this);
+            libManager.DataFactory.GetItemCollection<ContentItem>().Delete(Id);
         }
 
-        public virtual void Save(bool contentIsModified = true) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+        public virtual void Save(bool updateLastModifiedTime = true) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
 
-            if (contentIsModified) {
+            if (updateLastModifiedTime) {
+                // 更新日時を設定
+                UpdatedAt = DateTime.Now;
                 // Embeddingを更新
                 Task.Run(() => {
                     UpdateEmbedding();
                 });
             }
-            libManager.DataFactory.UpsertItem(this, contentIsModified);
+            libManager.DataFactory.GetItemCollection<ContentItem>().Upsert(this);
         }
 
         // OpenAIを使用してイメージからテキスト抽出する。
@@ -360,7 +361,7 @@ namespace PythonAILib.Model.Content
                 return;
             }
 
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
                 OpenAIExecutionModeEnum.OpenAIRAG => ReferenceVectorDBItems,
@@ -425,9 +426,9 @@ namespace PythonAILib.Model.Content
         }
         // ExecuteSystemDefinedPromptを実行する
         public void CreateChatResult(string promptName) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             // システム定義のPromptItemを取得
-            PromptItem? promptItem = libManager.DataFactory.GetPromptTemplateByName(promptName) ?? throw new Exception("PromptItem not found");
+            PromptItem promptItem = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == promptName) ?? throw new Exception("PromptItem not found");
             // CreateChatResultを実行
             CreateChatResult(promptItem);
         }
@@ -443,7 +444,7 @@ namespace PythonAILib.Model.Content
                 return;
             }
             // ChatUtl.CreateDictionaryChatResultを実行
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(openAIProperties, [], new PromptItem() {
                 ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
@@ -454,13 +455,13 @@ namespace PythonAILib.Model.Content
                 return;
             }
             dynamic? reliability = response["reliability"];
-            
+
             int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
 
             // DocumentReliabilityにreliabilityを設定
             DocumentReliability = reliabilityValue;
             // responseからキー：reasonを取得
-            if (response.ContainsKey("reason") ) {
+            if (response.ContainsKey("reason")) {
                 dynamic? reason = response["reason"];
                 // DocumentReliabilityReasonにreasonを設定
                 DocumentReliabilityReason = reason?.ToString() ?? "";
@@ -469,7 +470,7 @@ namespace PythonAILib.Model.Content
 
         // ベクトル検索を実行する
         public List<VectorSearchResult> VectorSearch(List<VectorDBItem> vectorDBItems) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             string contentText = Content;
             // VectorSearchRequestを作成
@@ -500,7 +501,7 @@ namespace PythonAILib.Model.Content
                 } else {
                     if (IsImage()) {
                         // 画像からテキスト抽出
-                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, Base64String, this.HeaderText, DocumentReliability );
+                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, Base64String, this.HeaderText, DocumentReliability);
                         // Embeddingを保存
                         folderVectorDBItem.DeleteIndex(imageInfo);
                     } else {
