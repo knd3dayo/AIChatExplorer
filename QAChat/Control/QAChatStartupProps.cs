@@ -3,8 +3,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 
-namespace QAChat.Control
-{
+namespace QAChat.Control {
     public class QAChatStartupProps {
         public QAChatStartupProps(ContentItem clipboardItem) {
             ContentItem = clipboardItem;
@@ -12,13 +11,9 @@ namespace QAChat.Control
         public ContentItem ContentItem { get; set; }
 
         public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (folders) => { };
-        
+
         public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatContentItem>> ExportChatCommand { get; set; } = (chatHistory) => { };
-
-        public string VenvPath { get; set; } = "";
     }
-
-
 }

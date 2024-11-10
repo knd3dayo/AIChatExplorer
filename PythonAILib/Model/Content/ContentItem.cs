@@ -340,7 +340,7 @@ namespace PythonAILib.Model.Content
         public virtual void CreateAutoTitleWithOpenAI() {
             // ContentTypeがTextの場合
             if (ContentType == ContentTypes.ContentItemTypes.Text) {
-                CreateChatResult(PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString());
+                CreateChatResult(SystemDefinedPromptNames.TitleGeneration.ToString());
                 return;
             }
             // ContentTypeがFiles,の場合
@@ -374,17 +374,17 @@ namespace PythonAILib.Model.Content
             string contentText = HeaderText + "\n" + Content;
 
             // PromptResultTypeがTextContentの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TextContent) {
+            if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
                 string result = ChatUtil.CreateTextChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
                 if (string.IsNullOrEmpty(result) == false) {
                     // PromptChatResultに結果を保存
                     PromptChatResult.SetTextContent(promptItem.Name, result);
                     // PromptOutputTypeがOverwriteTitleの場合はDescriptionに結果を保存
-                    if (promptItem.PromptOutputType == PromptItem.PromptOutputTypeEnum.OverwriteTitle) {
+                    if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteTitle) {
                         Description = result;
                     }
                     // PromptOutputTypeがOverwriteContentの場合はContentに結果を保存
-                    if (promptItem.PromptOutputType == PromptItem.PromptOutputTypeEnum.OverwriteContent) {
+                    if (promptItem.PromptOutputType == PromptOutputTypeEnum.OverwriteContent) {
                         Content = result;
                     }
                 }
@@ -392,7 +392,7 @@ namespace PythonAILib.Model.Content
             }
 
             // PromptResultTypeがTableContentの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.TableContent) {
+            if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
                 Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
                 // resultからキー:resultを取得
                 if (response.ContainsKey("result") == false) {
@@ -415,7 +415,7 @@ namespace PythonAILib.Model.Content
                 return;
             }
             // PromptResultTypeがListの場合
-            if (promptItem.PromptResultType == PromptItem.PromptResultTypeEnum.ListContent) {
+            if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
                 List<string> response = ChatUtil.CreateListChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
                 if (response.Count > 0) {
                     // PromptChatResultに結果を保存
@@ -436,9 +436,9 @@ namespace PythonAILib.Model.Content
         // 文章の信頼度を判定する
         public void CheckDocumentReliability() {
 
-            CreateChatResult(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            CreateChatResult(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             // PromptChatResultからキー：DocumentReliabilityCheck.ToString()の結果を取得
-            string result = PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            string result = PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             // resultがない場合は処理しない
             if (string.IsNullOrEmpty(result)) {
                 return;

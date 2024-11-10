@@ -8,8 +8,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Utils.Python
-{
+namespace PythonAILib.Utils.Python {
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換

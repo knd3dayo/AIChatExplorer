@@ -41,10 +41,10 @@ namespace ClipboardApp.Model {
         [BsonIgnore]
         public string BackgroundInfo {
             get {
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
             }
             set {
-                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
             }
         }
 
@@ -52,20 +52,20 @@ namespace ClipboardApp.Model {
         [BsonIgnore]
         public string Summary {
             get {
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
             }
             set {
-                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
             }
         }
         // 文章の信頼度
         [BsonIgnore]
         public string InformationReliability {
             get {
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
             }
             set {
-                PromptChatResult.SetTextContent(PromptItem.SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
             }
         }
 
@@ -340,8 +340,8 @@ namespace ClipboardApp.Model {
             }
             var task1 = Task.Run(() => {
                 // 標準背景情報を生成
-                CreateChatResult(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-                return PromptChatResult.GetTextContent(PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
+                CreateChatResult(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
             });
 
             // すべてのタスクが完了するまで待機

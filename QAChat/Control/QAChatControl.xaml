@@ -273,20 +273,15 @@
                     </Grid>
                 </TabItem>
                 <TabItem
-                    Width="Auto"
-                    Height="Auto"
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.Preview, Mode=OneTime}">
-                    <ScrollViewer
-                        Height="300"
-                        VerticalAlignment="Top"
-                        VerticalScrollBarVisibility="Auto">
+                    Header="{Binding StringResources.RequestParameterJson}">
+                    <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding PreviewText, Mode=OneWay}"
+                            Text="{Binding PreviewJson, Mode=OneWay}"
                             TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
@@ -296,15 +291,12 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.PreviewJSON}">
-                    <ScrollViewer
-                        Height="300"
-                        VerticalAlignment="Top"
-                        VerticalScrollBarVisibility="Auto">
+                    Header="{Binding StringResources.GenerateDebugCommand}">
+                    <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
                         <TextBox
                             Margin="10,10,10,10"
                             VerticalAlignment="Top"
-                            Text="{Binding PreviewJson, Mode=OneWay}"
+                            Text="{Binding GeneratedDebugCommand, Mode=OneWay}"
                             TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
                     </ScrollViewer>
                 </TabItem>
@@ -317,12 +309,10 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
-                    Grid.Column="3"
+                    Grid.Column="1"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">
                     <Button

@@ -100,8 +100,8 @@ namespace QAChat.ViewModel.PromptTemplateWindow
             foreach (var item in clipboardDBController.GetPromptCollection<PromptItem>().FindAll()) {
                 // システム用のプロンプトテンプレートを表示しない場合は、システム用のプロンプトテンプレートを表示しない
                 if (!IsShowSystemPromptItems &&
-                    (item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined ||
-                       item.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.ModifiedSystemDefined)) {
+                    (item.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
+                       item.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)) {
                     continue;
                 }
                 PromptItemViewModel itemViewModel = new(item);

@@ -299,13 +299,13 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
                 ObservableCollection<TabItem> tabItems = [];
                 // PromptResultのタブ
                 List<string> promptNames = [
-                    PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
-                    PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString(),
-                    PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString()
+                    SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(),
+                    SystemDefinedPromptNames.TasksGeneration.ToString(),
+                    SystemDefinedPromptNames.SummaryGeneration.ToString()
                     ];
                 // PromptChatResultのエントリからPromptItemの名前を取得
                 foreach (string name in ClipboardItem.PromptChatResult.Results.Keys) {
-                    if (promptNames.Contains(name) || PromptItem.SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
+                    if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
                         continue;
                     }
                     promptNames.Add(name);
@@ -319,13 +319,13 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
                     }
 
                     object content = item.PromptResultType switch {
-                        PromptItem.PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
-                        PromptItem.PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
+                        PromptResultTypeEnum.TextContent => new PromptResultTextPanel() { DataContext = promptViewModel },
+                        PromptResultTypeEnum.TableContent => new PromptResultTablePanel() { DataContext = promptViewModel },
                         _ => ""
                     };
                     Visibility visibility = item.PromptResultType switch {
-                        PromptItem.PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
-                        PromptItem.PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
+                        PromptResultTypeEnum.TextContent => promptViewModel.TextContentVisibility,
+                        PromptResultTypeEnum.TableContent => promptViewModel.TableContentVisibility,
                         _ => Visibility.Collapsed
                     };
 

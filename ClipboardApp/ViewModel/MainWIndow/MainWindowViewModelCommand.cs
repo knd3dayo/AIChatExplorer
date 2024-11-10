@@ -147,8 +147,10 @@ namespace ClipboardApp {
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-            ClipboardItem dummyItem = new(ChatRootFolderViewModel.ClipboardItemFolder.Id);
+            
+            ClipboardItem dummyItem = new(SelectedFolder?.ClipboardItemFolder.Id ?? RootFolderViewModel.ClipboardItemFolder.Id);
             ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(dummyItem);
+
         });
 
         // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視

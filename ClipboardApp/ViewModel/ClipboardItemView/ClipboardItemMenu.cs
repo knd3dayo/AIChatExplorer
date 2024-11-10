@@ -73,7 +73,7 @@ namespace ClipboardApp.ViewModel.ClipboardItemView {
                 Header = StringResources.OtherPrompts,
             };
             // DBからプロンプトテンプレートを取得し、選択させる
-            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.UserDefined).ToList();
+            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptTemplateType == PromptTemplateTypeEnum.UserDefined).ToList();
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,

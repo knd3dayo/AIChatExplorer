@@ -34,9 +34,8 @@ class AutoGenGroupChatTest1:
             name="user_proxy",
             human_input_mode="NEVER",
             is_termination_msg=lambda msg: "[会議を終了]" in msg["content"].lower(),
-            code_execution_config={"executor": self.executor},
+            code_execution_config=False,
             llm_config=self.llm_config,
-            max_consecutive_auto_reply=5,
         )
         # グループチャットの管理者
         self.chat_admin_agent = ConversableAgent(
@@ -61,6 +60,8 @@ class AutoGenGroupChatTest1:
         self.wikipedia_searcher = None
         # ベクトル検索者
         self.vector_searcher = None
+        # ファイル抽出者
+        self.file_extractor = None
 
     def enable_code_writer_and_executor(self):
         # コードの作成者と実行者は分離する。以下はコード推論 Agent。LLM を持つ。
@@ -75,8 +76,8 @@ class AutoGenGroupChatTest1:
                 ルール:
                 * コードブロック内でのみコードを提案します。
                 * 必要に応じてpipパッケージをインストールします。
-                * pipインストール以外には、システムへの変更は行いません。また、外部のファイルへのアクセスは読み取りのみ許可されます。
                 * あなたが作成するスクリプトは、{self.work_dir}に保存されます。
+                * pipインストール以外には、システムへの変更は行いません。
                 * スクリプトの実行結果がエラーである場合、エラー文を元に対策を考え、修正したコードを再度作成します。
                 * スクリプトを実行した結果、情報を十分に得られなかった場合、現状得られた情報から修正したコードを再度作成します。
                 * あなたはユーザーの指示を最終目標とし、これを満たす迄何度もコードを作成・修正します。
@@ -118,7 +119,7 @@ class AutoGenGroupChatTest1:
                 提供された関数を用いて、検索した結果、タイトルと本文を表示します。
                 """,
             llm_config=self.llm_config,
-            code_execution_config={"executor": self.executor},
+            code_execution_config=False,
             human_input_mode="NEVER",
         )
         # 利用可能な関数の情報をエージェントに登録する
@@ -139,7 +140,7 @@ class AutoGenGroupChatTest1:
                 提供された関数を用いて、検索した結果を表示します。
                 """,
             llm_config=self.llm_config,
-            code_execution_config={"executor": self.executor},
+            code_execution_config=False,
             human_input_mode="NEVER",
         )
         # 利用可能な関数の情報をエージェントに登録する
@@ -150,13 +151,36 @@ class AutoGenGroupChatTest1:
                 description="ベクトルデータベースから検索対象文字列に関連するページを検索します。検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します"
                 )(vector_search)
 
+    # ファイル抽出者を有効にする
+    def enable_file_extractor(self):
+        # ファイル抽出者
+        self.file_extractor = ConversableAgent(
+            "file-extractor",
+            system_message="""
+                あなたはファイル抽出者です。ユーザーの指示に従い、ファイルから情報を抽出します。
+                提供された関数を用いて、抽出した結果を表示します。
+                """,
+            llm_config=self.llm_config,
+            code_execution_config=False,
+            human_input_mode="NEVER",
+        )
+        # 利用可能な関数の情報をエージェントに登録する
+        extract_text_from_file = AutoGenTools().create_extract_text_from_file()
+        self.user_proxy.register_for_execution(name="extract_text_from_file") (extract_text_from_file)
+        self.file_extractor.register_for_llm(
+                name="extract_text_from_file",
+                description="ファイルからテキストを抽出します。"
+                )(extract_text_from_file)
+
+
     def set_output_file(self, output_file: str):
         self.output_file = output_file
 
     def execute_group_chat(self, initial_message: str, max_round: int):
         # エージェントのうち、Noneでないものを指定
         agents: list[ConversableAgent] = [self.user_proxy, self.chat_admin_agent]
-        for agent in [self.code_writer_agent, self.code_execution_agent, self.wikipedia_searcher, self.vector_searcher]:
+        for agent in [self.code_writer_agent, self.code_execution_agent, 
+                      self.wikipedia_searcher, self.vector_searcher, self.file_extractor]:
             if agent:
                 agents.append(agent)
         
@@ -165,7 +189,7 @@ class AutoGenGroupChatTest1:
             admin_name="chat_admin_agent",
             agents=agents,
             messages=[], 
-            send_introductions=True,  
+            # send_introductions=True,  
             max_round=max_round
         )
 
@@ -196,42 +220,38 @@ if __name__ == '__main__':
     # -m オプションでメッセージを指定する
     message = None
     output_file = None
-    openai_props_file = None
-    vector_db_props_file = None
+    props_file = None
 
-    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:v:")
+    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:")
     for opt, arg in opts:
         if opt == "-m":
             message = arg
         elif opt == "-o":
             output_file = arg
         elif opt == "-p":
-            openai_props_file = arg
-        elif opt == "-v":
-            vector_db_props_file = arg
+            props_file = arg
     
     # プロパティファイル(JSON)を読み込む
-    open_ai_props_dict = None
-    if openai_props_file:
-        print(f"openai_props_file:{openai_props_file}")
-        with open(openai_props_file, "r", encoding="utf-8") as f:
-            open_ai_props_dict = json.load(f)
-            open_ai_props: OpenAIProps = OpenAIProps.env_to_props()
-    else:
-        open_ai_props = OpenAIProps(open_ai_props_dict)
     
-    print (f"open_ai_props:{json.dumps(open_ai_props.__dict__, ensure_ascii=False, indent=4)}")
-    
-    # プロパティファイル(JSON)を読み込む
-    vector_db_props_dict = None
-    if vector_db_props_file:
-        with open(vector_db_props_file, "r", encoding="utf-8") as f:
-            vector_db_props_dict = json.load(f)
+    if props_file:
+        print(f"props_file:{props_file}")
+        with open(props_file, "r", encoding="utf-8") as f:
+            props_dict = json.load(f)
+            open_ai_props_dict = props_dict.get("open_ai_props", {})
+            open_ai_props = OpenAIProps(open_ai_props_dict)
+
+            vector_db_props_dict = props_dict.get("vector_db_props", [])
             vector_db_props_list = [VectorDBProps(props) for props in vector_db_props_dict]
     else:
-            vector_db_props_list = VectorDBProps.get_vector_db_settings()
+            open_ai_props: OpenAIProps = OpenAIProps.env_to_props()
+            vector_db_props_list = [VectorDBProps.get_vector_db_settings()]
 
-    print (f"vector_db_props_list:{json.dumps([props.__dict__ for props in vector_db_props_list], ensure_ascii=False, indent=4)}")        
+    print (f"open_ai_props:{open_ai_props.__dict__}")
+
+    if vector_db_props_list:
+        print (f"vector_db_props_list:{json.dumps([props.__dict__ for props in vector_db_props_list], ensure_ascii=False, indent=4)}")        
+    else:
+        print ("vector_db_props_list is empty")
 
     # Create a temporary directory to store the code files.
     temp_dir = tempfile.TemporaryDirectory()
@@ -250,6 +270,8 @@ if __name__ == '__main__':
     client.enable_code_writer_and_executor()
     client.enable_wikipedia_searcher()
     client.enable_vector_searcher(open_ai_props, vector_db_props_list)
+    client.enable_file_extractor()
+
     if output_file:
         client.set_output_file(output_file)
         print(f"Output file: {output_file}")

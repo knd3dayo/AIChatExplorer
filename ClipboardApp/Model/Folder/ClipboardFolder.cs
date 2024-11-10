@@ -177,11 +177,11 @@ namespace ClipboardApp.Model.Folder {
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
             // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
             if (GlobalSearchCondition.SearchCondition != null && GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                _items = [.. SearchItems(GlobalSearchCondition.SearchCondition)];
+                _items = [.. SearchItems(GlobalSearchCondition.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
 
             } else {
                 // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().FindAll().Where(x => x.CollectionId == this.Id)];
+                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().FindAll().Where(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt)];
             }
             return _items;
         }
@@ -195,7 +195,7 @@ namespace ClipboardApp.Model.Folder {
             SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
             if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
                 // 検索対象フォルダのアイテムを検索する。
-                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition)];
+                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
 
             }
             // 検索対象フォルダパスがない場合は何もしない。
@@ -746,14 +746,14 @@ namespace ClipboardApp.Model.Folder {
                 // サマリー
                 if (ClipboardAppConfig.Instance.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString());
+                    item.CreateChatResult(SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
             var task5 = Task.Run(() => {
                 // Tasks
                 if (ClipboardAppConfig.Instance.AutoGenerateTasks) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateTaskList);
-                    item.CreateChatResult(PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString());
+                    item.CreateChatResult(SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
             var task6 = Task.Run(() => {

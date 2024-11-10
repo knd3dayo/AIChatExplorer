@@ -8,8 +8,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -108,8 +107,7 @@ namespace PythonAILib.Model.Chat
             }
             return promptText;
         }
-
-        public string ToJson() {
+        public Dictionary<string, object> ToDict() {
             // OpenAIのAPIに送信するJSONを作成
 
             // ClipboardAppConfigの設定を取得
@@ -134,10 +132,12 @@ namespace PythonAILib.Model.Chat
             if (MaxTokens > 0) {
                 dc["max_tokens"] = MaxTokens;
             }
+            return dc;
+        }
 
-
+        public string ToJson() {
             //jsonに変換する
-            string json = JsonSerializer.Serialize(dc, JsonSerializerOptions);
+            string json = JsonSerializer.Serialize(ToDict(), JsonSerializerOptions);
             return json;
         }
 

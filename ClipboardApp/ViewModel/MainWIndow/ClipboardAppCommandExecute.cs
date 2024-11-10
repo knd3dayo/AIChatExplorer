@@ -389,19 +389,19 @@ namespace ClipboardApp.ViewModel.MainWindow {
 
         // Command to generate background information
         public static void GenerateBackgroundInfoCommand(List<ClipboardItem> contentItem, object afterExecuteAction) {
-            string promptName = PromptItem.SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
+            string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
 
         // Command to generate a summary
         public static void GenerateSummaryCommand(List<ClipboardItem> contentItem, object afterExecuteAction) {
-            string promptName = PromptItem.SystemDefinedPromptNames.SummaryGeneration.ToString();
+            string promptName = SystemDefinedPromptNames.SummaryGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
 
         // Command to generate a task list
         public static void GenerateTasksCommand(List<ClipboardItem> contentItem, object afterExecuteAction) {
-            string promptName = PromptItem.SystemDefinedPromptNames.TasksGeneration.ToString();
+            string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
         // Command to check the reliability of the document

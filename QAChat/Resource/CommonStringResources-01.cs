@@ -1,55 +1,7 @@
 namespace QAChat.Resource {
     public partial class CommonStringResources {
 
-        private static CommonStringResources? _instance;
-        public static CommonStringResources Instance {
-            get {
-                if (_instance == null || _LangChanged) {
-                    _LangChanged = false;
-                    switch (Lang) {
-                        case "ja-JP":
-                            _instance = new CommonStringResources();
-                            break;
-                        default:
-                            _instance = new CommonStringResourcesEn();
-                            break;
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private static bool _LangChanged = false;
-        private static string _Lang = "ja-JP";
-        public static string Lang {
-            get { return _Lang; }
-            set {
-                if (_Lang != value) {
-                    _LangChanged = true;
-                }
-                _Lang = value;
-            }
-        }
-
-        #region 共通 
-        // ファイル
-        public virtual string File { get; } = "ファイル";
-
-        // ファイル/画像
-        public virtual string FileOrImage { get; } = "ファイル/画像";
-
-        // チャット内容
-        public virtual string ChatContent { get; } = "チャット内容";
-        // 作成
-        public virtual string Create { get; } = "作成";
-        // アイテム作成
-        public virtual string CreateItem { get; } = "アイテム作成";
-        // 終了
-        public virtual string Exit { get; } = "終了";
-        // 編集
-        public virtual string Edit { get; } = "編集";
-
-        #region プロンプトメニュー
+        #region --- プロンプトメニュー --------------------------------------------------
 
         public virtual string PromptMenu { get; } = "プロンプトメニュー";
         // タイトルを生成
@@ -68,47 +20,6 @@ namespace QAChat.Resource {
 
         //ベクトル検索
         public virtual string VectorSearch { get; } = "ベクトル検索";
-
-        // 開始
-        public virtual string Start { get; } = "開始";
-        // 停止
-        public virtual string Stop { get; } = "停止";
-        // 選択
-        public virtual string Select { get; } = "選択";
-        // ヘルプ
-        public virtual string Help { get; } = "ヘルプ";
-        // バージョン情報
-        public virtual string VersionInfo { get; } = "バージョン情報";
-
-        // 表示
-        public virtual string View { get; } = "表示";
-
-        // 検索
-        public virtual string Search { get; } = "検索";
-        // 設定
-        public virtual string Setting { get; } = "設定";
-        // 削除
-        public virtual string Delete { get; } = "削除";
-        // 追加
-        public virtual string Add { get; } = "追加";
-        // OK
-        public virtual string OK { get; } = "OK";
-        // キャンセル
-        public virtual string Cancel { get; } = "キャンセル";
-        // 閉じる
-        public virtual string Close { get; } = "閉じる";
-
-        // ExportImport
-        public virtual string ExportImport { get; } = "エクスポート/インポート";
-
-        // Export
-        public virtual string Export { get; } = "エクスポート";
-        // Import
-        public virtual string Import { get; } = "インポート";
-
-        // モード
-        public virtual string Mode { get; } = "モード";
-
         // バックアップ/リストア
         public virtual string BackupRestore { get; } = "バックアップ/リストア";
 
@@ -120,7 +31,6 @@ namespace QAChat.Resource {
         // ベクトルDBのリフレッシュ
         public virtual string RefreshVectorDB { get; } = "ベクトルDBのリフレッシュ";
 
-        #endregion
 
         // 自動処理ルール一覧
         public virtual string ListAutoProcessRule { get; } = "自動処理ルール一覧";
@@ -151,10 +61,7 @@ namespace QAChat.Resource {
 
         // 選択したタグを削除します。
         public virtual string DeleteSelectedTag { get; } = "選択したタグを削除";
-        // すべて選択します。
-        public virtual string SelectAll { get; } = "すべて選択";
-        // すべて選択解除します。
-        public virtual string UnselectAll { get; } = "すべて選択解除";
+
 
         // --- 画面タイトル ---
 
@@ -401,12 +308,6 @@ namespace QAChat.Resource {
         // クリップボードフォルダ編集
         public virtual string EditClipboardFolder { get; } = "クリップボードフォルダ編集";
 
-        // 名前
-        public virtual string Name { get; } = "名前";
-
-        // 説明
-        public virtual string Description { get; } = "説明";
-
         // 自動処理時の設定
         public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
 
@@ -414,24 +315,12 @@ namespace QAChat.Resource {
         public virtual string ChatType { get; } = "Chatタイプ";
         // 出力形式
         public virtual string OutputType { get; } = "出力形式";
-        // 文字列
-        public virtual string StringType { get; } = "文字列";
-        // リスト
-        public virtual string ListType { get; } = "リスト";
-        // テーブル
-        public virtual string TableType { get; } = "テーブル";
-        // 出力先
-        public virtual string OutputDestination { get; } = "出力先";
         // 新規タブ
         public virtual string NewTab { get; } = "新規タブ";
         // 本文を上書き
         public virtual string OverwriteContent { get; } = "本文を上書き";
         // タイトルを上書き
         public virtual string OverwriteTitle { get; } = "タイトルを上書き";
-
-
-
-
 
         // フォルダ選択
         public virtual string SelectFolder { get; } = "フォルダ選択";
@@ -513,9 +402,6 @@ namespace QAChat.Resource {
         // 適用対象配下のフォルダも対象にする
         public virtual string IncludeSubfolders { get; } = "適用対象配下のフォルダも対象にする";
 
-        // クリア
-        public virtual string Clear { get; } = "クリア";
-
         // -- TagSearchWindow
         // タグ検索
         public virtual string TagSearch { get; } = "タグ検索";
@@ -534,8 +420,6 @@ namespace QAChat.Resource {
         // チェックタイプ
         public virtual string CheckType { get; } = "チェックタイプ";
 
-        // 貼り付け
-        public virtual string Paste { get; } = "貼り付け";
 
         // -- ImageCheck.MainWindow --
         // 画像ファイル選択
@@ -544,20 +428,11 @@ namespace QAChat.Resource {
         // 画像エビデンスチェック項目編集
         public virtual string EditImageEvidenceCheckItem { get; } = "画像エビデンスチェック項目編集";
 
-        // 開く
-        public virtual string Open { get; } = "開く";
-
         // ここに回答が表示されます
         public virtual string TheAnswerWillBeDisplayedHere { get; } = "ここに回答が表示されます";
 
         // ここに質問を入力
         public virtual string EnterYourQuestionHere { get; } = "ここに質問を入力";
-
-        // 保存
-        public virtual string Save { get; } = "保存";
-
-        // 送信
-        public virtual string Send { get; } = "送信";
 
         // -- ListVectorDBWindow --
         // システム用のベクトルを表示
@@ -620,14 +495,9 @@ namespace QAChat.Resource {
         // プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
         public virtual string PromptTemplate { get; } = "プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。";
 
-        // プレビュー
-        public virtual string Preview { get; } = "プレビュー";
 
-        // プレビュー(JSON)
-        public virtual string PreviewJSON { get; } = "プレビュー(JSON)";
-
-        // Copy
-        public virtual string Copy { get; } = "Copy";
+        // リクエストパラメーター(JSON)
+        public virtual string RequestParameterJson { get; } = "リクエストパラメーター(JSON)";
 
         // --- ClipboardFolderViewModel ---
         // 自動処理が設定されています
@@ -656,9 +526,6 @@ namespace QAChat.Resource {
 
         // ルートフォルダは削除できません
         public virtual string RootFolderCannotBeDeleted { get; } = "ルートフォルダは削除できません";
-
-        // 確認
-        public virtual string Confirm { get; } = "確認";
 
         // "フォルダを削除しますか？"
         public virtual string ConfirmDeleteFolder { get; } = "フォルダを削除しますか？";
@@ -829,8 +696,6 @@ namespace QAChat.Resource {
         public virtual string NoChangesToSystemCommonSettings { get; } = "システム共通設定の変更はありません。";
 
         // --- ListPythonScriptWindowViewModel ---
-        // 実行
-        public virtual string Execute { get; } = "実行";
 
         // スクリプトを選択してください
         public virtual string SelectScript { get; } = "スクリプトを選択してください";
@@ -884,9 +749,6 @@ namespace QAChat.Resource {
 
         // "選択中のアイテムを削除しますか?"
         public virtual string ConfirmDeleteSelectedItems { get; } = "選択中のアイテムを削除しますか?";
-
-        // "削除しました"
-        public virtual string Deleted { get; } = "削除しました";
 
         // --- ImageCHat ---
         // 画像を確認して以下の各文が正しいか否かを教えてください\n\n
@@ -1307,5 +1169,7 @@ namespace QAChat.Resource {
         // タブ削除
         public virtual string DeleteTab { get; } = "タブ削除";
 
+        // デバッグ用のコマンド生成
+        public virtual string GenerateDebugCommand { get; } = "デバッグ用のコマンド生成";
     }
 }

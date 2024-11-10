@@ -669,8 +669,7 @@ namespace QAChat.Resource {
         public override string ClickHereToAddImageFile { get; } = "Click here to add image file";
         public override string Chat { get; } = "Chat";
         public override string PromptTemplate { get; } = "Prompt template";
-        public override string Preview { get; } = "Preview";
-        public override string PreviewJSON { get; } = "Preview (JSON)";
+        public override string RequestParameterJson { get; } = "Request Parameters (JSON)";
         public override string Copy { get; } = "Copy";
 
         // --- ClipboardFolderViewModel ---
@@ -962,6 +961,9 @@ namespace QAChat.Resource {
 
         // タブ削除
         public override string DeleteTab { get; } = "Delete Tab";
+
+        // デバッグ用のコマンド生成
+        public override string GenerateDebugCommand { get; } = "Generate Debug Command";
 
     }
 }

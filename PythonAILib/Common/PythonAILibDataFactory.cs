@@ -6,8 +6,7 @@ using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Common
-{
+namespace PythonAILib.Common {
     public class PythonAILibDataFactory : IDataFactory {
 
         public const string CHAT_SESSION_COLLECTION_NAME = "chat_session";

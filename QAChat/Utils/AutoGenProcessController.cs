@@ -2,10 +2,10 @@ using System.Diagnostics;
 using System.IO;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
+using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Utils
-{
+namespace QAChat.Utils {
     public class AutoGenProcessController {
 
         public static Process? AutoGenStudioProcess { get; set; }
@@ -18,7 +18,7 @@ namespace QAChat.Utils
             // Start AutoGenStudio
             List<string> cmdLines = [];
             // venvが有効な場合は、activate.batを実行
-            if (! string.IsNullOrEmpty(venvPath)) {
+            if (!string.IsNullOrEmpty(venvPath)) {
                 string venvActivateScript = Path.Combine(venvPath, "Scripts", "activate");
                 cmdLines.Add($"call {venvActivateScript}");
             }
@@ -44,31 +44,16 @@ namespace QAChat.Utils
         }
 
         // StartAutoGenGroupChatTest1
-        public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems ,string message, Action<string> afterProcessEnd, string? venvPath= "") {
-            // Start AutoGenStudio
-            List<string> cmdLines = [];
-            // 文字コードをUTF-8に設定
-            cmdLines.Add("chcp 65001");
-            // venvが有効な場合は、activate.batを実行
-            if (!string.IsNullOrEmpty(venvPath)) {
-                string venvActivateScript = Path.Combine(venvPath, "Scripts", "activate");
-                cmdLines.Add($"call {venvActivateScript}");
-            }
-            // python_ai_libフォルダに移動
-            cmdLines.Add("cd python_ai_lib");
-
+        public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string message, Action<string> afterProcessEnd, string? venvPath = "") {
             // 結果を出力するテンポラリファイル
             string tempFile = Path.GetTempFileName();
-            // openAIPropertiesをJSONファイルに保存
-            string openAIPropertiesJsonFile = Path.GetTempFileName();
-            File.WriteAllText(openAIPropertiesJsonFile, openAIProperties.ToJson());
-            // vectorDBItemsをJSONファイルに保存
-            string vectorDBItemsJsonFile = Path.GetTempFileName();
-            File.WriteAllText(vectorDBItemsJsonFile, VectorDBItem.ToJson(vectorDBItems));
 
-            // python ai_app_autogen_group_chat_test.py -m <質問内容> -o <出力ファイル名> -p OpenAIPropertiesのJSONファイル -v ベクトルDB設定のJSONファイル 
-            cmdLines.Add($"python ai_app_autogen_group_chat_test.py -m {message} -o {tempFile} -p {openAIPropertiesJsonFile} -v {vectorDBItemsJsonFile}");
-            cmdLines.Add("pause");
+            // パラメーターファイルを作成
+            string parametersJsonFile = DebugUtil.CreateParameterJsonFile(openAIProperties, vectorDBItems, null);
+
+            // AutoGenGroupChatTest1を起動するコマンド
+            List<string> cmdLines = DebugUtil.CreateAutoGenGroupChatTest1CommandLine(message, parametersJsonFile, tempFile);
+
             AutoGenGroupChatTest1Process = ProcessUtil.StartWindowsCommandLine(cmdLines, "", (process) => { }, (content) => {
                 // テンポラリファイルから文字列を取得
                 string result = File.ReadAllText(tempFile);
@@ -77,11 +62,8 @@ namespace QAChat.Utils
                 if (File.Exists(tempFile)) {
                     File.Delete(tempFile);
                 }
-                if (File.Exists(openAIPropertiesJsonFile)) {
-                    File.Delete(openAIPropertiesJsonFile);
-                }
-                if (File.Exists(vectorDBItemsJsonFile)) {
-                    File.Delete(vectorDBItemsJsonFile);
+                if (File.Exists(parametersJsonFile)) {
+                    File.Delete(parametersJsonFile);
                 }
 
                 AutoGenStudioProcess = null;

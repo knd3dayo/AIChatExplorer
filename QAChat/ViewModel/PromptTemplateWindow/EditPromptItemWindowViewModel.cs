@@ -5,8 +5,7 @@ using PythonAILib.Model.Prompt;
 using QAChat.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.PromptTemplateWindow
-{
+namespace QAChat.ViewModel.PromptTemplateWindow {
     public class EditPromptItemWindowViewModel : QAChatViewModelBase {
 
         // 文字列リソース
@@ -107,7 +106,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.PromptResultType = (PromptItem.PromptResultTypeEnum)value;
+                ItemViewModel.PromptItem.PromptResultType = (PromptResultTypeEnum)value;
                 OnPropertyChanged(nameof(PromptResultTypeIndex));
             }
         }
@@ -123,7 +122,7 @@ namespace QAChat.ViewModel.PromptTemplateWindow
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.PromptOutputType = (PromptItem.PromptOutputTypeEnum)value;
+                ItemViewModel.PromptItem.PromptOutputType = (PromptOutputTypeEnum)value;
                 OnPropertyChanged(nameof(PromptOutputTypeIndex));
             }
         }
@@ -188,8 +187,8 @@ namespace QAChat.ViewModel.PromptTemplateWindow
             promptItem.Description = Description;
             promptItem.Prompt = Prompt;
             promptItem.Name = Name;
-            promptItem.PromptResultType = (PromptItem.PromptResultTypeEnum)PromptResultTypeIndex;
-            promptItem.PromptOutputType = (PromptItem.PromptOutputTypeEnum)PromptOutputTypeIndex;
+            promptItem.PromptResultType = (PromptResultTypeEnum)PromptResultTypeIndex;
+            promptItem.PromptOutputType = (PromptOutputTypeEnum)PromptOutputTypeIndex;
             promptItem.ChatType = (OpenAIExecutionModeEnum)ChatTypeIndex;
 
             // Nameが空の場合はエラーメッセージを表示

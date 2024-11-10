@@ -3,50 +3,8 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Resource;
 
-namespace PythonAILib.Model.Prompt
-{
-    public class PromptItem {
-        public enum PromptTemplateTypeEnum {
-            // ユーザー定義
-            UserDefined = 0,
-            // システム定義
-            SystemDefined = 1,
-            // 変更を加えたシステム定義
-            ModifiedSystemDefined = 2
-        }
-        public enum SystemDefinedPromptNames {
-            // タイトル生成
-            TitleGeneration = 0,
-            // 背景情報生成
-            BackgroundInformationGeneration = 1,
-            // サマリー生成
-            SummaryGeneration = 2,
-            // 課題リスト生成
-            TasksGeneration = 3,
-            // 文章の信頼度判定
-            DocumentReliabilityCheck = 4
-
-        }
-        public enum PromptResultTypeEnum {
-            // テキスト
-            TextContent = 0,
-            // リスト
-            ListContent = 1,
-            // 複雑なテキスト
-            TableContent = 2,
-            // Dictionary
-            DictionaryContent = 3
-        }
-        public enum PromptOutputTypeEnum {
-            // 新規作成
-            NewContent = 0,
-            // 本文を上書き
-            OverwriteContent = 1,
-            // タイトルを上書き
-            OverwriteTitle = 2,
-        }
-
-
+namespace PythonAILib.Model.Prompt {
+    public partial class PromptItem {
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
@@ -94,8 +52,8 @@ namespace PythonAILib.Model.Prompt
 
             var item = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(
                 x => x.Name == name.ToString() && (
-                x.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.SystemDefined ||
-                x.PromptTemplateType == PromptItem.PromptTemplateTypeEnum.ModifiedSystemDefined)
+                x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
+                x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
                 ) ?? throw new System.Exception("PromptItem not found");
             return item;
         }

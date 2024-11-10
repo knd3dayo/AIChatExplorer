@@ -1,13 +1,12 @@
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Text.Json;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.Resource;
+using PythonAILib.Utils.Python;
 using QAChat.Control;
 using QAChat.Resource;
 using QAChat.Utils;
@@ -18,8 +17,7 @@ using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain
-{
+namespace QAChat.ViewModel.QAChatMain {
     public class QAChatControlViewModel : CommonViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
@@ -159,14 +157,9 @@ namespace QAChat.ViewModel.QAChatMain
 
         public string PreviewJson {
             get {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                return ChatController.ToJson();
-            }
-        }
-
-        public string PreviewText {
-            get {
-                return ChatController.CreatePromptText();
+                // パラメーターJSONを作成
+                string parametersJson = DebugUtil.CreateParameterJson(PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(), [.. VectorDBItems], ChatController);
+                return parametersJson;
             }
         }
 
@@ -221,14 +214,14 @@ namespace QAChat.ViewModel.QAChatMain
                         LogWrapper.Error(StringResources.FailedToSendChat);
                         return;
                     }
-                // チャット内容を更新
-                UpdateChatHistoryList();
+                    // チャット内容を更新
+                    UpdateChatHistoryList();
 
-                // inputTextをクリア
-                InputText = "";
+                    // inputTextをクリア
+                    InputText = "";
 
-                // _SaveChatHistoryをTrueに設定
-                _SaveChatHistory = true;
+                    // _SaveChatHistoryをTrueに設定
+                    _SaveChatHistory = true;
 
                 }
 
@@ -255,22 +248,9 @@ namespace QAChat.ViewModel.QAChatMain
                     ChatContentItem chatItem1 = new(ChatContentItem.UserRole, InputText);
                     ChatController.ChatHistory.Add(chatItem1);
                     // ChatHistoryに追加
-                    StringBuilder sb = new();
-                    // responseJsonはJsonElementのリスト
-                    List<JsonElement> jsonElements = JsonSerializer.Deserialize<List<JsonElement>>(responseJson) ?? [];
-                    foreach (var jsonElement in jsonElements) {
-                        Dictionary<string, dynamic?>? dic = PythonAILib.Utils.Common.JsonUtil.ParseJson(jsonElement.ToString());
-                        // role, name , contentを取得
-                        string role = dic?["role"] ?? "";
-                        string name = dic?["name"] ?? "";
-                        string content = dic?["content"] ?? "";
-                        // roleがuserまたはassistantの場合はrole, name, contentをStringBuiderに追加
-                        if (role == "user" || role == "assistant") {
-                            sb.Append($"{role} {name}:\n{content}\n");
-                        }
-                    }
+                    string responseText = DebugUtil.ProcessAutoGenGroupChatResult(responseJson);
 
-                    ChatContentItem chatItem2 = new(ChatContentItem.AssistantRole, sb.ToString());
+                    ChatContentItem chatItem2 = new(ChatContentItem.AssistantRole, responseText);
                     ChatController.ChatHistory.Add(chatItem2);
 
                     // チャット内容を更新
@@ -281,7 +261,7 @@ namespace QAChat.ViewModel.QAChatMain
                     _SaveChatHistory = true;
                 });
 
-            }, QAChatStartupProps.VenvPath);
+            }, PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv());
         }
 
         // チャット内容のリストを更新するメソッド
@@ -350,12 +330,12 @@ namespace QAChat.ViewModel.QAChatMain
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
-                    // プレビュータブが選択された場合、プレビューテキストを更新
-                    OnPropertyChanged(nameof(PreviewText));
-                }
-                if (tabControl.SelectedIndex == 2) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
                     OnPropertyChanged(nameof(PreviewJson));
+                }
+                if (tabControl.SelectedIndex == 2) {
+                    // デバッグタブが選択された場合、デバッグコマンドを更新
+                    OnPropertyChanged(nameof(GeneratedDebugCommand));
                 }
             }
         });
@@ -423,6 +403,37 @@ namespace QAChat.ViewModel.QAChatMain
             QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, _SaveChatHistory);
             window.Close();
         });
+
+        // GeneratedDebugCommand
+        public string GeneratedDebugCommand {
+            get {
+                // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
+                if (ChatController.ChatMode == OpenAIExecutionModeEnum.Normal || ChatController.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                    // パラメーターファイルを作成
+                    string parametersJson = DebugUtil.CreateParameterJson(PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(), [.. VectorDBItems], ChatController);
+                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                    return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
+                }
+                // ModeがLangChainの場合は、LangChainChatを実行するコマンドを返す
+                if (ChatController.ChatMode == OpenAIExecutionModeEnum.LangChain) {
+                    // パラメーターファイルを作成
+                    string parametersJson = DebugUtil.CreateParameterJson(PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(), [.. VectorDBItems], ChatController);
+                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                    return string.Join("\n\n", DebugUtil.CreateLangChainChatCommandLine(DebugUtil.DebugRequestParametersFile));
+                }
+
+                // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
+                if (ChatController.ChatMode == OpenAIExecutionModeEnum.AutoGen) {
+                    // パラメーターファイルを作成
+                    string parametersJson = DebugUtil.CreateParameterJson(PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(), [.. VectorDBItems], ChatController);
+                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+
+                    return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(InputText, DebugUtil.DebugRequestParametersFile, null));
+                }
+
+                return "";
+            }
+        }
 
     }
 

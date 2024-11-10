@@ -25,6 +25,7 @@ namespace ClipboardApp.ViewModel.Folder {
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
             QAChatStartupProps props = new(itemViewModel.ClipboardItem);
+
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 

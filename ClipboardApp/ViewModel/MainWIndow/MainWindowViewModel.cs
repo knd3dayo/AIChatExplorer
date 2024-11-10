@@ -320,8 +320,7 @@ namespace ClipboardApp
             SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
 
             QAChatStartupProps props = new(clipboardItem) {
-                // VenvPath
-                VenvPath = ClipboardAppConfig.Instance.PythonVenvPath,
+                
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
                     SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, true, (selectedItems) => {

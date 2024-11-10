@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <None Remove="python_ai_lib\ai_app.py" />
-    <None Remove="python_ai_lib\ai_app_autogen_group_chat_test.py" />
     <None Remove="python_ai_lib\ai_app_autogen_util.py" />
     <None Remove="python_ai_lib\ai_app_file_util.py" />
     <None Remove="python_ai_lib\ai_app_langchain_util.py" />
@@ -31,6 +30,9 @@
     <None Remove="python_ai_lib\llamaindex_vector_db.py" />
     <None Remove="python_ai_lib\llamaindex_vector_db_chroma.py" />
     <None Remove="python_ai_lib\script_template.py" />
+    <None Remove="python_ai_lib\test_ai_app_autogen_group_chat_01.py" />
+    <None Remove="python_ai_lib\test_ai_app_langchain_chat_01.py" />
+    <None Remove="python_ai_lib\test_ai_app_open_ai_chat_01.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_chroma.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_postgres.py" />
     <None Remove="python_ai_lib\test_openai_client.py" />
@@ -39,7 +41,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="python_ai_lib\ai_app_autogen_group_chat_test.py">
+    <EmbeddedResource Include="python_ai_lib\test_ai_app_langchain_chat_01.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test_ai_app_open_ai_chat_01.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test_ai_app_autogen_group_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen_util.py">
