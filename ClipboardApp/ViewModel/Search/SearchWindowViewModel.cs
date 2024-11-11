@@ -1,11 +1,12 @@
 using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
+using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Search {
+namespace ClipboardApp.ViewModel.Search
+{
     public class SearchWindowViewModel : ClipboardAppViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,

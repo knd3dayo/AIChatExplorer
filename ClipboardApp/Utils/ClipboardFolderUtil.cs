@@ -9,12 +9,20 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.ViewModel.Folder {
+namespace ClipboardApp.Utils {
     public class ClipboardFolderUtil {
 
+        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
+        public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
+        public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
+        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
+
+
         #region static methods
+
         // 言語変更時にルートフォルダ名を変更する
         public static void ChangeRootFolderNames(CommonStringResources toRes) {
+
             // ClipboardRootFolder
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
             ClipboardFolder? clipboardRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
@@ -42,6 +50,40 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
+        public static List<ClipboardItem> GetNormalFolderItems(ClipboardFolder folder) {
+            List<ClipboardItem> _items = [];
+            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+            // 検索フォルダの場合は、SearchConditionを適用して取得
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
+            if (ClipboardFolderUtil.GlobalSearchCondition.SearchCondition != null && ClipboardFolderUtil.GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
+                _items = [.. folder.SearchItems(ClipboardFolderUtil.GlobalSearchCondition.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
+
+            } else {
+                // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
+                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().FindAll().Where(x => x.CollectionId == folder.Id).OrderByDescending(x => x.UpdatedAt)];
+            }
+            return _items;
+        }
+
+        public static List<ClipboardItem> GetSearchFolderItems(ClipboardFolder folder) {
+            List<ClipboardItem> _items = [];
+            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+            // 検索フォルダの場合は、SearchConditionを適用して取得
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            // フォルダに検索条件が設定されている場合
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(folder);
+            if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
+                // 検索対象フォルダのアイテムを検索する。
+                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
+
+            }
+            // 検索対象フォルダパスがない場合は何もしない。
+            return _items;
+        }
+
+
+
         // アプリ共通の検索条件
         public static SearchRule GlobalSearchCondition { get; set; } = new();
 
@@ -52,7 +94,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 ClipboardFolder? clipboardRootFolder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
                 if (clipboardRootFolder == null) {
                     clipboardRootFolder = new() {
-                        FolderName = ClipboardFolder.CLIPBOARD_ROOT_FOLDER_NAME,
+                        FolderName = ClipboardFolderUtil.CLIPBOARD_ROOT_FOLDER_NAME,
                         IsRootFolder = true,
                         IsAutoProcessEnabled = true,
                         FolderType = FolderTypeEnum.Normal
@@ -71,7 +113,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 ClipboardFolder? searchRootFolder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
                 if (searchRootFolder == null) {
                     searchRootFolder = new ClipboardFolder {
-                        FolderName = ClipboardFolder.SEARCH_ROOT_FOLDER_NAME,
+                        FolderName = ClipboardFolderUtil.SEARCH_ROOT_FOLDER_NAME,
                         FolderType = FolderTypeEnum.Search,
                         IsRootFolder = true,
                         // 自動処理を無効にする
@@ -92,7 +134,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 ClipboardFolder? chatRootFolder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
                 if (chatRootFolder == null) {
                     chatRootFolder = new ClipboardFolder {
-                        FolderName = ClipboardFolder.CHAT_ROOT_FOLDER_NAME,
+                        FolderName = ClipboardFolderUtil.CHAT_ROOT_FOLDER_NAME,
                         FolderType = FolderTypeEnum.Chat,
                         IsRootFolder = true,
                         // 自動処理を無効にする

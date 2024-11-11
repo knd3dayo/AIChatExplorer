@@ -12,7 +12,6 @@ using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Chat;
 using ClipboardApp.ViewModel.ClipboardItemView;
-using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.MainWindow;
 using ClipboardApp.ViewModel.Search;
 using PythonAILib.Common;

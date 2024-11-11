@@ -6,13 +6,15 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
+using ClipboardApp.Utils;
 using ClipboardApp.View.ExportImportView;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder {
+namespace ClipboardApp.ViewModel.Folder
+{
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
 
@@ -256,7 +258,7 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
             if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolderUtil.RootFolder.Id
-                || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
+                || folderViewModel.FolderPath == ClipboardFolderUtil.SEARCH_ROOT_FOLDER_NAME) {
                 LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
                 return;
             }

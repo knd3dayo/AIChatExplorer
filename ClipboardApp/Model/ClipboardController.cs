@@ -1,9 +1,10 @@
 using System.Reflection;
-using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.Utils;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model
+{
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>

@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Search;
-using ClipboardApp.ViewModel.Folder;
+using ClipboardApp.Utils;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -18,11 +18,6 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
 namespace ClipboardApp.Model.Folder {
     public partial class ClipboardFolder : ContentFolder {
-
-        public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;
-        public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
-        public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
-        public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
 
 
         //--------------------------------------------------------------------------------
@@ -54,7 +49,7 @@ namespace ClipboardApp.Model.Folder {
         // フォルダの参照用のベクトルDBのリストに含めるかどうかを示すプロパティ名を変更
         public bool IncludeInReferenceVectorDBItems { get; set; } = true;
 
-        // フォルダの絶対パス ファイルシステム用
+        // フォルダの絶対パス
         public override string FolderPath {
             get {
                 ClipboardFolder? parent = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(ParentId);
@@ -70,9 +65,9 @@ namespace ClipboardApp.Model.Folder {
         public List<ClipboardItem> Items {
             get {
                 if (FolderType == FolderTypeEnum.Search) {
-                    return GetSearchFolderItems();
+                    return ClipboardFolderUtil.GetSearchFolderItems(this);
                 }
-                return GetNormalFolderItems();
+                return ClipboardFolderUtil.GetNormalFolderItems(this);
             }
         }
 
@@ -103,17 +98,17 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
-        public void DeleteChild(ClipboardFolder child) {
+        public virtual void DeleteChild(ClipboardFolder child) {
             DeleteFolder<ClipboardFolder, ClipboardItem>(child);
         }
 
-        public ClipboardFolder CreateChild(string folderName) {
+        public virtual ClipboardFolder CreateChild(string folderName) {
             ClipboardFolder child = new(this, folderName);
             return child;
         }
 
         // アイテムを追加する処理
-        public ClipboardItem AddItem(ClipboardItem item) {
+        public virtual ClipboardItem AddItem(ClipboardItem item) {
             // 検索フォルダの場合は何もしない
             if (FolderType == FolderTypeEnum.Search) {
                 return item;
@@ -146,7 +141,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // ClipboardItemを削除
-        public void DeleteItem(ClipboardItem item) {
+        public virtual void DeleteItem(ClipboardItem item) {
             // 検索フォルダの場合は何もしない
             if (FolderType == FolderTypeEnum.Search) {
                 return;
@@ -154,37 +149,6 @@ namespace ClipboardApp.Model.Folder {
 
             // LiteDBに保存
             item.Delete();
-        }
-        private List<ClipboardItem> GetNormalFolderItems() {
-            List<ClipboardItem> _items = [];
-            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
-            // 検索フォルダの場合は、SearchConditionを適用して取得
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
-            if (ClipboardFolderUtil.GlobalSearchCondition.SearchCondition != null && ClipboardFolderUtil.GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
-                _items = [.. SearchItems(ClipboardFolderUtil.GlobalSearchCondition.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
-
-            } else {
-                // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
-                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().FindAll().Where(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt)];
-            }
-            return _items;
-        }
-
-        private List<ClipboardItem> GetSearchFolderItems() {
-            List<ClipboardItem> _items = [];
-            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
-            // 検索フォルダの場合は、SearchConditionを適用して取得
-            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
-            // フォルダに検索条件が設定されている場合
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
-            if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
-                // 検索対象フォルダのアイテムを検索する。
-                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
-
-            }
-            // 検索対象フォルダパスがない場合は何もしない。
-            return _items;
         }
 
         #region 検索
