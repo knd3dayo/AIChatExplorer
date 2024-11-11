@@ -6,6 +6,7 @@ using ClipboardApp.View.HelpView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using ClipboardApp.ViewModel.MainWindow;
+using ClipboardApp.ViewModel.MainWIndow;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.PromptTemplateWindow;
@@ -147,8 +148,8 @@ namespace ClipboardApp {
         // OpenOpenAIWindowCommandExecute メニューの「OpenAIチャット」をクリックしたときの処理。
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
-            
-            ClipboardItem dummyItem = new(SelectedFolder?.ClipboardItemFolder.Id ?? RootFolderViewModel.ClipboardItemFolder.Id);
+
+            ClipboardItem dummyItem = new(SelectedFolder?.ClipboardItemFolder.Id ?? RootFolderViewModelContainer.RootFolderViewModel.ClipboardItemFolder.Id);
             ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(dummyItem);
 
         });
@@ -156,15 +157,15 @@ namespace ClipboardApp {
         // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
-            ClipboardItem dummyItem = new(ChatRootFolderViewModel.ClipboardItemFolder.Id);
+            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder.Id);
             ClipboardAppCommandExecute.OpenImageChatWindowCommand(dummyItem, () => {
-                ChatRootFolderViewModel.LoadFolderCommand.Execute();
+                RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
         });
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
-            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
+            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ClipboardAppCommandExecute.OpenVectorSearchWindowCommand(folderViewModel.ClipboardItemFolder);
         });
 
@@ -186,7 +187,7 @@ namespace ClipboardApp {
         #region Window全体のInputBinding用のコマンド
         // Ctrl + F が押された時の処理
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
-            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModel;
+            ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
             ClipboardAppCommandExecute.OpenSearchWindowCommand(folderViewModel.ClipboardItemFolder, () => { folderViewModel.LoadFolderCommand.Execute(); });
         });
 

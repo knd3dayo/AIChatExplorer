@@ -314,7 +314,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public virtual async void LoadChildren(int nestLevel = 5) {
             try {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
                 await Task.Run(() => {
                 Children = [];
 
@@ -335,7 +335,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 }
             });
             } finally {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
             }
             OnPropertyChanged(nameof(Children));
 
@@ -346,7 +346,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // ClipboardItemFolder.Itemsは別スレッドで実行
             List<ClipboardItem> _items = [];
             try {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
                 await Task.Run(() => {
                     _items = ClipboardItemFolder.Items;
                 });
@@ -354,19 +354,9 @@ namespace ClipboardApp.ViewModel.Folder {
                     Items.Add(CreateItemViewModel(item));
                 }
             } finally {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
             }
         }
-
-
-
-
-
-
-
-
-
-
 
 
     }

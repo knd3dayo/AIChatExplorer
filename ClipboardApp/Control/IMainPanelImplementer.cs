@@ -1,7 +1,7 @@
-using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.MainWIndow;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Control {
@@ -11,7 +11,7 @@ namespace ClipboardApp.Control {
         public ClipboardItemViewModel? SelectedItem { get; set; }
         public ClipboardFolderViewModel? SelectedFolder { get; set; }
         // FolderViewModels
-        public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; }
+        public RootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
         // Item
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand { get; }
         public SimpleDelegateCommand<object> OpenSelectedItemCommand { get; }
@@ -24,7 +24,7 @@ namespace ClipboardApp.Control {
         public SimpleDelegateCommand<object> DeleteItemCommand { get; }
         // CutItemCommand
         public SimpleDelegateCommand<object> CutItemCommand { get; }
-        
+
         // PasteCommand
         public SimpleDelegateCommand<object> PasteCommand { get; }
         // Folder

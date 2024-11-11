@@ -27,7 +27,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 throw new Exception("Children is not cleared");
             }
             try {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
                 await Task.Run(() => {
                     foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
@@ -42,7 +42,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                     }
                 });
             } finally {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
+                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
             }
 
             OnPropertyChanged(nameof(Children));

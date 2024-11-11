@@ -6,6 +6,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.ViewModel.MainWIndow;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
@@ -567,7 +568,7 @@ namespace ClipboardApp.ViewModel.AutoProcess
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModel;
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModelContainer.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 LogWrapper.Error(StringResources.RootFolderViewModelIsNull);
                 return;
@@ -580,7 +581,7 @@ namespace ClipboardApp.ViewModel.AutoProcess
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、TargetFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModel;
+            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModelContainer.RootFolderViewModel;
             if (rootFolderViewModel == null) {
                 LogWrapper.Error(StringResources.RootFolderViewModelIsNull);
                 return;

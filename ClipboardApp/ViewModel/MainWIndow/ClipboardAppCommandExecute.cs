@@ -5,6 +5,7 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
+using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.SearchView;
 using ClipboardApp.View.Settings;
 using ClipboardApp.View.VectorDBView;
@@ -12,16 +13,15 @@ using ClipboardApp.ViewModel.ClipboardItemView;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Control;
-using QAChat.Utils;
 using QAChat.Resource;
+using QAChat.Utils;
 using QAChat.View.ImageChat;
 using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.MainWindow
-{
+namespace ClipboardApp.ViewModel.MainWindow {
     public class ClipboardAppCommandExecute {
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ClipboardApp.ViewModel.MainWindow
                 MainWindowViewModel.ClipboardController.Start(async (clipboardItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {
-                        model.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, clipboardItem));
+                        model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
                     });
                     MainUITask.Run(() => {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
@@ -64,9 +64,9 @@ namespace ClipboardApp.ViewModel.MainWindow
             MainWindowViewModel model = MainWindowViewModel.ActiveInstance;
             model.IsWindowsNotificationMonitorActive = !model.IsWindowsNotificationMonitorActive;
             if (model.IsWindowsNotificationMonitorActive) {
-                WindowsNotificationController.Start(model.RootFolderViewModel.ClipboardItemFolder, (item) => {
+                WindowsNotificationController.Start(model.RootFolderViewModelContainer.RootFolderViewModel.ClipboardItemFolder, (item) => {
                     // Process when a clipboard item is added
-                    model.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModel, item));
+                    model.RootFolderViewModelContainer.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, item));
                     MainUITask.Run(() => {
                         model.SelectedFolder?.LoadFolderCommand.Execute();
                     });
@@ -101,7 +101,7 @@ namespace ClipboardApp.ViewModel.MainWindow
 
         // Command to open OpenAI Chat
         public static void OpenOpenAIChatWindowCommand(ClipboardItem item) {
-            QAChatStartupProps qAChatStartupProps = MainWindowViewModel.CreateQAChatStartupProps(item);
+            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(item);
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
@@ -157,11 +157,11 @@ namespace ClipboardApp.ViewModel.MainWindow
             }
             // Display ProgressIndicator until processing is complete
             try {
-                model.IsIndeterminate = true;
+                model.UpdateIndeterminate(true);
                 model.SelectedFolder.LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.Reloaded);
             } finally {
-                model.IsIndeterminate = false;
+                model.UpdateIndeterminate(false);
             }
         }
 
@@ -441,7 +441,7 @@ namespace ClipboardApp.ViewModel.MainWindow
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
                         vectorDBItems.Add(item);
                     }
@@ -457,7 +457,7 @@ namespace ClipboardApp.ViewModel.MainWindow
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModel, true, (selectedItems) => {
+                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
                     foreach (var item in selectedItems) {
                         vectorDBItems.Add(item);
                     }
@@ -478,5 +478,71 @@ namespace ClipboardApp.ViewModel.MainWindow
                 LogWrapper.Error(e.Message);
             }
         }
+
+        public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
+
+            SearchRule rule = ClipboardFolderUtil.GlobalSearchCondition.Copy();
+
+            MainWindowViewModel ActiveInstance = MainWindowViewModel.ActiveInstance;
+            QAChatStartupProps props = new(clipboardItem) {
+
+                // フォルダ選択アクション
+                SelectVectorDBItemAction = (vectorDBItems) => {
+                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
+                        foreach (var item in selectedItems) {
+                            vectorDBItems.Add(item);
+                        }
+                    });
+
+                },
+                // Saveアクション
+                SaveCommand = (item, saveChatHistory) => {
+                    clipboardItem = (ClipboardItem)item;
+                    // ClipboardItemを保存
+                    clipboardItem.Save();
+                    // チャット履歴を保存するフラグが立っている場合で、チャット履歴以外のフォルダの場合
+                    if (saveChatHistory && clipboardItem.GetFolder().FolderType != FolderTypeEnum.Chat) {
+                        // チャット履歴用のItemの設定
+                        ClipboardFolder chatFolder = ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder;
+                        ClipboardItem chatHistoryItem = new(chatFolder.Id);
+                        clipboardItem.CopyTo(chatHistoryItem);
+                        // タイトルを日付 + 元のタイトルにする
+                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
+                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                        }
+                        chatHistoryItem.Save();
+                    }
+
+                },
+                // ExportChatアクション
+                ExportChatCommand = (chatHistory) => {
+                    ClipboardFolderViewModel? folderViewModel = ActiveInstance.SelectedFolder ?? ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel;
+
+                    FolderSelectWindow.OpenFolderSelectWindow(folderViewModel, (folder) => {
+                        ClipboardItem chatHistoryItem = new(folder.ClipboardItemFolder.Id);
+                        // タイトルを日付 + 元のタイトルにする
+                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
+                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                        }
+                        // chatHistoryItemの内容をテキスト化
+                        string chatHistoryText = "";
+                        foreach (var item in chatHistory) {
+                            chatHistoryText += $"--- {item.Role} ---\n";
+                            chatHistoryText += item.ContentWithSources + "\n\n";
+                        }
+                        chatHistoryItem.Content = chatHistoryText;
+                        chatHistoryItem.Save();
+
+                    });
+
+                }
+            };
+
+            return props;
+        }
+
+
     }
 }

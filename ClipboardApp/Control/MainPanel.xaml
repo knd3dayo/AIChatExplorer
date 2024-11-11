@@ -34,7 +34,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!--  Folder TreeView  -->
-        <TreeView Grid.Column="0" ItemsSource="{Binding FolderViewModels}">
+        <TreeView Grid.Column="0" ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">
             <TreeView.ItemContainerStyle>
                 <Style TargetType="TreeViewItem">
                     <Setter Property="Margin" Value="3,3,3,3" />
