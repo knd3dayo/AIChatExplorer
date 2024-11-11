@@ -179,6 +179,14 @@
                         ElementStyle="{StaticResource SingleLineTextBlock}"
                         Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.UpdateDate}"
                         IsReadOnly="True" />
+                    <!--  LastVectorizedAt  -->
+                    <DataGridTextColumn
+                        Width="150"
+                        MaxWidth="300"
+                        Binding="{Binding VectorizedAtString}"
+                        ElementStyle="{StaticResource SingleLineTextBlock}"
+                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.VectorizedDate}"
+                        IsReadOnly="True" />
                     <!--  ContentType  -->
                     <DataGridTextColumn
                         Width="100"

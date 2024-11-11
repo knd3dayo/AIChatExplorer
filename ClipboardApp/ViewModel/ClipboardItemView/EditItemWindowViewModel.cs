@@ -151,13 +151,22 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
             ClipboardItem? item = ItemViewModel.ClipboardItem.ApplyAutoProcess();
             // ClipboardItemを更新
             if (item != null) {
-                item.Save();
+                
+                Task.Run(() => {
+                    // ベクトル化
+                    item.UpdateEmbedding();
+                    // 保存
+                    item.Save();
+                    MainUITask.Run(() => {
+                        // 更新後の処理を実行
+                        _afterUpdate.Invoke();
+                    });
+                });
+
             } else {
                 // 自動処理に失敗した場合はLogWrapper.Info("自動処理に失敗しました");
                 LogWrapper.Info("自動処理に失敗しました");
             }
-            // 更新後の処理を実行
-            _afterUpdate.Invoke();
 
         });
         // OKボタンのコマンド

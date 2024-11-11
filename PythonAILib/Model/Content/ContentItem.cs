@@ -12,15 +12,16 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Content
-{
+namespace PythonAILib.Model.Content {
     public class ContentItem {
+
+        // 日時のダミー初期値。2000/1/1 0:0:0
+        private static readonly DateTime InitialDateTime = new(2000, 1, 1, 0, 0, 0);
 
         // コンストラクタ
         public ContentItem() {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
-
         }
 
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -33,6 +34,9 @@ namespace PythonAILib.Model.Content
 
         // 更新日時
         public DateTime UpdatedAt { get; set; }
+
+        // ベクトル化日時
+        public DateTime VectorizedAt { get; set; } = InitialDateTime;
 
         // クリップボードの内容
         public string Content { get; set; } = "";
@@ -82,10 +86,12 @@ namespace PythonAILib.Model.Content
         public string HeaderText {
             get {
                 string header1 = "";
-                // 更新日時文字列を追加
-                header1 += $"[{PythonAILibStringResources.Instance.UpdateDate}]" + UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
                 // 作成日時文字列を追加
-                header1 += $"[{PythonAILibStringResources.Instance.CreationDateTime}]" + CreatedAt.ToString("yyyy/MM/dd HH:mm:ss") + "\n";
+                header1 += $"[{PythonAILibStringResources.Instance.CreationDateTime}]" + CreatedAtString + "\n";
+                // 更新日時文字列を追加
+                header1 += $"[{PythonAILibStringResources.Instance.UpdateDate}]" + UpdatedAtString + "\n";
+                // ベクトル化日時文字列を追加
+                header1 += $"[{PythonAILibStringResources.Instance.VectorizedDate}]" + VectorizedAtString + "\n";
                 // 貼り付け元のアプリケーション名を追加
                 header1 += $"[{PythonAILibStringResources.Instance.SourceAppName}]" + SourceApplicationName + "\n";
                 // 貼り付け元のアプリケーションのタイトルを追加
@@ -133,6 +139,21 @@ namespace PythonAILib.Model.Content
         public string UpdatedAtString {
             get {
                 return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            }
+        }
+        public string CreatedAtString {
+            get {
+                return CreatedAt.ToString("yyyy/MM/dd HH:mm:ss");
+            }
+        }
+
+        // ベクトル化日時の文字列
+        public string VectorizedAtString {
+            get {
+                if (VectorizedAt <= InitialDateTime) {
+                    return "";
+                }
+                return VectorizedAt.ToString("yyyy/MM/dd HH:mm:ss");
             }
         }
 
@@ -317,10 +338,6 @@ namespace PythonAILib.Model.Content
             if (updateLastModifiedTime) {
                 // 更新日時を設定
                 UpdatedAt = DateTime.Now;
-                // Embeddingを更新
-                Task.Run(() => {
-                    UpdateEmbedding();
-                });
             }
             libManager.DataFactory.GetItemCollection<ContentItem>().Upsert(this);
         }
@@ -519,7 +536,6 @@ namespace PythonAILib.Model.Content
                     ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), Content, description, DocumentReliability);
                     // Embeddingを保存
                     folderVectorDBItem.UpdateIndex(clipboardInfo);
-                    return;
                 } else {
                     if (IsImage()) {
                         // 画像からテキスト抽出
@@ -532,6 +548,8 @@ namespace PythonAILib.Model.Content
                         folderVectorDBItem.UpdateIndex(contentInfo);
                     }
                 }
+                // ベクトル化日時を更新
+                VectorizedAt = DateTime.Now;
 
             }
         }

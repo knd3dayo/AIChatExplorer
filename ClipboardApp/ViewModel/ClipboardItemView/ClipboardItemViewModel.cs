@@ -10,8 +10,7 @@ using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.ClipboardItemView
-{
+namespace ClipboardApp.ViewModel.ClipboardItemView {
     public partial class ClipboardItemViewModel : CommonViewModelBase {
 
         // コンストラクタ
@@ -187,6 +186,12 @@ namespace ClipboardApp.ViewModel.ClipboardItemView
         public string UpdatedAtString {
             get {
                 return ClipboardItem.UpdatedAtString;
+            }
+        }
+        // VectorizedAtString
+        public string VectorizedAtString {
+            get {
+                return ClipboardItem.VectorizedAtString;
             }
         }
 

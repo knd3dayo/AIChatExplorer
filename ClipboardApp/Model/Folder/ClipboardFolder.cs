@@ -550,6 +550,8 @@ namespace ClipboardApp.Model.Folder {
             // フォルダ内のアイテムを取得して、ベクトルを作成
             foreach (var item in Items) {
                 item.UpdateEmbedding();
+                // Save
+                item.Save();
             }
         }
 
