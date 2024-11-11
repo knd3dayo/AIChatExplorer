@@ -221,96 +221,11 @@ namespace ClipboardApp.Model {
         public override void Save(bool contentIsModified = true) {
 
             base.Save(contentIsModified);
-
-
-            // 保存済みのアイテムを取得
-            ClipboardItem? savedItem = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>().FindAll().FirstOrDefault(x => x.Id == Id);
-
-            // SaveContentがNullの場合、またはContentが変更されている場合はOS上のファイル更新とEmbedding更新を行う
-            if (savedItem == null || savedItem.Content != Content) {
-                // OS上のファイルに保存
-                Task.Run(() => {
-                    // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダにも保存
-                    if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
-                        SaveToOSFolder();
-                    }
-                });
-
-            }
-        }
-
-        // OS上のファイルに保存する
-        private void SaveToOSFolder() {
-            LogWrapper.Info(CommonStringResources.Instance.SaveToFileOnOS);
-            // 保存先フォルダを取得
-            string syncFolder = ClipboardAppConfig.Instance.SyncFolderName;
-            // フォルダが存在しない場合は作成
-            if (Directory.Exists(syncFolder) == false) {
-                Directory.CreateDirectory(syncFolder);
-            }
-            // syncFolder/フォルダ名を作成
-            string folderPath = System.IO.Path.Combine(syncFolder, FolderPath);
-            // フォルダが存在しない場合は作成
-            if (Directory.Exists(folderPath) == false) {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            // folderPath + Id + .txtをファイル名として保存
-            string syncFilePath = System.IO.Path.Combine(folderPath, Id + ".txt");
-            // 保存
-            File.WriteAllText(syncFilePath, this.Content);
-
-            // 自動コミットが有効の場合はGitにコミット
-            if (ClipboardAppConfig.Instance.AutoCommit) {
-                GitCommit(syncFilePath);
-            }
-
-            LogWrapper.Info(CommonStringResources.Instance.SavedToFileOnOS);
-        }
-
-        public void GitCommit(string syncFilePath) {
-            try {
-
-                using (var repo = new Repository(ClipboardAppConfig.Instance.SyncFolderName)) {
-                    Commands.Stage(repo, syncFilePath);
-                    Signature author = new("ClipboardApp", "ClipboardApp", DateTimeOffset.Now);
-                    Signature committer = author;
-                    repo.Commit("Auto commit", author, committer);
-                    LogWrapper.Info($"{CommonStringResources.Instance.CommittedToGit}:{syncFilePath} {ClipboardAppConfig.Instance.SyncFolderName}");
-                }
-            } catch (RepositoryNotFoundException e) {
-                LogWrapper.Info($"{CommonStringResources.Instance.RepositoryNotFound}:{ClipboardAppConfig.Instance.SyncFolderName} {e.Message}");
-            } catch (EmptyCommitException e) {
-                LogWrapper.Info($"{CommonStringResources.Instance.CommitIsEmpty}:{syncFilePath} {e.Message}");
-            }
         }
 
         // 自分自身をDBから削除する
         public override void Delete() {
             base.Delete();
-
-            Task.Run(() => {
-                // 保存先フォルダを取得
-                string folderPath = ClipboardAppConfig.Instance.SyncFolderName;
-                // syncFolder/フォルダ名を取得
-                folderPath = Path.Combine(folderPath, FolderPath);
-                // ClipboardFolderのFolderPath + Id + .txtをファイル名として削除
-                string syncFilePath = Path.Combine(folderPath, Id + ".txt");
-
-                LogWrapper.Info(CommonStringResources.Instance.DeleteFileOnOS);
-                // SyncClipboardItemAndOSFolder == trueの場合はOSのフォルダからも削除
-                if (ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder) {
-                    // ファイルが存在する場合は削除
-                    if (File.Exists(syncFilePath)) {
-                        File.Delete(syncFilePath);
-                    }
-                    // 自動コミットが有効の場合はGitにコミット
-                    if (ClipboardAppConfig.Instance.AutoCommit) {
-                        GitCommit(syncFilePath);
-                    }
-                }
-                LogWrapper.Info(CommonStringResources.Instance.DeletedFileOnOS);
-            });
         }
 
         // 自動処理を適用する処理

@@ -1028,33 +1028,8 @@ namespace QAChat.Resource {
         // フォルダを取得できません
         public virtual string CannotGetFolder { get; } = "フォルダを取得できません";
 
-        // OS上のファイルに保存します
-        public virtual string SaveToFileOnOS { get; } = "OS上のファイルに保存します";
-
-        // Gitコミットしました
-        public virtual string CommittedToGit { get; } = "Gitコミットしました";
-
-        // リポジトリが見つかりませんでした
-        public virtual string RepositoryNotFound { get; } = "リポジトリが見つかりませんでした";
-
-        // コミットが空です
-        public virtual string CommitIsEmpty { get; } = "コミットが空です";
-
-        // OS上のファイルに保存しました
-        public virtual string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
-
-
         // サマリー
         public virtual string Summary { get; } = "サマリー";
-
-        
-
-        // "OS上のファイルを削除します"
-        public virtual string DeleteFileOnOS { get; } = "OS上のファイルを削除します";
-        // OS上のファイルを削除しました
-        public virtual string DeletedFileOnOS { get; } = "OS上のファイルを削除しました";
-
-
 
         // --- SystemAutoProcessItem.cs ---
         // 無視

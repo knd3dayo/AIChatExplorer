@@ -241,42 +241,6 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SyncClipboardItemAndOSFolder {
-            get {
-                return ((bool)(this["SyncClipboardItemAndOSFolder"]));
-            }
-            set {
-                this["SyncClipboardItemAndOSFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SyncFolderName {
-            get {
-                return ((string)(this["SyncFolderName"]));
-            }
-            set {
-                this["SyncFolderName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoCommit {
-            get {
-                return ((bool)(this["AutoCommit"]));
-            }
-            set {
-                this["AutoCommit"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PreviewMode {
             get {

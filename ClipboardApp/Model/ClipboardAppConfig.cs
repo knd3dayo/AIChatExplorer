@@ -241,51 +241,6 @@ namespace ClipboardApp.Model
             }
         }
 
-        // SyncClipboardItemAndOSFolder
-        private bool? _syncClipboardItemAndOSFolder;
-        public bool SyncClipboardItemAndOSFolder {
-            get {
-                if (_syncClipboardItemAndOSFolder == null) {
-                    _syncClipboardItemAndOSFolder = Properties.Settings.Default.SyncClipboardItemAndOSFolder;
-                }
-                return _syncClipboardItemAndOSFolder.Value;
-            }
-            set {
-                _syncClipboardItemAndOSFolder = value;
-                Properties.Settings.Default.SyncClipboardItemAndOSFolder = value;
-            }
-        }
-        // SyncFolderName
-        private string? _syncFolderName;
-        public string SyncFolderName {
-            get {
-                if (_syncFolderName == null) {
-                    _syncFolderName = Properties.Settings.Default.SyncFolderName;
-                }
-                return _syncFolderName;
-            }
-            set {
-                _syncFolderName = value;
-                Properties.Settings.Default.SyncFolderName = value;
-            }
-        }
-
-
-        // AutoCommit
-        private bool? _autoCommit;
-        public bool AutoCommit {
-            get {
-                if (_autoCommit == null) {
-                    _autoCommit = Properties.Settings.Default.AutoCommit;
-                }
-                return _autoCommit.Value;
-            }
-            set {
-                _autoCommit = value;
-                Properties.Settings.Default.AutoCommit = value;
-            }
-        }
-
         // AutoMergeItemsBySourceApplicationTitle
         private bool? _autoMergeItemsBySourceApplicationTitle;
         public bool AutoMergeItemsBySourceApplicationTitle {

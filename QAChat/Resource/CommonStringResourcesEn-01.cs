@@ -892,14 +892,6 @@ namespace QAChat.Resource {
         public override string SourceAppName { get; } = "Source App Name";
         public override string Pinned { get; } = "Pinned";
         public override string CannotGetFolder { get; } = "Cannot Get Folder";
-        public override string SaveToFileOnOS { get; } = "Save to File on OS";
-        public override string CommittedToGit { get; } = "Committed to Git";
-        public override string RepositoryNotFound { get; } = "Repository Not Found";
-        public override string CommitIsEmpty { get; } = "Commit is Empty";
-        public override string SavedToFileOnOS { get; } = "Saved to File on OS";
-        public override string Summary { get; } = "Summary";
-        public override string DeleteFileOnOS { get; } = "Delete File on OS";
-        public override string DeletedFileOnOS { get; } = "Deleted File on OS";
         public override string Ignore { get; } = "Ignore";
         public override string DoNothing { get; } = "Do Nothing";
         public override string CopyToFolder { get; } = "Copy to Folder";

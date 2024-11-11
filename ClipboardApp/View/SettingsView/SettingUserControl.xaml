@@ -610,44 +610,6 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
-                            <!--  クリップボードアイテムをOS上のフォルダと同期させる。  -->
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOS, Mode=OneTime}" />
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.SynchronizeClipboardItemsWithFoldersOnTheOSDescription, Mode=OneTime}"
-                                IsChecked="{Binding SyncClipboardItemAndOSFolder}" />
-                            <!--  同期先のフォルダ名  -->
-                            <DockPanel
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                HorizontalAlignment="Left">
-                                <Label
-                                    Margin="10,0,10,0"
-                                    VerticalAlignment="Center"
-                                    Content="{Binding StringResources.SyncTargetFolderName, Mode=OneTime}"
-                                    Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                                <TextBox
-                                    Margin="10,0,10,0"
-                                    VerticalAlignment="Center"
-                                    materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems, Mode=OneTime}"
-                                    Text="{Binding SyncFolderName}"
-                                    Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
-                            </DockPanel>
-                            <!--  同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットする。  -->
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{Binding StringResources.IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated, Mode=OneTime}"
-                                IsChecked="{Binding AutoCommit}"
-                                Visibility="{Binding SyncClipboardItemAndOSFolderVisibility}" />
                         </Grid>
                         <Grid Grid.Row="3">
                             <Grid.ColumnDefinitions>

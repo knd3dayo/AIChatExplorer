@@ -1,12 +1,10 @@
-using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
-using QAChat.Control;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using QAChat.Control;
 
-namespace ClipboardApp.ViewModel.Folder {
+namespace ClipboardApp.ViewModel.Chat {
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド

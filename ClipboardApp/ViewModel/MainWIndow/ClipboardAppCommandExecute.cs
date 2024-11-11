@@ -19,6 +19,7 @@ using QAChat.View.RAGWindow;
 using QAChat.View.VectorDBWindow;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
+using ClipboardApp.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.MainWindow {
     public class ClipboardAppCommandExecute {
@@ -144,7 +145,7 @@ namespace ClipboardApp.ViewModel.MainWindow {
                     SearchFolder = folder
                 };
             } else {
-                searchConditionRule = ClipboardFolder.GlobalSearchCondition;
+                searchConditionRule = ClipboardFolderUtil.GlobalSearchCondition;
             }
             SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
         }

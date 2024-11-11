@@ -10,6 +10,7 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolderView;
 using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Chat;
 using ClipboardApp.ViewModel.ClipboardItemView;
 using ClipboardApp.ViewModel.Folder;
 using ClipboardApp.ViewModel.MainWindow;
@@ -63,9 +64,9 @@ namespace ClipboardApp
         }
 
         private void InitClipboardFolders() {
-            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolder.RootFolder);
-            SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolder.SearchRootFolder);
-            ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolder.ChatRootFolder);
+            RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolderUtil.RootFolder);
+            SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolderUtil.SearchRootFolder);
+            ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolderUtil.ChatRootFolder);
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
@@ -317,7 +318,7 @@ namespace ClipboardApp
 
         public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
 
-            SearchRule rule = ClipboardFolder.GlobalSearchCondition.Copy();
+            SearchRule rule = ClipboardFolderUtil.GlobalSearchCondition.Copy();
 
             QAChatStartupProps props = new(clipboardItem) {
                 

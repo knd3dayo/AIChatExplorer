@@ -1,16 +1,15 @@
 using System.Text;
 using System.Windows;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel;
+using ClipboardApp.ViewModel.Folder;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using WpfAppCommon.Utils;
 using QAChat.Resource;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.Settings
-{
+namespace ClipboardApp.Settings {
     /// <summary>
     /// 設定画面のViewModel
     /// </summary>
@@ -246,46 +245,7 @@ namespace ClipboardApp.Settings
                 isPropertyChanged = true;
             }
         }
-        // クリップボードアイテムとOS上のフォルダを同期するかどうか
-        public bool SyncClipboardItemAndOSFolder {
-            get {
-                return ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder;
-            }
-            set {
-                ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder = value;
-                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolder));
-                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolderVisibility));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // ファイル更新時に自動的にコミットするかどうか
-        public bool AutoCommit {
-            get {
-                return ClipboardAppConfig.Instance.AutoCommit;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoCommit = value;
-                OnPropertyChanged(nameof(AutoCommit));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
-        // SyncFolderName
-        public string SyncFolderName {
-            get {
-                return ClipboardAppConfig.Instance.SyncFolderName;
-            }
-            set {
-                ClipboardAppConfig.Instance.SyncFolderName = value;
-                OnPropertyChanged(nameof(SyncFolderName));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoDescriptionNone
         public bool AutoDescriptionNone {
             get {
@@ -381,17 +341,6 @@ namespace ClipboardApp.Settings
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
-            }
-        }
-
-        // SyncClipboardItemAndOSFolderが有効かどうか
-        public Visibility SyncClipboardItemAndOSFolderVisibility {
-            get {
-                if (SyncClipboardItemAndOSFolder == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
             }
         }
 
@@ -661,7 +610,7 @@ namespace ClipboardApp.Settings
             set {
                 // 空文字の場合は-1にする
                 if (value == "") {
-                        IgnoreLineCount = -1;
+                    IgnoreLineCount = -1;
                 } else {
                     IgnoreLineCount = int.Parse(value);
                 }
@@ -687,7 +636,7 @@ namespace ClipboardApp.Settings
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             if (Save()) {
                 //追加設定.言語を変更
-                ClipboardFolder.ChangeRootFolderNames(CommonStringResources.Instance);
+                ClipboardFolderUtil.ChangeRootFolderNames(CommonStringResources.Instance);
                 LogWrapper.Info(StringResources.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);

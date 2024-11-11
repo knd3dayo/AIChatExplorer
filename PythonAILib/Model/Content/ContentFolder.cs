@@ -2,8 +2,7 @@ using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Model.Content
-{
+namespace PythonAILib.Model.Content {
     public class ContentFolder {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
@@ -76,6 +75,11 @@ namespace PythonAILib.Model.Content
 
         // 保存
         public virtual void Save() {
+            throw new NotImplementedException();
+        }
+
+        // 削除
+        public virtual void Delete() {
             throw new NotImplementedException();
         }
 

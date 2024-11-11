@@ -110,7 +110,7 @@ namespace ClipboardApp.ViewModel.Folder {
             }
 
             // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = ClipboardFolder.GlobalSearchCondition;
+            SearchRule? searchConditionRule = ClipboardFolderUtil.GlobalSearchCondition;
             if (ClipboardItemFolder.FolderType == FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             }
@@ -255,7 +255,7 @@ namespace ClipboardApp.ViewModel.Folder {
         /// <param name="parameter"></param>        
         public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
-            if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolder.RootFolder.Id
+            if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolderUtil.RootFolder.Id
                 || folderViewModel.FolderPath == ClipboardFolder.SEARCH_ROOT_FOLDER_NAME) {
                 LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
                 return;
