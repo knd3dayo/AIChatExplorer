@@ -13,8 +13,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder
-{
+namespace ClipboardApp.ViewModel.Folder {
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
 
@@ -314,7 +313,7 @@ namespace ClipboardApp.ViewModel.Folder
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public void LoadChildren(int nestLevel = 5) {
+        public virtual void LoadChildren(int nestLevel = 5) {
             Children = [];
 
             // Childrenがクリアされていない場合
@@ -336,10 +335,10 @@ namespace ClipboardApp.ViewModel.Folder
 
         }
         // LoadItems
-        public void LoadItems() {
+        public virtual void LoadItems() {
             Items.Clear();
             foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-                
+
                 Items.Add(CreateItemViewModel(item));
             }
         }

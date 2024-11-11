@@ -16,6 +16,7 @@ namespace ClipboardApp.Utils {
         public static readonly string SEARCH_ROOT_FOLDER_NAME = CommonStringResources.Instance.SearchFolder;
         public static readonly string CHAT_ROOT_FOLDER_NAME = CommonStringResources.Instance.ChatHistory;
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
+        public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
 
 
         #region static methods
@@ -47,6 +48,12 @@ namespace ClipboardApp.Utils {
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
                 imageCheckRootFolder.Save();
+            }
+            // FileSystemRootFolder
+            ClipboardFolder? fileSystemRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+            if (fileSystemRootFolder != null) {
+                fileSystemRootFolder.FolderName = toRes.FileSystem;
+                fileSystemRootFolder.Save();
             }
         }
 
@@ -145,6 +152,26 @@ namespace ClipboardApp.Utils {
                 // 既にSearchRootFolder作成済みの環境のための措置
                 chatRootFolder.IsRootFolder = true;
                 return chatRootFolder;
+            }
+        }
+        // Local File System Root Folder
+        public static FileSystemFolder FileSystemRootFolder {
+            get {
+                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<FileSystemFolder>();
+                FileSystemFolder? fileSystemRootFolder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+                if (fileSystemRootFolder == null) {
+                    fileSystemRootFolder = new FileSystemFolder {
+                        FolderName = ClipboardFolderUtil.FILESYSTEM_ROOT_FOLDER_NAME,
+                        FolderType = FolderTypeEnum.FileSystem,
+                        IsRootFolder = true,
+                        // 自動処理を無効にする
+                        IsAutoProcessEnabled = false
+                    };
+                    fileSystemRootFolder.Save();
+                }
+                // 既にSearchRootFolder作成済みの環境のための措置
+                fileSystemRootFolder.IsRootFolder = true;
+                return fileSystemRootFolder;
             }
         }
         #endregion

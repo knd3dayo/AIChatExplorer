@@ -94,6 +94,8 @@ namespace QAChat.Resource {
         public override string OpenAIChat { get; } = "OpenAI Chat";
         // BitmapImage Chat
         public override string ImageChat { get; } = "Image Chat";
+        // Local FileSystem
+        public override string FileSystem { get; } = "Local FileSystem";
 
         // ProxyURL
         public override string ProxyURL { get; } = "Proxy Server URL";

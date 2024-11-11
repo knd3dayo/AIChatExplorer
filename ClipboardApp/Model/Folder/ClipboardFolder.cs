@@ -62,7 +62,7 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public List<ClipboardItem> Items {
+        public virtual List<ClipboardItem> Items {
             get {
                 if (FolderType == FolderTypeEnum.Search) {
                     return ClipboardFolderUtil.GetSearchFolderItems(this);
@@ -70,7 +70,6 @@ namespace ClipboardApp.Model.Folder {
                 return ClipboardFolderUtil.GetNormalFolderItems(this);
             }
         }
-
 
         // 自分自身を保存
         public override void Save() {
@@ -90,7 +89,6 @@ namespace ClipboardApp.Model.Folder {
                 item.IsReferenceVectorDBItemsSynced = false;
                 item.Save(false);
             }
-
         }
         // Delete
         public override void Delete() {

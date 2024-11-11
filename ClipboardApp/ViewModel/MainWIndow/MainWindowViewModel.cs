@@ -12,6 +12,7 @@ using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Chat;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.FileSystem;
 using ClipboardApp.ViewModel.MainWindow;
 using ClipboardApp.ViewModel.Search;
 using PythonAILib.Common;
@@ -21,8 +22,7 @@ using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
 
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase, IMainPanelImplementer {
         public MainWindowViewModel() { }
         public void Init() {
@@ -61,14 +61,15 @@ namespace ClipboardApp
                 CopiedObjects.Clear();
             };
         }
-
         private void InitClipboardFolders() {
             RootFolderViewModel = new ClipboardFolderViewModel(ClipboardFolderUtil.RootFolder);
             SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolderUtil.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolderUtil.ChatRootFolder);
+            FileSystemFolderViewModel = new FileSystemFolderViewModel(ClipboardFolderUtil.FileSystemRootFolder);
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
+            FolderViewModels.Add(FileSystemFolderViewModel);
 
             OnPropertyChanged(nameof(FolderViewModels));
         }
@@ -90,6 +91,10 @@ namespace ClipboardApp
         [AllowNull]
         public ChatFolderViewModel ChatRootFolderViewModel { get; private set; }
 
+        // ローカルファイルシステムのフォルダのViewModel
+        // Null非許容を無視
+        [AllowNull]
+        public FileSystemFolderViewModel FileSystemFolderViewModel { get; private set; }
 
         // ClipboardController
         public static ClipboardController ClipboardController { get; } = new();
@@ -137,8 +142,6 @@ namespace ClipboardApp
                 return IsAutoGenStudioRunning ? StringResources.StopAutoGenStudio : StringResources.StartAutoGenStudio;
             }
         }
-
-
         // ClipboardFolder
 
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
@@ -320,7 +323,7 @@ namespace ClipboardApp
             SearchRule rule = ClipboardFolderUtil.GlobalSearchCondition.Copy();
 
             QAChatStartupProps props = new(clipboardItem) {
-                
+
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
                     SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModel, true, (selectedItems) => {

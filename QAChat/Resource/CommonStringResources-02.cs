@@ -468,6 +468,8 @@ namespace QAChat.Resource {
         public virtual string OpenAIChat { get; } = "OpenAIチャット";
         // 画像エビデンスチェッカー
         public virtual string ImageChat { get; } = "イメージチャット";
+        // ローカルファイルシステム
+        public virtual string FileSystem { get; } = "ファイルシステム";
 
         #endregion
 
