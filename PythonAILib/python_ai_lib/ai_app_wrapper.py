@@ -217,18 +217,15 @@ def delete_file_index(props_json: str, vector_db_items_json: str, request_json: 
 ########################
 # ファイルのMimeTypeを取得する
 def get_mime_type(filename):
-    import ai_app_file_util
-    return ai_app_file_util.get_mime_type(filename)
+    return ai_app.get_mime_type(filename)
 
 # Excelのシート名一覧を取得する
-def get_excel_sheet_names(filename):
-    import ai_app_file_util
-    return ai_app_file_util.get_excel_sheet_names(filename)
+def get_sheet_names(filename):
+    return ai_app.get_sheet_names(filename)
 
 # Excelのシートのデータを取得する
 def extract_excel_sheet(filename, sheet_name):
-    import ai_app_file_util
-    return ai_app_file_util.extract_text_from_sheet(filename, sheet_name)
+    return ai_app.extract_text_from_sheet(filename, sheet_name)
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename):

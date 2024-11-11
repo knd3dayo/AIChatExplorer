@@ -11,8 +11,7 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
 
     public class PythonNetFunctions : IPythonAIFunctions {
 
@@ -263,7 +262,7 @@ namespace PythonAILib.PythonIF
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                return  function_object(propsJson, vectorDBItemsJson, chatHistoryJson);
+                return function_object(propsJson, vectorDBItemsJson, chatHistoryJson);
             });
             // StatisticManagerにトークン数を追加
             MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, openAIProperties.OpenAICompletionModel);
@@ -472,5 +471,20 @@ namespace PythonAILib.PythonIF
             return result;
         }
 
+        // GetMimeType
+        public string GetMimeType(string filePath) {
+
+            string function_name = "get_mime_type";
+            string? contentType = "";
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                contentType = function_object(filePath);
+
+            });
+            return contentType ?? "";
+        }
     }
 }

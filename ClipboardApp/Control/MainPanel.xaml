@@ -29,7 +29,7 @@
         <Grid.ColumnDefinitions>
             <!--  1. TreeView, 2. GridSplitter, 3. ListBox  -->
             <!--  Insert GridSplitter between TreeView and ListBox  -->
-            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="300" />
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>

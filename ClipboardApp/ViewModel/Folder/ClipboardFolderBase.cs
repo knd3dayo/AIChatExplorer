@@ -16,6 +16,8 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Folder {
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
 
+        // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
+        public virtual int DefaultNextLevel { get; } = 5;
 
         #region abstract
 
@@ -46,6 +48,8 @@ namespace ClipboardApp.ViewModel.Folder {
         public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
         #endregion
 
+
+        // コンストラクタ
 
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
 
@@ -237,15 +241,10 @@ namespace ClipboardApp.ViewModel.Folder {
         // --------------------------------------------------------------
 
         public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
-            try {
-                LoadChildren();
-                int count = Children.Count;
-                LoadItems();
-                UpdateStatusText();
-            } finally {
-                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
-            }
+            LoadChildren(DefaultNextLevel);
+            int count = Children.Count;
+            LoadItems();
+            UpdateStatusText();
         });
 
 
@@ -313,33 +312,49 @@ namespace ClipboardApp.ViewModel.Folder {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public virtual void LoadChildren(int nestLevel = 5) {
-            Children = [];
+        public virtual async void LoadChildren(int nestLevel = 5) {
+            try {
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                await Task.Run(() => {
+                Children = [];
 
-            // Childrenがクリアされていない場合
-            if (Children.Count > 0) {
-                throw new Exception("Children is not cleared");
-            }
-            foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
-                if (child == null) {
-                    continue;
+                // Childrenがクリアされていない場合
+                if (Children.Count > 0) {
+                    throw new Exception("Children is not cleared");
                 }
-                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                if (nestLevel > 0) {
-                    childViewModel.LoadChildren(nestLevel - 1);
+                foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
+                    if (child == null) {
+                        continue;
+                    }
+                    ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                    if (nestLevel > 0) {
+                        childViewModel.LoadChildren(nestLevel - 1);
+                    }
+                    Children.Add(childViewModel);
                 }
-                Children.Add(childViewModel);
+            });
+            } finally {
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
             }
             OnPropertyChanged(nameof(Children));
 
         }
         // LoadItems
-        public virtual void LoadItems() {
+        public virtual async void LoadItems() {
             Items.Clear();
-            foreach (ClipboardItem item in ClipboardItemFolder.Items) {
-
-                Items.Add(CreateItemViewModel(item));
+            // ClipboardItemFolder.Itemsは別スレッドで実行
+            List<ClipboardItem> _items = [];
+            try {
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
+                await Task.Run(() => {
+                    _items = ClipboardItemFolder.Items;
+                });
+                foreach (ClipboardItem item in _items) {
+                    Items.Add(CreateItemViewModel(item));
+                }
+            } finally {
+                MainWindowViewModel.ActiveInstance.IsIndeterminate = false;
             }
         }
 

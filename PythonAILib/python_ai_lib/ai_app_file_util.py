@@ -7,8 +7,14 @@ class FileUtil:
     def identify_type(cls, filename):
         m = Magika()
         # ファイルのbyte列を取得
-        with open(filename, "rb") as f:
-            byte_data = f.read()
+        # アクセスできない場合は例外をキャッチ
+        try:
+            with open(filename, "rb") as f:
+                # 1KB読み込む
+                byte_data = f.read(1024)
+        except Exception as e:
+            print(e)
+            return None, None
 
         # ファイルの種類を判定
         res = m.identify_bytes(byte_data)
@@ -25,11 +31,15 @@ class FileUtil:
     @classmethod
     def get_mime_type(cls, filename):
         res, encoding = cls.identify_type(filename)
+        if res is None:
+            return None
         return res.output.mime_type
 
     @classmethod
     def extract_text_from_file(cls, filename):
         res, encoding = cls.identify_type(filename)
+        if res is None:
+            return None
         print(res.output.mime_type)
         
         if res.output.mime_type.startswith("text/"):

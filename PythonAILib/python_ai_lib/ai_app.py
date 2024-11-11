@@ -9,7 +9,24 @@ from ai_app_vector_db_util import VectorDBProps
 import base64
 from ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
 from ai_app_langchain_util import LangChainChatParameter, LangChainUtil
-from ai_app_file_util import ExcelUtil
+from ai_app_file_util import ExcelUtil, FileUtil
+
+
+########################
+# ファイル関連
+########################
+# ファイルのMimeTypeを取得する
+def get_mime_type(filename):
+    return FileUtil.get_mime_type(filename)
+
+# Excelのシート名一覧を取得する
+def get_sheet_names(filename):
+    return ExcelUtil.get_sheet_names(filename)
+
+# Excelのシートのデータを取得する
+def extract_text_from_sheet(filename, sheet_name):
+    return ExcelUtil.extract_text_from_sheet(filename, sheet_name)
+
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename:str) -> str:

@@ -14,13 +14,12 @@ namespace PythonAILib.PythonIF
 
         public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
 
-
         public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
-
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);
 
         public void DeleteVectorDBCollection(OpenAIProperties props, VectorDBItem vectorDBItem);
+
         public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
 
         public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
@@ -32,6 +31,9 @@ namespace PythonAILib.PythonIF
 
         // 引数として渡されたExcelファイルを読み込んでList<List<string>>に変換して返す
         public CommonDataTable ImportFromExcel(string filePath);
+
+        // GetMimeType
+        public string GetMimeType(string filePath);
 
         //テスト用
         public string HelloWorld();

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
@@ -49,10 +50,11 @@ namespace QAChat.Utils {
             string tempFile = Path.GetTempFileName();
 
             // パラメーターファイルを作成
-            string parametersJsonFile = DebugUtil.CreateParameterJsonFile(openAIProperties, vectorDBItems, null);
+            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, null);
+            File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
             // AutoGenGroupChatTest1を起動するコマンド
-            List<string> cmdLines = DebugUtil.CreateAutoGenGroupChatTest1CommandLine(message, parametersJsonFile, tempFile);
+            List<string> cmdLines = DebugUtil.CreateAutoGenGroupChatTest1CommandLine(message, DebugUtil.DebugRequestParametersFile, tempFile);
 
             AutoGenGroupChatTest1Process = ProcessUtil.StartWindowsCommandLine(cmdLines, "", (process) => { }, (content) => {
                 // テンポラリファイルから文字列を取得
@@ -62,8 +64,8 @@ namespace QAChat.Utils {
                 if (File.Exists(tempFile)) {
                     File.Delete(tempFile);
                 }
-                if (File.Exists(parametersJsonFile)) {
-                    File.Delete(parametersJsonFile);
+                if (File.Exists(DebugUtil.DebugRequestParametersFile)) {
+                    File.Delete(DebugUtil.DebugRequestParametersFile);
                 }
 
                 AutoGenStudioProcess = null;
