@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolderView;
@@ -536,7 +537,7 @@ namespace ClipboardApp.ViewModel.AutoProcess
             // ClipboardItemFolderにAutoProcessRuleIdを追加
             TargetFolder.ClipboardItemFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
             // ClipboardItemFolderを保存
-            TargetFolder.ClipboardItemFolder.Save();
+            TargetFolder.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

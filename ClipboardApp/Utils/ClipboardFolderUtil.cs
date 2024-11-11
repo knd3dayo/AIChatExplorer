@@ -29,31 +29,31 @@ namespace ClipboardApp.Utils {
             ClipboardFolder? clipboardRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
-                clipboardRootFolder.Save();
+                clipboardRootFolder.Save<ClipboardFolder, ClipboardItem>();
             }
             // SearchRootFolder
             ClipboardFolder? searchRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
-                searchRootFolder.Save();
+                searchRootFolder.Save<ClipboardFolder, ClipboardItem>();
             }
             // ChatRootFolder
             ClipboardFolder? chatRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
             if (chatRootFolder != null) {
                 chatRootFolder.FolderName = toRes.ChatHistory;
-                chatRootFolder.Save();
+                chatRootFolder.Save<ClipboardFolder, ClipboardItem>();
             }
             // ImageCheckRootFolder
             ClipboardFolder? imageCheckRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
-                imageCheckRootFolder.Save();
+                imageCheckRootFolder.Save<ClipboardFolder, ClipboardItem>();
             }
             // FileSystemRootFolder
             ClipboardFolder? fileSystemRootFolder = collection.FindAll().Where(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
             if (fileSystemRootFolder != null) {
                 fileSystemRootFolder.FolderName = toRes.FileSystem;
-                fileSystemRootFolder.Save();
+                fileSystemRootFolder.Save<FileSystemFolder, ClipboardItem>();
             }
         }
 
@@ -106,7 +106,7 @@ namespace ClipboardApp.Utils {
                         IsAutoProcessEnabled = true,
                         FolderType = FolderTypeEnum.Normal
                     };
-                    clipboardRootFolder.Save();
+                    clipboardRootFolder.Save<ClipboardFolder, ClipboardItem>();
                 }
                 // 既にRootFolder作成済みの環境のための措置
                 clipboardRootFolder.IsRootFolder = true;
@@ -126,7 +126,7 @@ namespace ClipboardApp.Utils {
                         // 自動処理を無効にする
                         IsAutoProcessEnabled = false
                     };
-                    searchRootFolder.Save();
+                    searchRootFolder.Save<ClipboardFolder, ClipboardItem>();
                 }
                 // 既にSearchRootFolder作成済みの環境のための措置
                 searchRootFolder.IsRootFolder = true;
@@ -147,7 +147,7 @@ namespace ClipboardApp.Utils {
                         // 自動処理を無効にする
                         IsAutoProcessEnabled = false
                     };
-                    chatRootFolder.Save();
+                    chatRootFolder.Save<ClipboardFolder, ClipboardItem>();
                 }
                 // 既にSearchRootFolder作成済みの環境のための措置
                 chatRootFolder.IsRootFolder = true;
@@ -167,7 +167,7 @@ namespace ClipboardApp.Utils {
                         // 自動処理を無効にする
                         IsAutoProcessEnabled = false
                     };
-                    fileSystemRootFolder.Save();
+                    fileSystemRootFolder.Save<FileSystemFolder, ClipboardItem>();
                 }
                 // 既にSearchRootFolder作成済みの環境のための措置
                 fileSystemRootFolder.IsRootFolder = true;

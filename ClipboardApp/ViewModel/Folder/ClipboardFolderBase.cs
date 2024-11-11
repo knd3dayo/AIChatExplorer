@@ -138,7 +138,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // フォルダー保存コマンド
         public SimpleDelegateCommand<ClipboardFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            ClipboardItemFolder.Save();
+            ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
         });
 
         // アイテム削除コマンド
@@ -158,7 +158,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save();
+                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
                 folderViewModel.LoadFolderCommand.Execute();
 
             });
@@ -168,7 +168,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             EditFolderCommandExecute(folderViewModel, () => {
                 //　フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save();
+                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.FolderEdited);
             });
@@ -233,7 +233,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            ClipboardItemFolder.RefreshVectorDBCollection();
+            ClipboardItemFolder.RefreshVectorDBCollection<ClipboardItem>();
         });
 
         // --------------------------------------------------------------

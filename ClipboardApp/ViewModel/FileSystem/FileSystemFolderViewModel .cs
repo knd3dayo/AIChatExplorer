@@ -29,7 +29,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
             try {
                 MainWindowViewModel.ActiveInstance.IsIndeterminate = true;
                 await Task.Run(() => {
-                    foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
+                    foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
                             continue;
                         }

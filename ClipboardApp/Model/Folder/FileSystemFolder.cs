@@ -21,7 +21,6 @@ namespace ClipboardApp.Model.Folder {
                 }
                 _fileSystemFolderPath = value;
             }
-
         }
         public static List<string> TargetMimeTypes { get; set; } = [
             "text/",
@@ -152,17 +151,17 @@ namespace ClipboardApp.Model.Folder {
                 if (!folders.Any(x => x.FileSystemFolderPath == localFileSystemFolder)) {
                     if (IsRootFolder) {
                         FileSystemFolder child = CreateChild(localFileSystemFolder);
-                        child.Save();
+                        child.Save<FileSystemFolder, ClipboardItem>();
                     } else {
                         // localFileSystemFolder からフォルダ名を取得
                         string folderName = Path.GetFileName(localFileSystemFolder);
                         FileSystemFolder child = CreateChild(folderName);
-                        child.Save();
+                        child.Save<FileSystemFolder, ClipboardItem>();
                     }
                 }
             }
             // 自分自身を保存
-            this.Save();
+            this.Save<FileSystemFolder, ClipboardItem>();
         }
     }
 }

@@ -1,11 +1,9 @@
-using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using LibGit2Sharp;
 using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -69,10 +67,6 @@ namespace ClipboardApp.Model {
             }
         }
 
-
-
-        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
-        public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
 
         // ReferenceVectorDBItems
         public override List<VectorDBItem> ReferenceVectorDBItems {
@@ -182,7 +176,7 @@ namespace ClipboardApp.Model {
 
         // Collectionに対応するClipboardFolderを取得
         public ClipboardFolder GetFolder(Type? objectType = null) {
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection< ClipboardFolder>().FindById(CollectionId);
+            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(CollectionId);
             return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
         }
 

@@ -1,6 +1,7 @@
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
+using PythonAILib.PythonIF;
 
 namespace PythonAILib.Model.Content {
     public class ContentFolder {
@@ -11,7 +12,11 @@ namespace PythonAILib.Model.Content {
         // 親フォルダのID
         public ObjectId ParentId { get; set; } = ObjectId.Empty;
 
-        public string Name { get; set; } = "";
+        // ルートフォルダか否か
+        public bool IsRootFolder { get; set; } = false;
+
+        // フォルダに設定されたメインベクトルDBを参照用のベクトルDBのリストに含めるかどうかを示すプロパティ名を変更
+        public bool IncludeInReferenceVectorDBItems { get; set; } = true;
 
         // 参照用のベクトルDBのリストのプロパティ
         private List<VectorDBItem> _referenceVectorDBItems = [];
@@ -26,14 +31,10 @@ namespace PythonAILib.Model.Content {
 
         // フォルダの絶対パス ファイルシステム用
         public virtual string FolderPath { get; } = "";
-
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";
-
-
         // Description
         public virtual string Description { get; set; } = "";
-
         // 子フォルダ
         public virtual List<T> GetChildren<T>() where T : ContentFolder {
             // DBからParentIDが自分のIDのものを取得
@@ -58,30 +59,97 @@ namespace PythonAILib.Model.Content {
             // folderを削除
             var folderCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T1>();
             folderCollection.Delete(folder.Id);
-
         }
 
         // フォルダを移動する
         public virtual void MoveTo(ContentFolder toFolder) {
             // 自分自身を移動
             ParentId = toFolder.Id;
-            Save();
+            Save<ContentFolder, ContentItem>();
         }
         // 名前を変更
         public virtual void Rename(string newName) {
             FolderName = newName;
-            Save();
+            Save<ContentFolder, ContentItem>();
         }
 
         // 保存
-        public virtual void Save() {
-            throw new NotImplementedException();
-        }
+        public virtual void Save<T1,T2>() where T1 : ContentFolder where T2: ContentItem{
+            // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
+            if (IncludeInReferenceVectorDBItems) {
+                AddVectorDBItem(GetVectorDBItem());
+            } else {
+                // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
+                RemoveVectorDBItem(GetVectorDBItem());
+            }
 
+            IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
+            dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
+
+            // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
+            foreach (var item in GetItems<T2>()) {
+                item.IsReferenceVectorDBItemsSynced = false;
+                item.Save(false);
+            }
+        }
         // 削除
         public virtual void Delete() {
             throw new NotImplementedException();
         }
+        public virtual IEnumerable<T> GetItems<T>() where T : ContentItem {
+            var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
+            var items = collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
+            return items.Cast<T>();
+        }
+        #region ベクトル検索
+        // ReferenceVectorDBItemsからVectorDBItemを削除
+        public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
+            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            foreach (var item in existingItems) {
+                ReferenceVectorDBItems.Remove(item);
+            }
+        }
+        // ReferenceVectorDBItemsにVectorDBItemを追加
+        public void AddVectorDBItem(VectorDBItem vectorDBItem) {
+            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
+            if (existingItems == null) {
+                ReferenceVectorDBItems.Add(vectorDBItem);
+            }
+        }
+        // フォルダに設定されたVectorDBのコレクションを削除
+        public void DeleteVectorDBCollection() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+
+            VectorDBItem vectorDBItem = GetVectorDBItem();
+            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItem);
+        }
+
+        // フォルダに設定されたVectorDBのインデックスを更新
+        public void RefreshVectorDBCollection<T>() where T: ContentItem{
+            // ベクトルを全削除
+            DeleteVectorDBCollection();
+            // ベクトルを再作成
+            // フォルダ内のアイテムを取得して、ベクトルを作成
+            foreach (var item in GetItems<T>()) {
+                item.UpdateEmbedding();
+                // Save
+                item.Save();
+            }
+        }
+        // SystemCommonVectorDBを取得する。
+        public VectorDBItem GetVectorDBItem() {
+            return VectorDBItem.GetFolderVectorDBItem(this);
+        }
+
+        #endregion
+        public virtual ContentFolder CreateChild(string folderName) {
+            ContentFolder folder = new() {
+                ParentId = Id,
+                FolderName = folderName,
+            };
+            return folder;
+        }
+
 
 
     }

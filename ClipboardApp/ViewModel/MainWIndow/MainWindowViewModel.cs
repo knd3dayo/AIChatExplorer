@@ -67,9 +67,9 @@ namespace ClipboardApp {
             ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolderUtil.ChatRootFolder);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(ClipboardFolderUtil.FileSystemRootFolder);
             FolderViewModels.Add(RootFolderViewModel);
+            FolderViewModels.Add(FileSystemFolderViewModel);
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
-            FolderViewModels.Add(FileSystemFolderViewModel);
 
             OnPropertyChanged(nameof(FolderViewModels));
         }

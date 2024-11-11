@@ -23,26 +23,22 @@ namespace PythonAILib.Model.Content {
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
         }
-
         public ObjectId Id { get; set; } = ObjectId.Empty;
-
         // ClipboardFolderのObjectId
         public ObjectId CollectionId { get; set; } = ObjectId.Empty;
-
         // 生成日時
         public DateTime CreatedAt { get; set; }
-
         // 更新日時
         public DateTime UpdatedAt { get; set; }
-
         // ベクトル化日時
         public DateTime VectorizedAt { get; set; } = InitialDateTime;
-
         // クリップボードの内容
         public string Content { get; set; } = "";
-
         //説明
         public string Description { get; set; } = "";
+        // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
+        public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
+
 
 
         // クリップボードの内容の種類

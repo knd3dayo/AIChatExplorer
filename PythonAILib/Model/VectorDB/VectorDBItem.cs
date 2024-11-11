@@ -4,12 +4,12 @@ using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.VectorDB
-{
+namespace PythonAILib.Model.VectorDB {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
@@ -186,6 +186,14 @@ namespace PythonAILib.Model.VectorDB
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedTextEmbeddingFromImage);
         }
+        public static VectorDBItem GetFolderVectorDBItem(ContentFolder folder) {
+            VectorDBItem systemVectorItem = VectorDBItem.SystemCommonVectorDB;
+            // NameとDescriptionとCollectionNameを設定する
+            systemVectorItem.Name = folder.FolderName;
+            systemVectorItem.Description = folder.Description;
+            systemVectorItem.CollectionName = folder.Id.ToString();
 
+            return systemVectorItem;
+        }
     }
 }

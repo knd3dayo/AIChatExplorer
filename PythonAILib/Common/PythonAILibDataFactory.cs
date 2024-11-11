@@ -163,7 +163,6 @@ namespace PythonAILib.Common {
                         item.Remove("BackgroundInfo");
                         collection.Update(item);
                     }
-                    ***/
                     // PromptItemのPromptResultTypeをComplexContentからTableContentに変更
                     var collection = db.GetCollection(PromptTemplateCollectionName);
                     collection = db.GetCollection(PromptTemplateCollectionName);
@@ -172,6 +171,42 @@ namespace PythonAILib.Common {
                         if (promptResultTypeString == "ComplexContent") {
                             item["PromptResultType"] = "TableContent";
                             collection.Update(item);
+                        }
+                    }
+                ***/
+                    var collection = db.GetCollection(CONTENT_FOLDERS_COLLECTION_NAME);
+                    foreach (var row in collection.FindAll()) {
+                        var items = row["ReferenceVectorDBItems"];
+                        if (items != null && items.AsArray != null) {
+                            foreach (var item in items.AsArray) {
+                                string? target = item["_type"];
+                                if (target == null) {
+                                    continue;
+                                }
+                                if (target.Contains("ClipboardApp.Model.ClipboardAppVectorDBItem, ClipboardApp")) {
+                                    string newTypeString = target.Replace("ClipboardApp.Model.ClipboardAppVectorDBItem, ClipboardApp", "PythonAILib.Model.VectorDB.VectorDBItem, PythonAILib");
+                                    item["_type"] = newTypeString;
+                                    collection.Update(row);
+                                }
+                            }
+                        }
+                    }
+
+                    var itemsCollection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+                    foreach (var row in itemsCollection.FindAll()) {
+                        var items = row["ReferenceVectorDBItems"];
+                        if (items != null && items.AsArray != null) {
+                            foreach (var item in items.AsArray) {
+                                string? target = item["_type"];
+                                if (target == null) {
+                                    continue;
+                                }
+                                if (target.Contains("ClipboardApp.Model.ClipboardAppVectorDBItem, ClipboardApp")) {
+                                    string newTypeString = target.Replace("ClipboardApp.Model.ClipboardAppVectorDBItem, ClipboardApp", "PythonAILib.Model.VectorDB.VectorDBItem, PythonAILib");
+                                    item["_type"] = newTypeString;
+                                    itemsCollection.Update(row);
+                                }
+                            }
                         }
                     }
 

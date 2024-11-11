@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
-using ClipboardApp.Model.Search;
+using ClipboardApp.Model.Folder;
 using ClipboardApp.Utils;
 using LiteDB;
 using PythonAILib.Common;
@@ -16,15 +16,15 @@ using QAChat.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
-    public partial class ClipboardFolder : ContentFolder {
+namespace ClipboardApp.Model.Search {
+    public partial class SearchFolder : ClipboardFolder {
 
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
-        public ClipboardFolder() { }
+        public SearchFolder() { }
 
-        protected ClipboardFolder(ClipboardFolder? parent, string folderName) {
+        protected SearchFolder(SearchFolder? parent, string folderName) : base (parent,folderName){
 
             ParentId = parent?.Id ?? ObjectId.Empty;
             FolderName = folderName;
@@ -57,12 +57,9 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public virtual List<ClipboardItem> Items {
+        public override List<ClipboardItem> Items {
             get {
-                if (FolderType == FolderTypeEnum.Search) {
-                    return ClipboardFolderUtil.GetSearchFolderItems(this);
-                }
-                return ClipboardFolderUtil.GetNormalFolderItems(this);
+                return ClipboardFolderUtil.GetSearchFolderItems(this);
             }
         }
 
@@ -71,16 +68,21 @@ namespace ClipboardApp.Model.Folder {
             DeleteFolder<ClipboardFolder, ClipboardItem>(this);
         }
 
-        public override ClipboardFolder CreateChild(string folderName) {
-            ClipboardFolder child = new(this, folderName);
+        // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない
+        public virtual void DeleteChild(ClipboardFolder child) {
+            DeleteFolder<ClipboardFolder, ClipboardItem>(child);
+        }
+
+        public virtual ClipboardFolder CreateChild(string folderName) {
+            SearchFolder child = new SearchFolder(this, folderName);
             return child;
         }
 
         // アイテムを追加する処理
-        public virtual void AddItem(ClipboardItem item) {
+        public virtual ClipboardItem AddItem(ClipboardItem item) {
             // 検索フォルダの場合は何もしない
             if (FolderType == FolderTypeEnum.Search) {
-                return;
+                return item;
             }
 
             // CollectionNameを設定
@@ -98,7 +100,7 @@ namespace ClipboardApp.Model.Folder {
             if (result == null) {
                 // 自動処理で削除または移動された場合は何もしない
                 LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
-                return;
+                return item;
             }
             // 保存
             result.Save();
@@ -106,6 +108,18 @@ namespace ClipboardApp.Model.Folder {
             Items.Add(result);
             // 通知
             LogWrapper.Info(CommonStringResources.Instance.AddedItems);
+            return item;
+        }
+
+        // ClipboardItemを削除
+        public virtual void DeleteItem(ClipboardItem item) {
+            // 検索フォルダの場合は何もしない
+            if (FolderType == FolderTypeEnum.Search) {
+                return;
+            }
+
+            // LiteDBに保存
+            item.Delete();
         }
 
         #region 検索
@@ -190,6 +204,47 @@ namespace ClipboardApp.Model.Folder {
             results = results.OrderByDescending(x => x.UpdatedAt);
 
             return results;
+        }
+        #endregion
+
+        #region ベクトル検索
+        // ReferenceVectorDBItemsからVectorDBItemを削除
+        public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
+            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            foreach (var item in existingItems) {
+                ReferenceVectorDBItems.Remove(item);
+            }
+        }
+        // ReferenceVectorDBItemsにVectorDBItemを追加
+        public void AddVectorDBItem(VectorDBItem vectorDBItem) {
+            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
+            if (existingItems == null) {
+                ReferenceVectorDBItems.Add(vectorDBItem);
+            }
+        }
+        // SystemCommonVectorDBを取得する。
+        public VectorDBItem GetVectorDBItem() {
+            return VectorDBItem.GetFolderVectorDBItem(this);
+        }
+
+        // フォルダに設定されたVectorDBのコレクションを削除
+        public void DeleteVectorDBCollection() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+
+            VectorDBItem vectorDBItem = GetVectorDBItem();
+            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItem);
+        }
+        // フォルダに設定されたVectorDBのインデックスを更新
+        public void RefreshVectorDBCollection() {
+            // ベクトルを全削除
+            DeleteVectorDBCollection();
+            // ベクトルを再作成
+            // フォルダ内のアイテムを取得して、ベクトルを作成
+            foreach (var item in Items) {
+                item.UpdateEmbedding();
+                // Save
+                item.Save();
+            }
         }
         #endregion
 
