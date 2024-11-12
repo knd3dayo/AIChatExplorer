@@ -25,7 +25,7 @@ class AutoGenProps:
         # AzureOpenAIの場合
         if openAIProps.AzureOpenAI:
             llm_config_entry["api_type"] = "azure"
-            llm_config_entry["version"] = openAIProps.AzureOpenAICompletionVersion
+            llm_config_entry["api_version"] = openAIProps.AzureOpenAICompletionVersion
             if openAIProps.OpenAICompletionBaseURL:
                 llm_config_entry["base_url"] = openAIProps.OpenAICompletionBaseURL
             else:

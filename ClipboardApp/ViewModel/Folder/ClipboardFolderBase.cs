@@ -315,8 +315,8 @@ namespace ClipboardApp.ViewModel.Folder {
         public virtual async void LoadChildren(int nestLevel = 5) {
             try {
                 MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
-                await Task.Run(() => {
                 Children = [];
+                await Task.Run(() => {
 
                 // Childrenがクリアされていない場合
                 if (Children.Count > 0) {

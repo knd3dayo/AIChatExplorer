@@ -265,6 +265,8 @@ namespace PythonAILib.Model.Content {
         }
 
         // キャッシュを更新する
+        // Base64Stringを参照する場合とテキスト抽出を行う場合にキャッシュを更新する。
+        // 対象ファイルがない場合は何もしない。
         public void UpdateCache() {
             if (FilePath == null || System.IO.File.Exists(FilePath) == false) {
                 return;

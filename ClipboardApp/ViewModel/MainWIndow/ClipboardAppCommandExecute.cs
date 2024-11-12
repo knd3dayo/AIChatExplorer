@@ -340,6 +340,9 @@ namespace ClipboardApp.ViewModel.MainWindow {
                 return;
             }
             contentItem.ExtractTextCommandExecute();
+            // 保存を行う
+            contentItem.Save(false);
+
         }
 
         // Command to open a file
