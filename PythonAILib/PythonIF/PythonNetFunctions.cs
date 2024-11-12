@@ -104,7 +104,7 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        public string ExtractBase64ToText(string base64) {
+        public string ExtractBase64ToText(string base64, string extenstion) {
 
             // ResultContainerを作成
             string result = "";
@@ -115,7 +115,7 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
                 try {
-                    result = function_object(base64);
+                    result = function_object(base64, extenstion);
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {

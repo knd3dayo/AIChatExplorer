@@ -8,7 +8,7 @@ namespace PythonAILib.PythonIF
 
         public string ExtractFileToText(string path);
 
-        public string ExtractBase64ToText(string base64);
+        public string ExtractBase64ToText(string base64, string extension);
 
         public void OpenAIEmbedding(OpenAIProperties props, string text);
 

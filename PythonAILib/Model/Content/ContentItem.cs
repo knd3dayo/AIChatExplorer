@@ -294,7 +294,9 @@ namespace PythonAILib.Model.Content {
                         Content = result;
                     }
                 } else {
-                    string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64);
+                    // ファイル名から拡張子を取得
+                    string extension = Path.GetExtension(FilePath);
+                    string text = PythonExecutor.PythonAIFunctions.ExtractBase64ToText(base64, extension);
                     Content = text;
                 }
 

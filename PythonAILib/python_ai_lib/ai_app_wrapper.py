@@ -232,8 +232,8 @@ def extract_text_from_file(filename):
     return ai_app.extract_text_from_file(filename)
 
 # base64形式のデータからテキストを抽出する
-def extract_base64_to_text(base64_data):
-    return ai_app.extract_base64_to_text(base64_data)
+def extract_base64_to_text(base64_data: str, extension: str):
+    return ai_app.extract_base64_to_text(base64_data, extension)
 
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):
