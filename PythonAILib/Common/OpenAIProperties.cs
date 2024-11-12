@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Common {
     public class OpenAIProperties {
 
         [JsonPropertyName("OpenAIKey")]

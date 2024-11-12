@@ -6,7 +6,8 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Utils {
+namespace QAChat.Utils
+{
     public class AutoGenProcessController {
 
         public static Process? AutoGenStudioProcess { get; set; }

@@ -34,7 +34,7 @@ namespace ClipboardApp.Model.AutoProcess
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
             chatController.PromptTemplateText = PromptItem.Prompt;
             chatController.ChatMode = Mode;
-            ClipboardFolder? clipboardFolder = clipboardItem.GetFolder();
+            ClipboardFolder clipboardFolder = clipboardItem.GetFolder<ClipboardFolder>();
 
             chatController.VectorDBItems = [];
             // フォルダのVectorDBItemを追加

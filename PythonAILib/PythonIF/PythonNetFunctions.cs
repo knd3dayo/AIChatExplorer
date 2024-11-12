@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Statistics;
@@ -11,7 +12,8 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
 
     public class PythonNetFunctions : IPythonAIFunctions {
 

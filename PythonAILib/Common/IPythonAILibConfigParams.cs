@@ -1,5 +1,3 @@
-using PythonAILib.Model.Chat;
-
 namespace PythonAILib.Common
 {
     public interface IPythonAILibConfigParams {

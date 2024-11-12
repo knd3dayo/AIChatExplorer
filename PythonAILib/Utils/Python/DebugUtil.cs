@@ -7,7 +7,8 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Utils.Python {
+namespace PythonAILib.Utils.Python
+{
     public class DebugUtil {
 
         private static readonly JsonSerializerOptions options = new() {

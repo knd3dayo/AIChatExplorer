@@ -8,7 +8,8 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Chat {
+namespace PythonAILib.Model.Chat
+{
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>

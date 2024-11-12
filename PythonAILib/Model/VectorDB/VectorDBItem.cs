@@ -3,13 +3,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.VectorDB {
+namespace PythonAILib.Model.VectorDB
+{
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>

@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
@@ -8,7 +9,8 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Utils.Python {
+namespace PythonAILib.Utils.Python
+{
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換

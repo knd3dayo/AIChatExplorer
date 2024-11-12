@@ -1,6 +1,6 @@
 
 using System.IO;
-using PythonAILib.Model.Chat;
+using PythonAILib.Common;
 
 namespace ImageChat.Model
 {

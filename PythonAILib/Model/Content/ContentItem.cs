@@ -78,6 +78,37 @@ namespace PythonAILib.Model.Content {
             return string.Join(",", Tags);
         }
 
+        // 背景情報
+        [BsonIgnore]
+        public string BackgroundInfo {
+            get {
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
+            }
+        }
+
+        // サマリー
+        [BsonIgnore]
+        public string Summary {
+            get {
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
+            }
+        }
+        // 文章の信頼度
+        [BsonIgnore]
+        public string InformationReliability {
+            get {
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
+            }
+            set {
+                PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
+            }
+        }
         [BsonIgnore]
         public string HeaderText {
             get {
@@ -132,6 +163,37 @@ namespace PythonAILib.Model.Content {
                 return chatHistoryText;
             }
         }
+
+
+        // ReferenceVectorDBItems
+        public  List<VectorDBItem> GetReferenceVectorDBItems {
+
+            get {
+                // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
+                if (IsReferenceVectorDBItemsSynced) {
+                    return ReferenceVectorDBItems;
+                }
+                // folderを取得
+                var folder = GetFolder<ContentFolder>();
+                if (folder == null) {
+                    return [];
+                }
+                ReferenceVectorDBItems = new(folder.ReferenceVectorDBItems);
+                IsReferenceVectorDBItemsSynced = true;
+                return ReferenceVectorDBItems;
+
+            }
+            set {
+                ReferenceVectorDBItems = value;
+            }
+        }
+        // Collectionに対応するClipboardFolderを取得
+        public T GetFolder<T>() where T: ContentFolder{
+            T folder = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>().FindById(CollectionId);
+            return folder;
+        }
+
+
         public string UpdatedAtString {
             get {
                 return UpdatedAt.ToString("yyyy/MM/dd HH:mm:ss");
@@ -551,6 +613,27 @@ namespace PythonAILib.Model.Content {
                 // ベクトル化日時を更新
                 VectorizedAt = DateTime.Now;
 
+            }
+        }
+
+        // 自動でコンテキスト情報を付与するコマンド
+        public void CreateAutoBackgroundInfo() {
+            string contentText = Content;
+            // contentTextがない場合は処理しない
+            if (string.IsNullOrEmpty(contentText)) {
+                return;
+            }
+            var task1 = Task.Run(() => {
+                // 標準背景情報を生成
+                CreateChatResult(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
+                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
+            });
+
+            // すべてのタスクが完了するまで待機
+            Task.WaitAll(task1);
+            // 背景情報を更新 taskの結果がNullでない場合は追加
+            if (task1.Result != null) {
+                BackgroundInfo += task1.Result;
             }
         }
 

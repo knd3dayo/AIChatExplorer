@@ -3,7 +3,6 @@ using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 

@@ -4,7 +4,6 @@ using WpfAppCommon.Utils;
 using ImageChat.Model;
 using System.IO;
 using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 
 namespace ImageChat
 {

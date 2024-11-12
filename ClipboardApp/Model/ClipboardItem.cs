@@ -4,10 +4,8 @@ using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using LiteDB;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
@@ -33,58 +31,6 @@ namespace ClipboardApp.Model {
                     return "";
                 }
                 return folder.FolderPath;
-            }
-        }
-        // 背景情報
-        [BsonIgnore]
-        public string BackgroundInfo {
-            get {
-                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-            }
-            set {
-                PromptChatResult.SetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString(), value);
-            }
-        }
-
-        // サマリー
-        [BsonIgnore]
-        public string Summary {
-            get {
-                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString());
-            }
-            set {
-                PromptChatResult.SetTextContent(SystemDefinedPromptNames.SummaryGeneration.ToString(), value);
-            }
-        }
-        // 文章の信頼度
-        [BsonIgnore]
-        public string InformationReliability {
-            get {
-                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString());
-            }
-            set {
-                PromptChatResult.SetTextContent(SystemDefinedPromptNames.DocumentReliabilityCheck.ToString(), value);
-            }
-        }
-
-
-        // ReferenceVectorDBItems
-        public override List<VectorDBItem> ReferenceVectorDBItems {
-
-            get {
-                // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
-                if (IsReferenceVectorDBItemsSynced) {
-                    return base.ReferenceVectorDBItems;
-                }
-                // folderを取得
-                ClipboardFolder folder = GetFolder();
-                base.ReferenceVectorDBItems = new(folder.ReferenceVectorDBItems);
-                IsReferenceVectorDBItemsSynced = true;
-                return base.ReferenceVectorDBItems;
-
-            }
-            set {
-                base.ReferenceVectorDBItems = value;
             }
         }
 
@@ -135,7 +81,7 @@ namespace ClipboardApp.Model {
 
         // ベクトルDBを返す。
         public override VectorDBItem GetMainVectorDBItem() {
-            return GetFolder().GetVectorDBItem();
+            return GetFolder<ClipboardFolder>().GetVectorDBItem();
         }
 
         public void MergeItems(List<ClipboardItem> items) {
@@ -174,11 +120,6 @@ namespace ClipboardApp.Model {
 
         }
 
-        // Collectionに対応するClipboardFolderを取得
-        public ClipboardFolder GetFolder(Type? objectType = null) {
-            ClipboardFolder? folder = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(CollectionId);
-            return folder ?? throw new Exception(CommonStringResources.Instance.CannotGetFolder);
-        }
 
         //--------------------------------------------------------------------------------
         // staticメソッド
@@ -211,23 +152,12 @@ namespace ClipboardApp.Model {
 
         }
 
-        // 自分自身をDBに保存する
-        public override void Save(bool contentIsModified = true) {
-
-            base.Save(contentIsModified);
-        }
-
-        // 自分自身をDBから削除する
-        public override void Delete() {
-            base.Delete();
-        }
-
         // 自動処理を適用する処理
         public ClipboardItem? ApplyAutoProcess() {
 
             ClipboardItem? result = this;
             // AutoProcessRulesを取得
-            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this.GetFolder());
+            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this.GetFolder<ClipboardFolder>());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{CommonStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
                 result = rule.RunAction(result);
@@ -238,27 +168,6 @@ namespace ClipboardApp.Model {
                 }
             }
             return result;
-        }
-
-        // 自動でコンテキスト情報を付与するコマンド
-        public void CreateAutoBackgroundInfo() {
-            string contentText = Content;
-            // contentTextがない場合は処理しない
-            if (string.IsNullOrEmpty(contentText)) {
-                return;
-            }
-            var task1 = Task.Run(() => {
-                // 標準背景情報を生成
-                CreateChatResult(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-                return PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
-            });
-
-            // すべてのタスクが完了するまで待機
-            Task.WaitAll(task1);
-            // 背景情報を更新 taskの結果がNullでない場合は追加
-            if (task1.Result != null) {
-                BackgroundInfo += task1.Result;
-            }
         }
 
     }
