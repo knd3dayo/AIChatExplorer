@@ -242,7 +242,7 @@ namespace QAChat.ViewModel.QAChatMain {
             // メッセージを取得
             string message = InputText;
             // AutoGenGroupChatTest1を実行
-            AutoGenProcessController.StartAutoGenGroupChatTest1(openAIProperties, vectorDBItems, message, (responseJson) => {
+            AutoGenProcessController.StartAutoGenGroupChatTest1(openAIProperties, vectorDBItems, ChatController, (responseJson) => {
                 MainUITask.Run(() => {
                     // ChatHistoryに追加
                     ChatContentItem chatItem1 = new(ChatContentItem.UserRole, InputText);
@@ -261,7 +261,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     _SaveChatHistory = true;
                 });
 
-            }, PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv());
+            });
         }
 
         // チャット内容のリストを更新するメソッド
@@ -428,7 +428,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     string parametersJson = DebugUtil.CreateParameterJson(PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(), [.. VectorDBItems], ChatController);
                     File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
-                    return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(InputText, DebugUtil.DebugRequestParametersFile, null));
+                    return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
                 }
 
                 return "";

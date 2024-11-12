@@ -80,8 +80,40 @@ class AutoGenTools:
         return search_wikipedia_ja
 
     def create_extract_text_from_file(self) -> Callable[[str], str]:
+        # ファイルからテキストを抽出する関数を生成
         def extract_file(file_path: Annotated[str, "ファイルパス"]) -> str:
             # 一時ファイルからテキストを抽出
             text = FileUtil.extract_text_from_file(file_path)
             return text
         return extract_file
+    
+    def create_get_html_function(self) -> Callable[[str], str]:
+        def get_html(url: Annotated[str, "URL"]) -> str:
+            # URLからHTMLを取得
+            import requests
+            try:
+                response = requests.get(url)
+                response.raise_for_status()  # ステータスコードが200番台でない場合、例外を発生させる
+                return response.text
+            except requests.exceptions.RequestException as e:
+                print(f"Error retrieving {url}: {e}")
+                return None
+        return get_html
+
+    def create_get_urls_from_html_function(self) -> Callable[[str], list[str]]:
+        def get_urls_from_html(html: Annotated[str, "HTML文字列"]) -> list[str]:
+            # HTMLからURLを抽出
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(html, "html.parser")
+            urls = [a.get("href") for a in soup.find_all("a")]
+            return urls
+        return get_urls_from_html
+    
+    def create_get_urls_from_text_function(self) -> Callable[[str], list[str]]:
+        def get_urls_from_text(text: Annotated[str, "テキスト文字列"]) -> list[str]:
+            # テキストからURLを抽出
+            import re
+            urls = re.findall(r"https?://\S+", text)
+            return urls
+        return get_urls_from_text
+        

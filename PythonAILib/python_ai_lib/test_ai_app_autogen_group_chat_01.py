@@ -56,8 +56,8 @@ class AutoGenGroupChatTest1:
         self.code_writer_agent = None
         # コード実行者
         self.code_execution_agent = None
-        # Wikipedia検索者
-        self.wikipedia_searcher = None
+        # Web検索者
+        self.web_searcher = None
         # ベクトル検索者
         self.vector_searcher = None
         # ファイル抽出者
@@ -109,26 +109,56 @@ class AutoGenGroupChatTest1:
         else:
             self.code_execution_agent.human_input_mode = "ALWAYS" 
 
-    def enable_wikipedia_searcher(self):
+    def enable_web_searcher(self):
         
-        # Wikipedia検索者
-        self.wikipedia_searcher = ConversableAgent(
-            "wikipedia-searcher",
+        # Web検索者
+        self.web_searcher = ConversableAgent(
+            "web-searcher",
             system_message="""
-                あなたはWikipedia検索者です。ユーザーの指示に従いWikipediaで情報を検索します。
-                提供された関数を用いて、検索した結果、タイトルと本文を表示します。
+                あなたはWeb検索者です。ユーザーの指示に従いWebで情報を検索します。
+                - 提供された関数を用いて、WikiPedia(日本語版)から情報を検索します。
+                - 検索した結果テキストから公式ドキュメントへのリンクなどを抽出します。
+                - 公式ドキュメントのHTMLを取得します。
+                - ユーザーからの指示にマッチする情報をユーザーに提供します。
                 """,
             llm_config=self.llm_config,
             code_execution_config=False,
             human_input_mode="NEVER",
         )
+
         # 利用可能な関数の情報をエージェントに登録する
-        search_wikipedia_ja = AutoGenTools().create_search_wikipedia_ja()
-        self.wikipedia_searcher.register_for_llm(
+
+        # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
+        search_web_ja = AutoGenTools().create_search_wikipedia_ja()
+        self.web_searcher.register_for_llm(
                 name="search_wikipedia_ja",
-                description="Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します"
-                )(search_wikipedia_ja)
-        self.user_proxy.register_for_execution(name="search_wikipedia_ja") (search_wikipedia_ja)
+                description="""
+                wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
+                検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します
+                """)(search_web_ja)
+        self.user_proxy.register_for_execution(name="search_wikipedia_ja") (search_web_ja)
+
+        # 指定されたURLのHTMLを取得します。
+        get_html = AutoGenTools().create_get_html_function()
+        self.web_searcher.register_for_llm(
+                name="get_html",
+                description="指定されたURLのHTMLを取得します。")(get_html)
+        self.user_proxy.register_for_execution(name="get_html") (get_html)
+
+        # テキストファイルからURLを抽出します。
+        extract_urls_from_text = AutoGenTools().create_get_urls_from_text_function()
+        self.web_searcher.register_for_llm(
+                name="extract_urls_from_text",
+                description="テキストファイルからURLを抽出します。")(extract_urls_from_text)
+        self.user_proxy.register_for_execution(name="extract_urls_from_text") (extract_urls_from_text)
+
+        # HTMLからURLを抽出します。
+        extract_urls_from_html = AutoGenTools().create_get_urls_from_html_function()
+        self.web_searcher.register_for_llm(
+                name="extract_urls_from_html",
+                description="HTMLからURLを抽出します。")(extract_urls_from_html)
+        self.user_proxy.register_for_execution(name="extract_urls_from_html") (extract_urls_from_html)
+
 
     # ベクトル検索者を有効にする
     def enable_vector_searcher(self, openAIProps: OpenAIProps, vector_db_props_list: list[VectorDBProps]):
@@ -180,7 +210,7 @@ class AutoGenGroupChatTest1:
         # エージェントのうち、Noneでないものを指定
         agents: list[ConversableAgent] = [self.user_proxy, self.chat_admin_agent]
         for agent in [self.code_writer_agent, self.code_execution_agent, 
-                      self.wikipedia_searcher, self.vector_searcher, self.file_extractor]:
+                      self.web_searcher, self.vector_searcher, self.file_extractor]:
             if agent:
                 agents.append(agent)
         
@@ -260,12 +290,16 @@ if __name__ == '__main__':
         # requestの[messages][0][content]の最後の要素を入力テキストとする
         messages = request.get("messages", [])
         if messages:
-            input_text = messages[0]["content"][:-1]
+            last_content = messages[0].get("content",[])[-1]
+            input_text = last_content.get("text", "")
 
     # メッセージが指定されていない場合は入力メッセージがない旨を表示して終了
     if not input_text:
         print("Input message is not specified.")
         sys.exit(1)
+
+    # メッセージを表示
+    print(f"Input message: {input_text}")
 
     # Create a temporary directory to store the code files.
     temp_dir = tempfile.TemporaryDirectory()
@@ -278,11 +312,9 @@ if __name__ == '__main__':
 
     autogenProps: AutoGenProps = AutoGenProps(open_ai_props)
 
-    user_message  = message
-
     client = AutoGenGroupChatTest1(autogenProps.llm_config, executor, temp_dir.name)
     client.enable_code_writer_and_executor()
-    client.enable_wikipedia_searcher()
+    client.enable_web_searcher()
     client.enable_vector_searcher(open_ai_props, vector_db_props_list)
     client.enable_file_extractor()
 
@@ -290,7 +322,7 @@ if __name__ == '__main__':
         client.set_output_file(output_file)
         print(f"Output file: {output_file}")
 
-    group_chat = client.execute_group_chat(user_message, 10)
+    group_chat = client.execute_group_chat(input_text, 10)
     # Print the messages in the group chat.
     for message in group_chat.messages:
         # roleがuserまたはassistantの場合はrole, name, contentを表示

@@ -74,7 +74,7 @@ namespace PythonAILib.Utils.Python {
 
         }
 
-        public static List<string> CreateAutoGenGroupChatTest1CommandLine(string message, string parametersJsonFile, string? outputFile) {
+        public static List<string> CreateAutoGenGroupChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
 
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
             string beforeExecScriptCommands = "notepad " + parametersJsonFile;
@@ -82,9 +82,9 @@ namespace PythonAILib.Utils.Python {
             string afterExecScriptCommands = "pause";
             string options;
             if (string.IsNullOrEmpty(outputFile)) {
-                options = $"-m {message} -p {parametersJsonFile}";
+                options = $"-p {parametersJsonFile}";
             } else {
-                options = $"-m {message} -p {parametersJsonFile} -o {outputFile}";
+                options = $"-p {parametersJsonFile} -o {outputFile}";
             }
             List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_autogen_group_chat_01.py", $"{options}",
                 beforeExecScriptCommands, afterExecScriptCommands);

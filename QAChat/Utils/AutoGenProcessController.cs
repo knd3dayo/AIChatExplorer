@@ -45,16 +45,16 @@ namespace QAChat.Utils {
         }
 
         // StartAutoGenGroupChatTest1
-        public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string message, Action<string> afterProcessEnd, string? venvPath = "") {
+        public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest chatRequest, Action<string> afterProcessEnd) {
             // 結果を出力するテンポラリファイル
             string tempFile = Path.GetTempFileName();
 
             // パラメーターファイルを作成
-            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, null);
+            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, chatRequest);
             File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
             // AutoGenGroupChatTest1を起動するコマンド
-            List<string> cmdLines = DebugUtil.CreateAutoGenGroupChatTest1CommandLine(message, DebugUtil.DebugRequestParametersFile, tempFile);
+            List<string> cmdLines = DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, tempFile);
 
             AutoGenGroupChatTest1Process = ProcessUtil.StartWindowsCommandLine(cmdLines, "", (process) => { }, (content) => {
                 // テンポラリファイルから文字列を取得
