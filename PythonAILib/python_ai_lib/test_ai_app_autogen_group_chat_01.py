@@ -232,7 +232,10 @@ if __name__ == '__main__':
             props_file = arg
     
     # プロパティファイル(JSON)を読み込む
-    
+    open_ai_props_dict = {}
+    vector_db_props_dict = []
+    request = {}
+
     if props_file:
         print(f"props_file:{props_file}")
         with open(props_file, "r", encoding="utf-8") as f:
@@ -242,16 +245,27 @@ if __name__ == '__main__':
 
             vector_db_props_dict = props_dict.get("vector_db_props", [])
             vector_db_props_list = [VectorDBProps(props) for props in vector_db_props_dict]
+
+            request = props_dict.get("chat_request", {})
+
     else:
             open_ai_props: OpenAIProps = OpenAIProps.env_to_props()
             vector_db_props_list = [VectorDBProps.get_vector_db_settings()]
 
-    print (f"open_ai_props:{open_ai_props.__dict__}")
-
-    if vector_db_props_list:
-        print (f"vector_db_props_list:{json.dumps([props.__dict__ for props in vector_db_props_list], ensure_ascii=False, indent=4)}")        
+    input_text = ""
+    # messageが指定されている場合は, messageを入力テキストとする
+    if message:
+        input_text = message
     else:
-        print ("vector_db_props_list is empty")
+        # requestの[messages][0][content]の最後の要素を入力テキストとする
+        messages = request.get("messages", [])
+        if messages:
+            input_text = messages[0]["content"][:-1]
+
+    # メッセージが指定されていない場合は入力メッセージがない旨を表示して終了
+    if not input_text:
+        print("Input message is not specified.")
+        sys.exit(1)
 
     # Create a temporary directory to store the code files.
     temp_dir = tempfile.TemporaryDirectory()

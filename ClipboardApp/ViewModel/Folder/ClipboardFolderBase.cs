@@ -315,29 +315,29 @@ namespace ClipboardApp.ViewModel.Folder {
         public virtual async void LoadChildren(int nestLevel = 5) {
             try {
                 MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
-                Children = [];
+                // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
+                List<ClipboardFolderViewModel> _children = [];
                 await Task.Run(() => {
+                    foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
+                        if (child == null) {
+                            continue;
+                        }
+                        ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                        // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                        if (nestLevel > 0) {
+                            childViewModel.LoadChildren(nestLevel - 1);
+                        }
+                        _children.Add(childViewModel);
+                    }
+                });
 
-                // Childrenがクリアされていない場合
-                if (Children.Count > 0) {
-                    throw new Exception("Children is not cleared");
-                }
-                foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
-                    if (child == null) {
-                        continue;
-                    }
-                    ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                    if (nestLevel > 0) {
-                        childViewModel.LoadChildren(nestLevel - 1);
-                    }
-                    Children.Add(childViewModel);
-                }
-            });
+                Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
+                OnPropertyChanged(nameof(Children));
+
             } finally {
                 MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
             }
-            OnPropertyChanged(nameof(Children));
+
 
         }
         // LoadItems

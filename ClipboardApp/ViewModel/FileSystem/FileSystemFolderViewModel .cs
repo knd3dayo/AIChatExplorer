@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
 
 namespace ClipboardApp.ViewModel.FileSystem {
@@ -21,13 +22,11 @@ namespace ClipboardApp.ViewModel.FileSystem {
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel = 0) {
-            Children = [];
-            // Childrenがクリアされていない場合
-            if (Children.Count > 0) {
-                throw new Exception("Children is not cleared");
-            }
             try {
                 MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
+                // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
+                List<ClipboardFolderViewModel> _children = [];
+
                 await Task.Run(() => {
                     foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
@@ -38,14 +37,15 @@ namespace ClipboardApp.ViewModel.FileSystem {
                         if (nestLevel > 0) {
                             childViewModel.LoadChildren(nestLevel - 1);
                         }
-                        Children.Add(childViewModel);
+                        _children.Add(childViewModel);
                     }
                 });
+                Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
+                OnPropertyChanged(nameof(Children));
             } finally {
                 MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
             }
 
-            OnPropertyChanged(nameof(Children));
 
         }
     }
