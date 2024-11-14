@@ -22,6 +22,12 @@ def capture_stdout_stderr(func):
         sys.stdout = buffer
         sys.stderr = buffer
         try:
+            # debug用
+            # HTTPS_PROXY環境変数
+            print(f"HTTPS_PROXY:{os.environ.get('HTTPS_PROXY')}")
+            # NO_PROXY環境変数
+            print(f"NO_PROXY:{os.environ.get('NO_PROXY')}")
+
             result = func(*args, **kwargs)
             # resultがdictでない場合は例外をスロー
             if not isinstance(result, dict):

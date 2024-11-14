@@ -99,7 +99,8 @@ class AutoGenAgents:
         self.vector_searcher = None
         # ファイル抽出者
         self.file_extractor = None
-
+        # Azure関連のドキュメント検索者
+        self.azure_document_searcher = None
 
     def enable_code_writer_and_executor(self):
         # コードの作成者と実行者は分離する。以下はコード推論 Agent。LLM を持つ。
@@ -185,7 +186,7 @@ class AutoGenAgents:
         extract_text_from_file = self.autogen_tools.create_extract_text_from_file()
         params = self.autogen_tools.create_extract_text_from_file_params()
         self.chat_admin_agent.register_for_execution(name="extract_text_from_file") (extract_text_from_file)
-        self.file_extractor.register_for_llm(params)(extract_text_from_file)
+        self.file_extractor.register_for_llm(**params)(extract_text_from_file)
 
 
     def set_output_file(self, output_file: str):
@@ -241,14 +242,14 @@ class AutoGenAgents:
         # 利用可能な関数の情報をエージェントに登録する
 
         # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
-        search_web_ja = self.autogen_tools.create_search_wikipedia_ja()
+        search_wikipedia_ja = self.autogen_tools.create_search_wikipedia_ja()
         self.web_searcher.register_for_llm( 
-            self.autogen_tools.create_search_wipedia_ja_params()
-            )(search_web_ja)
-        self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_web_ja)
+            **self.autogen_tools.create_search_wipedia_ja_params()
+            )(search_wikipedia_ja)
+        self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_wikipedia_ja)
 
         # 指定されたURLのテキストとリンクを取得します。
-        extract_webpage = AutoGenTools().create_get_html_function()
+        extract_webpage = AutoGenTools().create_extract_webpage_function()
         self.web_searcher.register_for_llm(
                 name="extract_webpage",
                 description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
@@ -258,7 +259,7 @@ class AutoGenAgents:
     def enable_azure_document_searcher(self):
         
         # Web検索者
-        self.web_searcher = ConversableAgent(
+        self.azure_document_searcher = ConversableAgent(
             "azure-document-searcher",
             system_message="""
                 あなたはAzure関連のドキュメント検索者です。ユーザーの指示に従いWeb上のAzure関連のドキュメントを検索します。
@@ -272,8 +273,8 @@ class AutoGenAgents:
         )
 
         # 指定されたURLのテキストとリンクを取得します。
-        extract_webpage = AutoGenTools().create_get_html_function()
-        self.web_searcher.register_for_llm(
+        extract_webpage = AutoGenTools().create_extract_webpage_function()
+        self.azure_document_searcher.register_for_llm(
                 name="extract_webpage",
                 description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
         self.chat_admin_agent.register_for_execution(name="extract_webpage") (extract_webpage)
@@ -301,6 +302,7 @@ class AutoGenTools:
             wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
             検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します
             """
+        return params
 
     def create_search_wikipedia_ja(self) -> Callable[[str, int], list[str]]:
         def search_wikipedia_ja(query: Annotated[str, "検索対象の文字列"], num_results: Annotated[int, "表示する結果の最大数"]) -> list[str]:
@@ -347,8 +349,8 @@ class AutoGenTools:
         return extract_file
     
     def create_extract_webpage_function(self) -> Callable[[str], list[str]]:
-        driver = self.create_web_driver()
         def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[str]], "テキストとリンク"]:
+            driver = self.create_web_driver()
             # webページのHTMLを取得して、テキストとリンクを抽出
             driver.get(url)
             # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
@@ -360,23 +362,24 @@ class AutoGenTools:
             soup = BeautifulSoup(page_html, "html.parser")
             text = soup.get_text()
             urls = [a.get("href") for a in soup.find_all("a")]
+            driver.close()
             return text, urls
         return extract_webpage
 
     def create_get_html_function(self) -> Callable[[str], str]:
-        driver = self.create_web_driver()
         def get_html(url: Annotated[str, "URL"]) -> str:
+            driver = self.create_web_driver()
             driver.get(url)
             # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
             driver.implicitly_wait(10)
             # ページ全体のHTMLを取得
             page_html = driver.page_source
+            driver.close()
             return page_html
         return get_html
 
     # レンダリング結果のTextを取得する
     def create_get_text_from_html_function(self) -> Callable[[str], str]:
-        get_html = self.create_get_html_function()
         def get_text_from_html(html: Annotated[str, "HTMLのソース"]) -> str:
             from bs4 import BeautifulSoup
             soup = BeautifulSoup(html, "html.parser")
