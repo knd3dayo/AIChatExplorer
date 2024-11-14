@@ -89,6 +89,7 @@ if __name__ == '__main__':
 
     client.enable_code_writer_and_executor()
     client.enable_web_searcher()
+    client.enable_azure_document_searcher()
     client.enable_vector_searcher(open_ai_props, vector_db_props_list)
     client.enable_file_extractor()
 

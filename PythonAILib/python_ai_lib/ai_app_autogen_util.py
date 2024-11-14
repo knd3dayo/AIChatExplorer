@@ -186,7 +186,9 @@ class AutoGenAgents:
         extract_text_from_file = self.autogen_tools.create_extract_text_from_file()
         params = self.autogen_tools.create_extract_text_from_file_params()
         self.chat_admin_agent.register_for_execution(name="extract_text_from_file") (extract_text_from_file)
-        self.file_extractor.register_for_llm(**params)(extract_text_from_file)
+        self.file_extractor.register_for_llm (
+            name="extract_text_from_file",
+        description="ファイルからテキストを抽出します。")(extract_text_from_file)
 
 
     def set_output_file(self, output_file: str):
@@ -195,8 +197,11 @@ class AutoGenAgents:
     def execute_group_chat(self, initial_message: str, max_round: int):
         # エージェントのうち、Noneでないものを指定
         agents: list[ConversableAgent] = [self.user_proxy, self.chat_admin_agent]
-        for agent in [self.code_writer_agent, self.code_execution_agent, 
-                      self.web_searcher, self.vector_searcher, self.file_extractor]:
+        for agent in [
+            self.code_writer_agent, 
+            self.code_execution_agent,
+            self.azure_document_searcher, 
+            self.web_searcher, self.vector_searcher, self.file_extractor]:
             if agent:
                 agents.append(agent)
         
@@ -244,7 +249,11 @@ class AutoGenAgents:
         # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
         search_wikipedia_ja = self.autogen_tools.create_search_wikipedia_ja()
         self.web_searcher.register_for_llm( 
-            **self.autogen_tools.create_search_wipedia_ja_params()
+        name="search_wikipedia_ja",
+        description="""
+            wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
+            検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します
+            """
             )(search_wikipedia_ja)
         self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_wikipedia_ja)
 
@@ -294,15 +303,6 @@ class AutoGenTools:
             return result
 
         return vector_search
-
-    def create_search_wipedia_ja_params(self) -> dict:
-        params = {}
-        params["name"]="search_wikipedia_ja",
-        params["description"]="""
-            wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
-            検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します
-            """
-        return params
 
     def create_search_wikipedia_ja(self) -> Callable[[str, int], list[str]]:
         def search_wikipedia_ja(query: Annotated[str, "検索対象の文字列"], num_results: Annotated[int, "表示する結果の最大数"]) -> list[str]:
