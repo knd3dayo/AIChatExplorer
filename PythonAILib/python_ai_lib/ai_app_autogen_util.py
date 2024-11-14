@@ -247,26 +247,12 @@ class AutoGenAgents:
             )(search_web_ja)
         self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_web_ja)
 
-        # 指定されたURLのHTMLを取得します。
-        get_html = AutoGenTools().create_get_html_function()
+        # 指定されたURLのテキストとリンクを取得します。
+        extract_webpage = AutoGenTools().create_get_html_function()
         self.web_searcher.register_for_llm(
-                name="get_html",
-                description="Seleniumを使用して指定されたURLのHTMLソースを取得します。")(get_html)
-        self.chat_admin_agent.register_for_execution(name="get_html") (get_html)
-
-        # HTMLからテキストを抽出します。
-        extract_text_from_html = AutoGenTools().create_get_text_from_html_function()
-        self.web_searcher.register_for_llm(
-                name="extract_text_from_html",
-                description="HTMLソースからテキストを抽出します。")(extract_text_from_html)
-        self.chat_admin_agent.register_for_execution(name="extract_urls_from_html") (extract_text_from_html)
-
-        # リンク一覧を取得する
-        extract_urls_from_html = AutoGenTools().create_get_urls_from_html_function()
-        self.web_searcher.register_for_llm(
-                name="extract_urls_from_html",
-                description="HTMLソースからURLを抽出します。")(extract_urls_from_html)
-        self.chat_admin_agent.register_for_execution(name="extract_urls_from_html") (extract_urls_from_html)
+                name="extract_webpage",
+                description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
+        self.chat_admin_agent.register_for_execution(name="extract_webpage") (extract_webpage)
 
 
     def enable_azure_document_searcher(self):
@@ -285,37 +271,12 @@ class AutoGenAgents:
             human_input_mode="NEVER",
         )
 
-        # 利用可能な関数の情報をエージェントに登録する
-
-        # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
-        search_web_ja = self.autogen_tools.create_search_wikipedia_ja()
-        self.web_searcher.register_for_llm( 
-            self.autogen_tools.create_search_wipedia_ja_params()
-            )(search_web_ja)
-        self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_web_ja)
-
-        # 指定されたURLのHTMLを取得します。
-        get_html = AutoGenTools().create_get_html_function()
+        # 指定されたURLのテキストとリンクを取得します。
+        extract_webpage = AutoGenTools().create_get_html_function()
         self.web_searcher.register_for_llm(
-                name="get_html",
-                description="Seleniumを使用して指定されたURLのHTMLソースを取得します。")(get_html)
-        self.chat_admin_agent.register_for_execution(name="get_html") (get_html)
-
-        # HTMLからテキストを抽出します。
-        extract_text_from_html = AutoGenTools().create_get_text_from_html_function()
-        self.web_searcher.register_for_llm(
-                name="extract_text_from_html",
-                description="HTMLソースからテキストを抽出します。")(extract_text_from_html)
-        self.chat_admin_agent.register_for_execution(name="extract_urls_from_html") (extract_text_from_html)
-
-        # リンク一覧を取得する
-        extract_urls_from_html = AutoGenTools().create_get_urls_from_html_function()
-        self.web_searcher.register_for_llm(
-                name="extract_urls_from_html",
-                description="HTMLソースからURLを抽出します。")(extract_urls_from_html)
-        self.chat_admin_agent.register_for_execution(name="extract_urls_from_html") (extract_urls_from_html)
-
-
+                name="extract_webpage",
+                description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
+        self.chat_admin_agent.register_for_execution(name="extract_webpage") (extract_webpage)
 
 class AutoGenTools:
     def __init__(self):
@@ -385,6 +346,23 @@ class AutoGenTools:
             return text
         return extract_file
     
+    def create_extract_webpage_function(self) -> Callable[[str], list[str]]:
+        driver = self.create_web_driver()
+        def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[str]], "テキストとリンク"]:
+            # webページのHTMLを取得して、テキストとリンクを抽出
+            driver.get(url)
+            # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
+            driver.implicitly_wait(10)
+            # ページ全体のHTMLを取得
+            page_html = driver.page_source
+
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(page_html, "html.parser")
+            text = soup.get_text()
+            urls = [a.get("href") for a in soup.find_all("a")]
+            return text, urls
+        return extract_webpage
+
     def create_get_html_function(self) -> Callable[[str], str]:
         driver = self.create_web_driver()
         def get_html(url: Annotated[str, "URL"]) -> str:

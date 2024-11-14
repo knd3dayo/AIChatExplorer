@@ -10,21 +10,6 @@ from ai_app_autogen_util import AutoGenProps, AutoGenTools, AutoGenAgents
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
 
-class AutoGenGroupChatTest1:
-    def __init__(self):
-        self.llm_config = llm_config
-        self.executor = executor
-        self.work_dir = work_dir
-        self.__create_default_agents()
-
-        # コード実行者が自動的にコードを実行するようにするかどうか
-        self.auto_execute_code = auto_execute_code
-
-        # 結果を出力するファイル
-        self.output_file = None
-
-        self.autogen_tools = AutoGenTools()
-
 import os
 import tempfile
 import sys
