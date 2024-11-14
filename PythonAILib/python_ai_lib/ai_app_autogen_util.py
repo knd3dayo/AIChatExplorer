@@ -59,6 +59,44 @@ class AutoGenAgents:
         self.autogen_tools = AutoGenTools()
 
 
+
+    def set_output_file(self, output_file: str):
+        self.output_file = output_file
+
+    def execute_group_chat(self, initial_message: str, max_round: int):
+        # エージェントのうち、Noneでないものを指定
+        agents: list[ConversableAgent] = [self.user_proxy, self.chat_admin_agent]
+        for agent in [
+            self.code_writer_agent, 
+            self.code_execution_agent,
+            self.azure_document_searcher, 
+            self.web_searcher, self.vector_searcher, self.file_extractor]:
+            if agent:
+                agents.append(agent)
+        
+        # グループチャットを開始
+        groupchat = autogen.GroupChat(
+            admin_name="chat_admin_agent",
+            agents=agents,
+            messages=[], 
+            # send_introductions=True,  
+            max_round=max_round
+        )
+
+        group_chat_manager = autogen.GroupChatManager(
+            groupchat=groupchat, 
+            llm_config=self.llm_config
+        )
+        self.user_proxy.initiate_chat(group_chat_manager, message=initial_message, max_turns=3)
+
+        # 結果を出力するファイルが指定されている場合
+        if self.output_file:
+            with open(self.output_file, "w", encoding="utf-8") as f:
+                f.write(json.dumps(groupchat.messages, ensure_ascii=False, indent=4))
+
+        return groupchat
+
+
     def __create_default_agents(self):
         # グループチャットの議題提供者
         self.user_proxy = autogen.UserProxyAgent(
@@ -184,48 +222,15 @@ class AutoGenAgents:
         )
         # 利用可能な関数の情報をエージェントに登録する
         extract_text_from_file = self.autogen_tools.create_extract_text_from_file()
-        params = self.autogen_tools.create_extract_text_from_file_params()
         self.chat_admin_agent.register_for_execution(name="extract_text_from_file") (extract_text_from_file)
         self.file_extractor.register_for_llm (
             name="extract_text_from_file",
-        description="ファイルからテキストを抽出します。")(extract_text_from_file)
-
-
-    def set_output_file(self, output_file: str):
-        self.output_file = output_file
-
-    def execute_group_chat(self, initial_message: str, max_round: int):
-        # エージェントのうち、Noneでないものを指定
-        agents: list[ConversableAgent] = [self.user_proxy, self.chat_admin_agent]
-        for agent in [
-            self.code_writer_agent, 
-            self.code_execution_agent,
-            self.azure_document_searcher, 
-            self.web_searcher, self.vector_searcher, self.file_extractor]:
-            if agent:
-                agents.append(agent)
-        
-        # グループチャットを開始
-        groupchat = autogen.GroupChat(
-            admin_name="chat_admin_agent",
-            agents=agents,
-            messages=[], 
-            # send_introductions=True,  
-            max_round=max_round
-        )
-
-        group_chat_manager = autogen.GroupChatManager(
-            groupchat=groupchat, 
-            llm_config=self.llm_config
-        )
-        self.user_proxy.initiate_chat(group_chat_manager, message=initial_message, max_turns=3)
-
-        # 結果を出力するファイルが指定されている場合
-        if self.output_file:
-            with open(self.output_file, "w", encoding="utf-8") as f:
-                f.write(json.dumps(groupchat.messages, ensure_ascii=False, indent=4))
-
-        return groupchat
+            description="ファイルからテキストを抽出します。")(extract_text_from_file)
+        list_files_in_directory = self.autogen_tools.create_list_files_in_directory()
+        self.chat_admin_agent.register_for_execution(name="list_files_in_directory") (list_files_in_directory)
+        self.file_extractor.register_for_llm (
+            name="list_files_in_directory",
+            description="指定されたディレクトリ内のファイル一覧を取得します。")(list_files_in_directory)
 
     def enable_web_searcher(self):
         
@@ -288,6 +293,7 @@ class AutoGenAgents:
                 description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
         self.chat_admin_agent.register_for_execution(name="extract_webpage") (extract_webpage)
 
+
 class AutoGenTools:
     def __init__(self):
         pass
@@ -332,13 +338,12 @@ class AutoGenTools:
             return result_texts
         return search_wikipedia_ja
 
-    def create_extract_text_from_file_params(self) -> dict:
-        params = {}
-        #   name="extract_text_from_file",
-        #   description="ファイルからテキストを抽出します。"
-        params["name"]="extract_text_from_file",
-        params["description"]="ファイルからテキストを抽出します。"
-        return params
+    def create_list_files_in_directory(self) -> Callable[[str], list[str]]:
+        def list_files_in_directory(directory_path: Annotated[str, "ディレクトリパス"]) -> list[str]:
+            import os
+            files = os.listdir(directory_path)
+            return files
+        return list_files_in_directory
         
     def create_extract_text_from_file(self) -> Callable[[str], str]:
         # ファイルからテキストを抽出する関数を生成
