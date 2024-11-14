@@ -6,6 +6,7 @@ from typing import Any, Type
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
+        
         self.OpenAIKey:str = props_dict.get("OpenAIKey", "")
         self.OpenAICompletionModel:str = props_dict.get("OpenAICompletionModel", "")
         self.OpenAIEmbeddingModel:str = props_dict.get("OpenAIEmbeddingModel", "")

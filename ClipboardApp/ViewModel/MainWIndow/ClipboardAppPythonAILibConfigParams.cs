@@ -6,57 +6,51 @@ using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.MainWindow
-{
-    public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams
-    {
+namespace ClipboardApp.ViewModel.MainWindow {
+    public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
-        public string GetLang()
-        {
+        public string GetHttpProxy() {
+            return ClipboardAppConfig.Instance.ProxyURL;
+        }
+        public string GetNoProxy() {
+            return ClipboardAppConfig.Instance.NoProxyList;
+        }
+
+        public string GetLang() {
             return ClipboardAppConfig.Instance.ActualLang;
         }
-        public string GetPythonDllPath()
-        {
+        public string GetPythonDllPath() {
             return ClipboardAppConfig.Instance.PythonDllPath;
         }
-        public string GetPathToVirtualEnv()
-        {
+        public string GetPathToVirtualEnv() {
             return ClipboardAppConfig.Instance.PythonVenvPath;
         }
-        public string GetAppDataPath()
-        {
+        public string GetAppDataPath() {
             return ClipboardAppConfig.Instance.AppDataFolder;
         }
 
-        public IDataFactory GetDataFactory()
-        {
+        public IDataFactory GetDataFactory() {
             return ClipboardAppFactory.Instance.GetClipboardDBController();
         }
-        public OpenAIProperties GetOpenAIProperties()
-        {
+        public OpenAIProperties GetOpenAIProperties() {
             return ClipboardAppConfig.Instance.CreateOpenAIProperties();
         }
 
-        public Action<string> GetInfoAction()
-        {
+        public Action<string> GetInfoAction() {
             return LogWrapper.Info;
         }
-        public Action<string> GetWarnAction()
-        {
+        public Action<string> GetWarnAction() {
             return LogWrapper.Warn;
         }
-        public Action<string> GetErrorAction()
-        {
+        public Action<string> GetErrorAction() {
             return LogWrapper.Error;
         }
 
-        public TextWrapping GetTextWrapping()
-        {
+        public TextWrapping GetTextWrapping() {
             return ClipboardAppConfig.Instance.TextWrapping;
         }
 
-        public string GetDBPath()
-        {
+        public string GetDBPath() {
             /// Get AppData folder path
             string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
             // Create database file path
@@ -65,14 +59,12 @@ namespace ClipboardApp.ViewModel.MainWindow
             return dbPath;
 
         }
-        public string GetSystemVectorDBPath()
-        {
+        public string GetSystemVectorDBPath() {
             string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db");
             return vectorDBPath;
         }
 
-        public string GetSystemDocDBPath()
-        {
+        public string GetSystemDocDBPath() {
             string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
             return docDBPath;
         }

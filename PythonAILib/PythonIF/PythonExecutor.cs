@@ -29,6 +29,10 @@ namespace PythonAILib.PythonIF
                 return path;
             }
         }
+        // HttpsProxy
+        public static string HttpsProxy { get; set; } = "";
+        // NoProxy
+        public static string NoProxy { get; set; } = "";
 
         public static string? PythonPath { get; set; }
 
@@ -44,7 +48,7 @@ namespace PythonAILib.PythonIF
                     throw new Exception(StringResources.PythonDLLNotFound);
                 }
                 if (_pythonAIFunctions == null) {
-                    InitPythonNet(PythonPath, PathToVirtualEnv, PythonAILibPath);
+                    InitPythonNet(PythonPath, PathToVirtualEnv, PythonAILibPath, HttpsProxy, NoProxy);
                     _pythonAIFunctions = new PythonNetFunctions();
                 }
                 return _pythonAIFunctions;
@@ -67,7 +71,10 @@ namespace PythonAILib.PythonIF
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot) {
+        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot, string httpsProxy, string noProxy) {
+            
+            HttpsProxy = httpsProxy;
+            NoProxy = noProxy;
 
             PythonPath = pythonPath;
             if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
@@ -91,7 +98,7 @@ namespace PythonAILib.PythonIF
         }
 
 
-        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath) {
+        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath, string httpsProxy, string noProxy) {
             // Pythonスクリプトを実行するための準備
 
             // 既に初期化されている場合は初期化しない
@@ -140,7 +147,7 @@ namespace PythonAILib.PythonIF
                     // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
                     dynamic sys = Py.Import("sys");
                     dynamic site = Py.Import("site");
-
+                    dynamic os = Py.Import("os");
                     if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                         sys.prefix = pathToVirtualEnv;
                         sys.exec_prefix = pathToVirtualEnv;
@@ -151,6 +158,15 @@ namespace PythonAILib.PythonIF
                     }
                     // set the path to pythonAILib
                     site.addsitedir(pythonAILibPath);
+
+                    // set the proxy settings
+                    if (!string.IsNullOrEmpty(httpsProxy)) {
+                        os.environ["HTTPS_PROXY"] = httpsProxy;
+                        os.environ["NO_PROXY"] = noProxy;
+                    } else {
+                        // NO_PROXY="*"
+                        os.environ["NO_PROXY"] = "*";
+                    }
 
                     // Run site path modification with tweaked prefixes
                     site.main();

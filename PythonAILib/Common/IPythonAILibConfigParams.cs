@@ -24,6 +24,9 @@ namespace PythonAILib.Common
 
         public Action<string> GetErrorAction();
 
+        public string GetHttpProxy();
+
+        public string GetNoProxy();
 
     }
 }

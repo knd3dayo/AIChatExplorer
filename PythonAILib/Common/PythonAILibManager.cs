@@ -42,7 +42,8 @@ namespace PythonAILib.Common
             // 言語設定
             PythonAILibStringResources.Lang = parameters.GetLang();
             // Python処理機能の初期化
-            PythonExecutor.Init(parameters.GetPythonDllPath(), parameters.GetPathToVirtualEnv(), parameters.GetAppDataPath());
+            PythonExecutor.Init(
+                parameters.GetPythonDllPath(), parameters.GetPathToVirtualEnv(), parameters.GetAppDataPath(), parameters.GetHttpProxy(), parameters.GetNoProxy());
             // DBControllerの設定
             DataFactory = parameters.GetDataFactory();
             // LogWrapperのログ出力設定

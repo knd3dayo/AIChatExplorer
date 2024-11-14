@@ -137,7 +137,8 @@ namespace ClipboardApp.Settings {
         #endregion
         private TestResult TestSpacy() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
+            PythonExecutor.Init(PythonDllPath, PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
+                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList);
             StringBuilder stringBuilder = new();
             stringBuilder.AppendLine("def execute(input_str):");
             stringBuilder.AppendLine("    import spacy");

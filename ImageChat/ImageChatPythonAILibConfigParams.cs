@@ -9,6 +9,12 @@ namespace ImageChat
 {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
+        public string GetHttpProxy() {
+            return ImageChatConfig.Instance.ProxyURL;
+        }
+        public string GetNoProxy() {
+            return ImageChatConfig.Instance.NoProxyList;
+        }
         public string GetLang() {
             return ImageChatConfig.Instance.ActualLang;
         }

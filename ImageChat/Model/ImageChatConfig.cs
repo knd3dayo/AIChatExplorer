@@ -181,6 +181,36 @@ namespace ImageChat.Model
             }
         }
 
+        // ProxyURL
+        private string? _proxyUrl;
+        public string ProxyURL {
+            get {
+                if (_proxyUrl == null) {
+                    _proxyUrl = Properties.Settings.Default.ProxyURL;
+                }
+                return _proxyUrl;
+            }
+            set {
+                _proxyUrl = value;
+                Properties.Settings.Default.ProxyURL = value;
+            }
+        }
+
+        // NoProxyList
+        private string? _noProxyList;
+        public string NoProxyList {
+            get {
+                if (_noProxyList == null) {
+                    _noProxyList = Properties.Settings.Default.NoProxyList;
+                }
+                return _noProxyList;
+            }
+            set {
+                _noProxyList = value;
+                Properties.Settings.Default.NoProxyList = value;
+            }
+        }
+
         // TextWrapping
         private bool _textWrapping = false;
         public System.Windows.TextWrapping TextWrapping {

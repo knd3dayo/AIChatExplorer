@@ -459,7 +459,9 @@ namespace ClipboardApp.Settings
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
+                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
+                );
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -478,7 +480,9 @@ namespace ClipboardApp.Settings
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
+                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
+                );
             try {
                 // ChatControllerを作成
                 ChatRequest chatController = new();
