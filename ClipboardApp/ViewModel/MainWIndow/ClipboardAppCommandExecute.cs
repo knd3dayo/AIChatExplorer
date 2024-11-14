@@ -501,8 +501,8 @@ namespace ClipboardApp.ViewModel.MainWindow {
                 // Saveアクション
                 SaveCommand = (item, saveChatHistory) => {
                     clipboardItem = (ClipboardItem)item;
-                    // ClipboardItemを保存
                     clipboardItem.Save();
+
                     // チャット履歴を保存するフラグが立っている場合で、チャット履歴以外のフォルダの場合
                     if (saveChatHistory && clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat) {
                         // チャット履歴用のItemの設定
