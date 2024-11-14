@@ -161,11 +161,11 @@ namespace PythonAILib.PythonIF
 
                     // set the proxy settings
                     if (!string.IsNullOrEmpty(httpsProxy)) {
-                        os.environ["HTTPS_PROXY"] = httpsProxy;
-                        os.environ["NO_PROXY"] = noProxy;
+                        os.environ["HTTPS_PROXY"] = new PyString(httpsProxy);
+                        os.environ["NO_PROXY"] = new PyString(noProxy);
                     } else {
                         // NO_PROXY="*"
-                        os.environ["NO_PROXY"] = "*";
+                        os.environ["NO_PROXY"] = new PyString("*");
                     }
 
                     // Run site path modification with tweaked prefixes

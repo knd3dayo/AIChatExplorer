@@ -11,7 +11,7 @@ class FileUtil:
         try:
             with open(filename, "rb") as f:
                 # 1KB読み込む
-                byte_data = f.read(1024)
+                byte_data = f.read(8192)
         except Exception as e:
             print(e)
             return None, None
