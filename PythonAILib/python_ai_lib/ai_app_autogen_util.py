@@ -107,7 +107,7 @@ class AutoGenAgents:
                 """,
             name="user_proxy",
             human_input_mode="NEVER",
-            is_termination_msg=lambda msg: "[会議を終了]" in msg["content"].lower(),
+            is_termination_msg=lambda msg: "会議を終了" in msg["content"].lower(),
             code_execution_config=False,
             llm_config=self.llm_config,
         )
@@ -116,14 +116,13 @@ class AutoGenAgents:
             name="chat-admin",
             system_message=f"""
                 あなたはグループチャットの管理者です。
-                他のエージェントに指示を出し、彼らが協力してタスクを完了するのを手伝います。
-                グループチャットの内容をまとめて議事録(4000文字程度,各エージェントの発言の概要が時系列でわかるもの)と結論を出す責任があります。
-                グループチャットでの結論が出ましたら、議事録と結論を出力します。そして議題提供者に[会議を終了]と返信します。
+                議題提供者から提示された議題を解決するため、他のエージェントに指示を出して彼らが協力してタスクを完了するのを手伝います。
+                グループチャットでの結論が出ましたら、チャットの内容を校正して文章として出力します。そして議題提供者に[会議を終了]と返信します。
                 """
         ,
             llm_config=self.llm_config,
             code_execution_config=False,
-            is_termination_msg=lambda msg: "[会議を終了]" in msg["content"].lower(),
+            is_termination_msg=lambda msg: "会議を終了" in msg["content"].lower(),
             function_map=None,
             human_input_mode="NEVER",
         )
