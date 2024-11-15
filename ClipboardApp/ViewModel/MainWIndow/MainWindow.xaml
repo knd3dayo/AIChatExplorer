@@ -218,11 +218,27 @@
                     </Menu>
                 </materialDesign:ColorZone>
             </StackPanel>
-            <lc:MainPanel
-                x:Name="MainPanel"
+            <TabControl
                 Grid.Row="1"
-                HorizontalAlignment="Stretch"
-                DataContext="{Binding}" />
+                HorizontalContentAlignment="Left"
+                ItemsSource="{Binding TabItems}">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding TabName}" />
+                            <materialDesign:PackIcon
+                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
+                                Kind="Close"
+                                Visibility="{Binding CloseButtonVisibility}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <UserControl Content="{Binding TabContent}" />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
             <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
             <ProgressBar
                 Grid.Row="1"

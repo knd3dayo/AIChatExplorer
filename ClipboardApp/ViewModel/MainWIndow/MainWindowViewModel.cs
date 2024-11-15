@@ -1,25 +1,22 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using System.Windows.Controls;
 using ClipboardApp.Control;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
-using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.VectorDBView;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.MainWindow;
 using ClipboardApp.ViewModel.MainWIndow;
 using PythonAILib.Common;
 using QAChat;
-using QAChat.Control;
 
 
 namespace ClipboardApp {
-    public partial class MainWindowViewModel : ClipboardAppViewModelBase, IMainPanelImplementer {
+    public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
 
@@ -56,7 +53,20 @@ namespace ClipboardApp {
                 // CopiedItemsをクリア
                 CopiedObjects.Clear();
             };
+
+            // TabItemsの初期化
+            MainPanel mainPanel = new() {
+                DataContext = this
+            };
+
+            ClipboardAppTabContainer container = new("main", mainPanel);
+            container.CloseButtonVisibility = Visibility.Collapsed;
+            TabItems.Add(container);
         }
+
+        public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];
+
+        public string TabName { get; set; } = "main";
 
         // Null許容型
         [AllowNull]
@@ -207,6 +217,7 @@ namespace ClipboardApp {
         public void NotifyPropertyChanged(string propertyName) {
             OnPropertyChanged(propertyName);
         }
+
 
     }
 
