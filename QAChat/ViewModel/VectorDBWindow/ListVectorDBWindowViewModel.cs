@@ -3,7 +3,7 @@ using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
-using QAChat.View.VectorDBWindow;
+using QAChat.View.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.VectorDBWindow

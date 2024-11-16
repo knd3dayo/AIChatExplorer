@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.Prompt;
 using QAChat.Model;
-using QAChat.View.PromptTemplateWindow;
+using QAChat.View.PromptTemplate;
 using WpfAppCommon.Utils;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;

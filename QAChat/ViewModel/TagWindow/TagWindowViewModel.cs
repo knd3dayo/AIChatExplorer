@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Tag;
 using QAChat.Model;
-using QAChat.View.TagView;
+using QAChat.View.Tag;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.TagWindow

@@ -2,7 +2,7 @@ using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.ClipboardItemFolder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Search

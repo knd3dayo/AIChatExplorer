@@ -1082,7 +1082,7 @@ namespace QAChat.Resource {
         // テキストファイルとして開きます。
         public virtual string OpenAsTextFile { get; } = "テキストファイルとして開きます。";
 
-        // --- EditChatItemWindow ---
+        // --- EditChatItem ---
         // チャットアイテム
         public virtual string ChatItem { get; } = "チャットアイテム";
 

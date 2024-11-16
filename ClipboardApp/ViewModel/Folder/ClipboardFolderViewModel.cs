@@ -1,16 +1,18 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.View.ClipboardItemView;
-using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.View.ClipboardItem;
+using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Common;
 using WpfAppCommon.Utils;
 
 
 namespace ClipboardApp.ViewModel {
     public partial class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : Folder.ClipboardFolderBase(clipboardItemFolder) {
-        public override ClipboardItemViewModel CreateItemViewModel(ClipboardItem item) {
+        public override ClipboardItemViewModel CreateItemViewModel(Model.ClipboardItem item) {
             return new ClipboardItemViewModel(this, item);
         }
 
@@ -60,11 +62,24 @@ namespace ClipboardApp.ViewModel {
             });
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel item) {
-            EditItemWindow.OpenEditItemWindow(this, item, () => {
+            // MainWindowViewModelのTabItemを追加する
+            EditItemControl editItemControl = EditItemControl.CreateEditItemControl(this, item,
+                () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.Edited);
             });
+
+            ClipboardAppTabContainer container = new(item.ClipboardItem.Description, editItemControl);
+
+            // UserControlをクローズする場合の処理を設定
+            editItemControl.SetCloseUserControl(() => {
+                MainWindowViewModel.Instance.RemoveTabItem(container);
+            });
+
+            MainWindowViewModel.Instance.AddTabItem(container);
+
+
         }
 
         /// <summary>
@@ -83,7 +98,7 @@ namespace ClipboardApp.ViewModel {
             IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ClipboardItemViewModel itemViewModel) {
-                    ClipboardItem clipboardItem = itemViewModel.ClipboardItem;
+                    Model.ClipboardItem clipboardItem = itemViewModel.ClipboardItem;
                     if (CutFlag == MainWindowViewModel.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
                         clipboardItem.MoveToFolder(toFolder.ClipboardItemFolder);

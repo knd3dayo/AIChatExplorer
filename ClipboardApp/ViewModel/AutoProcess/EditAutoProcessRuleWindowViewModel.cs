@@ -5,14 +5,14 @@ using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.ViewModel.MainWIndow;
+using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
-using QAChat.View.PromptTemplateWindow;
-using QAChat.View.PythonScriptView;
+using QAChat.View.PromptTemplate;
+using QAChat.View.PythonScript;
 using QAChat.ViewModel.PromptTemplateWindow;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
@@ -538,7 +538,7 @@ namespace ClipboardApp.ViewModel.AutoProcess
             // ClipboardItemFolderにAutoProcessRuleIdを追加
             TargetFolder.ClipboardItemFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
             // ClipboardItemFolderを保存
-            TargetFolder.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
+            TargetFolder.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

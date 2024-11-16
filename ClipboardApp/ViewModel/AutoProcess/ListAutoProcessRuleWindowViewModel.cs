@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Settings;
-using ClipboardApp.View.AutoProcessRuleView;
+using ClipboardApp.View.AutoProcessRule;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.AutoProcess {

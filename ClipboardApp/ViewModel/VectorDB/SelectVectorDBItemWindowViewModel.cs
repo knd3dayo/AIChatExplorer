@@ -1,9 +1,9 @@
 using System.Windows;
-using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.ClipboardItemFolder;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.VectorDB;
 using QAChat.Resource;
-using QAChat.View.VectorDBWindow;
+using QAChat.View.VectorDB;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 

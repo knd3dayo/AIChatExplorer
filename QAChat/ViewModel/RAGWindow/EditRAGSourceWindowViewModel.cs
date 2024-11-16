@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.View.RAGWindow;
+using QAChat.View.RAG;
 using WpfAppCommon.Utils;
 using QAChat.Model;
 

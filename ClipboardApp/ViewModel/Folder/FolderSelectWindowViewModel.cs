@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows;
-using ClipboardApp.View.ClipboardItemFolderView;
+using ClipboardApp.View.ClipboardItemFolder;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 

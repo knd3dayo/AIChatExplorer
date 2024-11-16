@@ -1,6 +1,7 @@
 using System.Windows;
 using ClipboardApp.Model;
 using QAChat.Resource;
+using ClipboardApp.View.Main;
 
 namespace ClipboardApp {
     /// <summary>

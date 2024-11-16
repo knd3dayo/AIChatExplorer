@@ -42,25 +42,25 @@
     <Compile Update="View\ImageChat\ScreenShotCheckPromptWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\PromptTemplateWindow\EditPromptItemWindow.xaml.cs">
+    <Compile Update="View\PromptTemplate\EditPromptItemWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\PromptTemplateWindow\ListPromptTemplateWindow.xaml.cs">
+    <Compile Update="View\PromptTemplate\ListPromptTemplateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\RAGWindow\EditRAGSourceWindow.xaml.cs">
+    <Compile Update="View\RAG\EditRAGSourceWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\RAGWindow\SelectCommitWindow.xaml.cs">
+    <Compile Update="View\RAG\SelectCommitWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Control\StatusBar\MyStatusBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\VectorDBWindow\EditVectorDBWindow.xaml.cs">
+    <Compile Update="View\VectorDB\EditVectorDBWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\VectorDBWindow\ListVectorDBWindow.xaml.cs">
+    <Compile Update="View\VectorDB\ListVectorDBWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

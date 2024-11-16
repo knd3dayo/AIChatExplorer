@@ -1,7 +1,7 @@
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolderView;
-using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.ViewModel.Content;
 using QAChat.Control;
 
 namespace ClipboardApp.ViewModel.Chat {
@@ -17,7 +17,7 @@ namespace ClipboardApp.ViewModel.Chat {
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
+            Model.ClipboardItem clipboardItem = new(ClipboardItemFolder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             OpenItemCommandExecute(clipboardItemViewModel);
         }

@@ -6,9 +6,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Common {
     public class ClipboardAppTabContainer : ObservableObject {
+
+        public static double HeaderWidthStatic { get; set; } = 200;
+
+        private double _headerWidth = HeaderWidthStatic;
+        public double HeaderWidth {
+            get { return _headerWidth; }
+            set {
+                _headerWidth = value; OnPropertyChanged(nameof(HeaderWidth));
+            }
+        }
 
         public ClipboardAppTabContainer(string tabName, UserControl tabContent) {
             _tabName = tabName;
@@ -40,5 +51,12 @@ namespace ClipboardApp.ViewModel.Common {
                 _closeButtonVisibility = value; OnPropertyChanged(nameof(CloseButtonVisibility));
             }
         }
+
+        // CloseTabCommand
+        public SimpleDelegateCommand<object> CloseTabCommand => new((param) => {
+            if (param is ClipboardAppTabContainer tabContainer) {
+                MainWindowViewModel.Instance.RemoveTabItem(tabContainer);
+            }
+        });
     }
 }

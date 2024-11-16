@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
-using QAChat.View.RAGWindow;
+using QAChat.View.RAG;
 using WpfAppCommon.Utils;
 using QAChat.Model;
 

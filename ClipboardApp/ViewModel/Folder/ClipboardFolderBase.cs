@@ -7,8 +7,8 @@ using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ExportImportView;
-using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.View.ExportImport;
+using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
@@ -34,7 +34,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         public abstract void CreateItemCommandExecute();
 
-        public abstract ClipboardItemViewModel CreateItemViewModel(ClipboardItem item);
+        public abstract ClipboardItemViewModel CreateItemViewModel(Model.ClipboardItem item);
 
         public abstract void OpenItemCommandExecute(ClipboardItemViewModel item);
 
@@ -138,7 +138,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // フォルダー保存コマンド
         public SimpleDelegateCommand<ClipboardFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
+            ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
         });
 
         // アイテム削除コマンド
@@ -158,7 +158,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
+                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
                 folderViewModel.LoadFolderCommand.Execute();
 
             });
@@ -168,7 +168,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             EditFolderCommandExecute(folderViewModel, () => {
                 //　フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, ClipboardItem>();
+                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.FolderEdited);
             });
@@ -233,7 +233,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            ClipboardItemFolder.RefreshVectorDBCollection<ClipboardItem>();
+            ClipboardItemFolder.RefreshVectorDBCollection<Model.ClipboardItem>();
         });
 
         // --------------------------------------------------------------
@@ -314,7 +314,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public virtual async void LoadChildren(int nestLevel = 5) {
             try {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
                 await Task.Run(() => {
@@ -335,7 +335,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 OnPropertyChanged(nameof(Children));
 
             } finally {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
 
 
@@ -344,17 +344,17 @@ namespace ClipboardApp.ViewModel.Folder {
         public virtual async void LoadItems() {
             Items.Clear();
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ClipboardItem> _items = [];
+            List<Model.ClipboardItem> _items = [];
             try {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
                 await Task.Run(() => {
                     _items = ClipboardItemFolder.Items;
                 });
-                foreach (ClipboardItem item in _items) {
+                foreach (Model.ClipboardItem item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             } finally {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
         }
 

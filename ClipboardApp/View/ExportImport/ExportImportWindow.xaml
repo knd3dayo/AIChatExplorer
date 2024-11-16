@@ -1,0 +1,251 @@
+<Window
+    x:Class="ClipboardApp.View.ExportImport.ExportImportWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="clr-namespace:QAChat.Control.StatusBar;assembly=QAChat"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.ViewModel.Folder"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="ImportClipboardItemsWindow"
+    Width="600"
+    Height="380"
+    d:DataContext="{d:DesignInstance local:ExportImportWindowViewModel}"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="18" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <!--  メニューバー  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <Menu
+                    Name="menu1"
+                    Margin="0,0,0,0"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="False">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="" />
+                </Menu>
+            </materialDesign:ColorZone>
+        </StackPanel>
+        <TabControl
+            Grid.Row="1"
+            Margin="10,10,10,10"
+            HorizontalContentAlignment="Left"
+            SelectedIndex="{Binding SelectedIndex}">
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,3,10,3"
+                Padding="0"
+                FontSize="10"
+                Header="{Binding StringResources.Export, Mode=OneTime}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <!--  以下の項目をエクスポートします  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Text="{Binding StringResources.ExportTheFollowingItems, Mode=OneTime}"
+                        TextWrapping="Wrap" />
+                    <!--  タイトル  -->
+                    <CheckBox
+                        Grid.Row="1"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.Title, Mode=OneTime}"
+                        IsChecked="{Binding IsTitleChecked}" />
+                    <!--  テキスト  -->
+                    <CheckBox
+                        Grid.Row="2"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.Text, Mode=OneTime}"
+                        IsChecked="{Binding IsTextChecked}" />
+                    <!--  背景情報  -->
+                    <CheckBox
+                        Grid.Row="3"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.BackgroundInformation, Mode=OneTime}"
+                        IsChecked="{Binding IsBackgroundChecked}" />
+                    <!--  サマリー  -->
+                    <CheckBox
+                        Grid.Row="4"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.Summary, Mode=OneTime}"
+                        IsChecked="{Binding IsSummaryChecked}" />
+                    <Button
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Width="100"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding SelectExportFileCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.SelectFile, Mode=OneTime}" />
+                    <TextBox
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        IsReadOnly="True"
+                        Text="{Binding SelectedFileName, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </Grid>
+            </TabItem>
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,3,10,3"
+                Padding="0"
+                FontSize="10"
+                Header="{Binding StringResources.Import, Mode=OneTime}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <!--  インポート時に自動処理を実行します  -->
+                    <CheckBox
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.ExecuteAutoProcessingOnImport, Mode=OneTime}"
+                        IsChecked="{Binding IsAutoProcessEnabled}" />
+
+                    <!--  以下の項目をインポートします  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Text="{Binding StringResources.ExportTheFollowingItems, Mode=OneTime}"
+                        TextWrapping="Wrap" />
+                    <!--  タイトル  -->
+                    <CheckBox
+                        Grid.Row="2"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.Title, Mode=OneTime}"
+                        IsChecked="{Binding IsTitleChecked}" />
+                    <!--  テキスト  -->
+                    <CheckBox
+                        Grid.Row="3"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{Binding StringResources.Text, Mode=OneTime}"
+                        IsChecked="{Binding IsTextChecked}" />
+                    <Button
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Width="100"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding SelectImportFileCommand, Mode=OneTime}"
+                        Content="{Binding StringResources.SelectFile, Mode=OneTime}" />
+                    <TextBox
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        IsReadOnly="True"
+                        Text="{Binding SelectedFileName, Mode=OneWay}" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <Grid Grid.Row="2" VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <DockPanel Margin="10,0,0,10" HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Command="{Binding OKCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                <Button
+                    Width="100"
+                    Margin="10,0,20,0"
+                    Command="{Binding CloseCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding StringResources.Close, Mode=OneTime}"
+                    DockPanel.Dock="Right" />
+            </DockPanel>
+        </Grid>
+        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <ProgressBar
+            Grid.Row="1"
+            IsIndeterminate="{Binding IsIndeterminate}"
+            Style="{StaticResource MaterialDesignCircularProgressBar}"
+            Value="0" />
+    </Grid>
+
+
+
+</Window>

@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Control\MainPanel.xaml.cs">
+    <Compile Update="View\Main\MainPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Properties\Misc.Designer.cs">
@@ -45,22 +45,22 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="View\SettingsView\SettingUserControl.xaml.cs">
+    <Compile Update="View\Settings\SettingUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\SettingsView\TestResultUserControl.xaml.cs">
+    <Compile Update="View\Settings\TestResultUserControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ClipboardItemView\ChatItemsTextPanel.xaml.cs">
+    <Compile Update="View\ClipboardItem\ChatItemsTextPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ClipboardItemView\PromptResultTextPanel.xaml.cs">
+    <Compile Update="View\ClipboardItem\PromptResultTextPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ClipboardItemView\FilePanel.xaml.cs">
+    <Compile Update="View\ClipboardItem\FilePanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ClipboardItemView\ContentPanel.xaml.cs">
+    <Compile Update="View\ClipboardItem\ContentPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,7 +21,7 @@ namespace QAChat.Resource {
         public Window? ThisWindow { get; set; }
 
         // Loaded時の処理
-        public SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
+        public virtual SimpleDelegateCommand<RoutedEventArgs> LoadedCommand => new((routedEventArgs) => {
             if (routedEventArgs.Source is Window) {
                 Window window = (Window)routedEventArgs.Source;
                 ThisWindow = window;
@@ -41,7 +42,7 @@ namespace QAChat.Resource {
         });
 
         // Activated時の処理
-        public SimpleDelegateCommand<object> ActivatedCommand => new((parameter) => {
+        public virtual SimpleDelegateCommand<object> ActivatedCommand => new((parameter) => {
             if (ThisWindow == null) return;
             Tools.ActiveWindow = ThisWindow;
             // 追加処理
@@ -49,8 +50,10 @@ namespace QAChat.Resource {
         });
 
         // CloseButtonを押した時の処理
-        public SimpleDelegateCommand<Window?> CloseCommand => new((window) => {
-            if (window != null) {
+        public virtual SimpleDelegateCommand<object> CloseCommand => new((parameter) => {
+            // parameterがWindowの場合
+            if (parameter is Window window) {
+                // ウィンドウを閉じる
                 window.Close();
             }
         });

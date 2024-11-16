@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
 
-namespace ClipboardApp.ViewModel.ClipboardItemView {
+namespace ClipboardApp.ViewModel.Content {
     public class ClipboardFolderMenu : ClipboardAppViewModelBase {
 
         public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }

@@ -23,7 +23,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel = 0) {
             try {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(true);
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
 
@@ -43,7 +43,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
-                MainWindowViewModel.ActiveInstance.UpdateIndeterminate(false);
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
 
 

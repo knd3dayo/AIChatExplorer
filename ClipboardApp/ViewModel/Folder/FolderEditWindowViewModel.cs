@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.View.VectorDBView;
+using ClipboardApp.View.VectorDB;
 using PythonAILib.Model.VectorDB;
-using QAChat.View.VectorDBWindow;
+using QAChat.View.VectorDB;
 using QAChat.ViewModel.VectorDBWindow;
 using WpfAppCommon.Utils;
 
@@ -114,7 +114,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
+            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
                 foreach (var item in selectedItems) {
                     FolderViewModel.ClipboardItemFolder.AddVectorDBItem(item);
                 }

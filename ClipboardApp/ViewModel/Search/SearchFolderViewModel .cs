@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
-using ClipboardApp.View.SearchView;
-using ClipboardApp.ViewModel.ClipboardItemView;
+using ClipboardApp.View.Search;
+using ClipboardApp.ViewModel.Content;
 
 namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

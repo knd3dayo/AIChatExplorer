@@ -424,8 +424,8 @@ namespace PythonAILib.Model.Content {
             }
             // ContentTypeがFiles,の場合
             if (ContentType == ContentTypes.ContentItemTypes.Files) {
-                // ファイルのフルパスをタイトルとして使用
-                Description += FilePath;
+                // ファイル名をタイトルとして使用
+                Description += FileName;
                 return;
             }
             // ContentTypeがImageの場合
