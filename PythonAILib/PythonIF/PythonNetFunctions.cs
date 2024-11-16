@@ -12,8 +12,7 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
 
     public class PythonNetFunctions : IPythonAIFunctions {
 

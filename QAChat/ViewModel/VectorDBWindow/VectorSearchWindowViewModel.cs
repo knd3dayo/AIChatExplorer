@@ -47,18 +47,8 @@ namespace QAChat.ViewModel.VectorDBWindow
         public ObservableCollection<VectorSearchResult> VectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorSearchResult> SubDocsVectorSearchResults {
-            get {
-                ObservableCollection<VectorSearchResult> results = [];
-                foreach(VectorSearchResult vectorSearchResult in VectorSearchResults) {
-                    foreach(VectorSearchResult subDoc in vectorSearchResult.SubDocs) {
-                        results.Add(subDoc);
-                    }
-                }
-                return results;
+        public ObservableCollection<VectorSearchResult> SubDocsVectorSearchResults { get; set; } = [];
 
-            }
-        }
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
@@ -142,7 +132,7 @@ namespace QAChat.ViewModel.VectorDBWindow
                         VectorSearchResults.Add(vectorSearchResult);
                         // sub_docsを追加
                         foreach (VectorSearchResult subDoc in vectorSearchResult.SubDocs) {
-                            VectorSearchResults.Add(subDoc);
+                            SubDocsVectorSearchResults.Add(subDoc);
                         }
                     }
                     OnPropertyChanged(nameof(VectorSearchResults));

@@ -105,6 +105,10 @@
                             Header="Score" />
                         <DataGridTextColumn
                             Width="100"
+                            Binding="{Binding DocId}"
+                            Header="DocId" />
+                        <DataGridTextColumn
+                            Width="100"
                             Binding="{Binding Source}"
                             Header="Source" />
                         <DataGridTextColumn
@@ -155,6 +159,10 @@
                             Header="Score" />
                         <DataGridTextColumn
                             Width="100"
+                            Binding="{Binding DocId}"
+                            Header="DocId" />
+                        <DataGridTextColumn
+                            Width="100"
                             Binding="{Binding Source}"
                             Header="Source" />
                         <DataGridTextColumn
@@ -203,6 +211,10 @@
                             Width="100"
                             Binding="{Binding Source}"
                             Header="Source" />
+                        <DataGridTextColumn
+                            Width="100"
+                            Binding="{Binding DocId}"
+                            Header="DocId" />
                         <DataGridTextColumn
                             Width="100"
                             Binding="{Binding SourceUrl}"

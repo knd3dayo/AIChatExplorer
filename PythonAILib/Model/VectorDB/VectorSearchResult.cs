@@ -6,7 +6,12 @@ using LiteDB;
 
 namespace PythonAILib.Model.VectorDB {
     public class VectorSearchResult {
-
+        // doc_id
+        [JsonPropertyName("doc_id")]
+        public string DocId { get; set; } = string.Empty;
+        // FolderId
+        [JsonPropertyName("folder_id")]
+        public string FolderId { get; set; } = string.Empty;
         // Content
         [JsonPropertyName("content")]
         public string Content { get; set; } = string.Empty;

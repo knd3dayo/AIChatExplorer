@@ -55,11 +55,31 @@ namespace ClipboardApp.ViewModel {
         }
 
         public override void CreateItemCommandExecute() {
+            /**
             EditItemWindow.OpenEditItemWindow(this, null, () => {
                 // フォルダ内のアイテムを再読み込み
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.Added);
             });
+            **/
+            // MainWindowViewModelのTabItemを追加する
+            EditItemControl editItemControl = EditItemControl.CreateEditItemControl(this, null,
+                () => {
+                    // フォルダ内のアイテムを再読み込み
+                    LoadFolderCommand.Execute();
+                    LogWrapper.Info(StringResources.Edited);
+                });
+
+            ClipboardAppTabContainer container = new("New Item", editItemControl);
+
+            // UserControlをクローズする場合の処理を設定
+            editItemControl.SetCloseUserControl(() => {
+                MainWindowViewModel.Instance.RemoveTabItem(container);
+            });
+
+            MainWindowViewModel.Instance.AddTabItem(container);
+
+
         }
         public override void OpenItemCommandExecute(ClipboardItemViewModel item) {
             // MainWindowViewModelのTabItemを追加する

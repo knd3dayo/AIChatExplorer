@@ -233,7 +233,10 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock Width="{Binding HeaderWidth}" Text="{Binding TabName}" />
+                        <TextBlock
+                            Width="{Binding HeaderWidth}"
+                            Margin="10,0,10,0"
+                            Text="{Binding TabName}" />
                         <materialDesign:PackIcon
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
                             Kind="Close"
