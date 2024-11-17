@@ -203,22 +203,6 @@
                     IsEnabled="True"
                     Text="{Binding ItemViewModel.DocStoreURL}"
                     Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
-                <!--  マルチベクターリトリーバのドキュメントのチャンクサイズ  -->
-                <TextBlock
-                    Grid.Row="10"
-                    Grid.Column="0"
-                    Margin="10,0,10,10"
-                    HorizontalAlignment="Left"
-                    Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="{Binding StringResources.DocumentChunkSizeForMultiVectorRetriever, Mode=OneTime}"
-                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
-                <TextBox
-                    Grid.Row="10"
-                    Grid.Column="1"
-                    Margin="10,0,10,10"
-                    IsEnabled="True"
-                    Text="{Binding ItemViewModel.MultiVectorDocChunkSize}"
-                    Visibility="{Binding ItemViewModel.DocStoreURLVisibility}" />
             </Grid>
         </ScrollViewer>
         <Grid

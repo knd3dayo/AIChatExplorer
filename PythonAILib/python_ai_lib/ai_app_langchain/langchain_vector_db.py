@@ -10,16 +10,21 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 
-from ai_app_file_util import FileUtil
-from ai_app_vector_db_util import VectorDBProps, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_file.ai_app_file_util import FileUtil
+from ai_app_vector_db.ai_app_vector_db_util import ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, VectorDBProps
+
 from ai_app_langchain_util import LangChainOpenAIClient
-from ai_app_openai_util import OpenAIProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps
 from langchain_core.runnables import chain
 from langchain_core.callbacks import (
     CallbackManagerForRetrieverRun,
 )
 from collections import defaultdict
 from typing import Optional
+
+# コレクションの指定がない場合はデフォルトのコレクション名を使用
+DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
@@ -69,6 +74,14 @@ class LangChainVectorDB:
         else:
             # それ以外の場合は例外
             raise ValueError("VectorDBType is invalid")
+    
+    @staticmethod
+    def get_vector_db_with_default_collection(openai_props: OpenAIProps, vector_db_props: VectorDBProps):
+        # vector_db_propsのコピーを作成
+        new_vector_db_props = copy.deepcopy(vector_db_props)
+        # デフォルトのコレクション名を設定
+        new_vector_db_props.CollectionName = DEFAULT_COLLECTION_NAME
+        return LangChainVectorDB.get_vector_db(openai_props, new_vector_db_props)
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
         self.langchain_openai_client = langchain_openai_client
@@ -98,9 +111,9 @@ class LangChainVectorDB:
         raise NotImplementedError("Not implemented")
 
     def _delete_collection(self):
-        # 未実装例外をスロー
-        raise NotImplementedError("Not implemented")
-    
+        self.db.delete_collection()
+        self.db.persist()
+
     def __add_document(self, document: Document):
         # ベクトルDB固有の保存メソッドを呼び出し                
         self._save([document])
@@ -144,6 +157,7 @@ class LangChainVectorDB:
         param.append((doc_id, source_document))
         retriever.doc_store.mset(param)
 
+
     def __delete_document(self, source: str):
         # ベクトルDB固有のvector id取得メソッドを呼び出し。
         vector_ids, metadata = self._get_document_ids_by_tag("source", source)
@@ -172,6 +186,28 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
         
+    def __create_metadata(self, doc_id, source: str, source_url: str, description: str, 
+                          content_type: str, image_url: str, reliability: int):
+        metadata = {"source": source, "source_url": source_url, "description": description,
+                      "content_type": content_type, "image_url": image_url, "reliability": reliability,
+                      "folder_id": self.vector_db_props.CollectionName,
+                      "doc_id": doc_id
+                }
+        return metadata
+
+    def __create_decorated_retriever(self, vectorstore, **kwargs: Any):
+        # ベクトル検索の結果にスコアを追加する
+        @chain
+        def retriever(query: str) -> list[Document]:
+            result = []
+            docs, scores = zip(*vectorstore.similarity_search_with_score(query, kwargs))
+            for doc, score in zip(docs, scores):
+                doc.metadata["score"] = score
+                result.append(doc)
+            return result
+
+        return retriever
+
 
     def _add_file(self, document_root: str, relative_path: str, source_url: str ,description:str="", reliability=0):
 
@@ -189,15 +225,6 @@ class LangChainVectorDB:
         # テキストを分割してDocumentのリストを返す
         return self._add_document_list(text, description, relative_path, source_url, chunk_size, reliability=reliability)
 
-    def __create_metadata(self, doc_id, source: str, source_url: str, description: str, 
-                          content_type: str, image_url: str, reliability: int):
-        metadata = {"source": source, "source_url": source_url, "description": description,
-                      "content_type": content_type, "image_url": image_url, "reliability": reliability,
-                      "folder_id": self.vector_db_props.CollectionName,
-                      "doc_id": doc_id
-                }
-        return metadata
-    
     def _add_document_list(self, content_text: str, description_text: str, source: str, source_url: str, content_type:str="text" , image_url="", reliability=0):
         
         # MultiVectorRetrieverの場合はchunk_size=MultiVectorRetrieverのChunkSize
@@ -241,19 +268,9 @@ class LangChainVectorDB:
             text_list.append(text[i:i + chunk_size])
         return text_list
 
-    def __create_decorated_retriever(self, vectorstore, **kwargs: Any):
-        # ベクトル検索の結果にスコアを追加する
-        @chain
-        def retriever(query: str) -> list[Document]:
-            result = []
-            docs, scores = zip(*vectorstore.similarity_search_with_score(query, kwargs))
-            for doc, score in zip(docs, scores):
-                doc.metadata["score"] = score
-                result.append(doc)
-            return result
-
-        return retriever
-
+    ########################################
+    # パブリック
+    ########################################
     def create_retriever(self, search_kwargs: dict[str, Any] = {}) -> Any:
         # ベクトルDB検索用のRetrieverオブジェクトの作成と設定
 
@@ -285,7 +302,7 @@ class LangChainVectorDB:
         # ベクトルDB固有の削除メソッドを呼び出してコレクションを削除
         self._delete_collection()
 
-    def delete_content_index(self, source: str):
+    def delete_document(self, source: str):
         # MultiVectorRetrieverの場合
         if self.vector_db_props.IsUseMultiVectorRetriever:
             # DBからsourceを指定して既存ドキュメントを削除
@@ -294,25 +311,18 @@ class LangChainVectorDB:
             # DBからsourceを指定して既存ドキュメントを削除
             self.__delete_document(source)
     
-    def update_content_index(self, params: ContentUpdateOrDeleteRequestParams):
+    def update_document(self, params: ContentUpdateOrDeleteRequestParams):
         
         # 既に存在するドキュメントを削除
-        self.delete_content_index(params.source)
+        self.delete_document(params.source)
         # ドキュメントを格納する。
         self._add_document_list(params.text, params.description, params.source, params.source_url, reliability=params.reliability)
 
-    def update_image_index(self, params: ImageUpdateOrDeleteRequestParams):
-        # 既に存在するドキュメントを削除
-        self.delete_content_index(params.source)
-        # ドキュメントを取得
-        self._add_document_list(params.text, params.description, params.source_url, params.source, 
-                                content_type="image", image_url=params.image_url , reliability=params.reliability)
-        
     def update_file_index(self, params: FileUpdateOrDeleteRequestParams):
 
         # ★TODO *_content_indexと同じ処理になっているので、共通化する
         # 既に存在するドキュメントを削除
-        self.delete_content_index(params)
+        self.delete_document(params)
 
         # ファイルの存在チェック
         file_path = os.path.join(params.document_root, params.relative_path)
@@ -322,5 +332,58 @@ class LangChainVectorDB:
 
         # ドキュメントを格納
         self._add_file(params.document_root, params.relative_path, params.source_url, description=params.description, reliability=params.reliability)
+
+    # ベクトル検索を行う
+    @staticmethod
+    def vector_search( params: VectorSearchParameter):    
+
+        client = LangChainOpenAIClient(params.openai_props)
+
+        # documentsの要素からcontent, source, source_urlを取得
+        result = []
+        # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
+        for vector_db_item in params.vector_db_props:
+
+            # デバッグ出力
+            print(f'検索文字列: {params.query}')
+            print(f'検索条件: {params.search_kwarg}')
+            print('ベクトルDBの設定')
+            print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
+            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(params.search_kwarg)
+            documents: list[Document] = retriever.invoke(params.query)
+
+            print(f"documents:\n{documents}")
+            for doc in documents:
+                content = doc.page_content
+                doc_id = doc.metadata.get("doc_id", "")
+                folder_id = doc.metadata.get("folder_id", "")
+                source = doc.metadata.get("source", "")
+                source_url = doc.metadata.get("source_url", "")
+                score = doc.metadata.get("score", 0.0)
+                # description, reliabilityを取得
+                description = doc.metadata.get("description", "")
+                reliability = doc.metadata.get("reliability", 0)
+
+                sub_docs = doc.metadata.get("sub_docs", [])
+                # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
+                sub_docs_result = []
+                for sub_doc in sub_docs:
+                    sub_content = sub_doc.page_content
+                    sub_source = sub_doc.metadata.get("source", "")
+                    sub_source_url = sub_doc.metadata.get("source_url", "")
+                    sub_score = sub_doc.metadata.get("score", 0.0)
+                    sub_doc_id = sub_doc.metadata.get("doc_id", "")
+                    sub_folder_id = sub_doc.metadata.get("folder_id", "")
+                    
+                    sub_docs_result.append({
+                        "doc_id": sub_doc_id, "folder_id": sub_folder_id,
+                        "content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+
+                result.append(
+                    {"doc_id": doc_id, "folder_id": folder_id,
+                    "content": content, "source": source, "source_url": source_url, "score": score, 
+                    "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
+            
+        return {"documents": result}
 
     

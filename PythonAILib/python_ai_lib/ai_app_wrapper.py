@@ -4,8 +4,8 @@ from io import StringIO
 import sys
 sys.path.append("python")
 
-from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 import ai_app
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
@@ -91,7 +91,7 @@ def run_langchain_chat( props_json: str, vector_db_items_json:str, request_json:
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
-        from ai_app_langchain_util import LangChainChatParameter
+        from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter
         params:LangChainChatParameter = LangChainChatParameter(props_json, vector_db_items_json, request_json)
         # langchan_chatを実行
         result = ai_app.run_langchain_chat(params)
@@ -123,12 +123,12 @@ def delete_collection(props_json: str, vector_db_items_json: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def run_vector_search(openai_props_json: str, vector_db_items_json: str, request_json: str):
+def vector_search(openai_props_json: str, vector_db_items_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
-        from ai_app_vector_db_util import VectorSearchParameter
+        from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter
         params:VectorSearchParameter = VectorSearchParameter.from_json(openai_props_json, vector_db_items_json, request_json)
-        result = ai_app.run_vector_search(params)
+        result = ai_app.vector_search(params)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -137,16 +137,17 @@ def run_vector_search(openai_props_json: str, vector_db_items_json: str, request
     return wrapper()
 
 # vector db関連
-# ベクトルDBのコンテンツインデックスを削除する
-def delete_content_index(props_json: str, vector_db_items_json: str, request_json: str):
+# ベクトルDBのインデックスを削除する
+def delete_index(props_json: str, vector_db_items_json: str, request_json: str):
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        from langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
+        from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_content_or_image_json(
+            props_json, vector_db_items_json, request_json)
         ai_app.update_or_delete_content_index(params)
         return {}
 
-    # strout,stderrをキャプチャするラッパー関数を生成
+    # strout, stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
@@ -155,38 +156,12 @@ def delete_content_index(props_json: str, vector_db_items_json: str, request_jso
 def update_content_index(props_json: str, vector_db_items_json: str, request_json: str):
     def func () -> dict:
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-        from langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
+        from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_content_or_image_json(
+            props_json, vector_db_items_json, request_json
+            )
+        
         ai_app.update_or_delete_content_index(params)
-        return {}
-
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-# ベクトルDBの画像インデックスを削除する
-def delete_image_index(props_json: str, vector_db_items_json: str, request_json: str):
-    # delete_indexを実行する関数を定義
-    def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-        from langchain_vector_db import ImageUpdateOrDeleteRequestParams
-        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
-        ai_app.update_or_delete_image_index(params)
-        return {}
-
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-# ベクトルDBの画像インデックスを更新する
-def update_image_index(props_json: str, vector_db_items_json: str, request_json: str):
-    # update_indexを実行する関数を定義
-    def func () -> dict:
-        from langchain_vector_db import ImageUpdateOrDeleteRequestParams
-        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
-        ai_app.update_or_delete_image_index(params)
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -196,7 +171,7 @@ def update_image_index(props_json: str, vector_db_items_json: str, request_json:
 
 def update_file_index(props_json: str, vector_db_items_json: str, request_json: str):
     def func () -> dict:
-        from langchain_vector_db import FileUpdateOrDeleteRequestParams
+        from ai_app_langchain.langchain_vector_db import FileUpdateOrDeleteRequestParams
         params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
         ai_app.update_or_delete_file_index(params)
         return {}
@@ -204,19 +179,6 @@ def update_file_index(props_json: str, vector_db_items_json: str, request_json: 
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
-
-def delete_file_index(props_json: str, vector_db_items_json: str, request_json: str):
-    def func () -> dict:
-        from langchain_vector_db import FileUpdateOrDeleteRequestParams
-        params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
-        ai_app.update_or_delete_file_index(params)
-        return {}
-    # strout,stderrをキャプチャするラッパー関数を生成
-    wrapper = capture_stdout_stderr(func)
-    # ラッパー関数を実行して結果のJSONを返す
-    return wrapper()
-
-
 
 ########################
 # ファイル関連
@@ -267,4 +229,8 @@ def import_from_excel(filePath):
 
 # テスト用
 def hello_world():
-    return "Hello World"
+    # iteratableなオブジェクトを返す
+    words = ['Hello', 'World']
+
+    iter_words = iter(words)    
+    return iter_words

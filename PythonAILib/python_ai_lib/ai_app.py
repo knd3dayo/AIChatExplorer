@@ -4,13 +4,13 @@ import tempfile
 import sys
 sys.path.append("python")
 
-from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 import base64
-from ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
-from ai_app_langchain_util import LangChainChatParameter, LangChainUtil
-from ai_app_file_util import ExcelUtil, FileUtil
-
+from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangChainUtil
+from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
+from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
 ########################
 # ファイル関連
@@ -30,7 +30,6 @@ def extract_text_from_sheet(filename, sheet_name):
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename:str) -> str:
-    from ai_app_file_util import FileUtil
     return FileUtil.extract_text_from_file(filename)
 
 # base64形式のデータからテキストを抽出する
@@ -44,7 +43,6 @@ def extract_base64_to_text(base64_data:str, extension:str) -> str:
         temp.write(base64_data_bytes)
         temp_path = temp.name
         temp.close()
-        from ai_app_file_util import FileUtil
         # 一時ファイルからテキストを抽出
         text = FileUtil.extract_text_from_file(temp_path)
         # 一時ファイルを削除
@@ -70,8 +68,8 @@ def list_openai_models(openai_props: OpenAIProps):
 # langchain関連
 ########################
 
-def run_vector_search(params:VectorSearchParameter) -> dict:
-    result = LangChainUtil.run_vector_search(params)
+def vector_search(params:VectorSearchParameter) -> dict:
+    result = LangChainVectorDB.vector_search(params)
     return result
 
 def run_langchain_chat(params:LangChainChatParameter) -> dict:
@@ -84,7 +82,7 @@ def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBP
     # vector_db_itemsからVectorDBPropsを取得
     # LangChainVectorDBを生成
     for vector_db_props in vector_db_items:
-        vector_db = LangChainUtil.get_vector_db(openai_props, vector_db_props)
+        vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
         # delete_collectionを実行
         vector_db.delete_collection()
 
@@ -94,30 +92,14 @@ def update_or_delete_content_index(params: ContentUpdateOrDeleteRequestParams):
 
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
+    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
     
     if params.mode == "delete":
         # delete_content_indexを実行
-        vector_db.delete_content_index(params.source)
+        vector_db.delete_document(params.source)
     elif params.mode == "update":
         # update_content_indexを実行
-        vector_db.update_content_index(params)
-    else:
-        raise Exception("mode is invalid")
-
-def update_or_delete_image_index(params: ImageUpdateOrDeleteRequestParams):
-    # props_json, request_jsonからOpenAIProps, VectorDBProps, text, image_url, sourceを取得
-    # openai_props, vector_db_props, text, source, source_url, description, image_url = langchain_vector_db.process_image_update_or_datele_request_params(props_json, request_json)
-    # LangChainVectorDBを生成
-    vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
-
-    if params.mode == "delete":
-        # delete_image_indexを実行
-            vector_db.delete_content_index(params.source)
-    elif params.mode == "update":
-        # update_image_indexを実行
-        vector_db.update_image_index(params)
+        vector_db.update_document(params)
     else:
         raise Exception("mode is invalid")
     
@@ -125,12 +107,12 @@ def update_or_delete_file_index(params: FileUpdateOrDeleteRequestParams):
 
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainUtil.get_vector_db(params.openai_props, vector_db_props)
+    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
 
     # modeに応じて処理を分岐
     if params.mode == "delete":
         # delete_file_indexを実行
-        vector_db.delete_content_index(params.relative_path)
+        vector_db.delete_document(params.relative_path)
     elif params.mode == "update":
         # update_file_indexを実行
         vector_db.update_file_index(params)

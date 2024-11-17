@@ -98,14 +98,6 @@ namespace QAChat.ViewModel.VectorDBWindow {
                 OnPropertyChanged(nameof(ChunkSize));
             }
         }
-        // MultiVectorDocChunkSize
-        public int MultiVectorDocChunkSize {
-            get => Item.MultiVectorDocChunkSize;
-            set {
-                Item.MultiVectorDocChunkSize = value;
-                OnPropertyChanged(nameof(MultiVectorDocChunkSize));
-            }
-        }
 
         // MaxSearchResults
         public int MaxSearchResults {

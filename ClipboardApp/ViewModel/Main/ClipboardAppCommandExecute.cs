@@ -14,7 +14,6 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Control;
 using QAChat.Resource;
-using QAChat.Utils;
 using QAChat.View.ImageChat;
 using QAChat.View.RAG;
 using QAChat.View.VectorDB;
@@ -80,22 +79,6 @@ namespace ClipboardApp.ViewModel.Main {
             model.NotifyPropertyChanged(nameof(model.IsWindowsNotificationMonitorActive));
             // Change button text
             model.NotifyPropertyChanged(nameof(model.WindowsNotificationMonitorButtonText));
-        }
-        // Start/Stop AutoGenStudio
-        public static void StartStopAutoGenStudioCommand() {
-            MainWindowViewModel model = MainWindowViewModel.Instance;
-            model.IsAutoGenStudioRunning = !model.IsAutoGenStudioRunning;
-            if (model.IsAutoGenStudioRunning) {
-                LogWrapper.Info(CommonStringResources.Instance.StartAutoGenStudioMessage);
-                AutoGenProcessController.StartAutoGenStudio(ClipboardAppConfig.Instance.PythonVenvPath);
-            } else {
-                LogWrapper.Info(CommonStringResources.Instance.StopAutoGenStudioMessage);
-                AutoGenProcessController.StopAutoGenStudio();
-            }
-            // Notification
-            model.NotifyPropertyChanged(nameof(model.IsAutoGenStudioRunning));
-            // Change button text
-            model.NotifyPropertyChanged(nameof(model.AutoGenStudioIsRunningButtonText));
         }
 
 

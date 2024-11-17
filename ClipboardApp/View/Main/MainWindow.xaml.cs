@@ -22,8 +22,6 @@ namespace ClipboardApp.View.Main {
         // Closedイベント
         protected override void OnClosed(EventArgs e) {
             base.OnClosed(e);
-            // AutoGenStudioプロセスを終了
-            AutoGenProcessController.StopAutoGenStudio();
 
             App.Current.Shutdown();
         }

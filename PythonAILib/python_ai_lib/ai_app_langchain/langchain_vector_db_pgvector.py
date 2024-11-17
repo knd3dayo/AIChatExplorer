@@ -9,12 +9,9 @@ from sqlalchemy.orm import Session
 import sqlalchemy
 from sqlalchemy.sql import text
 
-
-sys.path.append("python")
 from ai_app_langchain_util import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
-from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class LangChainVectorDBPGVector(LangChainVectorDB):
 
@@ -70,9 +67,5 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
         self.db.delete(ids=doc_ids)
 
         return len(doc_ids)    
-
-    def _delete_collection(self):
-        self.db.delete_collection()
-        self.db.persist()
 
 

@@ -8,8 +8,7 @@ import chromadb
 
 from ai_app_langchain_util import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
-from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class LangChainVectorDBChroma(LangChainVectorDB):
 
@@ -61,8 +60,3 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         self.db._collection.delete(ids=doc_ids)
 
         return len(doc_ids)    
-    
-    def _delete_collection(self):
-        self.db.delete_collection()
-        self.db.persist()
-

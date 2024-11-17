@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os, json
 from mimetypes import guess_type
-from ai_app_openai_util import OpenAIProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps
 
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
@@ -103,7 +103,7 @@ class VectorSearchParameter:
 
 class ContentUpdateOrDeleteRequestParams:
     def __init__(self, openai_props: OpenAIProps = None, vector_db_props_list: list[VectorDBProps] =[], 
-                 text: str = "", source: str = "", source_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
+                 text: str = "", source: str = "", source_url: str = "", image_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
         self.openai_props = openai_props
 
         self.vector_db_props_list = vector_db_props_list
@@ -115,8 +115,10 @@ class ContentUpdateOrDeleteRequestParams:
         self.reliability = reliability
         self.mode = mode
 
+        self.image_url = image_url
+
     @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
+    def from_content_or_image_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
         params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams()
         props = json.loads(props_json)
         params.openai_props = OpenAIProps(props)
@@ -134,46 +136,7 @@ class ContentUpdateOrDeleteRequestParams:
         params.description = request.get("description", "")
         params.reliability = request.get("reliability", 0)
         params.mode = request.get("mode", "")
-
-        return params
-        
-class ImageUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props_list: list[VectorDBProps] = [], 
-                    text: str = "", source: str = "", source_url: str = "", image_url: str = "", description: str = "", reliability: int = 0, mode: str = ""):
-
-        self.openai_props = openai_props
-
-        self.vector_db_props_list = vector_db_props_list
-        
-        # request_jsonをdictに変換
-        self.text = text
-        self.source = source
-        self.source_url = source_url
-        self.image_url = image_url
-        self.description = description
-        self.reliability = reliability
-        self.mode = mode
-
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        params:ImageUpdateOrDeleteRequestParams = ImageUpdateOrDeleteRequestParams()
-        props = json.loads(props_json)
-        params.openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-        params.vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            params.vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        # request_jsonをdictに変換
-        request: dict= json.loads(request_json)
-        params.text = request["content"]
-        params.source = request["id"]
-        params.source_url = ""
-        params.image_url = request["image_url"]
-        params.description = request.get("description", "")
-        params.reliability = request.get("reliability", 0)
-        params.mode = request.get("mode", "")
+        params.image_url = request.get("image_url", "")
 
         return params
 

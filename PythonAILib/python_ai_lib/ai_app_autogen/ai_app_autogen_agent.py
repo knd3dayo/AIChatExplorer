@@ -1,47 +1,12 @@
 import json
 
-from typing import Annotated, Callable
 from autogen import ConversableAgent
-from autogen.coding import LocalCommandLineCodeExecutor
+from autogen.coding import LocalCommandLineCodeExecutor # type: ignore
 import autogen 
 
-import wikipedia
-from selenium import webdriver
-from selenium.webdriver.edge.service import Service
-from selenium.webdriver.edge.options import Options
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
-
-from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps, VectorSearchParameter
-from ai_app_langchain_util import LangChainUtil
-from ai_app_file_util import FileUtil, ExcelUtil
-
-class AutoGenProps:
-    def __init__(self, openAIProps: OpenAIProps):
-        if openAIProps is None:
-            raise ValueError("openAIProps is None")
-        
-        # 基本設定
-        self.llm_config = {}
-        config_list = []
-        llm_config_entry = {}
-
-        llm_config_entry: dict = {}
-        llm_config_entry["model"] = openAIProps.OpenAICompletionModel
-        llm_config_entry["api_key"] = openAIProps.OpenAIKey
-
-        # AzureOpenAIの場合
-        if openAIProps.AzureOpenAI:
-            llm_config_entry["api_type"] = "azure"
-            llm_config_entry["api_version"] = openAIProps.AzureOpenAICompletionVersion
-            if openAIProps.OpenAICompletionBaseURL:
-                llm_config_entry["base_url"] = openAIProps.OpenAICompletionBaseURL
-            else:
-                llm_config_entry["base_url"] = openAIProps.AzureOpenAIEndpoint
-        
-        # llm_configに追加
-        config_list.append(llm_config_entry)
-        self.llm_config["config_list"] = config_list
+from ai_app_openai.ai_app_openai_util import OpenAIProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_autogen_tools import AutoGenTools
 
 class AutoGenAgents:
     def __init__(self, llm_config: dict, executor: LocalCommandLineCodeExecutor, work_dir: str, auto_execute_code: bool = False):
@@ -200,11 +165,8 @@ class AutoGenAgents:
         )
         # 利用可能な関数の情報をエージェントに登録する
         vector_search = AutoGenTools().create_vector_search(openAIProps, vector_db_props_list)
-        self.chat_admin_agent.register_for_execution(name="vector_search") (vector_search)
-        self.vector_searcher.register_for_llm(
-                name="vector_search",
-                description="ベクトルデータベースから検索対象文字列に関連するページを検索します。検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します"
-                )(vector_search)
+        self.chat_admin_agent.register_for_execution() (vector_search)
+        self.vector_searcher.register_for_llm()(vector_search)
 
     # ファイル抽出者を有効にする
     def enable_file_extractor(self):
@@ -226,10 +188,8 @@ class AutoGenAgents:
             name="extract_text_from_file",
             description="ファイルからテキストを抽出します。")(extract_text_from_file)
         list_files_in_directory = self.autogen_tools.create_list_files_in_directory()
-        self.chat_admin_agent.register_for_execution(name="list_files_in_directory") (list_files_in_directory)
-        self.file_extractor.register_for_llm (
-            name="list_files_in_directory",
-            description="指定されたディレクトリ内のファイル一覧を取得します。")(list_files_in_directory)
+        self.chat_admin_agent.register_for_execution() (list_files_in_directory)
+        self.file_extractor.register_for_llm ()(list_files_in_directory)
 
     def enable_web_searcher(self):
         
@@ -252,14 +212,8 @@ class AutoGenAgents:
 
         # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
         search_wikipedia_ja = self.autogen_tools.create_search_wikipedia_ja()
-        self.web_searcher.register_for_llm( 
-        name="search_wikipedia_ja",
-        description="""
-            wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
-            検索結果からページのタイトルと本文を抽出してリストとしてページごとのリストとして返します
-            """
-            )(search_wikipedia_ja)
-        self.chat_admin_agent.register_for_execution(name="search_wikipedia_ja") (search_wikipedia_ja)
+        self.web_searcher.register_for_llm()(search_wikipedia_ja)
+        self.chat_admin_agent.register_for_execution() (search_wikipedia_ja)
 
         # 指定されたURLのテキストとリンクを取得します。
         extract_webpage = AutoGenTools().create_extract_webpage_function()
@@ -287,138 +241,5 @@ class AutoGenAgents:
 
         # 指定されたURLのテキストとリンクを取得します。
         extract_webpage = AutoGenTools().create_extract_webpage_function()
-        self.azure_document_searcher.register_for_llm(
-                name="extract_webpage",
-                description="Seleniumを使用して指定されたURLのHTMLソースを取得したのち、テキストとリンク一覧を抽出します。")(extract_webpage)
-        self.chat_admin_agent.register_for_execution(name="extract_webpage") (extract_webpage)
-
-
-class AutoGenTools:
-    def __init__(self):
-        pass
-
-    def create_vector_search(self, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> Callable[[str], list[str]]:
-        def vector_search(query: Annotated[str, "検索対象の文字列"]) -> list[str]:
-            params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
-            result = LangChainUtil.run_vector_search(params)
-            # resultからdocumentsを取得
-            documents = result.get("documents",[])
-            # documentsから各documentのcontentを取得
-            result = [doc.get("content","") for doc in documents]
-            return result
-
-        return vector_search
-
-    def create_search_wikipedia_ja(self) -> Callable[[str, int], list[str]]:
-        def search_wikipedia_ja(query: Annotated[str, "検索対象の文字列"], num_results: Annotated[int, "表示する結果の最大数"]) -> list[str]:
-
-            # Wikipediaの日本語版を使用
-            wikipedia.set_lang("ja")
-            
-            # 検索結果を取得
-            search_results = wikipedia.search(query, results=num_results)
-            
-            result_texts = []
-            # 上位の結果を表示
-            for i, title in enumerate(search_results):
-            
-                print(f"結果 {i + 1}: {title}")
-                try:
-                    # ページの内容を取得
-                    page = wikipedia.page(title)
-                    print(page.content[:500])  # 最初の500文字を表示
-                    text = f"タイトル:\n{title}\n\n本文:\n{page.content}\n"
-                    result_texts.append(text)
-                except wikipedia.exceptions.DisambiguationError as e:
-                    print(f"曖昧さ回避: {e.options}")
-                except wikipedia.exceptions.PageError:
-                    print("ページが見つかりませんでした。")
-                print("\n" + "-"*50 + "\n")
-            return result_texts
-        return search_wikipedia_ja
-
-    def create_list_files_in_directory(self) -> Callable[[str], list[str]]:
-        def list_files_in_directory(directory_path: Annotated[str, "ディレクトリパス"]) -> list[str]:
-            import os
-            files = os.listdir(directory_path)
-            return files
-        return list_files_in_directory
-        
-    def create_extract_text_from_file(self) -> Callable[[str], str]:
-        # ファイルからテキストを抽出する関数を生成
-        def extract_file(file_path: Annotated[str, "ファイルパス"]) -> str:
-            # 一時ファイルからテキストを抽出
-            text = FileUtil.extract_text_from_file(file_path)
-            return text
-        return extract_file
-    
-    def create_extract_webpage_function(self) -> Callable[[str], list[str]]:
-        def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[str]], "テキストとリンク"]:
-            driver = self.create_web_driver()
-            # webページのHTMLを取得して、テキストとリンクを抽出
-            driver.get(url)
-            # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
-            driver.implicitly_wait(10)
-            # ページ全体のHTMLを取得
-            page_html = driver.page_source
-
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(page_html, "html.parser")
-            text = soup.get_text()
-            urls = [a.get("href") for a in soup.find_all("a")]
-            driver.close()
-            return text, urls
-        return extract_webpage
-
-    def create_get_html_function(self) -> Callable[[str], str]:
-        def get_html(url: Annotated[str, "URL"]) -> str:
-            driver = self.create_web_driver()
-            driver.get(url)
-            # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
-            driver.implicitly_wait(10)
-            # ページ全体のHTMLを取得
-            page_html = driver.page_source
-            driver.close()
-            return page_html
-        return get_html
-
-    # レンダリング結果のTextを取得する
-    def create_get_text_from_html_function(self) -> Callable[[str], str]:
-        def get_text_from_html(html: Annotated[str, "HTMLのソース"]) -> str:
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(html, "html.parser")
-            text = soup.get_text()
-            return text
-        return get_text_from_html    
-
-    # リンク一覧を取得する
-    def create_get_urls_from_html_function(self) -> Callable[[str], list[str]]:
-        get_urls_from_html = self.create_get_urls_from_html_function()
-        def get_urls_from_html(html: Annotated[str, "HTMLのソース"]) -> list[str]:
-            # HTMLからURLを抽出
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(html, "html.parser")
-            urls = [a.get("href") for a in soup.find_all("a")]
-            return urls
-        return get_urls_from_html
-
-    def create_web_driver(self):
-        # ヘッドレスモードのオプションを設定
-        edge_options = Options()
-        edge_options.add_argument("--headless")
-        edge_options.add_argument("--disable-gpu")
-        edge_options.add_argument("--no-sandbox")
-        edge_options.add_argument("--disable-dev-shm-usage")
-
-        # Edgeドライバをセットアップ
-        driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
-        return driver
-    
-    def create_get_urls_from_text_function(self) -> Callable[[str], list[str]]:
-        def get_urls_from_text(text: Annotated[str, "テキスト文字列"]) -> list[str]:
-            # テキストからURLを抽出
-            import re
-            urls = re.findall(r"https?://\S+", text)
-            return urls
-        return get_urls_from_text
-        
+        self.azure_document_searcher.register_for_llm()(extract_webpage)
+        self.chat_admin_agent.register_for_execution() (extract_webpage)

@@ -27,7 +27,7 @@ if __name__ == "__main__":
     """
     
     
-    from ai_app_openai_util import OpenAIProps, OpenAIClient
+    from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient
 
     # envファイルからpropsを取得する
     props = OpenAIProps.env_to_props()

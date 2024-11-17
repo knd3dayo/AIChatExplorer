@@ -10,40 +10,8 @@ namespace QAChat.Utils
 {
     public class AutoGenProcessController {
 
-        public static Process? AutoGenStudioProcess { get; set; }
-
         public static Process? AutoGenGroupChatTest1Process { get; set; }
-        public static void StartAutoGenStudio(string? venvPath = "") {
-            if (AutoGenStudioProcess != null) {
-                return;
-            }
-            // Start AutoGenStudio
-            List<string> cmdLines = [];
-            // venvが有効な場合は、activate.batを実行
-            if (!string.IsNullOrEmpty(venvPath)) {
-                string venvActivateScript = Path.Combine(venvPath, "Scripts", "activate");
-                cmdLines.Add($"call {venvActivateScript}");
-            }
-            // autogenstudioを起動するコマンド
-            cmdLines.Add("autogenstudio ui --port 8081");
-            AutoGenStudioProcess = ProcessUtil.StartWindowsBackgroundCommandLine(cmdLines, "", (process) => { }, (content) => { });
 
-            // 5秒後にブラウザを起動
-            Task.Run(() => {
-                Thread.Sleep(5000);
-                ProcessUtil.StartProcess("http://localhost:8081", "", (process) => { }, (content) => { });
-            });
-
-        }
-
-        // Stop AutoGenStudio
-        public static void StopAutoGenStudio() {
-            if (AutoGenStudioProcess == null) {
-                return;
-            }
-            ProcessUtil.StopProcess(AutoGenStudioProcess);
-            AutoGenStudioProcess = null;
-        }
 
         // StartAutoGenGroupChatTest1
         public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest chatRequest, Action<string> afterProcessEnd) {
@@ -69,7 +37,7 @@ namespace QAChat.Utils
                     File.Delete(DebugUtil.DebugRequestParametersFile);
                 }
 
-                AutoGenStudioProcess = null;
+                AutoGenGroupChatTest1Process = null;
             });
 
         }

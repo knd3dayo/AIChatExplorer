@@ -11,8 +11,8 @@ from typing import Any
 
 
 
-from ai_app_openai_util import OpenAIProps
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class LangChainOpenAIClient:
     def __init__(self, props: OpenAIProps):

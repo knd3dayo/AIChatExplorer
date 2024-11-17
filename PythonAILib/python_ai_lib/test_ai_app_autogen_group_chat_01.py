@@ -1,11 +1,10 @@
 import os, json
 from typing import Any
-from ai_app_openai_util import OpenAIProps
-from ai_app_vector_db_util import VectorDBProps
-from autogen import ConversableAgent
-from autogen.coding import LocalCommandLineCodeExecutor
-import autogen 
-from ai_app_autogen_util import AutoGenProps, AutoGenTools, AutoGenAgents
+from ai_app_openai.ai_app_openai_util import OpenAIProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_autogen.ai_app_autogen_util import  AutoGenProps
+from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents
+from ai_app_autogen.ai_app_autogen_tools import AutoGenTools
 
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
@@ -78,14 +77,8 @@ if __name__ == '__main__':
     # Create a temporary directory to store the code files.
     temp_dir = tempfile.TemporaryDirectory()
 
-    # Create a local command line code executor.
-    executor = LocalCommandLineCodeExecutor(
-        timeout=10,  # Timeout for each code execution in seconds.
-        work_dir=temp_dir.name,  # Use the temporary directory to store the code files.
-    )
-
-    autogenProps: AutoGenProps = AutoGenProps(open_ai_props)
-    client = AutoGenAgents(autogenProps.llm_config, executor, temp_dir.name)
+    autogenProps: AutoGenProps = AutoGenProps(open_ai_props, temp_dir.name)
+    client = AutoGenAgents(autogenProps.llm_config, autogenProps.executor, temp_dir.name)
 
     client.enable_code_writer_and_executor()
     client.enable_web_searcher()

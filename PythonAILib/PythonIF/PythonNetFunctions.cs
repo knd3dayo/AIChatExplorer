@@ -99,7 +99,12 @@ namespace PythonAILib.PythonIF {
                 string function_name = "hello_world";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // hello_world関数を呼び出す
-                result = function_object();
+                PyIterable iterator = function_object();
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    result += item.ToString();
+                }
+
             });
             return result;
         }
@@ -312,7 +317,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
 
             // VectorSearch関数を呼び出す
-            return VectorSearchExecute("run_vector_search", (function_object) => {
+            return VectorSearchExecute("vector_search", (function_object) => {
                 string resultString = function_object(propsJson, vectorDBItemsJson, vectorSearchRequestJson);
                 return resultString;
             });
@@ -378,7 +383,7 @@ namespace PythonAILib.PythonIF {
             if (contentInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
             } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_content_index";
+                function_name = "delete_index";
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
@@ -391,9 +396,9 @@ namespace PythonAILib.PythonIF {
         public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
             string function_name = "";
             if (imageInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_image_index";
+                function_name = "update_content_index";
             } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_content_index";
+                function_name = "delete_index";
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }
@@ -414,7 +419,7 @@ namespace PythonAILib.PythonIF {
             if (gitFileInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_file_index";
             } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_content_index";
+                function_name = "delete_index";
             } else {
                 throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
             }

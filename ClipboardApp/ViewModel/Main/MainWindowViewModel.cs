@@ -20,9 +20,11 @@ namespace ClipboardApp {
         public MainWindowViewModel() { }
         public void Init() {
 
+            /**
 #if DEBUG
             System.Diagnostics.PresentationTraceSources.DataBindingSource.Switch.Level = System.Diagnostics.SourceLevels.Critical;
 #endif
+            **/
 
             Instance = this;
 
@@ -154,15 +156,6 @@ namespace ClipboardApp {
         // Windows通知監視が実行中であるかどうか
         public bool IsWindowsNotificationMonitorActive { get; set; } = false;
 
-        // AutoGen Studioが実行中であるかどうか
-        public bool IsAutoGenStudioRunning { get; set; } = false;
-        // AutoGen Studioが実行中の場合は「停止」、停止されている場合は「開始」を返す
-        public string AutoGenStudioIsRunningButtonText {
-            get {
-                return IsAutoGenStudioRunning ? StringResources.StopAutoGenStudio : StringResources.StartAutoGenStudio;
-            }
-        }
-
         // Cutフラグ
         public enum CutFlagEnum {
             None,
@@ -218,10 +211,6 @@ namespace ClipboardApp {
         /// </summary>
         // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
         public List<object> CopiedObjects { get; set; } = [];
-
-        /// <summary>
-        /// コピーされたアイテムのフォルダ
-        /// </summary>
         // Ctrl + C or X  が押された時のClipboardItemFolder
         private ClipboardFolderViewModel? _copiedFolder;
         public ClipboardFolderViewModel? CopiedFolder {

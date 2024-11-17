@@ -1,4 +1,4 @@
-from ai_app_file_util import FileUtil
+from ai_app_file.ai_app_file_util import FileUtil
 # main
 if __name__ == "__main__":
     import sys

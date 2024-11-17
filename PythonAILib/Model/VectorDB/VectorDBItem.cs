@@ -92,10 +92,6 @@ namespace PythonAILib.Model.VectorDB
         [JsonPropertyName("ChunkSize")]
         public int ChunkSize { get; set; } = 500;
 
-        // マルチベクトルリトリーバを使う場合のドキュメントのチャンクサイズ
-        [JsonPropertyName("MultiVectorDocChunkSize")]
-        public int MultiVectorDocChunkSize { get; set; } = 10000;
-
         // ベクトル検索時の検索結果上限
         [JsonPropertyName("MaxSearchResults")]
         public int MaxSearchResults { get; set; } = 10;

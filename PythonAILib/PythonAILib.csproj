@@ -9,13 +9,19 @@
 
   <ItemGroup>
     <None Remove="python_ai_lib\ai_app.py" />
+    <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py" />
+    <None Remove="python_ai_lib\ai_app_autogen\__init__.py" />
+    <None Remove="python_ai_lib\ai_app_autogen_tools.py" />
     <None Remove="python_ai_lib\ai_app_autogen_util.py" />
+    <None Remove="python_ai_lib\ai_app_file\__init__.py" />
     <None Remove="python_ai_lib\ai_app_file_util.py" />
+    <None Remove="python_ai_lib\ai_app_langchain\__init__.py" />
     <None Remove="python_ai_lib\ai_app_langchain_client.py" />
     <None Remove="python_ai_lib\ai_app_langchain_util.py" />
     <None Remove="python_ai_lib\ai_app_openai_util.py" />
     <None Remove="python_ai_lib\ai_app_pyocr.py" />
     <None Remove="python_ai_lib\ai_app_spacy.py" />
+    <None Remove="python_ai_lib\ai_app_vector_db\__init__.py" />
     <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
     <None Remove="python_ai_lib\flask_app.py" />
@@ -30,6 +36,7 @@
     <None Remove="python_ai_lib\llamaindex_client.py" />
     <None Remove="python_ai_lib\llamaindex_vector_db.py" />
     <None Remove="python_ai_lib\llamaindex_vector_db_chroma.py" />
+    <None Remove="python_ai_lib\ai_app_openai\__init__.py" />
     <None Remove="python_ai_lib\script_template.py" />
     <None Remove="python_ai_lib\test_ai_app_autogen_group_chat_01.py" />
     <None Remove="python_ai_lib\test_ai_app_langchain_chat_01.py" />
@@ -42,7 +49,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="python_ai_lib\ai_app_langchain_client.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_tools.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_file\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\ai_app_langchain_client.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_openai\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\test_ai_app_langchain_chat_01.py">
@@ -54,10 +82,10 @@
     <EmbeddedResource Include="python_ai_lib\test_ai_app_autogen_group_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_autogen_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\__init__.py">
@@ -75,28 +103,28 @@
     <EmbeddedResource Include="python_ai_lib\dev\misc_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_file_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_file\ai_app_file_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\dev\flask_app.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_doc_store_postgres.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\langchain_doc_store_postgres.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_doc_store.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\langchain_doc_store.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_langchain_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\ai_app_langchain_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_vector_db.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\langchain_vector_db.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_vector_db_pgvector.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\langchain_vector_db_pgvector.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\langchain_vector_db_chroma.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_langchain\langchain_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\dev\langchain_vector_db_faiss.py">
@@ -111,7 +139,7 @@
     <EmbeddedResource Include="python_ai_lib\dev\llamaindex_vector_db_chroma.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_openai_util.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_openai\ai_app_openai_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\dev\script_template.py">

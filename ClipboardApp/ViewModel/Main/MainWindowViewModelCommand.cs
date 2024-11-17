@@ -36,11 +36,7 @@ namespace ClipboardApp {
         public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
             ClipboardAppCommandExecute.StartStopWindowsNotificationMonitorCommand();
         });
-        // AutoGenStudio開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleAutoGenStudioIsRunning => new((parameter) => {
-            ClipboardAppCommandExecute.StartStopAutoGenStudioCommand();
-        });
+
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {

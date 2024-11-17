@@ -13,8 +13,8 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 
-from ai_app_openai_util import OpenAIProps
-from ai_app_vector_db_util import VectorSearchParameter, VectorDBProps
+from ai_app_openai.ai_app_openai_util import OpenAIProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 from langchain_vector_db import LangChainVectorDB
 
 class CustomToolInput(BaseModel):
@@ -160,59 +160,6 @@ class RetrievalQAUtil:
 
 class LangChainUtil:
 
-    # ベクトル検索を行う
-    @staticmethod
-    def run_vector_search( params: VectorSearchParameter):    
-
-        client = LangChainOpenAIClient(params.openai_props)
-
-        # documentsの要素からcontent, source, source_urlを取得
-        result = []
-        # vector_db_propsの要素毎にRetrieverを作成して、検索を行う
-        for vector_db_item in params.vector_db_props:
-
-            # デバッグ出力
-            print(f'検索文字列: {params.query}')
-            print(f'検索条件: {params.search_kwarg}')
-            print('ベクトルDBの設定')
-            print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(params.search_kwarg)
-            documents: list[Document] = retriever.invoke(params.query)
-
-            print(f"documents:\n{documents}")
-            for doc in documents:
-                content = doc.page_content
-                doc_id = doc.metadata.get("doc_id", "")
-                folder_id = doc.metadata.get("folder_id", "")
-                source = doc.metadata.get("source", "")
-                source_url = doc.metadata.get("source_url", "")
-                score = doc.metadata.get("score", 0.0)
-                # description, reliabilityを取得
-                description = doc.metadata.get("description", "")
-                reliability = doc.metadata.get("reliability", 0)
-
-                sub_docs = doc.metadata.get("sub_docs", [])
-                # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
-                sub_docs_result = []
-                for sub_doc in sub_docs:
-                    sub_content = sub_doc.page_content
-                    sub_source = sub_doc.metadata.get("source", "")
-                    sub_source_url = sub_doc.metadata.get("source_url", "")
-                    sub_score = sub_doc.metadata.get("score", 0.0)
-                    sub_doc_id = sub_doc.metadata.get("doc_id", "")
-                    sub_folder_id = sub_doc.metadata.get("folder_id", "")
-                    
-                    sub_docs_result.append({
-                        "doc_id": sub_doc_id, "folder_id": sub_folder_id,
-                        "content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
-
-                result.append(
-                    {"doc_id": doc_id, "folder_id": folder_id,
-                    "content": content, "source": source, "source_url": source_url, "score": score, 
-                    "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
-            
-        return {"documents": result}
-
 
     @staticmethod
     def langchain_chat(params: LangChainChatParameter):
@@ -248,8 +195,8 @@ if __name__ == '__main__':
 
     question1 = input("Please enter your question:")
 
-    from ai_app_openai_util import OpenAIProps
-    from ai_app_vector_db_util import VectorDBProps
+    from ai_app_openai.ai_app_openai_util import OpenAIProps
+    from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
     props:OpenAIProps  = OpenAIProps.env_to_props()
     vector_db_item: VectorDBProps = VectorDBProps.get_vector_db_settings()
 

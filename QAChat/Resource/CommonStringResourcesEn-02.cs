@@ -31,9 +31,6 @@ namespace QAChat.Resource {
         // Start: Start Notification Watch. Stop: Stop Notification Watch.
         public override string ToggleNotificationWatchToolTop { get; } = "Start: Start Notification Watch. Stop: Stop Notification Watch.";
 
-        // Start: Start AutoGenStudio. Stop: Stop AutoGenStudio.
-        public override string ToggleAutoGenStudioIsRunningToolTip { get; } = "Start: Start AutoGenStudio. Stop: Stop AutoGenStudio.";
-
         #endregion
         #region ClipboardApp MainWindow
 
@@ -45,11 +42,6 @@ namespace QAChat.Resource {
         public override string StartNotificationWatch { get; } = "Start Notification Watch";
         // Stop Notification Watch
         public override string StopNotificationWatch { get; } = "Stop Notification Watch";
-
-        // Start AutoGenStudio
-        public override string StartAutoGenStudio { get; } = "Start AutoGenStudio";
-        // Stop AutoGenStudio
-        public override string StopAutoGenStudio { get; } = "Stop AutoGenStudio";
 
         // Started Clipboard Watch
         public override string StartClipboardWatchMessage { get; } = "Started Clipboard Watch";
