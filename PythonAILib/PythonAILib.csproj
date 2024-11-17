@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="python_ai_lib\ai_app.py" />
     <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py" />
+    <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_client.py" />
     <None Remove="python_ai_lib\ai_app_autogen\__init__.py" />
     <None Remove="python_ai_lib\ai_app_autogen_tools.py" />
     <None Remove="python_ai_lib\ai_app_autogen_util.py" />
@@ -53,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_client.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\__init__.py">

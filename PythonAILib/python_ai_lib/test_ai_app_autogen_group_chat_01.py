@@ -2,9 +2,9 @@ import os, json
 from typing import Any
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
-from ai_app_autogen.ai_app_autogen_util import  AutoGenProps
+from ai_app_autogen.ai_app_autogen_client import  AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents
-from ai_app_autogen.ai_app_autogen_tools import AutoGenTools
+from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
 
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"
@@ -13,6 +13,8 @@ import os
 import tempfile
 import sys
 import getopt
+
+
 
 if __name__ == '__main__':
 
@@ -24,8 +26,10 @@ if __name__ == '__main__':
     message = None
     output_file = None
     props_file = None
+    work_dir = None
+    temp_dir = None
 
-    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:")
+    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:d:")
     for opt, arg in opts:
         if opt == "-m":
             message = arg
@@ -33,6 +37,8 @@ if __name__ == '__main__':
             output_file = arg
         elif opt == "-p":
             props_file = arg
+        elif opt == "-d":
+            work_dir = arg
     
     # プロパティファイル(JSON)を読み込む
     open_ai_props_dict = {}
@@ -74,33 +80,10 @@ if __name__ == '__main__':
     # メッセージを表示
     print(f"Input message: {input_text}")
 
-    # Create a temporary directory to store the code files.
-    temp_dir = tempfile.TemporaryDirectory()
-
-    autogenProps: AutoGenProps = AutoGenProps(open_ai_props, temp_dir.name)
-    client = AutoGenAgents(autogenProps.llm_config, autogenProps.executor, temp_dir.name)
-
-    client.enable_code_writer_and_executor()
-    client.enable_web_searcher()
-    client.enable_azure_document_searcher()
-    client.enable_vector_searcher(open_ai_props, vector_db_props_list)
-    client.enable_file_extractor()
-
-    if output_file:
-        client.set_output_file(output_file)
-        print(f"Output file: {output_file}")
-
-    group_chat = client.execute_group_chat(input_text, 10)
-    # Print the messages in the group chat.
-    for message in group_chat.messages:
-        # roleがuserまたはassistantの場合はrole, name, contentを表示
-        if message["role"] in ["user", "assistant"]:
-            print(f"role:[{message['role']}] name:[{message['name']}]")
-            print ("------------------------------------------")
-            print(f"content:{message['content']}\n")
-
-    # Delete the temporary directory.
-    temp_dir.cleanup()
-    
+    # AutoGenUtilを作成
+    autogen_util = AutoGenUtil(open_ai_props, work_dir, vector_db_props_list)
+    # group_chatを実行
+    for message in autogen_util.run_group_chat(input_text, output_file):
+        print(message)
 
 

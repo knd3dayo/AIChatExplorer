@@ -6,16 +6,16 @@ from langchain.docstore.document import Document
 from langchain_community.callbacks.manager import get_openai_callback
 import langchain
 from langchain_core.tools.structured import StructuredTool
-from ai_app_langchain_client import LangChainOpenAIClient, LangChainChatParameter
 
 from typing import Any
-
 from pydantic import BaseModel, Field
 
 
+from ai_app_langchain.ai_app_langchain_client import LangChainOpenAIClient, LangChainChatParameter
+from ai_app_langchain.langchain_vector_db import LangChainVectorDB
+
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
-from langchain_vector_db import LangChainVectorDB
 
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
