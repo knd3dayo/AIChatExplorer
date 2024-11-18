@@ -8,8 +8,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Chat
-{
+namespace PythonAILib.Model.Chat {
     /// <summary>
     /// ChatItemの履歴、
     /// </summary>
@@ -56,6 +55,11 @@ namespace PythonAILib.Model.Chat
         // max_tokens
         [JsonPropertyName("max_tokens")]
         protected int MaxTokens { get; set; } = 0;
+
+        // work_dir
+        [JsonPropertyName("work_dir")]
+        public string WorkDir { get; set; } = "";
+
 
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
@@ -143,10 +147,66 @@ namespace PythonAILib.Model.Chat
         }
 
         // Chatを実行する
-        public ChatResult? ExecuteChat(OpenAIProperties openAIProperties) {
-            return ChatUtil.ExecuteChat(openAIProperties, this);
-        }
+        public ChatResult? ExecuteChat(OpenAIProperties openAIProperties, Action<string> iterateAction ) {
+            if (this.ChatMode == OpenAIExecutionModeEnum.Normal) {
+                // リクエストをChatItemsに追加
 
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+                // 通常のChatを実行する。
+                ChatResult? result = ChatUtil.ExecuteChatNormal(openAIProperties, this);
+                if (result == null) {
+                    return null;
+                }
+                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                return result;
+            }
+            if (this.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
+                ContentText += ChatUtil.GenerateVectorSearchResult(openAIProperties, VectorDBItems, ContentText);
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, ContentText));
+
+                // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
+                ChatResult? result = ChatUtil.ExecuteChatOpenAIRAG(openAIProperties, this);
+                if (result == null) {
+                    return null;
+                }
+                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                return result;
+
+            }
+            if (this.ChatMode == OpenAIExecutionModeEnum.LangChain) {
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+
+                // ChatModeがLangChainの場合は、LangChainChatを実行する。
+                ChatResult? result = ChatUtil.ExecuteChatLangChain(openAIProperties, this);
+                if (result == null) {
+                    return null;
+                }
+                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
+                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                return result;
+            }
+            if (this.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
+                // AutoGenGroupChatを実行する
+                return ExecuteAutoGenGroupChat(openAIProperties, iterateAction);
+            }
+            return null;
+        }
+        // AutoGenGroupChatを実行する
+        public ChatResult? ExecuteAutoGenGroupChat(OpenAIProperties openAIProperties, Action<string> iterateAction) {
+            ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+            // 結果
+            ChatContentItem result = new(ChatContentItem.AssistantRole, "", []);
+            ChatHistory.Add(result);
+
+            // AutoGenGroupChatを実行する
+            return ChatUtil.ExecuteAutoGenGroupChat(openAIProperties, this, (message) => {
+                result.Content += message;
+                iterateAction(message);
+            });
+        }
 
         private List<Dictionary<string, object>> CreateOpenAIMessagesList() {
             //OpenAIのリクエストパラメーターのMessage部分のデータを作成

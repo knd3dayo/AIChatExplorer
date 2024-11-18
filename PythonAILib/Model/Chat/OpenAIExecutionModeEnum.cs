@@ -3,6 +3,6 @@ namespace PythonAILib.Model.Chat {
         Normal = 0,
         OpenAIRAG = 1,
         LangChain = 2,
-        AutoGen = 3,
+        AutoGenChatGroup = 3,
     }
 }

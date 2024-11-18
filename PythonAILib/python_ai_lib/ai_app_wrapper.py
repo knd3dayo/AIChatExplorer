@@ -1,5 +1,6 @@
 import os, json
 from typing import Any
+from collections.abc import Generator
 from io import StringIO
 import sys
 sys.path.append("python")
@@ -47,6 +48,39 @@ def capture_stdout_stderr(func):
 
     return wrapper
 
+# stdout,stderrを文字列として取得するためラッパー関数を定義
+def capture_generator_stdout_stderr(func):
+    def wrapper(*args, **kwargs) -> Generator[str, None, None]:
+
+        # strout,stderrorをStringIOでキャプチャする
+        buffer = StringIO()
+        sys.stdout = buffer
+        sys.stderr = buffer
+        for result in func(*args, **kwargs):
+            try:
+                # resultがdictでない場合は例外をスロー
+                if not isinstance(result, dict):
+                    raise ValueError("result must be dict")
+                json_string = json.dumps(result, ensure_ascii=False, indent=4)
+                print(json_string)
+                yield json_string
+
+            except Exception as e:
+                # エラーが発生した場合はエラーメッセージを出力
+                e.printStackTrace()
+                result = {}
+
+        # strout,stderrorを元に戻す
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        
+        # resultにlogを追加して返す
+        result["log"] = buffer.getvalue()
+        # jsonを返す
+        return json.dumps(result, ensure_ascii=False, indent=4)
+
+    return wrapper
+
 ########################
 # openai関連
 ########################
@@ -81,6 +115,31 @@ def list_openai_models(props_json: str):
     openai_props = OpenAIProps(props)
     client = OpenAIClient(openai_props)
     return client.list_openai_models()
+
+
+########################
+# Autogen関連
+########################
+def run_autogen_group_chat( props_json: str, vector_db_items_json:str, work_dir: str, input_text: str):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> Generator[dict, None, None]:
+        props = json.loads(props_json)
+        openai_props = OpenAIProps(props)
+        vector_db_items = json.loads(vector_db_items_json)
+
+        # process_langchain_chat_parameterを実行
+        # langchan_chatを実行
+        result = ai_app.run_autogen_group_chat(openai_props, vector_db_items, work_dir, input_text)
+        for message, is_last_message in result:
+            # dictを作成
+            result_dict = {"message": message, "is_last_message": is_last_message}
+            yield result_dict
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_generator_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 
 ########################
 # langchain関連

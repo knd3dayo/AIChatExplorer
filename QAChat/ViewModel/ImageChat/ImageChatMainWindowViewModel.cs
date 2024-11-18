@@ -168,7 +168,7 @@ namespace QAChat.ViewModel.ImageChat
                     ChatController.ContentText = InputText;
                     ChatController.PromptTemplateText = PromptText;
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
+                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties(), (message) => { });
 
                 });
                 // 結果を表示

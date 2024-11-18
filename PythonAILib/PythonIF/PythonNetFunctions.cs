@@ -90,6 +90,7 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
+
         // テスト用
         public string HelloWorld() {
             string result = "";
@@ -108,6 +109,8 @@ namespace PythonAILib.PythonIF {
             });
             return result;
         }
+
+
 
 
         public string ExtractBase64ToText(string base64, string extenstion) {
@@ -168,16 +171,17 @@ namespace PythonAILib.PythonIF {
                 // JSON文字列からDictionaryに変換する。
                 Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
                 // contentを取得
-                string? content = resultDict["output"]?.ToString();
-                if (content == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
+                if (resultDict.TryGetValue("output", out dynamic? outputValue)) {
+                    string? output = outputValue.ToString();
+                    // ChatResultに設定
+                    chatResult.Output = output ?? "";
                 }
-                // total_tokensを取得. total_tokensが存在しない場合は0を設定
-                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
-
-                // ChatResultに設定
-                chatResult.Output = content;
-                chatResult.TotalTokens = totalTokens;
+                // total_tokensを取得
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    // JsonElementである、totalTokensValueを、longに変換
+                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
+                    chatResult.TotalTokens = totalTokens;
+                }
 
             });
             return chatResult;
@@ -219,30 +223,27 @@ namespace PythonAILib.PythonIF {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions);
-                if (resultDict == null) {
-                    throw new Exception(StringResources.OpenAIResponseEmpty);
-                }
-                // outputがある場合は取得
-                resultDict.TryGetValue("output", out object? output_value);
-                if (output_value != null) {
-                    string? output = output_value.ToString();
+                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
+                // outputを取得
+                if (resultDict.TryGetValue("output", out dynamic? outputValue)) {
+                    string? output = outputValue.ToString();
                     // ChatResultに設定
                     chatResult.Output = output ?? "";
                 }
-
                 // page_content_listを取得
-                List<Dictionary<string, string>> page_content_list = resultDict["page_content_list"] as List<Dictionary<string, string>> ?? [];
-                chatResult.PageContentList = page_content_list;
-
+                if (resultDict.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
+                    chatResult.PageContentList = pageContentListValue ?? new List<Dictionary<string, string>>();
+                }
                 // page_source_listを取得
-                List<string> page_source_list = resultDict["page_source_list"] as List<string> ?? new();
-                chatResult.PageSourceList = page_source_list;
-
-                // total_tokensを取得. total_tokensが存在しない場合は0を設定
-                long totalTokens = resultDict.TryGetValue("total_tokens", out object? value) ? long.Parse(value.ToString() ?? "0") : 0;
-                chatResult.TotalTokens = totalTokens;
-
+                if (resultDict.TryGetValue("page_source_list", out dynamic? pageSourceListValue)) {
+                    chatResult.PageSourceList = pageSourceListValue ?? new List<Dictionary<string, string>>();
+                }
+                // total_tokensを取得.
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    // JsonElementである、totalTokensValueを、longに変換
+                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
+                    chatResult.TotalTokens = totalTokens;
+                }
 
             });
             return chatResult;
@@ -273,6 +274,57 @@ namespace PythonAILib.PythonIF {
             // StatisticManagerにトークン数を追加
             MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, openAIProperties.OpenAICompletionModel);
             return chatResult;
+        }
+
+        // AutoGenのGroupChatを実行する
+        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string workDir, string message, Action<string> iteration) {
+            // propsをJSON文字列に変換
+            string propsJson = openAIProperties.ToJson();
+            // vectorDBItemsをJSON文字列に変換
+            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
+
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+
+            ChatResult chatResult = new();
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "run_autogen_group_chat";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+                // hello_world関数を呼び出す
+                PyIterable iterator = function_object(propsJson, vectorDBItemsJson, workDir, message);
+                Dictionary<string, dynamic?> keyValuePairs = new();
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    string itemString = item.ToString() ?? "{}";
+                    keyValuePairs = JsonUtil.ParseJson(itemString);
+                    // messageを取得
+                    if (keyValuePairs.TryGetValue("message", out dynamic? messageValue)) {
+                        iteration(messageValue);
+                    }
+                    // logを取得
+                    if (keyValuePairs.TryGetValue("log", out dynamic? logValue)) {
+                        LogWrapper.Info(logValue);
+                    }
+                }
+                // 最終処理
+                // page_content_listを取得
+                if (keyValuePairs.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
+                    chatResult.PageContentList = pageContentListValue ?? new List<Dictionary<string, string>>();
+                }
+                // page_source_listを取得
+                if (keyValuePairs.TryGetValue("page_source_list", out dynamic? pageSourceListValue)) {
+                    chatResult.PageSourceList = pageSourceListValue ?? new List<Dictionary<string, string>>();
+                }
+                // total_tokensを取得.
+                if (keyValuePairs.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    // JsonElementである、totalTokensValueを、longに変換
+                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
+                    chatResult.TotalTokens = totalTokens;
+                }
+            });
+            return chatResult;
+
         }
 
         private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {

@@ -7,10 +7,11 @@ sys.path.append("python")
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 import base64
-from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, ImageUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
 from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangChainUtil
 from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
+from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
 
 ########################
 # ファイル関連
@@ -63,6 +64,15 @@ def openai_embedding(openai_props: OpenAIProps, input_text: str):
 def list_openai_models(openai_props: OpenAIProps):
     client = OpenAIClient(openai_props)
     return client.list_openai_models()
+
+########################
+# autogen関連
+########################
+def run_autogen_group_chat(openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps], work_dir: str, input_text: str) :
+    # AutoGenUtilを生成
+    autogen_util = AutoGenUtil(openai_props, work_dir, vector_db_props_list)
+    # run_group_chatを実行
+    return autogen_util.run_group_chat(input_text)
 
 ########################
 # langchain関連

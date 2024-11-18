@@ -40,7 +40,7 @@ namespace ClipboardApp.Model.AutoProcess
             // フォルダのVectorDBItemを追加
             chatController.VectorDBItems.Add(clipboardFolder.GetVectorDBItem());
 
-            ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties());
+            ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { });
             if (result == null)
             {
                 return clipboardItem;

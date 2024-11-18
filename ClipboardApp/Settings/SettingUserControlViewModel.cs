@@ -493,7 +493,7 @@ namespace ClipboardApp.Settings
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
 
-                string resultString = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties())?.Output ?? "";
+                string resultString = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { })?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
                     testResult.Result = false;
@@ -515,7 +515,7 @@ namespace ClipboardApp.Settings
                 List<ChatContentItem> chatItems = [new ChatContentItem(ChatContentItem.UserRole, "Hello")];
                 chatController.ChatHistory = chatItems;
                 chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
-                ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties());
+                ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { });
                 if (string.IsNullOrEmpty(result?.Output)) {
                     LogWrapper.Error($"[NG]:{StringResources.FailedToRunLangChain}");
                 } else {

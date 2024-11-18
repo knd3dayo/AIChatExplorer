@@ -1,6 +1,6 @@
 import json
 import queue
-
+from typing import Any, Generator
 from autogen import ConversableAgent
 from autogen.coding import LocalCommandLineCodeExecutor # type: ignore
 import autogen 
@@ -69,7 +69,7 @@ class AutoGenAgents:
             if "callback" in config and  config["callback"] is not None:
                 callback = config["callback"]
                 callback(sender, recipient, messages[-1])
-            response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}" 
+            response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{messages[-1]}" 
             # queueにresponseを追加
             self.message_queue.put(response)
 
@@ -82,16 +82,18 @@ class AutoGenAgents:
         self.finished = True
         self.message_queue.put(None)
     # キューからメッセージを取得 yiled で返す
-    def get_messages(self):
+    def get_messages(self) -> Generator[Any, None, None]:
         while True:
             if self.finished:
                 break
-            messages = self.message_queue.get()
-            yield messages
+            message = self.message_queue.get()
+            yield message, False
+        
+        return None, True
 
     # キューから取り出したメッセージを表示
     def print_messages(self):
-        for message in self.get_messages():
+        for message, is_last_message in self.get_messages():
             if message is None:
                 break
             print(message)

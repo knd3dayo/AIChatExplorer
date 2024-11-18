@@ -1,5 +1,7 @@
 import os, json
 from typing import Any
+from collections.abc import Generator
+
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 from ai_app_autogen.ai_app_autogen_client import  AutoGenProps
@@ -18,7 +20,7 @@ class AutoGenUtil:
         self.last_message = None
         self.temp_dir = None
 
-    def run_group_chat(self, input_text: str, output_file: str = None):
+    def run_group_chat(self, input_text: str) -> Generator[Any, None, None]:
 
         # self.work_dir_pathがNoneの場合はtempfileを使用
         if not self.work_dir_path:
@@ -29,12 +31,12 @@ class AutoGenUtil:
         client = AutoGenAgents(autogenProps, self.vector_db_props_list)
         # threadを使ってgroup_chatを実行
         import threading
-        thread = threading.Thread(target=self.create_group_chat_thread, args=(client, input_text, output_file))
+        thread = threading.Thread(target=self.create_group_chat_thread, args=(client, input_text))
         thread.start()
 
         return client.get_messages()
     
-    def create_group_chat_thread(self, client: AutoGenAgents, input_text: str, output_file: str = None):
+    def create_group_chat_thread(self, client: AutoGenAgents, input_text: str):
 
         # client.enable_code_writer()
         # client.enable_code_executor()
@@ -43,10 +45,6 @@ class AutoGenUtil:
         client.enable_vector_searcher()
         client.enable_file_extractor()
         client.enable_autogen_tool_writer()
-
-        if output_file:
-            client.set_output_file(output_file)
-            print(f"Output file: {output_file}")
 
         if not self.work_dir_path:
             # Create a temporary directory to store the code files.

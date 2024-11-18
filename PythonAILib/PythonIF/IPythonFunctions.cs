@@ -3,8 +3,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
@@ -16,6 +15,8 @@ namespace PythonAILib.PythonIF
         public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
 
         public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
+
+        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string workDir, string message, Action<string> iteration);
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);
 

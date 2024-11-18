@@ -28,7 +28,7 @@ namespace PythonAILib.Utils.Python
                 VectorDBItems = vectorDBItems,
             };
 
-            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -46,7 +46,7 @@ namespace PythonAILib.Utils.Python
                     VectorDBItems = vectorDBItems
                 };
 
-                ChatResult? result = chatController.ExecuteChat(openAIProperties);
+                ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
                 if (result != null) {
                     resultString = result.Output;
                 }
@@ -67,7 +67,7 @@ namespace PythonAILib.Utils.Python
                 JsonMode = true
             };
 
-            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
 
                 Dictionary<string, List<string>> jsonResult = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(result.Output, options) ?? [];
@@ -88,7 +88,7 @@ namespace PythonAILib.Utils.Python
                 JsonMode = true
             };
 
-            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 return JsonUtil.ParseJson(result.Output);
             }
@@ -107,7 +107,7 @@ namespace PythonAILib.Utils.Python
                 JsonMode = true
             };
 
-            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
                 // JSON文字列をDictionary<string, dynamic>型に変換
                 return JsonUtil.ParseJson(result.Output);
@@ -127,7 +127,7 @@ namespace PythonAILib.Utils.Python
                 return "";
             }
 
-            ChatResult? result = chatController.ExecuteChat(openAIProperties);
+            ChatResult? result = chatController.ExecuteChat(openAIProperties, (message) => { });
             if (result != null) {
                 return result.Output;
             }
@@ -170,66 +170,27 @@ namespace PythonAILib.Utils.Python
             }
             return "";
         }
-        // OpenAIChatを実行する。
-        public static ChatResult? ExecuteChat(OpenAIProperties openAIProperties, ChatRequest chat) {
-            if (chat.ChatMode == OpenAIExecutionModeEnum.Normal) {
-                // 通常のChatを実行する。
-                return ExecuteChatNormal(openAIProperties, chat);
-            }
-            if (chat.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
-                // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
-                return ExecuteChatOpenAIRAG(openAIProperties, chat);
-            }
-            if (chat.ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                // ChatModeがLangChainの場合は、LangChainChatを実行する。
-                return ExecuteChatLangChain(openAIProperties, chat);
-            }
-            return null;
+
+        public static ChatResult? ExecuteAutoGenGroupChat(OpenAIProperties openAIProperties, ChatRequest chat, Action<string> iteration) {
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(openAIProperties, chat.VectorDBItems, chat.WorkDir, chat.CreatePromptText(), iteration);
+            return result;
         }
+
         public static ChatResult? ExecuteChatLangChain(OpenAIProperties openAIProperties, ChatRequest chat) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
             // GenerateVectorSearchResult(openAIProperties);
-
             ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(openAIProperties, chat);
-            if (result == null) {
-                return null;
-            }
-            // リクエストをChatItemsに追加
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, chat.CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
             return result;
-
         }
 
         public static ChatResult? ExecuteChatNormal(OpenAIProperties openAIProperties, ChatRequest chat) {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, chat);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, chat.CreatePromptText()));
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
-
             return result;
         }
 
         public static ChatResult? ExecuteChatOpenAIRAG(OpenAIProperties openAIProperties, ChatRequest chat) {
-            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            chat.ContentText += ChatUtil.GenerateVectorSearchResult(openAIProperties, chat.VectorDBItems, chat.ContentText);
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, chat.ContentText));
-
-
 
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(openAIProperties, chat);
-            // リクエストをChatItemsに追加
-            if (result == null) {
-                return null;
-            }
-            // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-            chat.ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
-
             return result;
 
         }
