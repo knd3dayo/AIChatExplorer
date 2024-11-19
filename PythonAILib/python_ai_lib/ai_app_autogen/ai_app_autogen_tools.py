@@ -90,10 +90,10 @@ class AutoGenTools:
     def create_extract_webpage_function(self) -> tuple[Callable[[str], list[str]], str]:
         def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[tuple[str, str]]], "ページテキスト,リンク(aタグのhref属性とリンクテキスト)のリスト"]:
             driver = self.create_web_driver()
-            # webページのHTMLを取得して、テキストとリンクを抽出
-            driver.get(url)
             # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
             driver.implicitly_wait(10)
+            # webページのHTMLを取得して、テキストとリンクを抽出
+            driver.get(url)
             # ページ全体のHTMLを取得
             page_html = driver.page_source
 

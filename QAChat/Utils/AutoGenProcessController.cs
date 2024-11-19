@@ -19,7 +19,9 @@ namespace QAChat.Utils
             string tempFile = Path.GetTempFileName();
 
             // パラメーターファイルを作成
-            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, chatRequest);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            string workDir = Path.Combine(libManager.ConfigParams.GetAppDataPath(), "autogen");
+            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, chatRequest, workDir);
             File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
             // AutoGenGroupChatTest1を起動するコマンド

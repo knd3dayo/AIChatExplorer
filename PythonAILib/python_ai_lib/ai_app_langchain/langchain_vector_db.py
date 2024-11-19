@@ -279,7 +279,10 @@ class LangChainVectorDB:
 
         vector_db_props = self.vector_db_props
         if not search_kwargs:
-            search_kwargs = {"k": 10}
+            if vector_db_props.CollectionName:
+                search_kwargs = {"k": 10, 'filter': {'folder_id': vector_db_props.CollectionName},}
+            else:
+                search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
         if vector_db_props.IsUseMultiVectorRetriever:

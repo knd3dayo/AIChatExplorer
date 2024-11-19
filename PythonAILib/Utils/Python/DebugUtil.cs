@@ -50,9 +50,9 @@ namespace PythonAILib.Utils.Python
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターファイルを作成する。
-        public static string CreateParameterJsonFile(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest) {
+        public static string CreateParameterJsonFile(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest, string workDir) {
             // JSONファイルに保存
-            string parametersJson = CreateParameterJson(openAIProperties, vectorDBItems, chatRequest);
+            string parametersJson = CreateParameterJson(openAIProperties, vectorDBItems, chatRequest, workDir);
             string parametersJsonFile = Path.GetTempFileName();
             File.WriteAllText(parametersJsonFile, parametersJson);
 
@@ -60,7 +60,7 @@ namespace PythonAILib.Utils.Python
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターJsonを作成する。
-        public static string CreateParameterJson(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest) {
+        public static string CreateParameterJson(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest, string workDir) {
             Dictionary<string, object> parametersDict = [];
             // OpenAIPropertiesをDictionaryに保存
             parametersDict["open_ai_props"] = openAIProperties;
@@ -68,8 +68,13 @@ namespace PythonAILib.Utils.Python
             parametersDict["vector_db_props"] = vectorDBItems;
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
+                // work_dirを設定
+                if (!string.IsNullOrEmpty(workDir)) {
+                    chatRequest.WorkDir = workDir;
+                }
                 parametersDict["chat_request"] = chatRequest.ToDict();
             }
+            
             string parametersJson = JsonSerializer.Serialize(parametersDict, options);
             return parametersJson;
 

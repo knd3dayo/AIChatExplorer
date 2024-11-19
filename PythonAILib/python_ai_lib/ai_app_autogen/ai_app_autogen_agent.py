@@ -24,7 +24,8 @@ class AutoGenAgents:
         self.__create_default_agents()
 
         # コード実行者が自動的にコードを実行するようにするかどうか
-        self.auto_execute_code = auto_execute_code
+        # self.auto_execute_code = auto_execute_code
+        self.auto_execute_code = True
 
         # 結果を出力するファイル
         self.output_file = None
@@ -197,7 +198,6 @@ class AutoGenAgents:
                 コードの実行結果を表示します。
                 """,
             llm_config=False,
-            
             code_execution_config={"executor": self.executor},
             human_input_mode="NEVER",
         )
