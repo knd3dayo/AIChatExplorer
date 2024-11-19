@@ -83,7 +83,7 @@ if __name__ == '__main__':
     # AutoGenUtilを作成
     autogen_util = AutoGenUtil(open_ai_props, work_dir, vector_db_props_list)
     # group_chatを実行
-    for message in autogen_util.run_group_chat(input_text, output_file):
+    for message in autogen_util.run_group_chat(input_text):
         print(message)
 
 

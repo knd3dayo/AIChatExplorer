@@ -69,7 +69,16 @@ class AutoGenAgents:
             if "callback" in config and  config["callback"] is not None:
                 callback = config["callback"]
                 callback(sender, recipient, messages[-1])
-            response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{messages[-1]}" 
+
+            # Print the messages in the group chat.
+            # roleがuserまたはassistantの場合はrole, name, contentを表示
+            message = messages[-1]
+            header = f"role:[{message['role']}] name:[{message['name']}]\n------------------------------------------\n"
+            content = f"{message['content']}\n"
+            if message["role"] in ["user", "assistant"]:
+                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}{content}"
+            else:
+                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}" 
             # queueにresponseを追加
             self.message_queue.put(response)
 
@@ -260,14 +269,14 @@ class AutoGenAgents:
         self.web_searcher = ConversableAgent(
             "web-searcher",
             system_message="""
-                あなたは汎用のWeb検索者です。ユーザーの指示に従いWebで情報を検索します。
-                - 提供された関数を用いて、WikiPedia(日本語版)から情報を検索します。
-                - 検索した結果テキストから公式ドキュメントへのリンクなどを抽出します。
-                - 公式ドキュメントのHTMLを取得します。
-                - ユーザーからの指示にマッチする情報をユーザーに提供します。
+                ユーザーの指示に従い、指定されたURLから情報を取得します。
+                - 提供された関数を用いて、指定されたURLのテキストとリンクを取得します。
+                - ユーザーからURLが提供されなかった場合は、WikiPedia(日本語版)から検索対象文字列に関連するページを検索します。
+                - リンク先に必要なドキュメントがない場合はさらにリンクされた情報を検索します。
+                - 必要なドキュメントがあった場合はドキュメントのテキストをユーザーに提供します
                 """,
             llm_config=self.llm_config,
-            code_execution_config=False,
+            code_execution_config={"executor": self.executor},
             human_input_mode="NEVER",
         )
         # register_reply 

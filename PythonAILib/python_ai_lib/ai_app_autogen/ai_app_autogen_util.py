@@ -44,6 +44,8 @@ class AutoGenUtil:
         client.enable_azure_document_searcher()
         client.enable_vector_searcher()
         client.enable_file_extractor()
+        # client.enable_code_writer()
+        # client.enable_code_executor()
         client.enable_autogen_tool_writer()
 
         if not self.work_dir_path:

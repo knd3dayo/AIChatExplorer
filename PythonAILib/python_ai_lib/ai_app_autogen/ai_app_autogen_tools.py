@@ -88,7 +88,7 @@ class AutoGenTools:
         return extract_file, "指定されたファイルからテキストを抽出する関数です。"
     
     def create_extract_webpage_function(self) -> tuple[Callable[[str], list[str]], str]:
-        def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[str]], "テキストとリンク"]:
+        def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[tuple[str, str]]], "ページテキスト,リンク(aタグのhref属性とリンクテキスト)のリスト"]:
             driver = self.create_web_driver()
             # webページのHTMLを取得して、テキストとリンクを抽出
             driver.get(url)
@@ -100,7 +100,8 @@ class AutoGenTools:
             from bs4 import BeautifulSoup
             soup = BeautifulSoup(page_html, "html.parser")
             text = soup.get_text()
-            urls = [a.get("href") for a in soup.find_all("a")]
+            # aタグのhref属性とテキストを取得
+            urls : list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
             driver.close()
             return text, urls
         return extract_webpage, "指定されたURLのWebページからテキストとリンクを抽出する関数です。"

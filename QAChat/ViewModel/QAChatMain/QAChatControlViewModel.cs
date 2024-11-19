@@ -200,6 +200,8 @@ namespace QAChat.ViewModel.QAChatMain
                     // VectorDBItemsを設定
                     List<VectorDBItem> items = [.. VectorDBItems];
                     ChatRequest.VectorDBItems = items;
+                    // WorkDirを設定
+                    ChatRequest.WorkDir = Path.Combine(libManager.ConfigParams.GetAppDataPath(), "autogen");
                     // OpenAIChat or LangChainChatを実行
                     result = ChatRequest.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties(), (message) => {
                         MainUITask.Run(() => {
