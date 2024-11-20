@@ -200,7 +200,6 @@
                                             <TextBlock
                                                 Grid.Row="1"
                                                 MinHeight="30"
-                                                MaxHeight="600"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
                                                 FontSize="8pt"
