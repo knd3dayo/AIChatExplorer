@@ -121,6 +121,7 @@ namespace PythonAILib.Model.Chat {
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {
+                ["work_dir"] = WorkDir,
                 ["model"] = model,
                 ["messages"] = CreateOpenAIMessagesList(),
                 ["temperature"] = Temperature

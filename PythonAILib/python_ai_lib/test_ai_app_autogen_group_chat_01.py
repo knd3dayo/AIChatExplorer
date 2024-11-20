@@ -27,7 +27,6 @@ if __name__ == '__main__':
     output_file = None
     props_file = None
     work_dir = None
-    temp_dir = None
 
     opts, args = getopt.getopt(sys.argv[1:], "m:o:p:d:")
     for opt, arg in opts:
@@ -56,6 +55,9 @@ if __name__ == '__main__':
             vector_db_props_list = [VectorDBProps(props) for props in vector_db_props_dict]
 
             request = props_dict.get("chat_request", {})
+
+            if not work_dir:
+                work_dir = request.get("work_dir", None)
 
     else:
             open_ai_props: OpenAIProps = OpenAIProps.env_to_props()
