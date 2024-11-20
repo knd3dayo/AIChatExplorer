@@ -22,7 +22,13 @@ class AutoGenUtil:
         self.client = AutoGenAgents(autogenProps, self.vector_db_props_list)
 
         if not agent_names:
-            agent_names = ["web_searcher", "azure_document_searcher", "vector_searcher", "file_extractor", "code_writer", "code_executor", "autogen_tool_writer"]
+            agent_names = [
+                "web_searcher", "azure_document_searcher", "vector_searcher", 
+                "file_extractor", "code_writer", 
+                "code_executor", 
+                "file_writer", 
+                #"file_checker"
+                ]
 
         self.agents = self.prepare_agents(agent_names)
 

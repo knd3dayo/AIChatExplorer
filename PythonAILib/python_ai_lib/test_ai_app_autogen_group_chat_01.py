@@ -6,17 +6,15 @@ from ai_app_autogen.ai_app_autogen_client import  AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents
 from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
 
-# AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
-os.environ["PYTHONUTF8"] = "1"
 
-import os
-import tempfile
 import sys
 import getopt
 
 
 
 if __name__ == '__main__':
+    # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
+    os.environ["PYTHONUTF8"] = "1"
 
     # getoptsでオプション引数の解析
     # -p オプションでOpenAIプロパティファイル(JSON)を指定する
@@ -85,7 +83,12 @@ if __name__ == '__main__':
     # AutoGenUtilを作成
     autogen_util = AutoGenUtil(open_ai_props, work_dir, vector_db_props_list)
     # group_chatを実行
-    for message in autogen_util.run_group_chat(input_text):
-        print(message)
-
+    try:
+        autogen_util.run_group_chat(input_text)
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        autogen_util.finish(autogen_util.client)
+        exit(0)
+    
 

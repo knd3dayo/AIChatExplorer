@@ -245,17 +245,22 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBox
+                            <!--  プロンプトテンプレート  -->
+                            <ScrollViewer
                                 Grid.Row="0"
-                                Height="30"
-                                Margin="10,0,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
-                                AcceptsReturn="True"
-                                Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
-                                <TextBox.InputBindings>
-                                    <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
-                                </TextBox.InputBindings>
-                            </TextBox>
+                                Margin="0,0,0,0"
+                                VerticalScrollBarVisibility="Auto">
+                                <TextBox
+                                    Height="60"
+                                    Margin="10,0,10,0"
+                                    materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
+                                    AcceptsReturn="True"
+                                    Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
+                                    <TextBox.InputBindings>
+                                        <MouseBinding Command="{Binding PromptTemplateCommand, Mode=OneTime}" MouseAction="LeftDoubleClick" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </ScrollViewer>
                             <ScrollViewer
                                 Grid.Row="1"
                                 Margin="0,0,0,0"

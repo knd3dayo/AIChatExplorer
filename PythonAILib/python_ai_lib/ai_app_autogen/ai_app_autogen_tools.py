@@ -29,7 +29,9 @@ class AutoGenTools:
             "get_text_from_html": self.create_get_text_from_html_function,
             "get_urls_from_html": self.create_get_urls_from_html_function,
             "get_urls_from_text": self.create_get_urls_from_text_function,
-            "save_tools": self.create_save_tools_function
+            "save_tools": self.create_save_tools_function,
+            "file_checker": self.create_check_file_function,
+            "save_text_file": self.create_save_text_file_function
         }
 
     def create_vector_search(self) -> tuple[Callable[[str], list[str]], str]:
@@ -87,6 +89,15 @@ class AutoGenTools:
             return text
         return extract_file, "指定されたファイルからテキストを抽出する関数です。"
     
+    def create_check_file_function(self) -> tuple[Callable[[str], bool], str]:
+        def check_file(file_path: Annotated[str, "ファイルパス"]) -> bool:
+            # ファイルが存在するかチェック
+            import os
+            check_file = os.path.exists(file_path)
+            return check_file
+        
+        return check_file, "指定されたファイルが存在するかチェックする関数です。"
+
     def create_extract_webpage_function(self) -> tuple[Callable[[str], list[str]], str]:
         def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[tuple[str, str]]], "ページテキスト,リンク(aタグのhref属性とリンクテキスト)のリスト"]:
             driver = self.create_web_driver()
@@ -187,6 +198,26 @@ class AutoGenTools:
         def generator():
             return func, description
         return name, generator
+
+    def create_save_text_file_function(self) -> tuple[Callable[[str, str, str], None], str]:
+        def save_text_file(name: Annotated[str, "ファイル名"], dirname: Annotated[str, "ディレクトリ名"], text: Annotated[str, "保存するテキストデータ"]) -> Annotated[bool, "保存結果"]:
+            # 指定したディレクトリに保存
+            try:
+                import os
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
+                path = os.path.join(dirname, name)
+                with open(path , "w", encoding="utf-8") as f:
+                    f.write(text)
+                # ファイルの存在チェック    
+                return os.path.exists(path)
+
+            except Exception as e:
+                print(e)
+                return False
+
+        return save_text_file, "テキストデータをファイルとして保存する関数です。"
+
 
     def create_save_tools_function(self) -> tuple[Callable[[str, str, str], None], str]:
         def save_tools(name: Annotated[str, "関数名"], description: Annotated[str, "関数の説明"], code: Annotated[str, "関数のコード"], dirname: Annotated[str, "保存先ディレクトリ名"]) -> Annotated[bool, "保存結果"]:

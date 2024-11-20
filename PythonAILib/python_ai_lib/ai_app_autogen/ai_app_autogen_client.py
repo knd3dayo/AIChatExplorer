@@ -1,5 +1,5 @@
-import json
-
+import os
+import datetime
 from autogen.coding import LocalCommandLineCodeExecutor
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
@@ -12,6 +12,10 @@ class AutoGenProps:
         if work_dir_path is None:
             raise ValueError("work_dir_path is None")
         # 基本設定
+        # work_dir_pathの下にyyyy-mm-dd-hh-mm-ss形式のディレクトリパスを追加
+        now = datetime.datetime.now()
+        work_dir_path = os.path.join(work_dir_path, now.strftime("%Y-%m-%d-%H-%M-%S"))
+
         self.work_dir_path = work_dir_path
         self.OpenAIProps = openAIProps
 
@@ -37,5 +41,15 @@ class AutoGenProps:
         config_list.append(llm_config_entry)
         llm_config = {}
         llm_config["config_list"] = config_list
+        llm_config["cache_seed"] = None
 
         return llm_config
+    
+    def create_code_executor(self):
+        # Create a local command line code executor.
+        print(f"work_dir_path:{self.work_dir_path}")
+        executor = LocalCommandLineCodeExecutor(
+            timeout=120,  # Timeout for each code execution in seconds.
+            work_dir=self.work_dir_path,  # Use the temporary directory to store the code files.
+        )
+        return executor

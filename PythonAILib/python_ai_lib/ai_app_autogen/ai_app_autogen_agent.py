@@ -13,15 +13,8 @@ class AutoGenAgents:
     def __init__(self, autgenProps: AutoGenProps, auto_execute_code: bool = False, vector_db_props_list = []):
         
         self.autogen_pros = autgenProps
-        self.work_dir = autgenProps.work_dir_path
+        self.work_dir_path = autgenProps.work_dir_path
         
-
-        # Create a local command line code executor.
-        self.executor = LocalCommandLineCodeExecutor(
-            timeout=10,  # Timeout for each code execution in seconds.
-            work_dir=self.work_dir,  # Use the temporary directory to store the code files.
-        )
-
         self.print_messages_function = self.__create_print_messages_function()
 
         self.autogen_tools = AutoGenTools(autgenProps.OpenAIProps, vector_db_props_list)
@@ -88,8 +81,8 @@ class AutoGenAgents:
             return self.create_user_proxy()
         elif agent_name == "code_writer":
             return self.create_code_writer()
-        elif agent_name == "autogen_tool_writer":
-            return self.create_autogen_tool_writer()
+        elif agent_name == "file_writer":
+            return self.create_file_writer()
         elif agent_name == "code_executor":
             return self.create_code_executor()
         elif agent_name == "vector_searcher":
@@ -100,6 +93,8 @@ class AutoGenAgents:
             return self.create_web_searcher()
         elif agent_name == "azure_document_searcher":
             return self.create_azure_document_searcher()
+        elif agent_name == "file_checker":
+            return self.create_file_checker()
         else:
             return None
 
@@ -127,14 +122,17 @@ class AutoGenAgents:
         # グループチャットの議題提供者
         user_proxy = autogen.UserProxyAgent(
             system_message="""
-                あなたはグループチャットの議題提供者です。
-                グループチャットの管理者に議題を提示します。
-                グループチャットの管理者から会議を終了する旨のメッセージが届いたら、グループチャットの管理者に[会議を終了]と返信します。
+                ユーザーの依頼を達成するため各エージェントと協力してタスクを実行します。
+                ユーザーからファイルの保存場所の指定があれば、指定された場所にファイルを保存します。
+                  指定がない場合は、{self.autogen_pros.work_dir_path}に保存します。
+                  ファイル名は英語でお願いします。
+                ユーザーの依頼を達成したら、グループチャットの管理者に[会議を終了]と返信します。
                 """,
             name="user_proxy",
             human_input_mode="NEVER",
-            is_termination_msg=lambda msg: "会議を終了" in msg["content"].lower(),
             code_execution_config=False,
+            is_termination_msg=lambda msg: "会議を終了" in msg["content"].lower(),
+            description="ユーザーの依頼を達成するためのタスク一覧を考えて各エージェントにタスクを割り当てます。",
             llm_config=self.autogen_pros.create_llm_config()
         )
         # register_reply 
@@ -153,14 +151,13 @@ class AutoGenAgents:
         code_writer_agent = ConversableAgent(
             "code-writer",
             system_message=f"""
-                あなたはPython開発者です。
+                あなたはスクリプト開発者です。
                 あなたがコードを書くと自動的に外部のアプリケーション上で実行されます。
                 ユーザーの指示に従ってあなたはコードを書きます。
                 コードの実行結果は、あなたがコードを投稿した後に自動的に表示されます。
                 ただし、次の条件を厳密に遵守する必要があります。
                 ルール:
                 * コードブロック内でのみコードを提案します。
-                * あなたが作成するスクリプトは、{self.work_dir}に保存されます。
                 * スクリプトの実行結果がエラーである場合、エラー文を元に対策を考え、修正したコードを再度作成します。
                 * スクリプトを実行した結果、情報を十分に得られなかった場合、現状得られた情報から修正したコードを再度作成します。
                 * あなたはユーザーの指示を最終目標とし、これを満たす迄何度もコードを作成・修正します。
@@ -168,6 +165,7 @@ class AutoGenAgents:
         ,
             llm_config=self.autogen_pros.create_llm_config(),
             code_execution_config=False,
+            description="ユーザーの指示に従ってコードを書きます。",
             human_input_mode="NEVER",
         )
         # register_reply 
@@ -176,27 +174,28 @@ class AutoGenAgents:
         return code_writer_agent
 
 
-    def create_autogen_tool_writer(self):
+    def create_file_writer(self):
         # コードの作成者と実行者は分離する。以下はコード推論 Agent。LLM を持つ。
-        autogen_tool_writer = ConversableAgent(
-            "autogen-tool-writer",
+        file_writer = ConversableAgent(
+            "file-writer",
             system_message=f"""
-                あなたはAutoGenツール作成者です。ユーザーの指示に従い、AutoGenツール用のPython関数と説明を作成します。
-                AutoGenツール用の関数は、Annotatedデコレータ(from typing import Annotated)を使って型ヒントを指定してください。
-                作成して関数と説明はsave_tools関数によりjsonとして{self.work_dir}に保存します。
+                ユーザーの指示に従い、Pythonでデータをファイルに保存します。
+                デフォルトの保存場所は{self.autogen_pros.work_dir_path}です。
+                ユーザーからファイルの保存場所の指定があれば、指定された場所にファイルを保存します。
                 """
         ,
             llm_config=self.autogen_pros.create_llm_config(),
             code_execution_config=False,
+            description="ユーザーの指示に従い、Pythonでデータをファイルに保存します。",
             human_input_mode="NEVER",
         )
         # register_reply 
-        autogen_tool_writer.register_reply( [autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
-        save_tools, description = self.autogen_tools.create_save_tools_function()
+        file_writer.register_reply( [autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
+        save_tools, description = self.autogen_tools.create_save_text_file_function()
         # register_for_llm
-        autogen_tool_writer.register_for_llm(description=description)(save_tools)
+        file_writer.register_for_llm(description=description)(save_tools)
 
-        return autogen_tool_writer
+        return file_writer
 
     def create_code_executor(self):
         # コードの作成者と実行者は分離する。以下はコード実行者 Agent。LLM は持たない。
@@ -205,12 +204,11 @@ class AutoGenAgents:
             system_message=f"""
                 あなたはコード実行者です。
                 コード作成者から提供されたコードを実行します。
-                必要に応じてpipパッケージをインストールします。
-                pipインストール以外には、システムへの変更は行いません。
                 コードの実行結果を表示します。
                 """,
             llm_config=False,
-            code_execution_config={"executor": self.executor},
+            code_execution_config={"executor": self.autogen_pros.create_code_executor()},   
+            description="コード作成者から提供されたコードを実行します。",
             human_input_mode="NEVER",
         )
         # register_reply 
@@ -236,6 +234,7 @@ class AutoGenAgents:
                 """,
             llm_config=self.autogen_pros.create_llm_config(),
             code_execution_config=False,
+            description="ユーザーの指示に従い、ベクトルデータベースから情報を検索します。",
             human_input_mode="NEVER",
         )
         # register_reply 
@@ -258,6 +257,7 @@ class AutoGenAgents:
                 """,
             llm_config=self.autogen_pros.create_llm_config(),
             code_execution_config=False,
+            description="ユーザーの指示に従い、ファイルからテキストを抽出します。",
             human_input_mode="NEVER",
         )
         # register_reply 
@@ -286,7 +286,8 @@ class AutoGenAgents:
                 - 必要なドキュメントがあった場合はドキュメントのテキストをユーザーに提供します
                 """,
             llm_config=self.autogen_pros.create_llm_config(),
-            code_execution_config={"executor": self.executor},
+            code_execution_config={"executor": self.autogen_pros.create_code_executor()},   
+            description="指定されたURLから情報を取得します。",
             human_input_mode="NEVER",
         )
         # register_reply 
@@ -317,6 +318,7 @@ class AutoGenAgents:
                 """,
             llm_config=self.autogen_pros.create_llm_config(),
             code_execution_config=False,
+            description="Azure関連のドキュメントを検索します。",
             human_input_mode="NEVER",
         )
 
@@ -328,3 +330,26 @@ class AutoGenAgents:
         azure_document_searcher.register_for_llm(description=description)(extract_webpage)
 
         return azure_document_searcher
+
+    def create_file_checker(self):
+        
+        # ファイルチェッカー
+        file_checker = ConversableAgent(
+            "file_checker",
+            system_message="""
+                ファイルチェッカーです。指定されたファイルが存在するか確認します。
+                """,
+            llm_config=self.autogen_pros.create_llm_config(),
+            code_execution_config=False,
+            description="指定されたファイルが存在するか確認します。",
+            human_input_mode="NEVER",
+        )
+
+        # register_reply 
+        file_checker.register_reply( [autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
+
+        # 指定されたURLのテキストとリンクを取得します。
+        func, description = self.autogen_tools.create_check_file_function()
+        file_checker.register_for_llm(description=description)(func)
+
+        return file_checker
