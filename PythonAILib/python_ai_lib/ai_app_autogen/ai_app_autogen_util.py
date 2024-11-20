@@ -20,13 +20,14 @@ class AutoGenUtil:
         self.last_message = None
         autogenProps: AutoGenProps = AutoGenProps(self.OpenAIProps, self.work_dir_path )
         self.client = AutoGenAgents(autogenProps, self.vector_db_props_list)
-        self.user_agent = self.client.create_user_proxy()
 
-        self.agents = [self.user_agent]
         if not agent_names:
             agent_names = ["web_searcher", "azure_document_searcher", "vector_searcher", "file_extractor", "code_writer", "code_executor", "autogen_tool_writer"]
 
         self.agents = self.prepare_agents(agent_names)
+
+        self.user_agent = self.client.create_user_proxy()
+        self.agents.append(self.user_agent)
 
     def prepare_agents(self, agent_names: list[str]) -> list[ConversableAgent]:
         agents: list[ConversableAgent] = []
