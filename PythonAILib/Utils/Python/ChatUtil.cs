@@ -172,7 +172,7 @@ namespace PythonAILib.Utils.Python
         }
 
         public static ChatResult? ExecuteAutoGenGroupChat(OpenAIProperties openAIProperties, ChatRequest chat, Action<string> iteration) {
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(openAIProperties, chat.VectorDBItems, chat.WorkDir, chat.CreatePromptText(), iteration);
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenGroupChat(openAIProperties, chat, iteration);
             return result;
         }
 

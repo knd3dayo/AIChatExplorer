@@ -138,13 +138,18 @@ namespace PythonAILib.Model.Chat {
             if (MaxTokens > 0) {
                 dc["max_tokens"] = MaxTokens;
             }
-            return dc;
-        }
 
-        public string ToJson() {
-            //jsonに変換する
-            string json = JsonSerializer.Serialize(ToDict(), JsonSerializerOptions);
-            return json;
+            // ModeがAutoGenChatGroupの場合は、work_dirを設定する
+            if (ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
+                dc["work_dir"] = WorkDir;
+            } else {
+                // work_dirがある場合は削除する
+                if (dc.ContainsKey("work_dir")) {
+                    dc.Remove("work_dir");
+                }
+            }
+
+            return dc;
         }
 
         // Chatを実行する

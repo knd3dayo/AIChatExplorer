@@ -16,7 +16,7 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
 
-        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string workDir, string message, Action<string> iteration);
+        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, ChatRequest chat, Action<string> iteration);
 
         public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);
 

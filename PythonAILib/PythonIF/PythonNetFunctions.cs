@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -192,7 +193,9 @@ namespace PythonAILib.PythonIF {
         public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatRequest) {
 
             // ChatHistoryとContentなどからリクエストを作成
-            string chat_history_json = chatRequest.ToJson();
+            Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
+            // ChatRequestをJSON文字列に変換
+            string chat_history_json = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
             string propsJson = props.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
@@ -252,7 +255,9 @@ namespace PythonAILib.PythonIF {
         public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatRequest chatRequest) {
 
             string prompt = chatRequest.CreatePromptText();
-            string chatHistoryJson = chatRequest.ToJson();
+            Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
+            // ChatRequestをJSON文字列に変換
+            string chatHistoryJson = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
@@ -277,11 +282,15 @@ namespace PythonAILib.PythonIF {
         }
 
         // AutoGenのGroupChatを実行する
-        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, string workDir, string message, Action<string> iteration) {
+        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties,ChatRequest chatRequest,  Action<string> iteration) {
             // propsをJSON文字列に変換
             string propsJson = openAIProperties.ToJson();
             // vectorDBItemsをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
+            string vectorDBItemsJson = VectorDBItem.ToJson(chatRequest.VectorDBItems);
+            // workDirを取得
+            string workDir = chatRequest.WorkDir;
+            // messageを取得
+            string message = chatRequest.CreatePromptText();
 
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
 
