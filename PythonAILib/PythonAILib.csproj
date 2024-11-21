@@ -42,6 +42,7 @@
     <None Remove="python_ai_lib\test_ai_app_autogen_group_chat_01.py" />
     <None Remove="python_ai_lib\test_ai_app_langchain_chat_01.py" />
     <None Remove="python_ai_lib\test_ai_app_open_ai_chat_01.py" />
+    <None Remove="python_ai_lib\test_autogen_def_tool.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_chroma.py" />
     <None Remove="python_ai_lib\test_langchain_vector_db_postgres.py" />
     <None Remove="python_ai_lib\test_openai_client.py" />
@@ -90,6 +91,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_util.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test_autogen_def_tool.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\__init__.py">
