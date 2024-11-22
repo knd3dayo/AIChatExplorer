@@ -19,22 +19,56 @@ class AutoGenTools:
         self.OpenAIProps = openai_props
         self.VectorDBPropsList = vector_db_props_list
         # 関数名と関数生成関数のペアを保持する辞書
-        self.function_generators = {
-            "create_vector_search": self.create_vector_search,
-            "search_wikipedia_ja": self.create_search_wikipedia_ja,
-            "list_files_in_directory": self.create_list_files_in_directory,
-            "extract_text_from_file": self.create_extract_text_from_file,
-            "extract_webpage": self.create_extract_webpage_function,
-            "get_html": self.create_get_html_function,
-            "get_text_from_html": self.create_get_text_from_html_function,
-            "get_urls_from_html": self.create_get_urls_from_html_function,
-            "get_urls_from_text": self.create_get_urls_from_text_function,
-            "save_tools": self.create_save_tools_function,
-            "file_checker": self.create_check_file_function,
-            "save_text_file": self.create_save_text_file_function
+        self.tools: dict[str, tuple[Callable, str]] = {
+            "vector_search": self.__create_vector_search(),
+            "search_wikipedia_ja": self.__create_search_wikipedia_ja(),
+            "list_files_in_directory": self.__create_list_files_in_directory(),
+            "extract_text_from_file": self.__create_extract_text_from_file(),
+            "extract_webpage": self.__create_extract_webpage_function(),
+            "get_html": self.__create_get_html_function(),
+            "get_text_from_html": self.__create_get_text_from_html_function(),
+            "get_urls_from_html": self.__create_get_urls_from_html_function(),
+            "get_urls_from_text": self.__create_get_urls_from_text_function(),
+            "save_tools": self.__create_save_tools_function(),
+            "check_file": self.__create_check_file_function(),
+            "save_text_file": self.__create_save_text_file_function()
         }
 
-    def create_vector_search(self) -> tuple[Callable[[str], list[str]], str]:
+    def add_tools(self, tools: dict[str, tuple[Callable, str]]):
+        self.tools.update(tools)
+
+    # 指定したディレクトリ内の*.jsonファイルを読み込み、関数を生成
+    def load_tools(self, dirname: str):
+        import os
+        # ディレクトリ内のファイル一覧を取得
+        files = os.listdir(dirname)
+        # JSONファイルのみを抽出
+        json_files = [f for f in files if f.endswith(".json")]
+        # JSONファイルから関数を生成
+        for json_file in json_files:
+            with open(os.path.join(dirname, json_file), "r", encoding="utf-8") as f:
+                json_str = f.read()
+                name, func = self.__create_tool_from_json(json_str)
+                # 関数名と関数生成関数のペアを登録
+                self.tools[name] = func
+    
+    # JSON文字列から関数を生成        
+    def __create_tool_from_json(self, json_str: str) -> tuple[Callable, str]:
+        # JSON文字列を辞書に変換
+        func_dict = json.loads(json_str)
+        # name, description, content
+        name = func_dict.get("name", "")
+        description = func_dict.get("description", "")
+        content = func_dict.get("content", "")
+        # contentから関数を生成
+        exec(content)
+        func = locals()[name]
+        # 関数と説明文を返すgeneratorとなる関数を返す
+        def generator():
+            return func, description
+        return name, generator
+
+    def __create_vector_search(self) -> tuple[Callable[[str], list[str]], str]:
         def vector_search(query: Annotated[str, "検索対象の文字列"]) -> list[str]:
             params:VectorSearchParameter = VectorSearchParameter(self.OpenAIProps, self.VectorDBPropsList, query)
             result = LangChainVectorDB.vector_search(params)
@@ -46,7 +80,7 @@ class AutoGenTools:
 
         return vector_search , "指定されたテキストをベクトル検索し、関連する文書を返す関数です。"
 
-    def create_search_wikipedia_ja(self) -> tuple[Callable[[str, int], list[str]], str]:
+    def __create_search_wikipedia_ja(self) -> tuple[Callable[[str, int], list[str]], str]:
         def search_wikipedia_ja(query: Annotated[str, "検索対象の文字列"], num_results: Annotated[int, "表示する結果の最大数"]) -> list[str]:
 
             # Wikipediaの日本語版を使用
@@ -74,14 +108,14 @@ class AutoGenTools:
             return result_texts
         return search_wikipedia_ja, "指定されたキーワードでWikipediaを検索し、関連する記事を返す関数です。"
 
-    def create_list_files_in_directory(self) -> tuple[Callable[[str], list[str]], str]:
+    def __create_list_files_in_directory(self) -> tuple[Callable[[str], list[str]], str]:
         def list_files_in_directory(directory_path: Annotated[str, "ディレクトリパス"]) -> list[str]:
             import os
             files = os.listdir(directory_path)
             return files
         return list_files_in_directory, "指定されたディレクトリ内のファイル一覧を返す関数です。"
         
-    def create_extract_text_from_file(self) -> tuple[Callable[[str], str]]:
+    def __create_extract_text_from_file(self) -> tuple[Callable[[str], str]]:
         # ファイルからテキストを抽出する関数を生成
         def extract_file(file_path: Annotated[str, "ファイルパス"]) -> str:
             # 一時ファイルからテキストを抽出
@@ -89,7 +123,7 @@ class AutoGenTools:
             return text
         return extract_file, "指定されたファイルからテキストを抽出する関数です。"
     
-    def create_check_file_function(self) -> tuple[Callable[[str], bool], str]:
+    def __create_check_file_function(self) -> tuple[Callable[[str], bool], str]:
         def check_file(file_path: Annotated[str, "ファイルパス"]) -> bool:
             # ファイルが存在するかチェック
             import os
@@ -98,7 +132,7 @@ class AutoGenTools:
         
         return check_file, "指定されたファイルが存在するかチェックする関数です。"
 
-    def create_extract_webpage_function(self) -> tuple[Callable[[str], list[str]], str]:
+    def __create_extract_webpage_function(self) -> tuple[Callable[[str], list[str]], str]:
         def extract_webpage(url: Annotated[str, "テキストとリンク抽出対象のWebページのURL"]) -> Annotated[tuple[str, list[tuple[str, str]]], "ページテキスト,リンク(aタグのhref属性とリンクテキスト)のリスト"]:
             driver = self.create_web_driver()
             # ページが完全にロードされるのを待つ（必要に応じて明示的に待機条件を設定）
@@ -117,7 +151,7 @@ class AutoGenTools:
             return text, urls
         return extract_webpage, "指定されたURLのWebページからテキストとリンクを抽出する関数です。"
 
-    def create_get_html_function(self) -> tuple[Callable[[str], str], str]:
+    def __create_get_html_function(self) -> tuple[Callable[[str], str], str]:
         def get_html(url: Annotated[str, "URL"]) -> str:
             driver = self.create_web_driver()
             driver.get(url)
@@ -130,7 +164,7 @@ class AutoGenTools:
         return get_html, "指定されたURLのWebページのHTMLを取得する関数です。"
 
     # レンダリング結果のTextを取得する
-    def create_get_text_from_html_function(self) -> tuple[Callable[[str], str], str]:
+    def __create_get_text_from_html_function(self) -> tuple[Callable[[str], str], str]:
         def get_text_from_html(html: Annotated[str, "HTMLのソース"]) -> str:
             from bs4 import BeautifulSoup
             soup = BeautifulSoup(html, "html.parser")
@@ -139,7 +173,7 @@ class AutoGenTools:
         return get_text_from_html , "指定されたHTMLのソースからテキストを抽出する関数です。"
 
     # リンク一覧を取得する
-    def create_get_urls_from_html_function(self) -> tuple[Callable[[str], list[str]], str]:
+    def __create_get_urls_from_html_function(self) -> tuple[Callable[[str], list[str]], str]:
         def get_urls_from_html(html: Annotated[str, "HTMLのソース"]) -> list[str]:
             # HTMLからURLを抽出
             from bs4 import BeautifulSoup
@@ -148,7 +182,7 @@ class AutoGenTools:
             return urls
         return get_urls_from_html, "指定されたHTMLのソースからリンクを抽出する関数です。"
 
-    def create_web_driver(self):
+    def __create_web_driver(self):
         # ヘッドレスモードのオプションを設定
         edge_options = Options()
         edge_options.add_argument("--headless")
@@ -160,7 +194,7 @@ class AutoGenTools:
         driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
         return driver
     
-    def create_get_urls_from_text_function(self) -> tuple[Callable[[str], list[str]], str]:
+    def __create_get_urls_from_text_function(self) -> tuple[Callable[[str], list[str]], str]:
         def get_urls_from_text(text: Annotated[str, "テキスト文字列"]) -> list[str]:
             # テキストからURLを抽出
             import re
@@ -168,38 +202,7 @@ class AutoGenTools:
             return urls
         return get_urls_from_text, "指定されたテキストからURLを抽出する関数です。"
 
-    # 指定したディレクトリ内の*.jsonファイルを読み込み、関数を生成
-    def load_tools(self, dirname: str):
-        import os
-        # ディレクトリ内のファイル一覧を取得
-        files = os.listdir(dirname)
-        # JSONファイルのみを抽出
-        json_files = [f for f in files if f.endswith(".json")]
-        # JSONファイルから関数を生成
-        for json_file in json_files:
-            with open(os.path.join(dirname, json_file), "r", encoding="utf-8") as f:
-                json_str = f.read()
-                name, func = self.__create_tool_from_json(json_str)
-                # 関数名と関数生成関数のペアを登録
-                self.function_generators[name] = func
-    
-    # JSON文字列から関数を生成        
-    def __create_tool_from_json(self, json_str: str) -> tuple[Callable, str]:
-        # JSON文字列を辞書に変換
-        func_dict = json.loads(json_str)
-        # name, description, content
-        name = func_dict.get("name", "")
-        description = func_dict.get("description", "")
-        content = func_dict.get("content", "")
-        # contentから関数を生成
-        exec(content)
-        func = locals()[name]
-        # 関数と説明文を返すgeneratorとなる関数を返す
-        def generator():
-            return func, description
-        return name, generator
-
-    def create_save_text_file_function(self) -> tuple[Callable[[str, str, str], None], str]:
+    def __create_save_text_file_function(self) -> tuple[Callable[[str, str, str], None], str]:
         def save_text_file(name: Annotated[str, "ファイル名"], dirname: Annotated[str, "ディレクトリ名"], text: Annotated[str, "保存するテキストデータ"]) -> Annotated[bool, "保存結果"]:
             # 指定したディレクトリに保存
             try:
@@ -219,7 +222,7 @@ class AutoGenTools:
         return save_text_file, "テキストデータをファイルとして保存する関数です。"
 
 
-    def create_save_tools_function(self) -> tuple[Callable[[str, str, str], None], str]:
+    def __create_save_tools_function(self) -> tuple[Callable[[str, str, str], None], str]:
         def save_tools(name: Annotated[str, "関数名"], description: Annotated[str, "関数の説明"], code: Annotated[str, "関数のコード"], dirname: Annotated[str, "保存先ディレクトリ名"]) -> Annotated[bool, "保存結果"]:
             # JSON文字列を生成
             func_dict = {
@@ -242,4 +245,76 @@ class AutoGenTools:
 
         return save_tools, "PythonのコードをAutoGenのツール用のJSONファイルとして保存する関数です。"
 
+from openpyxl import load_workbook
+from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+
+class AutoGenToolGenerator:
+    def __init__(self, autogen_pros: AutoGenProps):
+        self.autogen_pros = autogen_pros
+
+    def create_tool(self, name: str, content: str):
+        # contentから関数オブジェクトを作成する。
+        exec(content)
+        return locals()[name]
+    
+
+    def create_tools_dict(self, data_list: list[dict]) -> dict[str, tuple[Callable, str]]:
+        function_dict = {}
+        for data in data_list:
+            name = data['name']
+            description = data['description']
+            content = data['content']
+
+            # 関数を作成
+            function_obj = self.create_tool(name, content)
+            # dictに格納
+            function_dict[name] = (function_obj, description)
+
+        # 結果を表示（必要に応じて）
+        for name, (func, desc) in function_dict.items():
+            print(f'Name: {name}, Description: {desc}, Function: {func}')
+        
+        return function_dict
+
+    def create_tools_dict_from_sheet(self, excel_file) -> dict[str, tuple[Callable, str]]:
+        # Excelファイルを開く
+        wb = load_workbook(excel_file)
+        sheet = wb['tools']
+
+        # ヘッダー行から列名を取得
+        headers = [cell.value for cell in sheet[1]]
+        name_index = headers.index('name')
+        description_index = headers.index('description')
+        content_index = headers.index('content')
+        human_input_mode_index = headers.index('human_input_mode')
+        is_termination_msg_index = headers.index('is_termination_msg')
+        code_execution_config_index = headers.index('code_execution_config')
+        llm_config_index = headers.index('llm_config')
+        system_message_index = headers.index('system_message')
+
+        function_data_list = []
+
+        # 2行目から最終行まで処理を行う
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            
+            name = row[name_index]  # name列
+            description = row[description_index]  # description列
+            content = row[content_index]  # content列
+            human_input_mode = row[human_input_mode_index]  # human_input_mode列
+            is_termination_msg = row[is_termination_msg_index]  # is_termination_msg列
+            code_execution_config = row[code_execution_config_index]  # code_execution_config列
+            llm_config = row[llm_config_index]  # llm_config列
+            system_message = row[system_message_index]  # system_message列
+
+            # function_data_listに格納
+            function_data_list.append({
+                'name': name, 'description': description, 'content': content,
+                'human_input_mode': human_input_mode, 'is_termination_msg': is_termination_msg,
+                'code_execution_config': code_execution_config, 'llm_config': llm_config,
+                'system_message': system_message
+            })
+
+        # create_tools_dictを呼び出し
+        return self.create_tools_dict(function_data_list)
+        
 

@@ -10,8 +10,6 @@ from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
 import sys
 import getopt
 
-
-
 if __name__ == '__main__':
     # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
     os.environ["PYTHONUTF8"] = "1"
@@ -82,13 +80,5 @@ if __name__ == '__main__':
 
     # AutoGenUtilを作成
     autogen_util = AutoGenUtil(open_ai_props, work_dir, vector_db_props_list)
-    # group_chatを実行
-    try:
-        autogen_util.run_group_chat(input_text)
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        autogen_util.finish(autogen_util.client)
-        exit(0)
-    
+    autogen_util.run_default_group_chat(input_text)
 

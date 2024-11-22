@@ -72,7 +72,7 @@ def run_autogen_group_chat(openai_props: OpenAIProps, vector_db_props_list: list
     # AutoGenUtilを生成
     autogen_util = AutoGenUtil(openai_props, work_dir, vector_db_props_list)
     # run_group_chatを実行
-    return autogen_util.run_group_chat(input_text)
+    return autogen_util.run_default_group_chat(input_text)
 
 ########################
 # langchain関連
