@@ -1,5 +1,9 @@
 import os, json
 import ai_app_wrapper
+from promptflow.tracing import start_trace
+
+# instrument OpenAI
+start_trace()
 
 # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
 os.environ["PYTHONUTF8"] = "1"

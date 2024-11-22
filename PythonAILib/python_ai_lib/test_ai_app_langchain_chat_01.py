@@ -7,6 +7,10 @@ os.environ["PYTHONUTF8"] = "1"
 import os
 import sys
 import getopt
+from promptflow.tracing import start_trace
+
+# instrument OpenAI
+start_trace()
 
 if __name__ == '__main__':
 

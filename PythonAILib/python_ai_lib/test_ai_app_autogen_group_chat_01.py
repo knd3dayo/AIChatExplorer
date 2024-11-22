@@ -6,6 +6,10 @@ from ai_app_autogen.ai_app_autogen_client import  AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents
 from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
 
+from promptflow.tracing import start_trace
+
+# instrument OpenAI
+start_trace()
 
 import sys
 import getopt
