@@ -1,11 +1,8 @@
-using System;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Statistics;
@@ -71,16 +68,20 @@ namespace PythonAILib.PythonIF {
 
         // IPythonFunctionsのメソッドを実装
         public string ExtractFileToText(string path) {
-            // ResultContainerを作成
-            string result = "";
-
+            PythonScriptResult result = new();
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text_from_file";
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
                 try {
-                    result = function_object(path);
+                    string resultString = function_object(path);
+                    result.LoadFromJson(resultString);
+                    // Errorがある場合はLogWrapper.Errorを呼び出す
+                    if (!string.IsNullOrEmpty(result.Error)) {
+                        LogWrapper.Error(result.Error);
+                    }
+
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {
@@ -89,7 +90,7 @@ namespace PythonAILib.PythonIF {
                     throw;
                 }
             });
-            return result;
+            return result.Output;
         }
 
 
@@ -111,10 +112,10 @@ namespace PythonAILib.PythonIF {
             });
             return result;
         }
-        public string ExtractBase64ToText(string base64, string extenstion) {
+        public string ExtractBase64ToText(string base64, string extension) {
 
             // ResultContainerを作成
-            string result = "";
+            PythonScriptResult result = new();
 
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
@@ -122,7 +123,13 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // extract_text関数を呼び出す
                 try {
-                    result = function_object(base64, extenstion);
+                    string resultString = function_object(base64, extension);
+                    // resultStringからDictionaryに変換する。
+                    result.LoadFromJson(resultString);
+                    // Errorがある場合はLogWrapper.Errorを呼び出す
+                    if (!string.IsNullOrEmpty(result.Error)) {
+                        LogWrapper.Error(result.Error);
+                    }
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
                     if (e.Message.Contains("Unsupported file type")) {
@@ -131,25 +138,7 @@ namespace PythonAILib.PythonIF {
                     throw;
                 }
             });
-            return result;
-        }
-
-        public void OpenAIEmbedding(ChatRequestContext chatRequestContext, string text) {
-
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
-                // Pythonスクリプトの関数を呼び出す
-                string function_name = "openai_embedding";
-                dynamic function_object = GetPythonFunction(ps, function_name);
-                string propsJson = chatRequestContext.ToJson();
-
-                LogWrapper.Info(PythonAILibStringResources.Instance.EmbeddingExecute);
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
-                LogWrapper.Info($"{PythonAILibStringResources.Instance.Text}:{text}");
-
-                // open_ai_chat関数を呼び出す
-                function_object(text, propsJson);
-                // System.Windows.MessageBox.Show(result);
-            });
+            return result.Output;
         }
 
         private ChatResult OpenAIChatExecute(string function_name, Func<dynamic, string> pythonFunction) {
@@ -167,18 +156,22 @@ namespace PythonAILib.PythonIF {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // contentを取得
                 if (resultDict.TryGetValue("output", out dynamic? outputValue)) {
-                    string? output = outputValue.ToString();
+                    string output = outputValue?.ToString() ?? "";
                     // ChatResultに設定
-                    chatResult.Output = output ?? "";
+                    chatResult.Output = output;
                 }
                 // total_tokensを取得
                 if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
                     // JsonElementである、totalTokensValueを、longに変換
                     long totalTokens = totalTokensValue?.GetInt64() ?? 0;
                     chatResult.TotalTokens = totalTokens;
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
                 }
 
             });
@@ -210,6 +203,7 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
+        // LangChainChatを実行する
         private ChatResult LangChainChatExecute(string functionName, Func<dynamic, string> pythonFunction) {
             ChatResult chatResult = new();
 
@@ -223,26 +217,34 @@ namespace PythonAILib.PythonIF {
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
 
                 // JSON文字列からDictionaryに変換する。
-                Dictionary<string, object>? resultDict = JsonSerializer.Deserialize<Dictionary<string, object>>(resultString, jsonSerializerOptions) ?? throw new Exception(StringResources.OpenAIResponseEmpty);
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
                 // outputを取得
                 if (resultDict.TryGetValue("output", out dynamic? outputValue)) {
-                    string? output = outputValue.ToString();
+                    string output = outputValue?.ToString() ?? "";
                     // ChatResultに設定
-                    chatResult.Output = output ?? "";
+                    chatResult.Output = output;
                 }
                 // page_content_listを取得
                 if (resultDict.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
-                    chatResult.PageContentList = pageContentListValue ?? new List<Dictionary<string, string>>();
+                    if (pageContentListValue is  List<string> pageContentList) {
+                        chatResult.PageContentList = pageContentList;
+                    }
                 }
                 // page_source_listを取得
                 if (resultDict.TryGetValue("page_source_list", out dynamic? pageSourceListValue)) {
-                    chatResult.PageSourceList = pageSourceListValue ?? new List<Dictionary<string, string>>();
+                    if (pageSourceListValue is List<Dictionary<string, string>> pageSourceList) {
+                        chatResult.PageSourceList = pageSourceList;
+                    }
                 }
                 // total_tokensを取得.
                 if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                    // JsonElementである、totalTokensValueを、longに変換
-                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
-                    chatResult.TotalTokens = totalTokens;
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
                 }
 
             });
@@ -275,7 +277,7 @@ namespace PythonAILib.PythonIF {
         }
 
         // AutoGenのGroupChatを実行する
-        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest,  Action<string> iteration) {
+        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
             // messageを取得
             string message = chatRequest.CreatePromptText();
@@ -293,35 +295,30 @@ namespace PythonAILib.PythonIF {
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
                 // hello_world関数を呼び出す
-                PyIterable iterator = function_object(requestContextJson,  message);
-                Dictionary<string, dynamic?> keyValuePairs = [];
+                PyIterable iterator = function_object(requestContextJson, message);
+                Dictionary<string, dynamic?> resultDict = [];
                 // iteratorから文字列を取得
                 foreach (PyObject item in iterator) {
                     string itemString = item.ToString() ?? "{}";
-                    keyValuePairs = JsonUtil.ParseJson(itemString);
+                    resultDict = JsonUtil.ParseJson(itemString);
                     // messageを取得
-                    if (keyValuePairs.TryGetValue("message", out dynamic? messageValue)) {
+                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
                         iteration(messageValue);
                     }
                     // logを取得
-                    if (keyValuePairs.TryGetValue("log", out dynamic? logValue)) {
+                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
                         LogWrapper.Info(logValue);
                     }
                 }
-                // 最終処理
-                // page_content_listを取得
-                if (keyValuePairs.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
-                    chatResult.PageContentList = pageContentListValue ?? new List<Dictionary<string, string>>();
-                }
-                // page_source_listを取得
-                if (keyValuePairs.TryGetValue("page_source_list", out dynamic? pageSourceListValue)) {
-                    chatResult.PageSourceList = pageSourceListValue ?? new List<Dictionary<string, string>>();
-                }
                 // total_tokensを取得.
-                if (keyValuePairs.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                    // JsonElementである、totalTokensValueを、longに変換
-                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
-                    chatResult.TotalTokens = totalTokens;
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
                 }
             });
             return chatResult;
@@ -386,6 +383,10 @@ namespace PythonAILib.PythonIF {
                     LogWrapper.Info(resultString);
                     // resultStringからDictionaryに変換する。
                     result.LoadFromJson(resultString);
+                    // Errorがある場合はLogWrapper.Errorを呼び出す
+                    if (!string.IsNullOrEmpty(result.Error)) {
+                        LogWrapper.Error(result.Error);
+                    }
 
                 } catch (PythonException e) {
                     // エラーメッセージを表示 Unsupported file typeが含まれる場合は例外をスロー
@@ -444,7 +445,7 @@ namespace PythonAILib.PythonIF {
 
 
         public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
-            string function_name = "";
+            string function_name;
             if (imageInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
             } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {

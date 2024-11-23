@@ -20,8 +20,9 @@ class AutoGenTools:
         self.autogen_props: AutoGenProps = autogen_props
         self.tools: dict[str, tuple[Callable, str]] = {}
 
-        if self.autogen_props.use_system_agent():
-            self.tools.update(AutoGenToolGenerator.create_default_tools(autogen_props).tools)
+        if self.autogen_props.use_system_agent:
+            self.tools.update(AutoGenToolGenerator.create_default_tools(autogen_props))
+
         self.tools.update(AutoGenToolGenerator.create_tools_dict(tools_dict))
 
 
@@ -136,7 +137,7 @@ class AutoGenToolGenerator:
         return cls.create_tools_dict(function_data_list)
 
     @classmethod        
-    def create_default_tools(cls, autogen_props: AutoGenProps):
+    def create_default_tools(cls, autogen_props: AutoGenProps) -> dict[str, tuple[Callable, str]]:
         openai_props = autogen_props.openai_props
         vector_db_props_list = autogen_props.vector_db_items
         # デフォルトのツールを生成
@@ -150,11 +151,10 @@ class AutoGenToolGenerator:
             "save_tools": cls.__create_save_tools_function(),
             "check_file": cls.__create_check_file_function(),
             "save_text_file": cls.__create_save_text_file_function(),
-            "search_duckduckgo": cls.__create_search_duckduckgo()
+            "search_duckduckgo": cls.__create_search_duckduckgo(),
+            "get_current_time": cls.__create_get_current_time()
         }
-        autogen_tools = AutoGenTools()
-        autogen_tools.add_tools(tools)
-        return autogen_tools
+        return tools
 
     @classmethod
     def __create_vector_search(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> tuple[Callable[[str], list[str]], str]:
@@ -340,3 +340,12 @@ class AutoGenToolGenerator:
                 return False
 
         return save_tools, "PythonのコードをAutoGenのツール用のJSONファイルとして保存する関数です。"
+
+    # 現在の時刻をyyyy/mm/dd (曜日) hh:mm:ss 形式で返す関数を生成   
+    @classmethod
+    def __create_get_current_time(cls) -> tuple[Callable, str]:
+        from datetime import datetime
+        def get_current_time() -> str:
+            now = datetime.now()
+            return now.strftime("%Y/%m/%d (%a) %H:%M:%S")
+        return get_current_time, "現在の時刻をyyyy/mm/dd (曜日) hh:mm:ss 形式で返す関数です。"

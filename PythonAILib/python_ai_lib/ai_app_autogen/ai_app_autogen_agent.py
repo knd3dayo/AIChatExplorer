@@ -13,10 +13,10 @@ class AutoGenAgents:
     # 途中のメッセージを格納するキュー
     message_queue = queue.Queue()
 
-    def __init__(self, autgenProps: AutoGenProps, autogen_tools: AutoGenTools, agents_dict: list[dict], auto_execute_code: bool = False):
+    def __init__(self, autogen_props: AutoGenProps, autogen_tools: AutoGenTools, agents_dict: list[dict], auto_execute_code: bool = False):
         
-        self.autogen_props = autgenProps
-        self.work_dir_path = autgenProps.work_dir_path
+        self.autogen_props = autogen_props
+        self.work_dir_path = autogen_props.work_dir_path
         # コード実行者が自動的にコードを実行するようにするかどうか
         # self.auto_execute_code = auto_execute_code
         self.auto_execute_code = True
@@ -27,7 +27,8 @@ class AutoGenAgents:
 
         self.agents : dict[str, tuple[ConversableAgent, str]] = {}
         if self.autogen_props.use_system_agent:
-            self.agents.update(AutoGenAgentGenerator.create_default_agents(self.autogen_props))
+            print("Using system agents")
+            self.agents.update(AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.autogen_tools))
         
         for agent_dict in agents_dict:
             self.agents.update(AutoGenAgentGenerator.create_agents_dict(self.autogen_tools, agent_dict))
@@ -199,9 +200,8 @@ class AutoGenAgentGenerator:
             return cls.create_agents_dict(autogen_tools, agent_data_list)
     
     @classmethod
-    def create_default_agents(cls, autogen_props: AutoGenProps) -> dict[str, tuple[ConversableAgent, str]]:
+    def create_default_agents(cls, autogen_props: AutoGenProps, tools: AutoGenTools) -> dict[str, tuple[ConversableAgent, str]]:
 
-        tools: AutoGenTools = AutoGenToolGenerator.create_default_tools(autogen_props)
         agents : dict[str, tuple[ConversableAgent, str]] = {}
         agents["user_proxy"] = cls.__create_user_proxy(autogen_props, tools)
         agents["code_executor"] = cls.__create_code_executor(autogen_props, tools, True)
@@ -213,6 +213,9 @@ class AutoGenAgentGenerator:
         agents["wikipeda_searcher"] = cls.__create_wikipedia_searcher(autogen_props, tools)
         agents["azure_document_searcher"] = cls.__create_azure_document_searcher(autogen_props, tools)
         agents["file_checker"] = cls.__create_file_checker(autogen_props, tools)
+        agents["current_time"] = cls.__create_current_time(autogen_props, tools)
+
+        return agents
 
     @classmethod
     def __create_user_proxy(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -477,3 +480,24 @@ class AutoGenAgentGenerator:
 
         return file_checker, description
 
+    # 現在の時刻を取得するエージェントを作成
+    @classmethod
+    def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
+        # 現在の時刻を取得するエージェント
+        description = "現在の時刻を取得します。"
+        current_time = ConversableAgent(
+            "current_time",
+            system_message="""
+                現在の時刻を取得します。
+                """,
+            llm_config=autogen_pros.create_llm_config(),
+            code_execution_config=False,
+            description=description,
+            human_input_mode="NEVER",
+        )
+
+        # 現在の時刻を取得する関数を登録
+        func, description = autogen_tools.tools["get_current_time"]
+        current_time.register_for_llm(description=description)(func)
+
+        return current_time, description

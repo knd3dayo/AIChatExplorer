@@ -9,16 +9,6 @@ from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents, AutoGenAgentGener
 from ai_app_autogen.ai_app_autogen_tools import AutoGenTools
 
 class AutoGenGroupChat:
-    @classmethod
-    def create_default_group_chat(cls, autogen_props: AutoGenProps) -> "AutoGenGroupChat":
-        autogen_group_chat = AutoGenGroupChat("default") 
-        agents: dict = AutoGenAgentGenerator.create_default_agents(autogen_props)
-        init_agent = agents["user_proxy"]
-        autogen_group_chat.set_init_agent(init_agent)
-        autogen_group_chat.set_agents(agents)
-
-        return autogen_group_chat
-    
     def __init__(self, autogen_props: AutoGenProps):
         self.autogen_props = autogen_props
         group_chat_dict = autogen_props.group_chat_dict
@@ -27,7 +17,7 @@ class AutoGenGroupChat:
         self.autogen_tools = AutoGenTools(self.autogen_props, tools_dict)
 
         agents_dict = group_chat_dict.get("agents", {})
-        self.autogen_agents = AutoGenAgents(self.autogen_props, agents_dict)
+        self.autogen_agents = AutoGenAgents(self.autogen_props, self.autogen_tools, agents_dict)
 
         init_agent_name = group_chat_dict.get("init_agent", "user_proxy")
         self.init_autogent_agent = self.autogen_agents.agents.get(init_agent_name, None)

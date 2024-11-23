@@ -46,7 +46,7 @@ def capture_stdout_stderr(func):
         # strout,stderrorを元に戻す
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        
+            
         # resultにlogを追加して返す
         result["log"] = buffer.getvalue()
         # jsonを返す
@@ -75,6 +75,7 @@ def capture_generator_stdout_stderr(func):
                 # エラーが発生した場合はエラーメッセージを出力
                 e.printStackTrace()
                 result = {}
+                result["error"] = str(e)
 
         # strout,stderrorを元に戻す
         sys.stdout = sys.__stdout__
@@ -131,10 +132,20 @@ def run_openai_chat(context_json: str, request_json: str):
 
 
 def openai_embedding(context_json: str, input_text: str):
-    # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-    openai_props, openai_client = get_openai_objects(context_json)
-    
-    return openai_client.openai_embedding(input_text)
+    # OpenAIチャットを実行する関数を定義
+    def func() -> dict[str, Any]:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        _, openai_client = get_openai_objects(context_json)
+        result: dict = {}
+        vector =  openai_client.openai_embedding(input_text)
+        result["vector"] = vector
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 
 def list_openai_models(context_json: str):
     # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
@@ -299,11 +310,24 @@ def extract_excel_sheet(filename, sheet_name):
 
 # ファイルからテキストを抽出する
 def extract_text_from_file(filename):
-    return ai_app.extract_text_from_file(filename)
+    def func () -> dict:
+        text = ai_app.extract_text_from_file(filename)
+        return {"output": text}
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # base64形式のデータからテキストを抽出する
 def extract_base64_to_text(base64_data: str, extension: str):
-    return ai_app.extract_base64_to_text(base64_data, extension)
+    def func () -> dict:
+        text = ai_app.extract_base64_to_text(base64_data, extension)
+        return {"output": text}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):

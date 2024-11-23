@@ -34,6 +34,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "work_dir", WorkDir },
                 { "open_ai_props", OpenAIProperties.ToDict() },
                 { "group_chat", AutoGenGroupChat.ToDict() },
+                { "use_system_agent", UseSystemAgent },
             };
             return dict;
         }

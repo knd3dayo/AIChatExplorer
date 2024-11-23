@@ -4,8 +4,8 @@ using PythonAILib.Utils;
 namespace PythonAILib.Model.Chat {
     public class ChatResult : PythonScriptResult {
 
-        public List<Dictionary<string, string>> PageContentList { get; set; } = [];
-        public List<string> PageSourceList { get; set; } = [];
+        public List<string> PageContentList { get; set; } = [];
+        public List<Dictionary<string, string>> PageSourceList { get; set; } = [];
 
         public long TotalTokens { get; set; } = 0;
 
@@ -19,11 +19,11 @@ namespace PythonAILib.Model.Chat {
             }
             // page_source_listがあれば取得
             if (Parameters.TryGetValue("page_source_list", out dynamic? pageSourceListValue)) {
-                PageSourceList = pageSourceListValue ?? new List<string>();
+                PageSourceList = pageSourceListValue ?? new List<Dictionary<string, string>>();
             }
             // page_content_listがあれば取得
             if (Parameters.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
-                PageContentList = pageContentListValue ?? new List<Dictionary<string, string>>();
+                PageContentList = pageContentListValue ?? new List<string>();
             }
         }
     }

@@ -68,11 +68,11 @@ class LangChainVectorDB:
         langchain_openai_client = LangChainOpenAIClient(openai_props)
         # ベクトルDBのタイプがChromaの場合
         if vector_db_props.VectorDBTypeString == "Chroma":
-            from langchain_vector_db_chroma import LangChainVectorDBChroma
+            from ai_app_langchain.langchain_vector_db_chroma import LangChainVectorDBChroma
             return LangChainVectorDBChroma(langchain_openai_client, vector_db_props)
         # ベクトルDBのタイプがPostgresの場合
         elif vector_db_props.VectorDBTypeString == "PGVector":
-            from langchain_vector_db_pgvector import LangChainVectorDBPGVector
+            from ai_app_langchain.langchain_vector_db_pgvector import LangChainVectorDBPGVector
             return LangChainVectorDBPGVector(langchain_openai_client, vector_db_props)
         else:
             # それ以外の場合は例外

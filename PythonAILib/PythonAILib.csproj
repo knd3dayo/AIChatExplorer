@@ -82,13 +82,13 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\test_ai_app_langchain_chat_01.py">
+    <EmbeddedResource Include="python_ai_lib\debug\test_ai_app_langchain_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\test_ai_app_open_ai_chat_01.py">
+    <EmbeddedResource Include="python_ai_lib\debug\test_ai_app_open_ai_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\test_ai_app_autogen_group_chat_01.py">
+    <EmbeddedResource Include="python_ai_lib\debug\test_ai_app_autogen_group_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_util.py">

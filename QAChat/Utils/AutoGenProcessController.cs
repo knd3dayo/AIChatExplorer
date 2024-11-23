@@ -6,19 +6,18 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Utils
-{
+namespace QAChat.Utils {
     public class AutoGenProcessController {
 
         public static Process? AutoGenGroupChatTest1Process { get; set; }
 
 
         // StartAutoGenGroupChatTest1
-        public static void StartAutoGenGroupChatTest1(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest chatRequest, Action<string> afterProcessEnd) {
+        public static void StartAutoGenGroupChatTest1(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> afterProcessEnd) {
             // 結果を出力するテンポラリファイル
             string tempFile = Path.GetTempFileName();
 
-            string parametersJson = DebugUtil.CreateParameterJson(openAIProperties, vectorDBItems, chatRequest);
+            string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
             File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
             // AutoGenGroupChatTest1を起動するコマンド

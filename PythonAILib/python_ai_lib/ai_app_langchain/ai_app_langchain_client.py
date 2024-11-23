@@ -57,8 +57,10 @@ class LangChainOpenAIClient:
         
 
 class LangChainChatParameter:
-    def __init__(self, request_dict: dict ={}):
+    def __init__(self, request_json: str):
 
+        # request_jsonをdictに変換
+        request_dict = json.loads(request_json)
         # messagesを取得
         messages = request_dict.get("messages", [])
         # messagesのlengthが0の場合はエラーを返す

@@ -30,7 +30,7 @@ namespace PythonAILib.Model.Chat {
         // ToDict
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                { "vector_db_items", VectorDBItem.ToDict(VectorDBItems) },
+                { "vector_db_items", VectorDBItem.ToDictList(VectorDBItems) },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
             };

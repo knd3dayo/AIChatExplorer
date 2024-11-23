@@ -318,14 +318,19 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Command to extract text
         public static void ExtractTextCommand(Model.ClipboardItem contentItem) {
-            if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
-                LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                return;
+            // プログレスインジケータを表示
+            MainWindowViewModel.Instance.UpdateIndeterminate(true);
+            try {
+                if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
+                    LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                    return;
+                }
+                contentItem.ExtractTextCommandExecute();
+                // 保存を行う
+                contentItem.Save(false);
+            } finally {
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
-            contentItem.ExtractTextCommandExecute();
-            // 保存を行う
-            contentItem.Save(false);
-
         }
 
         // Command to open a file

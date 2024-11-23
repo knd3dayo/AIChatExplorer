@@ -72,7 +72,7 @@ def list_openai_models(openai_props: OpenAIProps):
 def run_autogen_group_chat(autogen_props: AutoGenProps, input_text: str) -> Generator[Any, None, None]:
     # autogen_propsの
     # AutoGenGroupChatを生成
-    autogen_group_chat = AutoGenGroupChat.create_default_group_chat(autogen_props)
+    autogen_group_chat = AutoGenGroupChat(autogen_props)
     # run_group_chatを実行
     result = autogen_group_chat.run_group_chat(input_text, 10)
     return result
@@ -106,7 +106,7 @@ def update_or_delete_content_index(params: ContentUpdateOrDeleteRequestParams):
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
     vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
-    
+    print("mode:", params.mode)
     if params.mode == "delete":
         # delete_content_indexを実行
         vector_db.delete_document(params.source)

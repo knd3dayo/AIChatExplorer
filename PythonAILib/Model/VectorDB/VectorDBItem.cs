@@ -121,11 +121,9 @@ namespace PythonAILib.Model.VectorDB {
             };
             return dict;
         }
-        // ToDict
-        public static Dictionary<string, object> ToDict(IEnumerable<VectorDBItem> items) {
-            return new Dictionary<string, object> {
-                { "VectorDBItems", items.Select(item => item.ToDict()).ToList() }
-            };
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBItem> items) {
+            return items.Select(item => item.ToDict()).ToList();
         }
 
         // Json文字列化する

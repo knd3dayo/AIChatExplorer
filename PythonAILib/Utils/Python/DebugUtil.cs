@@ -7,8 +7,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.Utils.Python
-{
+namespace PythonAILib.Utils.Python {
     public class DebugUtil {
 
         private static readonly JsonSerializerOptions options = new() {
@@ -29,7 +28,10 @@ namespace PythonAILib.Utils.Python
             string appDir = AppDomain.CurrentDomain.BaseDirectory;
             // python_ai_libのディレクトリ
             string pythonAILibDir = Path.Combine(appDir, "python_ai_lib");
-
+            // debug用のScriptのディレクトリ
+            string debugScriptDir = Path.Combine(pythonAILibDir, "debug");
+            // Scriptのフルパス
+            string pythonScriptPath = Path.Combine(debugScriptDir, pythonScriptName);
             // 文字コードをUTF-8に設定
             cmdLines.Add("chcp 65001");
             // venvが有効な場合は、activate.batを実行
@@ -40,8 +42,8 @@ namespace PythonAILib.Utils.Python
             }
             // 事前処理
             cmdLines.Add(beforeExecScriptCommands);
-            cmdLines.Add($"cd {pythonAILibDir}");
-            cmdLines.Add($"python {pythonScriptName} {pythonScriptArgs}");
+            cmdLines.Add($"set PYTHONPATH={pythonAILibDir}");
+            cmdLines.Add($"python {pythonScriptPath} {pythonScriptArgs}");
             // 事後処理
             cmdLines.Add(afterExecScriptCommands);
             cmdLines.Add("\n");
@@ -50,9 +52,9 @@ namespace PythonAILib.Utils.Python
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターファイルを作成する。
-        public static string CreateParameterJsonFile(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest) {
+        public static string CreateParameterJsonFile(ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
             // JSONファイルに保存
-            string parametersJson = CreateParameterJson(openAIProperties, vectorDBItems, chatRequest);
+            string parametersJson = CreateParameterJson(chatRequestContext, chatRequest);
             string parametersJsonFile = Path.GetTempFileName();
             File.WriteAllText(parametersJsonFile, parametersJson);
 
@@ -60,15 +62,12 @@ namespace PythonAILib.Utils.Python
         }
 
         // ChatRequestの内容とList<VectorDBItem>からパラメーターJsonを作成する。
-        public static string CreateParameterJson(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, ChatRequest? chatRequest) {
+        public static string CreateParameterJson(ChatRequestContext chatRequestContext, ChatRequest? chatRequest) {
             Dictionary<string, object> parametersDict = [];
-            // OpenAIPropertiesをDictionaryに保存
-            parametersDict["open_ai_props"] = openAIProperties;
-            // VectorDBItemsをDictionaryに保存
-            parametersDict["vector_db_props"] = vectorDBItems;
+            parametersDict["context"] = chatRequestContext.ToDict();
             // ChatRequestをDictionaryに保存
             if (chatRequest != null) {
-                parametersDict["chat_request"] = chatRequest.ToDict();
+                parametersDict["request"] = chatRequest.ToDict();
             }
 
             string parametersJson = JsonSerializer.Serialize(parametersDict, options);
@@ -82,12 +81,7 @@ namespace PythonAILib.Utils.Python
             string beforeExecScriptCommands = "notepad " + parametersJsonFile;
             // 事後コマンド pauseで一時停止
             string afterExecScriptCommands = "pause";
-            string options;
-            if (string.IsNullOrEmpty(outputFile)) {
-                options = $"-p {parametersJsonFile}";
-            } else {
-                options = $"-p {parametersJsonFile} -o {outputFile}";
-            }
+            string options = $"-p {parametersJsonFile}";
             List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_autogen_group_chat_01.py", $"{options}",
                 beforeExecScriptCommands, afterExecScriptCommands);
 

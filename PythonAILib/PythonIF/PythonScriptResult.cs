@@ -6,6 +6,8 @@ namespace PythonAILib.PythonIF
         public string Output { get; set; } = "";
         public string Log { get; set; } = "";
 
+        public string Error { get; set; } = "";
+
         public Dictionary<string, dynamic?> Parameters { get; protected set; } = [];
 
         public virtual void LoadFromJson(string json) {
@@ -17,6 +19,10 @@ namespace PythonAILib.PythonIF
             // verboseがあれば取得
             if (Parameters.TryGetValue("log", out dynamic? logValue)) {
                 Log = logValue ?? "";
+            }
+            // errorがあれば取得
+            if (Parameters.TryGetValue("error", out dynamic? errorValue)) {
+                Error = errorValue ?? "";
             }
         }
     }

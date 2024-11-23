@@ -19,7 +19,7 @@ namespace PythonAILib.Model.Chat {
 
         // JSON化しないプロパティ
         [JsonIgnore]
-        public List<string> Sources { get; set; } = [];
+        public List<Dictionary<string, string>> Sources { get; set; } = [];
 
         [JsonIgnore]
         public string SourceDocumentURL { get; set; } = "";
@@ -49,7 +49,7 @@ namespace PythonAILib.Model.Chat {
             Role = role;
             Content = text;
         }
-        public ChatContentItem(string role, string text, List<string> sources) {
+        public ChatContentItem(string role, string text, List<Dictionary<string,string>> sources) {
             Role = role;
             Content = text;
             Sources = sources;
