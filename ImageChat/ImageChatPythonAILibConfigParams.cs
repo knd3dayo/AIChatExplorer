@@ -1,12 +1,11 @@
+using System.IO;
 using System.Windows;
+using ImageChat.Model;
+using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
-using ImageChat.Model;
-using System.IO;
-using PythonAILib.Common;
 
-namespace ImageChat
-{
+namespace ImageChat {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
         public string GetHttpProxy() {
@@ -67,6 +66,10 @@ namespace ImageChat
             string docDBPath = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "imagechat_doc_store.db");
             return docDBPath;
 
+        }
+        public string GetAutoGenWorkDir() {
+            string workDir = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "autogen");
+            return workDir;
         }
 
 

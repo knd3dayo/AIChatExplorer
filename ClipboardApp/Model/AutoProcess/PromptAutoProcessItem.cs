@@ -1,4 +1,5 @@
 using ClipboardApp.Model.Folder;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 
@@ -28,19 +29,21 @@ namespace ClipboardApp.Model.AutoProcess
             {
                 return null;
             }
-            ChatRequest chatController = new();
+            ChatRequest chatRequest = new();
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
-            chatController.PromptTemplateText = PromptItem.Prompt;
-            chatController.ChatMode = Mode;
+            chatRequest.PromptTemplateText = PromptItem.Prompt;
+            chatRequest.ChatMode = Mode;
             ClipboardFolder clipboardFolder = clipboardItem.GetFolder<ClipboardFolder>();
 
-            chatController.VectorDBItems = [];
-            // フォルダのVectorDBItemを追加
-            chatController.VectorDBItems.Add(clipboardFolder.GetVectorDBItem());
+            // ChatRequestContentを作成
+            ChatRequestContext chatRequestContent = new() {
+                OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                VectorDBItems = [clipboardFolder.GetVectorDBItem()]
+            };
 
-            ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { });
+            ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });
             if (result == null)
             {
                 return clipboardItem;
@@ -48,7 +51,7 @@ namespace ClipboardApp.Model.AutoProcess
             // ClipboardItemのContentにレスポンスを設定
             clipboardItem.Content = result.Output;
             // レスポンスをClipboardItemに設定
-            clipboardItem.ChatItems = chatController.ChatHistory;
+            clipboardItem.ChatItems = chatRequest.ChatHistory;
             return clipboardItem;
         }
     }

@@ -82,7 +82,7 @@ namespace ClipboardApp.Model.Folder {
             try {
                 fileSystemFilePaths = Directory.GetFiles(FileSystemFolderPath).ToList();
             } catch (UnauthorizedAccessException e) {
-                LogWrapper.Info($"Access Denied:{FileSystemFolderPath}");
+                LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
             }
             // items内に、fileSystemFilePaths以外のFilePathがある場合は削除
             foreach (var item in items) {
@@ -137,7 +137,7 @@ namespace ClipboardApp.Model.Folder {
                 try {
                     fileSystemFolderPaths = Directory.GetDirectories(FileSystemFolderPath).ToList();
                 } catch (UnauthorizedAccessException e) {
-                    LogWrapper.Info($"Access Denied:{FileSystemFolderPath}");
+                    LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
                 }
             }
             // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除

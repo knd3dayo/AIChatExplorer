@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using Python.Runtime;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Statistics;
@@ -110,10 +111,6 @@ namespace PythonAILib.PythonIF {
             });
             return result;
         }
-
-
-
-
         public string ExtractBase64ToText(string base64, string extenstion) {
 
             // ResultContainerを作成
@@ -137,13 +134,13 @@ namespace PythonAILib.PythonIF {
             return result;
         }
 
-        public void OpenAIEmbedding(OpenAIProperties props, string text) {
+        public void OpenAIEmbedding(ChatRequestContext chatRequestContext, string text) {
 
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "openai_embedding";
                 dynamic function_object = GetPythonFunction(ps, function_name);
-                string propsJson = props.ToJson();
+                string propsJson = chatRequestContext.ToJson();
 
                 LogWrapper.Info(PythonAILibStringResources.Instance.EmbeddingExecute);
                 LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
@@ -190,27 +187,27 @@ namespace PythonAILib.PythonIF {
         }
 
         // 通常のOpenAIChatを実行する
-        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatRequest) {
+        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
 
             // ChatHistoryとContentなどからリクエストを作成
             Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
             // ChatRequestをJSON文字列に変換
-            string chat_history_json = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
-            string propsJson = props.ToJson();
+            string chat_request_json = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
 
             LogWrapper.Info(PythonAILibStringResources.Instance.OpenAIExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_history_json}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chat_request_json}");
 
             //OpenAIChatExecuteを呼び出す
             ChatResult result = OpenAIChatExecute("run_openai_chat", (function_object) => {
-                return function_object(propsJson, chat_history_json);
+                return function_object(chatRequestContextJson, chat_request_json);
             });
             // StatisticManagerにトークン数を追加
-            MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, props.OpenAICompletionModel);
-
+            MainStatistics.GetMainStatistics().AddTodayTokens(result.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
             return result;
-
         }
 
         private ChatResult LangChainChatExecute(string functionName, Func<dynamic, string> pythonFunction) {
@@ -252,57 +249,52 @@ namespace PythonAILib.PythonIF {
             return chatResult;
 
         }
-        public ChatResult LangChainChat(OpenAIProperties openAIProperties, ChatRequest chatRequest) {
+        public ChatResult LangChainChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
 
-            string prompt = chatRequest.CreatePromptText();
-            Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
             // ChatRequestをJSON文字列に変換
-            string chatHistoryJson = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
+            Dictionary<string, object> chatRequestDict = chatRequest.ToDict();
+            string chatRequestJson = JsonSerializer.Serialize(chatRequestDict, jsonSerializerOptions);
+
             // Pythonスクリプトの関数を呼び出す
             ChatResult chatResult = new();
 
-            // propsをJSON文字列に変換
-            string propsJson = openAIProperties.ToJson();
-
-            // vectorDBItemsをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(chatRequest.VectorDBItems);
+            // RequestContextをJSON文字列に変換
+            string contextJson = chatRequestContext.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.LangChainExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.Prompt}:{prompt}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatHistoryJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {contextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatRequestJson}");
 
             // LangChainChat関数を呼び出す
             chatResult = LangChainChatExecute("run_langchain_chat", (function_object) => {
-                return function_object(propsJson, vectorDBItemsJson, chatHistoryJson);
+                return function_object(contextJson, chatRequestJson);
             });
             // StatisticManagerにトークン数を追加
-            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, openAIProperties.OpenAICompletionModel);
+            MainStatistics.GetMainStatistics().AddTodayTokens(chatResult.TotalTokens, chatRequestContext.OpenAIProperties.OpenAICompletionModel);
             return chatResult;
         }
 
         // AutoGenのGroupChatを実行する
-        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties,ChatRequest chatRequest,  Action<string> iteration) {
-            // propsをJSON文字列に変換
-            string propsJson = openAIProperties.ToJson();
-            // vectorDBItemsをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(chatRequest.VectorDBItems);
-            // workDirを取得
-            string workDir = chatRequest.WorkDir;
+        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest,  Action<string> iteration) {
+
             // messageを取得
             string message = chatRequest.CreatePromptText();
+            // chatRequestContextをJSON文字列に変換
+            string requestContextJson = chatRequestContext.ToJson();
 
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {requestContextJson}");
 
             ChatResult chatResult = new();
+
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_autogen_group_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
+
                 // hello_world関数を呼び出す
-                PyIterable iterator = function_object(propsJson, vectorDBItemsJson, workDir, message);
-                Dictionary<string, dynamic?> keyValuePairs = new();
+                PyIterable iterator = function_object(requestContextJson,  message);
+                Dictionary<string, dynamic?> keyValuePairs = [];
                 // iteratorから文字列を取得
                 foreach (PyObject item in iterator) {
                     string itemString = item.ToString() ?? "{}";
@@ -365,21 +357,19 @@ namespace PythonAILib.PythonIF {
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties openAIProperties, List<VectorDBItem> vectorDBItems, VectorSearchRequest vectorSearchRequest) {
-            // propsをJSON文字列に変換
-            string propsJson = openAIProperties.ToJson();
-            // vectorDBItemsをJSON文字列に変換
-            string vectorDBItemsJson = VectorDBItem.ToJson(vectorDBItems);
+        public List<VectorSearchResult> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest vectorSearchRequest) {
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
             // vectorSearchRequestをJSON文字列に変換
             string vectorSearchRequestJson = vectorSearchRequest.ToJson();
+
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propsJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorDBItems}:{vectorDBItemsJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
             LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("vector_search", (function_object) => {
-                string resultString = function_object(propsJson, vectorDBItemsJson, vectorSearchRequestJson);
+                string resultString = function_object(chatRequestContextJson, vectorSearchRequestJson);
                 return resultString;
             });
         }
@@ -407,39 +397,38 @@ namespace PythonAILib.PythonIF {
             });
         }
         // 指定されたベクトルDBのインデックスを削除する
-        public void DeleteVectorDBCollection(OpenAIProperties props, VectorDBItem vectorDBItem) {
-            // OpenAIPropertiesをJSON文字列に変換
-            string propJson = props.ToJson();
-            // VectorDBItemをJSON文字列に変換
-            string vectorDBItemJson = VectorDBItem.ToJson([vectorDBItem]);
+        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
 
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("delete_collection", (function_object) => {
-                return function_object(propJson, vectorDBItemJson);
+                return function_object(chatRequestContextJson);
             }, result);
         }
-        public void UpdateVectorDBIndex(OpenAIProperties props, VectorDBItem vectorDBItem, string vectorTargetJson, string function_name) {
 
-            // OpenAIPropertiesをJSON文字列に変換
-            string propJson = props.ToJson();
-            // VectorDBItemをJSON文字列に変換
-            string vectorDBItemJson = VectorDBItem.ToJson([vectorDBItem]);
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, string vectorTargetJson, string function_name) {
+
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
+
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {propJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo}:{vectorTargetJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
-                return function_object(propJson, vectorDBItemJson, vectorTargetJson);
+                return function_object(chatRequestContextJson, vectorTargetJson);
             }, result);
 
         }
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo) {
+
             string function_name;
             if (contentInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
@@ -450,11 +439,11 @@ namespace PythonAILib.PythonIF {
             }
             // contentInfoをJSON文字列に変換
             string contentInfoJson = contentInfo.ToJson();
-            UpdateVectorDBIndex(props, vectorDBItem, contentInfoJson, function_name);
+            UpdateVectorDBIndex(chatRequestContext, contentInfoJson, function_name);
         }
 
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
             string function_name = "";
             if (imageInfo.Mode == VectorDBUpdateMode.update) {
                 function_name = "update_content_index";
@@ -465,11 +454,10 @@ namespace PythonAILib.PythonIF {
             }
             // imageInfoをJSON文字列に変換
             string imageInfoJson = imageInfo.ToJson();
-            UpdateVectorDBIndex(props, vectorDBItem, imageInfoJson, function_name);
+            UpdateVectorDBIndex(chatRequestContext, imageInfoJson, function_name);
         }
 
-
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem) {
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, GitFileInfo gitFileInfo) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
             if (File.Exists(gitFileInfo.AbsolutePath)) {
@@ -486,7 +474,7 @@ namespace PythonAILib.PythonIF {
             }
             // gitFileInfoをJSON文字列に変換
             string gitFileInfoJson = gitFileInfo.ToJson();
-            UpdateVectorDBIndex(props, vectorDBItem, gitFileInfoJson, function_name);
+            UpdateVectorDBIndex(chatRequestContext, gitFileInfoJson, function_name);
         }
 
         // ExportToExcelを実行する

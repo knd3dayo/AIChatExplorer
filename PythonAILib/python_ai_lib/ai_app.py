@@ -1,5 +1,5 @@
 import os, json
-from typing import Any, Tuple
+from typing import Any, Tuple, Generator
 import tempfile
 import sys
 sys.path.append("python")
@@ -11,7 +11,8 @@ from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, Conten
 from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangChainUtil
 from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
-from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
+from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChat
+from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 
 ########################
 # ファイル関連
@@ -68,11 +69,13 @@ def list_openai_models(openai_props: OpenAIProps):
 ########################
 # autogen関連
 ########################
-def run_autogen_group_chat(openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps], work_dir: str, input_text: str) :
-    # AutoGenUtilを生成
-    autogen_util = AutoGenUtil(openai_props, work_dir, vector_db_props_list)
+def run_autogen_group_chat(autogen_props: AutoGenProps, input_text: str) -> Generator[Any, None, None]:
+    # autogen_propsの
+    # AutoGenGroupChatを生成
+    autogen_group_chat = AutoGenGroupChat.create_default_group_chat(autogen_props)
     # run_group_chatを実行
-    return autogen_util.run_default_group_chat(input_text)
+    result = autogen_group_chat.run_group_chat(input_text, 10)
+    return result
 
 ########################
 # langchain関連
@@ -82,9 +85,9 @@ def vector_search(params:VectorSearchParameter) -> dict:
     result = LangChainVectorDB.vector_search(params)
     return result
 
-def run_langchain_chat(params:LangChainChatParameter) -> dict:
+def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], params:LangChainChatParameter) -> dict:
     # langchan_chatを実行
-    result = LangChainUtil.langchain_chat(params)
+    result = LangChainUtil.langchain_chat(openai_props, vector_db_items, params)
     return result
 
 # vector db関連

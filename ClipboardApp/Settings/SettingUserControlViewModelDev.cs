@@ -8,39 +8,6 @@ namespace ClipboardApp.Settings {
 
 
         #region 開発中機能関連の設定
-        public Visibility EnableDevFeaturesVisibility {
-            get {
-                if (ClipboardAppConfig.Instance.EnableDevFeatures) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-            set {
-                if (value == Visibility.Visible) {
-                    ClipboardAppConfig.Instance.EnableDevFeatures = true;
-                } else {
-                    ClipboardAppConfig.Instance.EnableDevFeatures = false;
-                }
-                OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // EnableDevFeatures
-        public bool EnableDevFeatures {
-            get {
-                return ClipboardAppConfig.Instance.EnableDevFeatures;
-            }
-            set {
-                ClipboardAppConfig.Instance.EnableDevFeatures = value;
-                OnPropertyChanged(nameof(EnableDevFeatures));
-                OnPropertyChanged(nameof(EnableDevFeaturesVisibility));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
         // TesseractExePath
         public string TesseractExePath {
             get {

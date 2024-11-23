@@ -11,7 +11,6 @@ namespace PythonAILib.Model.Chat {
 
         public ChatResult() { }
 
-
         public override void LoadFromJson(string json) {
             base.LoadFromJson(json);
             // total_tokensがあれば取得

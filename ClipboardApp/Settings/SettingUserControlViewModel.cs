@@ -485,15 +485,19 @@ namespace ClipboardApp.Settings
                 );
             try {
                 // ChatControllerを作成
-                ChatRequest chatController = new();
+                ChatRequest chatRequest = new();
                 List<ChatContentItem> chatItems = [];
                 // ChatItemを追加
                 ChatContentItem chatItem = new(ChatContentItem.UserRole, "Hello");
                 chatItems.Add(chatItem);
-                chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+                chatRequest.ChatHistory = chatItems;
+                chatRequest.ChatMode = OpenAIExecutionModeEnum.Normal;
+                // ChatRequestContextを作成
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                };
 
-                string resultString = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { })?.Output ?? "";
+                string resultString = chatRequest.ExecuteChat(chatRequestContext, (message) => { })?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
                     testResult.Result = false;
@@ -511,11 +515,16 @@ namespace ClipboardApp.Settings
         // TestLangChain
         private void TestLangChain() {
             try {
-                ChatRequest chatController = new();
+                ChatRequest chatRequest = new();
                 List<ChatContentItem> chatItems = [new ChatContentItem(ChatContentItem.UserRole, "Hello")];
-                chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
-                ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties(), (message) => { });
+                chatRequest.ChatHistory = chatItems;
+                chatRequest.ChatMode = OpenAIExecutionModeEnum.LangChain;
+
+                // ChatRequestContextを作成
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                };
+                ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
                 if (string.IsNullOrEmpty(result?.Output)) {
                     LogWrapper.Error($"[NG]:{StringResources.FailedToRunLangChain}");
                 } else {

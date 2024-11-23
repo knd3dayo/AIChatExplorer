@@ -3,13 +3,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.VectorDB
-{
+namespace PythonAILib.Model.VectorDB {
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
@@ -104,6 +104,30 @@ namespace PythonAILib.Model.VectorDB
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                { "VectorDBName", Name },
+                { "VectorDBDescription", Description },
+                { "VectorDBURL", VectorDBURL },
+                { "IsUseMultiVectorRetriever", IsUseMultiVectorRetriever },
+                { "DocStoreURL", DocStoreURL },
+                { "VectorDBTypeString", VectorDBTypeString },
+                { "CollectionName", CollectionName ?? ""},
+                { "ChunkSize", ChunkSize },
+                { "MaxSearchResults", MaxSearchResults },
+                { "IsEnabled", IsEnabled },
+                { "IsSystem", IsSystem }
+            };
+            return dict;
+        }
+        // ToDict
+        public static Dictionary<string, object> ToDict(IEnumerable<VectorDBItem> items) {
+            return new Dictionary<string, object> {
+                { "VectorDBItems", items.Select(item => item.ToDict()).ToList() }
+            };
+        }
+
         // Json文字列化する
         public static string ToJson(IEnumerable<VectorDBItem> items) {
             return JsonSerializer.Serialize(items, JsonSerializerOptions);
@@ -139,47 +163,63 @@ namespace PythonAILib.Model.VectorDB
         public void UpdateIndex(ContentInfo contentInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            UpdateIndex(contentInfo, openAIProperties);
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
+
+            UpdateIndex(chatRequestContext, contentInfo);
         }
 
         public void DeleteIndex(ContentInfo contentInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            DeleteIndex(contentInfo, openAIProperties);
-
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
+            DeleteIndex(chatRequestContext, contentInfo);
         }
 
         public void UpdateIndex(ImageInfo imageInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            UpdateIndex(imageInfo, openAIProperties);
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
+            UpdateIndex(chatRequestContext, imageInfo);
         }
 
         public void DeleteIndex(ImageInfo imageInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            DeleteIndex(imageInfo, openAIProperties);
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
+            DeleteIndex(chatRequestContext, imageInfo);
         }
 
-        public void UpdateIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+        public void UpdateIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo ) {
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
         }
-        public void DeleteIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+        public void DeleteIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo) {
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
-        public void UpdateIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+        public void UpdateIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, imageInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedTextEmbeddingFromImage);
 
         }
-        public void DeleteIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
+        public void DeleteIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, imageInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedTextEmbeddingFromImage);
         }
         public static VectorDBItem GetFolderVectorDBItem(ContentFolder folder) {

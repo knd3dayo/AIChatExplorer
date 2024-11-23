@@ -2,14 +2,14 @@ import os, json
 from typing import Any
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
-from ai_app_autogen.ai_app_autogen_client import  AutoGenProps
-from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents
 from ai_app_autogen.ai_app_autogen_util import AutoGenUtil
+from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChat
+from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 
-from promptflow.tracing import start_trace
 
-# instrument OpenAI
-start_trace()
+import logging 
+logging.basicConfig(level=logging.ERROR)
+
 
 import sys
 import getopt
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     props_file = None
     work_dir = None
 
-    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:d:")
+    opts, args = getopt.getopt(sys.argv[1:], "m:o:p:d")
     for opt, arg in opts:
         if opt == "-m":
             message = arg
@@ -37,7 +37,9 @@ if __name__ == '__main__':
         elif opt == "-p":
             props_file = arg
         elif opt == "-d":
-            work_dir = arg
+            from promptflow.tracing import start_trace
+            # instrument OpenAI
+            start_trace()
     
     # プロパティファイル(JSON)を読み込む
     open_ai_props_dict = {}
@@ -48,20 +50,8 @@ if __name__ == '__main__':
         print(f"props_file:{props_file}")
         with open(props_file, "r", encoding="utf-8") as f:
             props_dict = json.load(f)
-            open_ai_props_dict = props_dict.get("open_ai_props", {})
-            open_ai_props = OpenAIProps(open_ai_props_dict)
-
-            vector_db_props_dict = props_dict.get("vector_db_props", [])
-            vector_db_props_list = [VectorDBProps(props) for props in vector_db_props_dict]
-
-            request = props_dict.get("chat_request", {})
-
-            if not work_dir:
-                work_dir = request.get("work_dir", None)
-
-    else:
-            open_ai_props: OpenAIProps = OpenAIProps.env_to_props()
-            vector_db_props_list = [VectorDBProps.get_vector_db_settings()]
+            # AutoGenPropsを生成
+            autogen_props = AutoGenProps(props_dict)
 
     input_text = ""
     # messageが指定されている場合は, messageを入力テキストとする
@@ -82,7 +72,10 @@ if __name__ == '__main__':
     # メッセージを表示
     print(f"Input message: {input_text}")
 
-    # AutoGenUtilを作成
+    # AutogenGroupChatを生成
+    default_group_chat = AutoGenGroupChat.create_default_group_chat(open_ai_props, vector_db_props_list)
     autogen_util = AutoGenUtil(open_ai_props, work_dir, vector_db_props_list)
-    autogen_util.run_default_group_chat(input_text)
+    result = autogen_util.run_default_group_chat(input_text)
+    for message, _ in result:
+        print(f"message:{message}")
 

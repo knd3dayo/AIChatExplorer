@@ -7,6 +7,8 @@ sys.path.append("python")
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+
 import ai_app
 
 # Proxy環境下でのSSLエラー対策。HTTPS_PROXYが設定されていない場合はNO_PROXYを設定する
@@ -22,6 +24,7 @@ def capture_stdout_stderr(func):
         buffer = StringIO()
         sys.stdout = buffer
         sys.stderr = buffer
+        result = {}
         try:
             # debug用
             # HTTPS_PROXY環境変数
@@ -36,7 +39,10 @@ def capture_stdout_stderr(func):
         except Exception as e:
             # エラーが発生した場合はエラーメッセージを出力
             print(e)
-            result = {}
+            import traceback
+            traceback.print_exc()            
+            result["error"] = "\n".join(traceback.format_exception(type(e), e, e.__traceback__))
+
         # strout,stderrorを元に戻す
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -82,14 +88,37 @@ def capture_generator_stdout_stderr(func):
     return wrapper
 
 ########################
+# parametar関連
+########################
+def get_openai_objects(context_json: str) -> tuple[OpenAIProps, OpenAIClient]:
+    # ChatRequestContextからOpenAIPorpsを生成
+    props_dict = json.loads(context_json)
+    openai_props_dict = props_dict["openai_props"]
+    openai_props = OpenAIProps(openai_props_dict)
+    client = OpenAIClient(openai_props)
+    return openai_props, client
+
+def get_vector_db_objects(context_json: str) -> list[VectorDBProps]:
+    # ChatRequestContextからVectorDBPropsを生成
+    props_dict = json.loads(context_json)
+    vector_db_items = props_dict["vector_db_items"]
+    vector_db_props = [VectorDBProps(item) for item in vector_db_items]
+    return vector_db_props
+
+def get_autogen_objects(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], context_json: str) -> AutoGenProps:
+    # ChatRequestContextからAutoGenPropsを生成
+    props_dict = json.loads(context_json)
+    autogen_props = AutoGenProps(openai_props, vector_db_items, props_dict["autogen_props"])
+    return autogen_props
+
+########################
 # openai関連
 ########################
-def run_openai_chat(props_json: str, request_json: str):
+def run_openai_chat(context_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict[str, Any]:
-        # OpenAIPorpsを生成
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
         # request_jsonをdictに変換
         request = json.loads(request_json)
         result:dict = ai_app.run_openai_chat(openai_props, request)
@@ -101,35 +130,28 @@ def run_openai_chat(props_json: str, request_json: str):
     return wrapper()
 
 
-def openai_embedding(props_json: str, input_text: str):
-    # OpenAIPorpsを生成
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    # OpenAIClientを生成
-    openai_client = OpenAIClient(openai_props)
+def openai_embedding(context_json: str, input_text: str):
+    # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+    openai_props, openai_client = get_openai_objects(context_json)
     
     return openai_client.openai_embedding(input_text)
 
-def list_openai_models(props_json: str):
-    props = json.loads(props_json)
-    openai_props = OpenAIProps(props)
-    client = OpenAIClient(openai_props)
-    return client.list_openai_models()
-
+def list_openai_models(context_json: str):
+    # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+    openai_props, openai_client = get_openai_objects(context_json)
+    return openai_client.list_openai_models()
 
 ########################
 # Autogen関連
 ########################
-def run_autogen_group_chat( props_json: str, vector_db_items_json:str, work_dir: str, input_text: str):
+def run_autogen_group_chat( context_json:str, input_text: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> Generator[dict, None, None]:
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        vector_db_items = json.loads(vector_db_items_json)
+        openai_props, _ = get_openai_objects(context_json)
+        vector_db_items = get_vector_db_objects(context_json)
+        autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
 
-        # process_langchain_chat_parameterを実行
-        # langchan_chatを実行
-        result = ai_app.run_autogen_group_chat(openai_props, vector_db_items, work_dir, input_text)
+        result = ai_app.run_autogen_group_chat(autogen_props, input_text)
         for message, is_last_message in result:
             # dictを作成
             result_dict = {"message": message, "is_last_message": is_last_message}
@@ -145,15 +167,19 @@ def run_autogen_group_chat( props_json: str, vector_db_items_json:str, work_dir:
 # langchain関連
 ########################
 
-def run_langchain_chat( props_json: str, vector_db_items_json:str, request_json: str):
+def run_langchain_chat( context_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
 
         # process_langchain_chat_parameterを実行
         from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter
-        params:LangChainChatParameter = LangChainChatParameter(props_json, vector_db_items_json, request_json)
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+        params:LangChainChatParameter = LangChainChatParameter(request_json)
         # langchan_chatを実行
-        result = ai_app.run_langchain_chat(params)
+        result = ai_app.run_langchain_chat(openai_props, vector_db_items, params)
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -164,13 +190,12 @@ def run_langchain_chat( props_json: str, vector_db_items_json:str, request_json:
 ########################
 # ベクトルDB関連
 ########################
-def delete_collection(props_json: str, vector_db_items_json: str):
+def delete_collection(context_json: str):
     def func() -> dict:
-    # props_jsonからOpenAIProps, VectorDBPropsを取得
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-        vector_db_items = json.loads(vector_db_items_json)
-
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
         # vector_db_itemsからVectorDBPropsを取得
         vector_db_props = [VectorDBProps(item) for item in vector_db_items]
         
@@ -182,11 +207,16 @@ def delete_collection(props_json: str, vector_db_items_json: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def vector_search(openai_props_json: str, vector_db_items_json: str, request_json: str):
+def vector_search(context_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+
         from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter
-        params:VectorSearchParameter = VectorSearchParameter.from_json(openai_props_json, vector_db_items_json, request_json)
+        params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, request_json)
         result = ai_app.vector_search(params)
         return result
     
@@ -197,12 +227,15 @@ def vector_search(openai_props_json: str, vector_db_items_json: str, request_jso
 
 # vector db関連
 # ベクトルDBのインデックスを削除する
-def delete_index(props_json: str, vector_db_items_json: str, request_json: str):
+def delete_index(context_json: str, request_json: str):
     def func () -> dict:
-        # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
         from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_content_or_image_json(
-            props_json, vector_db_items_json, request_json)
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(
+            openai_props, vector_db_items, request_json)
         ai_app.update_or_delete_content_index(params)
         return {}
 
@@ -212,12 +245,17 @@ def delete_index(props_json: str, vector_db_items_json: str, request_json: str):
     return wrapper()
 
 # ベクトルDBのコンテンツインデックスを更新する
-def update_content_index(props_json: str, vector_db_items_json: str, request_json: str):
+def update_content_index(context_json: str, request_json: str):
     def func () -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+
         # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
         from ai_app_langchain.langchain_vector_db import ContentUpdateOrDeleteRequestParams
-        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams.from_content_or_image_json(
-            props_json, vector_db_items_json, request_json
+        params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(
+            openai_props, vector_db_items, request_json
             )
         
         ai_app.update_or_delete_content_index(params)
@@ -228,10 +266,15 @@ def update_content_index(props_json: str, vector_db_items_json: str, request_jso
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-def update_file_index(props_json: str, vector_db_items_json: str, request_json: str):
+def update_file_index(context_json: str, request_json: str):
     def func () -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+
         from ai_app_langchain.langchain_vector_db import FileUpdateOrDeleteRequestParams
-        params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams.from_json(props_json, vector_db_items_json, request_json)
+        params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams(openai_props, vector_db_items, request_json)
         ai_app.update_or_delete_file_index(params)
         return {}
     # strout,stderrをキャプチャするラッパー関数を生成

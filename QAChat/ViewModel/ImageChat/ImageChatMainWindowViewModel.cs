@@ -141,6 +141,10 @@ namespace QAChat.ViewModel.ImageChat
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
             PythonAILibManager? libManager = PythonAILibManager.Instance;
+            // ChatRequestContextを生成
+            ChatRequestContext chatRequestContext = new() {
+                OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+            };
 
             // 画像イメージファイル名がない場合はエラー
             if (ImageFiles.Count == 0) {
@@ -168,7 +172,7 @@ namespace QAChat.ViewModel.ImageChat
                     ChatController.ContentText = InputText;
                     ChatController.PromptTemplateText = PromptText;
                     // ChatRequestを送信してChatResultを受信
-                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties(), (message) => { });
+                    result = ChatController.ExecuteChat(chatRequestContext, (message) => { });
 
                 });
                 // 結果を表示

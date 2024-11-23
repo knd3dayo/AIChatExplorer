@@ -24,5 +24,4 @@ wikipedia
 flaml[automl]
 selenium
 webdriver-manager
-promptflow-tracing
-promptflow-devkit
+duckduckgo-search

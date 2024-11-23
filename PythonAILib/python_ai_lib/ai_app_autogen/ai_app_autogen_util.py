@@ -44,10 +44,9 @@ class AutoGenUtil:
         return agents
 
     def run_default_group_chat(self, init_message: str, max_round: int = 10) -> queue.Queue:
-        autogen_agents = AutoGenAgents(self.client.autogen_pros, self.vector_db_props_list)
+        autogen_agents = AutoGenAgents(self.client.autogen_props, self.vector_db_props_list)
         autogen_group_chat = AutoGenGroupChat(autogen_agents) 
-        init_agent = self.client.agents["user_proxy"]
 
-        return autogen_group_chat.run_group_chat(init_message, max_round, init_agent, self.agents)
+        return autogen_group_chat.run_group_chat(init_message, max_round)
 
     

@@ -57,20 +57,10 @@ class LangChainOpenAIClient:
         
 
 class LangChainChatParameter:
-    def __init__(self, props_json: str ="{}", vector_db_items_json:str = "{}", request_json: str ="{}"):
-        # OpenAIPorpsを生成
-        props = json.loads(props_json)
-        # OpenAIPorpsを生成
-        self.openai_props = OpenAIProps(props)
+    def __init__(self, request_dict: dict ={}):
 
-        # VectorDBPropsを生成
-        vector_db_items = json.loads(vector_db_items_json)
-        self.vector_db_items = [VectorDBProps(item) for item in vector_db_items]
-
-        #  openai_props, vector_db_items, prompt, chat_historyを設定する
-        request = json.loads(request_json)
         # messagesを取得
-        messages = request.get("messages", [])
+        messages = request_dict.get("messages", [])
         # messagesのlengthが0の場合はエラーを返す
         if len(messages) == 0:
             self.prompt = ""
@@ -97,9 +87,6 @@ class LangChainChatParameter:
         print ("LangChainChatParameter, __init__")
         print(f'prompt: {self.prompt}')
         print(f'chat_history: {self.chat_history}')
-        print('vector db')
-        for item in self.vector_db_items:
-            print(f'Name:{item.Name} VectorDBDescription:{item.VectorDBDescription} VectorDBTypeString:{item.VectorDBTypeString} VectorDBURL:{item.VectorDBURL} CollectionName:{item.CollectionName}')
 
     @classmethod
     def convert_to_langchain_chat_history(cls, chat_history_json: str):

@@ -18,13 +18,27 @@ namespace PythonAILib.Common {
         public bool AzureOpenAI { get; set; } = false;
 
         [JsonPropertyName("AzureOpenAIEndpoint")]
-        public string? AzureOpenAIEndpoint { get; set; } = null;
+        public string AzureOpenAIEndpoint { get; set; } = "";
 
         [JsonPropertyName("OpenAICompletionBaseURL")]
-        public string? OpenAICompletionBaseURL { get; set; } = null;
+        public string OpenAICompletionBaseURL { get; set; } = "";
 
         [JsonPropertyName("OpenAIEmbeddingBaseURL")]
-        public string? OpenAIEmbeddingBaseURL { get; set; } = null;
+        public string OpenAIEmbeddingBaseURL { get; set; } = "";
+
+        // ToDict
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                { "OpenAIKey", OpenAIKey },
+                { "OpenAICompletionModel", OpenAICompletionModel },
+                { "OpenAIEmbeddingModel", OpenAIEmbeddingModel },
+                { "AzureOpenAI", AzureOpenAI },
+                { "AzureOpenAIEndpoint", AzureOpenAIEndpoint },
+                { "OpenAICompletionBaseURL", OpenAICompletionBaseURL },
+                { "OpenAIEmbeddingBaseURL", OpenAIEmbeddingBaseURL },
+            };
+            return dict;
+        }
 
         public string ToJson() {
             // option

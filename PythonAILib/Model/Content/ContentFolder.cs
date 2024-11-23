@@ -1,5 +1,6 @@
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 
@@ -119,9 +120,15 @@ namespace PythonAILib.Model.Content {
         // フォルダに設定されたVectorDBのコレクションを削除
         public void DeleteVectorDBCollection() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             VectorDBItem vectorDBItem = GetVectorDBItem();
-            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(libManager.ConfigParams.GetOpenAIProperties(), vectorDBItem);
+
+            ChatRequestContext chatRequestContext = new() {
+                OpenAIProperties = openAIProperties,
+                VectorDBItems = [vectorDBItem]
+            };
+
+            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
         }
 
         // フォルダに設定されたVectorDBのインデックスを更新

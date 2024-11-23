@@ -1,8 +1,10 @@
+using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
@@ -56,11 +58,6 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("max_tokens")]
         protected int MaxTokens { get; set; } = 0;
 
-        // work_dir
-        [JsonPropertyName("work_dir")]
-        public string WorkDir { get; set; } = "";
-
-
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
@@ -74,10 +71,6 @@ namespace PythonAILib.Model.Chat {
 
         public bool JsonMode { get; set; } = false;
 
-
-        public List<ContentItem> AdditionalItems { get; set; } = [];
-
-        public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
         public ChatContentItem? GetLastSendItem() {
@@ -102,14 +95,6 @@ namespace PythonAILib.Model.Chat {
             // ContentTextを追加
             promptText += ContentText;
 
-            // ContextItemsが空でない場合は、ContextItemsのContentを追加
-            if (AdditionalItems.Any()) {
-                promptText += PythonAILibStringResources.Instance.SourcesHeader;
-                // ContextItemsのContentを追加
-                foreach (ContentItem item in AdditionalItems) {
-                    promptText += item.Content + "\n";
-                }
-            }
             return promptText;
         }
         public Dictionary<string, object> ToDict() {
@@ -121,7 +106,6 @@ namespace PythonAILib.Model.Chat {
 
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {
-                ["work_dir"] = WorkDir,
                 ["model"] = model,
                 ["messages"] = CreateOpenAIMessagesList(),
                 ["temperature"] = Temperature
@@ -139,27 +123,17 @@ namespace PythonAILib.Model.Chat {
                 dc["max_tokens"] = MaxTokens;
             }
 
-            // ModeがAutoGenChatGroupの場合は、work_dirを設定する
-            if (ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
-                dc["work_dir"] = WorkDir;
-            } else {
-                // work_dirがある場合は削除する
-                if (dc.ContainsKey("work_dir")) {
-                    dc.Remove("work_dir");
-                }
-            }
-
             return dc;
         }
 
         // Chatを実行する
-        public ChatResult? ExecuteChat(OpenAIProperties openAIProperties, Action<string> iterateAction ) {
+        public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction ) {
             if (this.ChatMode == OpenAIExecutionModeEnum.Normal) {
                 // リクエストをChatItemsに追加
 
                 ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
                 // 通常のChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatNormal(openAIProperties, this);
+                ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, this);
                 if (result == null) {
                     return null;
                 }
@@ -169,11 +143,11 @@ namespace PythonAILib.Model.Chat {
             }
             if (this.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
                 // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-                ContentText += ChatUtil.GenerateVectorSearchResult(openAIProperties, VectorDBItems, ContentText);
+                ContentText += ChatUtil.GenerateVectorSearchResult(chatRequestContext, ContentText);
                 ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, ContentText));
 
                 // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatOpenAIRAG(openAIProperties, this);
+                ChatResult? result = ChatUtil.ExecuteChatOpenAIRAG(chatRequestContext, this);
                 if (result == null) {
                     return null;
                 }
@@ -186,7 +160,7 @@ namespace PythonAILib.Model.Chat {
                 ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
 
                 // ChatModeがLangChainの場合は、LangChainChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatLangChain(openAIProperties, this);
+                ChatResult? result = ChatUtil.ExecuteChatLangChain(chatRequestContext, this);
                 if (result == null) {
                     return null;
                 }
@@ -196,19 +170,19 @@ namespace PythonAILib.Model.Chat {
             }
             if (this.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
                 // AutoGenGroupChatを実行する
-                return ExecuteAutoGenGroupChat(openAIProperties, iterateAction);
+                return ExecuteAutoGenGroupChat(chatRequestContext, iterateAction);
             }
             return null;
         }
         // AutoGenGroupChatを実行する
-        public ChatResult? ExecuteAutoGenGroupChat(OpenAIProperties openAIProperties, Action<string> iterateAction) {
+        public ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
             // 結果
             ChatContentItem result = new(ChatContentItem.AssistantRole, "", []);
             ChatHistory.Add(result);
 
             // AutoGenGroupChatを実行する
-            return ChatUtil.ExecuteAutoGenGroupChat(openAIProperties, this, (message) => {
+            return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, this, (message) => {
                 result.Content += message;
                 iterateAction(message);
             });
@@ -226,18 +200,7 @@ namespace PythonAILib.Model.Chat {
                 messages.Add(itemDict);
             }
             // このオブジェクトのプロパティを基にしたContentを作成
-            // ImageURLとAdditionalImageURLsを結合したリストを作成
-            List<string> additionalImageURLs = [];
-            foreach (ContentItem item in AdditionalItems) {
-                if (item.IsImage()) {
-                    string? base64String = item.Base64String;
-                    if (base64String == null) {
-                        continue;
-                    }
-                    additionalImageURLs.Add(ChatUtil.CreateImageURL(base64String));
-                }
-            }
-            List<string> imageURLs = [.. ImageURLs, .. additionalImageURLs];
+            List<string> imageURLs = [.. ImageURLs];
 
             var dc = new Dictionary<string, object> {
                 ["role"] = ChatContentItem.UserRole,

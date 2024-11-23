@@ -1,50 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using System.Threading.Tasks;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenGroupChat {
 
-        public static JsonSerializerOptions options = new() {
-            WriteIndented = true,
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-        };
-
         [JsonPropertyName("name")]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = "default";
 
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
 
-        // work_dir
-        [JsonPropertyName("work_dir")]
-        public string WorkDir { get; set; } = "";
+        [JsonPropertyName("init_agent_name")]
+        public string InitAgentName { get; set; } = "user_proxy";
 
-        public List<AutoGenAgent> AutoGenAgents { get; set; } = new List<AutoGenAgent>();
+        public List<AutoGenAgent> AutoGenAgents { get; set; } = [];
 
-        public List<AutoGentTool> AutoGentTools { get; set; } = new List<AutoGentTool>();
+        public List<AutoGentTool> AutoGentTools { get; set; } = [];
 
         // ToDict
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "name", Name },
                 { "description", Description },
-                { "work_dir", WorkDir },
+                { "init_agent_name", InitAgentName },
                 { "agents", AutoGenAgent.ToDict(AutoGenAgents) },
                 { "tools", AutoGentTool.ToDict(AutoGentTools) },
             };
             return dict;
-        }
-
-        // ToJson
-        public string ToJson() {
-            return JsonSerializer.Serialize(ToDict(), options);
         }
     }
 }

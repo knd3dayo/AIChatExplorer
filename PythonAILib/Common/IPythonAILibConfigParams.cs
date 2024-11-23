@@ -1,5 +1,4 @@
-namespace PythonAILib.Common
-{
+namespace PythonAILib.Common {
     public interface IPythonAILibConfigParams {
 
         public string GetLang();
@@ -28,5 +27,6 @@ namespace PythonAILib.Common
 
         public string GetNoProxy();
 
+        public string GetAutoGenWorkDir();
     }
 }

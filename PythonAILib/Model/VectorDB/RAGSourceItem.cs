@@ -3,6 +3,7 @@ using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 
 namespace PythonAILib.Model.VectorDB
 {
@@ -219,11 +220,15 @@ namespace PythonAILib.Model.VectorDB
 
         public UpdateIndexResult UpdateIndex(File.FileStatus fileStatus, UpdateIndexResult result, string description, int reliability) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             if (VectorDBItem == null) {
                 throw new Exception(PythonAILibStringResources.Instance.NoVectorDBSet);
             }
-            int token = 0;
+            ChatRequestContext chatRequestContext = new() {
+                OpenAIProperties = openAIProperties,
+                VectorDBItems = [VectorDBItem]
+            };
+
             try {
                 // GitFileInfoの作成
                 VectorDBUpdateMode mode = VectorDBUpdateMode.update;
@@ -233,14 +238,13 @@ namespace PythonAILib.Model.VectorDB
                     mode = VectorDBUpdateMode.delete;
                 }
                 GitFileInfo gitFileInfo = new (mode, fileStatus.Path, WorkingDirectory, SourceURL, description, reliability);
-                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(libManager.ConfigParams.GetOpenAIProperties(), gitFileInfo, VectorDBItem);
+                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, gitFileInfo);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;
                 result.Message = e.Message;
             }
 
-            result.TokenCount = token;
             result.Result = UpdateIndexResult.UpdateIndexResultEnum.Success;
 
             return result;

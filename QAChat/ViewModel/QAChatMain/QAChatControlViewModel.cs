@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
@@ -193,10 +194,6 @@ namespace QAChat.ViewModel.QAChatMain
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
             PythonAILibManager? libManager = PythonAILibManager.Instance;
-            //AutoGenのGroupChat用にWorkDirを設定
-            string workDir = Path.Combine(libManager.ConfigParams.GetAppDataPath(), "autogen");
-            ChatRequest.WorkDir = workDir;
-
 
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
@@ -208,11 +205,22 @@ namespace QAChat.ViewModel.QAChatMain
                 await Task.Run(() => {
                     // VectorDBItemsを設定
                     List<VectorDBItem> items = [.. VectorDBItems];
-                    ChatRequest.VectorDBItems = items;
-                    // WorkDirを設定
-                    ChatRequest.WorkDir = Path.Combine(libManager.ConfigParams.GetAppDataPath(), "autogen");
+
+                    // ★TODO AutoGenPropertiesを実行時に指定可能にする
+                    AutoGenProperties autoGenProperties = new() {
+                        WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
+                        OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                        UseSystemAgent = true
+                    };
+                    // ChatRequestContextを設定
+                    ChatRequestContext chatRequestContext = new() {
+                        VectorDBItems = items,
+                        OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                        AutoGenProperties = autoGenProperties
+                    };
+
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatRequest.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties(), (message) => {
+                    result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
                         MainUITask.Run(() => {
                             // チャット内容を更新
                             UpdateChatHistoryList();

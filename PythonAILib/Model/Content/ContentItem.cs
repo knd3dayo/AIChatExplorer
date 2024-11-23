@@ -346,12 +346,17 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = ReferenceVectorDBItems,
+                OpenAIProperties = openAIProperties
+            };
+
             string base64 = Base64String;
 
             try {
 
                 if (ContentTypes.IsImageData(base64)) {
-                    string result = ChatUtil.ExtractTextFromImage(openAIProperties, [base64]);
+                    string result = ChatUtil.ExtractTextFromImage(chatRequestContext, [base64]);
                     if (string.IsNullOrEmpty(result) == false) {
                         Content = result;
                     }
@@ -447,14 +452,18 @@ namespace PythonAILib.Model.Content {
                 OpenAIExecutionModeEnum.LangChain => ReferenceVectorDBItems,
                 _ => []
             };
-
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = vectorDBItems,
+                OpenAIProperties = openAIProperties
+            };
             // ヘッダー情報とコンテンツ情報を結合
             // ★TODO タグ情報を追加する
             string contentText = HeaderText + "\n" + Content;
 
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {
-                string result = ChatUtil.CreateTextChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                string result = ChatUtil.CreateTextChatResult(chatRequestContext, promptItem, contentText);
                 if (string.IsNullOrEmpty(result) == false) {
                     // PromptChatResultに結果を保存
                     PromptChatResult.SetTextContent(promptItem.Name, result);
@@ -472,7 +481,7 @@ namespace PythonAILib.Model.Content {
 
             // PromptResultTypeがTableContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TableContent) {
-                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                Dictionary<string, dynamic?> response = ChatUtil.CreateTableChatResult(chatRequestContext, promptItem, contentText);
                 // resultからキー:resultを取得
                 if (response.ContainsKey("result") == false) {
                     return;
@@ -495,7 +504,7 @@ namespace PythonAILib.Model.Content {
             }
             // PromptResultTypeがListの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.ListContent) {
-                List<string> response = ChatUtil.CreateListChatResult(openAIProperties, vectorDBItems, promptItem, contentText);
+                List<string> response = ChatUtil.CreateListChatResult(chatRequestContext, promptItem, contentText);
                 if (response.Count > 0) {
                     // PromptChatResultに結果を保存
                     PromptChatResult.SetListContent(promptItem.Name, response);
@@ -525,7 +534,14 @@ namespace PythonAILib.Model.Content {
             // ChatUtl.CreateDictionaryChatResultを実行
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(openAIProperties, [], new PromptItem() {
+
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = ReferenceVectorDBItems,
+                OpenAIProperties = openAIProperties
+            };
+
+            Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
                 ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
                 Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
@@ -551,6 +567,12 @@ namespace PythonAILib.Model.Content {
         public List<VectorSearchResult> VectorSearch(List<VectorDBItem> vectorDBItems) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            // ChatRequestContextを作成
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = vectorDBItems,
+                OpenAIProperties = openAIProperties
+            };
+
             string contentText = Content;
             // VectorSearchRequestを作成
             VectorSearchRequest request = new() {
@@ -560,7 +582,7 @@ namespace PythonAILib.Model.Content {
                 }
             };
             // ベクトル検索を実行
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(openAIProperties, vectorDBItems, request);
+            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, request);
             return results;
         }
 

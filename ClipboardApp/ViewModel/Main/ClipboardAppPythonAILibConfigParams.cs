@@ -68,5 +68,10 @@ namespace ClipboardApp.ViewModel.Main {
             string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
             return docDBPath;
         }
+        // AutoGenWorkDir
+        public string GetAutoGenWorkDir() {
+            string workDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen");
+            return workDir;
+        }
     }
 }

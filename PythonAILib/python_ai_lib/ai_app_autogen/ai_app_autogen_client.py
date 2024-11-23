@@ -1,41 +1,49 @@
-import os
-import datetime
 from autogen.coding import LocalCommandLineCodeExecutor
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
+from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class AutoGenProps:
-    def __init__(self, openAIProps: OpenAIProps, work_dir_path: str):
-        if openAIProps is None:
-            raise ValueError("openAIProps is None")
-        # work_dir_pathがNoneの場合はエラー
-        if work_dir_path is None:
-            raise ValueError("work_dir_path is None")
-        # 基本設定
-        # work_dir_pathの下にyyyy-mm-dd-hh-mm-ss形式のディレクトリパスを追加
-        now = datetime.datetime.now()
-        work_dir_path = os.path.join(work_dir_path, now.strftime("%Y-%m-%d-%H-%M-%S"))
+    def __init__(self, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps],  props_dict: dict):
+        # OpenAIProps
+        self.openai_props = openai_props
+        # VectorDBPropsのリスト
+        self.vector_db_items = vector_db_items
 
-        self.work_dir_path = work_dir_path
-        self.OpenAIProps = openAIProps
+        # work_dir
+        work_dir = props_dict.get("work_dir", None)
+        if work_dir is None:
+            raise ValueError("work_dir is None")
+        self.work_dir_path = work_dir
 
+        # use_system_agent
+        self.use_system_agent: bool = props_dict.get("use_system_agent", False)
+
+        # group_chat
+        group_chat_dict = props_dict.get("group_chat", None)
+        if group_chat_dict is None:
+            raise ValueError("group_chat is None")
+        self.group_chat_dict = group_chat_dict
+
+    def use_system_agent(self):
+        return self.use_system_agent
 
     def create_llm_config(self):
         config_list = []
         llm_config_entry = {}
 
         llm_config_entry: dict = {}
-        llm_config_entry["model"] = self.OpenAIProps.OpenAICompletionModel
-        llm_config_entry["api_key"] = self.OpenAIProps.OpenAIKey
+        llm_config_entry["model"] = self.openai_props.OpenAICompletionModel
+        llm_config_entry["api_key"] = self.openai_props.OpenAIKey
 
         # AzureOpenAIの場合
-        if self.OpenAIProps.AzureOpenAI:
+        if self.openai_props.AzureOpenAI:
             llm_config_entry["api_type"] = "azure"
-            llm_config_entry["api_version"] = self.OpenAIProps.AzureOpenAICompletionVersion
-            if self.OpenAIProps.OpenAICompletionBaseURL:
-                llm_config_entry["base_url"] = self.OpenAIProps.OpenAICompletionBaseURL
+            llm_config_entry["api_version"] = self.openai_props.AzureOpenAICompletionVersion
+            if self.openai_props.OpenAICompletionBaseURL:
+                llm_config_entry["base_url"] = self.openai_props.OpenAICompletionBaseURL
             else:
-                llm_config_entry["base_url"] = self.OpenAIProps.AzureOpenAIEndpoint
+                llm_config_entry["base_url"] = self.openai_props.AzureOpenAIEndpoint
         
         # llm_configに追加
         config_list.append(llm_config_entry)

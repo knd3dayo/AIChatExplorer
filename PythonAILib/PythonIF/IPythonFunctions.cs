@@ -1,4 +1,5 @@
 using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
@@ -10,23 +11,23 @@ namespace PythonAILib.PythonIF {
 
         public string ExtractBase64ToText(string base64, string extension);
 
-        public void OpenAIEmbedding(OpenAIProperties props, string text);
+        public void OpenAIEmbedding(ChatRequestContext chatRequestContext, string text);
 
-        public ChatResult OpenAIChat(OpenAIProperties props, ChatRequest chatController);
+        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatController);
 
-        public ChatResult LangChainChat(OpenAIProperties props, ChatRequest chatController);
+        public ChatResult LangChainChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
-        public ChatResult AutoGenGroupChat(OpenAIProperties openAIProperties, ChatRequest chat, Action<string> iteration);
+        public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
-        public List<VectorSearchResult> VectorSearch(OpenAIProperties props, List<VectorDBItem> vectorDBItems, VectorSearchRequest request);
+        public List<VectorSearchResult> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest request);
 
-        public void DeleteVectorDBCollection(OpenAIProperties props, VectorDBItem vectorDBItem);
+        public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, GitFileInfo gitFileInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, GitFileInfo gitFileInfo);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ContentInfo contentInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo);
 
-        public void UpdateVectorDBIndex(OpenAIProperties props, ImageInfo imageInfo, VectorDBItem vectorDBItem);
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo);
 
         // 引数として渡されたList<List<string>>の文字列をExcelファイルに出力する
         public void ExportToExcel(string filePath, CommonDataTable data);

@@ -162,13 +162,13 @@ class LangChainUtil:
 
 
     @staticmethod
-    def langchain_chat(params: LangChainChatParameter):
+    def langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], params: LangChainChatParameter):
 
         # langchainのログを出力する
         langchain.verbose = True
         print("langchain_chat:start")
-        client = LangChainOpenAIClient(params.openai_props)
-        RetrievalQAUtilInstance = RetrievalQAUtil(client, params.vector_db_items)
+        client = LangChainOpenAIClient(openai_props)
+        RetrievalQAUtilInstance = RetrievalQAUtil(client, vector_db_items)
         ChatAgentExecutorInstance = RetrievalQAUtilInstance.create_agent_executor()
         print("langchain_chat:init done")
         
@@ -197,16 +197,13 @@ if __name__ == '__main__':
 
     from ai_app_openai.ai_app_openai_util import OpenAIProps
     from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
-    props:OpenAIProps  = OpenAIProps.env_to_props()
+    openai_props:OpenAIProps  = OpenAIProps.env_to_props()
     vector_db_item: VectorDBProps = VectorDBProps.get_vector_db_settings()
 
     params: LangChainChatParameter = LangChainChatParameter()
-    params.chat_history = []
-    params.openai_props = props
-    params.vector_db_items = [vector_db_item]
 
     params.prompt = question1
-    result1 = LangChainUtil.langchain_chat(params)
+    result1 = LangChainUtil.langchain_chat(openai_props, [vector_db_item], params)
 
     print(result1.get("output",""))
     page_conetnt_list = result1.get("page_content_list", [])
