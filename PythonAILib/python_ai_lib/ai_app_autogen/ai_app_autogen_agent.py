@@ -46,7 +46,7 @@ from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 class AutoGenAgentGenerator:
 
     @classmethod
-    def create_agent(cls, autogen_tools: AutoGenTools, params: dict) -> ConversableAgent:
+    def create_agent_from_definition(cls, autogen_tools: AutoGenTools, params: dict) -> ConversableAgent:
         autogen_props: AutoGenProps = autogen_tools.autogen_props
 
         # human_input_modeが指定されていない場合はデフォルト値を設定
@@ -100,7 +100,7 @@ class AutoGenAgentGenerator:
             name = data['name']
             description = data['description']
             # エージェントを作成
-            agent_obj = cls.create_agent(autogen_tools, data)
+            agent_obj = cls.create_agent_from_definition(autogen_tools, data)
             # dictに格納
             agent_dict[name] = (agent_obj, description)
 
@@ -111,49 +111,24 @@ class AutoGenAgentGenerator:
         return agent_dict
 
     @classmethod
-    def create_agents_dict_from_sheet(cls, autogen_tools: AutoGenTools, excel_file):
-        # Excelファイルを開く
-        wb = load_workbook(excel_file)
-        sheet = wb['agents']
+    def create_definiton(
+        cls, name: str, description: str, system_message: str, type: str, human_input_mode: str, 
+        is_termination_msg: str, code_execution_config: bool, llm_config: bool, tools: str) -> dict:
+        return {
+            "name": name,
+            "description": description,
+            "type": type,
+            "human_input_mode": human_input_mode,
+            "is_termination_msg": is_termination_msg,
+            "code_execution_config": code_execution_config,
+            "llm_config": llm_config,
+            "tools": tools
+        }
 
-        # ヘッダー行から列名を取得
-        headers = [cell.value for cell in sheet[1]]
-        name_index = headers.index('name')
-        description_index = headers.index('description')
-        system_message_index = headers.index('system_message')
-        type_index = headers.index('type')
-        tools_index = headers.index('tools')
-        human_input_mode_index = headers.index('human_input_mode')
-        is_termination_msg_index = headers.index('is_termination_msg')
-        code_execution_config_index = headers.index('code_execution_config')
-        llm_config_index = headers.index('llm_config')
-
-        agent_data_list = []
-        # 2行目から最終行まで処理を行う
-        for row in sheet.iter_rows(min_row=2, values_only=True):
-            # 各列の値を取得
-            name = row[name_index]
-            description = row[description_index]
-            system_message = row[system_message_index]
-            type_value = row[type_index]
-            tools = row[tools_index]
-            human_input_mode = row[human_input_mode_index]
-            is_termination_msg = row[is_termination_msg_index]
-            code_execution_config = row[code_execution_config_index]
-            llm_config = row[llm_config_index]
-
-            agent_data_list.append({
-                'name': name, 'description': description, 'system_message': system_message, 
-                'type': type_value, 'tools': tools, 'human_input_mode': human_input_mode,
-                'is_termination_msg': is_termination_msg, 'code_execution_config': code_execution_config,
-                'llm_config': llm_config
-            })
-            return cls.create_agents_dict(autogen_tools, agent_data_list)
-    
     @classmethod
-    def create_default_agents(cls, autogen_props: AutoGenProps, tools: AutoGenTools) -> dict[str, tuple[ConversableAgent, str]]:
+    def create_default_agents(cls, autogen_props: AutoGenProps, tools: AutoGenTools) -> dict[str, tuple[ConversableAgent, str, dict]]:
 
-        agents : dict[str, tuple[ConversableAgent, str]] = {}
+        agents : dict[str, tuple[ConversableAgent, str, dict]] = {}
         agents["user_proxy"] = cls.__create_user_proxy(autogen_props, tools)
         agents["code_executor"] = cls.__create_code_executor(autogen_props, tools, True)
         agents["code_writer"] = cls.__create_code_writer(autogen_props, tools)
@@ -170,26 +145,26 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_user_proxy(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # グループチャットの議題提供者
-        description = "ユーザーの依頼を達成するためのタスク一覧を考えて各エージェントにタスクを割り当てます。"
+        # Task assigner for group chat
+        description = "Creates a list of tasks to achieve the user's request and assigns tasks to each agent."
         user_proxy = autogen.UserProxyAgent(
             system_message="""
-                ユーザーの依頼を達成するため各エージェントと協力してタスクを実行します。
-                - まず、ユーザーの依頼を達成するためのプランを考えて、タスク一覧を作成します。
-                - 各エージェントにタスクを割り当て、タスクを実行します。
-                - 各エージェントによるタスク実行によりプランが達成されたら、[会議を終了]と返信します。
-                - 追加質問がない場合は、[会議を終了]と返信します。
+                Executes tasks in collaboration with each agent to achieve the user's request.
+                - First, create a plan and a list of tasks to achieve the user's request.
+                - Assign tasks to each agent and execute the tasks.
+                - When the plan is achieved by executing the tasks by each agent, reply with [End Meeting].
+                - If there are no additional questions, reply with [End Meeting].
                 """,
             name="user_proxy",
             human_input_mode="NEVER",
             code_execution_config=False,
-            is_termination_msg=lambda msg: "会議を終了" in msg["content"].lower(),
+            is_termination_msg=lambda msg: "end meeting" in msg["content"].lower(),
             description=description,
             llm_config=autogen_pros.create_llm_config()
         )
 
-        # user_proxyのregister_from_execution()を設定
-        for func, description  in autogen_tools.tools.values():
+        # Setting register_from_execution() for user_proxy
+        for func, description in autogen_tools.tools.values():
             print(f"register_for_execution: {func.__name__}")
             user_proxy.register_for_execution()(func)
 
@@ -197,21 +172,21 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # コードの作成者と実行者は分離する。以下はコード推論 Agent。LLM を持つ。
-        description = "ユーザーの指示に従い、Pythonスクリプトを作成します。"
+        # Separate the code writer and executor. Below is the code inference Agent with LLM.
+        description = "Creates Python scripts according to the user's instructions."
         code_writer_agent = ConversableAgent(
             "code-writer",
             system_message=f"""
-                あなたはスクリプト開発者です。
-                あなたがコードを書くと自動的に外部のアプリケーション上で実行されます。
-                ユーザーの指示に従ってあなたはコードを書きます。
-                コードの実行結果は、あなたがコードを投稿した後に自動的に表示されます。
-                ただし、次の条件を厳密に遵守する必要があります。
-                ルール:
-                * コードブロック内でのみコードを提案します。
-                * スクリプトの実行結果がエラーである場合、エラー文を元に対策を考え、修正したコードを再度作成します。
-                * スクリプトを実行した結果、情報を十分に得られなかった場合、現状得られた情報から修正したコードを再度作成します。
-                * あなたはユーザーの指示を最終目標とし、これを満たす迄何度もコードを作成・修正します。
+                You are a script developer.
+                When you write code, it is automatically executed on an external application.
+                You write code according to the user's instructions.
+                The execution result of the code is automatically displayed after you post the code.
+                However, you must strictly adhere to the following conditions:
+                Rules:
+                * Only propose code within code blocks.
+                * If the execution result of the script is an error, consider measures based on the error message and create revised code again.
+                * If the information obtained from the execution of the script is insufficient, create revised code again based on the currently obtained information.
+                * Your ultimate goal is the user's instructions, and you will create and revise code as many times as necessary to meet this goal.
                 """
         ,
             llm_config=autogen_pros.create_llm_config(),
@@ -224,14 +199,14 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_file_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # コードの作成者と実行者は分離する。以下はコード推論 Agent。LLM を持つ。
-        description = "ユーザーの指示に従い、Pythonでデータをファイルに保存します。"
+        # Separate the code writer and executor. Below is the code inference Agent with LLM.
+        description = "Saves data to a file in Python according to the user's instructions."
         file_writer = ConversableAgent(
             "file-writer",
             system_message=f"""
-                ユーザーの指示に従い、Pythonでデータをファイルに保存します。
-                デフォルトの保存場所は{autogen_pros.work_dir_path}です。
-                ユーザーからファイルの保存場所の指定があれば、指定された場所にファイルを保存します。
+                Saves data to a file in Python according to the user's instructions.
+                The default save location is {autogen_pros.work_dir_path}.
+                If the user specifies a save location, save the file to the specified location.
                 """
         ,
             llm_config=autogen_pros.create_llm_config(),
@@ -247,40 +222,40 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools, auto_execute_code: bool = False):
-        # コードの作成者と実行者は分離する。以下はコード実行者 Agent。LLM は持たない。
-        description = "コード作成者から提供されたコードを実行します。"
+        # Separate the code writer and executor. Below is the code executor Agent without LLM.
+        description = "Executes the code provided by the code writer."
         code_execution_agent = ConversableAgent(
             "code-execution",
             system_message=f"""
-                あなたはコード実行者です。
-                コード作成者から提供されたコードを実行します。
-                コードの実行結果を表示します。
+                You are a code executor.
+                Execute the code provided by the code writer.
+                Display the execution results of the code.
                 """,
             llm_config=False,
-            code_execution_config={"executor": autogen_pros.create_code_executor()},   
+            code_execution_config={"executor": autogen_pros.create_code_executor()},
             description=description,
             human_input_mode="NEVER",
         )
 
-        # コード実行者が自動的にコードを実行するようにするかどうか
-        # self.auto_execute_code == True の場合はhuman_input_mode="NEVER"とする
+        # Determine whether the code executor automatically executes the code
+        # If self.auto_execute_code == True, set human_input_mode to "NEVER"
         if auto_execute_code:
             code_execution_agent.human_input_mode = "NEVER"
         else:
-            code_execution_agent.human_input_mode = "ALWAYS" 
+            code_execution_agent.human_input_mode = "ALWAYS"
 
         return code_execution_agent, description
 
-    # ベクトル検索者を有効にする
+    # Enable Vector Searcher
     @classmethod
     def __create_vector_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # ベクトル検索者
-        description = "ユーザーの指示に従い、ベクトルデータベースから情報を検索します。"
+        # Vector Searcher
+        description = "Searches information from the vector database according to the user's instructions."
         vector_searcher = ConversableAgent(
             "vector-searcher",
             system_message="""
-                あなたはベクトル検索者です。ユーザーの指示に従い、ベクトルデータベースから情報を検索します。
-                提供された関数を用いて、検索した結果を表示します。
+                You are a vector searcher. You search for information from the vector database according to the user's instructions.
+                Use the provided function to display the search results.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -288,22 +263,22 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 利用可能な関数の情報をエージェントに登録する
+        # Register the information of available functions to the agent
         vector_search, description = autogen_tools.tools["vector_search"]
         vector_searcher.register_for_llm(description=description)(vector_search)
-        
+
         return vector_searcher, description
 
-    # ファイル抽出者を有効にする
+    # Enable File Extractor
     @classmethod
     def __create_file_extractor(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # ファイル抽出者
-        description = "ユーザーの指示に従い、ファイルから情報を抽出します。"
+        # File Extractor
+        description = "Extracts information from files according to the user's instructions."
         file_extractor = ConversableAgent(
             "file-extractor",
             system_message="""
-                あなたはファイル抽出者です。ユーザーの指示に従い、ファイルから情報を抽出します。
-                提供された関数を用いて、抽出した結果を表示します。
+                You are a file extractor. You extract information from files according to the user's instructions.
+                Use the provided function to display the extraction results.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -311,26 +286,26 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 利用可能な関数の情報をエージェントに登録する
+        # Register the information of available functions to the agent
         extract_text_from_file, description = autogen_tools.tools["extract_text_from_file"]
-        file_extractor.register_for_llm (description=description)(extract_text_from_file)
+        file_extractor.register_for_llm(description=description)(extract_text_from_file)
 
-        list_files_in_directory,  description = autogen_tools.tools["list_files_in_directory"]
-        file_extractor.register_for_llm (description=description)(list_files_in_directory)
+        list_files_in_directory, description = autogen_tools.tools["list_files_in_directory"]
+        file_extractor.register_for_llm(description=description)(list_files_in_directory)
 
         return file_extractor, description
 
     @classmethod
     def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # Web検索者
-        description = "Webのドキュメントを検索します。"
+        # Web Searcher
+        description = "Searches documents on the web."
         web_searcher = ConversableAgent(
             "azure-document-searcher",
             system_message="""
-                あなたはWeb検索者です。ユーザーの指示に従いWeb上のドキュメントを検索します。
-                - 提供されたsearch_duckduckgo関数を用いて、情報を検索します。
-                - リンク先に必要なドキュメントがない場合はさらにリンクされた情報を検索します。
-                - 必要なドキュメントがあった場合はドキュメントをextract_webpageで取得して、テキストをユーザーに提供します。
+                You are a web searcher. You search for documents on the web according to the user's instructions.
+                - Use the provided search_duckduckgo function to search for information.
+                - If the required document is not at the link destination, search for further linked information.
+                - If the required document is found, retrieve the document with extract_webpage and provide the text to the user.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -338,11 +313,11 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 指定したキーワードでAzureのドキュメントを検索します。
+        # Search for Azure documents with the specified keywords.
         search_duckduckgo, description = autogen_tools.tools["search_duckduckgo"]
         web_searcher.register_for_llm(description=description)(search_duckduckgo)
 
-        # 指定されたURLのテキストとリンクを取得します。
+        # Retrieve the text and links from the specified URL.
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         web_searcher.register_for_llm(description=description)(extract_webpage)
 
@@ -351,16 +326,16 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_wikipedia_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
         
-        # Web検索者
-        description = "指定されたURLから情報を取得します。"
+        # Web Searcher
+        description = "Retrieves information from the specified URL."
         wipkipedia_searcher = ConversableAgent(
             "wipkipedia-searcher",
             system_message="""
-                ユーザーの指示に従い、指定されたURLから情報を取得します。
-                - 提供された関数を用いて、指定されたURLのテキストとリンクを取得します。
-                - ユーザーからURLが提供されなかった場合は、WikiPedia(日本語版)から検索対象文字列に関連するページを検索します。
-                - リンク先に必要なドキュメントがない場合はさらにリンクされた情報を検索します。
-                - 必要なドキュメントがあった場合はドキュメントのテキストをユーザーに提供します
+                Retrieves information from the specified URL according to the user's instructions.
+                - Uses the provided function to retrieve text and links from the specified URL.
+                - If no URL is provided by the user, searches for relevant pages from the Japanese version of Wikipedia.
+                - If necessary documents are not available on the linked page, searches further linked information.
+                - Provides the text of the necessary documents to the user if they are available.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,   
@@ -368,13 +343,13 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 利用可能な関数の情報をエージェントに登録する
+        # Register information about available functions to the agent
 
-        # Wikipedia(日本語版)から検索対象文字列に関連するページを検索します。
+        # Searches for relevant pages from the Japanese version of Wikipedia.
         search_wikipedia_ja, description = autogen_tools.tools["search_wikipedia_ja"]
         wipkipedia_searcher.register_for_llm(description=description)(search_wikipedia_ja)
 
-        # 指定されたURLのテキストとリンクを取得します。
+        # Retrieves text and links from the specified URL.
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         wipkipedia_searcher.register_for_llm(description=description)(extract_webpage)
 
@@ -383,15 +358,15 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_azure_document_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
         
-        # Web検索者
-        description = "Azure関連のドキュメントを検索します。"
+        # Web Searcher
+        description = "Searches for Azure-related documents."
         azure_document_searcher = ConversableAgent(
             "azure-document-searcher",
             system_message="""
-                あなたはAzure関連のドキュメント検索者です。ユーザーの指示に従いWeb上のAzure関連のドキュメントを検索します。
-                - 提供されたsearch_duckduckgo関数を用いて、site:https://learn.microsoft.com/ja-jp/azure内の情報を検索します。
-                - リンク先に必要なドキュメントがない場合はさらにリンクされた情報を検索します。
-                - 必要なドキュメントがあった場合はドキュメントをextract_webpageで取得して、テキストをユーザーに提供します。
+                You are an Azure document searcher. Searches for Azure-related documents on the web according to user instructions.
+                - Uses the provided search_duckduckgo function to search within site:https://learn.microsoft.com/en-us/azure.
+                - If necessary documents are not available on the linked page, searches further linked information.
+                - Retrieves the necessary documents with extract_webpage and provides the text to the user.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -399,11 +374,11 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 指定したキーワードでAzureのドキュメントを検索します。
+        # Searches for Azure documents with the specified keywords.
         search_duckduckgo, description = autogen_tools.tools["search_duckduckgo"]
         azure_document_searcher.register_for_llm(description=description)(search_duckduckgo)
 
-        # 指定されたURLのテキストとリンクを取得します。
+        # Retrieves text and links from the specified URL.
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         azure_document_searcher.register_for_llm(description=description)(extract_webpage)
 
@@ -412,12 +387,12 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_file_checker(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
         
-        # ファイルチェッカー
-        description = "指定されたファイルが存在するか確認します。"
+        # File Checker
+        description = "Checks whether the specified file exists."
         file_checker = ConversableAgent(
             "file_checker",
             system_message="""
-                ファイルチェッカーです。指定されたファイルが存在するか確認します。
+                File Checker: Checks whether the specified file exists.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -425,21 +400,21 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 指定されたURLのテキストとリンクを取得します。
+        # Retrieves text and links from the specified URL.
         func, description = autogen_tools.tools["check_file"]
         file_checker.register_for_llm(description=description)(func)
 
         return file_checker, description
 
-    # 現在の時刻を取得するエージェントを作成
+    # Create an agent to get the current time
     @classmethod
     def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # 現在の時刻を取得するエージェント
-        description = "現在の時刻を取得します。"
+        # Agent to get the current time
+        description = "Retrieves the current time."
         current_time = ConversableAgent(
             "current_time",
             system_message="""
-                現在の時刻を取得します。
+                Retrieves the current time.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -447,7 +422,7 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # 現在の時刻を取得する関数を登録
+        # Register the function to get the current time
         func, description = autogen_tools.tools["get_current_time"]
         current_time.register_for_llm(description=description)(func)
 

@@ -182,7 +182,9 @@ def get_autogen_definition(context_json):
         vector_db_items = get_vector_db_objects(context_json)
         autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
         from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator
-        tool_definition_list, tools_list = AutoGenToolGenerator.export_tools_dict(autogen_props)
+        autogen_tools = AutoGenToolGenerator.create_default_tools(autogen_props)
+
+        tool_definition_list = AutoGenToolGenerator.create_definition_from_tools(autogen_tools)
         result: dict = {}
         result["tools"] = tool_definition_list
 
