@@ -13,7 +13,7 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
 using QAChat.View.PromptTemplate;
 using QAChat.View.PythonScript;
-using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 

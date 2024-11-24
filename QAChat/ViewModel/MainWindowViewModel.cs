@@ -1,4 +1,4 @@
-using QAChat.Control;
+using QAChat.View.Common;
 using QAChat.Model;
 using QAChat.ViewModel.QAChatMain;
 using WpfAppCommon.Utils;

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Common;
@@ -8,24 +7,20 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using QAChat.Control;
 using QAChat.Resource;
-using QAChat.Utils;
-using QAChat.View.EditChatItem;
+using QAChat.View.Chat;
 using QAChat.View.PromptTemplate;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel.PromptTemplateWindow;
-using QAChat.ViewModel.VectorDBWindow;
+using QAChat.ViewModel.PromptTemplate;
+using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain
-{
+namespace QAChat.ViewModel.QAChatMain {
     public class QAChatControlViewModel : CommonViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 
             QAChatStartupProps = props;
-
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
             List<VectorDBItem> vectorDBItems = props.ContentItem.ReferenceVectorDBItems;
             VectorDBItems = new(vectorDBItems);
@@ -41,23 +36,6 @@ namespace QAChat.ViewModel.QAChatMain
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
-
-
-        // CollectionName
-        private string? _CollectionName = null;
-        public string? CollectionName {
-            get {
-                return _CollectionName;
-            }
-            set {
-                _CollectionName = value;
-                OnPropertyChanged(nameof(CollectionName));
-            }
-        }
-
-        // 選択中のフォルダの全てのClipboardItem
-        public ObservableCollection<ContentItem> ClipboardItems { get; set; } = new();
-
 
         public ChatRequest ChatRequest { get; set; } = new();
 
@@ -89,9 +67,9 @@ namespace QAChat.ViewModel.QAChatMain
             }
         }
 
-        public static ChatContentItem? SelectedItem { get; set; }
+        public static ChatMessage? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatContentItem> ChatHistory {
+        public ObservableCollection<ChatMessage> ChatHistory {
             get {
                 return [.. ChatRequest.ChatHistory];
             }
@@ -159,17 +137,8 @@ namespace QAChat.ViewModel.QAChatMain
 
         public string PreviewJson {
             get {
-                // パラメーターJSONを作成
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                ChatRequestContext chatRequestContext = new() {
-                    VectorDBItems = [.. VectorDBItems],
-                    OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                    AutoGenProperties = new AutoGenProperties() {
-                        WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                    }
-                };
-                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
-                return parametersJson;
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems]);
+                return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
 
@@ -317,9 +286,11 @@ namespace QAChat.ViewModel.QAChatMain
 
         });
 
-        // Tabが変更されたときの処理
+        // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // リクエストのメッセージをアップデート
+                ChatRequest.UpdateMessage();
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
@@ -340,7 +311,7 @@ namespace QAChat.ViewModel.QAChatMain
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatContentItem> OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatMessage> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
@@ -349,7 +320,7 @@ namespace QAChat.ViewModel.QAChatMain
             QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
         });
         // 選択したチャット内容をクリップボードにコピーするコマンド
-        public SimpleDelegateCommand<ChatContentItem> CopySelectedChatItemCommand => new((item) => {
+        public SimpleDelegateCommand<ChatMessage> CopySelectedChatItemCommand => new((item) => {
             string text = $"{item.Role}:\n{item.Content}";
             Clipboard.SetText(text);
 
@@ -396,44 +367,12 @@ namespace QAChat.ViewModel.QAChatMain
             window.Close();
         });
 
+
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-
-                ChatRequestContext chatRequestContext = new() {
-                    VectorDBItems = [.. VectorDBItems],
-                    OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                    AutoGenProperties = new AutoGenProperties() {
-                        WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                        UseSystemAgent = true
-                    }
-                };
-                // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.Normal || ChatRequest.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
-                    // パラメーターファイルを作成
-                    string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
-                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-                    return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
-                }
-                // ModeがLangChainの場合は、LangChainChatを実行するコマンドを返す
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                    // パラメーターファイルを作成
-                    string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
-                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-                    return string.Join("\n\n", DebugUtil.CreateLangChainChatCommandLine(DebugUtil.DebugRequestParametersFile));
-                }
-
-                // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
-                    // パラメーターファイルを作成
-                    string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
-                    File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-
-                    return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
-                }
-
-                return "";
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems]);
+                return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }
 

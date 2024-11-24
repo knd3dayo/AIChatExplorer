@@ -20,6 +20,14 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("group_chat")]
         public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
 
+        // AutoGenAgent
+        [JsonPropertyName("agents")]
+        public List<AutoGenAgent> AutoGenAgents { get; set; } = new List<AutoGenAgent>();
+
+        // AutoGenTools
+        [JsonPropertyName("tools")]
+        public List<AutoGenTool> AutoGenTools { get; set; } = new List<AutoGenTool>();
+
         // OpenAIProperties
         [JsonPropertyName("open_ai_props")]
         public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
@@ -34,7 +42,9 @@ namespace PythonAILib.Model.AutoGen {
                 { "work_dir", WorkDir },
                 { "open_ai_props", OpenAIProperties.ToDict() },
                 { "group_chat", AutoGenGroupChat.ToDict() },
-                { "use_system_agent", UseSystemAgent },
+                { "agents", AutoGenAgent.ToDict(AutoGenAgents) },
+                { "tools", AutoGenTool.ToDict(AutoGenTools) },
+                { "use_default", UseSystemAgent },
             };
             return dict;
         }

@@ -13,7 +13,7 @@ using ClipboardApp.ViewModel.Main;
 using PythonAILib.Common;
 using QAChat;
 using WpfAppCommon.Utils;
-
+using PythonAILib.Model.AutoGen;
 
 namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
@@ -68,6 +68,10 @@ namespace ClipboardApp {
             ClipboardAppTabContainer container = new("main", mainPanel);
             container.CloseButtonVisibility = Visibility.Collapsed;
             TabItems.Add(container);
+
+            // AutoGenToolの初期化
+            AutoGenTool.Init();
+
         }
 
         public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];

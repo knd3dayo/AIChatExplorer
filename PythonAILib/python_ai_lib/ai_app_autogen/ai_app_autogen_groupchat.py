@@ -3,6 +3,7 @@ from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from collections.abc import Generator
 from typing import Any
+import queue
 
 from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents, AutoGenAgentGenerator
@@ -24,14 +25,22 @@ class AutoGenGroupChat:
         if self.init_autogent_agent is None:
             raise ValueError(f"init_agent not found: {init_agent_name}")
 
+        self.print_messages_function = self.create_print_messages_function()
+
+
+        # 途中のメッセージを格納するキュー
+        self.message_queue = queue.Queue()
+        # 終了フラグ
+        self.finished = False
+
+
     def run_group_chat(self, initial_message: str, max_round: int) -> Generator[Any, None, None]:
         
         init_agent = self.init_autogent_agent[0]
         agents = [agent[0] for agent in self.autogen_agents.agents.values()]
         # register_reply 
-        init_agent.register_reply([autogen.Agent, None], reply_func=self.autogen_agents.print_messages_function, config={"callback": None})
         for agent in agents:
-            agent.register_reply([autogen.Agent, None], reply_func=self.autogen_agents.print_messages_function, config={"callback": None})
+            agent.register_reply([autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
 
         # グループチャットを開始
         groupchat = autogen.GroupChat(
@@ -54,10 +63,58 @@ class AutoGenGroupChat:
                 import traceback
                 traceback.print_exc()
             finally:
-                self.autogen_agents.finish()
+                self.finish()
 
         thread = threading.Thread(target=start_chat)
         thread.start()
         # thread.join()  # スレッドが完了するまで待機
 
-        return self.autogen_agents.get_messages()
+        return self.get_messages()
+
+    # キューからメッセージを取得 yiled で返す
+    def get_messages(self) -> Generator[Any, None, None]:
+        while True:
+            if self.finished:
+                break
+            try:
+                message = self.message_queue.get(timeout=1)
+                yield message, False
+            except queue.Empty:
+                continue
+        
+        return None, True
+
+    # キューから取り出したメッセージを表示
+    def print_messages(self):
+        for message, is_last_message in self.get_messages():
+            if message is None:
+                break
+            print(message)
+
+    def create_print_messages_function(self):
+        def print_messages(recipient, messages, sender, config): 
+            if "callback" in config and  config["callback"] is not None:
+                callback = config["callback"]
+                callback(sender, recipient, messages[-1])
+
+            # Print the messages in the group chat.
+            # roleがuserまたはassistantの場合はrole, name, contentを表示
+            message = messages[-1]
+            header = f"role:[{message['role']}] name:[{message['name']}]\n------------------------------------------\n"
+            content = f"{message['content']}\n"
+            if message["role"] in ["user", "assistant"]:
+                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}{content}"
+            else:
+                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}" 
+            # queueにresponseを追加
+            self.message_queue.put(response)
+
+            return False, None  # required to ensure the agent communication flow continues
+        
+        return print_messages
+
+    # エージェントの終了処理
+    def finish(self):
+        self.finished = True
+        self.message_queue.put(None)
+        self.autogen_agents.finish()

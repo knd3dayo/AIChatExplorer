@@ -5,9 +5,9 @@ using QAChat.Model;
 namespace QAChat.ViewModel.QAChatMain {
     public class EditChatItemWindowViewModel : QAChatViewModelBase {
 
-        public ChatContentItem ChatItem { get; set; }
+        public ChatMessage ChatItem { get; set; }
 
-        public EditChatItemWindowViewModel(ChatContentItem chatItem) {
+        public EditChatItemWindowViewModel(ChatMessage chatItem) {
             ChatItem = chatItem;
             OnPropertyChanged(nameof(ChatItem));
         }

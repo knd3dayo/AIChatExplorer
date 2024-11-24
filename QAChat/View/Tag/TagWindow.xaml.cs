@@ -1,12 +1,12 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
 using PythonAILib.Model.Content;
-using QAChat.ViewModel.TagWindow;
+using QAChat.ViewModel.Tag;
 
 namespace QAChat.View.Tag
 {
     /// <summary>
-    /// TagWindow.xaml の相互作用ロジック
+    /// Tag.xaml の相互作用ロジック
     /// </summary>
     public partial class TagWindow : Window {
         public TagWindow() {

@@ -36,10 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Control\StatusMessage\StatusMessageWindow.xaml.cs">
+    <Compile Update="View\Common\StatusMessage\StatusMessageWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\ImageChat\ScreenShotCheckPromptWindow.xaml.cs">
+    <Compile Update="View\Chat\ScreenShotCheckPromptWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\PromptTemplate\EditPromptItemWindow.xaml.cs">
@@ -54,7 +54,7 @@
     <Compile Update="View\RAG\SelectCommitWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Control\StatusBar\MyStatusBar.xaml.cs">
+    <Compile Update="View\Common\StatusBar\MyStatusBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\VectorDB\EditVectorDBWindow.xaml.cs">
@@ -63,6 +63,10 @@
     <Compile Update="View\VectorDB\ListVectorDBWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModel\Common\" />
   </ItemGroup>
 
 </Project>

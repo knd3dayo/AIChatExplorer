@@ -444,6 +444,9 @@ namespace QAChat.Resource {
         public virtual string EditPromptTemplate { get; } = "プロンプトテンプレート編集";
         // RAGソース編集
         public virtual string EditGitRagSource { get; } = "RAGソース(git)編集";
+        // AutoGen定義編集
+        public virtual string EditAutoGenDefinition { get; } = "AutoGen定義編集";
+
 
         // -- 表示メニュー
         // テキストを右端で折り返す
@@ -468,6 +471,10 @@ namespace QAChat.Resource {
         #endregion
 
         #region SettingWindow
+        #endregion
+
+        #region 未整理
+
         #endregion
     }
 }

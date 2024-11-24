@@ -7,7 +7,7 @@ using PythonAILib.Model;
 namespace PythonAILib.PythonIF {
     public class ImageInfo(VectorDBUpdateMode mode, string id, string content, string base64String, string description, int reliability) 
         : UpdateVectorDBInfo(mode, id, description, reliability) {
-        // = ChatRequest.CreateImageURL(base64String);
+        // = ChatRequest.CreateImageURLFromBytes(base64String);
 
         [JsonPropertyName("content")]
         public string Content { get; set; } = content;

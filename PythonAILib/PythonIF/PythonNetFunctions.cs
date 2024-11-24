@@ -279,8 +279,13 @@ namespace PythonAILib.PythonIF {
         // AutoGenのGroupChatを実行する
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
 
-            // messageを取得
-            string message = chatRequest.CreatePromptText();
+            // ChatRequestから最後のユーザー発言を取得
+            ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
+            string message = lastUserRoleMessage.Content;
+            // messageが空の場合はLogWrapper.Errorを呼び出す
+            if (string.IsNullOrEmpty(message)) {
+                LogWrapper.Error("Message is empty.");
+            }
             // chatRequestContextをJSON文字列に変換
             string requestContextJson = chatRequestContext.ToJson();
 

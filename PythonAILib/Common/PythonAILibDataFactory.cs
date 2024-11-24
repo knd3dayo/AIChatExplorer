@@ -1,4 +1,5 @@
 using LiteDB;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
@@ -29,6 +30,15 @@ namespace PythonAILib.Common {
 
         // Statistics
         public const string StatisticsCollectionName = "Statistics";
+
+        // AutoGenTools
+        public const string AutoGenToolCollectionName = "AutoGenTool";
+
+        // AutoGenAgents
+        public const string AutoGenAgentCollectionName = "AutoGenAgent";
+
+        // AutoGenGroupChat
+        public const string AutoGenGroupChatCollectionName = "AutoGenGroupChat";
 
         private LiteDatabase? db;
 
@@ -266,6 +276,21 @@ namespace PythonAILib.Common {
         //--- Statistics
         public ILiteCollection<T> GetStatisticsCollection<T>() where T : MainStatistics {
             var collection = GetDatabase().GetCollection<T>(StatisticsCollectionName);
+            return collection;
+        }
+        // --- AutoGenTools
+        public ILiteCollection<T> GetAutoGenToolCollection<T>() where T : AutoGenTool {
+            var collection = GetDatabase().GetCollection<T>(AutoGenToolCollectionName);
+            return collection;
+        }
+        // --- AutoGenAgents
+        public ILiteCollection<T> GetAutoGenAgentCollection<T>() where T : AutoGenAgent {
+            var collection = GetDatabase().GetCollection<T>(AutoGenAgentCollectionName);
+            return collection;
+        }
+        // --- AutoGentGroupChat
+        public ILiteCollection<T> GetAutoGenGroupChatCollection<T>() where T : AutoGenGroupChat {
+            var collection = GetDatabase().GetCollection<T>(AutoGenGroupChatCollectionName);
             return collection;
         }
     }

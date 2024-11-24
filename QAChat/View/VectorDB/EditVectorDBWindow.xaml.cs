@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.ViewModel.VectorDBWindow;
+using QAChat.ViewModel.VectorDB;
 
 namespace QAChat.View.VectorDB
 {

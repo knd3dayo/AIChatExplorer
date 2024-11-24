@@ -75,7 +75,7 @@ namespace ClipboardApp.Model {
             clipboardItem.PromptChatResult = PromptChatResult;
 
             //-- ChatItemsをコピー
-            newItem.ChatItems = new List<ChatContentItem>(ChatItems);
+            newItem.ChatItems = new List<ChatMessage>(ChatItems);
 
         }
 

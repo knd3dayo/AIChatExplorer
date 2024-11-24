@@ -46,7 +46,7 @@ namespace PythonAILib.Model.Content {
 
         // OpenAIチャットのChatItemコレクション
         // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
-        public List<ChatContentItem> ChatItems { get; set; } = [];
+        public List<ChatMessage> ChatItems { get; set; } = [];
 
         // プロンプトテンプレートに基づくチャットの結果
         public PromptChatResult PromptChatResult { get; set; } = new();

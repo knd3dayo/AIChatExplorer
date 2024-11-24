@@ -1,12 +1,8 @@
-using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
-using PythonAILib.Model.Content;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
 
@@ -18,14 +14,7 @@ namespace PythonAILib.Model.Chat {
         public ChatRequest() {
             OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties();
         }
-
         protected OpenAIProperties OpenAIProperties { get; private set; }
-
-        //Encode設定
-        private static JsonSerializerOptions JsonSerializerOptions = new() {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-            WriteIndented = true
-        };
 
         [JsonPropertyName("model")]
         protected string Model {
@@ -33,15 +22,10 @@ namespace PythonAILib.Model.Chat {
                 return OpenAIProperties.OpenAICompletionModel;
             }
         }
-        [JsonPropertyName("messages")]
-        protected List<Dictionary<string, object>> Messages {
-            get {
-                return CreateOpenAIMessagesList();
-            }
-        }
         // temperature
         [JsonPropertyName("temperature")]
         protected double Temperature { get; set; } = 0.5;
+
         // response_format
         [JsonPropertyName("response_format")]
         protected Dictionary<string, string> ResponseFormat {
@@ -58,33 +42,51 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("max_tokens")]
         protected int MaxTokens { get; set; } = 0;
 
+        [JsonPropertyName("messages")]
+        protected List<Dictionary<string, object>> Messages {
+            get {
+                return ChatMessage.ToDictList(ChatHistory);
+            }
+        }
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
 
-        public List<ChatContentItem> ChatHistory { get; set; } = [];
+        public List<ChatMessage> ChatHistory { get; set; } = [];
 
         public string PromptTemplateText { get; set; } = "";
+
         public string ContentText { get; set; } = "";
 
+        // ImageのURLのリスト. data:image/{formatText};base64,{base64String}という形式の文字列のリスト
         public List<string> ImageURLs { get; set; } = [];
 
         public bool JsonMode { get; set; } = false;
 
 
 
-        public ChatContentItem? GetLastSendItem() {
+        public ChatMessage? GetLastSendItem() {
             // ChatItemsのうち、ユーザー発言の最後のものを取得
-            var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatContentItem.UserRole);
+            var lastUserChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatMessage.UserRole);
             return lastUserChatItem;
         }
 
-        public ChatContentItem? GetLastResponseItem() {
+        public ChatMessage? GetLastResponseItem() {
             // ChatItemsのうち、アシスタント発言の最後のものを取得
-            var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatContentItem.AssistantRole);
+            var lastAssistantChatItem = ChatHistory.LastOrDefault(x => x.Role == ChatMessage.AssistantRole);
             return lastAssistantChatItem;
         }
-        public string CreatePromptText() {
+
+        public void UpdateMessage() {
+            // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
+            ChatMessage lastUserRoleMessage;
+            if (ChatHistory.Count == 0 || ChatHistory.Last().Role == ChatMessage.AssistantRole) {
+                lastUserRoleMessage = new ChatMessage(ChatMessage.UserRole, "");
+                ChatHistory.Add(lastUserRoleMessage);
+            } else {
+                lastUserRoleMessage = ChatHistory.Last();
+            }
+
             // PromptTextを作成
             string promptText = "";
 
@@ -95,8 +97,14 @@ namespace PythonAILib.Model.Chat {
             // ContentTextを追加
             promptText += ContentText;
 
-            return promptText;
+            // 最後のユーザー発言のContentにPromptTextを追加
+            lastUserRoleMessage.Content = promptText;
+            // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加
+            if (ImageURLs.Count > 0) {
+                lastUserRoleMessage.ImageURLs = ImageURLs;
+            }
         }
+
         public Dictionary<string, object> ToDict() {
             // OpenAIのAPIに送信するJSONを作成
 
@@ -107,7 +115,7 @@ namespace PythonAILib.Model.Chat {
             // model, messages, temperature, response_format, max_tokensを設定する.
             var dc = new Dictionary<string, object> {
                 ["model"] = model,
-                ["messages"] = CreateOpenAIMessagesList(),
+                ["messages"] = ChatMessage.ToDictList(ChatHistory),
                 ["temperature"] = Temperature
             };
             // jsonModeがTrueの場合は、response_formatを json_objectに設定する
@@ -127,24 +135,26 @@ namespace PythonAILib.Model.Chat {
         }
 
         // Chatを実行する
-        public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction ) {
+        public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             if (this.ChatMode == OpenAIExecutionModeEnum.Normal) {
-                // リクエストをChatItemsに追加
-
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+                // リクエストメッセージを最新化
+                UpdateMessage();
                 // 通常のChatを実行する。
                 ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, this);
                 if (result == null) {
                     return null;
                 }
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
                 return result;
             }
             if (this.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                // リクエストメッセージを最新化
+                UpdateMessage();
                 // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
                 ContentText += ChatUtil.GenerateVectorSearchResult(chatRequestContext, ContentText);
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, ContentText));
+                // リクエストメッセージを最新化
+                UpdateMessage();
 
                 // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
                 ChatResult? result = ChatUtil.ExecuteChatOpenAIRAG(chatRequestContext, this);
@@ -152,12 +162,13 @@ namespace PythonAILib.Model.Chat {
                     return null;
                 }
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
                 return result;
 
             }
             if (this.ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+                // リクエストメッセージを最新化
+                UpdateMessage();
 
                 // ChatModeがLangChainの場合は、LangChainChatを実行する。
                 ChatResult? result = ChatUtil.ExecuteChatLangChain(chatRequestContext, this);
@@ -165,7 +176,7 @@ namespace PythonAILib.Model.Chat {
                     return null;
                 }
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatContentItem(ChatContentItem.AssistantRole, result.Output, result.PageSourceList));
+                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
                 return result;
             }
             if (this.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
@@ -176,9 +187,10 @@ namespace PythonAILib.Model.Chat {
         }
         // AutoGenGroupChatを実行する
         public ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            ChatHistory.Add(new ChatContentItem(ChatContentItem.UserRole, CreatePromptText()));
+            // リクエストメッセージを最新化
+            UpdateMessage();
             // 結果
-            ChatContentItem result = new(ChatContentItem.AssistantRole, "", []);
+            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
             ChatHistory.Add(result);
 
             // AutoGenGroupChatを実行する
@@ -186,28 +198,6 @@ namespace PythonAILib.Model.Chat {
                 result.Content += message;
                 iterateAction(message);
             });
-        }
-
-        private List<Dictionary<string, object>> CreateOpenAIMessagesList() {
-            //OpenAIのリクエストパラメーターのMessage部分のデータを作成
-            // Messages部分はRoleとContentからなるDictionaryのリスト
-            List<Dictionary<string, object>> messages = [];
-            foreach (var item in ChatHistory) {
-                var itemDict = new Dictionary<string, object> {
-                    ["role"] = item.Role,
-                    ["content"] = ChatUtil.CreateOpenAIContentList(item.Content, item.ImageURLs)
-                };
-                messages.Add(itemDict);
-            }
-            // このオブジェクトのプロパティを基にしたContentを作成
-            List<string> imageURLs = [.. ImageURLs];
-
-            var dc = new Dictionary<string, object> {
-                ["role"] = ChatContentItem.UserRole,
-                ["content"] = ChatUtil.CreateOpenAIContentList(CreatePromptText(), imageURLs)
-            };
-            messages.Add(dc);
-            return messages;
         }
     }
 }

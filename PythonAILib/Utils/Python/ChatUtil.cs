@@ -1,7 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
@@ -10,8 +8,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Utils.Python
-{
+namespace PythonAILib.Utils.Python {
     public class ChatUtil {
 
         // JSON形式の結果をパースしてリストに変換
@@ -196,7 +193,7 @@ namespace PythonAILib.Utils.Python
         public static string CreateImageURLFromFilePath(string filePath) {
             // filePathから画像のBase64文字列を作成
             byte[] imageBytes = System.IO.File.ReadAllBytes(filePath);
-            string result = CreateImageURL(imageBytes);
+            string result = CreateImageURLFromBytes(imageBytes);
             return result;
         }
 
@@ -213,36 +210,11 @@ namespace PythonAILib.Utils.Python
             return result;
         }
 
-        public static string CreateImageURL(byte[] imageBytes) {
+        public static string CreateImageURLFromBytes(byte[] imageBytes) {
             // filePathから画像のBase64文字列を作成
             string base64String = Convert.ToBase64String(imageBytes);
             string result = CreateImageURL(base64String);
             return result;
         }
-
-        public static List<Dictionary<string, object>> CreateOpenAIContentList(string content, List<string> imageURLs) {
-
-            //OpenAIのリクエストパラメーターのContent部分のデータを作成
-            List<Dictionary<string, object>> parameters = [];
-            // Contentを作成
-            var dc = new Dictionary<string, object> {
-                ["type"] = "text",
-                ["text"] = content
-            };
-            parameters.Add(dc);
-
-            foreach (var imageURL in imageURLs) {
-                // ImageURLプロパティを追加
-                dc = new Dictionary<string, object> {
-                    ["type"] = "image_url",
-                    ["image_url"] = new Dictionary<string, object> {
-                        ["url"] = imageURL
-                    }
-                };
-                parameters.Add(dc);
-            }
-            return parameters;
-        }
-
     }
 }

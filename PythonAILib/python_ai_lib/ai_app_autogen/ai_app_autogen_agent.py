@@ -2,7 +2,6 @@
 from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from collections.abc import Generator
-import queue
 from typing import Any
 
 from ai_app_autogen.ai_app_autogen_tools import AutoGenTools, AutoGenToolGenerator
@@ -10,8 +9,6 @@ from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class AutoGenAgents:
-    # 途中のメッセージを格納するキュー
-    message_queue = queue.Queue()
 
     def __init__(self, autogen_props: AutoGenProps, autogen_tools: AutoGenTools, agents_dict: list[dict], auto_execute_code: bool = False):
         
@@ -21,8 +18,6 @@ class AutoGenAgents:
         # self.auto_execute_code = auto_execute_code
         self.auto_execute_code = True
         
-        self.print_messages_function = AutoGenAgents.create_print_messages_function()
-
         self.autogen_tools = autogen_tools
 
         self.agents : dict[str, tuple[ConversableAgent, str]] = {}
@@ -33,8 +28,6 @@ class AutoGenAgents:
         for agent_dict in agents_dict:
             self.agents.update(AutoGenAgentGenerator.create_agents_dict(self.autogen_tools, agent_dict))
 
-        # 終了フラグ
-        self.finished = False
         self.temp_dir = None
 
 
@@ -43,50 +36,8 @@ class AutoGenAgents:
 
     # エージェントの終了処理
     def finish(self):
-        self.finished = True
-        self.message_queue.put(None)
         if self.temp_dir:
             self.temp_dir.cleanup()
-
-    # キューからメッセージを取得 yiled で返す
-    def get_messages(self) -> Generator[Any, None, None]:
-        while True:
-            if self.finished:
-                break
-            message = self.message_queue.get()
-            yield message, False
-        
-        return None, True
-
-    # キューから取り出したメッセージを表示
-    def print_messages(self):
-        for message, is_last_message in self.get_messages():
-            if message is None:
-                break
-            print(message)
-
-    @classmethod
-    def create_print_messages_function(cls):
-        def print_messages(recipient, messages, sender, config): 
-            if "callback" in config and  config["callback"] is not None:
-                callback = config["callback"]
-                callback(sender, recipient, messages[-1])
-
-            # Print the messages in the group chat.
-            # roleがuserまたはassistantの場合はrole, name, contentを表示
-            message = messages[-1]
-            header = f"role:[{message['role']}] name:[{message['name']}]\n------------------------------------------\n"
-            content = f"{message['content']}\n"
-            if message["role"] in ["user", "assistant"]:
-                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}{content}"
-            else:
-                response = f"Messages sent to: {recipient.name} | num messages: {len(messages)}\n{header}" 
-            # queueにresponseを追加
-            cls.message_queue.put(response)
-
-            return False, None  # required to ensure the agent communication flow continues
-        
-        return print_messages
 
 from openpyxl import load_workbook
 from autogen import ConversableAgent, UserProxyAgent

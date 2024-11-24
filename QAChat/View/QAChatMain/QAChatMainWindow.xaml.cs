@@ -1,5 +1,4 @@
 using System.Windows;
-using QAChat.Control;
 using QAChat.ViewModel;
 
 namespace QAChat.View.QAChatMain {

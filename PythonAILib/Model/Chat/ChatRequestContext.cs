@@ -41,5 +41,19 @@ namespace PythonAILib.Model.Chat {
             return JsonSerializer.Serialize(ToDict(), options);
         }
 
+        // CreateDefaultChatRequestContext 
+        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorDBItem> vectorDBItems) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = vectorDBItems,
+                OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                AutoGenProperties = new AutoGenProperties() {
+                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
+                    UseSystemAgent = true
+                }
+            };
+            return chatRequestContext;
+        }
+
     }
 }

@@ -1,6 +1,6 @@
 using System.Windows;
 using PythonAILib.Model.Chat;
-using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.PromptTemplate;
 
 namespace QAChat.View.PromptTemplate
 {

@@ -1,8 +1,7 @@
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.ClipboardItemFolder;
 using ClipboardApp.ViewModel.Content;
-using QAChat.Control;
+using QAChat.ViewModel;
 
 namespace ClipboardApp.ViewModel.Chat {
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

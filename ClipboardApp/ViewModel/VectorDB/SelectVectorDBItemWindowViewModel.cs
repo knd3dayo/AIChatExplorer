@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.VectorDB;
 using QAChat.Resource;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel.VectorDBWindow;
+using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.VectorDB {

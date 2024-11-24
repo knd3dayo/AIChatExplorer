@@ -68,6 +68,9 @@ namespace QAChat.Resource {
         // Edit Git RAG Source
         public override string EditGitRagSource { get; } = "Edit Git RAG Source";
 
+        // AutoGen定義編集
+        public override string EditAutoGenDefinition { get; } = "Edit AutoGen Definition";
+
         // -- View Menu --
         // Wrap text at the right edge
         public override string TextWrapping { get; } = "Wrap text at the right edge";

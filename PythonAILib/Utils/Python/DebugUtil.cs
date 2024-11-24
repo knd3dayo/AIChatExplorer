@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Unicode;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
-using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.Utils.Python {
     public class DebugUtil {
@@ -87,6 +86,39 @@ namespace PythonAILib.Utils.Python {
 
             return cmdLines;
         }
+
+        // Chatを実行するコマンド文字列を生成する。
+        public static string CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+            // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequest.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                // パラメーターファイルを作成
+                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
+            }
+            // ModeがLangChainの場合は、LangChainChatを実行するコマンドを返す
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.LangChain) {
+                // パラメーターファイルを作成
+                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                return string.Join("\n\n", DebugUtil.CreateLangChainChatCommandLine(DebugUtil.DebugRequestParametersFile));
+            }
+
+            // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
+                // パラメーターファイルを作成
+                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+
+                return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
+            }
+
+            return "";
+
+
+
+        }
+
         // OpenAIチャットを実行するコマンド文字列を生成する。
         public static List<string> CreateOpenAIChatCommandLine(string parametersJsonFile) {
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く

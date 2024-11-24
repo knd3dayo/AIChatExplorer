@@ -8,9 +8,10 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
+using QAChat.View.AutoGen;
 using QAChat.View.PromptTemplate;
 using QAChat.View.Tag;
-using QAChat.ViewModel.PromptTemplateWindow;
+using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
@@ -133,6 +134,10 @@ namespace ClipboardApp {
         // メニューの「タグ編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenTagWindowCommand => new((parameter) => {
             OpenTagWindowCommandExecute();
+        });
+        // メニューの「AutoGen定義編集」をクリックしたときの処理
+        public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
+            ListAutoGenItemWindow.OpenListAutoGenItemWindow();
         });
 
         // バージョン情報画面を開く処理

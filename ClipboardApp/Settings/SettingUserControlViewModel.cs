@@ -486,9 +486,9 @@ namespace ClipboardApp.Settings
             try {
                 // ChatControllerを作成
                 ChatRequest chatRequest = new();
-                List<ChatContentItem> chatItems = [];
+                List<ChatMessage> chatItems = [];
                 // ChatItemを追加
-                ChatContentItem chatItem = new(ChatContentItem.UserRole, "Hello");
+                ChatMessage chatItem = new(ChatMessage.UserRole, "Hello");
                 chatItems.Add(chatItem);
                 chatRequest.ChatHistory = chatItems;
                 chatRequest.ChatMode = OpenAIExecutionModeEnum.Normal;
@@ -516,7 +516,7 @@ namespace ClipboardApp.Settings
         private void TestLangChain() {
             try {
                 ChatRequest chatRequest = new();
-                List<ChatContentItem> chatItems = [new ChatContentItem(ChatContentItem.UserRole, "Hello")];
+                List<ChatMessage> chatItems = [new ChatMessage(ChatMessage.UserRole, "Hello")];
                 chatRequest.ChatHistory = chatItems;
                 chatRequest.ChatMode = OpenAIExecutionModeEnum.LangChain;
 

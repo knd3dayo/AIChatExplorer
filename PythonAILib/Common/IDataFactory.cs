@@ -1,4 +1,5 @@
 using LiteDB;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
@@ -33,9 +34,16 @@ namespace PythonAILib.Common {
         // --- Python Script
         public ILiteCollection<T> GetScriptCollection<T>() where T : ScriptItem;
 
-
         // --- Statistics
         public ILiteCollection<T> GetStatisticsCollection<T>() where T : MainStatistics;
 
+        // --- AutoGenTools
+        public ILiteCollection<T> GetAutoGenToolCollection<T>() where T : AutoGenTool;
+
+        // --- AutoGenAgents
+        public ILiteCollection<T> GetAutoGenAgentCollection<T>() where T : AutoGenAgent;
+
+        // --- AutoGentGroupChat
+        public ILiteCollection<T> GetAutoGenGroupChatCollection<T>() where T : AutoGenGroupChat;
     }
 }

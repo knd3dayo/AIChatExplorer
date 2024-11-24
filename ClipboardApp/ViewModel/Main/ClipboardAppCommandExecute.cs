@@ -12,12 +12,12 @@ using ClipboardApp.View.VectorDB;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
-using QAChat.Control;
 using QAChat.Resource;
-using QAChat.View.ImageChat;
+using QAChat.View.Chat;
 using QAChat.View.RAG;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel.VectorDBWindow;
+using QAChat.ViewModel;
+using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {

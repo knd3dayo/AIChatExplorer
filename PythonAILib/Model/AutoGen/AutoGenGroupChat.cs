@@ -1,10 +1,10 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
+using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenGroupChat {
+
+        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "default";
@@ -15,9 +15,11 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("init_agent_name")]
         public string InitAgentName { get; set; } = "user_proxy";
 
+        [JsonPropertyName("agent_names")]
+        public List<string> AgentNames { get; set; } = [];
         public List<AutoGenAgent> AutoGenAgents { get; set; } = [];
 
-        public List<AutoGentTool> AutoGentTools { get; set; } = [];
+        public List<AutoGenTool> AutoGentTools { get; set; } = [];
 
         // ToDict
         public Dictionary<string, object> ToDict() {
@@ -25,10 +27,26 @@ namespace PythonAILib.Model.AutoGen {
                 { "name", Name },
                 { "description", Description },
                 { "init_agent_name", InitAgentName },
-                { "agents", AutoGenAgent.ToDict(AutoGenAgents) },
-                { "tools", AutoGentTool.ToDict(AutoGentTools) },
+                { "agent_names", string.Join(",", AgentNames) },
             };
             return dict;
+        }
+
+        // Save
+        public void Save() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            collection.Upsert(this);
+        }
+
+        // Delete
+        public void Delete() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            collection.Delete(this.Id);
+        }
+        // FindAll
+        public static List<AutoGenGroupChat> FindAll() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            return collection.FindAll().ToList();
         }
     }
 }

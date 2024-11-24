@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenAgent {
 
+        public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         [JsonPropertyName("name")]
         public string Name { get; set; } = "";
@@ -75,6 +70,23 @@ namespace PythonAILib.Model.AutoGen {
                 dictList.Add(ToDict(item));
             }
             return dictList;
+        }
+
+        // Save
+        public void Save() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenAgentCollection<AutoGenAgent>();
+            collection.Upsert(this);
+        }
+        // Delete
+        public void Delete() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenAgentCollection<AutoGenAgent>();
+            collection.Delete(this.Id);
+        }
+
+        // FindAll
+        public static List<AutoGenAgent> FindAll() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenAgentCollection<AutoGenAgent>();
+            return collection.FindAll().ToList();
         }
     }
 }
