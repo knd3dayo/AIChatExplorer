@@ -28,7 +28,7 @@ namespace PythonAILib.Utils.Python {
             // python_ai_libのディレクトリ
             string pythonAILibDir = Path.Combine(appDir, "python_ai_lib");
             // debug用のScriptのディレクトリ
-            string debugScriptDir = Path.Combine(pythonAILibDir, "debug");
+            string debugScriptDir = Path.Combine(pythonAILibDir, "debug_tool");
             // Scriptのフルパス
             string pythonScriptPath = Path.Combine(debugScriptDir, pythonScriptName);
             // 文字コードをUTF-8に設定
