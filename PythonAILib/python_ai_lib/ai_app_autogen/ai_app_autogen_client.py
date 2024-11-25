@@ -25,6 +25,11 @@ class AutoGenProps:
             raise ValueError("group_chat is None")
         self.group_chat_dict = group_chat_dict
 
+        # tools
+        self.tools_list = group_chat_dict.get("tools", [])
+        # agents
+        self.agents_list = group_chat_dict.get("agents", [])
+        
     def create_llm_config(self):
         config_list = []
         llm_config_entry = {}

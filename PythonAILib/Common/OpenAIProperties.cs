@@ -26,7 +26,7 @@ namespace PythonAILib.Common {
         [JsonPropertyName("OpenAIEmbeddingBaseURL")]
         public string OpenAIEmbeddingBaseURL { get; set; } = "";
 
-        // ToDict
+        // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "OpenAIKey", OpenAIKey },

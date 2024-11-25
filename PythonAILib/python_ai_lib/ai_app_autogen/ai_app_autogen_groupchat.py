@@ -14,14 +14,28 @@ class AutoGenGroupChat:
         self.autogen_props = autogen_props
         group_chat_dict = autogen_props.group_chat_dict
         self.name = group_chat_dict.get("name", "default")
-        tools_dict = group_chat_dict.get("tools", {})
-        self.autogen_tools = AutoGenTools(self.autogen_props, tools_dict)
-
-        agents_dict = group_chat_dict.get("agents", {})
-        self.autogen_agents = AutoGenAgents(self.autogen_props, self.autogen_tools, agents_dict)
+        agent_names_str = group_chat_dict.get("agent_names", "")
+        agent_names = agent_names_str.split(",")
 
         init_agent_name = group_chat_dict.get("init_agent", "user_proxy")
+
+
+        default_autogen_tools = AutoGenTools(self.autogen_props, autogen_props.tools_list)
+        default_autogen_agents = AutoGenAgents(self.autogen_props, default_autogen_tools, autogen_props.agents_list)
+
+        # nameがdefaultの場合はデフォルトのエージェントを使用
+        if self.name == "default":
+            self.autogen_agents = default_autogen_agents
+        else:
+            self.autogen_agents = []
+            for agent_name in agent_names:
+                agent = default_autogen_agents.agents.get(agent_name, None)
+                if agent is None:
+                    raise ValueError(f"agent not found: {agent_name}")
+                self.autogen_agents.append(agent)
+
         self.init_autogent_agent = self.autogen_agents.agents.get(init_agent_name, None)
+
         if self.init_autogent_agent is None:
             raise ValueError(f"init_agent not found: {init_agent_name}")
 

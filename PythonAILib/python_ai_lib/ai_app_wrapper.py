@@ -189,8 +189,8 @@ def get_autogen_definition(context_json):
         result["tools"] = tool_definition_list
 
         from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator
-        agent_dfinition_list = AutoGenAgentGenerator.export_agents_definition(autogen_props, tools_list)
-        result["agents"] = agent_dfinition_list
+        agent_dfinition_list = AutoGenAgentGenerator.create_agent_from_definition(autogen_props, autogen_tools)
+        result["agents"] = [ item[2] for item in agent_dfinition_list]
 
 
         return result

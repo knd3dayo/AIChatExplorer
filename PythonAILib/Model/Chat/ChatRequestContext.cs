@@ -27,7 +27,7 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("openai_props")]
         public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
 
-        // ToDict
+        // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "vector_db_items", VectorDBItem.ToDictList(VectorDBItems) },

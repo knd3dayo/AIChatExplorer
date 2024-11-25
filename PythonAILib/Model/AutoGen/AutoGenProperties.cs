@@ -36,14 +36,14 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("use_system_agent")]
         public bool UseSystemAgent { get; set; } = false;
 
-        // ToDict
+        // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "work_dir", WorkDir },
                 { "open_ai_props", OpenAIProperties.ToDict() },
                 { "group_chat", AutoGenGroupChat.ToDict() },
-                { "agents", AutoGenAgent.ToDict(AutoGenAgents) },
-                { "tools", AutoGenTool.ToDict(AutoGenTools) },
+                { "agents", AutoGenAgent.ToDictList(AutoGenAgents) },
+                { "tools", AutoGenTool.ToDictList(AutoGenTools) },
                 { "use_default", UseSystemAgent },
             };
             return dict;

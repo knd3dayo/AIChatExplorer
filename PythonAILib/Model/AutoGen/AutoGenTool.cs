@@ -14,7 +14,7 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("content")]
         public string Content { get; set; } = "";
 
-        // ToDict
+        // ToDictList
         public static Dictionary<string, object> ToDict(AutoGenTool data) {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
@@ -24,8 +24,8 @@ namespace PythonAILib.Model.AutoGen {
             };
             return dict;
         }
-        // ToDict
-        public static List<Dictionary<string, object>> ToDict(List<AutoGenTool> data) {
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(List<AutoGenTool> data) {
             List<Dictionary<string, object>> dictList = new List<Dictionary<string, object>>();
             foreach (AutoGenTool item in data) {
                 dictList.Add(ToDict(item));

@@ -46,7 +46,7 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("llm")]
         public bool Llm { get; set; } = false;
 
-        // ToDict
+        // ToDictList
         public static Dictionary<string, object> ToDict(AutoGenAgent data) {
             // Create a dictionary
             Dictionary<string, object> dict = new Dictionary<string, object> {
@@ -62,8 +62,8 @@ namespace PythonAILib.Model.AutoGen {
             };
             return dict;
         }
-        // ToDict
-        public static List<Dictionary<string, object>> ToDict(List<AutoGenAgent> data) {
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(List<AutoGenAgent> data) {
             // Create a list of dictionaries
             List<Dictionary<string, object>> dictList = new List<Dictionary<string, object>>();
             foreach (AutoGenAgent item in data) {

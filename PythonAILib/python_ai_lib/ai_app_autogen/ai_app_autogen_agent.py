@@ -21,9 +21,8 @@ class AutoGenAgents:
         self.autogen_tools = autogen_tools
 
         self.agents : dict[str, tuple[ConversableAgent, str]] = {}
-        if self.autogen_props.use_system_agent:
-            print("Using system agents")
-            self.agents.update(AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.autogen_tools))
+        print("Default agents")
+        self.agents.update(AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.autogen_tools))
         
         for agent_dict in agents_dict:
             self.agents.update(AutoGenAgentGenerator.create_agents_dict(self.autogen_tools, agent_dict))
@@ -39,7 +38,6 @@ class AutoGenAgents:
         if self.temp_dir:
             self.temp_dir.cleanup()
 
-from openpyxl import load_workbook
 from autogen import ConversableAgent, UserProxyAgent
 from ai_app_autogen.ai_app_autogen_client import AutoGenProps
 
@@ -102,10 +100,10 @@ class AutoGenAgentGenerator:
             # エージェントを作成
             agent_obj = cls.create_agent_from_definition(autogen_tools, data)
             # dictに格納
-            agent_dict[name] = (agent_obj, description)
+            agent_dict[name] = (agent_obj, description, data)
 
         # 結果を表示（必要に応じて）
-        for name, (agent, desc) in agent_dict.items():
+        for name, (agent, desc, _ ) in agent_dict.items():
             print(f'Name: {name}, Description: {desc}, Agent: {agent}')
         
         return agent_dict
@@ -168,7 +166,20 @@ class AutoGenAgentGenerator:
             print(f"register_for_execution: {func.__name__}")
             user_proxy.register_for_execution()(func)
 
-        return user_proxy, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="user_proxy",
+            description=description,
+            system_message="",
+            type="userproxy",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return user_proxy, description, definition
 
     @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -194,8 +205,20 @@ class AutoGenAgentGenerator:
             description=description,
             human_input_mode="NEVER",
         )
+        # create definition dict
+        definition = cls.create_definiton(
+            name="code_writer",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
 
-        return code_writer_agent, description
+        return code_writer_agent, description, definition
 
     @classmethod
     def __create_file_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -218,7 +241,19 @@ class AutoGenAgentGenerator:
         # register_for_llm
         file_writer.register_for_llm(description=description)(save_tools)
 
-        return file_writer, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="file_writer",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+        return file_writer, description, definition
 
     @classmethod
     def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools, auto_execute_code: bool = False):
@@ -244,7 +279,20 @@ class AutoGenAgentGenerator:
         else:
             code_execution_agent.human_input_mode = "ALWAYS"
 
-        return code_execution_agent, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="code_executor",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=True,
+            llm_config=False,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return code_execution_agent, description, definition
 
     # Enable Vector Searcher
     @classmethod
@@ -267,7 +315,20 @@ class AutoGenAgentGenerator:
         vector_search, description = autogen_tools.tools["vector_search"]
         vector_searcher.register_for_llm(description=description)(vector_search)
 
-        return vector_searcher, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="vector_searcher",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return vector_searcher, description, definition
 
     # Enable File Extractor
     @classmethod
@@ -293,7 +354,20 @@ class AutoGenAgentGenerator:
         list_files_in_directory, description = autogen_tools.tools["list_files_in_directory"]
         file_extractor.register_for_llm(description=description)(list_files_in_directory)
 
-        return file_extractor, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="file_extractor",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return file_extractor, description, definition
 
     @classmethod
     def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -321,7 +395,20 @@ class AutoGenAgentGenerator:
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         web_searcher.register_for_llm(description=description)(extract_webpage)
 
-        return web_searcher, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="web_searcher",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return web_searcher, description, definition
 
     @classmethod
     def __create_wikipedia_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -353,7 +440,20 @@ class AutoGenAgentGenerator:
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         wipkipedia_searcher.register_for_llm(description=description)(extract_webpage)
 
-        return wipkipedia_searcher, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="wipkipedia_searcher",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return wipkipedia_searcher, description, definition
 
     @classmethod
     def __create_azure_document_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -382,7 +482,19 @@ class AutoGenAgentGenerator:
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         azure_document_searcher.register_for_llm(description=description)(extract_webpage)
 
-        return azure_document_searcher, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="azure_document_searcher",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+        return azure_document_searcher, description, definition
 
     @classmethod
     def __create_file_checker(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
@@ -404,7 +516,20 @@ class AutoGenAgentGenerator:
         func, description = autogen_tools.tools["check_file"]
         file_checker.register_for_llm(description=description)(func)
 
-        return file_checker, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="file_checker",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return file_checker, description, definition
 
     # Create an agent to get the current time
     @classmethod
@@ -426,4 +551,17 @@ class AutoGenAgentGenerator:
         func, description = autogen_tools.tools["get_current_time"]
         current_time.register_for_llm(description=description)(func)
 
-        return current_time, description
+        # create definition dict
+        definition = cls.create_definiton(
+            name="current_time",
+            description=description,
+            system_message="",
+            type="assistant",
+            human_input_mode="NEVER",
+            is_termination_msg="end meeting",
+            code_execution_config=False,
+            llm_config=True,
+            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
+        )
+
+        return current_time, description, definition

@@ -104,7 +104,7 @@ namespace PythonAILib.Model.VectorDB {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
-        // ToDict
+        // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "VectorDBName", Name },
