@@ -17,3 +17,4 @@ flaml[automl]
 selenium
 webdriver-manager
 duckduckgo-search
+promptflow-devkit

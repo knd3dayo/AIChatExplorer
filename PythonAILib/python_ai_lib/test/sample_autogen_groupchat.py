@@ -38,9 +38,20 @@ class AutoGenGroupChat:
 
 if __name__ == "__main__":
     import sys
+    import getopt
+    opts, args = getopt.getopt(sys.argv[1:], "d")
+    for opt, arg in opts:
+        if opt == "-d":
+            # デバッグ設定
+            import logging 
+            logging.basicConfig(level=logging.ERROR)
+            from promptflow.tracing import start_trace
+            # instrument OpenAI
+            start_trace()
+
     # 第1引数：入力用のテキストファイル
     input_file = sys.argv[1]
-    with open(input_file, "r") as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         initial_message = f.read()
     
     # 第2引数：最大ラウンド数　デフォルトは5
