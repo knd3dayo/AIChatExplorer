@@ -10,8 +10,8 @@
   <ItemGroup>
     <None Remove="python_ai_lib\ai_app.py" />
     <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py" />
-    <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_client.py" />
     <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_groupchat.py" />
+    <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_props.py" />
     <None Remove="python_ai_lib\ai_app_autogen\__init__.py" />
     <None Remove="python_ai_lib\ai_app_autogen_tools.py" />
     <None Remove="python_ai_lib\ai_app_autogen_util.py" />
@@ -66,7 +66,7 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_agent.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_client.py">
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_props.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\__init__.py">
@@ -94,9 +94,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\debug_tool\test_ai_app_autogen_group_chat_01.py">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_util.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_util.py">

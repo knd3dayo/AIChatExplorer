@@ -165,9 +165,9 @@ namespace PythonAILib.PythonIF {
                 }
                 // total_tokensを取得
                 if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
-                    // JsonElementである、totalTokensValueを、longに変換
-                    long totalTokens = totalTokensValue?.GetInt64() ?? 0;
-                    chatResult.TotalTokens = totalTokens;
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
                 }
                 // Errorがある場合はLogWrapper.Errorを呼び出す
                 if (resultDict.TryGetValue("error", out dynamic? errorValue)) {

@@ -5,7 +5,7 @@ from collections.abc import Generator
 from typing import Any
 import queue
 
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgents, AutoGenAgentGenerator
 from ai_app_autogen.ai_app_autogen_tools import AutoGenTools
 

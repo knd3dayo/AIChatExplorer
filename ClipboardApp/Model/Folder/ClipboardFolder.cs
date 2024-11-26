@@ -10,7 +10,6 @@ using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
-using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
 using WpfAppCommon.Utils;

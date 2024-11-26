@@ -12,7 +12,7 @@ from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangC
 from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChat
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 ########################
 # ファイル関連

@@ -7,7 +7,7 @@ sys.path.append("python")
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 import ai_app
 
@@ -174,23 +174,22 @@ def run_autogen_group_chat( context_json:str, input_text: str):
     return wrapper()
 
 # Autogenのtoolをjson形式で返す
-def get_autogen_definition(context_json):
+def get_autogen_default_definition(context_json):
     def func() -> dict:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
         autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
-        from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator
-        autogen_tools = AutoGenToolGenerator.create_default_tools(autogen_props)
-
-        tool_definition_list = AutoGenToolGenerator.create_definition_from_tools(autogen_tools)
+        from ai_app_autogen.ai_app_autogen_tools import AutoGenTools, AutoGenToolGenerator
+        autogen_tools = AutoGenTools(autogen_props,[])
+        tools_definiton = AutoGenToolGenerator.create_definition_from_tools(autogen_tools.tools)
         result: dict = {}
-        result["tools"] = tool_definition_list
+        result["tools"] = tools_definiton
 
         from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator
-        agent_dfinition_list = AutoGenAgentGenerator.create_agent_from_definition(autogen_props, autogen_tools)
-        result["agents"] = [ item[2] for item in agent_dfinition_list]
+        agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, autogen_tools)
+        result["agents"] = [ value[2] for key, value in agent_dfinition_list.items()]
 
 
         return result

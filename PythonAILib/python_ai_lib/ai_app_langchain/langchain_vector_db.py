@@ -158,7 +158,7 @@ class LangChainVectorDB:
         # 元のドキュメントをDocStoreに保存
         param = []
         param.append((doc_id, source_document))
-        retriever.doc_store.mset(param)
+        retriever.docstore.mset(param)
 
 
     def __delete_document(self, source: str):

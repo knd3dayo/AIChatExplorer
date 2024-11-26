@@ -12,7 +12,7 @@ from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps, VectorSearchParameter
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_file.ai_app_file_util import FileUtil
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 
 class AutoGenTools:
@@ -62,7 +62,7 @@ class AutoGenTools:
 
 
 from openpyxl import load_workbook
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 class AutoGenToolGenerator:
     def __init__(self, autogen_props: AutoGenProps):
@@ -95,12 +95,13 @@ class AutoGenToolGenerator:
 
     @classmethod
     def create_definition_from_tools(cls, tools: dict[str, tuple[Callable, str]]) -> list[dict]:
+        import inspect
         data_list = []
         for name, (func, desc) in tools.items():
             data = {
                 "name": name,
                 "description": desc,
-                "content": func.__code__
+                "content": inspect.getsource(func)
             }
             data_list.append(data)
         return data_list
@@ -139,11 +140,11 @@ class AutoGenToolGenerator:
         return vector_search, "This function performs a vector search on the specified text and returns the related documents."
 
     @classmethod
-    def __create_search_wikipedia_ja(cls) -> tuple[Callable[[str, int], list[str]], str]:
-        def search_wikipedia_ja(query: Annotated[str, "String to search for"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
+    def __create_search_wikipedia_ja(cls) -> tuple[Callable[[str, str, int], list[str]], str]:
+        def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
 
             # Use the Japanese version of Wikipedia
-            wikipedia.set_lang("ja")
+            wikipedia.set_lang(lang)
             
             # Retrieve search results
             search_results = wikipedia.search(query, results=num_results)

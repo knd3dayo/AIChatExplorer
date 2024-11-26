@@ -5,7 +5,7 @@ from collections.abc import Generator
 from typing import Any
 
 from ai_app_autogen.ai_app_autogen_tools import AutoGenTools, AutoGenToolGenerator
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
 
 class AutoGenAgents:
@@ -39,7 +39,7 @@ class AutoGenAgents:
             self.temp_dir.cleanup()
 
 from autogen import ConversableAgent, UserProxyAgent
-from ai_app_autogen.ai_app_autogen_client import AutoGenProps
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 class AutoGenAgentGenerator:
 
