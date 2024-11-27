@@ -28,5 +28,7 @@ namespace PythonAILib.Common {
         public string GetNoProxy();
 
         public string GetAutoGenWorkDir();
+
+        public string GetCatalogDBURL();
     }
 }

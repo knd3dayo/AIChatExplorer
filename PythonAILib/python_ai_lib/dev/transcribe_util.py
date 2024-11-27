@@ -8,7 +8,7 @@ import sys
 from speechbrain.inference.classifiers import EncoderClassifier #type: ignore
 from sklearn.cluster import AgglomerativeClustering #type: ignore
 from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db_props import VectorDBProps
 import torch #type: ignore
 
 sys.path.append("..")
@@ -225,7 +225,7 @@ if __name__ == "__main__":
     # テストコード
     import os
     from ai_app_openai_util import OpenAIProps, OpenAIClient 
-    from ai_app_vector_db_util import VectorDBProps
+    from ai_app_vector_db_props import VectorDBProps
 
     props = OpenAIProps.env_to_props()
     props.AzureOpenAI = False

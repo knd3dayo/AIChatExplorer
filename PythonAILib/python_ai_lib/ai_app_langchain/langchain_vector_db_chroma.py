@@ -9,7 +9,7 @@ import chromadb
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class LangChainVectorDBChroma(LangChainVectorDB):
 

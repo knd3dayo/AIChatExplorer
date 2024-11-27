@@ -9,7 +9,7 @@ from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps, VectorSearchParameter
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_file.ai_app_file_util import FileUtil
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps

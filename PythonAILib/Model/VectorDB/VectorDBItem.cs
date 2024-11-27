@@ -45,6 +45,12 @@ namespace PythonAILib.Model.VectorDB {
 
             }
         }
+
+        public static string GetCatalogDBURL() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            return libManager.ConfigParams.GetCatalogDBURL();
+        }
+
         private static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions {
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
             WriteIndented = true
@@ -88,6 +94,11 @@ namespace PythonAILib.Model.VectorDB {
         [JsonPropertyName("CollectionName")]
         public string? CollectionName { get; set; } = null;
 
+        // カタログ用のDBURL
+        [JsonPropertyName("CatalogDBURL")]
+        public string CatalogDBURL { get; set; } = GetCatalogDBURL();
+
+
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
         [JsonPropertyName("ChunkSize")]
         public int ChunkSize { get; set; } = 500;
@@ -117,7 +128,8 @@ namespace PythonAILib.Model.VectorDB {
                 { "ChunkSize", ChunkSize },
                 { "MaxSearchResults", MaxSearchResults },
                 { "IsEnabled", IsEnabled },
-                { "IsSystem", IsSystem }
+                { "IsSystem", IsSystem },
+                { "CatalogDBURL", CatalogDBURL }
             };
             return dict;
         }

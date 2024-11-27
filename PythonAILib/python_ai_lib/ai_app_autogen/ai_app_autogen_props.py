@@ -1,7 +1,7 @@
 from autogen.coding import LocalCommandLineCodeExecutor
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenProps:
     def __init__(self, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps],  props_dict: dict):

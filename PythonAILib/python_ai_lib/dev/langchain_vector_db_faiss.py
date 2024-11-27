@@ -8,7 +8,7 @@ from langchain.docstore.document import Document
 sys.path.append("python")
 from ai_app_langchain_util import LangChainOpenAIClient
 from langchain_vector_db import LangChainVectorDB
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db_props import VectorDBProps
 
 class LangChainVectorDBFaiss(LangChainVectorDB):
 

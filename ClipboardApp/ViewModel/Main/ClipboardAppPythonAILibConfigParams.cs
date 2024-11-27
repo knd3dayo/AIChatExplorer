@@ -73,5 +73,10 @@ namespace ClipboardApp.ViewModel.Main {
             string workDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen");
             return workDir;
         }
+        // GetCatalogDBURL
+        public string GetCatalogDBURL() {
+            string dbUrl =  string.Concat("sqlite:///", Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "catalog.db"));
+            return dbUrl;
+        }
     }
 }

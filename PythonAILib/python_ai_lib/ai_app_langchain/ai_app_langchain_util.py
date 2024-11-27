@@ -15,7 +15,7 @@ from ai_app_langchain.ai_app_langchain_client import LangChainOpenAIClient, Lang
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class CustomToolInput(BaseModel):
     question: str = Field(description="question")
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     question1 = input("Please enter your question:")
 
     from ai_app_openai.ai_app_openai_util import OpenAIProps
-    from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+    from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
     openai_props:OpenAIProps  = OpenAIProps.env_to_props()
     vector_db_item: VectorDBProps = VectorDBProps.get_vector_db_settings()
 

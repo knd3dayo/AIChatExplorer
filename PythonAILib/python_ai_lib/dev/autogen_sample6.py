@@ -8,7 +8,7 @@ from autogen.coding import LocalCommandLineCodeExecutor # type: ignore
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from ai_app_autogen_util import AutoGenProps, AutoGenGroupChatTest1
 from ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db_props import VectorDBProps
 
 
 if __name__ == '__main__':

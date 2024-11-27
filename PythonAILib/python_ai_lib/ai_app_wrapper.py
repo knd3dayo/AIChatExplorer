@@ -6,7 +6,7 @@ import sys
 sys.path.append("python")
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 import ai_app
@@ -252,7 +252,7 @@ def vector_search(context_json: str, request_json: str):
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
 
-        from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter
+        from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
         params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, request_json)
         result = ai_app.vector_search(params)
         return result

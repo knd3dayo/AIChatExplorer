@@ -2,7 +2,7 @@ from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 import os
 from ai_app_langchain.langchain_vector_db_chroma import LangChainVectorDBChroma
 from ai_app_openai.ai_app_openai_util import OpenAIProps 
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 if __name__ == "__main__":
     # clipboard_app_props

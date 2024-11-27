@@ -5,9 +5,9 @@ import sys
 sys.path.append("python")
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 import base64
-from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
 from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangChainUtil
 from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB

@@ -13,6 +13,11 @@ class VectorDBProps:
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する
         if not self.VectorDBDescription:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
+
+        # DBのカタログ情報を保持するDBのURL
+        self.CatalogDBURL = props_dict.get("CatalogDBURL", "")
+        if not self.CatalogDBURL:
+            raise ValueError("CatalogDBURL is not set.")
         
         # チャンクサイズ
         self.ChunkSize = props_dict.get("ChunkSize", 500)

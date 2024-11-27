@@ -2,11 +2,11 @@
 from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from collections.abc import Generator
-from typing import Any
+from typing import Any, Callable
 
 from ai_app_autogen.ai_app_autogen_tools import AutoGenTools, AutoGenToolGenerator
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
-from ai_app_vector_db.ai_app_vector_db_util import VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenAgents:
 
@@ -130,14 +130,12 @@ class AutoGenAgentGenerator:
         agents["user_proxy"] = cls.__create_user_proxy(autogen_props, tools)
         agents["code_executor"] = cls.__create_code_executor(autogen_props, tools, True)
         agents["code_writer"] = cls.__create_code_writer(autogen_props, tools)
-        agents["file_writer"] = cls.__create_file_writer(autogen_props, tools)
+        agents["file_operator"] = cls.__create_file_operator(autogen_props, tools)
         agents["vector_searcher"] = cls.__create_vector_searcher(autogen_props, tools)
-        agents["file_extractor"] = cls.__create_file_extractor(autogen_props, tools)
         agents["web_searcher"] = cls.__create_web_searcher(autogen_props, tools)
-        agents["wikipeda_searcher"] = cls.__create_wikipedia_searcher(autogen_props, tools)
-        agents["azure_document_searcher"] = cls.__create_azure_document_searcher(autogen_props, tools)
-        agents["file_checker"] = cls.__create_file_checker(autogen_props, tools)
         agents["current_time"] = cls.__create_current_time(autogen_props, tools)
+        agents["planner"] = cls.__create_planner(autogen_props, tools)
+        agents["critic"] = cls.__create_critic(autogen_props, tools)
 
         return agents
 
@@ -182,6 +180,50 @@ class AutoGenAgentGenerator:
         return user_proxy, description, definition
 
     @classmethod
+    def __create_planner(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
+        # Task assigner for group chat
+        description = "Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, until admin approval. "
+        planner = autogen.AssistantAgent(
+            system_message="""Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, 
+            until admin approval. 
+            """,
+            name="planner",
+            human_input_mode="NEVER",
+            code_execution_config=False,
+            description=description,
+            llm_config=autogen_pros.create_llm_config()
+        )
+
+        # Setting register_from_execution() for planner
+        for func, description in tools.values():
+            print(f"register_for_execution: {func.__name__}")
+            planner.register_for_execution()(func)
+
+        return planner, description
+
+    @classmethod
+    def __create_critic(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
+        # Task assigner for group chat
+        description = "Critic. Double check plan, claims, code from other agents and provide feedback. Check whether the plan includes adding verifiable info such as source URL."
+        critic = autogen.AssistantAgent(
+            system_message="""Critic. Double check plan, claims, code from other agents and provide feedback. 
+            Check whether the plan includes adding verifiable info such as source URL.
+            """,
+            name="critic",
+            human_input_mode="NEVER",
+            code_execution_config=False,
+            description=description,
+            llm_config=autogen_pros.create_llm_config()
+        )
+
+        # Setting register_from_execution() for planner
+        for func, description in tools.values():
+            print(f"register_for_execution: {func.__name__}")
+            critic.register_for_execution()(func)
+
+        return critic, description
+
+    @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
         # Separate the code writer and executor. Below is the code inference Agent with LLM.
         description = "Creates Python scripts according to the user's instructions."
@@ -220,40 +262,6 @@ class AutoGenAgentGenerator:
 
         return code_writer_agent, description, definition
 
-    @classmethod
-    def __create_file_writer(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # Separate the code writer and executor. Below is the code inference Agent with LLM.
-        description = "Saves data to a file in Python according to the user's instructions."
-        file_writer = ConversableAgent(
-            "file-writer",
-            system_message=f"""
-                Saves data to a file in Python according to the user's instructions.
-                The default save location is {autogen_pros.work_dir_path}.
-                If the user specifies a save location, save the file to the specified location.
-                """
-        ,
-            llm_config=autogen_pros.create_llm_config(),
-            code_execution_config=False,
-            description=description,
-            human_input_mode="NEVER",
-        )
-        save_tools, description = autogen_tools.tools["save_text_file"]
-        # register_for_llm
-        file_writer.register_for_llm(description=description)(save_tools)
-
-        # create definition dict
-        definition = cls.create_definiton(
-            name="file_writer",
-            description=description,
-            system_message="",
-            type="assistant",
-            human_input_mode="NEVER",
-            is_termination_msg="end meeting",
-            code_execution_config=False,
-            llm_config=True,
-            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
-        )
-        return file_writer, description, definition
 
     @classmethod
     def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools, auto_execute_code: bool = False):
@@ -330,45 +338,6 @@ class AutoGenAgentGenerator:
 
         return vector_searcher, description, definition
 
-    # Enable File Extractor
-    @classmethod
-    def __create_file_extractor(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        # File Extractor
-        description = "Extracts information from files according to the user's instructions."
-        file_extractor = ConversableAgent(
-            "file-extractor",
-            system_message="""
-                You are a file extractor. You extract information from files according to the user's instructions.
-                Use the provided function to display the extraction results.
-                """,
-            llm_config=autogen_pros.create_llm_config(),
-            code_execution_config=False,
-            description=description,
-            human_input_mode="NEVER",
-        )
-
-        # Register the information of available functions to the agent
-        extract_text_from_file, description = autogen_tools.tools["extract_text_from_file"]
-        file_extractor.register_for_llm(description=description)(extract_text_from_file)
-
-        list_files_in_directory, description = autogen_tools.tools["list_files_in_directory"]
-        file_extractor.register_for_llm(description=description)(list_files_in_directory)
-
-        # create definition dict
-        definition = cls.create_definiton(
-            name="file_extractor",
-            description=description,
-            system_message="",
-            type="assistant",
-            human_input_mode="NEVER",
-            is_termination_msg="end meeting",
-            code_execution_config=False,
-            llm_config=True,
-            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
-        )
-
-        return file_extractor, description, definition
-
     @classmethod
     def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
         # Web Searcher
@@ -395,6 +364,11 @@ class AutoGenAgentGenerator:
         extract_webpage, description = autogen_tools.tools["extract_webpage"]
         web_searcher.register_for_llm(description=description)(extract_webpage)
 
+        # token消費量が多くなるのでコメントアウト
+        # Searches for relevant pages from the Japanese version of Wikipedia.
+        # search_wikipedia_ja, description = autogen_tools.tools["search_wikipedia_ja"]
+        # web_searcher.register_for_llm(description=description)(search_wikipedia_ja)
+
         # create definition dict
         definition = cls.create_definiton(
             name="web_searcher",
@@ -410,63 +384,22 @@ class AutoGenAgentGenerator:
 
         return web_searcher, description, definition
 
+    # Enable File Extractor
     @classmethod
-    def __create_wikipedia_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        
-        # Web Searcher
-        description = "Retrieves information from the specified URL."
-        wipkipedia_searcher = ConversableAgent(
-            "wipkipedia-searcher",
+    def __create_file_operator(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
+        # File Extractor
+        description = "File operator. Ex. Write text file. Extracts information from files according to the user's instructions."
+        file_operator = ConversableAgent(
+            "file_operator",
             system_message="""
-                Retrieves information from the specified URL according to the user's instructions.
-                - Uses the provided function to retrieve text and links from the specified URL.
-                - If no URL is provided by the user, searches for relevant pages from the Japanese version of Wikipedia.
-                - If necessary documents are not available on the linked page, searches further linked information.
-                - Provides the text of the necessary documents to the user if they are available.
-                """,
-            llm_config=autogen_pros.create_llm_config(),
-            code_execution_config=False,   
-            description=description,
-            human_input_mode="NEVER",
-        )
-
-        # Register information about available functions to the agent
-
-        # Searches for relevant pages from the Japanese version of Wikipedia.
-        search_wikipedia_ja, description = autogen_tools.tools["search_wikipedia_ja"]
-        wipkipedia_searcher.register_for_llm(description=description)(search_wikipedia_ja)
-
-        # Retrieves text and links from the specified URL.
-        extract_webpage, description = autogen_tools.tools["extract_webpage"]
-        wipkipedia_searcher.register_for_llm(description=description)(extract_webpage)
-
-        # create definition dict
-        definition = cls.create_definiton(
-            name="wipkipedia_searcher",
-            description=description,
-            system_message="",
-            type="assistant",
-            human_input_mode="NEVER",
-            is_termination_msg="end meeting",
-            code_execution_config=False,
-            llm_config=True,
-            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
-        )
-
-        return wipkipedia_searcher, description, definition
-
-    @classmethod
-    def __create_azure_document_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        
-        # Web Searcher
-        description = "Searches for Azure-related documents."
-        azure_document_searcher = ConversableAgent(
-            "azure-document-searcher",
-            system_message="""
-                You are an Azure document searcher. Searches for Azure-related documents on the web according to user instructions.
-                - Uses the provided search_duckduckgo function to search within site:https://learn.microsoft.com/en-us/azure.
-                - If necessary documents are not available on the linked page, searches further linked information.
-                - Retrieves the necessary documents with extract_webpage and provides the text to the user.
+                You are a file operator. 
+                - You extract information from files according to the user's instructions.
+                Use the provided function to display the extraction results.
+                - Saves data to a file in Python according to the user's instructions.
+                The default save location is {autogen_pros.work_dir_path}.
+                If the user specifies a save location, save the file to the specified location.
+                - list directory files
+                - File Checker: Checks whether the specified file exists.
                 """,
             llm_config=autogen_pros.create_llm_config(),
             code_execution_config=False,
@@ -474,17 +407,23 @@ class AutoGenAgentGenerator:
             human_input_mode="NEVER",
         )
 
-        # Searches for Azure documents with the specified keywords.
-        search_duckduckgo, description = autogen_tools.tools["search_duckduckgo"]
-        azure_document_searcher.register_for_llm(description=description)(search_duckduckgo)
+        # Register the information of available functions to the agent
+        extract_text_from_file, description = tools["extract_text_from_file"]
+        file_operator.register_for_llm(description=description)(extract_text_from_file)
 
+        list_files_in_directory, description = tools["list_files_in_directory"]
+        file_operator.register_for_llm(description=description)(list_files_in_directory)
+
+        save_tools, description = tools["save_text_file"]
+        # register_for_llm
+        file_operator.register_for_llm(description=description)(save_tools)
         # Retrieves text and links from the specified URL.
-        extract_webpage, description = autogen_tools.tools["extract_webpage"]
-        azure_document_searcher.register_for_llm(description=description)(extract_webpage)
+        func, description = tools["check_file"]
+        file_operator.register_for_llm(description=description)(func)
 
         # create definition dict
         definition = cls.create_definiton(
-            name="azure_document_searcher",
+            name="file_operator",
             description=description,
             system_message="",
             type="assistant",
@@ -492,44 +431,10 @@ class AutoGenAgentGenerator:
             is_termination_msg="end meeting",
             code_execution_config=False,
             llm_config=True,
-            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
-        )
-        return azure_document_searcher, description, definition
-
-    @classmethod
-    def __create_file_checker(cls, autogen_pros: AutoGenProps, autogen_tools: AutoGenTools):
-        
-        # File Checker
-        description = "Checks whether the specified file exists."
-        file_checker = ConversableAgent(
-            "file_checker",
-            system_message="""
-                File Checker: Checks whether the specified file exists.
-                """,
-            llm_config=autogen_pros.create_llm_config(),
-            code_execution_config=False,
-            description=description,
-            human_input_mode="NEVER",
+            tools=",".join([func.__name__ for func, description in tools.values()]) 
         )
 
-        # Retrieves text and links from the specified URL.
-        func, description = autogen_tools.tools["check_file"]
-        file_checker.register_for_llm(description=description)(func)
-
-        # create definition dict
-        definition = cls.create_definiton(
-            name="file_checker",
-            description=description,
-            system_message="",
-            type="assistant",
-            human_input_mode="NEVER",
-            is_termination_msg="end meeting",
-            code_execution_config=False,
-            llm_config=True,
-            tools=",".join([func.__name__ for func, description in autogen_tools.tools.values()])
-        )
-
-        return file_checker, description, definition
+        return file_operator, description, definition
 
     # Create an agent to get the current time
     @classmethod

@@ -71,7 +71,10 @@ namespace ImageChat {
             string workDir = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "autogen");
             return workDir;
         }
-
+        public string GetCatalogDBURL() {
+            string dbUrl = string.Concat("sqlite:///", Path.Combine(ImageChatConfig.Instance.AppDataFolder, "catalog.db"));
+            return dbUrl;
+        }
 
     }
 }

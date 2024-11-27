@@ -22,8 +22,8 @@ from ai_app_langchain.langchain_doc_store import SQLDocStore
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
-from ai_app_vector_db.ai_app_vector_db_util import ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
-from ai_app_vector_db.ai_app_vector_db_util import VectorSearchParameter, VectorDBProps
+from ai_app_vector_db.ai_app_vector_db_props import ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
 
 
 # コレクションの指定がない場合はデフォルトのコレクション名を使用

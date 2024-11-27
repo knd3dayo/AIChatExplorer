@@ -65,7 +65,7 @@ namespace PythonAILib.Model.AutoGen {
         // ToDictList
         public static List<Dictionary<string, object>> ToDictList(List<AutoGenAgent> data) {
             // Create a list of dictionaries
-            List<Dictionary<string, object>> dictList = new List<Dictionary<string, object>>();
+            List<Dictionary<string, object>> dictList = [];
             foreach (AutoGenAgent item in data) {
                 dictList.Add(ToDict(item));
             }
