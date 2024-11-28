@@ -23,7 +23,7 @@ class AutoGenAgentGenerator:
         agents["web_searcher"] = cls.__create_web_searcher(autogen_props, tools)
         agents["current_time"] = cls.__create_current_time(autogen_props, tools)
         agents["planner"] = cls.__create_planner(autogen_props, tools)
-        # agents["critic"] = cls.__create_critic(autogen_props, tools)
+        agents["critic"] = cls.__create_critic(autogen_props, tools)
 
         return agents
 
@@ -34,7 +34,6 @@ class AutoGenAgentGenerator:
         user_proxy = autogen.UserProxyAgent(
             system_message="""
                 A human admin. Interact with the planner to discuss the plan. Plan execution needs to be approved by this admin.
-                - Assign tasks to each agent and execute the tasks.
                 - When the plan is achieved by executing the tasks by each agent, reply with [End Meeting].
                 - If there are no additional questions, reply with [End Meeting].
                 """,
