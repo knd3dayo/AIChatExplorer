@@ -41,6 +41,11 @@
     <None Remove="python_ai_lib\llamaindex_vector_db_chroma.py" />
     <None Remove="python_ai_lib\ai_app_openai\__init__.py" />
     <None Remove="python_ai_lib\script_template.py" />
+    <None Remove="python_ai_lib\test2\requirements.txt" />
+    <None Remove="python_ai_lib\test2\sample_autogen_agent.py" />
+    <None Remove="python_ai_lib\test2\sample_autogen_groupchat.py" />
+    <None Remove="python_ai_lib\test2\sample_autogen_props.py" />
+    <None Remove="python_ai_lib\test2\sample_autogen_tools.py" />
     <None Remove="python_ai_lib\test\requirements.txt" />
     <None Remove="python_ai_lib\test\sample_autogen_agent.py" />
     <None Remove="python_ai_lib\test\sample_autogen_groupchat.py" />
@@ -101,6 +106,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\ai_app_vector_db_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test2\requirements.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test2\sample_autogen_agent.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test2\sample_autogen_groupchat.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test2\sample_autogen_props.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\test2\sample_autogen_tools.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\test\requirements.txt">
