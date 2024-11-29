@@ -17,6 +17,8 @@ class AutoGenAgentGenerator:
         # Create an instance of AutoGenProps
         agents : dict[str, tuple[ConversableAgent, str, dict]] = {}
         agents["user_proxy"] = cls.__create_user_proxy(autogen_props, tools)
+        agents["planner"] = cls.__create_planner(autogen_props, tools)
+        agents["critic"] = cls.__create_critic(autogen_props, tools)
         agents["code_executor"] = cls.__create_code_executor(autogen_props, tools, True)
         agents["code_writer"] = cls.__create_code_writer(autogen_props, tools)
         agents["file_writer"] = cls.__create_file_writer(autogen_props, tools)
@@ -31,11 +33,11 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_user_proxy(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
         # タスクアサイナーを作成
-        description = "ユーザーのリクエストを達成するためのタスクの一覧を作成し、各エージェントにタスクを割り当てます。"
+        description = "ユーザーのリクエストを達成するためにプランナーと批評家と協力して実行計画を策定します。実行計画に基づき各エージェントと協力してタスクを完了させます。"
         user_proxy = autogen.UserProxyAgent(
             system_message="""
-                ユーザーのリクエストを達成するために各エージェントと協力してタスクを実行します。
-                - まず、ユーザーのリクエストを達成するための計画とタスクのリストを作成します。
+                あなたはユーザーの代理人です。ユーザーのリクエストを達成するためにプランナーと批評家と協力して実行計画を策定します。実行計画に基づき各エージェントと協力してタスクを完了させます。
+                - まず、ユーザーのリクエストを達成するためにプランナーと批評家と協力して計画とタスクのリストを作成します。
                 - 各エージェントにタスクを割り当て、そのタスクを実行します。
                 - 各エージェントがタスクを実行して計画が達成されたら、[End Meeting]と返信します。
                 - 追加の質問がなければ、[End Meeting]と返信します。
@@ -54,6 +56,43 @@ class AutoGenAgentGenerator:
             user_proxy.register_for_execution()(func)
 
         return user_proxy, description
+
+    @classmethod
+    def __create_planner(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
+        # グループチャットのタスク割り当て
+        description = "プランナー。計画を提案し、ユーザーの代理人(user_proxy)と批評家からのフィードバックに基づいてユーザーの代理の承認が得られるまで計画を修正します。"
+        planner = autogen.AssistantAgent(
+            system_message="""
+            あなたはプランナーです。計画を提案し、ユーザーの代理人(user_proxy)と批評家からのフィードバックに基づいてユーザーの代理の承認が得られるまで計画を修正します。
+            計画は、タスクのリスト、各タスクの責任者、タスクの期限、およびタスクの進捗状況を含む必要があります。
+            計画立案には各エージェントの専門知識を活用してください。
+            """,
+            name="planner",
+            human_input_mode="NEVER",
+            code_execution_config=False,
+            description=description,
+            llm_config=autogen_pros.create_llm_config()
+        )
+
+        return planner, description
+
+    @classmethod
+    def __create_critic(cls, autogen_pros: AutoGenProps, tools: dict[str, tuple[Callable, str]]):
+        # グループチャットのタスク割り当て
+        description = "批評家。他のエージェントの計画、主張、コードをダブルチェックし、フィードバックを提供します。計画に検証可能な情報（ソースURLなど）が含まれているかどうかを確認します。"
+        critic = autogen.AssistantAgent(
+            system_message="""批評家。他のエージェントの計画、主張、コードをダブルチェックし、フィードバックを提供します。
+            計画に検証可能な情報（ソースURLなど）が含まれているかどうかを確認します。
+            """,
+            name="critic",
+            human_input_mode="NEVER",
+            code_execution_config=False,
+            description=description,
+            llm_config=autogen_pros.create_llm_config()
+        )
+
+        return critic, description
+
 
     @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps,  tools: dict[str, tuple[Callable, str]]):
