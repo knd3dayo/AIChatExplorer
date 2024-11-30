@@ -47,6 +47,11 @@ namespace PythonAILib.Model.AutoGen {
             collection.Delete(this.Id);
         }
 
+        public static void DeleteAll() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenToolCollection<AutoGenTool>();
+            collection.DeleteAll();
+        }
+
         public static List<AutoGenTool> FindAll() {
             var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenToolCollection<AutoGenTool>();
             return collection.FindAll().ToList();

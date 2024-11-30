@@ -35,6 +35,10 @@ namespace PythonAILib.Model.AutoGen {
         // Save
         public void Save() {
             var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            var items = collection.Find(x => x.Name == Name);
+            foreach (var item in items) {
+                collection.Delete(item.Id);
+            }
             collection.Upsert(this);
         }
 

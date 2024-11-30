@@ -108,6 +108,15 @@ namespace PythonAILib.Model.AutoGen {
                     }
                 }
             }
+            // デフォルトのAutoGenGroupChatを作成。デフォルトのAutoGenGroupChatは、全てのAgentsを含む
+            AutoGenGroupChat groupChat = new() {
+                Name = "default",
+                Description = "default",
+                InitAgentName = "user_proxy",
+                AgentNames = AutoGenAgent.FindAll().Select(x => x.Name).ToList(),
+            };
+            groupChat.Save();
+
             Initialized = true;
 
         }

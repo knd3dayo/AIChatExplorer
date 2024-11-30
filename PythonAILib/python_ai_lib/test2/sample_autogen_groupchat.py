@@ -5,7 +5,7 @@ from typing import Any
 from sample_autogen_props import AutoGenProps
 from sample_autogen_agent import AutoGenAgentGenerator
 
-class AutoGenGroupChat:
+class AutoGenGroupChatWrapper:
 
     # responseを格納するlist
     responses = []
@@ -66,6 +66,13 @@ class AutoGenGroupChat:
 
         return group_chat_manager
 
+class AutoGenGroupChatGenerator:
+
+    @classmethod
+    def create_default_group_chat(cls) -> autogen.GroupChatManager:
+        admin_name = "chat_admin_agent"
+
+
 if __name__ == "__main__":
     import sys
     import getopt
@@ -93,9 +100,9 @@ if __name__ == "__main__":
         elif opt == "-o":
             output_file = arg
 
-    AutoGenGroupChat.run_group_chat(initial_message, max_round=max_round)
+    AutoGenGroupChatWrapper.run_group_chat(initial_message, max_round=max_round)
      
     if output_file:
         with open(output_file, "w", encoding="utf-8") as f:
-            for message in AutoGenGroupChat.responses:
+            for message in AutoGenGroupChatWrapper.responses:
                 f.write(f"{message}\n")

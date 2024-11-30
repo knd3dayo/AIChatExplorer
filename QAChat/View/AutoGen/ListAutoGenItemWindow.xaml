@@ -125,6 +125,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Name}" Header="名前" />
                         <DataGridTextColumn Binding="{Binding Description}" Header="説明" />
+                        <DataGridTextColumn Binding="{Binding SourcePath}" Header="ソースパス" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>

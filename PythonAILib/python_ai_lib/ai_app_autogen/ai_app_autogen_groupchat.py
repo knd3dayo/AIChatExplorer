@@ -157,14 +157,13 @@ class AutoGenGroupChat:
         self.finished = True
         self.message_queue.put(None)
 
-class AutoGenGroupChatGenerator:
     @classmethod
-    def create_default_group_chat(cls, autogen_props: AutoGenProps) -> AutoGenGroupChat:
-        return AutoGenGroupChat(autogen_props)
-
-    @staticmethod
-    def create_group_chat(autogen_props: AutoGenProps, group_chat_dict: dict) -> AutoGenGroupChat:
+    def create_group_chat(cls, autogen_props: AutoGenProps, group_chat_dict: dict) -> "AutoGenGroupChat":
         autogen_props.group_chat_dict = group_chat_dict
         return AutoGenGroupChat(autogen_props)
     
-    
+class AutoGenGroupChatGenerator:
+    @classmethod
+    def create_default_group_chat(cls, autogen_props: AutoGenProps) -> list[AutoGenGroupChat]:
+        autogen_group_chats = [AutoGenGroupChat(autogen_props)]
+        return autogen_group_chats
