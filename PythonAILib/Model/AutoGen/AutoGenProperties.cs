@@ -30,10 +30,6 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("tools")]
         public List<AutoGenTool> AutoGenTools { get; set; } = new List<AutoGenTool>();
 
-        // UseSystemAgent
-        [JsonPropertyName("use_system_agent")]
-        public bool UseSystemAgent { get; set; } = false;
-
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
@@ -41,7 +37,6 @@ namespace PythonAILib.Model.AutoGen {
                 { "group_chat", AutoGenGroupChat.ToDict() },
                 { "agents", AutoGenAgent.ToDictList(AutoGenAgents) },
                 { "tools", AutoGenTool.ToDictList(AutoGenTools) },
-                { "use_default", UseSystemAgent },
             };
             return dict;
         }
@@ -71,28 +66,43 @@ namespace PythonAILib.Model.AutoGen {
                         AutoGenTool tool = new AutoGenTool {
                             Name = toolData["name"],
                             Description = toolData["description"],
-                            Content = toolData["content"],
+                            SourcePath = toolData["source_path"],
                         };
                         tool.Save();
                     }
                 }
             }
             // defaultSettings から agents を取得
-            if (defaultSettings.TryGetValue("agents", out dynamic? agentsData)) {
-                if (agentsData != null) {
-                    foreach (var agentData in agentsData) {
-                        string toolNames = agentData["tools"];
-                        List<string> strings = toolNames.Split(",").ToList();
+            if (defaultSettings.TryGetValue("agents", out dynamic? agentsDataList)) {
+                if (agentsDataList != null) {
+                    foreach (var agentData in agentsDataList) {
+                        List<string> toolNamesForExecution = [];
+                        foreach( object item in agentData["tool_names_for_execution"]) {
+                            var value = item.ToString();
+                            if (value != null) {
+                                toolNamesForExecution.Add(value);
+                            }
+                        }
+                        List<string> toolNamesForLlm = [];
+                        foreach (object item in agentData["tool_names_for_llm"]) {
+                            var value = item.ToString();
+                            if (value != null) {
+                                toolNamesForLlm.Add(value);
+                            }
+                        }
 
-                        AutoGenAgent agent = new AutoGenAgent {
+                        // List<string>に変換
+
+                        AutoGenAgent agent = new() {
                             Name = agentData["name"],
                             Description = agentData["description"],
                             HumanInputMode = agentData["human_input_mode"],
-                            TerminationMsg = agentData["is_termination_msg"],
-                            CodeExecution = agentData["code_execution_config"],
-                            Llm = agentData["llm_config"],
-                            Type = agentData["type"],
-                            ToolNamesList = strings,
+                            TerminationMsg = agentData["termination_msg"],
+                            CodeExecution = agentData["code_execution"],
+                            Llm = agentData["llm_execution"],
+                            TypeValue = agentData["type_value"],
+                            ToolNamesForExecution = toolNamesForExecution,
+                            ToolNamesForLlm = toolNamesForLlm,
                         };
                         agent.Save();
                     }

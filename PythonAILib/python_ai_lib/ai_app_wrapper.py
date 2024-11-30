@@ -181,15 +181,16 @@ def get_autogen_default_definition(context_json):
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
         autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
-        from ai_app_autogen.ai_app_autogen_tools import AutoGenTools, AutoGenToolGenerator
-        autogen_tools = AutoGenTools(autogen_props,[])
-        tools_definiton = AutoGenToolGenerator.create_definition_from_tools(autogen_tools.tools)
         result: dict = {}
-        result["tools"] = tools_definiton
 
-        from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator
-        agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, autogen_tools)
-        result["agents"] = [ value[2] for key, value in agent_dfinition_list.items()]
+        from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
+        tools_wrappers = AutoGenToolGenerator.create_default_tools()
+        tool_definition_list = AutoGenToolWrapper.create_dict_list(tools_wrappers)
+        result["tools"] = tool_definition_list
+
+        from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGentAgentWrapper
+        agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, tools_wrappers)
+        result["agents"] = AutoGentAgentWrapper.create_dict_list(agent_dfinition_list)
 
         return result
     

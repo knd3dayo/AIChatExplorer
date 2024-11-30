@@ -946,10 +946,10 @@ namespace QAChat.Resource {
         public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
         public override string ClearChatContents { get; } = "Clear Chat Contents";
-        // Clear Content
+        // Clear SourcePath
         public override string ClearContent { get; } = "Clear Content";
 
-        // Reload Content
+        // Reload SourcePath
         public override string ReloadContent { get; } = "Reload Content";
 
         public override string ExtractedText { get; } = "Extracted Text";

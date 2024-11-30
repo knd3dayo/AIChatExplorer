@@ -49,7 +49,7 @@ namespace ClipboardApp.Model
         /// </summary>
         /// <param name="item"></param>
         public void SetDataObject(ClipboardItem item) {
-            // System.Windows.MessageBox.Show(item.Content);
+            // System.Windows.MessageBox.Show(item.SourcePath);
 
             IsClipboardMonitorEnabled = false;
             // If ContentType is Text, copy to clipboard

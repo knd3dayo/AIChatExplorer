@@ -11,8 +11,8 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
 
-        [JsonPropertyName("content")]
-        public string Content { get; set; } = "";
+        [JsonPropertyName("source_path")]
+        public string SourcePath { get; set; } = "";
 
         // ToDictList
         public static Dictionary<string, object> ToDict(AutoGenTool data) {
@@ -20,7 +20,7 @@ namespace PythonAILib.Model.AutoGen {
             Dictionary<string, object> dict = new Dictionary<string, object> {
                 { "name", data.Name },
                 { "description", data.Description },
-                { "content", data.Content },
+                { "source_path", data.SourcePath },
             };
             return dict;
         }

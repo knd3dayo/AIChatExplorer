@@ -49,7 +49,7 @@ class AutoGenGroupChat:
         # autogen_propsからtoolsを取得
         self.tool_wrappers: list[AutoGenToolWrapper] = AutoGenToolWrapper.create_wrapper_list(autogen_props.tools_list)
         # tool_wrappersにデフォルトのツールを追加
-        default_tool_wrappers = AutoGenToolGenerator.create_default_tools(self.autogen_props)
+        default_tool_wrappers = AutoGenToolGenerator.create_default_tools()
         # 既に追加されている場合は追加しない
         for default_tool_wrapper in default_tool_wrappers:
             if default_tool_wrapper not in self.tool_wrappers:
@@ -67,23 +67,16 @@ class AutoGenGroupChat:
 
     def run_group_chat(self, initial_message: str, max_round: int) -> Generator[Any, None, None]:
 
-
-
-        # エージェントのリストを取得
-        if len(self.agent_names) > 0:
-            # agent_wrappersの中からagent_namesに含まれていないエージェントを削除
-            agent_wrappers = [agent for agent in agent_wrappers if agent.name in self.agent_names]
-
         # エージェントのリストを生成
-        agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, tool_wrappers) for agent in agent_wrappers]
+        agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers]
 
         # init_agent_nameに一致するエージェントを取得
-        init_agent_wrappers = [agent for agent in agent_wrappers if agent.name == self.init_agent_name]
+        init_agent_wrappers = [agent for agent in self.agent_wrappers if agent.name == self.init_agent_name]
 
         if len(init_agent_wrappers) == 0:
             raise ValueError(f"init_agent not found: {self.init_agent_name}")
 
-        init_agent: ConversableAgent = init_agent_wrappers[0].create_agent(self.autogen_props, tool_wrappers)
+        init_agent: ConversableAgent = init_agent_wrappers[0].create_agent(self.autogen_props, self.tool_wrappers)
 
         # register_reply 
         for agent in agents:

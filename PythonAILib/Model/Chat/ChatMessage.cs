@@ -29,7 +29,7 @@ namespace PythonAILib.Model.Chat {
         public List<string> ImageURLs { get; set; } = [];
 
         [JsonIgnore]
-        // Content + Sourcesを返す
+        // SourcePath + Sourcesを返す
         public string ContentWithSources {
             get {
                 if (Sources.Count == 0) {

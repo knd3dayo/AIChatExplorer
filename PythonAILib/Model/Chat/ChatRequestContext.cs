@@ -49,7 +49,6 @@ namespace PythonAILib.Model.Chat {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 AutoGenProperties = new AutoGenProperties() {
                     WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                    UseSystemAgent = true
                 }
             };
             return chatRequestContext;

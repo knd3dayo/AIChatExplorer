@@ -261,7 +261,7 @@ namespace ClipboardApp.Model.AutoProcess {
                 } else {
                     result += $"{CommonStringResources.Instance.ActionNone}\n";
                 }
-                // Type が CopyToFolderまたはMoveToFolderの場合
+                // TypeValue が CopyToFolderまたはMoveToFolderの場合
                 if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
                     // DestinationFolderが設定されている場合
                     if (DestinationFolder != null) {

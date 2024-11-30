@@ -17,18 +17,16 @@ namespace PythonAILib.Model.AutoGen {
         public string SystemMessage { get; set; } = "";
 
         // type
-        [JsonPropertyName("type")]
-        public string Type { get; set; } = "";
+        [JsonPropertyName("type_value")]
+        public string TypeValue { get; set; } = "";
 
-        public List<string> ToolNamesList { get; set; } = new List<string>();
+        [JsonPropertyName("tool_names_for_execution")]
+        public List<string> ToolNamesForExecution { get; set; } = new List<string>();
 
-        // tools
-        [JsonPropertyName("tool_names")]
-        public string ToolNames {
-            get {
-                return string.Join(",", ToolNamesList);
-            }
-        }
+        // tool_names_for_llm
+        [JsonPropertyName("tool_names_for_llm")]
+        public List<string> ToolNamesForLlm { get; set; } = new List<string>();
+
 
         // human_input_mode
         [JsonPropertyName("human_input_mode")]
@@ -43,7 +41,7 @@ namespace PythonAILib.Model.AutoGen {
         public bool CodeExecution { get; set; } = false;
 
         // llm
-        [JsonPropertyName("llm")]
+        [JsonPropertyName("llm_execution")]
         public bool Llm { get; set; } = false;
 
         // ToDictList
@@ -53,12 +51,13 @@ namespace PythonAILib.Model.AutoGen {
                 { "name", data.Name },
                 { "description", data.Description },
                 { "system_message", data.SystemMessage },
-                { "type", data.Type },
-                { "tool_names", data.ToolNames },
+                { "type_value", data.TypeValue },
+                { "tool_names_for_execution", data.ToolNamesForExecution },
+                { "tool_names_for_llm", data.ToolNamesForLlm },
                 { "human_input_mode", data.HumanInputMode },
                 { "termination_msg", data.TerminationMsg },
                 { "code_execution", data.CodeExecution },
-                { "llm", data.Llm }
+                { "llm_execution", data.Llm }
             };
             return dict;
         }

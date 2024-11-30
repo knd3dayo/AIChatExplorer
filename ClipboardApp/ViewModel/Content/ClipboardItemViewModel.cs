@@ -50,7 +50,7 @@ namespace ClipboardApp.ViewModel.Content {
             }
         }
 
-        // Content
+        // SourcePath
         public string Content {
             get {
                 return ClipboardItem.Content;
@@ -239,7 +239,7 @@ namespace ClipboardApp.ViewModel.Content {
         public ObservableCollection<TabItem> TabItems {
             get {
                 ObservableCollection<TabItem> tabItems = [];
-                // Content 
+                // SourcePath 
                 ContentPanel contentPanel = new() {
                     DataContext = this,
                 };

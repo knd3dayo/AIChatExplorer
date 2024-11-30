@@ -15,27 +15,35 @@ from ai_app_file.ai_app_file_util import FileUtil
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 class AutoGenToolWrapper:
-    def __init__(self, name: str, description: str, content: str):
+    def __init__(self, name: str, description: str, source_path: str = None):
         self.name = name
         self.description = description
-        self.content = content
+        self.source_path = source_path
+
+        print(f"name: {name}, description: {description}, source_path:, {source_path}")
 
         # 関数を作成
-        self.tool = AutoGenToolWrapper.create_tool(name, content)
+        self.tool = AutoGenToolWrapper.create_tool(name, source_path)
 
     @classmethod
-    def create_tool(cls, name: str, content: str):
+    def create_tool(cls, name: str, source_path: str):
+        if source_path is None:
+            raise ValueError("source_path is None")
+
+        # source_pathからファイルを読み込む
+        with open(source_path, "r", encoding="utf-8") as f:
+            content = f.read()
         # contentから関数オブジェクトを作成する。
         exec(content)
         return locals()[name]
-    
+
 
     @classmethod
     def create_dict(cls, tool_wrapper: "AutoGenToolWrapper") -> dict:
         return {
             "name": tool_wrapper.name,
             "description": tool_wrapper.description,
-            "content": tool_wrapper.tool.__code__
+            "source_path": tool_wrapper.source_path
         }
 
     @classmethod
@@ -46,9 +54,9 @@ class AutoGenToolWrapper:
     def create_wrapper(cls, data: dict) -> "AutoGenToolWrapper":
         name = data['name']
         description = data['description']
-        content = data['content']
+        source_path = data['source_path']
 
-        return AutoGenToolWrapper(name, description, content)
+        return AutoGenToolWrapper(name, description, source_path)
 
     @classmethod
     def create_wrapper_list(cls, data_list: list[dict]) -> list["AutoGenToolWrapper"]:
@@ -61,217 +69,209 @@ class AutoGenToolGenerator:
         self.autogen_pros = autogen_props
 
     @classmethod        
-    def create_default_tools(cls, autogen_props: AutoGenProps) -> list[AutoGenToolWrapper]:
-        openai_props = autogen_props.openai_props
-        vector_db_props_list = autogen_props.vector_db_items
+    def create_default_tools(cls) -> list[AutoGenToolWrapper]:
         # デフォルトのツールを生成
         # 関数名と関数生成関数のペアを保持する辞書
         tools: dict[str, tuple[Callable, str]] = {
-            "vector_search": cls.__create_vector_search(openai_props, vector_db_props_list),
-            "search_wikipedia_ja": cls.__create_search_wikipedia_ja(),
-            "list_files_in_directory": cls.__create_list_files_in_directory(),
-            "extract_text_from_file": cls.__create_extract_text_from_file(),
-            "extract_webpage": cls.__create_extract_webpage_function(),
-            "save_tools": cls.__create_save_tools_function(),
-            "check_file": cls.__create_check_file_function(),
-            "save_text_file": cls.__create_save_text_file_function(),
-            "search_duckduckgo": cls.__create_search_duckduckgo(),
-            "get_current_time": cls.__create_get_current_time()
+            "vector_search": (vector_search, vector_search.__doc__),
+            "search_wikipedia_ja": (search_wikipedia_ja, search_wikipedia_ja.__doc__),
+            "list_files_in_directory": (list_files_in_directory, list_files_in_directory.__doc__),
+            "extract_file": (extract_file, extract_file.__doc__),
+            "extract_webpage": (extract_webpage, extract_webpage.__doc__),
+            "save_tools": (save_tools, save_tools.__doc__),
+            "check_file": (check_file, check_file.__doc__),
+            "save_text_file": (save_text_file, save_text_file.__doc__),
+            "search_duckduckgo": (search_duckduckgo, search_duckduckgo.__doc__),
+            "get_current_time": (get_current_time, get_current_time.__doc__)
         }
         # toolsからAutoGenToolWrapperのリストを生成
-        tools_list = [AutoGenToolWrapper(name, description, content.__code__) for name, (content, description) in tools.items()]
+        tools_list =[]
+        for name, (_, description) in tools.items():
+
+            tool_wrapper = AutoGenToolWrapper(name, description, __file__)
+            tools_list.append(tool_wrapper)
+
         return tools_list
 
 
-    @classmethod
-    def __create_vector_search(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> tuple[Callable[[str], list[str]], str]:
-        def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
-            params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
-            result = LangChainVectorDB.vector_search(params)
-            # Retrieve documents from result
-            documents = result.get("documents", [])
-            # Extract content of each document from documents
-            result = [doc.get("content", "") for doc in documents]
-            return result
+def vector_search(query: Annotated[str, "String to search for"], openai_props, vector_db_props_list) -> list[str]:
+    """
+    This function performs a vector search on the specified text and returns the related documents.
+    """
+    params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
+    result = LangChainVectorDB.vector_search(params)
+    # Retrieve documents from result
+    documents = result.get("documents", [])
+    # Extract content of each document from documents
+    result = [doc.get("content", "") for doc in documents]
+    return result
 
-        return vector_search, "This function performs a vector search on the specified text and returns the related documents."
+def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
+    """
+    This function searches Wikipedia with the specified keywords and returns related articles.
+    """
+    # Use the Japanese version of Wikipedia
+    wikipedia.set_lang(lang)
+    
+    # Retrieve search results
+    search_results = wikipedia.search(query, results=num_results)
+    
+    result_texts = []
+    # Display the top results
+    for i, title in enumerate(search_results):
+    
+        print(f"Result {i + 1}: {title}")
+        try:
+            # Retrieve the content of the page
+            page = wikipedia.page(title)
+            print(page.content[:500])  # Display the first 500 characters
+            text = f"Title:\n{title}\n\nContent:\n{page.content}\n"
+            result_texts.append(text)
+        except wikipedia.exceptions.DisambiguationError as e:
+            print(f"Disambiguation: {e.options}")
+        except wikipedia.exceptions.PageError:
+            print("Page not found.")
+        print("\n" + "-"*50 + "\n")
+    return result_texts
 
-    @classmethod
-    def __create_search_wikipedia_ja(cls) -> tuple[Callable[[str, str, int], list[str]], str]:
-        def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
+def list_files_in_directory(directory_path: Annotated[str, "Directory path"]) -> list[str]:
+    """
+    This function returns a list of files in the specified directory.
+    """
+    import os
+    files = os.listdir(directory_path)
+    return files
 
-            # Use the Japanese version of Wikipedia
-            wikipedia.set_lang(lang)
-            
-            # Retrieve search results
-            search_results = wikipedia.search(query, results=num_results)
-            
-            result_texts = []
-            # Display the top results
-            for i, title in enumerate(search_results):
-            
-                print(f"Result {i + 1}: {title}")
-                try:
-                    # Retrieve the content of the page
-                    page = wikipedia.page(title)
-                    print(page.content[:500])  # Display the first 500 characters
-                    text = f"Title:\n{title}\n\nContent:\n{page.content}\n"
-                    result_texts.append(text)
-                except wikipedia.exceptions.DisambiguationError as e:
-                    print(f"Disambiguation: {e.options}")
-                except wikipedia.exceptions.PageError:
-                    print("Page not found.")
-                print("\n" + "-"*50 + "\n")
-            return result_texts
-        return search_wikipedia_ja, "This function searches Wikipedia with the specified keywords and returns related articles."
+def extract_file(file_path: Annotated[str, "File path"]) -> str:
+    """
+    This function extracts text from the specified file.
+    """
+    # Extract text from a temporary file
+    text = FileUtil.extract_text_from_file(file_path)
+    return text
 
-    @classmethod
-    def __create_list_files_in_directory(cls) -> tuple[Callable[[str], list[str]], str]:
-        def list_files_in_directory(directory_path: Annotated[str, "Directory path"]) -> list[str]:
-            import os
-            files = os.listdir(directory_path)
-            return files
-        return list_files_in_directory, "This function returns a list of files in the specified directory."
+def check_file(file_path: Annotated[str, "File path"]) -> bool:
+    """
+    This function checks if the specified file exists.
+    """
+    # Check if the file exists
+    import os
+    check_file = os.path.exists(file_path)
+    return check_file
 
-    @classmethod
-    def __create_extract_text_from_file(cls) -> tuple[Callable[[str], str]]:
-        # Generates a function to extract text from a file
-        def extract_file(file_path: Annotated[str, "File path"]) -> str:
-            # Extract text from a temporary file
-            text = FileUtil.extract_text_from_file(file_path)
-            return text
-        return extract_file, "This function extracts text from the specified file."
+def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
+    """
+    This function extracts text and links from the specified URL of a web page.
+    """
+    # ヘッドレスモードのオプションを設定
+    edge_options = Options()
+    edge_options.add_argument("--headless")
+    edge_options.add_argument("--disable-gpu")
+    edge_options.add_argument("--no-sandbox")
+    edge_options.add_argument("--disable-dev-shm-usage")
 
-    @classmethod
-    def __create_check_file_function(cls) -> tuple[Callable[[str], bool], str]:
-        def check_file(file_path: Annotated[str, "File path"]) -> bool:
-            # Check if the file exists
-            import os
-            check_file = os.path.exists(file_path)
-            return check_file
-        
-        return check_file, "This function checks if the specified file exists."
+    # Edgeドライバをセットアップ
+    driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
+    # Wait for the page to fully load (set explicit wait conditions if needed)
+    driver.implicitly_wait(10)
+    # Retrieve HTML of the web page and extract text and links
+    driver.get(url)
+    # Get the entire HTML of the page
+    page_html = driver.page_source
 
-    @classmethod
-    def __create_extract_webpage_function(cls) -> tuple[Callable[[str], list[str]], str]:
-        def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
-            driver = cls.__create_web_driver()
-            # Wait for the page to fully load (set explicit wait conditions if needed)
-            driver.implicitly_wait(10)
-            # Retrieve HTML of the web page and extract text and links
-            driver.get(url)
-            # Get the entire HTML of the page
-            page_html = driver.page_source
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(page_html, "html.parser")
+    text = soup.get_text()
+    # Retrieve href attribute and text from <a> tags
+    urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
+    driver.close()
+    return text, urls
 
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(page_html, "html.parser")
-            text = soup.get_text()
-            # Retrieve href attribute and text from <a> tags
-            urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
-            driver.close()
-            return text, urls
-        return extract_webpage, "This function extracts text and links from the specified URL of a web page."
+def search_duckduckgo(query: Annotated[str, "String to search for"], site: Annotated[str, "Site to search within. Leave blank if no site is specified"], num_results: Annotated[int, "Maximum number of results to display"]) -> Annotated[list[tuple[str, str, str]], "(Title, URL, Body) list"]:
+    """
+    This function searches DuckDuckGo with the specified keywords and returns related articles.
+    """
+    
+    from duckduckgo_search import DDGS
+    ddgs = DDGS()
+    try:
+        # Retrieve DuckDuckGo search results
+        if site:
+            query = f"{query} site:{site}"
 
-    @classmethod
-    def __create_web_driver(cls):
-        # ヘッドレスモードのオプションを設定
-        edge_options = Options()
-        edge_options.add_argument("--headless")
-        edge_options.add_argument("--disable-gpu")
-        edge_options.add_argument("--no-sandbox")
-        edge_options.add_argument("--disable-dev-shm-usage")
+        print(f"Search query: {query}")
 
-        # Edgeドライバをセットアップ
-        driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
-        return driver
+        results_dict = ddgs.text(
+            keywords=query,            # Search keywords
+            region='jp-jp',            # Region. For Japan: "jp-jp", No specific region: "wt-wt"
+            safesearch='off',          # Safe search OFF->"off", ON->"on", Moderate->"moderate"
+            timelimit=None,            # Time limit. None for no limit, past day->"d", past week->"w", past month->"m", past year->"y"
+            max_results=num_results    # Number of results to retrieve
+        )
 
-    # Generate a function to search with the specified keywords using the DuckDuckGo API and return related articles
-    @classmethod
-    def __create_search_duckduckgo(cls) -> tuple[Callable, str]:
-        from duckduckgo_search import DDGS
-        ddgs = DDGS()
-        def search_duckduckgo(query: Annotated[str, "String to search for"], site: Annotated[str, "Site to search within. Leave blank if no site is specified"], num_results: Annotated[int, "Maximum number of results to display"]) -> Annotated[list[tuple[str, str, str]], "(Title, URL, Body) list"]:
-            try:
-                # Retrieve DuckDuckGo search results
-                if site:
-                    query = f"{query} site:{site}"
+        results = []
+        for result in results_dict:
+            # title, href, body
+            title = result.get("title", "")
+            href = result.get("href", "")
+            body = result.get("body", "")
+            print(f'Title: {title}, URL: {href}, Body: {body[:100]}')
+            results.append((title, href, body))
 
-                print(f"Search query: {query}")
+        return results
+    except Exception as e:
+        print(e)
+        import traceback
+        traceback.print_exc()
+        return []
 
-                results_dict = ddgs.text(
-                    keywords=query,            # Search keywords
-                    region='jp-jp',            # Region. For Japan: "jp-jp", No specific region: "wt-wt"
-                    safesearch='off',          # Safe search OFF->"off", ON->"on", Moderate->"moderate"
-                    timelimit=None,            # Time limit. None for no limit, past day->"d", past week->"w", past month->"m", past year->"y"
-                    max_results=num_results    # Number of results to retrieve
-                )
+def save_text_file(name: Annotated[str, "File name"], dirname: Annotated[str, "Directory name"], text: Annotated[str, "Text data to save"]) -> Annotated[bool, "Save result"]:
+    """
+    This function saves text data as a file.
+    """
+    
+    # Save in the specified directory
+    try:
+        import os
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        path = os.path.join(dirname, name)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(text)
+        # Check if the file exists
+        return os.path.exists(path)
+    except Exception as e:
+        print(e)
+        return False
 
-                results = []
-                for result in results_dict:
-                    # title, href, body
-                    title = result.get("title", "")
-                    href = result.get("href", "")
-                    body = result.get("body", "")
-                    print(f'Title: {title}, URL: {href}, Body: {body[:100]}')
-                    results.append((title, href, body))
+def save_tools(name: Annotated[str, "Function name"], description: Annotated[str, "Function description"], code: Annotated[str, "Function code"], dirname: Annotated[str, "Directory name for saving"]) -> Annotated[bool, "Save result"]:
+    """
+    This function saves Python code as a JSON file for AutoGen tools.
+    """
+    
+    # Generate JSON string
+    func_dict = {
+        "name": name,
+        "description": description,
+        "content": code
+    }
+    # Save in the specified directory
+    try:
+        import os
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        filename = os.path.join(dirname, f"{name}.json")
+        with open(filename, "w", encoding="utf-8") as f:
+            json.dump(func_dict, f, ensure_ascii=False, indent=4)
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
-                return results
-            except Exception as e:
-                print(e)
-                import traceback
-                traceback.print_exc()
-                return []
-            
-        return search_duckduckgo, "This function searches DuckDuckGo with the specified keywords and returns related articles."
-
-    @classmethod
-    def __create_save_text_file_function(cls) -> tuple[Callable[[str, str, str], None], str]:
-        def save_text_file(name: Annotated[str, "File name"], dirname: Annotated[str, "Directory name"], text: Annotated[str, "Text data to save"]) -> Annotated[bool, "Save result"]:
-            # Save in the specified directory
-            try:
-                import os
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-                path = os.path.join(dirname, name)
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(text)
-                # Check if the file exists
-                return os.path.exists(path)
-            except Exception as e:
-                print(e)
-                return False
-
-        return save_text_file, "This function saves text data as a file."
-
-    @classmethod
-    def __create_save_tools_function(cls) -> tuple[Callable[[str, str, str], None], str]:
-        def save_tools(name: Annotated[str, "Function name"], description: Annotated[str, "Function description"], code: Annotated[str, "Function code"], dirname: Annotated[str, "Directory name for saving"]) -> Annotated[bool, "Save result"]:
-            # Generate JSON string
-            func_dict = {
-                "name": name,
-                "description": description,
-                "content": code
-            }
-            # Save in the specified directory
-            try:
-                import os
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-                filename = os.path.join(dirname, f"{name}.json")
-                with open(filename, "w", encoding="utf-8") as f:
-                    json.dump(func_dict, f, ensure_ascii=False, indent=4)
-                return True
-            except Exception as e:
-                print(e)
-                return False
-
-        return save_tools, "This function saves Python code as a JSON file for AutoGen tools."
-
-    # Generate a function that returns the current time in the format yyyy/mm/dd (Day) hh:mm:ss
-    @classmethod
-    def __create_get_current_time(cls) -> tuple[Callable, str]:
-        from datetime import datetime
-        def get_current_time() -> str:
-            now = datetime.now()
-            return now.strftime("%Y/%m/%d (%a) %H:%M:%S")
-        return get_current_time, "This function returns the current time in the format yyyy/mm/dd (Day) hh:mm:ss."
+def get_current_time() -> str:
+    """
+    This function returns the current time in the format yyyy/mm/dd (Day) hh:mm:ss.
+    """
+    from datetime import datetime
+    now = datetime.now()
+    return now.strftime("%Y/%m/%d (%a) %H:%M:%S")

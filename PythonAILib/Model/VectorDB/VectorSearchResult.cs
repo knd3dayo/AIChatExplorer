@@ -12,7 +12,7 @@ namespace PythonAILib.Model.VectorDB {
         // FolderId
         [JsonPropertyName("folder_id")]
         public string FolderId { get; set; } = string.Empty;
-        // Content
+        // SourcePath
         [JsonPropertyName("content")]
         public string Content { get; set; } = string.Empty;
 

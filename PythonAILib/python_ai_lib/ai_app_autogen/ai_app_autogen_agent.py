@@ -130,7 +130,8 @@ class AutoGenAgentGenerator:
             - When the plan is achieved by executing the tasks by each agent, reply with [End Meeting].
             - If there are no additional questions, reply with [End Meeting].
             """
-        description=description,
+        description=description
+        
         agent_wrapper = AutoGentAgentWrapper(
             name=name,
             description=description,
@@ -159,6 +160,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[tool.name for tool in autogen_tools],
@@ -180,6 +182,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[tool.name for tool in autogen_tools],
@@ -211,6 +214,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=True,
             llm_execution=False,
             tool_names_for_execution=[tool.name for tool in autogen_tools],
@@ -240,6 +244,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode= human_input_mode,
+            termination_msg=None,
             code_execution=True,
             llm_execution=False,
             tool_names_for_execution=[],
@@ -263,6 +268,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[],
@@ -287,6 +293,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[],
@@ -323,6 +330,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[],
@@ -346,6 +354,7 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="assistant",
             human_input_mode="NEVER",
+            termination_msg=None,
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[],

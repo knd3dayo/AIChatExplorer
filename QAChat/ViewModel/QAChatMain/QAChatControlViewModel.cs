@@ -184,7 +184,6 @@ namespace QAChat.ViewModel.QAChatMain {
                     // ★TODO AutoGenPropertiesを実行時に指定可能にする
                     AutoGenProperties autoGenProperties = new() {
                         WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                        UseSystemAgent = true
                     };
                     // ChatRequestContextを設定
                     ChatRequestContext chatRequestContext = new() {

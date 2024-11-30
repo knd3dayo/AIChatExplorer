@@ -26,7 +26,7 @@ namespace ClipboardApp.Model.Search {
 
         public string Name { get; set; } = "";
 
-        // Type
+        // TypeValue
         // 標準 or 検索フォルダ
         public SearchType Type { get; set; }
 
