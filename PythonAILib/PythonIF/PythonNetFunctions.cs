@@ -330,6 +330,32 @@ namespace PythonAILib.PythonIF {
 
         }
 
+        // AutoGenのデフォルトの設定を取得する
+        public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext) {
+
+            // chatRequestContextをJSON文字列に変換
+            string requestContextJson = chatRequestContext.ToJson();
+
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {requestContextJson}");
+
+            Dictionary<string, dynamic?> result = [];
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "get_autogen_default_definition";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                // hello_world関数を呼び出す
+                string  resultString = function_object(requestContextJson);
+                // LogWrapper.Info
+                LogWrapper.Info(resultString);
+                result = JsonUtil.ParseJson(resultString);
+            });
+            return result;
+        }
+
+
         private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
             List<VectorSearchResult> vectorSearchResults = [];

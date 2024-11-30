@@ -69,8 +69,11 @@ namespace ClipboardApp {
             container.CloseButtonVisibility = Visibility.Collapsed;
             TabItems.Add(container);
 
-            // AutoGenToolの初期化
-            AutoGenTool.Init();
+            // AutoGenPropertiesの初期化
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
+            Task.Run(() => {
+                AutoGenProperties.Init(libManager.ConfigParams.GetOpenAIProperties());
+            });
 
         }
 

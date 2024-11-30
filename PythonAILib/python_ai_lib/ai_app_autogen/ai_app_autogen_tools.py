@@ -8,106 +8,60 @@ from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
+from ai_app_openai.ai_app_openai_util import OpenAIProps 
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_file.ai_app_file_util import FileUtil
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
+class AutoGenToolWrapper:
+    def __init__(self, name: str, description: str, content: str):
+        self.name = name
+        self.description = description
+        self.content = content
 
-class AutoGenTools:
-    def __init__(self, autogen_props: AutoGenProps, tools_dict: list[dict]):
-        self.autogen_props: AutoGenProps = autogen_props
-        self.tools: dict[str, tuple[Callable, str]] = {}
-
-        self.tools.update(AutoGenToolGenerator.create_default_tools(autogen_props))
-
-        self.tools.update(AutoGenToolGenerator.create_tools_from_definition(tools_dict))
-
-
-    def add_tools(self, tools: dict[str, tuple[Callable, str]]):
-        self.tools.update(tools)
-
- 
-    # 指定したディレクトリ内の*.jsonファイルを読み込み、関数を生成
-    def load_tools(self, dirname: str):
-        import os
-        # ディレクトリ内のファイル一覧を取得
-        files = os.listdir(dirname)
-        # JSONファイルのみを抽出
-        json_files = [f for f in files if f.endswith(".json")]
-        # JSONファイルから関数を生成
-        for json_file in json_files:
-            with open(os.path.join(dirname, json_file), "r", encoding="utf-8") as f:
-                json_str = f.read()
-                name, func = self.__create_tool_from_json(json_str)
-                # 関数名と関数生成関数のペアを登録
-                self.tools[name] = func
-    
-    # JSON文字列から関数を生成        
-    def __create_tool_from_json(self, json_str: str) -> tuple[Callable, str]:
-        # JSON文字列を辞書に変換
-        func_dict = json.loads(json_str)
-        # name, description, content
-        name = func_dict.get("name", "")
-        description = func_dict.get("description", "")
-        content = func_dict.get("content", "")
-        # contentから関数を生成
-        exec(content)
-        func = locals()[name]
-        # 関数と説明文を返すgeneratorとなる関数を返す
-        def generator():
-            return func, description
-        return name, generator
-
-
-from openpyxl import load_workbook
-from ai_app_autogen.ai_app_autogen_props import AutoGenProps
-
-class AutoGenToolGenerator:
-    def __init__(self, autogen_props: AutoGenProps):
-        self.autogen_pros = autogen_props
+        # 関数を作成
+        self.tool = AutoGenToolWrapper.create_tool(name, content)
 
     @classmethod
     def create_tool(cls, name: str, content: str):
         # contentから関数オブジェクトを作成する。
         exec(content)
         return locals()[name]
+    
 
     @classmethod
-    def create_tools_from_definition(cls, data_list: list[dict]) -> dict[str, tuple[Callable, str]]:
-        function_dict = {}
-        for data in data_list:
-            name = data['name']
-            description = data['description']
-            content = data['content']
-
-            # 関数を作成
-            function_obj = cls.create_tool(name, content)
-            # dictに格納
-            function_dict[name] = (function_obj, description)
-
-        # 結果を表示（必要に応じて）
-        for name, (func, desc) in function_dict.items():
-            print(f'Name: {name}, Description: {desc}, Function: {func}')
-        
-        return function_dict
+    def create_dict(cls, tool_wrapper: "AutoGenToolWrapper") -> dict:
+        return {
+            "name": tool_wrapper.name,
+            "description": tool_wrapper.description,
+            "content": tool_wrapper.tool.__code__
+        }
 
     @classmethod
-    def create_definition_from_tools(cls, tools: dict[str, tuple[Callable, str]]) -> list[dict]:
-        import inspect
-        data_list = []
-        for name, (func, desc) in tools.items():
-            data = {
-                "name": name,
-                "description": desc,
-                "content": inspect.getsource(func)
-            }
-            data_list.append(data)
-        return data_list
+    def create_dict_list(cls, tool_wrappers: list["AutoGenToolWrapper"]) -> list[dict]:
+        return [AutoGenToolWrapper.create_dict(tool_wrapper) for tool_wrapper in tool_wrappers]
+
+    @classmethod
+    def create_wrapper(cls, data: dict) -> "AutoGenToolWrapper":
+        name = data['name']
+        description = data['description']
+        content = data['content']
+
+        return AutoGenToolWrapper(name, description, content)
+
+    @classmethod
+    def create_wrapper_list(cls, data_list: list[dict]) -> list["AutoGenToolWrapper"]:
+        return [AutoGenToolWrapper.create_wrapper(data) for data in data_list]
+
+from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+
+class AutoGenToolGenerator:
+    def __init__(self, autogen_props: AutoGenProps):
+        self.autogen_pros = autogen_props
 
     @classmethod        
-    def create_default_tools(cls, autogen_props: AutoGenProps) -> dict[str, tuple[Callable, str]]:
+    def create_default_tools(cls, autogen_props: AutoGenProps) -> list[AutoGenToolWrapper]:
         openai_props = autogen_props.openai_props
         vector_db_props_list = autogen_props.vector_db_items
         # デフォルトのツールを生成
@@ -124,7 +78,10 @@ class AutoGenToolGenerator:
             "search_duckduckgo": cls.__create_search_duckduckgo(),
             "get_current_time": cls.__create_get_current_time()
         }
-        return tools
+        # toolsからAutoGenToolWrapperのリストを生成
+        tools_list = [AutoGenToolWrapper(name, description, content.__code__) for name, (content, description) in tools.items()]
+        return tools_list
+
 
     @classmethod
     def __create_vector_search(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> tuple[Callable[[str], list[str]], str]:

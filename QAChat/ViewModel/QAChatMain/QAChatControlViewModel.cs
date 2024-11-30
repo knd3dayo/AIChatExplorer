@@ -31,6 +31,7 @@ namespace QAChat.ViewModel.QAChatMain {
             if (QAChatStartupProps.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
+
         }
 
         public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;

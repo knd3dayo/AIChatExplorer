@@ -17,6 +17,10 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
+        // AutoGenのデフォルトの設定を取得する
+        public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext);
+
+
         public List<VectorSearchResult> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest request);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
@@ -38,5 +42,6 @@ namespace PythonAILib.PythonIF {
 
         //テスト用
         public string HelloWorld();
+
     }
 }

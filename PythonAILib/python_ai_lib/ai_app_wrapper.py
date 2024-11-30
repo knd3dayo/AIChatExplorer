@@ -191,7 +191,6 @@ def get_autogen_default_definition(context_json):
         agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, autogen_tools)
         result["agents"] = [ value[2] for key, value in agent_dfinition_list.items()]
 
-
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

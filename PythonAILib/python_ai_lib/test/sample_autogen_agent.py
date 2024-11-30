@@ -13,7 +13,7 @@ class AutoGenAgentGenerator:
     @classmethod
     def create_default_agents(cls, autogen_props: AutoGenProps ) -> dict[str, tuple[ConversableAgent, str, dict]]:
         # create ddefault tools
-        tools = AutoGenToolGenerator.create_default_tools(autogen_props)
+        tools = AutoGenToolGenerator.create_default_tools()
         # Create an instance of AutoGenProps
         agents : dict[str, tuple[ConversableAgent, str, dict]] = {}
         agents["user_proxy"] = cls.__create_user_proxy(autogen_props, tools)

@@ -75,6 +75,10 @@ namespace PythonAILib.Model.AutoGen {
         // Save
         public void Save() {
             var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenAgentCollection<AutoGenAgent>();
+            var items = collection.Find(x => x.Name == Name);
+            foreach (var item in items) {
+                collection.Delete(item.Id);
+            }
             collection.Upsert(this);
         }
         // Delete
