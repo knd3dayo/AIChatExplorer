@@ -1,14 +1,17 @@
 import autogen 
+from autogen import ConversableAgent
 from collections.abc import Generator
 from typing import Any
 
 from sample_autogen_props import AutoGenProps
-from sample_autogen_agent import AutoGenAgentGenerator
+from sample_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
+from sample_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
 
 class AutoGenGroupChatWrapper:
 
     # responseを格納するlist
     responses = []
+
 
     @classmethod
     def print_messages(cls, recipient, messages, sender, config): 
@@ -34,20 +37,33 @@ class AutoGenGroupChatWrapper:
     @classmethod
     def run_group_chat(cls, initial_message: str, max_round: int) -> autogen.GroupChatManager:
         
-        # defaultのエージェントを作成
+        # AutoGenPropsのインスタンスを生成
         autogen_props = AutoGenProps()
-        autogen_agents = AutoGenAgentGenerator.create_default_agents(autogen_props)
+        # デフォルトのエージェントのリストを生成
+        default_tool_wrappers: list[AutoGenToolWrapper] = AutoGenToolGenerator.create_default_tools()
+        # デフォルトのエージェントのリストを生成
+        default_agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentGenerator.create_default_agents(autogen_props, default_tool_wrappers)
 
-        # dict[str, tuple[ConversableAgent, str, dict]]から各Valueの1つめの要素を取得
-        agents = [ v[0] for k, v in autogen_agents.items() ]
+        # init_agent_name
+        init_agent_name = "user_proxy"
+        # autogen_agents
+        agents = [agent.create_agent(autogen_props, default_tool_wrappers) for agent in default_agent_wrappers ]
+
+        # init_agent_nameに一致するエージェントを取得
+        init_agent_wrappers = [agent for agent in default_agent_wrappers if agent.name == init_agent_name]
+
+        if len(init_agent_wrappers) == 0:
+            raise ValueError(f"init_agent not found: {init_agent_name}")
+
+        init_agent: ConversableAgent = init_agent_wrappers[0].create_agent(autogen_props, default_tool_wrappers)
 
         # register_reply 
         for agent in agents:
             agent.register_reply([autogen.Agent, None], reply_func=cls.print_messages, config={"callback": None})
 
-
-        # init_agentを作成 autogen_agentのキーが"user_proxy"のものを取得
-        init_agent = autogen_agents["user_proxy"][0]
+        # agentのリストを表示
+        for agent in agents:
+            print(f"agent:{agent.name} is ready.")
 
         # グループチャットを開始
         groupchat = autogen.GroupChat(

@@ -61,8 +61,11 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
-            <TabItem Header="グループチャット">
+        <TabControl
+            Grid.Row="1"
+            HorizontalContentAlignment="Left"
+            SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="{Binding StringResGroupChat}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -76,19 +79,29 @@
                     SelectedItem="{Binding SelectedAutoGenGroupChat, Mode=TwoWay}"
                     SelectionMode="Single"
                     SelectionUnit="FullRow">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding SelectedAutoGenGroupChatChangeCommmand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.InputBindings>
+                        <!--  Open selected item window by double-clicking  -->
+                        <MouseBinding Command="{Binding OpenEditAutoGenGroupChatWindowCommand}" MouseAction="LeftDoubleClick" />
+                    </DataGrid.InputBindings>
                     <DataGrid.Columns>
                         <DataGridTextColumn
                             Width="200"
                             Binding="{Binding Name}"
-                            Header="名前" />
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
                         <DataGridTextColumn
                             Width="*"
                             Binding="{Binding Description}"
-                            Header="説明" />
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
-            <TabItem Header="エージェント">
+            <!--  Agent  -->
+            <TabItem Header="{Binding StringResAgent}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -102,13 +115,28 @@
                     SelectedItem="{Binding SelectedAutoGenAgent, Mode=TwoWay}"
                     SelectionMode="Single"
                     SelectionUnit="FullRow">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.InputBindings>
+                        <!--  Open selected item window by double-clicking  -->
+                        <MouseBinding Command="{Binding OpenEditAutoGenAgentWindowCommand}" MouseAction="LeftDoubleClick" />
+                    </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="名前" />
-                        <DataGridTextColumn Binding="{Binding Description}" Header="説明" />
+                        <DataGridTextColumn
+                            Width="200"
+                            Binding="{Binding Name}"
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
-            <TabItem Header="ツール">
+            <TabItem Header="{Binding StringResTool}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -122,10 +150,28 @@
                     SelectedItem="{Binding SelectedAutoGenTool, Mode=TwoWay}"
                     SelectionMode="Single"
                     SelectionUnit="FullRow">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.InputBindings>
+                        <!--  Open selected item window by double-clicking  -->
+                        <MouseBinding Command="{Binding OpenEditAutoGenToolWindowCommand}" MouseAction="LeftDoubleClick" />
+                    </DataGrid.InputBindings>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Binding="{Binding Name}" Header="名前" />
-                        <DataGridTextColumn Binding="{Binding Description}" Header="説明" />
-                        <DataGridTextColumn Binding="{Binding SourcePath}" Header="ソースパス" />
+                        <DataGridTextColumn
+                            Width="200"
+                            Binding="{Binding Name}"
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Description}"
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding SourcePath}"
+                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResSourcePath}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -137,30 +183,25 @@
             </Grid.ColumnDefinitions>
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
                 <Button
-                    Width="180"
+                    Width="100"
                     Margin="10,10,10,10"
-                    Command="{Binding AddPromptItemCommand}"
-                    Content="{Binding StringResources.NewPromptTemplate}" />
-                <Button
-                    Width="180"
-                    Margin="10,10,10,10"
-                    Command="{Binding EditPromptItemCommand}"
-                    Content="{Binding StringResources.EditPromptTemplate}" />
+                    Command="{Binding AddItemCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{Binding StringResAdd}" />
             </DockPanel>
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                 <Button
                     Width="100"
                     Margin="10,10,10,10"
-                    Command="{Binding SelectPromptItemCommand}"
+                    Command="{Binding SaveCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding SelectButtonText}"
-                    Visibility="{Binding ExecButtonVisibility}" />
+                    Content="{Binding StringResSave}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,10"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="閉じる"
+                    Content="{Binding StringResCancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

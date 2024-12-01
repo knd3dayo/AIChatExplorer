@@ -188,9 +188,9 @@ def get_autogen_default_definition(context_json):
         tool_definition_list = AutoGenToolWrapper.create_dict_list(tools_wrappers)
         result["tools"] = tool_definition_list
 
-        from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGentAgentWrapper
+        from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
         agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, tools_wrappers)
-        result["agents"] = AutoGentAgentWrapper.create_dict_list(agent_dfinition_list)
+        result["agents"] = AutoGenAgentWrapper.create_dict_list(agent_dfinition_list)
 
         return result
     

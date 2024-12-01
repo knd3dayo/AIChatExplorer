@@ -153,7 +153,7 @@ class AutoGenAgentGenerator:
                 コードの実行結果を表示してください。
                 """,
             llm_config=False,
-            code_execution_config={"executor": autogen_pros.create_code_executor()},
+            code_execution_config=autogen_pros.create_code_executor_config(),
             description=description,
             human_input_mode="ALWAYS",
         )

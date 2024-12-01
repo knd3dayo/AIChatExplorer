@@ -63,3 +63,6 @@ class AutoGenProps:
             work_dir=self.work_dir_path,  # Use the temporary directory to store the code files.
         )
         return executor
+
+    def create_code_executor_config(self):
+        return {"executor": self.create_code_executor()}

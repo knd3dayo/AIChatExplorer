@@ -20,7 +20,7 @@ class AutoGenToolWrapper:
         self.description = description
         self.source_path = source_path
 
-        print(f"name: {name}, description: {description}, source_path:, {source_path}")
+        # print(f"name: {name}, description: {description}, source_path:, {source_path}")
 
         # 関数を作成
         self.tool = AutoGenToolWrapper.create_tool(name, source_path)

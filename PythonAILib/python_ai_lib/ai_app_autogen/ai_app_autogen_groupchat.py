@@ -6,7 +6,7 @@ from typing import Any
 import queue
 
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
-from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGentAgentWrapper
+from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
 from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
 
 
@@ -56,7 +56,7 @@ class AutoGenGroupChat:
                 self.tool_wrappers.append(default_tool_wrapper)
 
         # autogen_propsからagentsを取得
-        self.agent_wrappers: list[AutoGentAgentWrapper] = AutoGentAgentWrapper.create_wrapper_list(autogen_props.agents_list)
+        self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(autogen_props.agents_list)
         # agent_wrappersにデフォルトのエージェントを追加
         default_agent_wrappers = AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.tool_wrappers)
         # 既に追加されている場合は追加しない
@@ -81,6 +81,10 @@ class AutoGenGroupChat:
         # register_reply 
         for agent in agents:
             agent.register_reply([autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
+
+        # agentのリストを表示
+        for agent in agents:
+            print(f"agent:{agent.name} is ready.")
 
         # グループチャットを開始
         groupchat = autogen.GroupChat(

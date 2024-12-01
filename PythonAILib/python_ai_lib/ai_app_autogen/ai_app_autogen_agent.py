@@ -6,7 +6,7 @@ from typing import Any, Callable
 from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
-class AutoGentAgentWrapper:
+class AutoGenAgentWrapper:
 
     def __init__(self, name: str, description: str, system_message: str, 
                  type_value: str, human_input_mode: str, termination_msg: str, 
@@ -25,6 +25,10 @@ class AutoGentAgentWrapper:
 
     def create_agent(self, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]):
         params = {}
+        params['name'] = self.name
+        params['description'] = self.description
+        params['system_message'] = self.system_message
+
         params['human_input_mode'] = self.human_input_mode if self.human_input_mode else "NEVER"
         # is_termination_msgが指定されていない場合はNone, それ以外の場合はtermination_msgを設定
         if self.termination_msg:
@@ -32,10 +36,10 @@ class AutoGentAgentWrapper:
 
         # code_executionを大文字にしたものがTRUEの場合はauto_gen_pros.create_code_executor()を呼び出し
         # それ以外の場合はFalseを設定
-        params['code_execution_config'] = autogen_props.create_code_executor() if self.code_execution else False
+        params['code_execution_config'] = autogen_props.create_code_executor_config() if self.code_execution else False
         # llm_configを設定 llmをお大文字にしたものがTRUEの場合はauto_gen_pros.create_llm_config()を呼び出し
         # それ以外の場合はNoneを設定
-        params['llm_config'] = autogen_props.create_llm_config() if self.llm_execution else None
+        params['llm_config'] = autogen_props.create_llm_config() if self.llm_execution else False
 
         agent = None
         if self.type_value == 'userproxy':
@@ -50,18 +54,18 @@ class AutoGentAgentWrapper:
         for tool_name in self.tool_names_for_execution:
             tool_wrapper = next((tool for tool in tool_wrappers if tool.name == tool_name), None)
             if tool_wrapper:
-                agent.register_for_execution()(tool_wrapper.function)
+                agent.register_for_execution()(tool_wrapper.tool)
         
         for tool_name in self.tool_names_for_llm:
             tool_wrapper = next((tool for tool in tool_wrappers if tool.name == tool_name), None)
             if tool_wrapper:
-                agent.register_for_llm()(tool_wrapper.function)
+                agent.register_for_llm()(tool_wrapper.tool)
 
         return agent
         
 
     @classmethod
-    def create_wrapper(cls, data: dict, tool_wrappers: list[AutoGenToolWrapper]) -> "AutoGentAgentWrapper":
+    def create_wrapper(cls, data: dict, tool_wrappers: list[AutoGenToolWrapper]) -> "AutoGenAgentWrapper":
         return cls(
             name=data["name"],
             description=data["description"],
@@ -74,11 +78,11 @@ class AutoGentAgentWrapper:
             tools=["tools"]
         )
     @classmethod
-    def create_wrapper_list(cls, data: list[dict], tool_wrappers: list[AutoGenToolWrapper]) -> list["AutoGentAgentWrapper"]:
+    def create_wrapper_list(cls, data: list[dict], tool_wrappers: list[AutoGenToolWrapper]) -> list["AutoGenAgentWrapper"]:
         return [cls.create_wrapper(d, tool_wrappers) for d in data]
 
     @classmethod
-    def create_dict(cls, agent: "AutoGentAgentWrapper") -> dict:
+    def create_dict(cls, agent: "AutoGenAgentWrapper") -> dict:
         return {
             "name": agent.name,
             "description": agent.description,
@@ -93,7 +97,7 @@ class AutoGentAgentWrapper:
         }
     
     @classmethod
-    def create_dict_list(cls, agents: list["AutoGentAgentWrapper"]) -> list[dict]:
+    def create_dict_list(cls, agents: list["AutoGenAgentWrapper"]) -> list[dict]:
         return [cls.create_dict(agent) for agent in agents]
 
 
@@ -103,7 +107,7 @@ from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 class AutoGenAgentGenerator:
 
     @classmethod
-    def create_default_agents(cls, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]) -> list[AutoGentAgentWrapper]:
+    def create_default_agents(cls, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]) -> list[AutoGenAgentWrapper]:
 
         agent_wrappers = []
         agent_wrappers.append(cls.__create_user_proxy_wrapper(autogen_props, tool_wrappers))
@@ -119,7 +123,7 @@ class AutoGenAgentGenerator:
         return agent_wrappers
 
     @classmethod
-    def __create_user_proxy_wrapper(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper: 
+    def __create_user_proxy_wrapper(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper: 
         # Task assigner for group chat
         name="user_proxy"
         description = "Creates a list of tasks to achieve the user's request and assigns tasks to each agent."
@@ -132,7 +136,7 @@ class AutoGenAgentGenerator:
             """
         description=description
         
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -147,14 +151,14 @@ class AutoGenAgentGenerator:
         return agent_wrapper
 
     @classmethod
-    def __create_planner(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_planner(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Task assigner for group chat
         description = "Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, until admin approval. "
         system_message="""Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, 
         until admin approval. 
         """
         name="planner"
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -169,14 +173,14 @@ class AutoGenAgentGenerator:
         return agent_wrapper
 
     @classmethod
-    def __create_critic(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_critic(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Task assigner for group chat
         description = "Critic. Double check plan, claims, code from other agents and provide feedback. Check whether the plan includes adding verifiable info such as source URL."
         system_message="""Critic. Double check plan, claims, code from other agents and provide feedback. 
         Check whether the plan includes adding verifiable info such as source URL.
         """
         name="critic"
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -192,7 +196,7 @@ class AutoGenAgentGenerator:
 
 
     @classmethod
-    def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Separate the code writer and executor. Below is the code inference Agent with LLM.
         description = "Creates Python scripts according to the user's instructions."
         name = "code_writer"
@@ -208,7 +212,7 @@ class AutoGenAgentGenerator:
             * If the information obtained from the execution of the script is insufficient, create revised code again based on the currently obtained information.
             * Your ultimate goal is the user's instructions, and you will create and revise code as many times as necessary to meet this goal.
             """
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -217,14 +221,14 @@ class AutoGenAgentGenerator:
             termination_msg=None,
             code_execution=True,
             llm_execution=False,
-            tool_names_for_execution=[tool.name for tool in autogen_tools],
-            tool_names_for_llm=[tool.name for tool in autogen_tools]
+            tool_names_for_execution=[],
+            tool_names_for_llm=[]
         )
         return agent_wrapper
 
 
     @classmethod
-    def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper], auto_execute_code: bool = False) -> AutoGentAgentWrapper:
+    def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper], auto_execute_code: bool = False) -> AutoGenAgentWrapper:
         # Separate the code writer and executor. Below is the code executor Agent without LLM.
         description = "Executes the code provided by the code writer."
         name = "code_executor"
@@ -238,7 +242,7 @@ class AutoGenAgentGenerator:
         else:
             human_input_mode = "ALWAYS"
 
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -254,7 +258,7 @@ class AutoGenAgentGenerator:
 
     # Enable Vector Searcher
     @classmethod
-    def __create_vector_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_vector_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Vector Searcher
         description = "Searches information from the vector database according to the user's instructions."
         name = "vector_searcher"
@@ -262,7 +266,7 @@ class AutoGenAgentGenerator:
             You are a vector searcher. You search for information from the vector database according to the user's instructions.
             Use the provided function to display the search results.
             """
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -277,7 +281,7 @@ class AutoGenAgentGenerator:
         return agent_wrapper
 
     @classmethod
-    def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Web Searcher
         description = "Searches documents on the web."
         name = "web_searcher"
@@ -287,7 +291,7 @@ class AutoGenAgentGenerator:
             - If the required document is not at the link destination, search for further linked information.
             - If the required document is found, retrieve the document with extract_webpage and provide the text to the user.
             """
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -310,7 +314,7 @@ class AutoGenAgentGenerator:
 
     # Enable File Extractor
     @classmethod
-    def __create_file_operator(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_file_operator(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # File Extractor
         description = "File operator. Ex. Write text file. Extracts information from files according to the user's instructions."
         name = "file_operator"
@@ -324,7 +328,7 @@ class AutoGenAgentGenerator:
             - list directory files
             - File Checker: Checks whether the specified file exists.
             """
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
@@ -341,14 +345,14 @@ class AutoGenAgentGenerator:
 
     # Create an agent to get the current time
     @classmethod
-    def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGentAgentWrapper:
+    def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Agent to get the current time
         description = "Retrieves the current time."
         name = "current_time"
         system_message="""
             Retrieves the current time.
             """
-        agent_wrapper = AutoGentAgentWrapper(
+        agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
             system_message=system_message,
