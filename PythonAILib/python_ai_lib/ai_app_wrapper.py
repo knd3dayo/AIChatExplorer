@@ -189,9 +189,13 @@ def get_autogen_default_definition(context_json):
         result["tools"] = tool_definition_list
 
         from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
-        agent_dfinition_list = AutoGenAgentGenerator.create_default_agents(autogen_props, tools_wrappers)
-        result["agents"] = AutoGenAgentWrapper.create_dict_list(agent_dfinition_list)
+        agent_wrappers = AutoGenAgentGenerator.create_default_agents(autogen_props, tools_wrappers)
+        agent_definition_list = AutoGenAgentWrapper.create_dict_list(agent_wrappers)
+        result["agents"] = agent_definition_list
 
+        from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChatGenerator
+        group_chat_definition_list = AutoGenGroupChatGenerator.create_default_chats(autogen_props, agent_wrappers)
+        result["group_chats"] = group_chat_definition_list
         return result
     
     # strout,stderrをキャプチャするラッパー関数を生成

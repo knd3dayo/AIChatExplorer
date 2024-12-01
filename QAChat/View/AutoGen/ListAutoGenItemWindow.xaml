@@ -109,7 +109,7 @@
                 </DataGrid>
             </TabItem>
             <!--  Agent  -->
-            <TabItem Header="{x:Static res:ViewStringResources.Agent}">
+            <TabItem Header="{x:Static res:ViewStringResources.Agent}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -149,7 +149,7 @@
                     </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
-            <TabItem Header="{x:Static res:ViewStringResources.Tool}">
+            <TabItem Header="{x:Static res:ViewStringResources.Tool}" Visibility="{Binding NormalModeVisibility}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -208,6 +208,14 @@
                     Content="{x:Static res:ViewStringResources.Add}" />
             </DockPanel>
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                <Button
+                    Width="100"
+                    Margin="10,10,10,10"
+                    Command="{Binding SelectCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.Select}"
+                    DockPanel.Dock="Right"
+                    Visibility="{Binding SelectGroupChatModeVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,10,10,10"

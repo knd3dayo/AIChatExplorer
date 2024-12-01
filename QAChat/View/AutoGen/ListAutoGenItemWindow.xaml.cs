@@ -10,9 +10,9 @@ namespace QAChat.View.AutoGen {
             InitializeComponent();
         }
 
-        public static void OpenListAutoGenItemWindow() {
+        public static void OpenListAutoGenItemWindow(bool selectGroupChatMode = false) {
             ListAutoGenItemWindow listAutoGenItemWindow = new();
-            ListAutoGenItemWindowViewModel listAutoGenItemWindowViewModel = new();
+            ListAutoGenItemWindowViewModel listAutoGenItemWindowViewModel = new(selectGroupChatMode);
             listAutoGenItemWindow.DataContext = listAutoGenItemWindowViewModel;
             listAutoGenItemWindow.Show();
         }

@@ -76,6 +76,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -103,6 +104,19 @@
                         Grid.Column="1"
                         Margin="10,10,10,10"
                         Text="{Binding Description}" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Width="120"
+                        Margin="10,10,10,10"
+                        Text="{x:Static res:ViewStringResources.InitAgent}" />
+                    <ComboBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,10,10,10"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding AutoGenAgents}"
+                        SelectedItem="{Binding InitAgent}" />
                 </Grid>
             </TabItem>
             <TabItem Header="{x:Static res:ViewStringResources.DetailSettings}">
@@ -123,11 +137,11 @@
                                 Header="{x:Static res:ViewStringResources.Enabled}" />
                             <DataGridTextColumn
                                 Width="200"
-                                Binding="{Binding Name}"
+                                Binding="{Binding AutoGenAgent.Name}"
                                 Header="{x:Static res:ViewStringResources.Name}" />
                             <DataGridTextColumn
                                 Width="*"
-                                Binding="{Binding Description}"
+                                Binding="{Binding AutoGenAgent.Description}"
                                 Header="{x:Static res:ViewStringResources.Description}" />
                         </DataGrid.Columns>
                     </DataGrid>

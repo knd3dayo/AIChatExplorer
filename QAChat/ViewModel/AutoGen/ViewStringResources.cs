@@ -55,6 +55,36 @@ namespace QAChat.ViewModel.AutoGen {
         // Close
         public static string Close { get; set; } = CommonStringResources.Close;
 
+        // Select
+        public static string Select { get; set; } = CommonStringResources.Select;
+        // InitAgent
+        public static string InitAgent { get; set; } = "初期エージェント";
+        // AgentType
+        public static string AgentType { get; set; } = "エージェントタイプ";
 
+        // UserProxy
+        public static string UserProxy { get; set; } = "userproxy";
+
+        // Assistant
+        public static string Assistant { get; set; } = "assistant";
+
+        // HumanInputMode
+        public static string HumanInputMode { get; set; } = "HumanInputMode";
+        // Never
+        public static string Never { get; set; } = "NEVER";
+        // Always
+        public static string Always { get; set; } = "ALWAYS";
+
+        // Terminate
+        public static string Terminate { get; set; } = "TERMINATE";
+
+        // TerminateMsg
+        public static string TerminateMsg { get; set; } = "TerminateMsg";
+
+        // CodeExecution
+        public static string CodeExecution { get; set; } = "CodeExecution";
+
+        // LLM
+        public static string LLM { get; set; } = "LLM";
     }
 }

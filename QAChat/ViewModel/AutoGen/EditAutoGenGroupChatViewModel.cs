@@ -12,6 +12,7 @@ namespace QAChat.ViewModel.AutoGen {
 
             AutoGenGroupChat = autoGenGroupChat;
             AfterUpdate = afterUpdate;
+
             LoadAutoGenAgents();
         }
 
@@ -58,6 +59,9 @@ namespace QAChat.ViewModel.AutoGen {
             }
         }
 
+        // InitAgent
+        public AutoGenAgentViewModel? InitAgent { get; set; }
+
         public void LoadAutoGenAgents() {
             // AutoGenAgentのリストを取得
             ObservableCollection<AutoGenAgentViewModel> autoGenAgents = [];
@@ -73,6 +77,11 @@ namespace QAChat.ViewModel.AutoGen {
             }
             AutoGenAgents = autoGenAgents;
             OnPropertyChanged(nameof(AutoGenAgents));
+
+            // InitAgentNameからAutoGenAgentを取得
+            InitAgent = AutoGenAgents.Select((item) => item).FirstOrDefault((item) => item.AutoGenAgent.Name == AutoGenGroupChat.InitAgentName);
+            OnPropertyChanged(nameof(InitAgent));
+
         }
 
 
@@ -84,6 +93,10 @@ namespace QAChat.ViewModel.AutoGen {
                 if (item.IsChecked) {
                     AutoGenGroupChat.AgentNames.Add(item.AutoGenAgent.Name);
                 }
+            }
+            // InitAgentNameを更新
+            if (InitAgent != null) { 
+                AutoGenGroupChat.InitAgentName = InitAgent.AutoGenAgent.Name;
             }
             AutoGenGroupChat.Save();
             AfterUpdate();

@@ -164,8 +164,46 @@ class AutoGenGroupChat:
         autogen_props.group_chat_dict = group_chat_dict
         return AutoGenGroupChat(autogen_props)
     
+    @classmethod
+    def _create_group_chat_dict(cls, name: str, description: str, init_agent_name: str, agent_names: list[str]) -> dict:
+        group_chat_dict = {
+            "name": name,
+            "description": description,
+            "init_agent_name": init_agent_name,
+            "agent_names": agent_names
+        }
+        return group_chat_dict
+
+
+    @classmethod
+    def create_dict(cls, agent: "AutoGenAgentWrapper") -> dict:
+        return {
+            "name": agent.name,
+            "description": agent.description,
+            "system_message": agent.system_message,
+            "type_value": agent.type_value,
+            "human_input_mode": agent.human_input_mode,
+            "termination_msg": agent.termination_msg,
+            "code_execution": agent.code_execution,
+            "llm_execution": agent.llm_execution,
+            "tool_names_for_execution": agent.tool_names_for_execution,
+            "tool_names_for_llm": agent.tool_names_for_llm
+        }
+    
+    @classmethod
+    def create_dict_list(cls, agents: list["AutoGenAgentWrapper"]) -> list[dict]:
+        return [cls.create_dict(agent) for agent in agents]
+
+
 class AutoGenGroupChatGenerator:
     @classmethod
-    def create_default_group_chat(cls, autogen_props: AutoGenProps) -> list[AutoGenGroupChat]:
-        autogen_group_chats = [AutoGenGroupChat(autogen_props)]
-        return autogen_group_chats
+    def create_default_chats(cls, autogen_props: AutoGenProps, agent_wrappers: list[AutoGenAgentWrapper]) -> list[AutoGenGroupChat]:
+        agent_names = [agent_wrapper.name for agent_wrapper in agent_wrappers]
+        group_chat_dict = {
+            "name": "default",
+            "description": "default",
+            "init_agent_name": "user_proxy",
+            "agent_names": agent_names
+        }
+
+        return [group_chat_dict]

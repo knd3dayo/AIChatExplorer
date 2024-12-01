@@ -12,6 +12,20 @@ namespace QAChat.ViewModel.AutoGen {
             AutoGenAgent = autoGenAgent;
             AfterUpdate = afterUpdate;
             LoadTools();
+            // TypeValue
+            if (AutoGenAgent.TypeValue == "userproxy") {
+                SelectedTypeValueIndex = 0;
+            } else if (AutoGenAgent.TypeValue == "assistant") {
+                SelectedTypeValueIndex = 1;
+            }
+            // HumanInputMode
+            if (AutoGenAgent.HumanInputMode == "NEVER") {
+                SelectedHumanInputModeIndex = 0;
+            } else if (AutoGenAgent.HumanInputMode == "ALWAYS") {
+                SelectedHumanInputModeIndex = 1;
+            } else if (AutoGenAgent.HumanInputMode == "TERMINATE") {
+                SelectedHumanInputModeIndex = 2;
+            }
         }
 
         public AutoGenAgent AutoGenAgent { get; set; }
@@ -125,6 +139,28 @@ namespace QAChat.ViewModel.AutoGen {
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
+            // TypeValue
+            switch (SelectedTypeValueIndex) {
+                case 0:
+                    AutoGenAgent.TypeValue = "userproxy";
+                    break;
+                case 1:
+                    AutoGenAgent.TypeValue = "assistant";
+                    break;
+            }
+            // HumanInputMode
+            switch (SelectedHumanInputModeIndex) {
+                case 0:
+                    AutoGenAgent.HumanInputMode = "NEVER";
+                    break;
+                case 1:
+                    AutoGenAgent.HumanInputMode = "ALWAYS";
+                    break;
+                case 2:
+                    AutoGenAgent.HumanInputMode = "TERMINATE";
+                    break;
+            }
+
             // Save
             AutoGenAgent.Save();
             AfterUpdate();

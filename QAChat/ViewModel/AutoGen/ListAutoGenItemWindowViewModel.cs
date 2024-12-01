@@ -17,8 +17,23 @@ namespace QAChat.ViewModel.AutoGen {
 
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChats { get; set; } = [];
 
-        public ListAutoGenItemWindowViewModel() {
+        public ListAutoGenItemWindowViewModel(bool selectGroupChatMode) {
+            SelectGroupChatMode = selectGroupChatMode;
             LoadItems();
+        }
+
+        public bool SelectGroupChatMode { get; set; }
+
+        public Visibility SelectGroupChatModeVisibility {
+            get {
+                return SelectGroupChatMode ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
+
+        public Visibility NormalModeVisibility {
+            get {
+                return SelectGroupChatMode ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
 
         public void LoadItems() {
@@ -170,6 +185,13 @@ namespace QAChat.ViewModel.AutoGen {
             if (routedEventArgs.OriginalSource is DataGrid) {
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
                 SelectedAutoGenTool = (AutoGenTool)dataGrid.SelectedItem;
+            }
+        });
+
+        // SelectCommand
+        public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
+            if (SelectedAutoGenGroupChat != null) {
+                window.Close();
             }
         });
     }

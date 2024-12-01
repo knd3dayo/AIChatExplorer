@@ -11,6 +11,11 @@ namespace QAChat.ViewModel.AutoGen {
 
         public AutoGenAgent AutoGenAgent { get; set; }
 
+        // Name
+        public string Name {
+            get => AutoGenAgent.Name;
+        }
+
         private bool _isChecked;
         public bool IsChecked {
             get => _isChecked;
@@ -18,6 +23,13 @@ namespace QAChat.ViewModel.AutoGen {
                 _isChecked = value;
                 OnPropertyChanged(nameof(IsChecked));
             }
+        }
+
+        public override bool Equals(object? other)  {
+            if (other is AutoGenAgentViewModel otherAgent) {
+                return AutoGenAgent.Name == otherAgent.AutoGenAgent.Name;
+            }
+            return false;
         }
     }
 }
