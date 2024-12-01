@@ -32,12 +32,10 @@ class AutoGenGroupChat:
             raise ValueError("init_agent_name is None")
 
         # agent_names
-        agent_name_string = group_chat_dict.get("agent_names", "")
-        self.agent_names = []
-        if agent_name_string != "":
-            self.agent_names = agent_name_string.split(",")
+        self.agent_names =  group_chat_dict.get("agent_names", [])
 
-        print (f"agent_names: {self.agent_names}")
+        agent_names_string = ",".join(self.agent_names)
+        print (f"agent_names: {agent_names_string}")
         
         self.print_messages_function = self.create_print_messages_function()
 

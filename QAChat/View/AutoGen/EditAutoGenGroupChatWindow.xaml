@@ -9,10 +9,11 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.AutoGen"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.ViewModel.AutoGen"
     Title="EditAutoGenGroupWindow"
     Width="800"
     Height="450"
-    d:DataContext="{d:DesignInstance Type=local:EditAutoGenGroupViewModel}"
+    d:DataContext="{d:DesignInstance Type=local:EditAutoGenGroupChatViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -70,7 +71,7 @@
             Margin="10,10,10,10"
             HorizontalContentAlignment="Left"
             SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="{Binding StringResources.BasicSettings}">
+            <TabItem Header="{x:Static res:ViewStringResources.BasicSettings}">
                 <Grid Margin="10,10,10,20" HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -85,76 +86,60 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Name, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Name}" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="10,10,10,10"
-                        Text="{Binding FolderViewModel.FolderName}" />
+                        Text="{Binding Name}" />
                     <TextBlock
                         Grid.Row="1"
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Description, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Description}" />
                     <editorControl:MyTextBox
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,10"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.InputDescriptionOfThisFolder, Mode=OneTime}"
-                        Text="{Binding FolderViewModel.Description}" />
+                        Text="{Binding Description}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="{Binding StringResources.DetailSettings}">
+            <TabItem Header="{x:Static res:ViewStringResources.DetailSettings}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <CheckBox
-                        Grid.Row="0"
+                    <DataGrid
+                        Grid.Row="1"
                         Margin="10,10,10,10"
-                        Content="{Binding StringResources.AddMyFolderToTargetVectorDB, Mode=OneTime}"
-                        IsChecked="{Binding IncludeInReferenceVectorDBItems}" />
-                    <ListBox
-                        Grid.Row="2"
-                        Margin="10,10,10,10"
-                        ItemsSource="{Binding VectorDBItems}"
-                        SelectedItem="{Binding SelectedVectorDBItem}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                        <ListBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
-                            </ContextMenu>
-                        </ListBox.ContextMenu>
-                    </ListBox>
+                        AutoGenerateColumns="False"
+                        ItemsSource="{Binding AutoGenAgents, Mode=OneWay}">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn
+                                Width="Auto"
+                                Binding="{Binding IsChecked}"
+                                Header="{x:Static res:ViewStringResources.Enabled}" />
+                            <DataGridTextColumn
+                                Width="200"
+                                Binding="{Binding Name}"
+                                Header="{x:Static res:ViewStringResources.Name}" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Description}"
+                                Header="{x:Static res:ViewStringResources.Description}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2" Margin="10,10,10,10">
-            <DockPanel HorizontalAlignment="Left">
-                <Button
-                    Width="250"
-                    Margin="10,0,10,0"
-                    Command="{Binding AddVectorDBItemCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}"
-                    Visibility="{Binding VectorDBItemButtonVisibility}" />
-            </DockPanel>
             <DockPanel HorizontalAlignment="Right">
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
-                    Command="{Binding CreateCommand, Mode=OneTime}"
+                    Command="{Binding SaveCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{Binding StringResources.OK, Mode=OneTime}" />
                 <Button

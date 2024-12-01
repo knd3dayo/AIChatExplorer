@@ -23,9 +23,9 @@ namespace QAChat.View.AutoGen {
             InitializeComponent();
         }
 
-        public static void OpenWindow(AutoGenTool autoGenTool) {
+        public static void OpenWindow(AutoGenTool autoGenTool, Action afterUpdate) {
             var window = new EditAutoGenToolWindow();
-            window.DataContext = new EditAutoGenToolViewModel(autoGenTool);
+            window.DataContext = new EditAutoGenToolViewModel(autoGenTool, afterUpdate);
             window.ShowDialog();
         }
     }

@@ -27,7 +27,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "name", Name },
                 { "description", Description },
                 { "init_agent_name", InitAgentName },
-                { "agent_names", string.Join(",", AgentNames) },
+                { "agent_names", AgentNames },
             };
             return dict;
         }

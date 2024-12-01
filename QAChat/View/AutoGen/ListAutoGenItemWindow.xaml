@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.AutoGen"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.ViewModel.AutoGen"
     Title="ListAutoGenItemWindow"
     Width="800"
     Height="450"
@@ -65,7 +66,8 @@
             Grid.Row="1"
             HorizontalContentAlignment="Left"
             SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="{Binding StringResGroupChat}">
+            <!--  グループチャット  -->
+            <TabItem Header="{x:Static res:ViewStringResources.GroupChat}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -81,9 +83,10 @@
                     SelectionUnit="FullRow">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding SelectedAutoGenGroupChatChangeCommmand}" PassEventArgsToCommand="True" />
+                            <i:InvokeCommandAction Command="{Binding AutoGenGroupChatSelectionChangedCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+
                     <DataGrid.InputBindings>
                         <!--  Open selected item window by double-clicking  -->
                         <MouseBinding Command="{Binding OpenEditAutoGenGroupChatWindowCommand}" MouseAction="LeftDoubleClick" />
@@ -92,16 +95,21 @@
                         <DataGridTextColumn
                             Width="200"
                             Binding="{Binding Name}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
+                            Header="{x:Static res:ViewStringResources.Name}" />
                         <DataGridTextColumn
                             Width="*"
                             Binding="{Binding Description}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
+                            Header="{x:Static res:ViewStringResources.Description}" />
                     </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding DeleteAutoGenGroupChatCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
             <!--  Agent  -->
-            <TabItem Header="{Binding StringResAgent}">
+            <TabItem Header="{x:Static res:ViewStringResources.Agent}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -117,7 +125,7 @@
                     SelectionUnit="FullRow">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            <i:InvokeCommandAction Command="{Binding AutoGenAgentSelectionChangedCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <DataGrid.InputBindings>
@@ -128,15 +136,20 @@
                         <DataGridTextColumn
                             Width="200"
                             Binding="{Binding Name}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
+                            Header="{x:Static res:ViewStringResources.Name}" />
                         <DataGridTextColumn
                             Width="*"
                             Binding="{Binding Description}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
+                            Header="{x:Static res:ViewStringResources.Description}" />
                     </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding DeleteAutoGenAgentCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
-            <TabItem Header="{Binding StringResTool}">
+            <TabItem Header="{x:Static res:ViewStringResources.Tool}">
                 <DataGrid
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
@@ -152,7 +165,7 @@
                     SelectionUnit="FullRow">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ClipboardItemSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                            <i:InvokeCommandAction Command="{Binding AutoGenToolSelectionChangedCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <DataGrid.InputBindings>
@@ -163,16 +176,21 @@
                         <DataGridTextColumn
                             Width="200"
                             Binding="{Binding Name}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResName}" />
+                            Header="{x:Static res:ViewStringResources.Name}" />
                         <DataGridTextColumn
                             Width="*"
                             Binding="{Binding Description}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResDescription}" />
+                            Header="{x:Static res:ViewStringResources.Description}" />
                         <DataGridTextColumn
                             Width="*"
                             Binding="{Binding SourcePath}"
-                            Header="{x:Static local:ListAutoGenItemWindowViewModel.StringResSourcePath}" />
+                            Header="{x:Static res:ViewStringResources.SourcePath}" />
                     </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding DeleteAutoGenToolCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
         </TabControl>
@@ -187,21 +205,15 @@
                     Margin="10,10,10,10"
                     Command="{Binding AddItemCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResAdd}" />
+                    Content="{x:Static res:ViewStringResources.Add}" />
             </DockPanel>
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                 <Button
                     Width="100"
                     Margin="10,10,10,10"
-                    Command="{Binding SaveCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResSave}" />
-                <Button
-                    Width="100"
-                    Margin="10,10,10,10"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResCancel}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

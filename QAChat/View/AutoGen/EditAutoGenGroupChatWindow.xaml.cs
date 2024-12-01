@@ -11,9 +11,9 @@ namespace QAChat.View.AutoGen {
             InitializeComponent();
         }
 
-        public static void OpenWindow(AutoGenGroupChat autoGenGroupChat) {
+        public static void OpenWindow(AutoGenGroupChat autoGenGroupChat, Action afterUpdate) {
             var window = new EditAutoGenGroupChatWindow();
-            window.DataContext = new EditAutoGenGroupChatViewModel(autoGenGroupChat);
+            window.DataContext = new EditAutoGenGroupChatViewModel(autoGenGroupChat, afterUpdate);
             window.ShowDialog();
         }
     }

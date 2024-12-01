@@ -10,9 +10,9 @@ namespace QAChat.View.AutoGen {
         public EditAutoGenAgentWindow() {
             InitializeComponent();
         }
-        public static void OpenWindow(AutoGenAgent autoGenAgent) {
+        public static void OpenWindow(AutoGenAgent autoGenAgent, Action afterUpdate) {
             var window = new EditAutoGenAgentWindow();
-            window.DataContext = new EditAutoGenAgentViewModel(autoGenAgent);
+            window.DataContext = new EditAutoGenAgentViewModel(autoGenAgent, afterUpdate);
             window.ShowDialog();
         }
     }

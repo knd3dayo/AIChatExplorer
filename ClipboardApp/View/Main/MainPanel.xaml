@@ -8,9 +8,9 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Main"
+    xmlns:viewModel="clr-namespace:ClipboardApp"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:IMainPanelImplementer}"
+    d:DataContext="{d:DesignInstance Type=viewModel:MainWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <commonModel:CommonStringResources x:Key="StringResources" />
