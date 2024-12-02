@@ -2,7 +2,7 @@ using System.Windows;
 using PythonAILib.Model.Image;
 using QAChat.ViewModel.ImageChat;
 
-namespace QAChat.View.Chat
+namespace QAChat.View.QAChatMain
 {
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック

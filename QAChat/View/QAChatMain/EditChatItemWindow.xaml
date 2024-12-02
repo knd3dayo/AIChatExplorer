@@ -1,5 +1,5 @@
 <Window
-    x:Class="QAChat.View.Chat.EditChatItemWindow"
+    x:Class="QAChat.View.QAChatMain.EditChatItemWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:QAChat.View.Common.StatusBar"
@@ -10,7 +10,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.QAChatMain"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ChatItem, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
+    Title="{x:Static res:ViewStringResources.ChatItem}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:EditChatItemWindowViewModel}"
@@ -84,7 +85,7 @@
                     Margin="10,0,10,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

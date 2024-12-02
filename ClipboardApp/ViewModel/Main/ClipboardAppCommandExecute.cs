@@ -13,7 +13,7 @@ using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
-using QAChat.View.Chat;
+using QAChat.View.QAChatMain;
 using QAChat.View.RAG;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel;

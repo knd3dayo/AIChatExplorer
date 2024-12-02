@@ -7,13 +7,13 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.ContentItemPanel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
     x:Name="Root"
     d:DataContext="{d:DesignInstance Type=local:ContentItemPanelViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -38,11 +38,11 @@
                 <MenuItem
                     Command="{Binding OpenSelectedItemCommand, Mode=OneTime}"
                     CommandParameter="{Binding}"
-                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Open}" />
+                    Header="{x:Static res:ViewStringResources.Open}" />
                 <MenuItem
                     Command="{Binding RemoveSelectedItemCommand}"
                     CommandParameter="{Binding}"
-                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Delete}" />
+                    Header="{x:Static res:ViewStringResources.Delete}" />
             </ContextMenu>
         </Grid.ContextMenu>
         <!--  タイトル  -->

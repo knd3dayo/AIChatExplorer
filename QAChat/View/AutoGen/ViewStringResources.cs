@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using QAChat.Resource;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace QAChat.View.AutoGen {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;

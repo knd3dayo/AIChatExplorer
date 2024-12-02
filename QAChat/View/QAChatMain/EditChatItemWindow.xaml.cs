@@ -3,8 +3,7 @@ using PythonAILib.Model.Chat;
 using QAChat.ViewModel;
 using QAChat.ViewModel.QAChatMain;
 
-namespace QAChat.View.Chat
-{
+namespace QAChat.View.QAChatMain {
     /// <summary>
     /// EditChatItem.xaml の相互作用ロジック
     /// </summary>

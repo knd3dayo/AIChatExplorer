@@ -8,7 +8,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using QAChat.Resource;
-using QAChat.View.Chat;
+using QAChat.View.QAChatMain;
 using QAChat.View.PromptTemplate;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel.PromptTemplate;

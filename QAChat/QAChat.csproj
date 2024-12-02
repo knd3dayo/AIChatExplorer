@@ -39,7 +39,7 @@
     <Compile Update="View\Common\StatusMessage\StatusMessageWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Chat\ScreenShotCheckPromptWindow.xaml.cs">
+    <Compile Update="View\QAChatMain\ScreenShotCheckPromptWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\PromptTemplate\EditPromptItemWindow.xaml.cs">
@@ -63,10 +63,6 @@
     <Compile Update="View\VectorDB\ListVectorDBWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModel\Common\" />
   </ItemGroup>
 
 </Project>

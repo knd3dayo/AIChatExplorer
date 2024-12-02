@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.ImageChat"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
     d:DataContext="{d:DesignInstance Type=local:ImageChatMainWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -95,11 +96,11 @@
                                     <MenuItem
                                         Command="{Binding OpenSelectedImageFileCommand}"
                                         CommandParameter="{Binding}"
-                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Open, Mode=OneTime}" />
+                                        Header="{x:Static res:ViewStringResources.Open}" />
                                     <MenuItem
                                         Command="{Binding RemoveSelectedImageFileCommand}"
                                         CommandParameter="{Binding}"
-                                        Header="{Binding Source={StaticResource StringResources}, Path=Instance.Delete, Mode=OneTime}" />
+                                        Header="{x:Static res:ViewStringResources.Delete}" />
                                 </ContextMenu>
                             </Grid.ContextMenu>
                         </Grid>
@@ -126,7 +127,7 @@
                     <TextBox
                         MinHeight="50"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.TheAnswerWillBeDisplayedHere, Mode=OneTime}"
+                        materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.TheAnswerWillBeDisplayedHere}"
                         AcceptsReturn="True"
                         FontSize="12"
                         IsReadOnly="True"
@@ -148,7 +149,7 @@
                         Grid.Row="0"
                         Height="30"
                         Margin="10,0,10,0"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
+                        materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PromptTemplate}"
                         AcceptsReturn="True"
                         Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.InputBindings>
@@ -163,7 +164,7 @@
                         <TextBox
                             MinHeight="50"
                             Margin="10,0,10,0"
-                            materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                            materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                             AcceptsReturn="True"
                             FontSize="12"
                             Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
@@ -192,16 +193,16 @@
                 Margin="10,10,10,10"
                 Command="{Binding SendChatCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Send}" />
+                Content="{x:Static res:ViewStringResources.Send}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding ClearChatCommand}"
-                Content="{Binding StringResources.Clear}" />
+                Content="{x:Static res:ViewStringResources.Clear}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding CloseCommand}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Close}" />
+                Content="{x:Static res:ViewStringResources.Close}" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
         <ProgressBar

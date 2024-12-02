@@ -1,5 +1,5 @@
 <Window
-    x:Class="QAChat.View.Chat.ImageChatMainWindow"
+    x:Class="QAChat.View.QAChatMain.ImageChatMainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:QAChat.Resource"
@@ -9,7 +9,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:qc="clr-namespace:QAChat.View.QAChatMain"
-    Title="{Binding StringResources.ImageChat, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
+    Title="{x:Static res:ViewStringResources.ImageChat}"
     d:DataContext="{d:DesignInstance Type=local:ImageChatMainWindowViewModel}"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -61,25 +62,25 @@
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.File, Mode=OneTime}">
+                        Header="{x:Static res:ViewStringResources.File}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding SelectImageFileCommand, Mode=OneTime}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.SelectImageFile, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.SelectImageFile}" />
                     </MenuItem>
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Edit, Mode=OneTime}">
+                        Header="{x:Static res:ViewStringResources.Edit}">
                         <MenuItem
                             Height="Auto"
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ScreenShotCheckPromptCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditImageEvidenceCheckItem, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditImageEvidenceCheckItem}" />
                     </MenuItem>
                 </Menu>
                 <Menu

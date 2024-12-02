@@ -1,22 +1,21 @@
 <Window
-    x:Class="QAChat.View.Chat.ScreenShotCheckPromptWindow"
+    x:Class="QAChat.View.QAChatMain.ScreenShotCheckPromptWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:QAChat.View.Common.StatusBar"
-    xmlns:commonModel="clr-namespace:QAChat.Resource"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel.ImageChat"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
     x:Name="root"
-    Title="{Binding StringResources.ScreenShotCheckPromptWindowTitle, Mode=OneTime}"
+    Title="{x:Static res:ViewStringResources.ScreenShotCheckPromptWindowTitle}"
     Width="800"
     Height="450"
     d:DataContext="d:DdesignInstance Type=local:ScreenShotCheckPromptWindowViewModel"
     mc:Ignorable="d">
     <Window.Resources>
-        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -87,12 +86,12 @@
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingItem, UpdateSourceTrigger=PropertyChanged}"
-                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.SettingItem}" />
+                    Header="{x:Static res:ViewStringResources.SettingItem}" />
                 <DataGridTextColumn
                     Width="300"
                     Binding="{Binding SettingValue, UpdateSourceTrigger=PropertyChanged}"
-                    Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.SettingValue}" />
-                <DataGridTemplateColumn Width="150" Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.CheckType}">
+                    Header="{x:Static res:ViewStringResources.SettingValue}" />
+                <DataGridTemplateColumn Width="150" Header="{x:Static res:ViewStringResources.CheckType}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding CheckTypeList}" SelectedItem="{Binding CheckTypeString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -120,7 +119,7 @@
                     Width="100"
                     Margin="10,0,0,0"
                     Command="{Binding ClearCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.Clear, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.Clear}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -131,13 +130,13 @@
                     Margin="10,0,20,0"
                     Command="{Binding OKCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel}"
+                    Content="{x:Static res:ViewStringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

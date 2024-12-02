@@ -9,7 +9,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
 using QAChat.Model;
-using QAChat.View.Chat;
+using QAChat.View.QAChatMain;
 using QAChat.View.PromptTemplate;
 using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;

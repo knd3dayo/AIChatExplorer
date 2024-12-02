@@ -10,14 +10,13 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:qaChatControl="clr-namespace:QAChat.View.QAChatMain"
-    xmlns:res="clr-namespace:QAChat.ViewModel.QAChatMain"
+    xmlns:res="clr-namespace:QAChat.View.QAChatMain"
     x:Name="Root"
     d:DataContext="{d:DesignInstance Type=local:QAChatControlViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -60,7 +59,7 @@
             <TextBlock
                 Grid.Row="0"
                 Margin="10,0,10,5"
-                Text="{Binding StringResources.Setting, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Setting}" />
             <Separator Grid.Row="1" />
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
@@ -72,7 +71,7 @@
                     Margin="10,0,10,0"
                     VerticalAlignment="Center"
                     FontWeight="Bold"
-                    Text="{Binding StringResources.Mode}" />
+                    Text="{x:Static res:ViewStringResources.Mode}" />
                 <ComboBox
                     Grid.Column="1"
                     Margin="10,0,10,0"
@@ -107,13 +106,13 @@
                             Grid.Column="0"
                             VerticalAlignment="Center"
                             FontWeight="Bold"
-                            Text="{Binding StringResources.VectorDB, Mode=OneTime}" />
+                            Text="{x:Static res:ViewStringResources.VectorDB}" />
                         <TextBlock
                             Grid.Column="1"
                             Margin="10,0,0,0"
                             VerticalAlignment="Center"
                             FontSize="10"
-                            Text="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}">
+                            Text="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}">
                             <TextBlock.InputBindings>
                                 <MouseBinding Command="{Binding AddVectorDBItemCommand, Mode=OneTime}" MouseAction="LeftClick" />
                             </TextBlock.InputBindings>
@@ -285,7 +284,7 @@
                                 <TextBox
                                     Height="60"
                                     Margin="10,0,10,0"
-                                    materialDesign:HintAssist.Hint="{Binding StringResources.PromptTemplate, Mode=OneTime}"
+                                    materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.PromptTemplate}"
                                     AcceptsReturn="True"
                                     Text="{Binding PromptText, UpdateSourceTrigger=PropertyChanged}">
                                     <TextBox.InputBindings>
@@ -300,7 +299,7 @@
                                 <editorControl:MyTextBox
                                     MinHeight="50"
                                     Margin="10,0,10,0"
-                                    materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                                    materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                                     AcceptsReturn="True"
                                     Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                                     TextWrappingMode="{Binding TextWrappingMode}" />
@@ -312,7 +311,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.RequestParameterJson}">
+                    Header="{x:Static res:ViewStringResources.RequestParameterJson}">
                     <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
                         <TextBox
                             Margin="10,10,10,10"
@@ -327,7 +326,7 @@
                     Margin="10,0,10,0"
                     Padding="0"
                     FontSize="10"
-                    Header="{Binding StringResources.GenerateDebugCommand}">
+                    Header="{x:Static res:ViewStringResources.GenerateDebugCommand}">
                     <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
                         <TextBox
                             Margin="10,10,10,10"
@@ -355,29 +354,29 @@
                         Margin="10,0,10,5"
                         Command="{Binding SendChatCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Send, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.Send}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearChatContentsCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.ClearChatContents, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.ClearChatContents}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ClearInputTextCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.ClearContent, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.ClearContent}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding ReloadInputTextCommand, Mode=OneTime}"
-                        Content="{Binding StringResources.ReloadContent, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.ReloadContent}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding SaveCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Save, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.Save}" />
                     <Button
                         Margin="10,0,10,5"
                         Command="{Binding CloseCommand, Mode=OneTime}"
                         CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                        Content="{Binding StringResources.Close, Mode=OneTime}" />
+                        Content="{x:Static res:ViewStringResources.Close}" />
                 </StackPanel>
             </Grid>
             <ProgressBar
