@@ -10,6 +10,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:qaChatControl="clr-namespace:QAChat.View.QAChatMain"
+    xmlns:res="clr-namespace:QAChat.ViewModel.QAChatMain"
     x:Name="Root"
     d:DataContext="{d:DesignInstance Type=local:QAChatControlViewModel}"
     d:DesignHeight="450"
@@ -49,6 +50,8 @@
             Width="250"
             Margin="10,10,10,10">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -149,6 +152,35 @@
                     </ListBox>
                 </Grid>
             </StackPanel>
+            <Separator Grid.Row="4" />
+            <Grid
+                Grid.Row="5"
+                Margin="10,20,0,10"
+                HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="Templature" />
+                <Slider
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    Maximum="1"
+                    Minimum="0"
+                    TickFrequency="0.01"
+                    TickPlacement="BottomRight"
+                    Value="{Binding Temperature}" />
+                <TextBlock
+                    Grid.Column="2"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Temperature, StringFormat={}{0:F2}}" />
+            </Grid>
+
         </Grid>
         <GridSplitter Grid.Column="1" Width="5" />
         <Grid Grid.Column="2">

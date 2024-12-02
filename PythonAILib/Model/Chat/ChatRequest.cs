@@ -24,7 +24,7 @@ namespace PythonAILib.Model.Chat {
         }
         // temperature
         [JsonPropertyName("temperature")]
-        protected double Temperature { get; set; } = 0.5;
+        public double Temperature { get; set; } = 0.5;
 
         // response_format
         [JsonPropertyName("response_format")]

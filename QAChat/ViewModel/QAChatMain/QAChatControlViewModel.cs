@@ -46,6 +46,17 @@ namespace QAChat.ViewModel.QAChatMain {
             });
         }
 
+        // Temperature
+        public double Temperature {
+            get {
+                return ChatRequest.Temperature;
+            }
+            set {
+                ChatRequest.Temperature = value;
+                OnPropertyChanged(nameof(Temperature));
+            }
+        }
+
         // Progress Indicatorの表示状態
         private bool _IsIndeterminate = false;
         public bool IsIndeterminate {
