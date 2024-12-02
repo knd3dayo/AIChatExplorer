@@ -125,15 +125,15 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_user_proxy_wrapper(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper: 
-        # Task assigner for group chat
+        # グループチャットのタスクアサイナー
         name="user_proxy"
-        description = "Creates a list of tasks to achieve the user's request and assigns tasks to each agent."
+        description = "ユーザーの要求を達成するためのタスクリストを作成し、各エージェントにタスクを割り当てます。"
         system_message="""
-            Executes tasks in collaboration with each agent to achieve the user's request.
-            - First, create a plan and a list of tasks to achieve the user's request.
-            - Assign tasks to each agent and execute the tasks.
-            - When the plan is achieved by executing the tasks by each agent, reply with [End Meeting].
-            - If there are no additional questions, reply with [End Meeting].
+            各エージェントと協力してユーザーの要求を達成するためのタスクを実行します。
+            - まず、ユーザーの要求を達成するための計画とタスクリストを作成します。
+            - 各エージェントにタスクを割り当ててタスクを実行します。
+            - 各エージェントによるタスクの実行で計画が達成された場合、[End Meeting]と返信します。
+            - 追加の質問がない場合、[End Meeting]と返信します。
             """
         description=description
         
@@ -153,10 +153,10 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_planner(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Task assigner for group chat
-        description = "Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, until admin approval. "
-        system_message="""Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, 
-        until admin approval. 
+        # グループチャットのタスクアサイナー
+        description = "プランナー。計画を提案します。管理者および批評家からのフィードバックに基づいて計画を修正し、管理者の承認を得るまで繰り返します。"
+        system_message="""プランナー。計画を提案します。管理者および批評家からのフィードバックに基づいて計画を修正し、
+        管理者の承認を得るまで繰り返します。
         """
         name="planner"
         agent_wrapper = AutoGenAgentWrapper(
@@ -175,10 +175,10 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_critic(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Task assigner for group chat
-        description = "Critic. Double check plan, claims, code from other agents and provide feedback. Check whether the plan includes adding verifiable info such as source URL."
-        system_message="""Critic. Double check plan, claims, code from other agents and provide feedback. 
-        Check whether the plan includes adding verifiable info such as source URL.
+        # グループチャットのタスクアサイナー
+        description = "批評家。他のエージェントによる計画、主張、コードをダブルチェックし、フィードバックを提供します。計画に検証可能な情報（例: ソースURL）が含まれているか確認します。"
+        system_message="""批評家。他のエージェントによる計画、主張、コードをダブルチェックし、フィードバックを提供します。
+        計画に検証可能な情報（例: ソースURL）が含まれているか確認します。
         """
         name="critic"
         agent_wrapper = AutoGenAgentWrapper(
@@ -195,23 +195,22 @@ class AutoGenAgentGenerator:
         )
         return agent_wrapper
 
-
     @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Separate the code writer and executor. Below is the code inference Agent with LLM.
-        description = "Creates Python scripts according to the user's instructions."
+        # コード作成者と実行者を分離。以下はLLMを使用したコード推論エージェントです。
+        description = "ユーザーの指示に従ってPythonスクリプトを作成します。"
         name = "code_writer"
         system_message=f"""
-            You are a script developer.
-            When you write code, it is automatically executed on an external application.
-            You write code according to the user's instructions.
-            The execution result of the code is automatically displayed after you post the code.
-            However, you must strictly adhere to the following conditions:
-            Rules:
-            * Only propose code within code blocks.
-            * If the execution result of the script is an error, consider measures based on the error message and create revised code again.
-            * If the information obtained from the execution of the script is insufficient, create revised code again based on the currently obtained information.
-            * Your ultimate goal is the user's instructions, and you will create and revise code as many times as necessary to meet this goal.
+            あなたはスクリプト開発者です。
+            コードを書くと、それは外部アプリケーションで自動的に実行されます。
+            あなたはユーザーの指示に従ってコードを書きます。
+            コードの実行結果はコードを投稿した後に自動的に表示されます。
+            ただし、次の条件を厳守しなければなりません:
+            規則:
+            * コードはコードブロック内にのみ提案してください。
+            * スクリプトの実行結果がエラーの場合は、エラーメッセージに基づいて対策を考え、再度修正されたコードを作成してください。
+            * スクリプトの実行から得られた情報が不十分な場合は、現在得られている情報に基づいて再度修正されたコードを作成してください。
+            * あなたの最終的な目標はユーザーの指示を達成することであり、この目標を満たすために必要な回数だけコードを作成および修正します。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -227,16 +226,15 @@ class AutoGenAgentGenerator:
         )
         return agent_wrapper
 
-
     @classmethod
     def __create_code_executor(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper], auto_execute_code: bool = False) -> AutoGenAgentWrapper:
-        # Separate the code writer and executor. Below is the code executor Agent without LLM.
-        description = "Executes the code provided by the code writer."
+        # コード作成者と実行者を分離。以下はLLMを使用しないコード実行エージェントです。
+        description = "コード作成者が提供するコードを実行します。"
         name = "code_executor"
         system_message=f"""
-            You are a code executor.
-            Execute the code provided by the code writer.
-            Display the execution results of the code.
+            あなたはコード実行者です。
+            コード作成者が提供するコードを実行します。
+            コードの実行結果を表示します。
             """
         if auto_execute_code:
             human_input_mode = "NEVER"
@@ -257,15 +255,15 @@ class AutoGenAgentGenerator:
         )
         return agent_wrapper
 
-    # Enable Vector Searcher
+    # ベクターサーチャーを有効にする
     @classmethod
     def __create_vector_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Vector Searcher
-        description = "Searches information from the vector database according to the user's instructions."
+        # ベクターサーチャー
+        description = "ユーザーの指示に従って、ベクターデータベースから情報を検索します。"
         name = "vector_searcher"
         system_message="""
-            You are a vector searcher. You search for information from the vector database according to the user's instructions.
-            Use the provided function to display the search results.
+            あなたはベクターサーチャーです。ユーザーの指示に従って、ベクターデータベースから情報を検索します。
+            提供された関数を使用して検索結果を表示してください。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -283,14 +281,14 @@ class AutoGenAgentGenerator:
 
     @classmethod
     def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Web Searcher
-        description = "Searches documents on the web."
+        # ウェブサーチャー
+        description = "ウェブ上のドキュメントを検索します。"
         name = "web_searcher"
         system_message="""
-            You are a web searcher. You search for documents on the web according to the user's instructions.
-            - Use the provided search_duckduckgo function to search for information.
-            - If the required document is not at the link destination, search for further linked information.
-            - If the required document is found, retrieve the document with extract_webpage and provide the text to the user.
+            あなたはウェブサーチャーです。ユーザーの指示に従って、ウェブ上のドキュメントを検索します。
+            - 情報を検索するために提供された search_duckduckgo 関数を使用してください。
+            - 必要なドキュメントがリンク先にない場合は、さらにリンクされた情報を検索してください。
+            - 必要なドキュメントが見つかった場合は、extract_webpage でドキュメントを取得し、ユーザーにテキストを提供してください。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -305,29 +303,29 @@ class AutoGenAgentGenerator:
             tool_names_for_llm=["search_duckduckgo", "extract_webpage"]
         )
 
-        # token消費量が多くなるのでコメントアウト
-        # Searches for relevant pages from the Japanese version of Wikipedia.
+        # トークン消費量が多くなるのでコメントアウト
+        # 日本語版ウィキペディアから関連ページを検索します。
         # search_wikipedia_ja, description = autogen_tools.tools["search_wikipedia_ja"]
         # web_searcher.register_for_llm(description=description)(search_wikipedia_ja)
 
         return agent_wrapper
 
 
-    # Enable File Extractor
+    # ファイル抽出機能を有効にする
     @classmethod
     def __create_file_operator(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # File Extractor
-        description = "File operator. Ex. Write text file. Extracts information from files according to the user's instructions."
+        # ファイルオペレーター
+        description = "ファイルオペレーター。例: テキストファイルの書き込み。ユーザーの指示に従ってファイルから情報を抽出します。"
         name = "file_operator"
         system_message=f"""
-            You are a file operator. 
-            - You extract information from files according to the user's instructions.
-            Use the provided function to display the extraction results.
-            - Saves data to a file in Python according to the user's instructions.
-            The default save location is {autogen_pros.work_dir_path}.
-            If the user specifies a save location, save the file to the specified location.
-            - list directory files
-            - File Checker: Checks whether the specified file exists.
+            あなたはファイルオペレーターです。
+            - ユーザーの指示に従ってファイルから情報を抽出します。
+            提供された関数を使用して抽出結果を表示してください。
+            - ユーザーの指示に従ってPythonでファイルにデータを保存します。
+            デフォルトの保存場所は {autogen_pros.work_dir_path} です。
+            ユーザーが保存場所を指定した場合は、指定された場所にファイルを保存してください。
+            - ディレクトリのファイルをリストします
+            - ファイルチェッカー：指定されたファイルが存在するかどうかを確認します。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -344,14 +342,14 @@ class AutoGenAgentGenerator:
 
         return agent_wrapper
 
-    # Create an agent to get the current time
+    # 現在の時刻を取得するエージェントを作成
     @classmethod
     def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Agent to get the current time
-        description = "Retrieves the current time."
+        # 現在の時刻を取得するエージェント
+        description = "現在の時刻を取得します。"
         name = "current_time"
         system_message="""
-            Retrieves the current time.
+            現在の時刻を取得します。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -367,4 +365,3 @@ class AutoGenAgentGenerator:
         )
 
         return agent_wrapper
-
