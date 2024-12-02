@@ -54,7 +54,7 @@ class AutoGenGroupChat:
                 self.tool_wrappers.append(default_tool_wrapper)
 
         # autogen_propsからagentsを取得
-        self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(autogen_props.agents_list)
+        self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(autogen_props.agents_list, self.tool_wrappers)
         # agent_wrappersにデフォルトのエージェントを追加
         default_agent_wrappers = AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.tool_wrappers)
         # 既に追加されている場合は追加しない

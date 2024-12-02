@@ -73,7 +73,8 @@ class AutoGenToolGenerator:
         # デフォルトのツールを生成
         # 関数名と関数生成関数のペアを保持する辞書
         tools: dict[str, tuple[Callable, str]] = {
-            "vector_search": (vector_search, vector_search.__doc__),
+            # vector_searchは別途実装
+            # "vector_search": (vector_search, vector_search.__doc__),
             "search_wikipedia_ja": (search_wikipedia_ja, search_wikipedia_ja.__doc__),
             "list_files_in_directory": (list_files_in_directory, list_files_in_directory.__doc__),
             "extract_file": (extract_file, extract_file.__doc__),
@@ -92,19 +93,21 @@ class AutoGenToolGenerator:
             tools_list.append(tool_wrapper)
 
         return tools_list
-
-
-def vector_search(query: Annotated[str, "String to search for"], openai_props, vector_db_props_list) -> list[str]:
-    """
-    This function performs a vector search on the specified text and returns the related documents.
-    """
-    params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
-    result = LangChainVectorDB.vector_search(params)
-    # Retrieve documents from result
-    documents = result.get("documents", [])
-    # Extract content of each document from documents
-    result = [doc.get("content", "") for doc in documents]
-    return result
+    
+@classmethod
+def create_vector_search_tool(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
+    def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
+        """
+        This function performs a vector search on the specified text and returns the related documents.
+        """
+        params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
+        result = LangChainVectorDB.vector_search(params)
+        # Retrieve documents from result
+        documents = result.get("documents", [])
+        # Extract content of each document from documents
+        result = [doc.get("content", "") for doc in documents]
+        return result
+    return vector_search
 
 def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
     """

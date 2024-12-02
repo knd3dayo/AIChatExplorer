@@ -59,7 +59,7 @@ class AutoGenAgentWrapper:
         for tool_name in self.tool_names_for_llm:
             tool_wrapper = next((tool for tool in tool_wrappers if tool.name == tool_name), None)
             if tool_wrapper:
-                agent.register_for_llm()(tool_wrapper.tool)
+                agent.register_for_llm(description=tool_wrapper.description)(tool_wrapper.tool)
 
         return agent
         
@@ -111,10 +111,11 @@ class AutoGenAgentGenerator:
 
         agent_wrappers = []
         agent_wrappers.append(cls.__create_user_proxy_wrapper(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_code_executor(autogen_props, tool_wrappers, False))
+        agent_wrappers.append(cls.__create_code_executor(autogen_props, tool_wrappers, True))
         agent_wrappers.append(cls.__create_code_writer(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_file_operator(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_vector_searcher(autogen_props, tool_wrappers))
+        # vector_searcherは別途実装
+        # agent_wrappers.append(cls.__create_vector_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_web_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_current_time(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
