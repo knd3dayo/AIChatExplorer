@@ -115,9 +115,10 @@ class AutoGenGroupChat:
     # キューからメッセージを取得 yiled で返す
     def get_messages(self) -> Generator[Any, None, None]:
         while True:
-            if self.finished:
-                break
             try:
+                if self.finished:
+                    print("finished")
+                    break
                 message = self.message_queue.get(timeout=1)
                 yield message, False
             except queue.Empty:
