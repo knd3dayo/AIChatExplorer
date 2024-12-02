@@ -59,7 +59,7 @@ class AutoGenToolWrapper:
     def create_wrapper_list(cls, data_list: list[dict]) -> list["AutoGenToolWrapper"]:
         return [AutoGenToolWrapper.create_wrapper(data) for data in data_list]
 
-from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+from sample_autogen_props import AutoGenProps
 
 class AutoGenToolGenerator:
     def __init__(self, autogen_props: AutoGenProps):

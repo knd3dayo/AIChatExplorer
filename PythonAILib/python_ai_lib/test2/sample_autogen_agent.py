@@ -103,7 +103,7 @@ class AutoGenAgentWrapper:
 
 
 from autogen import ConversableAgent, UserProxyAgent
-from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+from sample_autogen_props import AutoGenProps
 
 class AutoGenAgentGenerator:
 
@@ -119,7 +119,7 @@ class AutoGenAgentGenerator:
         agent_wrappers.append(cls.__create_web_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_current_time(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_critic(autogen_props, tool_wrappers))
+        # agent_wrappers.append(cls.__create_critic(autogen_props, tool_wrappers))
 
         return agent_wrappers
 
