@@ -190,9 +190,10 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
     driver.close()
     return text, urls
 
-def search_duckduckgo(query: Annotated[str, "String to search for"], site: Annotated[str, "Site to search within. Leave blank if no site is specified"], num_results: Annotated[int, "Maximum number of results to display"]) -> Annotated[list[tuple[str, str, str]], "(Title, URL, Body) list"]:
+def search_duckduckgo(query: Annotated[str, "String to search for"], num_results: Annotated[int, "Maximum number of results to display"], site: Annotated[str, "Site to search within. Leave blank if no site is specified"] = "") -> Annotated[list[tuple[str, str, str]], "(Title, URL, Body) list"]:
     """
     This function searches DuckDuckGo with the specified keywords and returns related articles.
+    ユーザーから特定のサイト内での検索を行うように指示を受けた場合、siteパラメータを使用して検索を行います。
     """
     
     from duckduckgo_search import DDGS
