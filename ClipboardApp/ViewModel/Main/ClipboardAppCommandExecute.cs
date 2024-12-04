@@ -8,11 +8,11 @@ using ClipboardApp.Utils;
 using ClipboardApp.View.ClipboardItemFolder;
 using ClipboardApp.View.Search;
 using ClipboardApp.View.Settings;
-using ClipboardApp.View.VectorDB;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
+using QAChat.View.Folder;
 using QAChat.View.QAChatMain;
 using QAChat.View.RAG;
 using QAChat.View.VectorDB;
@@ -511,7 +511,7 @@ namespace ClipboardApp.ViewModel.Main {
                     ClipboardFolderViewModel? folderViewModel = ActiveInstance.SelectedFolder ?? ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel;
 
                     FolderSelectWindow.OpenFolderSelectWindow(folderViewModel, (folder) => {
-                        Model.ClipboardItem chatHistoryItem = new(folder.ClipboardItemFolder.Id);
+                        Model.ClipboardItem chatHistoryItem = new(folder.Folder.Id);
                         // タイトルを日付 + 元のタイトルにする
                         chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {

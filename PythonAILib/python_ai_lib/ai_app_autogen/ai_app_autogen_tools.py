@@ -94,8 +94,7 @@ class AutoGenToolGenerator:
 
         return tools_list
     
-@classmethod
-def create_vector_search_tool(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
+def create_vector_search_tool( openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
     def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
         """
         This function performs a vector search on the specified text and returns the related documents.

@@ -3,15 +3,16 @@ from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from typing import Any, Callable
 
-from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper
+from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper, create_vector_search_tool
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenAgentWrapper:
 
     def __init__(self, name: str, description: str, system_message: str, 
                  type_value: str, human_input_mode: str, termination_msg: str, 
                  code_execution: bool, llm_execution: bool, 
-                 tool_names_for_execution: list[str], tool_names_for_llm: list[str]):
+                 tool_names_for_execution: list[str], tool_names_for_llm: list[str], vector_db_props_list: list[VectorDBProps] =[]):
         self.name = name
         self.description = description
         self.system_message = system_message
@@ -22,6 +23,7 @@ class AutoGenAgentWrapper:
         self.llm_execution = llm_execution
         self.tool_names_for_execution = tool_names_for_execution
         self.tool_names_for_llm = tool_names_for_llm
+        self.vector_db_props_list = vector_db_props_list
 
     def create_agent(self, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]):
         params = {}
@@ -61,11 +63,17 @@ class AutoGenAgentWrapper:
             if tool_wrapper:
                 agent.register_for_llm(description=tool_wrapper.description)(tool_wrapper.tool)
 
+        # VectorDBPropsがある場合はAutoGenToolGeneratorのcreate_vector_search_toolを呼び出す
+        if len(self.vector_db_props_list) > 0:
+            vector_search_tool = create_vector_search_tool(autogen_props.openai_props, self.vector_db_props_list)
+            description = vector_search_tool.__doc__
+            agent.register_for_llm(description=description)(vector_search_tool)
+    
         return agent
         
 
     @classmethod
-    def create_wrapper(cls, data: dict, tool_wrappers: list[AutoGenToolWrapper]) -> "AutoGenAgentWrapper":
+    def create_wrapper(cls, data: dict) -> "AutoGenAgentWrapper":
         return cls(
             name=data["name"],
             description=data["description"],
@@ -78,8 +86,8 @@ class AutoGenAgentWrapper:
             tools=["tools"]
         )
     @classmethod
-    def create_wrapper_list(cls, data: list[dict], tool_wrappers: list[AutoGenToolWrapper]) -> list["AutoGenAgentWrapper"]:
-        return [cls.create_wrapper(d, tool_wrappers) for d in data]
+    def create_wrapper_list(cls, data: list[dict]) -> list["AutoGenAgentWrapper"]:
+        return [cls.create_wrapper(d) for d in data]
 
     @classmethod
     def create_dict(cls, agent: "AutoGenAgentWrapper") -> dict:

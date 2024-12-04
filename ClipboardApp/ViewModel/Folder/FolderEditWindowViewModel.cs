@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.View.VectorDB;
 using PythonAILib.Model.VectorDB;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel.VectorDB;
@@ -127,7 +126,6 @@ namespace ClipboardApp.ViewModel.Folder {
 
             });
         });
-
 
     }
 

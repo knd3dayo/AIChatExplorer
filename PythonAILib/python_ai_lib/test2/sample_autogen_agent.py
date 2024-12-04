@@ -112,13 +112,13 @@ class AutoGenAgentGenerator:
 
         agent_wrappers = []
         agent_wrappers.append(cls.__create_user_proxy_wrapper(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_code_executor(autogen_props, tool_wrappers, False))
-        agent_wrappers.append(cls.__create_code_writer(autogen_props, tool_wrappers))
+        # agent_wrappers.append(cls.__create_code_executor(autogen_props, tool_wrappers, False))
+        # agent_wrappers.append(cls.__create_code_writer(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_file_operator(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_vector_searcher(autogen_props, tool_wrappers))
+        # agent_wrappers.append(cls.__create_vector_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_web_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_current_time(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
+        # agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
         # agent_wrappers.append(cls.__create_critic(autogen_props, tool_wrappers))
 
         return agent_wrappers

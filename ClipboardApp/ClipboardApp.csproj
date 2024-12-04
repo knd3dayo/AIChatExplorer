@@ -76,4 +76,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModel\VectorDB\" />
+    <Folder Include="View\VectorDB\" />
+  </ItemGroup>
+
 </Project>

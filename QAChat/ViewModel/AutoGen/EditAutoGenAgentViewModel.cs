@@ -2,14 +2,16 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.AutoGen;
 using QAChat.Model;
+using QAChat.View.VectorDB;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
     public class EditAutoGenAgentViewModel : QAChatViewModelBase {
-
-
-        public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, Action afterUpdate) {
+        public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent,  ContentFolderViewModel rootFolderViewModel ,Action afterUpdate) {
             AutoGenAgent = autoGenAgent;
+            RootFolderViewModel = rootFolderViewModel;
             AfterUpdate = afterUpdate;
             LoadTools();
             // TypeValue
@@ -27,6 +29,8 @@ namespace QAChat.ViewModel.AutoGen {
                 SelectedHumanInputModeIndex = 2;
             }
         }
+
+        public ContentFolderViewModel RootFolderViewModel { get; set; }
 
         public AutoGenAgent AutoGenAgent { get; set; }
 
@@ -99,6 +103,10 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged();
             }
         }
+        // VectorDBItem
+        public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
+
+        public VectorDBItemViewModel? SelectedVectorDBItem { get; set; }
 
         // AutoGenTools
         public ObservableCollection<AutoGenToolViewModel> AutoGenTools { get; set; } = [];
@@ -113,7 +121,6 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged();
             }
         }
-
 
         public void LoadTools() {
             // Load tools
@@ -166,5 +173,24 @@ namespace QAChat.ViewModel.AutoGen {
             AfterUpdate();
             window.Close();
         });
+
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
+            // フォルダを選択
+            SelectVectorDBWindow.OpenSelectVectorDBWindow(RootFolderViewModel, true, (selectedItems) => {
+                foreach (var item in selectedItems) {
+                    VectorDBItems.Add(new VectorDBItemViewModel(item));
+                }
+            }); OnPropertyChanged(nameof(VectorDBItems));
+        });
+
+        // 選択したVectorDBItemの編集画面を開くコマンド
+        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+
+            });
+        });
+
+
     }
 }

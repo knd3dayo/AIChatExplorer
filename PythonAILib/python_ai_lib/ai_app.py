@@ -78,6 +78,30 @@ def run_autogen_group_chat(autogen_props: AutoGenProps, input_text: str) -> Gene
     return result
 
 ########################
+# VectorDBCatalog関連
+########################
+from ai_app_vector_db.ai_app_vector_db_catalog import VectorDBCatalog
+def get_catalogs(catalb_db_url: str, vector_db_url: str) -> list[dict]:
+    vector_db_catalog = VectorDBCatalog(catalb_db_url)
+    result_list = vector_db_catalog.get_catalogs(vector_db_url)
+    return result_list
+
+def get_catalog(catalb_db_url: str, vector_db_url: str, collection: str) -> dict:
+    vector_db_catalog = VectorDBCatalog(catalb_db_url)
+    result_dict = vector_db_catalog.get_catalog(vector_db_url, collection)
+    return result_dict
+
+def update_catalog(catalb_db_url: str, vector_db_url: str, collection: str, description: str):
+    vector_db_catalog = VectorDBCatalog(catalb_db_url)
+    vector_db_catalog.update_catalog(vector_db_url, collection, description)
+
+def delete_catalog(catalb_db_url: str, vector_db_url: str, collection: str):
+    vector_db_catalog = VectorDBCatalog(catalb_db_url)
+    id = vector_db_catalog.get_catalog(vector_db_url, collection).get("id", None)
+    if id is not None:
+        vector_db_catalog.delete_catalog(catalb_db_url, vector_db_url, collection)
+
+########################
 # langchain関連
 ########################
 

@@ -55,6 +55,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -170,7 +171,7 @@
                     Margin="10,0,0,0"
                     Maximum="1"
                     Minimum="0"
-                    TickFrequency="0.01"
+                    TickFrequency="0.1"
                     TickPlacement="BottomRight"
                     Value="{Binding Temperature}" />
                 <TextBlock
@@ -179,7 +180,39 @@
                     VerticalAlignment="Center"
                     Text="{Binding Temperature, StringFormat={}{0:F2}}" />
             </Grid>
-
+            <!--  AutoGenGroupChat  -->
+            <Grid
+                Grid.Row="6"
+                Margin="10,20,0,10"
+                HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="Top P" />
+                <ListBox
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    ItemsSource="{Binding TopPList}"
+                    SelectedItem="{Binding SelectedTopP}"
+                    Visibility="{Binding TopPVisibility}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Margin" Value="0,1,0,1" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Grid>
         <GridSplitter Grid.Column="1" Width="5" />
         <Grid Grid.Column="2">

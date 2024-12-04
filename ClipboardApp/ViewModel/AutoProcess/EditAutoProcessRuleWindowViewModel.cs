@@ -2,23 +2,20 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolder;
-using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using QAChat.View.Folder;
 using QAChat.View.PromptTemplate;
 using QAChat.View.PythonScript;
 using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.AutoProcess
-{
+namespace ClipboardApp.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
         public enum Mode {
             Create,
@@ -574,7 +571,9 @@ namespace ClipboardApp.ViewModel.AutoProcess
                 return;
             }
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                DestinationFolder = folderViewModel;
+                if (folderViewModel is ClipboardFolderViewModel clipboardFolder) {
+                    DestinationFolder = clipboardFolder;
+                }
             });
         });
 
@@ -587,7 +586,9 @@ namespace ClipboardApp.ViewModel.AutoProcess
                 return;
             }
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                TargetFolder = folderViewModel;
+                if (folderViewModel is ClipboardFolderViewModel clipboardFolder) {
+                    TargetFolder = clipboardFolder;
+                }
             });
         });
 

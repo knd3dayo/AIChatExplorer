@@ -11,10 +11,13 @@ using ClipboardApp.View.ExportImport;
 using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using QAChat.Resource;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ClipboardAppViewModelBase {
+    public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
+
+        protected CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public virtual int DefaultNextLevel { get; } = 5;
@@ -69,21 +72,6 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // 子フォルダ
         public ObservableCollection<ClipboardFolderViewModel> Children { get; set; } = [];
-
-        public string FolderName {
-            get {
-                return ClipboardItemFolder.FolderName;
-            }
-            set {
-                ClipboardItemFolder.FolderName = value;
-                OnPropertyChanged(nameof(FolderName));
-            }
-        }
-        public string FolderPath {
-            get {
-                return ClipboardItemFolder.FolderPath;
-            }
-        }
 
         // - コンテキストメニューの削除を表示するかどうか
         public bool IsDeleteVisible {
@@ -240,7 +228,7 @@ namespace ClipboardApp.ViewModel.Folder {
         // 2024/04/07 以下の処理はフォルダ更新後の再読み込み対応済み
         // --------------------------------------------------------------
 
-        public SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
+        public override SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
             LoadChildren(DefaultNextLevel);
             int count = Children.Count;
             LoadItems();

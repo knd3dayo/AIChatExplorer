@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
+using QAChat.ViewModel.Folder;
 
 namespace QAChat.ViewModel {
     public class QAChatStartupProps {
@@ -15,5 +16,6 @@ namespace QAChat.ViewModel {
         public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatMessage>> ExportChatCommand { get; set; } = (chatHistory) => { };
+
     }
 }

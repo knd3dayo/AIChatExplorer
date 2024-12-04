@@ -1,15 +1,16 @@
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using System.Windows;
-using ClipboardApp.View.ClipboardItemFolder;
+using System.Windows.Controls;
+using QAChat.Model;
 using QAChat.Resource;
+using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder {
+namespace QAChat.ViewModel.Folder {
 
-    public class FolderSelectWindowViewModel : ClipboardAppViewModelBase {
+    public class FolderSelectWindowViewModel : QAChatViewModelBase {
 
-        public FolderSelectWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> _FolderSelectedAction) {
+        public FolderSelectWindowViewModel(ContentFolderViewModel rootFolderViewModel, Action<ContentFolderViewModel> _FolderSelectedAction) {
 
             FolderSelectedAction = _FolderSelectedAction;
             if (rootFolderViewModel == null) {
@@ -19,13 +20,13 @@ namespace ClipboardApp.ViewModel.Folder {
         }
 
         // フォルダツリーのルート
-        public ObservableCollection<ClipboardFolderViewModel> RootFolders { get; set; } = [];
+        public ObservableCollection<ContentFolderViewModel> RootFolders { get; set; } = [];
 
         // フォルダ選択時のAction
-        public Action<ClipboardFolderViewModel>? FolderSelectedAction { get; set; }
+        public Action<ContentFolderViewModel>? FolderSelectedAction { get; set; }
 
         // 選択されたフォルダ
-        public ClipboardFolderViewModel? SelectedFolder { get; set; } 
+        public ContentFolderViewModel? SelectedFolder { get; set; }
 
 
         private string _selectedFolderAbsoluteCollectionName = "";
@@ -50,9 +51,9 @@ namespace ClipboardApp.ViewModel.Folder {
 
         });
 
-        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new ((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
             TreeView treeView = (TreeView)routedEventArgs.OriginalSource;
-            ClipboardFolderViewModel clipboardItemFolderViewModel = (ClipboardFolderViewModel)treeView.SelectedItem;
+            ContentFolderViewModel clipboardItemFolderViewModel = (ContentFolderViewModel)treeView.SelectedItem;
 
             SelectedFolder = clipboardItemFolderViewModel;
             SelectedFolderAbsoluteCollectionName = clipboardItemFolderViewModel.FolderPath;

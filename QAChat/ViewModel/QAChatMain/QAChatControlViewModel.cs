@@ -252,9 +252,6 @@ namespace QAChat.ViewModel.QAChatMain {
                 }
             }
         }
-
-
-
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
@@ -315,9 +312,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // プロンプトテンプレート画面を開くコマンド
         public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
-
             PromptTemplateCommandExecute(parameter);
-
         });
 
         // チャットアイテムを編集するコマンド
@@ -383,6 +378,28 @@ namespace QAChat.ViewModel.QAChatMain {
             get {
                 ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems]);
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
+            }
+        }
+
+        // AutoGenGroupChatList
+        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
+            get {
+                ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
+                foreach (var item in AutoGenGroupChat.FindAll()) {
+                    autoGenGroupChatList.Add(item);
+                }
+                return autoGenGroupChatList;
+            }
+        }
+        // SelectedAutoGenGroupChat
+        private AutoGenGroupChat? _SelectedAutoGenGroupChat = null;
+        public AutoGenGroupChat? SelectedAutoGenGroupChat {
+            get {
+                return _SelectedAutoGenGroupChat;
+            }
+            set {
+                _SelectedAutoGenGroupChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
             }
         }
 

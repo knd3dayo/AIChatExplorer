@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using PythonAILib.Common;
+using PythonAILib.Model.VectorDB;
 
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenAgent {
@@ -44,6 +45,11 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("llm_execution")]
         public bool Llm { get; set; } = false;
 
+        // List(VectorDBItem)
+        [JsonPropertyName("vector_db_items")]
+        public List<VectorDBItem> VectorDBItems { get; set; } = [];
+
+
         // ToDictList
         public static Dictionary<string, object> ToDict(AutoGenAgent data) {
             // Create a dictionary
@@ -57,7 +63,9 @@ namespace PythonAILib.Model.AutoGen {
                 { "human_input_mode", data.HumanInputMode },
                 { "termination_msg", data.TerminationMsg },
                 { "code_execution", data.CodeExecution },
-                { "llm_execution", data.Llm }
+                { "llm_execution", data.Llm },
+                { "vector_db_items", VectorDBItem.ToDictList(data.VectorDBItems) }
+
             };
             return dict;
         }

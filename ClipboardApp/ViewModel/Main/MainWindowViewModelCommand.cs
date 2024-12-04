@@ -137,7 +137,7 @@ namespace ClipboardApp {
         });
         // メニューの「AutoGen定義編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
-            ListAutoGenItemWindow.OpenListAutoGenItemWindow();
+            ListAutoGenItemWindow.OpenListAutoGenItemWindow(RootFolderViewModelContainer.RootFolderViewModel);
         });
 
         // バージョン情報画面を開く処理

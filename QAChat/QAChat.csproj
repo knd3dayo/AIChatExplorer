@@ -63,6 +63,9 @@
     <Compile Update="View\VectorDB\ListVectorDBWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\VectorDB\SelectVectorDBWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

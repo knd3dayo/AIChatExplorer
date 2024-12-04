@@ -81,5 +81,13 @@ namespace QAChat.View.AutoGen {
 
         // LLM
         public static string LLM { get; set; } = "LLM";
+
+        // VectorDB
+        public static string VectorDB { get; set; } =  CommonStringResources.VectorDB;
+
+        // AddVectorDB
+        public static string AddVectorDB { get; set; } = "AddVectorDB";
+
+
     }
 }

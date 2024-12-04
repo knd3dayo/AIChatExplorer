@@ -1,9 +1,7 @@
 using System.Windows;
-using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.Folder;
+using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.View.ClipboardItemFolder
-{
+namespace QAChat.View.Folder {
     /// <summary>
     /// FolderSelectWindow.xaml の相互作用ロジック
     /// </summary>
@@ -12,8 +10,8 @@ namespace ClipboardApp.View.ClipboardItemFolder
             InitializeComponent();
         }
 
-        public static void OpenFolderSelectWindow(ClipboardFolderViewModel rootFolderViewModel, Action<ClipboardFolderViewModel> folderSelectedAction) {
-            FolderSelectWindow folderSelectWindow = new FolderSelectWindow();
+        public static void OpenFolderSelectWindow(ContentFolderViewModel rootFolderViewModel, Action<ContentFolderViewModel> folderSelectedAction) {
+            FolderSelectWindow folderSelectWindow = new();
             FolderSelectWindowViewModel folderSelectWindowViewModel = new(rootFolderViewModel, folderSelectedAction);
             folderSelectWindow.DataContext = folderSelectWindowViewModel;
             folderSelectWindow.ShowDialog();

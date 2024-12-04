@@ -4,12 +4,11 @@ using System.Windows.Controls;
 using PythonAILib.Model.AutoGen;
 using QAChat.Model;
 using QAChat.View.AutoGen;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
     public class ListAutoGenItemWindowViewModel : QAChatViewModelBase {
-
-
 
         public ObservableCollection<AutoGenAgent> AutoGenAgents { get; set; } = [];
 
@@ -17,10 +16,13 @@ namespace QAChat.ViewModel.AutoGen {
 
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChats { get; set; } = [];
 
-        public ListAutoGenItemWindowViewModel(bool selectGroupChatMode) {
+        public ListAutoGenItemWindowViewModel(ContentFolderViewModel rootFolderViewModel, bool selectGroupChatMode) {
             SelectGroupChatMode = selectGroupChatMode;
+            RootFolderViewModel = rootFolderViewModel;
             LoadItems();
         }
+
+        public ContentFolderViewModel RootFolderViewModel { get; set; }
 
         public bool SelectGroupChatMode { get; set; }
 
@@ -95,7 +97,7 @@ namespace QAChat.ViewModel.AutoGen {
             if (SelectedAutoGenAgent == null) {
                 return;
             }
-            EditAutoGenAgentWindow.OpenWindow(SelectedAutoGenAgent, () => {
+            EditAutoGenAgentWindow.OpenWindow(SelectedAutoGenAgent, RootFolderViewModel, () => {
                 LoadItems();
             });
         });
@@ -114,19 +116,19 @@ namespace QAChat.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddItemCommand => new((parameter) => {
             switch (SelectedTabIndex) {
                 case 0:
-                    AutoGenGroupChat autoGenGroupChat = new ();
+                    AutoGenGroupChat autoGenGroupChat = new();
                     EditAutoGenGroupChatWindow.OpenWindow(autoGenGroupChat, () => {
                         LoadItems();
                     });
                     break;
                 case 1:
-                    AutoGenAgent autoGenAgent = new ();
-                    EditAutoGenAgentWindow.OpenWindow(autoGenAgent, () => {
+                    AutoGenAgent autoGenAgent = new();
+                    EditAutoGenAgentWindow.OpenWindow(autoGenAgent, RootFolderViewModel, () => {
                         LoadItems();
                     });
                     break;
                 case 2:
-                    AutoGenTool autoGenTool = new ();
+                    AutoGenTool autoGenTool = new();
                     EditAutoGenToolWindow.OpenWindow(autoGenTool, () => {
                         LoadItems();
                     });

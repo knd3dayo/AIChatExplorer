@@ -231,22 +231,45 @@ def run_langchain_chat( context_json: str, request_json: str):
 ########################
 # ベクトルDB関連
 ########################
-def delete_collection(context_json: str):
-    def func() -> dict:
-        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
-        openai_props, _ = get_openai_objects(context_json)
-        # ChatRequestContextからVectorDBPropsを生成
-        vector_db_items = get_vector_db_objects(context_json)
-        # vector_db_itemsからVectorDBPropsを取得
-        vector_db_props = [VectorDBProps(item) for item in vector_db_items]
-        
-        ai_app.delete_collection(openai_props, vector_db_props)
-        return {}
+from ai_app_vector_db.ai_app_vector_db_catalog import VectorDBCatalog
+def get_catalog_list(context_json: str) -> dict:
 
+    def func() -> dict:
+        vector_db_items = get_vector_db_objects(context_json)
+        # 先頭のVectorDBPropsを取得
+        vector_db_props = vector_db_items[0]
+        db_url = vector_db_props.CatalogDBURL
+        vector_db_catalog = ai_app.get_catalogs(db_url)
+        result = {}
+        result["catalog_list"] = vector_db_catalog
+        return result
+    
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
+
+
+def get_catalog(context_json: str) -> dict:
+
+    def func() -> dict:
+        vector_db_items = get_vector_db_objects(context_json)
+        catalog_list = []
+        for vector_db_props in vector_db_items:
+            catalog_db_url = vector_db_props.CatalogDBURL
+            vector_db_url = vector_db_props.VectorDBURL
+            collection = vector_db_props.CollectionName
+            vector_db_catalog = ai_app.get_catalog(catalog_db_url, vector_db_url, collection)
+            catalog_list.append(vector_db_catalog)
+        result = {}
+        result["catalog_list"] = catalog_list
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+########################
 
 def vector_search(context_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
@@ -266,7 +289,32 @@ def vector_search(context_json: str, request_json: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-# vector db関連
+
+def delete_collection(context_json: str):
+    def func() -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+        # vector_db_itemsからVectorDBPropsを取得
+        vector_db_props = [VectorDBProps(item) for item in vector_db_items]
+        
+        ai_app.delete_collection(openai_props, vector_db_props)
+
+        # Catalogを削除
+        for vector_db_props in vector_db_items:
+            catalog_db_url = vector_db_props.CatalogDBURL
+            db_url = vector_db_props.VectorDBURL
+            collection = vector_db_props.CollectionName
+            ai_app.delete_catalog(catalog_db_url, db_url, collection)
+
+        return {}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
 # ベクトルDBのインデックスを削除する
 def delete_index(context_json: str, request_json: str):
     def func () -> dict:
@@ -278,6 +326,7 @@ def delete_index(context_json: str, request_json: str):
         params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(
             openai_props, vector_db_items, request_json)
         ai_app.update_or_delete_content_index(params)
+
         return {}
 
     # strout, stderrをキャプチャするラッパー関数を生成
@@ -300,6 +349,15 @@ def update_content_index(context_json: str, request_json: str):
             )
         
         ai_app.update_or_delete_content_index(params)
+
+        # Catalogを更新
+        for vector_db_props in vector_db_items:
+            catalog_db_url = vector_db_props.CatalogDBURL
+            db_url = vector_db_props.VectorDBURL
+            collection = vector_db_props.CollectionName
+            description = vector_db_props.VectorDBDescription
+            ai_app.update_catalog(catalog_db_url, db_url, collection, description)
+
         return {}
 
     # strout,stderrをキャプチャするラッパー関数を生成
@@ -317,6 +375,15 @@ def update_file_index(context_json: str, request_json: str):
         from ai_app_langchain.langchain_vector_db import FileUpdateOrDeleteRequestParams
         params:FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams(openai_props, vector_db_items, request_json)
         ai_app.update_or_delete_file_index(params)
+
+        # Catalogを更新
+        for vector_db_props in vector_db_items:
+            catalog_db_url = vector_db_props.CatalogDBURL
+            db_url = vector_db_props.VectorDBURL
+            collection = vector_db_props.CollectionName
+            description = vector_db_props.VectorDBDescription
+            ai_app.update_catalog(catalog_db_url, db_url, collection, description)
+
         return {}
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)

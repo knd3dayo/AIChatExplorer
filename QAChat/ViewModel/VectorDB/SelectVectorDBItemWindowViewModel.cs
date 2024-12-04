@@ -1,15 +1,17 @@
 using System.Windows;
-using ClipboardApp.View.ClipboardItemFolder;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using QAChat.Resource;
+using QAChat.View.Folder;
 using QAChat.View.VectorDB;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.VectorDB {
+namespace QAChat.ViewModel.VectorDB {
     public class SelectVectorDBItemWindowViewModel : ObservableObject {
-        public SelectVectorDBItemWindowViewModel(ClipboardFolderViewModel rootFolderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
+        public SelectVectorDBItemWindowViewModel(ContentFolderViewModel rootFolderViewModel, bool closeAfterSelect, Action<List<VectorDBItem>> action) {
             Action = action;
             FolderViewModel = rootFolderViewModel;
             CloseAfterSelect = closeAfterSelect;
@@ -20,7 +22,7 @@ namespace ClipboardApp.ViewModel.VectorDB {
 
         public bool CloseAfterSelect { get; set; }
 
-        public ClipboardFolderViewModel FolderViewModel { get; set; }
+        public ContentFolderViewModel FolderViewModel { get; set; }
 
 
         private bool isFolder = true;
@@ -49,7 +51,7 @@ namespace ClipboardApp.ViewModel.VectorDB {
             if (IsFolder) {
                 FolderSelectWindow.OpenFolderSelectWindow(FolderViewModel, (folderViewModel) => {
                     List<VectorDBItem> vectorDBItemBases = [];
-                    vectorDBItemBases.Add(folderViewModel.ClipboardItemFolder.GetVectorDBItem());
+                    vectorDBItemBases.Add(folderViewModel.Folder.GetVectorDBItem());
                     Action(vectorDBItemBases);
                 });
             }
