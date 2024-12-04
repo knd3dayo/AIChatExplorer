@@ -58,7 +58,24 @@ namespace PythonAILib.Model.AutoGen {
                 OpenAIProperties = openAIProperties,
             };
             Dictionary<string, dynamic?> defaultSettings = PythonExecutor.PythonAIFunctions.GetAutoGenDefaultSettings(chatRequestContent);
-
+            // defaultSettings から group_chat を取得
+            if (defaultSettings.TryGetValue("group_chat", out dynamic? groupChatData)) {
+                if (groupChatData != null) {
+                    AutoGenGroupChat groupChat = new() {
+                        Name = groupChatData["name"],
+                        Description = groupChatData["description"],
+                        InitAgentName = groupChatData["init_agent_name"],
+                        AgentNames = [],
+                    };
+                    foreach (object item in groupChatData["agent_names"]) {
+                        var value = item.ToString();
+                        if (value != null) {
+                            groupChat.AgentNames.Add(value);
+                        }
+                    }
+                    groupChat.Save();
+                }
+            }
             // defaultSettings から tools を取得
             if (defaultSettings.TryGetValue("tools", out dynamic? toolsData)) {
                 if (toolsData != null) {
@@ -108,14 +125,6 @@ namespace PythonAILib.Model.AutoGen {
                     }
                 }
             }
-            // デフォルトのAutoGenGroupChatを作成。デフォルトのAutoGenGroupChatは、全てのAgentsを含む
-            AutoGenGroupChat groupChat = new() {
-                Name = "default",
-                Description = "default",
-                InitAgentName = "user_proxy",
-                AgentNames = AutoGenAgent.FindAll().Select(x => x.Name).ToList(),
-            };
-            groupChat.Save();
 
             Initialized = true;
 

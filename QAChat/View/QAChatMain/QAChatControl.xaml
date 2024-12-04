@@ -88,8 +88,35 @@
                     </i:Interaction.Triggers>
                 </ComboBox>
             </Grid>
-            <StackPanel
+            <Grid
                 Grid.Row="3"
+                Margin="10,20,0,10"
+                HorizontalAlignment="Left">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition Width="50" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    Text="Templature" />
+                <Slider
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    Maximum="1"
+                    Minimum="0"
+                    TickFrequency="0.1"
+                    TickPlacement="BottomRight"
+                    Value="{Binding Temperature}" />
+                <TextBlock
+                    Grid.Column="2"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Text="{Binding Temperature, StringFormat={}{0:F2}}" />
+            </Grid>
+            <StackPanel
+                Grid.Row="4"
                 Margin="10,20,0,10"
                 HorizontalAlignment="Left"
                 Visibility="{Binding VectorDBItemVisibility}">
@@ -100,7 +127,7 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0" HorizontalAlignment="Left">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
@@ -152,66 +179,35 @@
                     </ListBox>
                 </Grid>
             </StackPanel>
-            <Separator Grid.Row="4" />
-            <Grid
-                Grid.Row="5"
-                Margin="10,20,0,10"
-                HorizontalAlignment="Left">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="130" />
-                    <ColumnDefinition Width="50" />
-                </Grid.ColumnDefinitions>
-                <TextBlock
-                    Grid.Column="0"
-                    VerticalAlignment="Center"
-                    Text="Templature" />
-                <Slider
-                    Grid.Column="1"
-                    Margin="10,0,0,0"
-                    Maximum="1"
-                    Minimum="0"
-                    TickFrequency="0.1"
-                    TickPlacement="BottomRight"
-                    Value="{Binding Temperature}" />
-                <TextBlock
-                    Grid.Column="2"
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
-                    Text="{Binding Temperature, StringFormat={}{0:F2}}" />
-            </Grid>
+            <Separator Grid.Row="5" />
             <!--  AutoGenGroupChat  -->
             <Grid
                 Grid.Row="6"
                 Margin="10,20,0,10"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                Visibility="{Binding AutoGenVisibility}">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock
                     Grid.Column="0"
                     VerticalAlignment="Center"
-                    Text="Top P" />
-                <ListBox
+                    FontWeight="Bold"
+                    Text="グループチャット" />
+                <ComboBox
                     Grid.Column="1"
                     Margin="10,0,0,0"
-                    ItemsSource="{Binding TopPList}"
-                    SelectedItem="{Binding SelectedTopP}"
-                    Visibility="{Binding TopPVisibility}">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="BorderThickness" Value="1" />
-                            <Setter Property="Margin" Value="0,1,0,1" />
-                            <Setter Property="Padding" Value="0" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    DisplayMemberPath="Name"
+                    ItemsSource="{Binding AutoGenGroupChatList}"
+                    SelectedItem="{Binding SelectedAutoGenGroupChat}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding AutoGenGroupChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                </ComboBox>
             </Grid>
         </Grid>
         <GridSplitter Grid.Column="1" Width="5" />

@@ -94,6 +94,11 @@ namespace ClipboardApp.ViewModel.Folder {
                 LogWrapper.Error(StringResources.EnterFolderName);
                 return;
             }
+            //　説明がない場合はエラー
+            if (FolderViewModel.Description == "") {
+                LogWrapper.Error(StringResources.EnterDescription);
+                return;
+            }
 
             FolderViewModel.SaveFolderCommand.Execute(null);
             // フォルダ作成後に実行するコマンドが設定されている場合

@@ -114,6 +114,27 @@ from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 class AutoGenAgentGenerator:
 
+    # Enable Vector Searcher
+    @classmethod
+    def create_vector_searcher(cls, vector_db_props: VectorDBProps) -> AutoGenAgentWrapper:
+        # Vector Searcher
+        name = vector_db_props.Name + "_searcher"
+        description = vector_db_props.VectorDBDescription
+        system_message=vector_db_props.VectorDBDescription
+        agent_wrapper = AutoGenAgentWrapper(
+            name=name,
+            description=description,
+            system_message=system_message,
+            type_value="assistant",
+            human_input_mode="NEVER",
+            termination_msg=None,
+            code_execution=False,
+            llm_execution=True,
+            tool_names_for_execution=[],
+            tool_names_for_llm=["vector_search"]
+        )
+        return agent_wrapper
+
     @classmethod
     def create_default_agents(cls, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]) -> list[AutoGenAgentWrapper]:
 
@@ -262,30 +283,6 @@ class AutoGenAgentGenerator:
             llm_execution=False,
             tool_names_for_execution=[],
             tool_names_for_llm=[]
-        )
-        return agent_wrapper
-
-    # Enable Vector Searcher
-    @classmethod
-    def __create_vector_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Vector Searcher
-        description = "Searches information from the vector database according to the user's instructions."
-        name = "vector_searcher"
-        system_message="""
-            You are a vector searcher. You search for information from the vector database according to the user's instructions.
-            Use the provided function to display the search results.
-            """
-        agent_wrapper = AutoGenAgentWrapper(
-            name=name,
-            description=description,
-            system_message=system_message,
-            type_value="assistant",
-            human_input_mode="NEVER",
-            termination_msg=None,
-            code_execution=False,
-            llm_execution=True,
-            tool_names_for_execution=[],
-            tool_names_for_llm=["vector_search"]
         )
         return agent_wrapper
 

@@ -52,5 +52,14 @@ namespace PythonAILib.Model.AutoGen {
             var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
             return collection.FindAll().ToList();
         }
+
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            AutoGenGroupChat other = (AutoGenGroupChat)obj;
+            return Name == other.Name;
+        }
     }
 }

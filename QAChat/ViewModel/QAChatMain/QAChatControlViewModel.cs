@@ -31,6 +31,9 @@ namespace QAChat.ViewModel.QAChatMain {
             if (QAChatStartupProps.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
+            // AutoGenGroupChatを設定
+            SelectedAutoGenGroupChat = AutoGenGroupChat.FindAll().FirstOrDefault();
+            
 
         }
 
@@ -149,7 +152,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems]);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
@@ -161,6 +164,17 @@ namespace QAChat.ViewModel.QAChatMain {
                     return Visibility.Collapsed;
                 } else {
                     return Visibility.Visible;
+                }
+            }
+        }
+
+        // AutoGen関連のVisibility
+        public Visibility AutoGenVisibility {
+            get {
+                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
                 }
             }
         }
@@ -290,6 +304,8 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenVisibility));
 
         });
 
@@ -376,7 +392,7 @@ namespace QAChat.ViewModel.QAChatMain {
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems]);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }
@@ -402,7 +418,14 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
             }
         }
-
+        // AutoGenGroupChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
+            }
+        });
     }
 
 }

@@ -241,5 +241,6 @@ namespace PythonAILib.Model.VectorDB {
 
             return systemVectorItem;
         }
+
     }
 }

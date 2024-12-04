@@ -42,14 +42,25 @@ namespace PythonAILib.Model.Chat {
         }
 
         // CreateDefaultChatRequestContext 
-        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorDBItem> vectorDBItems) {
+        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorDBItem> vectorDBItems , AutoGenGroupChat? groupChat ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
+            AutoGenProperties autoGenProperties;
+
+            if (groupChat != null) {
+                autoGenProperties = new AutoGenProperties() {
+                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
+                    AutoGenGroupChat = groupChat,
+                };
+            } else {
+                autoGenProperties = new AutoGenProperties() {
+                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
+                };
+            }
+
             ChatRequestContext chatRequestContext = new() {
                 VectorDBItems = vectorDBItems,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                AutoGenProperties = new AutoGenProperties() {
-                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                }
+                AutoGenProperties = autoGenProperties,
             };
             return chatRequestContext;
         }

@@ -26,7 +26,8 @@ class AutoGenProps:
         self.tools_list = group_chat_dict.get("tools", [])
         # agents
         self.agents_list = group_chat_dict.get("agents", [])
-        
+    
+    # TODO Agent毎に設定できるようにする
     def create_llm_config(self):
         config_list = []
         llm_config_entry = {}
@@ -52,6 +53,7 @@ class AutoGenProps:
 
         return llm_config
     
+    # TODO Agent毎に設定できるようにする
     def create_code_executor(self):
         # Create a local command line code executor.
         print(f"work_dir_path:{self.work_dir_path}")
@@ -60,6 +62,7 @@ class AutoGenProps:
             work_dir=self.work_dir_path,  # Use the temporary directory to store the code files.
         )
         return executor
-    
+
+    # TODO Agent毎に設定できるようにする    
     def create_code_executor_config(self):
         return {"executor": self.create_code_executor()}

@@ -162,7 +162,7 @@ def run_autogen_group_chat( context_json:str, input_text: str):
         vector_db_items = get_vector_db_objects(context_json)
         autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
 
-        result = ai_app.run_autogen_group_chat(autogen_props, input_text)
+        result = ai_app.run_autogen_group_chat(autogen_props, vector_db_items,  input_text)
         for message, is_last_message in result:
             # dictを作成
             result_dict = {"message": message, "is_last_message": is_last_message}

@@ -8,7 +8,7 @@ import queue
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
 from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
-
+from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenGroupChat:
     def __init__(self, autogen_props: AutoGenProps ):
@@ -63,10 +63,16 @@ class AutoGenGroupChat:
                 self.agent_wrappers.append(default_agent_wrapper)
 
 
-    def run_group_chat(self, initial_message: str, max_round: int) -> Generator[Any, None, None]:
+    def run_group_chat(self, initial_message: str, vector_db_items: list[VectorDBProps], max_round: int) -> Generator[Any, None, None]:
 
         # エージェントのリストを生成
         agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers]
+
+        # ベクトルDB検索用のagentを作成
+        for vector_db_item in vector_db_items:
+            vector_Searcher_wrapper = AutoGenAgentGenerator.create_vector_searcher(vector_db_item)
+            vector_Searcher = vector_Searcher_wrapper.create_agent(self.autogen_props, self.tool_wrappers)
+            agents.append(vector_Searcher)
 
         # init_agent_nameに一致するエージェントを取得
         init_agent_wrappers = [agent for agent in self.agent_wrappers if agent.name == self.init_agent_name]
