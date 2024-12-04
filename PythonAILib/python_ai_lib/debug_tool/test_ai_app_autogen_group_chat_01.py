@@ -55,7 +55,7 @@ if __name__ == '__main__':
             # vector_db_items
             vector_db_items = ai_app_wrapper.get_vector_db_objects(context_json)
             # autogen_props
-            autogen_props = ai_app_wrapper.get_autogen_objects(openai_props, vector_db_items, context_json)
+            autogen_props = ai_app_wrapper.get_autogen_objects(openai_props,  context_json)
 
             # メッセージを取得
             # requestの[messages][0][content]の最後の要素を入力テキストとする
@@ -70,6 +70,6 @@ if __name__ == '__main__':
     print(f"Input message: {input_text}")
 
     # AutogenGroupChatを実行
-    for message, _ in ai_app.run_autogen_group_chat(autogen_props, input_text):
+    for message, _ in ai_app.run_autogen_group_chat(autogen_props, vector_db_items, input_text):
         print(f"message:{message}")
 

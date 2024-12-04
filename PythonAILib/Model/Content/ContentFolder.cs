@@ -76,6 +76,15 @@ namespace PythonAILib.Model.Content {
 
         // 保存
         public virtual void Save<T1,T2>() where T1 : ContentFolder where T2: ContentItem{
+            // VectorDBItemの情報をアップデート
+            VectorDBItem vectorDBItem = GetVectorDBItem();
+            vectorDBItem.Name = FolderName;
+            vectorDBItem.Description = Description;
+            vectorDBItem.CollectionName = Id.ToString();
+            // Save
+            vectorDBItem.Save();
+
+            // ReferenceVectorDBItemsに自分自身を追加
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
                 AddVectorDBItem(GetVectorDBItem());

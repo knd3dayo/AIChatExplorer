@@ -106,10 +106,10 @@ def get_vector_db_objects(context_json: str) -> list[VectorDBProps]:
     vector_db_props = [VectorDBProps(item) for item in vector_db_items]
     return vector_db_props
 
-def get_autogen_objects(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], context_json: str) -> AutoGenProps:
+def get_autogen_objects(openai_props: OpenAIProps,  context_json: str) -> AutoGenProps:
     # ChatRequestContextからAutoGenPropsを生成
     props_dict = json.loads(context_json)
-    autogen_props = AutoGenProps(openai_props, vector_db_items, props_dict["autogen_props"])
+    autogen_props = AutoGenProps(openai_props,  props_dict["autogen_props"])
     return autogen_props
 
 ########################

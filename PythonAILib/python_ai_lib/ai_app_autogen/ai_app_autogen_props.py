@@ -1,5 +1,5 @@
 from autogen.coding import LocalCommandLineCodeExecutor
-
+import venv
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
 class AutoGenProps:
@@ -12,6 +12,9 @@ class AutoGenProps:
         if work_dir is None:
             raise ValueError("work_dir is None")
         self.work_dir_path = work_dir
+
+        # venv_path
+        self.venv_path = props_dict.get("venv_path", None)
 
         # use_system_agent
         self.use_system_agent: bool = props_dict.get("use_system_agent", False)
@@ -55,12 +58,20 @@ class AutoGenProps:
     
     # TODO Agent毎に設定できるようにする
     def create_code_executor(self):
+        params = {}
+        params["timeout"] = 120
+        params["work_dir"] = self.work_dir_path
+        if self.venv_path:
+            env_builder = venv.EnvBuilder(with_pip=True)
+            virtual_env_context = env_builder.ensure_directories(self.venv_path)
+            params["virtual_env_context"] = virtual_env_context
+            
         # Create a local command line code executor.
         print(f"work_dir_path:{self.work_dir_path}")
         executor = LocalCommandLineCodeExecutor(
-            timeout=120,  # Timeout for each code execution in seconds.
-            work_dir=self.work_dir_path,  # Use the temporary directory to store the code files.
+            **params
         )
+
         return executor
 
     # TODO Agent毎に設定できるようにする    

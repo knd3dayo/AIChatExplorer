@@ -13,7 +13,9 @@ namespace PythonAILib.Model.AutoGen {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
-
+        // venv_path
+        [JsonPropertyName("venv_path")]
+        public string VenvPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
         // work_dir
         [JsonPropertyName("work_dir")]
         public string WorkDir { get; set; } = "";
@@ -34,6 +36,7 @@ namespace PythonAILib.Model.AutoGen {
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
                 { "work_dir", WorkDir },
+                { "venv_path", VenvPath },
                 { "group_chat", AutoGenGroupChat.ToDict() },
                 { "agents", AutoGenAgent.ToDictList(AutoGenAgents) },
                 { "tools", AutoGenTool.ToDictList(AutoGenTools) },
