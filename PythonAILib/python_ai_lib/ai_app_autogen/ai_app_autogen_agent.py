@@ -2,7 +2,7 @@
 from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from typing import Any, Callable
-
+import uuid
 from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper, create_vector_search_tool
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
@@ -118,7 +118,7 @@ class AutoGenAgentGenerator:
     @classmethod
     def create_vector_searcher(cls, vector_db_props: VectorDBProps) -> AutoGenAgentWrapper:
         # Vector Searcher
-        name = vector_db_props.Name + "_searcher"
+        name = "vector_searcher_" +  str(uuid.uuid4())
         description = vector_db_props.VectorDBDescription
         system_message=vector_db_props.VectorDBDescription
         agent_wrapper = AutoGenAgentWrapper(
