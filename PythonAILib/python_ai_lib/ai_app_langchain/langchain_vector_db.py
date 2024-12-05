@@ -115,7 +115,7 @@ class LangChainVectorDB:
 
     def _delete_collection(self):
         self.db.delete_collection()
-        self.db.persist()
+        # self.db.persist()
 
     def __add_document(self, document: Document):
         # ベクトルDB固有の保存メソッドを呼び出し                
@@ -143,13 +143,19 @@ class LangChainVectorDB:
             chunk_size_list.append(1024)
         
         # テキストをchunk_size_listの値で分割
-        for chunk_size in chunk_size_list:
-            sub_docs = []
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size)
-            sub_docs = text_splitter.split_documents([source_document])
-            for sub_doc in sub_docs:
-                sub_doc.metadata["doc_id"] = doc_id
-        
+        sub_docs = []
+        if len(chunk_size_list) == 0:
+            sub_docs.append(source_document)
+        else:
+            for chunk_size in chunk_size_list:
+                text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size)
+                splited_docs = text_splitter.split_documents([source_document])
+                if len(splited_docs) == 0:
+                    raise ValueError("splited_docs is empty")
+                for sub_doc in splited_docs:
+                    sub_doc.metadata["doc_id"] = doc_id
+                    sub_docs.append(sub_doc)
+
         # Retoriverを作成
         retriever = self.create_retriever()
         # ドキュメントを追加
@@ -230,11 +236,7 @@ class LangChainVectorDB:
 
     def _add_document_list(self, content_text: str, description_text: str, source: str, source_url: str, content_type:str="text" , image_url="", reliability=0):
         
-        # MultiVectorRetrieverの場合はchunk_size=MultiVectorRetrieverのChunkSize
-        if self.vector_db_props.IsUseMultiVectorRetriever:
-            chunk_size = self.vector_db_props.MultiVectorDocChunkSize
-        else:
-            chunk_size = self.vector_db_props.ChunkSize
+        chunk_size = self.vector_db_props.ChunkSize
     
         document_list = []
         print("content_type:", content_type)

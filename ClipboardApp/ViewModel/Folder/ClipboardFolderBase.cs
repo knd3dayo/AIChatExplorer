@@ -221,7 +221,16 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // ベクトルのリフレッシュ
         public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
-            ClipboardItemFolder.RefreshVectorDBCollection<Model.ClipboardItem>();
+            Task.Run(() => {
+                try {
+                    // MainWindowViewModelのIsIndeterminateをTrueに設定
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                    ClipboardItemFolder.RefreshVectorDBCollection<Model.ClipboardItem>();
+                } finally {
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                }
+            });
+
         });
 
         // --------------------------------------------------------------

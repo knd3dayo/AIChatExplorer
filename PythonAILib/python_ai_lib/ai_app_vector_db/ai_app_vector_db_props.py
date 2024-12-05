@@ -32,14 +32,10 @@ class VectorDBProps:
             self.IsUseMultiVectorRetriever = True
             # DocStoreの設定
             self.DocStoreURL = props_dict.get("DocStoreURL", None)
-            # MultiVectorDocChunkSize
-            self.MultiVectorDocChunkSize = props_dict.get("MultiVectorDocChunkSize", 10000)
 
         else:
             self.IsUseMultiVectorRetriever = False
             self.DocStoreURL = None    
-            self.MultiVectorDocChunkSize = -1
-            
 
         # Collectionの設定
         self.CollectionName = props_dict.get("CollectionName", None)

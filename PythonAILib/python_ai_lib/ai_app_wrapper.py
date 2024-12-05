@@ -160,7 +160,7 @@ def run_autogen_group_chat( context_json:str, input_text: str):
     def func() -> Generator[dict, None, None]:
         openai_props, _ = get_openai_objects(context_json)
         vector_db_items = get_vector_db_objects(context_json)
-        autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
+        autogen_props = get_autogen_objects(openai_props, context_json)
 
         result = ai_app.run_autogen_group_chat(autogen_props, vector_db_items,  input_text)
         for message, is_last_message in result:
@@ -180,7 +180,7 @@ def get_autogen_default_definition(context_json):
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
-        autogen_props = get_autogen_objects(openai_props, vector_db_items, context_json)
+        autogen_props = get_autogen_objects(openai_props, context_json)
         result: dict = {}
 
         from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
@@ -296,10 +296,8 @@ def delete_collection(context_json: str):
         openai_props, _ = get_openai_objects(context_json)
         # ChatRequestContextからVectorDBPropsを生成
         vector_db_items = get_vector_db_objects(context_json)
-        # vector_db_itemsからVectorDBPropsを取得
-        vector_db_props = [VectorDBProps(item) for item in vector_db_items]
         
-        ai_app.delete_collection(openai_props, vector_db_props)
+        ai_app.delete_collection(openai_props, vector_db_items)
 
         # Catalogを削除
         for vector_db_props in vector_db_items:

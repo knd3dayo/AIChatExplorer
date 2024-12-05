@@ -73,15 +73,12 @@ class AutoGenGroupChat:
         if len(vector_db_items) > 0:
             self.vector_search_agents = AutoGenAgentGenerator.create_vector_search_agents(vector_db_items)
 
-
-    def run_group_chat(self, initial_message: str, vector_db_items: list[VectorDBProps], max_round: int) -> Generator[Any, None, None]:
-
         # エージェントのリストを生成
-        agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers if agent.name in self.agent_names]
+        self.agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers if agent.name in self.agent_names]
 
         # ベクトルDB検索用のagentを追加
         for vector_search_agent in self.vector_search_agents:
-            agents.append(vector_search_agent.create_agent(self.autogen_props, self.tool_wrappers))
+            self.agents.append(vector_search_agent.create_agent(self.autogen_props, self.tool_wrappers))
         
         # init_agent_nameに一致するエージェントを取得
         init_agent_wrappers = [agent for agent in self.agent_wrappers if agent.name == self.init_agent_name]
@@ -89,20 +86,24 @@ class AutoGenGroupChat:
         if len(init_agent_wrappers) == 0:
             raise ValueError(f"init_agent not found: {self.init_agent_name}")
 
-        init_agent: ConversableAgent = init_agent_wrappers[0].create_agent(self.autogen_props, self.tool_wrappers)
+        self.init_agent: ConversableAgent = init_agent_wrappers[0].create_agent(self.autogen_props, self.tool_wrappers)
 
         # register_reply 
-        for agent in agents:
+        for agent in self.agents:
             agent.register_reply([autogen.Agent, None], reply_func=self.print_messages_function, config={"callback": None})
 
         # agentのリストを表示
-        for agent in agents:
+        for agent in self.agents:
             print(f"agent:{agent.name} is ready.")
+
+
+
+    def run_group_chat(self, initial_message: str, vector_db_items: list[VectorDBProps], max_round: int) -> Generator[Any, None, None]:
 
         # グループチャットを開始
         groupchat = autogen.GroupChat(
             admin_name="chat_admin_agent",
-            agents=agents,
+            agents=self.agents,
             messages=[],
             max_round=max_round,
         )
@@ -113,7 +114,7 @@ class AutoGenGroupChat:
 
         def start_chat():
             try:
-                init_agent.initiate_chat(group_chat_manager, message=initial_message, max_turns=3)
+                self.init_agent.initiate_chat(group_chat_manager, message=initial_message, max_turns=3)
             except Exception as e:
                 print(f"Error: {e}")
                 import traceback
@@ -211,11 +212,17 @@ class AutoGenGroupChatGenerator:
     @classmethod
     def create_default_chats(cls, autogen_props: AutoGenProps, agent_wrappers: list[AutoGenAgentWrapper]) -> list[AutoGenGroupChat]:
         agent_names = [agent_wrapper.name for agent_wrapper in agent_wrappers]
-        group_chat_dict = {
+        default_group_chat = {
             "name": "default",
             "description": "default",
             "init_agent_name": "user_proxy",
             "agent_names": agent_names
         }
+        vector_search_group_chat = {
+            "name": "vector_search",
+            "description": "vector_search",
+            "init_agent_name": "user_proxy",
+            "agent_names": ["user_proxy", "planner"]
+        }
 
-        return [group_chat_dict]
+        return [default_group_chat, vector_search_group_chat]

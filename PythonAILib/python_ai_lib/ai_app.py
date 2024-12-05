@@ -99,7 +99,7 @@ def delete_catalog(catalb_db_url: str, vector_db_url: str, collection: str):
     vector_db_catalog = VectorDBCatalog(catalb_db_url)
     id = vector_db_catalog.get_catalog(vector_db_url, collection).get("id", None)
     if id is not None:
-        vector_db_catalog.delete_catalog(catalb_db_url, vector_db_url, collection)
+        vector_db_catalog.delete_catalog(id)
 
 ########################
 # langchain関連

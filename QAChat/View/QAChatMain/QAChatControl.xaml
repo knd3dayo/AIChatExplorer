@@ -191,7 +191,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock
-                    Grid.Column="0"
+                    Grid.Column="0" 
                     VerticalAlignment="Center"
                     FontWeight="Bold"
                     Text="グループチャット" />
