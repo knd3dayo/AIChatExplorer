@@ -65,6 +65,7 @@ class AutoGenAgentWrapper:
 
         # VectorDBPropsがある場合はAutoGenToolGeneratorのcreate_vector_search_toolを呼び出す
         if len(self.vector_db_props_list) > 0:
+            print (f"agent name: {self.name} VectorDBProps found: {self.vector_db_props_list}")
             vector_search_tool = create_vector_search_tool(autogen_props.openai_props, self.vector_db_props_list)
             description = vector_search_tool.__doc__
             agent.register_for_llm(description=description)(vector_search_tool)
@@ -131,7 +132,9 @@ class AutoGenAgentGenerator:
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[],
-            tool_names_for_llm=["vector_search"]
+            tool_names_for_llm=[],
+            # vector_db_props_listにVectorDBPropsを追加
+            vector_db_props_list=[vector_db_props]
         )
         return agent_wrapper
 
