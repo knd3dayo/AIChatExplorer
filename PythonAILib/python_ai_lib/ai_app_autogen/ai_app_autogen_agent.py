@@ -3,7 +3,7 @@ from autogen import ConversableAgent, UserProxyAgent
 import autogen 
 from typing import Any, Callable
 import uuid
-from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper, create_vector_search_tool
+from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
@@ -53,23 +53,18 @@ class AutoGenAgentWrapper:
         else:
             raise ValueError(f"Unknown agent type: {self.type_value}")
 
+    
         for tool_name in self.tool_names_for_execution:
             tool_wrapper = next((tool for tool in tool_wrappers if tool.name == tool_name), None)
             if tool_wrapper:
-                agent.register_for_execution()(tool_wrapper.tool)
+                agent.register_for_execution(name=tool_wrapper.name)(tool_wrapper.tool)
         
         for tool_name in self.tool_names_for_llm:
             tool_wrapper = next((tool for tool in tool_wrappers if tool.name == tool_name), None)
             if tool_wrapper:
-                agent.register_for_llm(description=tool_wrapper.description)(tool_wrapper.tool)
+                agent.register_for_llm(name=tool_wrapper.name, description=tool_wrapper.description)(tool_wrapper.tool)
 
-        # VectorDBPropsがある場合はAutoGenToolGeneratorのcreate_vector_search_toolを呼び出す
-        if len(self.vector_db_props_list) > 0:
-            print (f"agent name: {self.name} VectorDBProps found: {self.vector_db_props_list}")
-            vector_search_tool = create_vector_search_tool(autogen_props.openai_props, self.vector_db_props_list)
-            description = vector_search_tool.__doc__
-            agent.register_for_llm(description=description)(vector_search_tool)
-    
+
         return agent
         
 
@@ -117,26 +112,27 @@ class AutoGenAgentGenerator:
 
     # Enable Vector Searcher
     @classmethod
-    def create_vector_searcher(cls, vector_db_props: VectorDBProps) -> AutoGenAgentWrapper:
-        # Vector Searcher
-        name = "vector_searcher_" +  str(uuid.uuid4())
-        description = vector_db_props.VectorDBDescription
-        system_message=vector_db_props.VectorDBDescription
-        agent_wrapper = AutoGenAgentWrapper(
-            name=name,
-            description=description,
-            system_message=system_message,
-            type_value="assistant",
-            human_input_mode="NEVER",
-            termination_msg=None,
-            code_execution=False,
-            llm_execution=True,
-            tool_names_for_execution=[],
-            tool_names_for_llm=[],
-            # vector_db_props_listにVectorDBPropsを追加
-            vector_db_props_list=[vector_db_props]
-        )
-        return agent_wrapper
+    def create_vector_search_agents(cls, vector_db_props_list: list[VectorDBProps]) -> AutoGenAgentWrapper:
+        agent_wrappers = []
+        for vector_db_props in vector_db_props_list:
+            # Vector Searcher
+            name = "vector_searcher_" +  vector_db_props.id
+            description = vector_db_props.VectorDBDescription
+            system_message=vector_db_props.VectorDBDescription
+            agent_wrapper = AutoGenAgentWrapper(
+                name=name,
+                description=description,
+                system_message=system_message,
+                type_value="assistant",
+                human_input_mode="NEVER",
+                termination_msg=None,
+                code_execution=False,
+                llm_execution=True,
+                tool_names_for_execution=[],
+                tool_names_for_llm=["vector_search_" + vector_db_props.id],
+            )
+            agent_wrappers.append(agent_wrapper)
+        return agent_wrappers
 
     @classmethod
     def create_default_agents(cls, autogen_props: AutoGenProps, tool_wrappers: list[AutoGenToolWrapper]) -> list[AutoGenAgentWrapper]:
@@ -153,6 +149,13 @@ class AutoGenAgentGenerator:
         agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
         # agent_wrappers.append(cls.__create_critic(autogen_props, tool_wrappers))
 
+        return agent_wrappers
+
+    @classmethod
+    def create_vector_searcher_agents(cls, vector_db_props_list: list[VectorDBProps]) -> list[AutoGenAgentWrapper]:
+        agent_wrappers = []
+        for vector_db_props in vector_db_props_list:
+            agent_wrappers.append(cls.create_vector_searcher(vector_db_props))
         return agent_wrappers
 
     @classmethod

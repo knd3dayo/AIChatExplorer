@@ -11,7 +11,7 @@ from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToo
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenGroupChat:
-    def __init__(self, autogen_props: AutoGenProps ):
+    def __init__(self, autogen_props: AutoGenProps , vector_db_items: list[VectorDBProps] = []):
         self.autogen_props = autogen_props
         # group_chat_dict
         group_chat_dict = autogen_props.group_chat_dict
@@ -48,6 +48,11 @@ class AutoGenGroupChat:
         self.tool_wrappers: list[AutoGenToolWrapper] = AutoGenToolWrapper.create_wrapper_list(autogen_props.tools_list)
         # tool_wrappersにデフォルトのツールを追加
         default_tool_wrappers = AutoGenToolGenerator.create_default_tools()
+        
+        # VectorDBPropsがある場合はAutoGenToolGeneratorのcreate_vector_search_toolsを呼び出す
+        if len(vector_db_items) > 0:
+            default_tool_wrappers += AutoGenToolGenerator.create_vector_search_tools(self.autogen_props.openai_props, vector_db_items)
+
         # 既に追加されている場合は追加しない
         for default_tool_wrapper in default_tool_wrappers:
             if default_tool_wrapper not in self.tool_wrappers:
@@ -57,23 +62,27 @@ class AutoGenGroupChat:
         self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(autogen_props.agents_list)
         # agent_wrappersにデフォルトのエージェントを追加
         default_agent_wrappers = AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.tool_wrappers)
+
         # 既に追加されている場合は追加しない
         for default_agent_wrapper in default_agent_wrappers:
             if default_agent_wrapper not in self.agent_wrappers:
                 self.agent_wrappers.append(default_agent_wrapper)
 
+        # VectorDBPropsがある場合はAutoGenAgentGeneratorのcreate_vector_search_agentsを呼び出す
+        self.vector_search_agents = []
+        if len(vector_db_items) > 0:
+            self.vector_search_agents = AutoGenAgentGenerator.create_vector_search_agents(vector_db_items)
+
 
     def run_group_chat(self, initial_message: str, vector_db_items: list[VectorDBProps], max_round: int) -> Generator[Any, None, None]:
 
         # エージェントのリストを生成
-        agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers]
+        agents: list[ConversableAgent] = [agent.create_agent(self.autogen_props, self.tool_wrappers) for agent in self.agent_wrappers if agent.name in self.agent_names]
 
-        # ベクトルDB検索用のagentを作成
-        for vector_db_item in vector_db_items:
-            vector_Searcher_wrapper = AutoGenAgentGenerator.create_vector_searcher(vector_db_item)
-            vector_Searcher = vector_Searcher_wrapper.create_agent(self.autogen_props, self.tool_wrappers)
-            agents.append(vector_Searcher)
-
+        # ベクトルDB検索用のagentを追加
+        for vector_search_agent in self.vector_search_agents:
+            agents.append(vector_search_agent.create_agent(self.autogen_props, self.tool_wrappers))
+        
         # init_agent_nameに一致するエージェントを取得
         init_agent_wrappers = [agent for agent in self.agent_wrappers if agent.name == self.init_agent_name]
 
@@ -166,11 +175,7 @@ class AutoGenGroupChat:
         self.finished = True
         self.message_queue.put(None)
 
-    @classmethod
-    def create_group_chat(cls, autogen_props: AutoGenProps, group_chat_dict: dict) -> "AutoGenGroupChat":
-        autogen_props.group_chat_dict = group_chat_dict
-        return AutoGenGroupChat(autogen_props)
-    
+
     @classmethod
     def _create_group_chat_dict(cls, name: str, description: str, init_agent_name: str, agent_names: list[str]) -> dict:
         group_chat_dict = {

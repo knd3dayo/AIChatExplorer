@@ -15,15 +15,18 @@ from ai_app_file.ai_app_file_util import FileUtil
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 
 class AutoGenToolWrapper:
-    def __init__(self, name: str, description: str, source_path: str = None):
+    def __init__(self, name: str, description: str, source_path: str = None, tool: Callable = None):
         self.name = name
         self.description = description
         self.source_path = source_path
 
         # print(f"name: {name}, description: {description}, source_path:, {source_path}")
 
-        # 関数を作成
-        self.tool = AutoGenToolWrapper.create_tool(name, source_path)
+        # toolがない場合は関数を作成
+        if tool is None:
+            self.tool = AutoGenToolWrapper.create_tool(name, source_path)
+        else:
+            self.tool = tool
 
     @classmethod
     def create_tool(cls, name: str, source_path: str):
@@ -87,26 +90,32 @@ class AutoGenToolGenerator:
         }
         # toolsからAutoGenToolWrapperのリストを生成
         tools_list =[]
-        for name, (_, description) in tools.items():
+        for name, (tool, description) in tools.items():
 
-            tool_wrapper = AutoGenToolWrapper(name, description, __file__)
+            tool_wrapper = AutoGenToolWrapper(name, description, __file__, tool)
             tools_list.append(tool_wrapper)
 
         return tools_list
-    
-def create_vector_search_tool( openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
-    def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
-        """
-        This function performs a vector search on the specified text and returns the related documents.
-        """
-        params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
-        result = LangChainVectorDB.vector_search(params)
-        # Retrieve documents from result
-        documents = result.get("documents", [])
-        # Extract content of each document from documents
-        result = [doc.get("content", "") for doc in documents]
-        return result
-    return vector_search
+    @classmethod
+    def create_vector_search_tools(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> list[AutoGenToolWrapper]:
+        def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
+            """
+            This function performs a vector search on the specified text and returns the related documents.
+            """
+            params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
+            result = LangChainVectorDB.vector_search(params)
+            # Retrieve documents from result
+            documents = result.get("documents", [])
+            # Extract content of each document from documents
+            result = [doc.get("content", "") for doc in documents]
+            return result
+        
+        tools = []
+        for vector_db_props in vector_db_props_list:
+            tool = AutoGenToolWrapper("vector_search_" + vector_db_props.id, vector_db_props.VectorDBDescription, __file__, vector_search)
+            tools.append(tool)
+
+        return tools
 
 def search_wikipedia_ja(query: Annotated[str, "String to search for"], lang: Annotated[str, "Language of Wikipedia"], num_results: Annotated[int, "Maximum number of results to display"]) -> list[str]:
     """

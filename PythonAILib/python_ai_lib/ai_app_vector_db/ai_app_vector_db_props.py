@@ -1,10 +1,13 @@
 from dotenv import load_dotenv
 import os, json
 from ai_app_openai.ai_app_openai_util import OpenAIProps
-
+import uuid
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
     def __init__(self, props_dict: dict):
+        # AutoGenで使用するID
+        self.id = str(uuid.uuid4())
+
         # VectorStoreの設定
         self.VectorDBURL: str = props_dict.get("VectorDBURL", "")
         self.VectorDBTypeString :str = props_dict.get("VectorDBTypeString", "")

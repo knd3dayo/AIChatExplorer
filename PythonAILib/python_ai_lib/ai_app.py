@@ -72,7 +72,7 @@ def list_openai_models(openai_props: OpenAIProps):
 def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
     # autogen_propsの
     # AutoGenGroupChatを生成
-    autogen_group_chat = AutoGenGroupChat(autogen_props)
+    autogen_group_chat = AutoGenGroupChat(autogen_props, vector_db_items)
     # run_group_chatを実行
     result = autogen_group_chat.run_group_chat(input_text,  vector_db_items, 10)
     return result
