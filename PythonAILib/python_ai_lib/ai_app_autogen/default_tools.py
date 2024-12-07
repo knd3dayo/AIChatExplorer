@@ -186,19 +186,7 @@ def create_tools(autogen_props: AutoGenProps, vector_db_props_list: list[VectorD
         now = datetime.now()
         return now.strftime("%Y/%m/%d (%a) %H:%M:%S")
 
-    def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
-        """
-        This function performs a vector search on the specified text and returns the related documents.
-        """
-        params: VectorSearchParameter = VectorSearchParameter(autogen_props.openai_props, vector_db_props_list, query)
-        result = LangChainVectorDB.vector_search(params)
-        # Retrieve documents from result
-        documents = result.get("documents", [])
-        # Extract content of each document from documents
-        result = [doc.get("content", "") for doc in documents]
-        return result
-
     return [
         search_wikipedia_ja, list_files_in_directory, extract_file, extract_webpage, 
-        save_tools, check_file, save_text_file, search_duckduckgo, get_current_time, vector_search
+        save_tools, check_file, save_text_file, search_duckduckgo, get_current_time
     ]

@@ -7,7 +7,7 @@ import queue
 
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
 from ai_app_autogen.ai_app_autogen_agent import AutoGenAgentGenerator, AutoGenAgentWrapper
-from ai_app_autogen.ai_app_autogen_tools import AutoGenToolGenerator, AutoGenToolWrapper
+from ai_app_autogen.ai_app_autogen_tools import AutoGenToolWrapper
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class AutoGenGroupChat:
@@ -45,13 +45,16 @@ class AutoGenGroupChat:
         self.finished = False
 
         # autogen_propsからtoolsを取得
-        self.tool_wrappers: list[AutoGenToolWrapper] = AutoGenToolWrapper.create_wrapper_list(autogen_props.tools_list)
+        self.tool_wrappers: list[AutoGenToolWrapper] = AutoGenToolWrapper.create_wrapper_list(autogen_props.tools_list, autogen_props, vector_db_items)
         # tool_wrappersにデフォルトのツールを追加
-        default_tool_wrappers = AutoGenToolGenerator.create_default_tools()
+        import ai_app_autogen.default_tools
+        default_tool_wrappers = AutoGenToolWrapper.create_wrapper_all_from_source(
+            ai_app_autogen.default_tools.__file__, autogen_props, vector_db_items
+        )
         
-        # VectorDBPropsがある場合はAutoGenToolGeneratorのcreate_vector_search_toolsを呼び出す
+        # VectorDBPropsがある場合はAutoGenToolWrapperのcreate_vector_search_toolsを呼び出す
         if len(vector_db_items) > 0:
-            default_tool_wrappers += AutoGenToolGenerator.create_vector_search_tools(self.autogen_props.openai_props, vector_db_items)
+            default_tool_wrappers += AutoGenToolWrapper.create_vector_search_tools(self.autogen_props.openai_props, vector_db_items)
 
         # 既に追加されている場合は追加しない
         for default_tool_wrapper in default_tool_wrappers:
@@ -59,7 +62,9 @@ class AutoGenGroupChat:
                 self.tool_wrappers.append(default_tool_wrapper)
 
         # autogen_propsからagentsを取得
-        self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(autogen_props.agents_list)
+        self.agent_wrappers: list[AutoGenAgentWrapper] = AutoGenAgentWrapper.create_wrapper_list(
+            autogen_props.agents_list
+        )
         # agent_wrappersにデフォルトのエージェントを追加
         default_agent_wrappers = AutoGenAgentGenerator.create_default_agents(self.autogen_props, self.tool_wrappers)
 
@@ -135,7 +140,7 @@ class AutoGenGroupChat:
                 if self.finished:
                     print("finished")
                     break
-                message = self.message_queue.get(timeout=1)
+                message = self.message_queue.get(timeout=5)
                 yield message, False
             except queue.Empty:
                 continue
