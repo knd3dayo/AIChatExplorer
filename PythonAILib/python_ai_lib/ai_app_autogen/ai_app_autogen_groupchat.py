@@ -114,7 +114,8 @@ class AutoGenGroupChat:
         )
 
         group_chat_manager = autogen.GroupChatManager(
-            groupchat=groupchat
+            groupchat=groupchat,
+            is_termination_msg = lambda msg: "end meeting" in msg["content"].lower()
         )
 
         def start_chat():

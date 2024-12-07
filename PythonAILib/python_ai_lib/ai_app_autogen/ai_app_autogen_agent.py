@@ -34,7 +34,7 @@ class AutoGenAgentWrapper:
         params['human_input_mode'] = self.human_input_mode if self.human_input_mode else "NEVER"
         # is_termination_msgが指定されていない場合はNone, それ以外の場合はtermination_msgを設定
         if self.termination_msg:
-            params["is_termination_msg"] = lambda msg: self.termination_msg in msg["content"].lower()
+            params["is_termination_msg"] = eval(self.termination_msg)
 
         # code_executionを大文字にしたものがTRUEの場合はauto_gen_pros.create_code_executor()を呼び出し
         # それ以外の場合はFalseを設定
@@ -139,15 +139,11 @@ class AutoGenAgentGenerator:
 
         agent_wrappers = []
         agent_wrappers.append(cls.__create_user_proxy_wrapper(autogen_props, tool_wrappers))
+        agent_wrappers.append(cls.__create_current_time(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_code_executor(autogen_props, tool_wrappers, True))
         agent_wrappers.append(cls.__create_code_writer(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_file_operator(autogen_props, tool_wrappers))
-        # vector_searcherは別途実装
-        # agent_wrappers.append(cls.__create_vector_searcher(autogen_props, tool_wrappers))
         agent_wrappers.append(cls.__create_web_searcher(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_current_time(autogen_props, tool_wrappers))
-        agent_wrappers.append(cls.__create_planner(autogen_props, tool_wrappers))
-        # agent_wrappers.append(cls.__create_critic(autogen_props, tool_wrappers))
 
         return agent_wrappers
 
@@ -162,14 +158,14 @@ class AutoGenAgentGenerator:
     def __create_user_proxy_wrapper(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper: 
         # Task assigner for group chat
         name="user_proxy"
-        description = "Creates a list of tasks to achieve the user's request and assigns tasks to each agent."
+        description = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します"
         system_message="""
-            Executes tasks in collaboration with each agent to achieve the user's request.
-            - First, create a plan and a list of tasks to achieve the user's request.
-            - Assign tasks to each agent and execute the tasks.
-            - When the plan is achieved by executing the tasks by each agent, reply with [End Meeting].
-            - If there are no additional questions, reply with [End Meeting].
+            - まず、ユーザーの要求を達成するためにはどのエージェントと協力すべきか計画を作成します。
+              code_writer,code_executorがいる場合は、その他のエージェントでは対応できない要求をcode_writer,code_executorに割り当てます。
+            - 計画に基づき、対象のエージェントにタスクを割り当てて、タスクを実行します。
+            - 計画が達成されたら、[End Meeting]と返信してください。
             """
+
         description=description
         
         agent_wrapper = AutoGenAgentWrapper(
@@ -178,59 +174,13 @@ class AutoGenAgentGenerator:
             system_message=system_message,
             type_value="userproxy",
             human_input_mode="NEVER",
-            termination_msg="end meeting",
+            termination_msg="lambda msg: \"end meeting\" in msg[\"content\"].lower()",
             code_execution=False,
             llm_execution=True,
             tool_names_for_execution=[tool.name for tool in autogen_tools],
             tool_names_for_llm=[]
         )
         return agent_wrapper
-
-    @classmethod
-    def __create_planner(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Task assigner for group chat
-        description = "Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, until admin approval. "
-        system_message="""Planner. Suggest a plan. Revise the plan based on feedback from admin and critic, 
-        until admin approval. 
-        """
-        name="planner"
-        agent_wrapper = AutoGenAgentWrapper(
-            name=name,
-            description=description,
-            system_message=system_message,
-            type_value="assistant",
-            human_input_mode="NEVER",
-            termination_msg=None,
-            code_execution=False,
-            llm_execution=True,
-            tool_names_for_execution=[tool.name for tool in autogen_tools],
-            tool_names_for_llm=[]
-        )
-        return agent_wrapper
-
-    @classmethod
-    def __create_critic(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
-        # Task assigner for group chat
-        description = "Critic. Double check plan, claims, code from other agents and provide feedback. Check whether the plan includes adding verifiable info such as source URL."
-        system_message="""Critic. Double check plan, claims, code from other agents and provide feedback. 
-        Check whether the plan includes adding verifiable info such as source URL.
-        """
-        name="critic"
-        agent_wrapper = AutoGenAgentWrapper(
-            name=name,
-            description=description,
-            system_message=system_message,
-            type_value="assistant",
-            human_input_mode="NEVER",
-            termination_msg=None,
-            code_execution=False,
-            llm_execution=True,
-            tool_names_for_execution=[tool.name for tool in autogen_tools],
-            tool_names_for_llm=[]
-        )
-        return agent_wrapper
-
-
     @classmethod
     def __create_code_writer(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Separate the code writer and executor. Below is the code inference Agent with LLM.
@@ -295,14 +245,16 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_web_searcher(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Web Searcher
-        description = "Searches documents on the web."
+        description = "ウェブ上のドキュメントを検索します。"
         name = "web_searcher"
         system_message="""
-            You are a web searcher. You search for documents on the web according to the user's instructions.
-            - Use the provided search_duckduckgo function to search for information.
-            - If the required document is not at the link destination, search for further linked information.
-            - If the required document is found, retrieve the document with extract_webpage and provide the text to the user.
+            あなたはウェブサーチャーです。ユーザーの指示に従って、以下の機能を利用してウェブ上のドキュメントを検索します。
+            それ以外の指示には返信しないでください。
+            - 情報を検索するために提供された search_duckduckgo 関数を使用してください。
+            - 必要なドキュメントがリンク先にない場合は、さらにリンクされた情報を検索してください。
+            - 必要なドキュメントが見つかった場合は、extract_webpage でドキュメントを取得し、ユーザーにテキストを提供してください。
             """
+
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
             description=description,
@@ -328,17 +280,19 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_file_operator(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # File Extractor
-        description = "File operator. Ex. Write text file. Extracts information from files according to the user's instructions."
+        description = "ファイルオペレーター。例: テキストファイルの書き込み。ユーザーの指示に従ってファイルから情報を抽出します。"
         name = "file_operator"
         system_message=f"""
-            You are a file operator. 
-            - You extract information from files according to the user's instructions.
-            Use the provided function to display the extraction results.
-            - Saves data to a file in Python according to the user's instructions.
-            The default save location is {autogen_pros.work_dir_path}.
-            If the user specifies a save location, save the file to the specified location.
-            - list directory files
-            - File Checker: Checks whether the specified file exists.
+            あなたはファイルオペレーターです。ユーザーからの指示に従い以下の処理を行います。それ以外の指示には返信しないでください。
+            - ユーザーの指示に従ってファイルから情報を抽出します。
+            提供された関数を使用して抽出結果を表示してください。
+            - ユーザーの指示に従ってPythonでファイルにデータを保存します。
+            デフォルトの保存場所は {autogen_pros.work_dir_path} です。
+            ユーザーが保存場所を指定した場合は、指定された場所にファイルを保存してください。
+            - ディレクトリのファイルをリストします
+            - ファイルチェッカー：指定されたファイルが存在するかどうかを確認します。
+
+
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,
@@ -359,10 +313,11 @@ class AutoGenAgentGenerator:
     @classmethod
     def __create_current_time(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper:
         # Agent to get the current time
-        description = "Retrieves the current time."
+        description = "現在の時刻を取得してユーザーに伝えます"
         name = "current_time"
         system_message="""
-            Retrieves the current time.
+            あなたは時刻通知者です。現在の時刻を取得してユーザーに伝えます。
+            時刻の取得に関する依頼以外の場合は何も返信しないでください。
             """
         agent_wrapper = AutoGenAgentWrapper(
             name=name,

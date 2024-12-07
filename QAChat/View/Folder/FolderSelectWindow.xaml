@@ -5,14 +5,15 @@
     xmlns:cc="clr-namespace:QAChat.View.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.ViewModel.Folder"
+    xmlns:local="clr-namespace:QAChat.View.Folder"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:QAChat.View.Folder"
+    xmlns:viewmodel="clr-namespace:QAChat.ViewModel.Folder"
     Title="{x:Static res:ViewStringResources.SelectFolder}"
     Width="600"
     Height="450"
-    d:DataContext="{d:DesignInstance Type=local:FolderSelectWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodel:FolderSelectWindowViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -41,8 +42,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  メニューバー  -->
         <StackPanel
@@ -66,62 +65,9 @@
 
             </materialDesign:ColorZone>
         </StackPanel>
-        <TreeView Grid.Row="1" ItemsSource="{Binding RootFolders}">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="Margin" Value="3,3,3,3" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate DataType="local:ClipboardItemFolderViewModel" ItemsSource="{Binding Children}">
-                    <DockPanel HorizontalAlignment="Stretch">
-                        <materialDesign:PackIcon
-                            Width="18"
-                            Height="18"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
-                            Kind="Folder" />
-                        <TextBlock
-                            Margin="0,3,0,0"
-                            DockPanel.Dock="Left"
-                            FontSize="12"
-                            Foreground="#616161"
-                            Style="{StaticResource MaterialDesignBodyMediumTextBlock}"
-                            Text="{Binding FolderName}" />
-                        <DockPanel.ContextMenu>
-                            <!--  Folder context menu  -->
-                            <ContextMenu FontSize="12" ItemsSource="{Binding MenuItems}" />
-                        </DockPanel.ContextMenu>
-                    </DockPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectedItemChanged">
-                    <i:InvokeCommandAction Command="{Binding FolderSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
+        <local:FolderSelectControl Grid.Row="1" DataContext="{Binding}" />
 
-        </TreeView>
-        <TextBlock
-            Grid.Row="2"
-            MinHeight="20"
-            HorizontalAlignment="Stretch"
-            Text="{Binding SelectedFolderAbsoluteCollectionName}" />
-        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
-            <Button
-                Width="100"
-                Margin="10,10,10,10"
-                Command="{Binding SelectFolderCommand, Mode=OneTime}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Select}" />
-            <Button
-                Grid.Column="1"
-                Width="100"
-                Margin="10,10,10,10"
-                Command="{Binding CloseCommand, Mode=OneTime}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Cancel}" />
-        </DockPanel>
-        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>
 

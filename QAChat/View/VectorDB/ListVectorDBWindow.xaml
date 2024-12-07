@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.VectorDB"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListVectorDBWindowTitle, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.VectorDB"
+    Title="{x:Static res:ViewStringResources.ListVectorDBWindowTitle}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:ListVectorDBWindowViewModel}"
@@ -39,7 +40,6 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -64,56 +64,67 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <StackPanel
-            Grid.Row="1"
-            Margin="0,0,0,0"
-            Orientation="Vertical">
-            <CheckBox
-                Margin="10,10,0,0"
-                Content="{Binding StringResources.DisplayVectorsForTheSystem}"
-                IsChecked="{Binding IsShowSystemCommonVectorDB}" />
-        </StackPanel>
-        <ListView
-            Grid.Row="2"
-            ItemsSource="{Binding VectorDBItems}"
-            SelectedItem="{Binding SelectedVectorDBItem}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding EditVectorDBCommand, Mode=OneTime}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable, Mode=OneTime}">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn
-                        Width="Auto"
-                        DisplayMemberBinding="{Binding Name}"
-                        Header="{Binding StringResources.Name, Mode=OneTime}" />
-                    <GridViewColumn
-                        Width="Auto"
-                        DisplayMemberBinding="{Binding VectorDBURL}"
-                        Header="{Binding StringResources.VectorDBLocation, Mode=OneTime}" />
-                    <GridViewColumn
-                        Width="Auto"
-                        DisplayMemberBinding="{Binding VectorDBTypeString}"
-                        Header="{Binding StringResources.VectorDBType, Mode=OneTime}" />
-                </GridView>
-            </ListView.View>
-            <!--  コンテキストメニュー  -->
-            <ListView.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Command="{Binding EditVectorDBCommand}" Header="{Binding StringResources.Edit, Mode=OneTime}" />
-                    <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="{Binding StringResources.Delete, Mode=OneTime}" />
-                </ContextMenu>
-            </ListView.ContextMenu>
-        </ListView>
-        <Grid Grid.Row="3">
+        <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
+            <TabItem Header="ベクトルDB一覧">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="0,0,0,0"
+                        Orientation="Vertical">
+                        <CheckBox
+                            Margin="10,10,0,0"
+                            Content="{Binding StringResources.DisplayVectorsForTheSystem}"
+                            IsChecked="{Binding IsShowSystemCommonVectorDB}" />
+                    </StackPanel>
+                    <ListView
+                        Grid.Row="1"
+                        ItemsSource="{Binding VectorDBItems}"
+                        SelectedItem="{Binding SelectedVectorDBItem}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding EditVectorDBCommand, Mode=OneTime}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable, Mode=OneTime}">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn
+                                    Width="Auto"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Header="{Binding StringResources.Name, Mode=OneTime}" />
+                                <GridViewColumn
+                                    Width="Auto"
+                                    DisplayMemberBinding="{Binding VectorDBURL}"
+                                    Header="{Binding StringResources.VectorDBLocation, Mode=OneTime}" />
+                                <GridViewColumn
+                                    Width="Auto"
+                                    DisplayMemberBinding="{Binding VectorDBTypeString}"
+                                    Header="{Binding StringResources.VectorDBType, Mode=OneTime}" />
+                            </GridView>
+                        </ListView.View>
+                        <!--  コンテキストメニュー  -->
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding EditVectorDBCommand}" Header="{Binding StringResources.Edit, Mode=OneTime}" />
+                                <MenuItem Command="{Binding DeleteVectorDBCommand}" Header="{Binding StringResources.Delete, Mode=OneTime}" />
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                    </ListView>
+                </Grid>
+            </TabItem>
+            <TabItem Header="ベクトルDBフォルダ" />
+        </TabControl>
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
@@ -153,6 +164,6 @@
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
-        <cc:MyStatusBar Grid.Row="4" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
     </Grid>
 </Window>
