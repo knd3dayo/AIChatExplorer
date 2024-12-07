@@ -77,7 +77,7 @@ namespace PythonAILib.Model.AutoGen {
                                 groupChat.AgentNames.Add(value);
                             }
                         }
-                        groupChat.Save();
+                        groupChat.Save(allow_override: false);
                     }
                 }
             }
@@ -90,7 +90,7 @@ namespace PythonAILib.Model.AutoGen {
                             Description = toolData["description"],
                             SourcePath = toolData["source_path"],
                         };
-                        tool.Save();
+                        tool.Save(allow_override: false);
                     }
                 }
             }
@@ -126,7 +126,7 @@ namespace PythonAILib.Model.AutoGen {
                             ToolNamesForExecution = toolNamesForExecution,
                             ToolNamesForLlm = toolNamesForLlm,
                         };
-                        agent.Save();
+                        agent.Save(false);
                     }
                 }
             }

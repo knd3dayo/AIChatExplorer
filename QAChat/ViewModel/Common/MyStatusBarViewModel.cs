@@ -1,11 +1,12 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Resource;
-using QAChat.View.Common.StatusMessage;
+using QAChat.View.Common;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.View.Common.StatusBar {
+namespace QAChat.ViewModel.Common
+{
     public class MyStatusBarViewModel : ObservableObject {
 
         // ステータスバーのテキスト

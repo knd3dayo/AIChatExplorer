@@ -80,9 +80,12 @@ namespace PythonAILib.Model.AutoGen {
         }
 
         // Save
-        public void Save() {
+        public void Save(bool allow_override = true) {
             var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenAgentCollection<AutoGenAgent>();
             var items = collection.Find(x => x.Name == Name);
+            if (items.Count() > 0 && !allow_override) {
+                return;
+            }
             foreach (var item in items) {
                 collection.Delete(item.Id);
             }

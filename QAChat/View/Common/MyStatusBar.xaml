@@ -1,11 +1,12 @@
 <UserControl
-    x:Class="QAChat.View.Common.StatusBar.MyStatusBar"
+    x:Class="QAChat.View.Common.MyStatusBar"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.View.Common.StatusBar"
+    xmlns:local="clr-namespace:QAChat.ViewModel.Common"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.View.Common"
     x:Name="root"
     Width="Auto"
     d:DataContext="{d:DesignInstance Type=local:MyStatusBarViewModel}"
@@ -49,7 +50,7 @@
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                    Text="{Binding StringResources.Statistics}">
+                    Text="{x:Static res:ViewStringResources.Statistics}">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding OpenStatisticsWindowCommand}" Gesture="LeftClick" />
                     </TextBlock.InputBindings>
@@ -63,7 +64,7 @@
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesign.Brush.Primary}"
                     Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                    Text="{Binding StringResources.Log}">
+                    Text="{x:Static res:ViewStringResources.Log}">
                     <TextBlock.InputBindings>
                         <MouseBinding Command="{Binding OpenStatusMessageWindowCommand}" Gesture="LeftClick" />
                     </TextBlock.InputBindings>

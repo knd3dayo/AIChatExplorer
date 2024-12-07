@@ -3,7 +3,7 @@ using System.Windows;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
-using QAChat.View.Common.StatusBar;
+using QAChat.ViewModel.Common;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

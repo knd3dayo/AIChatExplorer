@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\Common\StatusMessage\StatusMessageWindow.xaml.cs">
+    <Compile Update="View\Common\StatusMessageWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\QAChatMain\ScreenShotCheckPromptWindow.xaml.cs">
@@ -54,7 +54,7 @@
     <Compile Update="View\RAG\SelectCommitWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\Common\StatusBar\MyStatusBar.xaml.cs">
+    <Compile Update="View\Common\MyStatusBar.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="View\VectorDB\EditVectorDBWindow.xaml.cs">

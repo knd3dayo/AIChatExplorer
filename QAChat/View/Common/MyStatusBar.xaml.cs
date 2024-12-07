@@ -1,7 +1,7 @@
 using System.Windows.Controls;
+using QAChat.ViewModel.Common;
 
-namespace QAChat.View.Common.StatusBar
-{
+namespace QAChat.View.Common{
     /// <summary>
     /// MyStatusBar.xaml の相互作用ロジック
     /// </summary>
