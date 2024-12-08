@@ -15,6 +15,7 @@ namespace PythonAILib.Common {
         public const string CONTENT_ATTACHED_ITEM_COLLECTION_NAME = "clipboard_file";
 
         public const string CONTENT_FOLDERS_COLLECTION_NAME = "folders";
+        public const string SHORTCUT_FOLDERS_COLLECTION_NAME = "shortcut_folders";
         public const string ROOT_FOLDERS_COLLECTION_NAME = "root_folders";
 
         public const string TAG_COLLECTION_NAME = "tags";
@@ -243,6 +244,12 @@ namespace PythonAILib.Common {
             var collection = GetDatabase().GetCollection<T>(CONTENT_FOLDERS_COLLECTION_NAME);
             return collection;
         }
+        // --
+        public ILiteCollection<T> GetShortCutFolderCollection<T>() where T : ContentFolder {
+            var collection = GetDatabase().GetCollection<T>(SHORTCUT_FOLDERS_COLLECTION_NAME);
+            return collection;
+        }
+
         // -- PromptItem
         public ILiteCollection<T> GetPromptCollection<T>() where T : PromptItem {
             var collection = GetDatabase().GetCollection<T>(PromptTemplateCollectionName);

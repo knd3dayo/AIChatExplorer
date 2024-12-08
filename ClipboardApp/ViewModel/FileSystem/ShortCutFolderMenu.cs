@@ -1,30 +1,16 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resource;
+using ClipboardApp.ViewModel.Content;
 
-namespace ClipboardApp.ViewModel.Content {
-    public class ClipboardFolderMenu : ClipboardAppViewModelBase {
-
-        public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
-
-        public ClipboardFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) {
-            ClipboardFolderViewModel = clipboardFolderViewModel;
-        }
+namespace ClipboardApp.ViewModel.FileSystem {
+    public class ShortCutFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
-        public virtual ObservableCollection<MenuItem> MenuItems {
+        public override ObservableCollection<MenuItem> MenuItems {
             get {
                 #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
-                // 新規作成
-                MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
-                    Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createMenuItem);
 
                 // 編集
                 MenuItem editMenuItem = new() {
@@ -42,6 +28,7 @@ namespace ClipboardApp.ViewModel.Content {
                 deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
                 deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
                 menuItems.Add(deleteMenuItem);
+
 
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {

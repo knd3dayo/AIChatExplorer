@@ -21,6 +21,9 @@ namespace ClipboardApp.ViewModel.Main {
         // ローカルファイルシステムのフォルダのViewModel
         public FileSystemFolderViewModel FileSystemFolderViewModel { get; private set; }
 
+        // ローカルファイルシステムのショートカットのViewModel
+        public ShortCutFolderViewModel ShortcutFolderViewModel { get; private set; } 
+
         // ClipboardFolder
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
 
@@ -30,8 +33,10 @@ namespace ClipboardApp.ViewModel.Main {
             SearchRootFolderViewModel = new SearchFolderViewModel(ClipboardFolderUtil.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(ClipboardFolderUtil.ChatRootFolder);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(ClipboardFolderUtil.FileSystemRootFolder);
+            ShortcutFolderViewModel = new ShortCutFolderViewModel(ClipboardFolderUtil.ShortcutRootFolder);
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(FileSystemFolderViewModel);
+            FolderViewModels.Add(ShortcutFolderViewModel);
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
 

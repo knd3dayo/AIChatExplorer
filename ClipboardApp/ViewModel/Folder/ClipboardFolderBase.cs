@@ -162,6 +162,23 @@ namespace ClipboardApp.ViewModel.Folder {
             });
         });
 
+        // ショートカット登録コマンド
+        public SimpleDelegateCommand<ClipboardFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
+            // ショートカット登録
+            // ShortCutRootFolderを取得
+            ShortCutFolder shortCutRootFolder = ClipboardFolderUtil.ShortcutRootFolder;
+            // ショートカットフォルダを作成
+            ShortCutFolder subFolder = new() {
+                FolderType = FolderTypeEnum.ShortCut,
+                Description = folderViewModel.FolderName,
+                FolderName = folderViewModel.FolderName,
+                ParentId = shortCutRootFolder.Id,
+                FileSystemFolderPath = folderViewModel.FolderPath
+            };
+            subFolder.Save<FileSystemFolder, Model.ClipboardItem>();
+        });
+
+
         // フォルダ内のアイテムをJSON形式でバックアップする処理
         public SimpleDelegateCommand<object> BackupItemsFromFolderCommand => new((parameter) => {
             DirectoryInfo directoryInfo = new("export");

@@ -19,6 +19,9 @@ namespace PythonAILib.Common {
         // ContentFolder
         public ILiteCollection<T> GetFolderCollection<T>() where T : ContentFolder;
 
+        // ShortCutFolder
+        public ILiteCollection<T> GetShortCutFolderCollection<T>() where T : ContentFolder;
+
         // Prompt
         public ILiteCollection<T> GetPromptCollection<T>() where T : PromptItem;
 

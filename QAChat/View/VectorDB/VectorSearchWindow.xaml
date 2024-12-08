@@ -10,7 +10,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.VectorDB"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.VectorSearchResult, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.VectorDB"
+    Title="{x:Static res:ViewStringResources.VectorSearchResult}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:VectorSearchWindowViewModel}"
@@ -82,7 +83,7 @@
                 Height="Auto"
                 Margin="10,10,10,10"
                 HorizontalAlignment="Left"
-                Header="ベクトル検索結果"
+                Header="{x:Static res:ViewStringResources.VectorSearchResult}"
                 Visibility="{Binding NormalVectorRetrieverVisibility}">
                 <DataGrid
                     Margin="10,10,10,10"
@@ -136,7 +137,7 @@
                 Height="Auto"
                 Margin="10,10,10,10"
                 HorizontalAlignment="Left"
-                Header="ベクトル検索結果"
+                Header="{x:Static res:ViewStringResources.VectorSearchResult}"
                 Visibility="{Binding MultiVectorRetrieverVisibility}">
                 <DataGrid
                     Margin="10,10,10,10"
@@ -190,7 +191,7 @@
                 Height="Auto"
                 Margin="10,10,10,10"
                 HorizontalAlignment="Left"
-                Header="マルチベクターリトリーバーの最終的な検索結果"
+                Header="{x:Static res:ViewStringResources.MultiVectorRetrieverFinalSearchResult}"
                 Visibility="{Binding MultiVectorRetrieverVisibility}">
                 <DataGrid
                     Margin="10,10,10,10"
@@ -244,7 +245,7 @@
             <editorControl:MyTextBox
                 MinHeight="50"
                 Margin="10,0,10,0"
-                materialDesign:HintAssist.Hint="{Binding StringResources.EnterYourQuestionHere, Mode=OneTime}"
+                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.EnterYourQuestionHere}"
                 AcceptsReturn="True"
                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                 TextWrappingMode="{Binding TextWrappingMode}" />
@@ -257,7 +258,7 @@
                     HorizontalAlignment="Left"
                     Command="{Binding SelectVectorDBItemCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.SelectVectorDB, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.SelectVectorDB}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
@@ -267,21 +268,21 @@
                     HorizontalAlignment="Right"
                     Command="{Binding SendCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Send, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.Send}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     HorizontalAlignment="Right"
                     Command="{Binding ClearCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Clear, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.Clear}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     HorizontalAlignment="Right"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </DockPanel>

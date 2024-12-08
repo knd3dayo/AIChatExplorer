@@ -68,7 +68,7 @@ namespace ClipboardApp.Model.Folder {
                 return items;
             }
         }
-        public void SyncItems() {
+        public  void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
@@ -110,16 +110,16 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // 子フォルダ
-        public override List<T> GetChildren<T>() {
+        public override List<FileSystemFolder> GetChildren<FileSystemFolder>() {
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
             var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<T>().ToList();
+            return folders.Cast<FileSystemFolder>().ToList();
 
         }
 
-        public void SyncFolders() {
+        public virtual void SyncFolders() {
 
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();

@@ -468,6 +468,9 @@ namespace QAChat.Resource {
         // ローカルファイルシステム
         public virtual string FileSystem { get; } = "ファイルシステム";
 
+        // Shortcut
+        public virtual string Shortcut { get; } = "ショートカット";
+
         #endregion
 
         #region SettingWindow

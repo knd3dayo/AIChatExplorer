@@ -43,7 +43,7 @@ namespace PythonAILib.Model.Content {
             var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             return folders.Cast<T>().ToList();
         }
-
+ 
         // フォルダを削除
         public virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
             // folderの子フォルダを再帰的に削除

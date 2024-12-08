@@ -4,7 +4,8 @@ namespace ClipboardApp.Model.Folder {
         Search,
         ImageCheck,
         Chat,
-        FileSystem
+        FileSystem,
+        ShortCut
     }
 }
 

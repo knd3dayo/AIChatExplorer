@@ -92,6 +92,9 @@ namespace QAChat.Resource {
         // Local FileSystem
         public override string FileSystem { get; } = "Local FileSystem";
 
+        // Shortcut
+        public override string Shortcut { get; } = "Shortcut";
+
         // ProxyURL
         public override string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList

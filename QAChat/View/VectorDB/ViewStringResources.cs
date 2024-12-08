@@ -50,5 +50,50 @@ namespace QAChat.View.VectorDB {
         // Select
         public static string Select { get; set; } = CommonStringResources.Select;
 
+        // EditVectorDB
+        public static string EditVectorDB { get; set; } = CommonStringResources.EditVectorDB;
+
+        // Description
+        public static string Description { get; set; } = CommonStringResources.Description;
+
+        // VectorDBLocation
+        public static string VectorDBLocationLabel { get; set; } = CommonStringResources.VectorDBLocation;
+
+        // DocumentChunkSize
+        public static string DocumentChunkSize { get; set; } = CommonStringResources.DocumentChunkSize;
+
+        // VectorSearchResultLimit
+        public static string VectorSearchResultLimit { get; set; } = CommonStringResources.VectorSearchResultLimit;
+
+        // UseMultiVectorRetriever
+        public static string UseMultiVectorRetriever { get; set; } = CommonStringResources.UseMultiVectorRetriever;
+
+        // SQLite3LocationForDocStore
+        public static string SQLite3LocationForDocStore { get; set; } = CommonStringResources.SQLite3LocationForDocStore;
+
+        // ExampleSQLite3Location
+        public static string ExampleSQLite3Location { get; set; } = CommonStringResources.ExampleSQLite3Location;
+
+        // OK
+        public static string OK { get; set; } = CommonStringResources.OK;
+
+        // Cancel
+        public static string Cancel { get; set; } = CommonStringResources.Cancel;
+
+        // VectorSearchResult
+        public static string VectorSearchResult { get; set; } = CommonStringResources.VectorSearchResult;
+
+        
+        // マルチベクターリトリーバーの最終的な検索結果
+        public static string MultiVectorRetrieverFinalSearchResult { get; set; } = "マルチベクターリトリーバーの最終的な検索結果";
+
+        // EnterYourQuestionHere
+        public static string EnterYourQuestionHere { get; set; } = CommonStringResources.EnterYourQuestionHere;
+
+        // SelectVectorDB
+        public static string SelectVectorDB { get; set; } = CommonStringResources.SelectVectorDB;
+
+        // Send
+        public static string Send { get; set; } = CommonStringResources.Send;
     }
 }

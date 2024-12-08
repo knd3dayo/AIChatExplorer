@@ -268,6 +268,10 @@ class LangChainVectorDB:
 
     def _split_text(self, text: str, chunk_size: int):
         text_list = []
+        # textが空の場合は空のリストを返す
+        if not text or len(text) == 0:
+            return text_list
+        
         # テキストをchunk_sizeで分割
         for i in range(0, len(text), chunk_size):
             text_list.append(text[i:i + chunk_size])

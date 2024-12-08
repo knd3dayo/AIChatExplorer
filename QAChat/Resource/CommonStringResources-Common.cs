@@ -81,6 +81,9 @@ namespace QAChat.Resource {
         // 閉じる
         public virtual string Close { get; } = "閉じる";
 
+        // ショートカット登録
+        public virtual string CreateShortCut { get; } = "ショートカット登録";
+
         // ExportImport
         public virtual string ExportImport { get; } = "エクスポート/インポート";
 

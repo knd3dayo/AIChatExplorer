@@ -1,34 +1,31 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.ViewModel.Content;
 
 namespace ClipboardApp.ViewModel.FileSystem {
-    public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+    public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder) : FileSystemFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;
 
         // -- virtual
         public override ObservableCollection<MenuItem> FolderMenuItems {
             get {
-                FileSystemFolderMenu clipboardItemMenu = new(this);
+                ShortCutFolderMenu clipboardItemMenu = new(this);
                 return clipboardItemMenu.MenuItems;
             }
         }
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override FileSystemFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override ShortCutFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
             if (childFolder is not FileSystemFolder) {
                 throw new Exception("childFolder is not FileSystemFolder");
             }
-            var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder) {
+            var childFolderViewModel = new ShortCutFolderViewModel((FileSystemFolder)childFolder) {
                 // 親フォルダとして自分自身を設定
                 ParentFolderViewModel = this
             };
             return childFolderViewModel;
         }
-
-
 
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
@@ -40,6 +37,18 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 List<ClipboardFolderViewModel> _children = [];
 
                 await Task.Run(() => {
+                    // RootFolderの場合は、ShortCutFolderを取得
+                    if (ClipboardItemFolder.IsRootFolder) {
+                        foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
+                            if (child == null) {
+                                continue;
+                            }
+                            ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                            _children.Add(childViewModel);
+                        }
+                        return;
+                    }
+                    // RootFolder以外の場合は、FileSystemFolderを取得 
                     foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
                             continue;
@@ -57,9 +66,8 @@ namespace ClipboardApp.ViewModel.FileSystem {
             } finally {
                 MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
-
-
         }
+
     }
 }
 

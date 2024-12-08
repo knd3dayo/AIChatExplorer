@@ -185,6 +185,8 @@ namespace QAChat.Resource {
         // Close
         public override string Close { get; } = "Close";
 
+        // ショートカット登録
+        public override string CreateShortCut { get; } = "Create ShortCut";
         // Export/Import
         public override string ExportImport { get; } = "Export/Import";
 

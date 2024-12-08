@@ -1,30 +1,18 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
 
-namespace ClipboardApp.ViewModel.Content {
-    public class ClipboardFolderMenu : ClipboardAppViewModelBase {
-
-        public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
-
-        public ClipboardFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) {
-            ClipboardFolderViewModel = clipboardFolderViewModel;
-        }
+namespace ClipboardApp.ViewModel.FileSystem {
+    public class FileSystemFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
-        public virtual ObservableCollection<MenuItem> MenuItems {
+        public override ObservableCollection<MenuItem> MenuItems {
             get {
                 #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
-                // 新規作成
-                MenuItem createMenuItem = new() {
-                    Header = StringResources.Create,
-                    Command = ClipboardFolderViewModel.CreateFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createMenuItem);
 
                 // 編集
                 MenuItem editMenuItem = new() {
@@ -35,13 +23,14 @@ namespace ClipboardApp.ViewModel.Content {
                 };
                 menuItems.Add(editMenuItem);
 
-                // 削除
-                MenuItem deleteMenuItem = new();
-                deleteMenuItem.Header = StringResources.Delete;
-                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
-                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
-                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
-                menuItems.Add(deleteMenuItem);
+                // ショートカット登録
+                MenuItem createShortCutMenuItem = new() {
+                    Header = StringResources.CreateShortCut,
+                    Command = ClipboardFolderViewModel.CreateShortCutCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(createShortCutMenuItem);
+
 
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {
