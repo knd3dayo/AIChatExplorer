@@ -118,16 +118,14 @@ namespace ClipboardApp.ViewModel.Folder {
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
-                foreach (var item in selectedItems) {
-                    FolderViewModel.ClipboardItemFolder.AddVectorDBItem(item);
-                }
-            }); OnPropertyChanged(nameof(VectorDBItems));
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (selectedItem) => {
+                FolderViewModel.ClipboardItemFolder.AddVectorDBItem(selectedItem);
+            });
         });
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel , (selectedItem) => {
 
             });
         });

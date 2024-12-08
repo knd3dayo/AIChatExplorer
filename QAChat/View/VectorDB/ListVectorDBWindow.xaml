@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:QAChat.View.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:folderView="clr-namespace:QAChat.View.Folder"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:QAChat.ViewModel.VectorDB"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -64,8 +65,11 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
-            <TabItem Header="ベクトルDB一覧">
+        <TabControl
+            Grid.Row="1"
+            HorizontalContentAlignment="Left"
+            SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="{x:Static res:ViewStringResources.VectorDBList}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -77,7 +81,7 @@
                         Orientation="Vertical">
                         <CheckBox
                             Margin="10,10,0,0"
-                            Content="{Binding StringResources.DisplayVectorsForTheSystem}"
+                            Content="{x:Static res:ViewStringResources.DisplayVectorsForTheSystem}"
                             IsChecked="{Binding IsShowSystemCommonVectorDB}" />
                     </StackPanel>
                     <ListView
@@ -91,7 +95,7 @@
                         </i:Interaction.Triggers>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="Auto" Header="{Binding StringResources.Enable, Mode=OneTime}">
+                                <GridViewColumn Width="Auto" Header="{x:Static res:ViewStringResources.Enable}">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding IsEnabled}" IsEnabled="False" />
@@ -101,15 +105,15 @@
                                 <GridViewColumn
                                     Width="Auto"
                                     DisplayMemberBinding="{Binding Name}"
-                                    Header="{Binding StringResources.Name, Mode=OneTime}" />
+                                    Header="{x:Static res:ViewStringResources.Name}" />
                                 <GridViewColumn
                                     Width="Auto"
                                     DisplayMemberBinding="{Binding VectorDBURL}"
-                                    Header="{Binding StringResources.VectorDBLocation, Mode=OneTime}" />
+                                    Header="{x:Static res:ViewStringResources.VectorDBLocation}" />
                                 <GridViewColumn
                                     Width="Auto"
                                     DisplayMemberBinding="{Binding VectorDBTypeString}"
-                                    Header="{Binding StringResources.VectorDBType, Mode=OneTime}" />
+                                    Header="{x:Static res:ViewStringResources.VectorDBType}" />
                             </GridView>
                         </ListView.View>
                         <!--  コンテキストメニュー  -->
@@ -122,7 +126,9 @@
                     </ListView>
                 </Grid>
             </TabItem>
-            <TabItem Header="ベクトルDBフォルダ" />
+            <TabItem Header="{x:Static res:ViewStringResources.VectorDBFolder}" Visibility="{Binding SelectModeVisibility}">
+                <folderView:FolderSelectControl DataContext="{Binding FolderSelectWindowViewModel}" />
+            </TabItem>
         </TabControl>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -137,12 +143,12 @@
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding AddVectorDBCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.NewVectorDBSetting, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.NewVectorDBSetting}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding EditVectorDBCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.EditVectorDBSetting, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.EditVectorDBSetting}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -153,14 +159,14 @@
                     Margin="10,0,20,0"
                     Command="{Binding SelectCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Select, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Select}"
                     Visibility="{Binding SelectModeVisibility}" />
                 <Button
                     Width="100"
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

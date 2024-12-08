@@ -378,9 +378,10 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                VectorDBItems.Add(selectedItem);
-            });
+            // フォルダを選択
+            QAChatStartupProps.EditVectorDBItemAction(VectorDBItems);
+            // 元のVectorDBItemsに追加
+            QAChatStartupProps.ContentItem.ReferenceVectorDBItems = [.. VectorDBItems];
         });
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {

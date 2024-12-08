@@ -16,7 +16,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TreeView Grid.Row="0" ItemsSource="{Binding RootFolders}">
             <TreeView.ItemContainerStyle>
@@ -57,21 +56,6 @@
             MinHeight="20"
             HorizontalAlignment="Stretch"
             Text="{Binding SelectedFolderAbsoluteCollectionName}" />
-        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
-            <Button
-                Width="100"
-                Margin="10,10,10,10"
-                Command="{Binding SelectFolderCommand, Mode=OneTime}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Select}" />
-            <Button
-                Grid.Column="1"
-                Width="100"
-                Margin="10,10,10,10"
-                Command="{Binding CloseCommand, Mode=OneTime}"
-                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{x:Static res:ViewStringResources.Cancel}" />
-        </DockPanel>
 
     </Grid>
 </UserControl>

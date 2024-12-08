@@ -13,6 +13,8 @@ namespace QAChat.ViewModel {
 
         public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (folders) => { };
 
+        public Action<ObservableCollection<VectorDBItem>> EditVectorDBItemAction { get; set; } = (folders) => { };
+
         public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 
         public Action<List<ChatMessage>> ExportChatCommand { get; set; } = (chatHistory) => { };

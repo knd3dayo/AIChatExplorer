@@ -4,20 +4,24 @@ using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
 using QAChat.Model;
 using QAChat.View.VectorDB;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDB
-{
+namespace QAChat.ViewModel.VectorDB {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
     public class ListVectorDBWindowViewModel : QAChatViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, Action<VectorDBItem> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, ContentFolderViewModel folder, Action<VectorDBItem> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
             LoadVectorItemsCommand.Execute();
+            FolderSelectWindowViewModel = new(folder, (selectedFolder) => {
+                FolderViewModel = selectedFolder;
+            });
+            FolderViewModel = folder;
 
         }
 
@@ -58,6 +62,10 @@ namespace QAChat.ViewModel.VectorDB
             }
         }
 
+        // FolderSelectWindowViewModel
+        public FolderSelectWindowViewModel FolderSelectWindowViewModel { get; set; } 
+        // ContentFolderViewModel 
+        public ContentFolderViewModel? FolderViewModel { get; set; } 
 
         // 選択ボタンの表示可否
         public Visibility SelectModeVisibility {
@@ -68,6 +76,19 @@ namespace QAChat.ViewModel.VectorDB
                 return Visibility.Collapsed;
             }
         }
+
+        // SelectedTabIndex
+        private int selectedTabIndex;
+        public int SelectedTabIndex {
+            get {
+                return selectedTabIndex;
+            }
+            set {
+                selectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
 
         // VectorDBItemのロード
         public SimpleDelegateCommand<object> LoadVectorItemsCommand => new((parameter) => {
@@ -127,11 +148,23 @@ namespace QAChat.ViewModel.VectorDB
 
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
-            if (SelectedVectorDBItem == null) {
-                LogWrapper.Error(StringResources.SelectVectorDBPlease);
-                return;
+            // SelectedTabIndexが0の場合は、選択したVectorDBItemを返す
+            if (SelectedTabIndex == 0) {
+                if (SelectedVectorDBItem == null) {
+                    LogWrapper.Error(StringResources.SelectVectorDBPlease);
+                    return;
+                }
+                callBackup?.Invoke(SelectedVectorDBItem.Item);
             }
-            callBackup?.Invoke(SelectedVectorDBItem.Item);
+            // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
+            else if (SelectedTabIndex == 1) {
+                VectorDBItem? item = FolderViewModel?.Folder.GetVectorDBItem();
+                if (item == null) {
+                    LogWrapper.Error(StringResources.SelectVectorDBPlease);
+                    return;
+                }
+                callBackup?.Invoke(item);
+            }
             // Windowを閉じる
             window.Close();
         });

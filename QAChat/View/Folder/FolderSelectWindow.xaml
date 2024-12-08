@@ -42,6 +42,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <!--  メニューバー  -->
         <StackPanel
@@ -66,8 +67,23 @@
             </materialDesign:ColorZone>
         </StackPanel>
         <local:FolderSelectControl Grid.Row="1" DataContext="{Binding}" />
+        <DockPanel Grid.Row="2" HorizontalAlignment="Right">
+            <Button
+                Width="100"
+                Margin="10,10,10,10"
+                Command="{Binding SelectFolderCommand, Mode=OneTime}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                Content="{x:Static res:ViewStringResources.Select}" />
+            <Button
+                Grid.Column="1"
+                Width="100"
+                Margin="10,10,10,10"
+                Command="{Binding CloseCommand, Mode=OneTime}"
+                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                Content="{x:Static res:ViewStringResources.Cancel}" />
+        </DockPanel>
 
-        <cc:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
+        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
     </Grid>
 </Window>
 

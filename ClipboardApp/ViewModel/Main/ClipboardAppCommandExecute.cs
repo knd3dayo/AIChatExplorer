@@ -5,7 +5,6 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemFolder;
 using ClipboardApp.View.Search;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
@@ -102,7 +101,7 @@ namespace ClipboardApp.ViewModel.Main {
         // Process when "Vector DB Management" is clicked in the menu
         public static void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, (vectorDBItem) => { });
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItem) => { });
         }
 
         // Process when "Settings" is clicked in the menu
@@ -432,10 +431,8 @@ namespace ClipboardApp.ViewModel.Main {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
-                    foreach (var item in selectedItems) {
-                        vectorDBItems.Add(item);
-                    }
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                    vectorDBItems.Add(vectorDBItemBase);
                 });
             };
             vectorSearchWindowViewModel.VectorDBItem = folder.GetVectorDBItem();
@@ -448,10 +445,8 @@ namespace ClipboardApp.ViewModel.Main {
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                SelectVectorDBWindow.OpenSelectVectorDBWindow(MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
-                    foreach (var item in selectedItems) {
-                        vectorDBItems.Add(item);
-                    }
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                    vectorDBItems.Add(vectorDBItemBase);
                 });
             };
             vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
@@ -479,11 +474,18 @@ namespace ClipboardApp.ViewModel.Main {
 
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
-                    SelectVectorDBWindow.OpenSelectVectorDBWindow(ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, true, (selectedItems) => {
-                        foreach (var item in selectedItems) {
-                            vectorDBItems.Add(item);
-                        }
-                    });
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
+                        ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                            vectorDBItems.Add(vectorDBItemBase);
+                        });
+
+                },
+                // フォルダ編集アクション
+                EditVectorDBItemAction = (vectorDBItems) => {
+                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit,
+                        ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                             vectorDBItems.Add(vectorDBItemBase);
+                        });
 
                 },
                 // Saveアクション

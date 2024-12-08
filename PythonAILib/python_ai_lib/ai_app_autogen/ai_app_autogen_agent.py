@@ -154,6 +154,27 @@ class AutoGenAgentGenerator:
             agent_wrappers.append(cls.create_vector_searcher(vector_db_props))
         return agent_wrappers
 
+    # Enable Vector Searcher
+    @classmethod
+    def create_vector_searcher(cls, vector_db_props: VectorDBProps) -> AutoGenAgentWrapper:
+        # Vector Searcher
+        name = "vector_searcher_" +  str(uuid.uuid4())
+        description = vector_db_props.VectorDBDescription
+        system_message=vector_db_props.VectorDBDescription
+        agent_wrapper = AutoGenAgentWrapper(
+            name=name,
+            description=description,
+            system_message=system_message,
+            type_value="assistant",
+            human_input_mode="NEVER",
+            termination_msg=None,
+            code_execution=False,
+            llm_execution=True,
+            tool_names_for_execution=[],
+            tool_names_for_llm=["vector_search"]
+        )
+        return agent_wrapper
+
     @classmethod
     def __create_user_proxy_wrapper(cls, autogen_pros: AutoGenProps, autogen_tools: list[AutoGenToolWrapper]) -> AutoGenAgentWrapper: 
         # Task assigner for group chat
