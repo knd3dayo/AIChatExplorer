@@ -5,14 +5,11 @@ import base64
 import sys
 sys.path.append("python")
 
-from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
-from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
-from ai_app_langchain.ai_app_langchain_util import LangChainChatParameter, LangChainUtil
-from ai_app_file.ai_app_file_util import ExcelUtil, FileUtil
-from ai_app_langchain.langchain_vector_db import LangChainVectorDB
-from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChat
-from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+from ai_app_openai import OpenAIProps, OpenAIClient
+from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
+from ai_app_file import ExcelUtil, FileUtil
+from ai_app_autogen import AutoGenGroupChat, AutoGenProps
 
 ########################
 # ファイル関連

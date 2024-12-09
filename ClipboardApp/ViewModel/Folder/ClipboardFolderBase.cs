@@ -166,7 +166,7 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<ClipboardFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
             // ショートカット登録
             // ShortCutRootFolderを取得
-            ShortCutFolder shortCutRootFolder = ClipboardFolderUtil.ShortcutRootFolder;
+            FileSystemFolder shortCutRootFolder = ClipboardFolderUtil.ShortcutRootFolder;
             // ショートカットフォルダを作成
             ShortCutFolder subFolder = new() {
                 FolderType = FolderTypeEnum.ShortCut,

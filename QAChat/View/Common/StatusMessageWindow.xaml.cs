@@ -1,4 +1,6 @@
+using System.Windows;
 using System.Windows.Controls;
+using QAChat.ViewModel.Common;
 
 namespace QAChat.View.Common {
     /// <summary>
@@ -10,8 +12,18 @@ namespace QAChat.View.Common {
             InitializeComponent();
         }
 
-        private void ListBox_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e) {
+        public static void OpenStatusMessageWindow(string title, StatusMessageWindowViewModel viewModel) {
+            StatusMessageWindow userControl = new() {
+                DataContext = viewModel
+            };
+            Window window = new() {
+                Title = title,
+                Content = userControl,
+                Width = 800,
+                Height = 450
+            };
 
+            window.ShowDialog();
         }
 
     }

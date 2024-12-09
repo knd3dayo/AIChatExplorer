@@ -5,9 +5,9 @@ from io import StringIO
 import sys
 sys.path.append("python")
 
-from ai_app_openai.ai_app_openai_util import OpenAIProps, OpenAIClient 
-from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
-from ai_app_autogen.ai_app_autogen_props import AutoGenProps
+from ai_app_openai import OpenAIProps, OpenAIClient 
+from ai_app_vector_db import VectorDBProps
+from ai_app_autogen import AutoGenProps
 
 import ai_app
 

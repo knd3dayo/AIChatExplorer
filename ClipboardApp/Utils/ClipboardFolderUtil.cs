@@ -182,13 +182,10 @@ namespace ClipboardApp.Utils {
             }
         }
         // Shortcut Root Folder
-        public static ShortCutFolder ShortcutRootFolder {
+        public static FileSystemFolder ShortcutRootFolder {
             get {
                 var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<FileSystemFolder>();
-                FileSystemFolder? folder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
-                if (folder is not ShortCutFolder shortcutRootFolder) {
-                    throw new Exception("ShortcutRootFolder is not ShortCutFolder");
-                }
+                FileSystemFolder? shortcutRootFolder = collection.FindAll().Where(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
                 if (shortcutRootFolder == null) {
                     shortcutRootFolder = new ShortCutFolder {
                         FolderName = ClipboardFolderUtil.SHORTCUT_ROOT_FOLDER_NAME,
@@ -197,7 +194,7 @@ namespace ClipboardApp.Utils {
                         // 自動処理を無効にする
                         IsAutoProcessEnabled = false
                     };
-                    shortcutRootFolder.Save<ShortCutFolder, ClipboardItem>();
+                    shortcutRootFolder.Save<FileSystemFolder, ClipboardItem>();
                 }
                 // 既にSearchRootFolder作成済みの環境のための措置
                 shortcutRootFolder.IsRootFolder = true;

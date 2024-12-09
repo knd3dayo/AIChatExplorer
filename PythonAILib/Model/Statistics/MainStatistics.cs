@@ -1,9 +1,7 @@
 using LiteDB;
-using PythonAILib.Resource;
 using PythonAILib.Common;
 
-namespace PythonAILib.Model.Statistics
-{
+namespace PythonAILib.Model.Statistics {
     public class MainStatistics {
 
         public static MainStatistics GetMainStatistics() {
@@ -83,6 +81,26 @@ namespace PythonAILib.Model.Statistics
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetStatisticsCollection<MainStatistics>();
             collection.Upsert(this);
+        }
+
+        // Get Statistics message
+        public static string GetStatisticsMessage() {
+            string message;
+            // MainStatisticsを取得
+            MainStatistics mainStatistics = MainStatistics.GetMainStatistics();
+            // 本日のトークン数
+            long totalTokens = mainStatistics.GetTotalTokens();
+            message = PythonAILib.Resource.PythonAILibStringResources.Instance.TotalTokenFormat(totalTokens) + "\n\n";
+            // 日次トークン数情報
+            message += PythonAILib.Resource.PythonAILibStringResources.Instance.DailyTokenCount + "\n";
+            Dictionary<DateTime, DailyStatistics> keyValuePairs = mainStatistics.DailyStatistics;
+            // 日毎のトークン数を表示
+            foreach (KeyValuePair<DateTime, DailyStatistics> pair in keyValuePairs) {
+                DailyStatistics dailyStatistics = pair.Value;
+                string dailyMessage = PythonAILib.Resource.PythonAILibStringResources.Instance.DailyTokenFormat(dailyStatistics.Date.ToShortDateString(), dailyStatistics.TotalTokens);
+                message += dailyMessage + "\n";
+            }
+            return message;
         }
     }
 }

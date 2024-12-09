@@ -1,6 +1,6 @@
 from typing import Annotated, Callable
 
-from ai_app_openai.ai_app_openai_util import OpenAIProps 
+from ai_app_openai import OpenAIProps
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps, VectorSearchParameter
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_autogen.ai_app_autogen_props import AutoGenProps
