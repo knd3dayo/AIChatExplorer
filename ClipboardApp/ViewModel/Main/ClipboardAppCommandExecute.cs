@@ -80,11 +80,18 @@ namespace ClipboardApp.ViewModel.Main {
             model.NotifyPropertyChanged(nameof(model.WindowsNotificationMonitorButtonText));
         }
 
-
         // Command to open OpenAI Chat
-        public static void OpenOpenAIChatWindowCommand(Model.ClipboardItem item) {
+        public static void OpenOpenAIChatWindowCommand(ClipboardItem? item) {
+            if (item == null) {
+                // チャット履歴用のItemの設定
+                ClipboardFolder chatFolder = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder;
+                item = new(chatFolder.Id);
+                // タイトルを日付 + 元のタイトルにする
+                item.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+
+            }
             QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(item);
-            QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
+            QAChatMainWindow.OpenOpenAIChatWindow(qAChatStartupProps);
         }
 
         // Command to open Image Chat
@@ -465,7 +472,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
-        public static QAChatStartupProps CreateQAChatStartupProps(Model.ClipboardItem clipboardItem) {
+        public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
 
             SearchRule rule = ClipboardFolderUtil.GlobalSearchCondition.Copy();
 
@@ -484,29 +491,27 @@ namespace ClipboardApp.ViewModel.Main {
                 EditVectorDBItemAction = (vectorDBItems) => {
                     ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit,
                         ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
-                             vectorDBItems.Add(vectorDBItemBase);
+                            vectorDBItems.Add(vectorDBItemBase);
                         });
 
                 },
                 // Saveアクション
                 SaveCommand = (item, saveChatHistory) => {
-                    clipboardItem = (Model.ClipboardItem)item;
+                    bool flag = clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat;
                     clipboardItem.Save();
-
-                    // チャット履歴を保存するフラグが立っている場合で、チャット履歴以外のフォルダの場合
-                    if (saveChatHistory && clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat) {
+   
+                    if (saveChatHistory && flag) {
                         // チャット履歴用のItemの設定
                         ClipboardFolder chatFolder = ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder;
-                        Model.ClipboardItem chatHistoryItem = new(chatFolder.Id);
+                        ClipboardItem chatHistoryItem = new(chatFolder.Id);
                         clipboardItem.CopyTo(chatHistoryItem);
-                        // タイトルを日付 + 元のタイトルにする
-                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {
                             chatHistoryItem.Description += " " + clipboardItem.Description;
                         }
+                        // タイトルを日付 + 元のタイトルにする
+                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
                         chatHistoryItem.Save();
                     }
-
                 },
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {

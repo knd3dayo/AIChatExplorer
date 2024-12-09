@@ -149,8 +149,8 @@ namespace ClipboardApp {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
-            ClipboardItem dummyItem = new(SelectedFolder?.ClipboardItemFolder.Id ?? RootFolderViewModelContainer.RootFolderViewModel.ClipboardItemFolder.Id);
-            ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(dummyItem);
+
+            ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(null);
 
         });
 

@@ -8,11 +8,9 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using QAChat.Resource;
-using QAChat.View.QAChatMain;
 using QAChat.View.PromptTemplate;
-using QAChat.View.VectorDB;
+using QAChat.View.QAChatMain;
 using QAChat.ViewModel.PromptTemplate;
-using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
@@ -33,7 +31,7 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             // AutoGenGroupChatを設定
             SelectedAutoGenGroupChat = AutoGenGroupChat.FindAll().FirstOrDefault();
-            
+
 
         }
 
@@ -385,7 +383,7 @@ namespace QAChat.ViewModel.QAChatMain {
         });
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, _SaveChatHistory);
+            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, true);
             window.Close();
         });
 
