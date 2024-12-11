@@ -2,7 +2,7 @@ using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
 using ClipboardApp.Utils;
-using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.View.Folder;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 

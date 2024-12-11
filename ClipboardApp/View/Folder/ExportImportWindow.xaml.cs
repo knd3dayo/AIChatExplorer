@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
 
-namespace ClipboardApp.View.ExportImport {
+namespace ClipboardApp.View.Folder {
     /// <summary>
     /// ExportImportWindow.xaml の相互作用ロジック
     /// </summary>

@@ -1,5 +1,5 @@
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using QAChat.ViewModel;
 

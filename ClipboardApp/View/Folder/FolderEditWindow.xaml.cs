@@ -2,7 +2,7 @@ using System.Windows;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
 
-namespace ClipboardApp.View.ClipboardItemFolder {
+namespace ClipboardApp.View.Folder {
     /// <summary>
     /// FolderEditWindow.xaml の相互作用ロジック
     /// </summary>

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.ClipboardItemFolder;
+using ClipboardApp.View.Folder;
 using ClipboardApp.View.ClipboardItem;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Common;
