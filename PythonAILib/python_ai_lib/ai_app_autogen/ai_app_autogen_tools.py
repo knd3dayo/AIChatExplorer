@@ -47,7 +47,7 @@ class AutoGenToolWrapper:
             data = {
                 "name": tool_wrapper.name,
                 "description": tool_wrapper.description,
-                "source_path": tool_wrapper.tool.__file__
+                "source_path": tool_wrapper.source_path
             }
             dict_list.append(data)
 
