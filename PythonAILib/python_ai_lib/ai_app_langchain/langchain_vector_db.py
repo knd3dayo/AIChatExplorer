@@ -209,7 +209,11 @@ class LangChainVectorDB:
         @chain
         def retriever(query: str) -> list[Document]:
             result = []
-            docs, scores = zip(*vectorstore.similarity_search_with_score(query, kwargs))
+            params = {}
+            if kwargs:
+                params = kwargs
+            params["query"] = query
+            docs, scores = zip(*vectorstore.similarity_search_with_score(**params))
             for doc, score in zip(docs, scores):
                 doc.metadata["score"] = score
                 result.append(doc)
@@ -232,7 +236,7 @@ class LangChainVectorDB:
         text = FileUtil.extract_text_from_file(absolute_file_path)
 
         # テキストを分割してDocumentのリストを返す
-        return self._add_document_list(text, description, relative_path, source_url, chunk_size, reliability=reliability)
+        return self._add_document_list(text, description, source_url, source_url, "text", "", reliability=reliability)
 
     def _add_document_list(self, content_text: str, description_text: str, source: str, source_url: str, content_type:str="text" , image_url="", reliability=0):
         
@@ -245,7 +249,7 @@ class LangChainVectorDB:
             content_type = "text"
         # content_typeが"text"または"image"以外の場合は例外をスロー
         if content_type not in ["text", "image"]:
-            raise ValueError("content_type must be 'text' or 'image'")
+            raise ValueError(f"content_type:{content_type}. content_type must be 'text' or 'image'")
 
         # テキストをchunk_sizeで分割
         text_list = self._split_text(content_text, chunk_size=chunk_size)
@@ -305,7 +309,7 @@ class LangChainVectorDB:
         else:
             print("Creating a regular Retriever")
             langChainVectorDB = LangChainVectorDB.get_vector_db(self.langchain_openai_client.props, vector_db_props)
-            retriever = self.__create_decorated_retriever(langChainVectorDB.db, search_kwargs=search_kwargs)
+            retriever = self.__create_decorated_retriever(langChainVectorDB.db, **search_kwargs)
          
         return retriever
 
@@ -334,7 +338,7 @@ class LangChainVectorDB:
 
         # ★TODO *_content_indexと同じ処理になっているので、共通化する
         # 既に存在するドキュメントを削除
-        self.delete_document(params)
+        self.delete_document(params.source_url)
 
         # ファイルの存在チェック
         file_path = os.path.join(params.document_root, params.relative_path)

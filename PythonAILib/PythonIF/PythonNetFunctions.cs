@@ -492,7 +492,7 @@ namespace PythonAILib.PythonIF {
         public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, GitFileInfo gitFileInfo) {
 
             // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
-            if (File.Exists(gitFileInfo.AbsolutePath)) {
+            if (! File.Exists(gitFileInfo.AbsolutePath)) {
                 LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
                 throw new FileNotFoundException(StringResources.FileNotFound + gitFileInfo.AbsolutePath);
             }
