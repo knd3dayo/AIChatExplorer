@@ -8,7 +8,7 @@ from langchain_postgres.vectorstores import PGVector
 from sqlalchemy.orm import Session
 import sqlalchemy
 from sqlalchemy.sql import text
-
+from langchain_core.vectorstores import VectorStore
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
@@ -35,7 +35,7 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
         if self.vector_db_props.CollectionName:
             params["collection_name"] = self.vector_db_props.CollectionName
         
-        self.db = PGVector(
+        self.db: VectorStore = PGVector(
             **params
             )
 
@@ -56,16 +56,5 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
             metadata_list = [row[1] for row in rows2]
             
             return document_ids, metadata_list
-
-    def _save(self, documents:list=[]):
-        self.db.add_documents(documents)
- 
-    def _delete(self, doc_ids:list=[]):
-        if len(doc_ids) == 0:
-            return
-
-        self.db.delete(ids=doc_ids)
-
-        return len(doc_ids)    
 
 

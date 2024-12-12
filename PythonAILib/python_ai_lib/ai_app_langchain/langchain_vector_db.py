@@ -4,6 +4,8 @@ from typing import Tuple, List, Any
 import copy
 
 from langchain_core.documents import Document
+from langchain_core.vectorstores import VectorStore
+
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain_core.runnables import chain
@@ -91,6 +93,8 @@ class LangChainVectorDB:
         else:
             print("DocStoreURL is None")
 
+        self.db: VectorStore = None
+
         self._load()
 
     def _load(self):
@@ -102,12 +106,15 @@ class LangChainVectorDB:
         raise NotImplementedError("Not implemented")
 
     def _save(self, documents:list=[]):
-        # 未実装例外をスロー
-        raise NotImplementedError("Not implemented")
+        self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
 
     def _delete(self, doc_ids:list=[]):
-        # 未実装例外をスロー
-        raise NotImplementedError("Not implemented")
+        if len(doc_ids) == 0:
+            return
+
+        self.db.delete(ids=doc_ids)
+
+        return len(doc_ids)    
 
     def _delete_collection(self):
         self.db.delete_collection()
@@ -334,7 +341,7 @@ class LangChainVectorDB:
         return {"documents": result}
 
     @classmethod
-    def create_metadata(cls, doc_id, source_path: str, source_url: str, description: str, image_url: str, score):
+    def create_metadata(cls, doc_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
         metadata = {"source_path": source_path, "git_repository_url": source_url, "description": description,
                       "image_url": image_url, "git_relative_path": "",
                       "doc_id": doc_id, "source_id": "", "source_type": 0, "score": score

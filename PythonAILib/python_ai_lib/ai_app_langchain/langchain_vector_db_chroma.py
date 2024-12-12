@@ -5,7 +5,7 @@ sys.path.append("python")
 from typing import Tuple, List
 from langchain_community.vectorstores.chroma import Chroma
 import chromadb
-
+from langchain_core.vectorstores import VectorStore
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
 from ai_app_langchain.langchain_vector_db import LangChainVectorDB
 
@@ -33,7 +33,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         if self.vector_db_props.CollectionName:
             params["collection_name"] = self.vector_db_props.CollectionName
         
-        self.db = Chroma(
+        self.db: VectorStore = Chroma(
             **params
             )
 
@@ -51,13 +51,5 @@ class LangChainVectorDBChroma(LangChainVectorDB):
 
         return ids, metadata_list
 
-    def _save(self, documents:list=[]):
-        self.db.add_documents(documents=documents, embedding=self.langchain_openai_client.get_embedding_client())
         
-    def _delete(self, doc_ids:list=[]):
-        if len(doc_ids) == 0:
-            return
 
-        self.db._collection.delete(ids=doc_ids)
-
-        return len(doc_ids)    
