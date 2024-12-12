@@ -8,8 +8,9 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:QAChat.View.PromptTemplate"
     xmlns:view="clr-namespace:QAChat.ViewModel.PromptTemplate"
-    Title="{Binding StringResources.PromptTemplateList, Mode=OneTime}"
+    Title="{x:Static res:ViewStringResources.PromptTemplateList}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=view:ListPromptTemplateWindowViewModel}"
@@ -69,7 +70,7 @@
             Orientation="Vertical">
             <CheckBox
                 Margin="10,10,0,0"
-                Content="{Binding StringResources.DisplayPromptsForTheSystem}"
+                Content="{x:Static res:ViewStringResources.DisplayPromptsForTheSystem}"
                 IsChecked="{Binding IsShowSystemPromptItems}" />
         </StackPanel>
         <StackPanel
@@ -98,11 +99,11 @@
                     <GridViewColumn
                         Width="300"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="{Binding StringResources.Name}" />
+                        Header="{x:Static res:ViewStringResources.Name}" />
                     <GridViewColumn
                         Width="400"
                         DisplayMemberBinding="{Binding Description}"
-                        Header="{Binding StringResources.Description}" />
+                        Header="{x:Static res:ViewStringResources.Description}" />
                 </GridView>
             </ListView.View>
             <!--  コンテキストメニュー  -->
@@ -123,12 +124,12 @@
                     Width="180"
                     Margin="10,10,10,10"
                     Command="{Binding AddPromptItemCommand}"
-                    Content="{Binding StringResources.NewPromptTemplate}" />
+                    Content="{x:Static res:ViewStringResources.NewPromptTemplate}" />
                 <Button
                     Width="180"
                     Margin="10,10,10,10"
                     Command="{Binding EditPromptItemCommand}"
-                    Content="{Binding StringResources.EditPromptTemplate}" />
+                    Content="{x:Static res:ViewStringResources.EditPromptTemplate}" />
             </DockPanel>
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                 <Button

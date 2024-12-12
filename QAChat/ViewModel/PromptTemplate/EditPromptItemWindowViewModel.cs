@@ -8,35 +8,6 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel.PromptTemplate {
     public class EditPromptItemWindowViewModel : QAChatViewModelBase {
 
-        // 文字列リソース
-        public string StringResourcesTitle => StringResources.EditPrompt;
-        public string StringResourcesName => StringResources.Name;
-        public string StringResourcesDescription => StringResources.Description;
-        // 自動処理時の設定
-        public string StringResourcesAutoProcessSetting => StringResources.AutoProcessSetting;
-        // Chatタイプ
-        public string StringResourcesChatType => StringResources.ChatType;
-        // 出力形式
-        public string StringResourcesOutputType => StringResources.OutputType;
-
-        // 文字列
-        public string StringResourcesStringType => StringResources.StringType;
-        // リスト
-        public string StringResourcesListType => StringResources.ListType;
-        // テーブル
-        public string StringResourcesTableType => StringResources.TableType;
-        // 出力先
-        public string StringResourcesOutputDestination => StringResources.OutputDestination;
-        // 新規タブ
-        public string StringResourcesNewTab => StringResources.NewTab;
-        // 本文を上書き
-        public string StringResourcesOverwriteContent => StringResources.OverwriteContent;
-        // タイトルを上書き
-        public string StringResourcesOverwriteTitle => StringResources.OverwriteTitle;
-        // OK
-        public string StringResourcesOK => StringResources.OK;
-        // キャンセル
-        public string StringResourcesCancel => StringResources.Cancel;
 
         // 初期化
         public EditPromptItemWindowViewModel(PromptItemViewModel itemViewModel, Action<PromptItemViewModel> afterUpdate) {
