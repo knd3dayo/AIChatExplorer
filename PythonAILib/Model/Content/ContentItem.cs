@@ -12,7 +12,8 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Content {
+namespace PythonAILib.Model.Content
+{
     public class ContentItem {
 
         // 日時のダミー初期値。2000/1/1 0:0:0
@@ -564,7 +565,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // ベクトル検索を実行する
-        public List<VectorSearchResult> VectorSearch(List<VectorDBItem> vectorDBItems) {
+        public List<VectorDBEntry> VectorSearch(List<VectorDBItem> vectorDBItems) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
@@ -582,7 +583,7 @@ namespace PythonAILib.Model.Content {
                 }
             };
             // ベクトル検索を実行
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, request);
+            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, request);
             return results;
         }
 
@@ -593,43 +594,32 @@ namespace PythonAILib.Model.Content {
             VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
 
             if (mode == VectorDBUpdateMode.delete) {
-                if (ContentType == ContentTypes.ContentItemTypes.Text) {
-                    // IPythonAIFunctions.ClipboardInfoを作成
-                    ContentInfo clipboardInfo = new(VectorDBUpdateMode.delete, this.Id.ToString(), this.Content, this.HeaderText, DocumentReliability);
-                    // Embeddingを削除
-                    folderVectorDBItem.DeleteIndex(clipboardInfo);
-                    return;
-                } else {
-                    if (IsImage()) {
-                        // 画像からテキスト抽出
-                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, Base64String, this.HeaderText, DocumentReliability);
-                        // Embeddingを保存
-                        folderVectorDBItem.DeleteIndex(imageInfo);
-                    } else {
-                        ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, this.HeaderText, DocumentReliability);
-                        // Embeddingを保存
-                        folderVectorDBItem.DeleteIndex(contentInfo);
-                    }
-                }
+                // IPythonAIFunctions.ClipboardInfoを作成
+                VectorDBEntry vectorDBEntry = new(this.Id.ToString());
+
+                // Embeddingを削除
+                folderVectorDBItem.DeleteIndex(vectorDBEntry);
+                return;
             }
             if (mode == VectorDBUpdateMode.update) {
+                // IPythonAIFunctions.ClipboardInfoを作成
+                VectorDBEntry vectorDBEntry = new(this.Id.ToString());
                 // タイトルとHeaderTextを追加
                 string description = Description + "\n" + HeaderText;
                 if (ContentType == ContentTypes.ContentItemTypes.Text) {
-                    // IPythonAIFunctions.ClipboardInfoを作成
-                    ContentInfo clipboardInfo = new(VectorDBUpdateMode.update, this.Id.ToString(), Content, description, DocumentReliability);
+                    vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.Clipboard, "", "", "", "");
                     // Embeddingを保存
-                    folderVectorDBItem.UpdateIndex(clipboardInfo);
+                    folderVectorDBItem.UpdateIndex(vectorDBEntry);
                 } else {
                     if (IsImage()) {
                         // 画像からテキスト抽出
-                        ImageInfo imageInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, Base64String, description, DocumentReliability);
+                        vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.File, FilePath, "", "", Base64String);
                         // Embeddingを保存
-                        folderVectorDBItem.UpdateIndex(imageInfo);
+                        folderVectorDBItem.UpdateIndex(vectorDBEntry);
                     } else {
-                        ContentInfo contentInfo = new(VectorDBUpdateMode.update, Id.ToString(), Content, description, DocumentReliability);
+                        vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.File, FilePath, "", "", "");
                         // Embeddingを保存
-                        folderVectorDBItem.UpdateIndex(contentInfo);
+                        folderVectorDBItem.UpdateIndex(vectorDBEntry);
                     }
                 }
                 // ベクトル化日時を更新

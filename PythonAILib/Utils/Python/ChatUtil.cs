@@ -143,14 +143,13 @@ namespace PythonAILib.Utils.Python {
             };
 
             StringBuilder sb = new();
-            List<VectorSearchResult> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, request) ?? [];
+            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, request) ?? [];
             sb.AppendLine();
             for (int i = 0; i < results.Count; i++) {
-                VectorSearchResult vectorSearchResult = results[i];
+                VectorDBEntry vectorSearchResult = results[i];
                 sb.AppendLine($"## 参考情報:{i + 1} ##");
                 sb.AppendLine("--------");
                 sb.AppendLine(vectorSearchResult.Description);
-                sb.AppendLine($"** {PromptStringResource.Instance.DocumentReliability}: {vectorSearchResult.Reliability}% **");
                 sb.AppendLine(vectorSearchResult.Content);
                 hasVectorSearch = true;
             }

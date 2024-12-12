@@ -136,9 +136,7 @@ class RetrievalQAUtil:
             # ツールを作成
             def vector_search_function(question: str) -> list[Document]:
                 # Retrieverを作成
-                # ★TODO search_kwargsの処理は現在はvector_db_propsのMaxSearchResults + content_type=textを使っている.
-                # content_typeもvector_db_propsで指定できるようにする
-                search_kwargs = {"k": 1, "filter":{"content_type": "text"}}
+                search_kwargs = {"k": 4}
 
                 retriever = LangChainVectorDB(client, item).create_retriever(search_kwargs)
                 docs: list[Document] = retriever.invoke(question)

@@ -1,4 +1,5 @@
 using System.IO;
+using System.Security.Cryptography.Pkcs;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -11,7 +12,8 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF {
+namespace PythonAILib.PythonIF
+{
 
     public class PythonNetFunctions : IPythonAIFunctions {
 
@@ -54,7 +56,6 @@ namespace PythonAILib.PythonIF {
                 ?? throw new Exception(StringResources.FunctionNotFound(function_name));
             return function_object;
         }
-
 
         public static string CreatePythonExceptionMessage(PythonException e) {
             string pythonErrorMessage = e.Message;
@@ -356,9 +357,9 @@ namespace PythonAILib.PythonIF {
         }
 
 
-        private List<VectorSearchResult> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
+        private List<VectorDBEntry> VectorSearchExecute(string function_name, Func<dynamic, string> pythonFunction) {
             // VectorSearchResultのリストを作成
-            List<VectorSearchResult> vectorSearchResults = [];
+            List<VectorDBEntry> vectorSearchResults = [];
 
             // Pythonスクリプトを実行する
             ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
@@ -378,14 +379,14 @@ namespace PythonAILib.PythonIF {
                 if (resultDict.ContainsKey("documents")) {
                     JsonElement? documentsObject = (JsonElement)resultDict["documents"];
                     // List<VectorSearchResult>に変換
-                    vectorSearchResults = VectorSearchResult.FromJson(documentsObject.ToString() ?? "[]");
+                    vectorSearchResults = VectorDBEntry.FromJson(documentsObject.ToString() ?? "[]");
                 }
 
             });
             return vectorSearchResults;
         }
 
-        public List<VectorSearchResult> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest vectorSearchRequest) {
+        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest vectorSearchRequest) {
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
             // vectorSearchRequestをJSON文字列に変換
@@ -459,54 +460,22 @@ namespace PythonAILib.PythonIF {
 
         }
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo) {
+        public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry) {
 
-            string function_name;
-            if (contentInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_content_index";
-            } else if (contentInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
+            string function_name = "delete_index";
             // contentInfoをJSON文字列に変換
-            string contentInfoJson = contentInfo.ToJson();
+            string contentInfoJson = vectorDBEntry.ToJson();
             UpdateVectorDBIndex(chatRequestContext, contentInfoJson, function_name);
+
         }
 
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry) {
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
             string function_name;
-            if (imageInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_content_index";
-            } else if (imageInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
-            // imageInfoをJSON文字列に変換
-            string imageInfoJson = imageInfo.ToJson();
-            UpdateVectorDBIndex(chatRequestContext, imageInfoJson, function_name);
-        }
-
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, GitFileInfo gitFileInfo) {
-
-            // workingDirPathとFileStatusのPathを結合する。ファイルが存在しない場合は例外をスロー
-            if (! File.Exists(gitFileInfo.AbsolutePath)) {
-                LogWrapper.Info($"{StringResources.FileNotFound} : {gitFileInfo.AbsolutePath}");
-                throw new FileNotFoundException(StringResources.FileNotFound + gitFileInfo.AbsolutePath);
-            }
-            string function_name = "";
-            if (gitFileInfo.Mode == VectorDBUpdateMode.update) {
-                function_name = "update_file_index";
-            } else if (gitFileInfo.Mode == VectorDBUpdateMode.delete) {
-                function_name = "delete_index";
-            } else {
-                throw new Exception(PythonAILibStringResources.Instance.InvalidMode);
-            }
-            // gitFileInfoをJSON文字列に変換
-            string gitFileInfoJson = gitFileInfo.ToJson();
-            UpdateVectorDBIndex(chatRequestContext, gitFileInfoJson, function_name);
+            function_name = "update_content_index";
+            // contentInfoをJSON文字列に変換
+            string contentInfoJson = vectorDBEntry.ToJson();
+            UpdateVectorDBIndex(chatRequestContext, contentInfoJson, function_name);
         }
 
         // ExportToExcelを実行する

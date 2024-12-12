@@ -6,7 +6,7 @@ import sys
 sys.path.append("python")
 
 from ai_app_openai import OpenAIProps, OpenAIClient
-from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
 from ai_app_autogen import AutoGenGroupChat, AutoGenProps
@@ -120,42 +120,16 @@ def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBP
         # delete_collectionを実行
         vector_db.delete_collection()
 
-def update_or_delete_content_index(params: ContentUpdateOrDeleteRequestParams):
-    # props_json, request_jsonからOpenAIProps, VectorDBProps, text, sourceを取得
-    # openai_props, vector_db_props, text, source, source_url, description  = langchain_vector_db.process_content_update_or_datele_request_params(props_json, request_json)
+def delete_index(params: ContentUpdateOrDeleteRequestParams):
+    vector_db_props = params.vector_db_props_list[0]
+    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
+    vector_db.delete_document(params.id)
 
+def update_content_index(params: ContentUpdateOrDeleteRequestParams):
     # LangChainVectorDBを生成
     vector_db_props = params.vector_db_props_list[0]
     vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
-    print("mode:", params.mode)
-    if params.mode == "delete":
-        # delete_content_indexを実行
-        vector_db.delete_document(params.source)
-    elif params.mode == "update":
-        # update_content_indexを実行
-        vector_db.update_document(params)
-    else:
-        raise Exception("mode is invalid")
-    
-def update_or_delete_file_index(params: FileUpdateOrDeleteRequestParams):
-
-    # LangChainVectorDBを生成
-    vector_db_props = params.vector_db_props_list[0]
-    vector_db = LangChainVectorDB.get_vector_db(params.openai_props, vector_db_props)
-
-    # modeに応じて処理を分岐
-    if params.mode == "delete":
-        # delete_file_indexを実行
-        vector_db.delete_document(params.relative_path)
-    elif params.mode == "update":
-        # update_file_indexを実行
-        vector_db.update_file_index(params)
-    else:
-        raise Exception("mode is invalid")
-    
-    # 結果用のdictを生成
-    result: dict = {}
-    return result
+    vector_db.update_document(params)
 
 # export_to_excelを実行する
 def export_to_excel(filePath, dataJson):

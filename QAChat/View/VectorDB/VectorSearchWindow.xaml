@@ -164,12 +164,8 @@
                             Header="DocId" />
                         <DataGridTextColumn
                             Width="100"
-                            Binding="{Binding Source}"
-                            Header="Source" />
-                        <DataGridTextColumn
-                            Width="100"
-                            Binding="{Binding SourceUrl}"
-                            Header="SourceUrl" />
+                            Binding="{Binding SourcePath}"
+                            Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

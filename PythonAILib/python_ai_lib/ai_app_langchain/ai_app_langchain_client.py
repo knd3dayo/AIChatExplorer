@@ -1,18 +1,13 @@
 
-import json, sys
+import json
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import AzureOpenAIEmbeddings
 from langchain_openai import AzureChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
-
-
 from typing import Any
 
-
-
 from ai_app_openai.ai_app_openai_util import OpenAIProps
-from ai_app_vector_db.ai_app_vector_db_props import VectorDBProps
 
 class LangChainOpenAIClient:
     def __init__(self, props: OpenAIProps):

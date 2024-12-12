@@ -7,8 +7,7 @@ using QAChat.ViewModel.Common;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDB
-{
+namespace QAChat.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : QAChatViewModelBase {
 
 
@@ -44,10 +43,10 @@ namespace QAChat.ViewModel.VectorDB
 
         // InputText
         public string InputText { get; set; }
-        public ObservableCollection<VectorSearchResult> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEntry> VectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorSearchResult> SubDocsVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEntry> SubDocsVectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
@@ -115,7 +114,7 @@ namespace QAChat.ViewModel.VectorDB
             VectorSearchResults.Clear();
             IsIndeterminate = true;
             await Task.Run(() => {
-                List<VectorSearchResult> vectorSearchResults = [];
+                List<VectorDBEntry> vectorSearchResults = [];
                 // ベクトル検索を実行
                 ContentItem contentItem = new() {
                     Content = InputText
@@ -128,10 +127,10 @@ namespace QAChat.ViewModel.VectorDB
                 MainUITask.Run(() => {
                     // VectorSearchResultsを更新
                     VectorSearchResults.Clear();
-                    foreach (VectorSearchResult vectorSearchResult in vectorSearchResults) {
+                    foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
                         VectorSearchResults.Add(vectorSearchResult);
                         // sub_docsを追加
-                        foreach (VectorSearchResult subDoc in vectorSearchResult.SubDocs) {
+                        foreach (VectorDBEntry subDoc in vectorSearchResult.SubDocs) {
                             SubDocsVectorSearchResults.Add(subDoc);
                         }
                     }
@@ -157,7 +156,7 @@ namespace QAChat.ViewModel.VectorDB
                 if (VectorDBItem.CollectionName != null) {
                     StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]:[{VectorDBItem.CollectionName}]";
                     StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]:[{VectorDBItem.CollectionName}]";
-                } else{
+                } else {
                     StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]";
                     StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]";
                 }

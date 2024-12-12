@@ -4,6 +4,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using System.IO;
 
 namespace PythonAILib.Model.VectorDB
 {
@@ -231,14 +232,20 @@ namespace PythonAILib.Model.VectorDB
 
             try {
                 // GitFileInfoの作成
-                VectorDBUpdateMode mode = VectorDBUpdateMode.update;
+                string source_path = Path.Combine(WorkingDirectory, fileStatus.Path);
+                VectorDBEntry vectorDBEntry = new(source_path);
                 if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
-                    mode = VectorDBUpdateMode.update;
+                    string content = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileStatus.Path);
+                    if (string.IsNullOrEmpty(content)) {
+                        throw new Exception($"Invalid FileType");
+                    }
+                    vectorDBEntry.UpdateSourceInfo(
+                        description, content , VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
+                    PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, vectorDBEntry);
+
                 } else if (fileStatus.Status == FileStatusEnum.Deleted) {
-                    mode = VectorDBUpdateMode.delete;
+                    PythonExecutor.PythonAIFunctions.DeleteVectorDBIndex(chatRequestContext, vectorDBEntry);
                 }
-                GitFileInfo gitFileInfo = new (mode, fileStatus.Path, WorkingDirectory, SourceURL, description, reliability);
-                PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, gitFileInfo);
             } catch (UnsupportedFileTypeException e) {
                 // ファイルタイプが未対応の場合
                 result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_InvalidFileType;

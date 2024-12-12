@@ -1,7 +1,5 @@
 
-import sys
-
-import uuid, json, os
+import uuid
 from typing import Tuple, List, Any
 import copy
 
@@ -15,14 +13,12 @@ from langchain_core.callbacks import (
 from collections import defaultdict
 from typing import Optional
 
-from ai_app_file.ai_app_file_util import FileUtil
-
 from ai_app_langchain.ai_app_langchain_client import LangChainOpenAIClient
 from ai_app_langchain.langchain_doc_store import SQLDocStore
 
 from ai_app_openai.ai_app_openai_util import OpenAIProps
 
-from ai_app_vector_db.ai_app_vector_db_props import ContentUpdateOrDeleteRequestParams, FileUpdateOrDeleteRequestParams
+from ai_app_vector_db.ai_app_vector_db_props import ContentUpdateOrDeleteRequestParams
 from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
 
 
@@ -194,15 +190,6 @@ class LangChainVectorDB:
 
         # ベクトルDB固有の削除メソッドを呼び出し
         self._delete(vector_ids)
-        
-    def __create_metadata(self, doc_id, source: str, source_url: str, description: str, 
-                          content_type: str, image_url: str, reliability: int):
-        metadata = {"source": source, "source_url": source_url, "description": description,
-                      "content_type": content_type, "image_url": image_url, "reliability": reliability,
-                      "folder_id": self.vector_db_props.CollectionName,
-                      "doc_id": doc_id
-                }
-        return metadata
 
     def __create_decorated_retriever(self, vectorstore, **kwargs: Any):
         # ベクトル検索の結果にスコアを追加する
@@ -221,41 +208,17 @@ class LangChainVectorDB:
 
         return retriever
 
-
-    def _add_file(self, document_root: str, relative_path: str, source_url: str ,description:str="", reliability=0):
-
-        # チャンクサイズの取得
-        chunk_size = self.vector_db_props.ChunkSize
-        # 絶対パスを取得
-        absolute_file_path = os.path.join (document_root, relative_path)
-        
-        # ファイルサイズが0の場合は空のリストを返す
-        if os.path.getsize(absolute_file_path) == 0:
-            return []
-        # テキスト抽出
-        text = FileUtil.extract_text_from_file(absolute_file_path)
-
-        # テキストを分割してDocumentのリストを返す
-        return self._add_document_list(text, description, source_url, source_url, "text", "", reliability=reliability)
-
-    def _add_document_list(self, content_text: str, description_text: str, source: str, source_url: str, content_type:str="text" , image_url="", reliability=0):
+    def _add_document_list(self, content_text: str, description_text: str, source_path: str, source_url: str, image_url=""):
         
         chunk_size = self.vector_db_props.ChunkSize
     
         document_list = []
-        print("content_type:", content_type)
-
-        if not content_type:
-            content_type = "text"
-        # content_typeが"text"または"image"以外の場合は例外をスロー
-        if content_type not in ["text", "image"]:
-            raise ValueError(f"content_type:{content_type}. content_type must be 'text' or 'image'")
 
         # テキストをchunk_sizeで分割
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
             doc_id = str(uuid.uuid4())
-            metadata = self.__create_metadata(doc_id, source, source_url, description_text, content_type, image_url, reliability)
+            metadata = LangChainVectorDB.create_metadata(doc_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
             document_list.append(document)
@@ -289,10 +252,7 @@ class LangChainVectorDB:
 
         vector_db_props = self.vector_db_props
         if not search_kwargs:
-            if vector_db_props.CollectionName:
-                search_kwargs = {"k": 10, 'filter': {'folder_id': vector_db_props.CollectionName},}
-            else:
-                search_kwargs = {"k": 10}
+            search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
         if vector_db_props.IsUseMultiVectorRetriever:
@@ -330,28 +290,13 @@ class LangChainVectorDB:
     def update_document(self, params: ContentUpdateOrDeleteRequestParams):
         
         # 既に存在するドキュメントを削除
-        self.delete_document(params.source)
+        self.delete_document(params.id)
         # ドキュメントを格納する。
-        self._add_document_list(params.text, params.description, params.source, params.source_url, reliability=params.reliability)
-
-    def update_file_index(self, params: FileUpdateOrDeleteRequestParams):
-
-        # ★TODO *_content_indexと同じ処理になっているので、共通化する
-        # 既に存在するドキュメントを削除
-        self.delete_document(params.source_url)
-
-        # ファイルの存在チェック
-        file_path = os.path.join(params.document_root, params.relative_path)
-        if not os.path.exists(file_path):
-            print("ファイルが存在しません。", file=sys.stderr)
-            return
-
-        # ドキュメントを格納
-        self._add_file(params.document_root, params.relative_path, params.source_url, description=params.description, reliability=params.reliability)
+        self._add_document_list(params.text, params.description, params.source_path, params.git_relative_path)
 
     # ベクトル検索を行う
-    @staticmethod
-    def vector_search( params: VectorSearchParameter):    
+    @classmethod
+    def vector_search(cls, params: VectorSearchParameter):    
 
         client = LangChainOpenAIClient(params.openai_props)
 
@@ -371,35 +316,40 @@ class LangChainVectorDB:
             print(f"documents:\n{documents}")
             for doc in documents:
                 content = doc.page_content
-                doc_id = doc.metadata.get("doc_id", "")
-                folder_id = doc.metadata.get("folder_id", "")
-                source = doc.metadata.get("source", "")
-                source_url = doc.metadata.get("source_url", "")
-                score = doc.metadata.get("score", 0.0)
-                # description, reliabilityを取得
-                description = doc.metadata.get("description", "")
-                reliability = doc.metadata.get("reliability", 0)
+                doc_dict = cls.create_metadata_from_document(doc)
+                doc_dict["content"] = content
 
-                sub_docs = doc.metadata.get("sub_docs", [])
+                sub_docs: list[Document]= doc.metadata.get("sub_docs", [])
                 # sub_docsの要素からcontent, source, source_url,scoreを取得してdictのリストに追加
                 sub_docs_result = []
                 for sub_doc in sub_docs:
-                    sub_content = sub_doc.page_content
-                    sub_source = sub_doc.metadata.get("source", "")
-                    sub_source_url = sub_doc.metadata.get("source_url", "")
-                    sub_score = sub_doc.metadata.get("score", 0.0)
-                    sub_doc_id = sub_doc.metadata.get("doc_id", "")
-                    sub_folder_id = sub_doc.metadata.get("folder_id", "")
-                    
-                    sub_docs_result.append({
-                        "doc_id": sub_doc_id, "folder_id": sub_folder_id,
-                        "content": sub_content, "source": sub_source, "source_url": sub_source_url, "score": sub_score})
+                    content = sub_doc.page_content
+                    sub_doc_dict = cls.create_metadata_from_document(sub_doc)
+                    sub_doc_dict["content"] = content
+                    sub_docs_result.append(sub_doc_dict)
 
-                result.append(
-                    {"doc_id": doc_id, "folder_id": folder_id,
-                    "content": content, "source": source, "source_url": source_url, "score": score, 
-                    "description": description, "reliability": reliability, "sub_docs": sub_docs_result})
+                doc_dict["sub_docs"] = sub_docs_result
+                result.append(doc_dict)
             
         return {"documents": result}
+
+    @classmethod
+    def create_metadata(cls, doc_id, source_path: str, source_url: str, description: str, image_url: str, score):
+        metadata = {"source_path": source_path, "git_repository_url": source_url, "description": description,
+                      "image_url": image_url, "git_relative_path": "",
+                      "doc_id": doc_id, "source_id": "", "source_type": 0, "score": score
+                }
+        return metadata
+
+    @classmethod
+    def create_metadata_from_document(cls, document: Document):
+        metadata = document.metadata
+        doc_id = metadata.get("doc_id", "")
+        source_path = metadata.get("source_path", "")
+        source_url = metadata.get("git_repository_url", "")
+        description = metadata.get("description", "")
+        image_url = metadata.get("image_url", "")
+        score = metadata.get("score", 0)
+        return cls.create_metadata(doc_id, source_path, source_url, description, image_url, score)
 
     

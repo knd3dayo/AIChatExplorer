@@ -9,7 +9,8 @@ using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
-namespace PythonAILib.Model.VectorDB {
+namespace PythonAILib.Model.VectorDB
+{
     /// <summary>
     /// VectorDBのアイテム
     /// </summary>
@@ -170,7 +171,7 @@ namespace PythonAILib.Model.VectorDB {
             collection.Delete(this.Id);
         }
 
-        public void UpdateIndex(ContentInfo contentInfo) {
+        public void UpdateIndex(VectorDBEntry contentInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
@@ -181,7 +182,7 @@ namespace PythonAILib.Model.VectorDB {
             UpdateIndex(chatRequestContext, contentInfo);
         }
 
-        public void DeleteIndex(ContentInfo contentInfo) {
+        public void DeleteIndex(VectorDBEntry contentInfo) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
@@ -191,47 +192,17 @@ namespace PythonAILib.Model.VectorDB {
             DeleteIndex(chatRequestContext, contentInfo);
         }
 
-        public void UpdateIndex(ImageInfo imageInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = [this],
-                OpenAIProperties = openAIProperties
-            };
-            UpdateIndex(chatRequestContext, imageInfo);
-        }
-
-        public void DeleteIndex(ImageInfo imageInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = [this],
-                OpenAIProperties = openAIProperties
-            };
-            DeleteIndex(chatRequestContext, imageInfo);
-        }
-
-        public void UpdateIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo ) {
+        public void UpdateIndex(ChatRequestContext chatRequestContext, VectorDBEntry contentInfo ) {
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
         }
-        public void DeleteIndex(ChatRequestContext chatRequestContext, ContentInfo contentInfo) {
+        public void DeleteIndex(ChatRequestContext chatRequestContext, VectorDBEntry contentInfo) {
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
             PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
-        public void UpdateIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
-            LogWrapper.Info(PythonAILibStringResources.Instance.SaveTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, imageInfo);
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedTextEmbeddingFromImage);
 
-        }
-        public void DeleteIndex(ChatRequestContext chatRequestContext, ImageInfo imageInfo) {
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, imageInfo);
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedTextEmbeddingFromImage);
-        }
         public static VectorDBItem GetFolderVectorDBItem(ContentFolder folder) {
             VectorDBItem systemVectorItem = VectorDBItem.SystemCommonVectorDB;
             // NameとDescriptionとCollectionNameを設定する

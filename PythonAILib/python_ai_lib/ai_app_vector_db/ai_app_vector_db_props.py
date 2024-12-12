@@ -4,41 +4,62 @@ from ai_app_openai.ai_app_openai_util import OpenAIProps
 import uuid
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
+    source_id_name = "source_id"
+    source_path_name = "source_path"
+    git_repository_url_name = "git_repository_url"
+    git_relative_path_name = "git_relative_path"
+    image_url_name = "image_url"
+    desccription_name = "description"
+    content_name = "content"
+
+    vector_db_url_name = "VectorDBURL"
+    vector_db_type_string_name = "VectorDBTypeString"
+    vector_db_name_name = "VectorDBName"
+    vector_db_description_name = "VectorDBDescription"
+    catalog_db_url_name = "CatalogDBURL"
+    chunk_size_name = "ChunkSize"
+    max_search_results_name = "MaxSearchResults"
+    is_use_multi_vector_retriever_name = "IsUseMultiVectorRetriever"
+    doc_store_url_name = "DocStoreURL"
+    collection_name = "CollectionName"
+
+    score_name = "score"
+
     def __init__(self, props_dict: dict):
         # AutoGenで使用するID
         self.id = str(uuid.uuid4())
 
         # VectorStoreの設定
-        self.VectorDBURL: str = props_dict.get("VectorDBURL", "")
-        self.VectorDBTypeString :str = props_dict.get("VectorDBTypeString", "")
-        self.Name:str = props_dict.get("VectorDBName", "")
-        self.VectorDBDescription:str = props_dict.get("VectorDBDescription", "")
+        self.VectorDBURL: str = props_dict.get(VectorDBProps.vector_db_url_name, "")
+        self.VectorDBTypeString :str = props_dict.get(VectorDBProps.vector_db_type_string_name, "")
+        self.Name:str = props_dict.get(VectorDBProps.vector_db_name_name, "")
+        self.VectorDBDescription:str = props_dict.get(VectorDBProps.vector_db_description_name, "")
         # VectorDBDescriptionがNoneの場合は以下のデフォルト値を設定する
         if not self.VectorDBDescription:
             self.VectorDBDescription = "ユーザーからの質問に基づき過去ドキュメントを検索するための汎用ベクトルDBです。"
 
         # DBのカタログ情報を保持するDBのURL
-        self.CatalogDBURL = props_dict.get("CatalogDBURL", "")
+        self.CatalogDBURL = props_dict.get(VectorDBProps.catalog_db_url_name, "")
         if not self.CatalogDBURL:
             raise ValueError("CatalogDBURL is not set.")
         
         # チャンクサイズ
-        self.ChunkSize = props_dict.get("ChunkSize", 500)
+        self.ChunkSize = props_dict.get(VectorDBProps.chunk_size_name, 500)
         # ベクトル検索時の検索結果上限数
-        self.MaxSearchResults = props_dict.get("MaxSearchResults", 10)
+        self.MaxSearchResults = props_dict.get(VectorDBProps.max_search_results_name, 10)
 
         # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
-        if props_dict.get("IsUseMultiVectorRetriever", False) == True:
+        if props_dict.get(VectorDBProps.is_use_multi_vector_retriever_name, False) == True:
             self.IsUseMultiVectorRetriever = True
             # DocStoreの設定
-            self.DocStoreURL = props_dict.get("DocStoreURL", None)
+            self.DocStoreURL = props_dict.get(VectorDBProps.doc_store_url_name, None)
 
         else:
             self.IsUseMultiVectorRetriever = False
             self.DocStoreURL = None    
 
         # Collectionの設定
-        self.CollectionName = props_dict.get("CollectionName", None)
+        self.CollectionName = props_dict.get(VectorDBProps.collection_name, "")
 
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}
@@ -112,16 +133,16 @@ class ContentUpdateOrDeleteRequestParams:
 
         # request_jsonをdictに変換
         request: dict = json.loads(request_json)
-        self.text = request["content"]
-        self.source = request["id"]
-        self.source_url = ""
-        self.description = request.get("description", "")
-        self.reliability = request.get("reliability", 0)
-        self.mode = request.get("mode", "")
-        self.image_url = request.get("image_url", "")
+        self.id = request[VectorDBProps.source_id_name]
+        self.description = request.get(VectorDBProps.desccription_name, "")
+        self.text = request[VectorDBProps.content_name]
+        self.source_path = request.get(VectorDBProps.source_path_name, "")
+        self.git_repository_url = request.get(VectorDBProps.git_repository_url_name, "")
+        self.git_relative_path = request.get(VectorDBProps.git_relative_path_name, "")
+        self.image_url = request.get(VectorDBProps.image_url_name, "")
 
     @classmethod
-    def from_content_or_image_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
+    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
         props = json.loads(props_json)
         openai_props = OpenAIProps(props)
 
@@ -133,34 +154,3 @@ class ContentUpdateOrDeleteRequestParams:
         
         params:ContentUpdateOrDeleteRequestParams = ContentUpdateOrDeleteRequestParams(openai_props, vector_db_props_list, request_json)
         return params
-
-class FileUpdateOrDeleteRequestParams:
-    def __init__(self, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps], request_json: str):
-        
-        self.openai_props = openai_props
-
-        self.vector_db_props_list = vector_db_props_list
-        
-        # request_jsonをdictに変換
-        # request_jsonをdictに変換
-        request: dict = json.loads(request_json)
-        self.document_root = request["WorkDirectory"]
-        self.relative_path = request["RelativePath"]
-        self.source_url = request["RepositoryURL"]
-        self.description = request.get("description", "")
-        self.reliability = request.get("reliability", 0)
-        self.mode = request.get("mode", "")
-    
-    @classmethod
-    def from_json(cls, props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):
-        props = json.loads(props_json)
-        openai_props = OpenAIProps(props)
-
-        vector_db_items = json.loads(vector_db_items_json)
-        vector_db_props_list = []
-        for vector_db_item in vector_db_items:
-            vector_db_props_list.append(VectorDBProps(vector_db_item))
-        
-        params: FileUpdateOrDeleteRequestParams = FileUpdateOrDeleteRequestParams(openai_props, vector_db_props_list, request_json)
-        return params
-

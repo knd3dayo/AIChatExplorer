@@ -15,7 +15,7 @@ namespace PythonAILib.Model.Statistics {
             return item;
         }
 
-        // Id
+        // SourceId
         public ObjectId Id { get; set; } = ObjectId.NewObjectId();
         // 日毎のStatistics
         public Dictionary<DateTime, DailyStatistics> DailyStatistics { get; set; } = [];
