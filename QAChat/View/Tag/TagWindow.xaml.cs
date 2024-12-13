@@ -1,5 +1,4 @@
 using System.Windows;
-using ClipboardApp.ViewModel;
 using PythonAILib.Model.Content;
 using QAChat.ViewModel.Tag;
 

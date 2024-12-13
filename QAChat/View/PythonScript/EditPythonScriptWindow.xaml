@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.Script"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.EditPythonScriptWindowTitle, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.PythonScript"
+    Title="{x:Static res:ViewStringResources.EditPythonScriptWindowTitle}"
     Width="800"
     d:DataContext="{d:DesignInstance Type=local:EditPythonScriptWindowViewModel}"
     SizeToContent="Height"
@@ -78,7 +79,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Margin="10,10,10,0"
-                Text="{Binding StringResources.Name, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Name}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="1"
@@ -89,7 +90,7 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Margin="10,0,10,0"
-                Text="{Binding StringResources.Description, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Description}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="1"
@@ -100,7 +101,7 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Margin="10,0,10,0"
-                Text="{Binding StringResources.Content, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Content}" />
             <ScrollViewer
                 Grid.Row="2"
                 Grid.Column="1"
@@ -122,12 +123,12 @@
                 Margin="10,10,10,10"
                 Command="{Binding OKButtonCommand, Mode=OneTime}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.OK, Mode=OneTime}" />
+                Content="{x:Static res:ViewStringResources.OK}" />
             <Button
                 Margin="10,10,10,10"
                 Command="{Binding CloseCommand, Mode=OneTime}"
                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                Content="{Binding StringResources.Cancel, Mode=OneTime}" />
+                Content="{x:Static res:ViewStringResources.Cancel}" />
         </StackPanel>
         <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
     </Grid>

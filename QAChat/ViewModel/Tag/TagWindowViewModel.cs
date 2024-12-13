@@ -7,8 +7,7 @@ using QAChat.Model;
 using QAChat.View.Tag;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Tag
-{
+namespace QAChat.ViewModel.Tag {
     public class TagWindowViewModel : QAChatViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];

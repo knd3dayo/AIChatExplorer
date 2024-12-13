@@ -2,8 +2,7 @@ using System.Windows;
 using QAChat.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace QAChat.ViewModel.Tag {
     public class TagSearchWindowViewModel : QAChatViewModelBase {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 

@@ -1,5 +1,5 @@
 using System.Windows;
-using ClipboardApp.ViewModel;
+using QAChat.ViewModel.Tag;
 
 namespace QAChat.View.Tag {
     /// <summary>

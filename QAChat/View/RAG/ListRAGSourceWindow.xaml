@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.RAG"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListGitRagSourceWindowTitle, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.RAG"
+    Title="{x:Static res:ViewStringResources.ListGitRagSourceWindowTitle}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:ListRAGSourceWindowViewModel}"
@@ -71,15 +72,15 @@
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding WorkingDirectory}"
-                        Header="{Binding StringResources.WorkingDirectory, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.WorkingDirectory}" />
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding SourceURL}"
-                        Header="{Binding StringResources.RepositoryURL, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.GitRepositoryURL}" />
                     <GridViewColumn
                         Width="250"
                         DisplayMemberBinding="{Binding LastIndexedCommitInfo}"
-                        Header="{Binding StringResources.LastIndexedCommit, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.LastIndexedCommit}" />
                 </GridView>
             </ListView.View>
             <!--  コンテキストメニュー  -->
@@ -103,12 +104,12 @@
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding AddRagSourceCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.NewRAGSource, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.NewRAGSource}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding EditRagSourceCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.EditRAGSource, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.EditRAGSource}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
@@ -119,7 +120,7 @@
                     Margin="10,0,20,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

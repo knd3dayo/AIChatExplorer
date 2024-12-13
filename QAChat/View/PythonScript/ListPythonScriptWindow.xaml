@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:QAChat.ViewModel.Script"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.ListPythonScriptWindowTitle, Mode=OneTime}"
+    xmlns:res="clr-namespace:QAChat.View.PythonScript"
+    Title="{x:Static res:ViewStringResources.ListPythonScriptWindowTitle}"
     Width="700"
     d:DataContext="{d:DesignInstance Type=local:ListPythonScriptWindowViewModel}"
     SizeToContent="Height"
@@ -73,11 +74,11 @@
                     <GridViewColumn
                         Width="160"
                         DisplayMemberBinding="{Binding Name}"
-                        Header="{Binding StringResources.Name, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Name}" />
                     <GridViewColumn
                         Width="350"
                         DisplayMemberBinding="{Binding Description}"
-                        Header="{Binding StringResources.Description, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Description}" />
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
@@ -85,7 +86,7 @@
                     <MenuItem
                         Command="{Binding DeleteScriptCommand, Mode=OneTime}"
                         CommandParameter="{Binding}"
-                        Header="{Binding StringResources.Delete, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Delete}" />
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.InputBindings>
@@ -113,12 +114,12 @@
                     Margin="10,0,0,0"
                     Command="{Binding CreateScriptItemCommand, Mode=OneTime}"
                     CommandParameter=""
-                    Content="{Binding StringResources.NewPythonScript, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.NewPythonScript}" />
                 <Button
                     Width="180"
                     Margin="10,0,0,0"
                     Command="{Binding EditScriptItemCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.EditPythonScript, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.EditPythonScript}" />
             </DockPanel>
             <DockPanel
                 Grid.Column="1"
