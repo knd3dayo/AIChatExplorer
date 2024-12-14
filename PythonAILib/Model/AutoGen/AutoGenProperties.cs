@@ -9,7 +9,7 @@ using PythonAILib.PythonIF;
 namespace PythonAILib.Model.AutoGen {
     public class AutoGenProperties {
 
-        public static JsonSerializerOptions options = new() {
+        static readonly JsonSerializerOptions options = new() {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
@@ -24,13 +24,21 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("group_chat")]
         public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
 
+        // AutoGenNormalChat
+        [JsonPropertyName("normal_chat")]
+        public AutoGenNormalChat AutoGenNormalChat { get; set; } = new AutoGenNormalChat();
+
+        // AutoGenNestedChat
+        [JsonPropertyName("nested_chat")]
+        public AutoGenNestedChat AutoGenNestedChat { get; set; } = new AutoGenNestedChat();
+
         // AutoGenAgent
         [JsonPropertyName("agents")]
         public List<AutoGenAgent> AutoGenAgents { get; set; } = new List<AutoGenAgent>();
 
         // AutoGenTools
         [JsonPropertyName("tools")]
-        public List<AutoGenTool> AutoGenTools { get; set; } = new List<AutoGenTool>();
+        public List<AutoGenTool> AutoGenTools { get; set; } = [];
 
         // ToDictList
         public Dictionary<string, object> ToDict() {
@@ -38,6 +46,8 @@ namespace PythonAILib.Model.AutoGen {
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
                 { "group_chat", AutoGenGroupChat.ToDict() },
+                { "normal_chat", AutoGenNormalChat.ToDict() },
+                { "nested_chat", AutoGenNestedChat.ToDict() },
                 { "agents", AutoGenAgent.ToDictList(AutoGenAgents) },
                 { "tools", AutoGenTool.ToDictList(AutoGenTools) },
             };

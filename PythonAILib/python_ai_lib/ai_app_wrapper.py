@@ -173,6 +173,25 @@ def run_autogen_group_chat( context_json:str, input_text: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
+def run_autogen_normal_chat( context_json:str, input_text: str):
+    # OpenAIチャットを実行する関数を定義
+    def func() -> Generator[dict, None, None]:
+        openai_props, _ = get_openai_objects(context_json)
+        vector_db_items = get_vector_db_objects(context_json)
+        autogen_props = get_autogen_objects(openai_props, context_json)
+
+        result = ai_app.run_autogen_normal_chat(autogen_props, vector_db_items,  input_text)
+        for message, is_last_message in result:
+            # dictを作成
+            result_dict = {"message": message, "is_last_message": is_last_message}
+            yield result_dict
+    
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_generator_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+
 # Autogenのtoolをjson形式で返す
 def get_autogen_default_definition(context_json):
     def func() -> dict:
@@ -194,8 +213,8 @@ def get_autogen_default_definition(context_json):
         agent_definition_list = AutoGenAgentWrapper.create_dict_list(agent_wrappers)
         result["agents"] = agent_definition_list
 
-        from ai_app_autogen.ai_app_autogen_groupchat import AutoGenGroupChatGenerator
-        group_chat_definition_list = AutoGenGroupChatGenerator.create_default_chats(autogen_props, agent_wrappers)
+        from ai_app_autogen.ai_app_autogen_chat import AutoGenGroupChatWrapper
+        group_chat_definition_list = AutoGenGroupChatWrapper.create_default_chats(autogen_props, agent_wrappers)
         result["group_chats"] = group_chat_definition_list
         return result
     

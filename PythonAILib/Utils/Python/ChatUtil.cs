@@ -168,6 +168,18 @@ namespace PythonAILib.Utils.Python {
             return result;
         }
 
+        // AutoGenNormalChatを実行
+        public static ChatResult? ExecuteAutoGenNormalChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenNormalChat(chatRequestContext, chat, iteration);
+            return result;
+        }
+
+        // AutoGenNestedChatを実行
+        public static ChatResult? ExecuteAutoGenNestedChat(ChatRequestContext chatRequestContext, ChatRequest chat, Action<string> iteration) {
+            ChatResult? result = PythonExecutor.PythonAIFunctions?.AutoGenNestedChat(chatRequestContext, chat, iteration);
+            return result;
+        }
+
         public static ChatResult? ExecuteChatLangChain(ChatRequestContext chatRequestContext, ChatRequest chat) {
             // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
             // GenerateVectorSearchResult(openAIProperties);

@@ -1,5 +1,3 @@
-using System.IO;
-using System.Security.Cryptography.Pkcs;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -12,8 +10,7 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
 
     public class PythonNetFunctions : IPythonAIFunctions {
 
@@ -227,7 +224,7 @@ namespace PythonAILib.PythonIF
                 }
                 // page_content_listを取得
                 if (resultDict.TryGetValue("page_content_list", out dynamic? pageContentListValue)) {
-                    if (pageContentListValue is  List<string> pageContentList) {
+                    if (pageContentListValue is List<string> pageContentList) {
                         chatResult.PageContentList = pageContentList;
                     }
                 }
@@ -331,6 +328,115 @@ namespace PythonAILib.PythonIF
 
         }
 
+        // AutoGenのNormalChatを実行する
+        public ChatResult AutoGenNormalChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+
+            // ChatRequestから最後のユーザー発言を取得
+            ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
+            string message = lastUserRoleMessage.Content;
+            // messageが空の場合はLogWrapper.Errorを呼び出す
+            if (string.IsNullOrEmpty(message)) {
+                LogWrapper.Error("Message is empty.");
+            }
+            // chatRequestContextをJSON文字列に変換
+            string requestContextJson = chatRequestContext.ToJson();
+
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {requestContextJson}");
+
+            ChatResult chatResult = new();
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "run_autogen_normal_chat";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                // hello_world関数を呼び出す
+                PyIterable iterator = function_object(requestContextJson, message);
+                Dictionary<string, dynamic?> resultDict = [];
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    string itemString = item.ToString() ?? "{}";
+                    resultDict = JsonUtil.ParseJson(itemString);
+                    // messageを取得
+                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
+                        iteration(messageValue);
+                    }
+                    // logを取得
+                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
+                        LogWrapper.Info(logValue);
+                    }
+                }
+                // total_tokensを取得.
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
+                }
+            });
+            return chatResult;
+
+        }
+
+        // AutoGenのNormalChatを実行する
+        public ChatResult AutoGenNestedChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration) {
+
+            // ChatRequestから最後のユーザー発言を取得
+            ChatMessage? lastUserRoleMessage = chatRequest.GetLastSendItem() ?? new ChatMessage("", "");
+            string message = lastUserRoleMessage.Content;
+            // messageが空の場合はLogWrapper.Errorを呼び出す
+            if (string.IsNullOrEmpty(message)) {
+                LogWrapper.Error("Message is empty.");
+            }
+            // chatRequestContextをJSON文字列に変換
+            string requestContextJson = chatRequestContext.ToJson();
+
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {requestContextJson}");
+
+            ChatResult chatResult = new();
+
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                string function_name = "run_autogen_nested_chat";
+                dynamic function_object = GetPythonFunction(ps, function_name);
+
+                // hello_world関数を呼び出す
+                PyIterable iterator = function_object(requestContextJson, message);
+                Dictionary<string, dynamic?> resultDict = [];
+                // iteratorから文字列を取得
+                foreach (PyObject item in iterator) {
+                    string itemString = item.ToString() ?? "{}";
+                    resultDict = JsonUtil.ParseJson(itemString);
+                    // messageを取得
+                    if (resultDict.TryGetValue("message", out dynamic? messageValue)) {
+                        iteration(messageValue);
+                    }
+                    // logを取得
+                    if (resultDict.TryGetValue("log", out dynamic? logValue)) {
+                        LogWrapper.Info(logValue);
+                    }
+                }
+                // total_tokensを取得.
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokens) {
+                        chatResult.TotalTokens = decimal.ToInt64(totalTokens);
+                    }
+                }
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (resultDict.TryGetValue("error", out dynamic? errorValue)) {
+                    LogWrapper.Error(errorValue?.ToString());
+                }
+            });
+            return chatResult;
+
+        }
+
+
         // AutoGenのデフォルトの設定を取得する
         public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext) {
 
@@ -348,7 +454,7 @@ namespace PythonAILib.PythonIF
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
                 // hello_world関数を呼び出す
-                string  resultString = function_object(requestContextJson);
+                string resultString = function_object(requestContextJson);
                 // LogWrapper.Info
                 LogWrapper.Info(resultString);
                 result = JsonUtil.ParseJson(resultString);

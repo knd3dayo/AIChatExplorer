@@ -4,7 +4,7 @@ import datetime
 import os
 
 class AutoGenProps:
-    def __init__(self,):
+    def __init__(self):
         load_dotenv()
 
         # 作業用フォルダ：yyyy-mm-dd-hh-mm-ss

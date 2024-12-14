@@ -166,16 +166,6 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        // AutoGen関連のVisibility
-        public Visibility AutoGenVisibility {
-            get {
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
 
         public TextWrapping TextWrapping {
             get {
@@ -303,7 +293,11 @@ namespace QAChat.ViewModel.QAChatMain {
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));
             // AutoGenVisibilityを更新
-            OnPropertyChanged(nameof(AutoGenVisibility));
+            OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenNormalChatVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenNestedChatVisibility));
 
         });
 
@@ -395,7 +389,61 @@ namespace QAChat.ViewModel.QAChatMain {
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }
+        #region AutoGen Normal Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenNormalChatVisibility {
+            get {
+                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
 
+        // AutoGenNormalChatList
+        public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
+            get {
+                ObservableCollection<AutoGenNormalChat> autoGenNormalChatList = [];
+                foreach (var item in AutoGenNormalChat.FindAll()) {
+                    autoGenNormalChatList.Add(item);
+                }
+                return autoGenNormalChatList;
+            }
+        }
+
+        // SelectedAutoGenNormalChat
+        private AutoGenNormalChat? _SelectedAutoGenNormalChat = null;
+        public AutoGenNormalChat? SelectedAutoGenNormalChat {
+            get {
+                return _SelectedAutoGenNormalChat;
+            }
+            set {
+                _SelectedAutoGenNormalChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenNormalChat));
+            }
+        }
+        // AutoGenNormalChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNormalChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenNormalChat = AutoGenNormalChatList[index];
+            }
+        });
+        #endregion
+
+        #region AutoGen Group Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenGroupChatVisibility {
+            get {
+                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
         // AutoGenGroupChatList
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
             get {
@@ -425,6 +473,51 @@ namespace QAChat.ViewModel.QAChatMain {
                 SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
             }
         });
+        #endregion
+
+        #region AutoGen Nested Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenNestedChatVisibility {
+            get {
+                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
+                    return Visibility.Visible;
+                } else {
+                    return Visibility.Collapsed;
+                }
+            }
+        }
+        // AutoGenNestedChatList
+        public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {
+            get {
+                ObservableCollection<AutoGenNestedChat> autoGenNestedChatList = [];
+                foreach (var item in AutoGenNestedChat.FindAll()) {
+                    autoGenNestedChatList.Add(item);
+                }
+                return autoGenNestedChatList;
+            }
+        }
+        // SelectedAutoGenNestedChat
+        private AutoGenNestedChat? _SelectedAutoGenNestedChat = null;
+        public AutoGenNestedChat? SelectedAutoGenNestedChat {
+            get {
+                return _SelectedAutoGenNestedChat;
+            }
+            set {
+                _SelectedAutoGenNestedChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenNestedChat));
+            }
+        }
+        // AutoGenNestedChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNestedChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenNestedChat = AutoGenNestedChatList[index];
+            }
+        });
+        #endregion
+
+
     }
 
 }

@@ -3,13 +3,12 @@ from typing import Any, Tuple, Generator
 import tempfile
 import base64
 import sys
-sys.path.append("python")
 
 from ai_app_openai import OpenAIProps, OpenAIClient
 from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
-from ai_app_autogen import AutoGenGroupChat, AutoGenProps
+from ai_app_autogen import AutoGenGroupChatWrapper, AutoGenProps, AutoGenNormalChatWrapper
 
 ########################
 # ファイル関連
@@ -67,11 +66,25 @@ def list_openai_models(openai_props: OpenAIProps):
 # autogen関連
 ########################
 def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
-    # autogen_propsの
+    # autogen_propsからAgentsを取得
+    from ai_app_autogen.ai_app_autogen_util import AutoGenChatUtil
+    autogen_util = AutoGenChatUtil(autogen_props, vector_db_items)
     # AutoGenGroupChatを生成
-    autogen_group_chat = AutoGenGroupChat(autogen_props, vector_db_items)
+
+    autogen_chat = AutoGenGroupChatWrapper(autogen_util.init_agent, autogen_util.agents)
     # run_group_chatを実行
-    result = autogen_group_chat.run_group_chat(input_text,  vector_db_items, 10)
+    result = autogen_chat.run_chat(input_text, 2, 10)
+    return result
+
+def run_autogen_normal_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
+    # autogen_propsからAgentsを取得
+    from ai_app_autogen.ai_app_autogen_util import AutoGenChatUtil
+    autogen_util = AutoGenChatUtil(autogen_props, vector_db_items)
+    # AutoGenGroupChatを生成
+
+    autogen_chat = AutoGenNormalChatWrapper(autogen_util.init_agent, autogen_util.agents)
+    # run_group_chatを実行
+    result = autogen_chat.run_chat(input_text, 2)
     return result
 
 ########################

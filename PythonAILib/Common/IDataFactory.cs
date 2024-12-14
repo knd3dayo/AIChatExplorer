@@ -48,5 +48,11 @@ namespace PythonAILib.Common {
 
         // --- AutoGentGroupChat
         public ILiteCollection<T> GetAutoGenGroupChatCollection<T>() where T : AutoGenGroupChat;
+
+        // --- AutoGenNormalChat
+        public ILiteCollection<T> GetAutoGenNormalChatCollection<T>() where T : AutoGenNormalChat;
+
+        // --- AutoGenNestedChat
+        public ILiteCollection<T> GetAutoGenNestedChatCollection<T>() where T : AutoGenNestedChat;
     }
 }

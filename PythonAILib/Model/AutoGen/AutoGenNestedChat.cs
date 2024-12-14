@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
-    public class AutoGenGroupChat {
+    public class AutoGenNestedChat {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
@@ -15,8 +15,12 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("init_agent_name")]
         public string InitAgentName { get; set; } = "user_proxy";
 
-        [JsonPropertyName("agent_names")]
-        public List<string> AgentNames { get; set; } = [];
+        [JsonPropertyName("group_chat_list")]
+        public List<AutoGenGroupChat> AutoGenGroupChatList { get; set; } = [];
+
+        [JsonPropertyName("normal_chat_list")]
+        public List<AutoGenGroupChat> AutoGenNormalChatList { get; set; } = [];
+
         public List<AutoGenAgent> AutoGenAgents { get; set; } = [];
 
         public List<AutoGenTool> AutoGentTools { get; set; } = [];
@@ -27,14 +31,15 @@ namespace PythonAILib.Model.AutoGen {
                 { "name", Name },
                 { "description", Description },
                 { "init_agent_name", InitAgentName },
-                { "agent_names", AgentNames },
+                { "group_chat_list", AutoGenGroupChatList },
+                { "normal_chat_list", AutoGenNormalChatList },
             };
             return dict;
         }
 
         // Save
         public void Save(bool allow_override = true) {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNestedChatCollection<AutoGenNestedChat>();
             var items = collection.Find(x => x.Name == Name);
             if (items.Count() > 0 && !allow_override) {
                 return;
@@ -47,12 +52,12 @@ namespace PythonAILib.Model.AutoGen {
 
         // Delete
         public void Delete() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNestedChatCollection<AutoGenNestedChat>();
             collection.Delete(this.Id);
         }
         // FindAll
-        public static List<AutoGenGroupChat> FindAll() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+        public static List<AutoGenNestedChat> FindAll() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNestedChatCollection<AutoGenNestedChat>();
             return collection.FindAll().ToList();
         }
 

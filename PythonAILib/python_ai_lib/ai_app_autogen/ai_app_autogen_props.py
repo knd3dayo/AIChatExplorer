@@ -16,19 +16,19 @@ class AutoGenProps:
         # venv_path
         self.venv_path = props_dict.get("venv_path", None)
 
-        # use_system_agent
-        self.use_system_agent: bool = props_dict.get("use_system_agent", False)
-
         # group_chat
-        group_chat_dict = props_dict.get("group_chat", None)
-        if group_chat_dict is None:
-            raise ValueError("group_chat is None")
-        self.group_chat_dict = group_chat_dict
+        self.chat_dict = props_dict.get("group_chat", None)
+
+        # normal_chat
+        self.normal_chat_dict = props_dict.get("normal_chat", None)
+
+        if self.chat_dict is None and self.normal_chat_dict is None:
+            raise ValueError("chat_dict is None")
 
         # tools
-        self.tools_list = group_chat_dict.get("tools", [])
+        self.tools_list = self.chat_dict.get("tools", [])
         # agents
-        self.agents_list = group_chat_dict.get("agents", [])
+        self.agents_list = self.chat_dict.get("agents", [])
     
     # TODO Agent毎に設定できるようにする
     def create_llm_config(self):

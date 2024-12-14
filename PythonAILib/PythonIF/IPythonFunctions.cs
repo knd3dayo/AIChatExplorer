@@ -1,11 +1,8 @@
-using PythonAILib.Common;
-using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public partial interface IPythonAIFunctions {
 
         public string ExtractFileToText(string path);
@@ -17,6 +14,12 @@ namespace PythonAILib.PythonIF
         public ChatResult LangChainChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+
+        public ChatResult AutoGenNormalChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+
+        public ChatResult AutoGenNestedChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
+
+
 
         // AutoGenのデフォルトの設定を取得する
         public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext);

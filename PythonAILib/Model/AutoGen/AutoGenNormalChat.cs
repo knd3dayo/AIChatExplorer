@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using PythonAILib.Common;
 
 namespace PythonAILib.Model.AutoGen {
-    public class AutoGenGroupChat {
+    public class AutoGenNormalChat {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
@@ -34,7 +34,7 @@ namespace PythonAILib.Model.AutoGen {
 
         // Save
         public void Save(bool allow_override = true) {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNormalChatCollection<AutoGenNormalChat>();
             var items = collection.Find(x => x.Name == Name);
             if (items.Count() > 0 && !allow_override) {
                 return;
@@ -47,12 +47,12 @@ namespace PythonAILib.Model.AutoGen {
 
         // Delete
         public void Delete() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNormalChatCollection<AutoGenNormalChat>();
             collection.Delete(this.Id);
         }
         // FindAll
-        public static List<AutoGenGroupChat> FindAll() {
-            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenGroupChatCollection<AutoGenGroupChat>();
+        public static List<AutoGenNormalChat> FindAll() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoGenNormalChatCollection<AutoGenNormalChat>();
             return collection.FindAll().ToList();
         }
 

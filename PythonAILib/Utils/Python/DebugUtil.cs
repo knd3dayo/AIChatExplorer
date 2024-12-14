@@ -105,7 +105,7 @@ namespace PythonAILib.Utils.Python {
             }
 
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenChatGroup) {
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);

@@ -12,7 +12,6 @@ class AutoGenGroupChatWrapper:
     # responseを格納するlist
     responses = []
 
-
     @classmethod
     def print_messages(cls, recipient, messages, sender, config): 
             if "callback" in config and  config["callback"] is not None:
@@ -81,12 +80,6 @@ class AutoGenGroupChatWrapper:
         init_agent.initiate_chat(group_chat_manager, message=initial_message, max_turns=3)
 
         return group_chat_manager
-
-class AutoGenGroupChatGenerator:
-
-    @classmethod
-    def create_default_group_chat(cls) -> autogen.GroupChatManager:
-        admin_name = "chat_admin_agent"
 
 
 if __name__ == "__main__":
