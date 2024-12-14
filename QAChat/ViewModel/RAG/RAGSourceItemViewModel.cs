@@ -6,12 +6,8 @@ using QAChat.Model;
 
 namespace QAChat.ViewModel.RAG
 {
-    public class RAGSourceItemViewModel : QAChatViewModelBase {
-
-        public RAGSourceItemViewModel(RAGSourceItem item) {
-            Item = item;
-        }
-        public RAGSourceItem Item { get; set; }
+    public class RAGSourceItemViewModel(RAGSourceItem item) : QAChatViewModelBase {
+        public RAGSourceItem Item { get; set; } = item;
         // SourceURL
         public string SourceURL {
             get => Item.SourceURL;
@@ -26,11 +22,11 @@ namespace QAChat.ViewModel.RAG
             set {
                 Item.WorkingDirectory = value;
                 // フォルダが存在する場合はソースURLを取得してSourceURLを更新
-                SourceURL = Item.SeekSourceURL(value);
+                SourceURL = Item.GetRemoteURL();
                 OnPropertyChanged(nameof(WorkingDirectory));
-
             }
         }
+
         // LastIndexCommitHash
         public string LastIndexCommitHash {
             get => Item.LastIndexCommitHash;
@@ -51,12 +47,7 @@ namespace QAChat.ViewModel.RAG
         // ComboBoxの選択肢
         public ObservableCollection<VectorDBItem> VectorDBItems {
             get {
-                var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-                var items = collection.FindAll().Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
-                if (items == null) {
-                    return new();
-                }
-                return new(items);
+                return [.. VectorDBItem.GetExternalVectorDBItems()];
             }
         }
         public VectorDBItem? SelectedVectorDBItem {
@@ -72,19 +63,10 @@ namespace QAChat.ViewModel.RAG
         // 最後にインデックス化したコミットの情報
         public string LastIndexedCommitInfo {
             get {
-                if (Item == null) {
-                    return "";
-                }
-                if (string.IsNullOrEmpty(Item.LastIndexCommitHash)) {
-                    return "";
-                }
-                CommitInfo commitInfo = Item.GetCommit(Item.LastIndexCommitHash);
-                string dateString = commitInfo.Date.ToLocalTime().ToString("yyyy/MM/dd HH:mm:ss");
-                string result = $"{dateString} {commitInfo.Hash} {commitInfo.Message}";
-                return result;
-
+                return Item.LastIndexedCommitInfoDisplayString;
             }
         }
+
         // save
         public void Save() {
             Item.Save();

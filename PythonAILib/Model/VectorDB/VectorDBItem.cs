@@ -213,5 +213,14 @@ namespace PythonAILib.Model.VectorDB
             return systemVectorItem;
         }
 
+        public static List<VectorDBItem> GetExternalVectorDBItems() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            var items = collection.FindAll().Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            if (items == null) {
+                return [];
+            }
+            return new(items);
+        }
+
     }
 }
