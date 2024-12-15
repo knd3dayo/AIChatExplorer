@@ -58,9 +58,6 @@ namespace ClipboardApp.Model.Folder {
         [BsonIgnore]
         public virtual List<ClipboardItem> Items {
             get {
-                if (FolderType == FolderTypeEnum.Search) {
-                    return ClipboardFolderUtil.GetSearchFolderItems(this);
-                }
                 return ClipboardFolderUtil.GetNormalFolderItems(this);
             }
         }
@@ -77,14 +74,8 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテムを追加する処理
         public virtual void AddItem(ClipboardItem item) {
-            // 検索フォルダの場合は何もしない
-            if (FolderType == FolderTypeEnum.Search) {
-                return;
-            }
-
             // CollectionNameを設定
             item.CollectionId = Id;
-
             // ReferenceVectorDBItemsを設定
             item.ReferenceVectorDBItems = ReferenceVectorDBItems;
 

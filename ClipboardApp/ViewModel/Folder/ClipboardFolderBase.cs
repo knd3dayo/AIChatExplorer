@@ -16,11 +16,6 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Folder {
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
 
-        protected CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
-
-        // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
-        public virtual int DefaultNextLevel { get; } = 5;
-
         #region abstract
 
         // フォルダ作成コマンドの実装

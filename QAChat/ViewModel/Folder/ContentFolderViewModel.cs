@@ -1,10 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
+using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 
 namespace QAChat.ViewModel.Folder {
     public partial class ContentFolderViewModel(ContentFolder folder) : ObservableObject {
+        protected CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
+
+        // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
+        public virtual int DefaultNextLevel { get; } = 5;
+
 
         public ContentFolder Folder { get; set; } = folder;
 

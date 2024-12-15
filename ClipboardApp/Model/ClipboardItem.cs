@@ -79,10 +79,7 @@ namespace ClipboardApp.Model {
 
         }
 
-        // ベクトルDBを返す。
-        public override VectorDBItem GetMainVectorDBItem() {
-            return GetFolder<ClipboardFolder>().GetVectorDBItem();
-        }
+
 
         public void MergeItems(List<ClipboardItem> items) {
             // itemsが空の場合は何もしない
