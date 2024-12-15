@@ -56,17 +56,15 @@ namespace ClipboardApp.Model.Folder {
 
 
         [BsonIgnore]
-        public override List<ClipboardItem> Items {
-            get {
-                // ローカルファイルシステムとClipboardFolderのファイルを同期
-                SyncItems();
+        public override List<ClipboardItem> GetItems() {
+            // ローカルファイルシステムとClipboardFolderのファイルを同期
+            SyncItems();
 
-                var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
-                // FileSystemFolderPathフォルダ内のファイルを取得
-                List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
+            // FileSystemFolderPathフォルダ内のファイルを取得
+            List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
-                return items;
-            }
+            return items;
         }
         public  void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない

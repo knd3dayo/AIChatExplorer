@@ -997,11 +997,12 @@ namespace QAChat.Resource {
         // 自動処理でアイテムが削除または移動されました
         public virtual string ItemsDeletedOrMovedByAutoProcessing { get; } = "自動処理でアイテムが削除または移動されました";
 
-        // "アイテムを追加しました"
-        public virtual string AddedItems { get; } = "アイテムを追加しました";
-
+        
         // 自動処理を適用します
         public virtual string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理を適用しました
+        public virtual string AutoProcessingApplied { get; } = "自動処理を適用しました";
 
         // 自動処理でアイテムが削除されました
         public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";

@@ -265,6 +265,8 @@ namespace PythonAILib.Resource {
         // "The prompt template [promptName] has been executed."
         public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
 
+        public override string AddedItems { get; } = "Added Items";
+
         #region Statistics and Logging
 
         // Daily token count

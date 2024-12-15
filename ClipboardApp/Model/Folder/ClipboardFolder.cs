@@ -56,10 +56,8 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public virtual List<ClipboardItem> Items {
-            get {
+        public virtual List<ClipboardItem> GetItems() {
                 return ClipboardFolderUtil.GetNormalFolderItems(this);
-            }
         }
 
         // Delete
@@ -73,29 +71,26 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // アイテムを追加する処理
-        public virtual void AddItem(ClipboardItem item) {
-            // CollectionNameを設定
-            item.CollectionId = Id;
-            // ReferenceVectorDBItemsを設定
-            item.ReferenceVectorDBItems = ReferenceVectorDBItems;
-
-            // 自動処理を適用
-            ClipboardItem? result = item;
-            if (IsAutoProcessEnabled) {
-                result = item.ApplyAutoProcess();
-            }
-
-            if (result == null) {
-                // 自動処理で削除または移動された場合は何もしない
-                LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
+        public override void AddItem(ContentItem item) {
+            if (item is  ClipboardItem ) {
+                LogWrapper.Error("Item is not ClipboardItem");
                 return;
             }
-            // 保存
-            result.Save();
-            // Itemsに追加
-            Items.Add(result);
-            // 通知
-            LogWrapper.Info(CommonStringResources.Instance.AddedItems);
+            ClipboardItem clipboardItem = (ClipboardItem)item;
+            base.AddItem(clipboardItem);
+
+            // 自動処理を適用
+            if (IsAutoProcessEnabled) {
+                LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
+                ClipboardItem? result = clipboardItem.ApplyAutoProcess();
+                if (result == null) {
+                    // 自動処理で削除または移動された場合は何もしない
+                    LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
+                    return;
+                }
+                result.Save();
+                LogWrapper.Info(CommonStringResources.Instance.AutoProcessingApplied);
+            }
         }
 
         #region 検索
@@ -186,7 +181,6 @@ namespace ClipboardApp.Model.Folder {
         #region マージ
         // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
         public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
-
             // SourceApplicationNameが空の場合は何もしない
             if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
                 return;
@@ -195,12 +189,13 @@ namespace ClipboardApp.Model.Folder {
             if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
                 return;
             }
-            if (Items.Count == 0) {
+            List<ClipboardItem> items = GetItems();
+            if (items.Count == 0) {
                 return;
             }
             List<ClipboardItem> sameTitleItems = [];
             // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
-            foreach (var item in Items) {
+            foreach (var item in items) {
                 if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
                     && newItem.SourceApplicationName == item.SourceApplicationName) {
                     // TypeがTextのアイテムのみマージ
@@ -214,7 +209,7 @@ namespace ClipboardApp.Model.Folder {
 
         // 指定されたフォルダの全アイテムをマージするコマンド
         public void MergeItems(ClipboardItem item) {
-            item.MergeItems(Items);
+            item.MergeItems(GetItems());
 
         }
         #endregion
@@ -227,7 +222,7 @@ namespace ClipboardApp.Model.Folder {
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            string jsonString = System.Text.Json.JsonSerializer.Serialize(Items, options);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize((Func<List<ClipboardItem>>)GetItems, options);
 
             File.WriteAllText(fileName, jsonString);
 
@@ -246,9 +241,6 @@ namespace ClipboardApp.Model.Folder {
                 return;
             }
 
-            // Itemsをクリア
-            Items.Clear();
-
             foreach (JsonObject? jsonValue in jsonArray.Cast<JsonObject?>()) {
                 if (jsonValue == null) {
                     continue;
@@ -260,12 +252,9 @@ namespace ClipboardApp.Model.Folder {
                     continue;
                 }
                 item.CollectionId = Id;
-                // Itemsに追加
-                Items.Add(item);
                 //保存
                 item.Save();
             }
-
         }
 
         // --- Export/Import
@@ -273,7 +262,7 @@ namespace ClipboardApp.Model.Folder {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var item in Items) {
+            foreach (var item in GetItems()) {
                 List<string> row = [];
                 if (exportTitle) {
                     row.Add(item.Description);

@@ -884,8 +884,10 @@ namespace QAChat.Resource {
         public override string Clipboard { get; } = "Clipboard";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
-        public override string AddedItems { get; } = "Added Items";
         public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";
+
+        // 自動処理を適用しました
+        public override string AutoProcessingApplied { get; } = "Auto Processing Applied";
         public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
         public override string FailedToParseJSONString { get; } = "Failed to Parse JSON String";
         public override string CannotMergeToNonTextItems { get; } = "Cannot Merge to Non-Text Items";

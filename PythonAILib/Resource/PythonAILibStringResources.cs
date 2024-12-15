@@ -364,6 +364,8 @@ namespace PythonAILib.Resource {
         // "プロンプトテンプレート[promptName]を実行しました."
         public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
 
+        // "アイテムを追加しました"
+        public virtual string AddedItems { get; } = "アイテムを追加しました";
 
 
         #region 統計、ログ関連

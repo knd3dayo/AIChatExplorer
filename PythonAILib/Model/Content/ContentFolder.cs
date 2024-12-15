@@ -3,6 +3,8 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
+using PythonAILib.Resource;
+using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.Content {
     public class ContentFolder {
@@ -43,7 +45,7 @@ namespace PythonAILib.Model.Content {
             var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             return folders.Cast<T>().ToList();
         }
- 
+
         // フォルダを削除
         public virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
             // folderの子フォルダを再帰的に削除
@@ -75,7 +77,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // 保存
-        public virtual void Save<T1,T2>() where T1 : ContentFolder where T2: ContentItem{
+        public virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
             // VectorDBItemの情報をアップデート
             VectorDBItem vectorDBItem = GetVectorDBItem();
             vectorDBItem.Name = FolderName;
@@ -141,7 +143,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // フォルダに設定されたVectorDBのインデックスを更新
-        public void RefreshVectorDBCollection<T>() where T: ContentItem{
+        public void RefreshVectorDBCollection<T>() where T : ContentItem {
             // ベクトルを全削除
             DeleteVectorDBCollection();
             // ベクトルを再作成
@@ -166,7 +168,18 @@ namespace PythonAILib.Model.Content {
             return folder;
         }
 
+        public virtual void AddItem(ContentItem item) {
+            // CollectionNameを設定
+            item.CollectionId = Id;
+            // ReferenceVectorDBItemsを設定
+            item.ReferenceVectorDBItems = ReferenceVectorDBItems;
 
+            // 保存
+            item.Save();
+            // 通知
+            LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
+
+        }
 
     }
 }

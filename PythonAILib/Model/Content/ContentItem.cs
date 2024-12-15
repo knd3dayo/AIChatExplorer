@@ -1,4 +1,7 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LiteDB;
 using PythonAILib.Common;
@@ -12,8 +15,7 @@ using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
 
-namespace PythonAILib.Model.Content
-{
+namespace PythonAILib.Model.Content {
     public class ContentItem {
 
         // 日時のダミー初期値。2000/1/1 0:0:0
@@ -167,7 +169,7 @@ namespace PythonAILib.Model.Content
 
 
         // ReferenceVectorDBItems
-        public  List<VectorDBItem> GetReferenceVectorDBItems {
+        public List<VectorDBItem> GetReferenceVectorDBItems {
 
             get {
                 // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
@@ -189,7 +191,7 @@ namespace PythonAILib.Model.Content
             }
         }
         // Collectionに対応するClipboardFolderを取得
-        public T GetFolder<T>() where T: ContentFolder{
+        public T GetFolder<T>() where T : ContentFolder {
             T folder = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>().FindById(CollectionId);
             return folder;
         }
@@ -651,7 +653,6 @@ namespace PythonAILib.Model.Content
         public void UpdateEmbedding() {
             UpdateEmbedding(VectorDBUpdateMode.update);
         }
-
 
     }
 }

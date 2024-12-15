@@ -2,6 +2,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Utils;
 using LiteDB;
+using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -37,10 +38,8 @@ namespace ClipboardApp.Model.Search {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public override List<ClipboardItem> Items {
-            get {
-                return ClipboardFolderUtil.GetSearchFolderItems(this);
-            }
+        public override List<ClipboardItem> GetItems() {
+            return ClipboardFolderUtil.GetSearchFolderItems(this);
         }
 
         // Delete
@@ -59,7 +58,7 @@ namespace ClipboardApp.Model.Search {
         }
 
         // アイテムを追加する処理
-        public override void AddItem(ClipboardItem item) {
+        public override void AddItem(ContentItem item) {
             // 何もしない
         }
 

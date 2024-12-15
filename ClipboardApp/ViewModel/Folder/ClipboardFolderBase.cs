@@ -61,7 +61,7 @@ namespace ClipboardApp.ViewModel.Folder {
             }
         }
 
-        // Items
+        // GetItems
         public ObservableCollection<ClipboardItemViewModel> Items { get; } = [];
 
         // 子フォルダ
@@ -356,7 +356,7 @@ namespace ClipboardApp.ViewModel.Folder {
             try {
                 MainWindowViewModel.Instance.UpdateIndeterminate(true);
                 await Task.Run(() => {
-                    _items = ClipboardItemFolder.Items;
+                    _items = ClipboardItemFolder.GetItems();
                 });
                 foreach (Model.ClipboardItem item in _items) {
                     Items.Add(CreateItemViewModel(item));
