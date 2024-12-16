@@ -105,13 +105,14 @@ namespace PythonAILib.Model.Content {
             }
         }
         // 削除
-        public virtual void Delete() {
-            throw new NotImplementedException();
+        public virtual void Delete<T1,T2>() where T1 : ContentFolder where T2 : ContentItem {
+            DeleteFolder<T1, T2>((T1)this);
         }
-        public virtual IEnumerable<T> GetItems<T>() where T : ContentItem {
+
+        public virtual List<T> GetItems<T>() where T : ContentItem {
             var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
             var items = collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
-            return items.Cast<T>();
+            return items.Cast<T>().ToList();
         }
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除

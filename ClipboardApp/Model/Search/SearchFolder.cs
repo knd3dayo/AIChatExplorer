@@ -38,13 +38,8 @@ namespace ClipboardApp.Model.Search {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public override List<ClipboardItem> GetItems() {
-            return ClipboardFolderUtil.GetSearchFolderItems(this);
-        }
-
-        // Delete
-        public override void Delete() {
-            DeleteFolder<ClipboardFolder, ClipboardItem>(this);
+        public override List<T> GetItems<T>() {
+            return ClipboardFolderUtil.GetSearchFolderItems(this).Cast<T>().ToList();
         }
 
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない

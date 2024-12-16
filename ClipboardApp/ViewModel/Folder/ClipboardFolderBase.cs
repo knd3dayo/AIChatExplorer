@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
@@ -276,7 +277,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // 親フォルダを取得
             ClipboardFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
 
-            folderViewModel.ClipboardItemFolder.Delete();
+            folderViewModel.ClipboardItemFolder.Delete< ClipboardFolder, ClipboardItem>();
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
@@ -356,7 +357,7 @@ namespace ClipboardApp.ViewModel.Folder {
             try {
                 MainWindowViewModel.Instance.UpdateIndeterminate(true);
                 await Task.Run(() => {
-                    _items = ClipboardItemFolder.GetItems();
+                    _items = ClipboardItemFolder.GetItems<ClipboardItem>();
                 });
                 foreach (Model.ClipboardItem item in _items) {
                     Items.Add(CreateItemViewModel(item));

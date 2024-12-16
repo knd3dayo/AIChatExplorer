@@ -4,6 +4,10 @@ from ai_app_openai.ai_app_openai_util import OpenAIProps
 import uuid
 # VectorDBのパラメーターを管理するクラス
 class VectorDBProps:
+
+    # コレクションの指定がない場合はデフォルトのコレクション名を使用
+    DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
+
     source_id_name = "source_id"
     source_path_name = "source_path"
     git_repository_url_name = "git_repository_url"

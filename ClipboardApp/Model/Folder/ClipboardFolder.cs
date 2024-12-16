@@ -56,13 +56,9 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
-        public virtual List<ClipboardItem> GetItems() {
-                return ClipboardFolderUtil.GetNormalFolderItems(this);
-        }
-
-        // Delete
-        public override void Delete() {
-            DeleteFolder<ClipboardFolder, ClipboardItem>(this);
+        public override List<T> GetItems<T>() {
+            List<ClipboardItem> items = ClipboardFolderUtil.GetNormalFolderItems(this);
+            return items.Cast<T>().ToList();
         }
 
         public override ClipboardFolder CreateChild(string folderName) {
@@ -72,7 +68,7 @@ namespace ClipboardApp.Model.Folder {
 
         // アイテムを追加する処理
         public override void AddItem(ContentItem item) {
-            if (item is  ClipboardItem ) {
+            if (item is not ClipboardItem) {
                 LogWrapper.Error("Item is not ClipboardItem");
                 return;
             }
@@ -189,7 +185,7 @@ namespace ClipboardApp.Model.Folder {
             if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
                 return;
             }
-            List<ClipboardItem> items = GetItems();
+            List<ClipboardItem> items = GetItems<ClipboardItem>();
             if (items.Count == 0) {
                 return;
             }
@@ -209,7 +205,7 @@ namespace ClipboardApp.Model.Folder {
 
         // 指定されたフォルダの全アイテムをマージするコマンド
         public void MergeItems(ClipboardItem item) {
-            item.MergeItems(GetItems());
+            item.MergeItems(GetItems< ClipboardItem>());
 
         }
         #endregion
@@ -222,7 +218,7 @@ namespace ClipboardApp.Model.Folder {
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            string jsonString = System.Text.Json.JsonSerializer.Serialize((Func<List<ClipboardItem>>)GetItems, options);
+            string jsonString = System.Text.Json.JsonSerializer.Serialize((Func<List<ClipboardItem>>)GetItems<ClipboardItem>, options);
 
             File.WriteAllText(fileName, jsonString);
 
@@ -262,7 +258,7 @@ namespace ClipboardApp.Model.Folder {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var item in GetItems()) {
+            foreach (var item in GetItems< ClipboardItem>()) {
                 List<string> row = [];
                 if (exportTitle) {
                     row.Add(item.Description);

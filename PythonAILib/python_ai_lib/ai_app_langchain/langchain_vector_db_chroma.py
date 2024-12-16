@@ -28,10 +28,8 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         params = {}
         params["client"] = chromadb.PersistentClient(path=self.vector_db_props.VectorDBURL)
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
-        # collectionが指定されている場合
-        print("CollectionName:", self.vector_db_props.CollectionName)
-        if self.vector_db_props.CollectionName:
-            params["collection_name"] = self.vector_db_props.CollectionName
+        # params["collection_name"] = self.vector_db_props.CollectionName
+        params["collection_name"] = self.vector_db_props.DEFAULT_COLLECTION_NAME
         
         self.db: VectorStore = Chroma(
             **params

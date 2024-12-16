@@ -56,7 +56,7 @@ namespace ClipboardApp.Model.Folder {
 
 
         [BsonIgnore]
-        public override List<ClipboardItem> GetItems() {
+        public override List<T> GetItems<T>() {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
             SyncItems();
 
@@ -64,7 +64,7 @@ namespace ClipboardApp.Model.Folder {
             // FileSystemFolderPathフォルダ内のファイルを取得
             List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
-            return items;
+            return items.Cast<T>().ToList();
         }
         public  void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない

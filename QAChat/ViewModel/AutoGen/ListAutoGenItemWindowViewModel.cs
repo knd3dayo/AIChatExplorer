@@ -16,6 +16,10 @@ namespace QAChat.ViewModel.AutoGen {
 
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChats { get; set; } = [];
 
+        public ObservableCollection<AutoGenNormalChat> AutoGenNormalChats { get; set; } = [];
+
+        public ObservableCollection<AutoGenNestedChat> AutoGenNestedChats { get; set; } = [];
+
         public ListAutoGenItemWindowViewModel(ContentFolderViewModel rootFolderViewModel, bool selectGroupChatMode) {
             SelectGroupChatMode = selectGroupChatMode;
             RootFolderViewModel = rootFolderViewModel;

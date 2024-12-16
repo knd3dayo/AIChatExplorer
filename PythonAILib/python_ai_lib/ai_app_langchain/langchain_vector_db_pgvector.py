@@ -30,11 +30,9 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
         params["embeddings"] = self.langchain_openai_client.get_embedding_client()
         params["use_jsonb"] = True
         
-        # collectionが指定されている場合
-        print("CollectionName:", self.vector_db_props.CollectionName)
-        if self.vector_db_props.CollectionName:
-            params["collection_name"] = self.vector_db_props.CollectionName
-        
+        # params["collection_name"] = self.vector_db_props.CollectionName
+        params["collection_name"] = self.vector_db_props.DEFAULT_COLLECTION_NAME
+
         self.db: VectorStore = PGVector(
             **params
             )

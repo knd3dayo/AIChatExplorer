@@ -24,8 +24,6 @@ from ai_app_vector_db.ai_app_vector_db_props import ContentUpdateOrDeleteRequest
 from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter, VectorDBProps
 
 
-# コレクションの指定がない場合はデフォルトのコレクション名を使用
-DEFAULT_COLLECTION_NAME = "ai_app_default_collection"
 
 class CustomMultiVectorRetriever(MultiVectorRetriever):
     def _get_relevant_documents(self, query: str, *, run_manager: CallbackManagerForRetrieverRun) -> list[Document]:
@@ -81,7 +79,8 @@ class LangChainVectorDB:
         # vector_db_propsのコピーを作成
         new_vector_db_props = copy.deepcopy(vector_db_props)
         # デフォルトのコレクション名を設定
-        new_vector_db_props.CollectionName = DEFAULT_COLLECTION_NAME
+        new_vector_db_props.CollectionName = VectorDBProps.DEFAULT_COLLECTION_NAME
+
         return LangChainVectorDB.get_vector_db(openai_props, new_vector_db_props)
 
     def __init__(self, langchain_openai_client: LangChainOpenAIClient, vector_db_props: VectorDBProps):
@@ -225,7 +224,8 @@ class LangChainVectorDB:
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
             doc_id = str(uuid.uuid4())
-            metadata = LangChainVectorDB.create_metadata(doc_id, source_path, source_url, description_text, image_url)
+            folder_id = self.vector_db_props.CollectionName
+            metadata = LangChainVectorDB.create_metadata(doc_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
             document_list.append(document)
@@ -341,22 +341,24 @@ class LangChainVectorDB:
         return {"documents": result}
 
     @classmethod
-    def create_metadata(cls, doc_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
-        metadata = {"source_path": source_path, "git_repository_url": source_url, "description": description,
-                      "image_url": image_url, "git_relative_path": "",
-                      "doc_id": doc_id, "source_id": "", "source_type": 0, "score": score
-                }
+    def create_metadata(cls, doc_id, folder_id, source_path: str, source_url: str, description: str, image_url: str, score = 0.0):
+        metadata = {
+            "folder_id": folder_id, "source_path": source_path, "git_repository_url": source_url, 
+            "description": description, "image_url": image_url, "git_relative_path": "",
+            "doc_id": doc_id, "source_id": "", "source_type": 0, "score": score
+        }
         return metadata
 
     @classmethod
     def create_metadata_from_document(cls, document: Document):
         metadata = document.metadata
+        folder_id = metadata.get("folder_id", "")
         doc_id = metadata.get("doc_id", "")
         source_path = metadata.get("source_path", "")
         source_url = metadata.get("git_repository_url", "")
         description = metadata.get("description", "")
         image_url = metadata.get("image_url", "")
         score = metadata.get("score", 0)
-        return cls.create_metadata(doc_id, source_path, source_url, description, image_url, score)
+        return cls.create_metadata(doc_id, folder_id, source_path, source_url, description, image_url, score)
 
     
