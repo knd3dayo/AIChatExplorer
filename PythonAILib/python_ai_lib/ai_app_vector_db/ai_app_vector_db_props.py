@@ -15,6 +15,7 @@ class VectorDBProps:
     image_url_name = "image_url"
     desccription_name = "description"
     content_name = "content"
+    folder_id_name = "folder_id"
 
     vector_db_url_name = "VectorDBURL"
     vector_db_type_string_name = "VectorDBTypeString"
@@ -64,6 +65,9 @@ class VectorDBProps:
 
         # Collectionの設定
         self.CollectionName = props_dict.get(VectorDBProps.collection_name, "")
+
+        # FolderのID
+        self.FolderID = props_dict.get(VectorDBProps.folder_id_name, "")
 
     def get_vector_db_dict(self) -> dict:
         vector_db_dict = {}

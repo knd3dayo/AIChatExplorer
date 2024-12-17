@@ -10,7 +10,6 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel.VectorDB {
     public class VectorSearchWindowViewModel : QAChatViewModelBase {
 
-
         public VectorSearchWindowViewModel() {
             InputText = string.Empty;
 

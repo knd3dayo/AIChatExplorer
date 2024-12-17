@@ -83,6 +83,8 @@ namespace PythonAILib.Model.Content {
             vectorDBItem.Name = FolderName;
             vectorDBItem.Description = Description;
             vectorDBItem.CollectionName = Id.ToString();
+            vectorDBItem.FolderId = Id.ToString();
+
             // Save
             vectorDBItem.Save();
 
@@ -117,14 +119,14 @@ namespace PythonAILib.Model.Content {
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除
         public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
-            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName));
+            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName && x.FolderId == vectorDBItem.FolderId));
             foreach (var item in existingItems) {
                 ReferenceVectorDBItems.Remove(item);
             }
         }
         // ReferenceVectorDBItemsにVectorDBItemを追加
         public void AddVectorDBItem(VectorDBItem vectorDBItem) {
-            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName);
+            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName && x.FolderId == vectorDBItem.FolderId);
             if (existingItems == null) {
                 ReferenceVectorDBItems.Add(vectorDBItem);
             }

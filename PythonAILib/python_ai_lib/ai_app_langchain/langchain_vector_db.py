@@ -224,7 +224,7 @@ class LangChainVectorDB:
         text_list = self._split_text(content_text, chunk_size=chunk_size)
         for text in text_list:
             doc_id = str(uuid.uuid4())
-            folder_id = self.vector_db_props.CollectionName
+            folder_id = self.vector_db_props.FolderID
             metadata = LangChainVectorDB.create_metadata(doc_id, folder_id, source_path, source_url, description_text, image_url)
             print("metadata:", metadata)
             document = Document(page_content=text, metadata=metadata)
