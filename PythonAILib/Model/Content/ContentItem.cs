@@ -592,6 +592,8 @@ namespace PythonAILib.Model.Content {
 
             // VectorDBItemを取得
             VectorDBItem folderVectorDBItem = GetMainVectorDBItem();
+            // システム共通のベクトルDBを取得
+            VectorDBItem systemCommonVectorDBItem = VectorDBItem.GetFolderVectorDBItem();
 
             if (mode == VectorDBUpdateMode.delete) {
                 // IPythonAIFunctions.ClipboardInfoを作成
@@ -599,6 +601,8 @@ namespace PythonAILib.Model.Content {
 
                 // Embeddingを削除
                 folderVectorDBItem.DeleteIndex(vectorDBEntry);
+                // ★TODO システム共通のベクトルDBにも削除
+                systemCommonVectorDBItem.DeleteIndex(vectorDBEntry);
                 return;
             }
             if (mode == VectorDBUpdateMode.update) {
@@ -610,16 +614,25 @@ namespace PythonAILib.Model.Content {
                     vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.Clipboard, "", "", "", "");
                     // Embeddingを保存
                     folderVectorDBItem.UpdateIndex(vectorDBEntry);
+                    // ★TODO システム共通のベクトルDBにも保存
+                    systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
+
                 } else {
                     if (IsImage()) {
                         // 画像からテキスト抽出
                         vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.File, FilePath, "", "", Base64String);
                         // Embeddingを保存
                         folderVectorDBItem.UpdateIndex(vectorDBEntry);
+                        // ★TODO システム共通のベクトルDBにも保存
+                        systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
+
                     } else {
                         vectorDBEntry.UpdateSourceInfo(description, Content, VectorSourceType.File, FilePath, "", "", "");
                         // Embeddingを保存
                         folderVectorDBItem.UpdateIndex(vectorDBEntry);
+                        // ★TODO システム共通のベクトルDBにも保存
+                        systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
+
                     }
                 }
                 // ベクトル化日時を更新
