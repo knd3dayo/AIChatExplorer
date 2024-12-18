@@ -42,6 +42,12 @@ namespace QAChat.View.AutoGen {
         // SystemMessage
         public static string SystemMessage { get; set; } = "SystemMessage";
         public static string GroupChat { get; set; } = "グループチャット";
+
+        // NormalChat
+        public static string NormalChat { get; set; } = "通常チャット";
+
+        // NestedChat
+        public static string NestedChat { get; set; } = "ネストチャット";
         public static string Agent { get; set; } = "エージェント";
         public static string Tool { get; set; } = "ツール";
         public static string SourcePath { get; set; } = "ソースパス";

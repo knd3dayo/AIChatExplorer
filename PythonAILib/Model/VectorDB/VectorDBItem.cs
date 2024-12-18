@@ -36,7 +36,8 @@ namespace PythonAILib.Model.VectorDB {
                     DocStoreURL = $"sqlite:///{docDBPath}",
                     IsUseMultiVectorRetriever = true,
                     IsEnabled = true,
-                    IsSystem = true
+                    IsSystem = true,
+                    CollectionName = DefaultCollectionName
                 };
                 item.Save();
             }

@@ -68,9 +68,6 @@ namespace QAChat.ViewModel.AutoGen {
             OnPropertyChanged(nameof(AutoGenGroupChats));
         }
 
-        // SelectedAutoGenGroupChat
-        public AutoGenGroupChat? SelectedAutoGenGroupChat { get; set; }
-
         // SelectedAutoGenAgent
         public AutoGenAgent? SelectedAutoGenAgent { get; set; }
 
@@ -86,15 +83,6 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
-        // OpenEditAutoGenGroupChatWindow
-        public SimpleDelegateCommand<object> OpenEditAutoGenGroupChatWindowCommand => new((parameter) => {
-            if (SelectedAutoGenGroupChat == null) {
-                return;
-            }
-            EditAutoGenGroupChatWindow.OpenWindow(SelectedAutoGenGroupChat, () => {
-                LoadItems();
-            });
-        });
 
         // OpenEditAutoGenAgentWindow
         public SimpleDelegateCommand<object> OpenEditAutoGenAgentWindowCommand => new((parameter) => {
@@ -140,15 +128,6 @@ namespace QAChat.ViewModel.AutoGen {
             }
         });
 
-        // DeleteAutoGenGroupChatCommand
-        public SimpleDelegateCommand<object> DeleteAutoGenGroupChatCommand => new((parameter) => {
-            if (SelectedAutoGenGroupChat == null) {
-                return;
-            }
-            SelectedAutoGenGroupChat.Delete();
-            LoadItems();
-        });
-
         // DeleteAutoGenAgentCommand
         public SimpleDelegateCommand<object> DeleteAutoGenAgentCommand => new((parameter) => {
             if (SelectedAutoGenAgent == null) {
@@ -167,14 +146,6 @@ namespace QAChat.ViewModel.AutoGen {
             LoadItems();
         });
 
-        // AutoGenGroupChatSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
-            // DataGridの場合
-            if (routedEventArgs.OriginalSource is DataGrid) {
-                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                SelectedAutoGenGroupChat = (AutoGenGroupChat)dataGrid.SelectedItem;
-            }
-        });
 
         // AutoGenAgentSelectionChangedCommand
         public SimpleDelegateCommand<RoutedEventArgs> AutoGenAgentSelectionChangedCommand => new((routedEventArgs) => {
@@ -194,6 +165,36 @@ namespace QAChat.ViewModel.AutoGen {
             }
         });
 
+        // SelectedAutoGenGroupChat
+        public AutoGenGroupChat? SelectedAutoGenGroupChat { get; set; }
+
+        // OpenEditAutoGenGroupChatWindow
+        public SimpleDelegateCommand<object> OpenEditAutoGenGroupChatWindowCommand => new((parameter) => {
+            if (SelectedAutoGenGroupChat == null) {
+                return;
+            }
+            EditAutoGenGroupChatWindow.OpenWindow(SelectedAutoGenGroupChat, () => {
+                LoadItems();
+            });
+        });
+
+        // DeleteAutoGenGroupChatCommand
+        public SimpleDelegateCommand<object> DeleteAutoGenGroupChatCommand => new((parameter) => {
+            if (SelectedAutoGenGroupChat == null) {
+                return;
+            }
+            SelectedAutoGenGroupChat.Delete();
+            LoadItems();
+        });
+
+        // AutoGenGroupChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                SelectedAutoGenGroupChat = (AutoGenGroupChat)dataGrid.SelectedItem;
+            }
+        });
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             if (SelectedAutoGenGroupChat != null) {

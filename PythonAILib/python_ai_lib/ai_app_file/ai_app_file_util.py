@@ -21,10 +21,10 @@ class FileUtil:
         # エンコーディング判定
         encoding_dic = chardet.detect(byte_data)
         encoding = encoding_dic["encoding"]
-        if encoding is None or encoding == "UTF-8":
-            encoding = "utf-8"
-        elif encoding == "SHIFT_JIS":
+        if encoding == "SHIFT_JIS":
             encoding = "cp932"
+        else:
+            encoding = "utf-8"
             
         return res, encoding
 
