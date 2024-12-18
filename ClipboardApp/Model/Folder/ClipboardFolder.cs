@@ -57,6 +57,9 @@ namespace ClipboardApp.Model.Folder {
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
         public override List<T> GetItems<T>() {
+            if (FolderType == FolderTypeEnum.Search) {
+                return ClipboardFolderUtil.GetSearchFolderItems(this).Cast<T>().ToList(); 
+            }
             List<ClipboardItem> items = ClipboardFolderUtil.GetNormalFolderItems(this);
             return items.Cast<T>().ToList();
         }
