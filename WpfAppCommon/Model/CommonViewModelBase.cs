@@ -1,9 +1,7 @@
-using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Control.Editor;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.Resource {

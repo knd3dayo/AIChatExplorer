@@ -74,10 +74,24 @@ namespace PythonAILib.Utils.Python {
 
         }
 
+        // AutoGenNormalChatのテスト1を実行するコマンド文字列を生成する。
+        public static List<string> CreateAutoGenNormalChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
+            // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
+            string beforeExecScriptCommands = "notepad " + parametersJsonFile + "\n" + "pause";
+            // 事後コマンド pauseで一時停止
+            string afterExecScriptCommands = "pause";
+            string options = $"-p {parametersJsonFile}";
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_autogen_normal_chat_01.py", $"{options}",
+                               beforeExecScriptCommands, afterExecScriptCommands);
+
+            return cmdLines;
+        }
+
+        // AutoGenGroupChatのテスト1を実行するコマンド文字列を生成する。
         public static List<string> CreateAutoGenGroupChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
 
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
-            string beforeExecScriptCommands = "notepad " + parametersJsonFile;
+            string beforeExecScriptCommands = "notepad " + parametersJsonFile + "\n" + "pause";
             // 事後コマンド pauseで一時停止
             string afterExecScriptCommands = "pause";
             string options = $"-p {parametersJsonFile}";
@@ -86,6 +100,19 @@ namespace PythonAILib.Utils.Python {
 
             return cmdLines;
         }
+        // AutoGenNestedChatのテスト1を実行するコマンド文字列を生成する。
+        public static List<string> CreateAutoGenNestedChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
+            // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
+            string beforeExecScriptCommands = "notepad " + parametersJsonFile + "\n" + "pause";
+            // 事後コマンド pauseで一時停止
+            string afterExecScriptCommands = "pause";
+            string options = $"-p {parametersJsonFile}";
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_autogen_nested_chat_01.py", $"{options}",
+                               beforeExecScriptCommands, afterExecScriptCommands);
+
+            return cmdLines;
+        }
+
 
         // Chatを実行するコマンド文字列を生成する。
         public static string CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
@@ -103,7 +130,13 @@ namespace PythonAILib.Utils.Python {
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
                 return string.Join("\n\n", DebugUtil.CreateLangChainChatCommandLine(DebugUtil.DebugRequestParametersFile));
             }
-
+            // ModeがAutoGenの場合は、AutoGenのNormalChatを実行するコマンドを返す
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
+                // パラメーターファイルを作成
+                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
+                return string.Join("\n\n", DebugUtil.CreateAutoGenNormalChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
+            }
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
             if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // パラメーターファイルを作成
@@ -112,11 +145,15 @@ namespace PythonAILib.Utils.Python {
 
                 return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
             }
+            // ModeがAutoGenの場合は、AutoGenのNestedChatを実行するコマンドを返す
+            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
+                // パラメーターファイルを作成
+                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
+                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
+                return string.Join("\n\n", DebugUtil.CreateAutoGenNestedChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
+            }
             return "";
-
-
-
         }
 
         // OpenAIチャットを実行するコマンド文字列を生成する。

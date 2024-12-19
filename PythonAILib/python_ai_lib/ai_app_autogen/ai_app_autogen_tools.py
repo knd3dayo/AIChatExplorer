@@ -15,10 +15,10 @@ class AutoGenToolWrapper:
         # print(f"name: {name}, description: {description}, source_path:, {source_path}")
 
         # toolがない場合は関数を作成
-        self.tool: Callable = AutoGenToolWrapper.__create_tool(name, source_path, autogen_props, vector_db_props_list)
+        self.tool: Callable = AutoGenToolWrapper.load_tool(name, source_path, autogen_props, vector_db_props_list)
 
     @classmethod
-    def __create_tool(cls, name: str, source_path: str, autogen_props: AutoGenProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
+    def load_tool(cls, name: str, source_path: str, autogen_props: AutoGenProps, vector_db_props_list: list[VectorDBProps]) -> Callable:
         if source_path is None:
             raise ValueError("source_path is None")
 
@@ -86,22 +86,13 @@ class AutoGenToolWrapper:
         return wrapper_list
 
     @classmethod
-    def create_vector_search_tools(cls, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]) -> list["AutoGenToolWrapper"]:
-        def vector_search(query: Annotated[str, "String to search for"]) -> list[str]:
-            """
-            This function performs a vector search on the specified text and returns the related documents.
-            """
-            params: VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_props_list, query)
-            result = LangChainVectorDB.vector_search(params)
-            # Retrieve documents from result
-            documents = result.get("documents", [])
-            # Extract content of each document from documents
-            result = [doc.get("content", "") for doc in documents]
-            return result
-        
+    def create_vector_search_tools(cls, autogen_props: AutoGenProps, vector_db_props_list: list[VectorDBProps]) -> list["AutoGenToolWrapper"]:
         tools = []
+        import ai_app_autogen.vector_db_tools
+        source_path = ai_app_autogen.vector_db_tools.__file__
         for vector_db_props in vector_db_props_list:
-            tool = AutoGenToolWrapper("vector_search_" + vector_db_props.id, vector_db_props.VectorDBDescription, __file__, vector_search)
+            tool = AutoGenToolWrapper("vector_search", vector_db_props.VectorDBDescription, source_path, autogen_props, [vector_db_props])
+            tool.name = "vector_search_" + vector_db_props.id
             tools.append(tool)
 
         return tools

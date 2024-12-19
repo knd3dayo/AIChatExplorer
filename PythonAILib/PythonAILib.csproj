@@ -14,6 +14,7 @@
     <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_props.py" />
     <None Remove="python_ai_lib\ai_app_autogen\ai_app_autogen_util.py" />
     <None Remove="python_ai_lib\ai_app_autogen\default_tools.py" />
+    <None Remove="python_ai_lib\ai_app_autogen\vector_db_tools.py" />
     <None Remove="python_ai_lib\ai_app_autogen\__init__.py" />
     <None Remove="python_ai_lib\ai_app_autogen_tools.py" />
     <None Remove="python_ai_lib\ai_app_autogen_util.py" />
@@ -29,6 +30,7 @@
     <None Remove="python_ai_lib\ai_app_vector_db\__init__.py" />
     <None Remove="python_ai_lib\ai_app_vector_db_util.py" />
     <None Remove="python_ai_lib\ai_app_wrapper.py" />
+    <None Remove="python_ai_lib\debug_tool\test_ai_app_autogen_normal_chat_01.py" />
     <None Remove="python_ai_lib\flask_app.py" />
     <None Remove="python_ai_lib\langchain_doc_store.py" />
     <None Remove="python_ai_lib\langchain_doc_store_postgres.py" />
@@ -71,6 +73,9 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\ai_app_autogen_chat.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\ai_app_autogen\vector_db_tools.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_autogen\default_tools.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -102,6 +107,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="python_ai_lib\debug_tool\test_ai_app_autogen_normal_chat_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\debug_tool\test_ai_app_langchain_chat_01.py">

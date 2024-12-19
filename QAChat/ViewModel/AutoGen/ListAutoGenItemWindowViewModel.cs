@@ -30,18 +30,9 @@ namespace QAChat.ViewModel.AutoGen {
 
         public bool SelectGroupChatMode { get; set; }
 
-        public Visibility SelectGroupChatModeVisibility {
-            get {
-                return SelectGroupChatMode ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public Visibility SelectGroupChatModeVisibility => Tools.BoolToVisibility(SelectGroupChatMode);
 
-        public Visibility NormalModeVisibility {
-            get {
-                return SelectGroupChatMode ? Visibility.Collapsed : Visibility.Visible;
-            }
-        }
-
+        public Visibility NormalModeVisibility  => Tools.BoolToVisibility(!SelectGroupChatMode);
         public void LoadItems() {
             AutoGenAgents = [];
             // Load AutoGenAgents
@@ -66,6 +57,22 @@ namespace QAChat.ViewModel.AutoGen {
                 AutoGenGroupChats.Add(item);
             }
             OnPropertyChanged(nameof(AutoGenGroupChats));
+
+            // Load AutoGenNormalChats
+            AutoGenNormalChats = [];
+            var autoGenNormalChats = AutoGenNormalChat.FindAll();
+            foreach (var item in autoGenNormalChats) {
+                AutoGenNormalChats.Add(item);
+            }
+            OnPropertyChanged(nameof(AutoGenNormalChats));
+
+            // Load AutoGenNestedChats
+            AutoGenNestedChats = [];
+            var autoGenNestedChats = AutoGenNestedChat.FindAll();
+            foreach (var item in autoGenNestedChats) {
+                AutoGenNestedChats.Add(item);
+            }
+            OnPropertyChanged(nameof(AutoGenNestedChats));
         }
 
         // SelectedAutoGenAgent
@@ -108,18 +115,30 @@ namespace QAChat.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddItemCommand => new((parameter) => {
             switch (SelectedTabIndex) {
                 case 0:
+                    AutoGenNormalChat autoGenNormalChat = new();
+                    EditAutoGenNormalChatWindow.OpenWindow(autoGenNormalChat, () => {
+                        LoadItems();
+                    });
+                    break;
+                case 1:
                     AutoGenGroupChat autoGenGroupChat = new();
                     EditAutoGenGroupChatWindow.OpenWindow(autoGenGroupChat, () => {
                         LoadItems();
                     });
                     break;
-                case 1:
+                case 2:
+                    AutoGenNestedChat autoGenNestedChat = new();
+                    EditAutoGenNestedChatWindow.OpenWindow(autoGenNestedChat, () => {
+                        LoadItems();
+                    });
+                    break;
+                case 3:
                     AutoGenAgent autoGenAgent = new();
                     EditAutoGenAgentWindow.OpenWindow(autoGenAgent, RootFolderViewModel, () => {
                         LoadItems();
                     });
                     break;
-                case 2:
+                case 4:
                     AutoGenTool autoGenTool = new();
                     EditAutoGenToolWindow.OpenWindow(autoGenTool, () => {
                         LoadItems();
@@ -195,6 +214,66 @@ namespace QAChat.ViewModel.AutoGen {
                 SelectedAutoGenGroupChat = (AutoGenGroupChat)dataGrid.SelectedItem;
             }
         });
+        // SelectedAutoGenNormalChat
+        public AutoGenNormalChat? SelectedAutoGenNormalChat { get; set; }
+
+        // OpenEditAutoGenNormalChatWindow
+        public SimpleDelegateCommand<object> OpenEditAutoGenNormalChatWindowCommand => new((parameter) => {
+            if (SelectedAutoGenNormalChat == null) {
+                return;
+            }
+            EditAutoGenNormalChatWindow.OpenWindow(SelectedAutoGenNormalChat, () => {
+                LoadItems();
+            });
+        });
+
+        // DeleteAutoGenNormalChatCommand
+        public SimpleDelegateCommand<object> DeleteAutoGenNormalChatCommand => new((parameter) => {
+            if (SelectedAutoGenNormalChat == null) {
+                return;
+            }
+            SelectedAutoGenNormalChat.Delete();
+            LoadItems();
+        });
+        // AutoGenNormalChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNormalChatSelectionChangedCommand => new((routedEventArgs) => {
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                SelectedAutoGenNormalChat = (AutoGenNormalChat)dataGrid.SelectedItem;
+            }
+        });
+
+        // SelectedAutoGenNestedChat
+        public AutoGenNestedChat? SelectedAutoGenNestedChat { get; set; }
+
+        // OpenEditAutoGenNestedChatWindow
+        public SimpleDelegateCommand<object> OpenEditAutoGenNestedChatWindowCommand => new((parameter) => {
+            if (SelectedAutoGenNestedChat == null) {
+                return;
+            }
+            EditAutoGenNestedChatWindow.OpenWindow(SelectedAutoGenNestedChat, () => {
+                LoadItems();
+            });
+        });
+        // DeleteAutoGenNestedChatCommand
+        public SimpleDelegateCommand<object> DeleteAutoGenNestedChatCommand => new((parameter) => {
+            if (SelectedAutoGenNestedChat == null) {
+                return;
+            }
+            SelectedAutoGenNestedChat.Delete();
+            LoadItems();
+        });
+
+        // AutoGenNestedChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNestedChatSelectionChangedCommand => new((routedEventArgs) => {
+            // DataGridの場合
+            if (routedEventArgs.OriginalSource is DataGrid) {
+                DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
+                SelectedAutoGenNestedChat = (AutoGenNestedChat)dataGrid.SelectedItem;
+            }
+        });
+
         // SelectCommand
         public SimpleDelegateCommand<Window> SelectCommand => new((window) => {
             if (SelectedAutoGenGroupChat != null) {

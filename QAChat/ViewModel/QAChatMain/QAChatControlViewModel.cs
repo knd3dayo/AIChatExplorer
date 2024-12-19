@@ -7,6 +7,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
+using QAChat.Model;
 using QAChat.Resource;
 using QAChat.View.PromptTemplate;
 using QAChat.View.QAChatMain;
@@ -14,7 +15,7 @@ using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
-    public class QAChatControlViewModel : CommonViewModelBase {
+    public class QAChatControlViewModel : QAChatViewModelBase {
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 
@@ -31,11 +32,7 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             // AutoGenGroupChatを設定
             SelectedAutoGenGroupChat = AutoGenGroupChat.FindAll().FirstOrDefault();
-
-
         }
-
-        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
 
@@ -57,19 +54,6 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(Temperature));
             }
         }
-
-        // Progress Indicatorの表示状態
-        private bool _IsIndeterminate = false;
-        public bool IsIndeterminate {
-            get {
-                return _IsIndeterminate;
-            }
-            set {
-                _IsIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
-            }
-        }
-
         public int Mode {
             get {
                 return (int)ChatRequest.ChatMode;
@@ -156,27 +140,8 @@ namespace QAChat.ViewModel.QAChatMain {
         }
 
         //
-        public Visibility VectorDBItemVisibility {
-            get {
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.Normal) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal);
 
-
-        public TextWrapping TextWrapping {
-            get {
-                if (QAChatManager.Instance == null) {
-                    return TextWrapping.NoWrap;
-                }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
-            }
-        }
-        // チャット履歴を保存するか否かのフラグ
-        private bool _SaveChatHistory = false;
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
@@ -224,10 +189,6 @@ namespace QAChat.ViewModel.QAChatMain {
 
                 // inputTextをクリア
                 InputText = "";
-
-                // _SaveChatHistoryをTrueに設定
-                _SaveChatHistory = true;
-
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
@@ -389,17 +350,11 @@ namespace QAChat.ViewModel.QAChatMain {
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }
+
+
         #region AutoGen Normal Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNormalChatVisibility {
-            get {
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat);
 
         // AutoGenNormalChatList
         public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
@@ -435,15 +390,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Group Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility {
-            get {
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
+
         // AutoGenGroupChatList
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
             get {
@@ -477,15 +425,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Nested Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNestedChatVisibility {
-            get {
-                if (ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
-            }
-        }
+        public Visibility AutoGenNestedChatVisibility  => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat);
+
         // AutoGenNestedChatList
         public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {
             get {

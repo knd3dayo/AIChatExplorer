@@ -1,7 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using NLog;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
@@ -64,6 +63,11 @@ namespace WpfAppCommon.Utils {
             if (string.IsNullOrEmpty(childPath))
                 return parentPath;
             return Path.Combine(parentPath, childPath);
+        }
+        // ------------
+        // Visibilityを切り替える TrueならVisible、FalseならCollapsed
+        public static Visibility BoolToVisibility(bool value) {
+            return value ? Visibility.Visible : Visibility.Collapsed;
         }
 
 
