@@ -134,9 +134,10 @@ namespace PythonAILib.Model.VectorDB {
                 string source_path = Path.Combine(WorkingDirectory, fileStatus.Path);
                 VectorDBEntry vectorDBEntry = new(source_path);
                 if (fileStatus.Status == FileStatusEnum.Added || fileStatus.Status == FileStatusEnum.Modified) {
-                    string content = PythonExecutor.PythonAIFunctions.ExtractFileToText(fileStatus.Path);
+                    string content = PythonExecutor.PythonAIFunctions.ExtractFileToText(source_path);
                     if (string.IsNullOrEmpty(content)) {
-                        throw new Exception($"Invalid FileType");
+                        result.Result = UpdateIndexResult.UpdateIndexResultEnum.Failed_Other;
+                        return result;
                     }
                     vectorDBEntry.UpdateSourceInfo(
                         description, content, VectorSourceType.Git, source_path, SourceURL, fileStatus.Path, "");
