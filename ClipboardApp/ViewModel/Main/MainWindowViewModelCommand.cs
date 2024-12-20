@@ -356,9 +356,11 @@ namespace ClipboardApp {
             PromptItem promptItem = tuple.Item2;
             // チャットを実行
             Task.Run(() => {
-                itemViewModel.ClipboardItem.CreateChatResult(promptItem);
-                //保存
-                itemViewModel.ClipboardItem.Save();
+                foreach (var item in SelectedItems) {
+                    item.ClipboardItem.CreateChatResult(promptItem);
+                    //保存
+                    item.ClipboardItem.Save();
+                }
                 MainUITask.Run(() => {
                     // フォルダ内のアイテムを再読み込み
                     SelectedFolder?.LoadFolderCommand.Execute();
