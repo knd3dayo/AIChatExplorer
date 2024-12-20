@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
@@ -21,6 +22,74 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppCommandExecute {
+
+        public ClipboardAppCommandExecute(ClipboardItemViewModel clipboardItemViewModel) {
+            ClipboardItemViewModel = clipboardItemViewModel;
+        }
+        private ClipboardItemViewModel ClipboardItemViewModel { get; }
+
+        // フォルダを開くコマンド
+        public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
+            ClipboardAppCommandExecute.OpenFolder(ClipboardItemViewModel.ClipboardItem);
+        });
+
+        // テキストをファイルとして開くコマンド
+        public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
+            ClipboardAppCommandExecute.OpenContentAsFile(ClipboardItemViewModel.ClipboardItem);
+        });
+
+        // ファイルを開くコマンド
+        public SimpleDelegateCommand<object> OpenFileCommand => new((obj) => {
+            ClipboardAppCommandExecute.OpenFile(ClipboardItemViewModel.ClipboardItem);
+        });
+
+
+        // ファイルを新規ファイルとして開くコマンド
+        public SimpleDelegateCommand<object> OpenFileAsNewFileCommand => new((obj) => {
+            ClipboardAppCommandExecute.OpenFileAsNewFile(ClipboardItemViewModel.ClipboardItem);
+        });
+
+        // QAChatButtonCommand
+        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
+            // QAChatControlのDrawerを開く
+            ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(ClipboardItemViewModel.ClipboardItem);
+        });
+
+        // ベクトル検索を実行するコマンド
+        public SimpleDelegateCommand<object> VectorSearchCommand => new((obj) => {
+            ClipboardAppCommandExecute.OpenVectorSearchWindowCommand(ClipboardItemViewModel.ClipboardItem);
+        });
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド
+        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
+            if (ClipboardItemViewModel == null) {
+                LogWrapper.Error("クリップボードアイテムが選択されていません");
+                return;
+            }
+            ClipboardAppCommandExecute.ExtractText(ClipboardItemViewModel.ClipboardItem);
+            int index = ClipboardItemViewModel.SelectedTabIndex;
+            ClipboardItemViewModel.SelectedTabIndex = index;
+        });
+
+        // ピン留めの切り替えコマンド
+        public SimpleDelegateCommand<object> ChangePinCommand => new((obj) => {
+            ClipboardItemViewModel.IsPinned = !ClipboardItemViewModel.IsPinned;
+            // ピン留めの時は更新日時を変更しない
+            SaveClipboardItemCommand.Execute(false);
+        });
+
+        // アイテム保存
+        public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItemViewModel.ClipboardItem.Save);
+
+        // Delete
+        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((obj) => {
+            ClipboardItemViewModel.ClipboardItem.Delete();
+        });
+
+
+
+
+
 
         /// <summary>
         /// Application exit command
@@ -304,7 +373,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
         // Command to open a folder
-        public static void OpenFolderCommand(Model.ClipboardItem contentItem) {
+        public static void OpenFolder(Model.ClipboardItem contentItem) {
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
@@ -323,7 +392,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to extract text
-        public static void ExtractTextCommand(Model.ClipboardItem contentItem) {
+        public static void ExtractText(Model.ClipboardItem contentItem) {
             // プログレスインジケータを表示
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             try {
@@ -340,13 +409,13 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to open a file
-        public static void OpenFileCommand(Model.ClipboardItem contentItem) {
+        public static void OpenFile(Model.ClipboardItem contentItem) {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
         }
 
         // Command to open a file as a new file
-        public static void OpenFileAsNewFileCommand(Model.ClipboardItem contentItem) {
+        public static void OpenFileAsNewFile(Model.ClipboardItem contentItem) {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
@@ -462,8 +531,9 @@ namespace ClipboardApp.ViewModel.Main {
             vectorSearchWindowViewModel.SendCommand.Execute(null);
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
+
         // Command to open text content as a file
-        public static void OpenContentAsFileCommand(Model.ClipboardItem contentItem) {
+        public static void OpenContentAsFile(Model.ClipboardItem contentItem) {
             try {
                 // Open the selected item
                 ClipboardProcessController.OpenClipboardItemContent(contentItem);

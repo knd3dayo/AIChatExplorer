@@ -103,7 +103,7 @@ namespace ClipboardApp.ViewModel.Content {
             // テキストをファイルとして開く
             MenuItem openContentAsFileMenuItem = new() {
                 Header = StringResources.OpenTextAsFile,
-                Command = itemViewModel.OpenContentAsFileCommand,
+                Command = itemViewModel.Commands.OpenContentAsFileCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+Shit+O"
             };
@@ -111,7 +111,7 @@ namespace ClipboardApp.ViewModel.Content {
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
                 Header = PythonAILibStringResources.Instance.Pin,
-                Command = itemViewModel.ChangePinCommand,
+                Command = itemViewModel.Commands.ChangePinCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(pinnedStateChangeMenuItem);
@@ -161,7 +161,7 @@ namespace ClipboardApp.ViewModel.Content {
             //  テキストを抽出
             MenuItem extractTextMenuItem = new() {
                 Header = StringResources.ExtractText,
-                Command = itemViewModel.ExtractTextCommand,
+                Command = itemViewModel.Commands.ExtractTextCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(extractTextMenuItem);

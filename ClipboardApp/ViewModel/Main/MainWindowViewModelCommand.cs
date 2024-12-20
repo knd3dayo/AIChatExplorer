@@ -87,7 +87,7 @@ namespace ClipboardApp {
                 return;
             }
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
-                clipboardItemViewModel.ChangePinCommand.Execute();
+                clipboardItemViewModel.Commands.ChangePinCommand.Execute();
             }
             // フォルダ内のアイテムを再読み込み
             SelectedFolder?.LoadFolderCommand.Execute();
@@ -245,7 +245,7 @@ namespace ClipboardApp {
             if (result == MessageBoxResult.Yes) {
                 // 選択中のアイテムを削除
                 foreach (var item in SelectedItems) {
-                    item.DeleteItemCommand.Execute();
+                    item.Commands.DeleteItemCommand.Execute();
                 }
                 // フォルダ内のアイテムを再読み込む
                 SelectedFolder?.LoadFolderCommand.Execute();
@@ -281,12 +281,7 @@ namespace ClipboardApp {
         #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
-            this.SelectedItem?.OpenContentAsFileCommand.Execute();
-        });
-
-        // 選択したアイテムを開く処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> OpenFileCommand => new((parameter) => {
-            this.SelectedItem?.OpenFileCommand.Execute();
+            this.SelectedItem?.Commands.OpenContentAsFileCommand.Execute();
         });
 
         // タイトルを生成する処理 複数アイテム処理可
@@ -351,7 +346,7 @@ namespace ClipboardApp {
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
-            this.SelectedItem?.VectorSearchCommand.Execute();
+            this.SelectedItem?.Commands.VectorSearchCommand.Execute();
         });
 
 

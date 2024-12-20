@@ -72,17 +72,17 @@
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                         Header="ファイル">
                         <MenuItem
-                            Command="{Binding ItemViewModel.OpenContentAsFileCommand}"
+                            Command="{Binding ItemViewModel.Commands.OpenContentAsFileCommand}"
                             CommandParameter="{Binding ItemViewModel}"
                             Header="{Binding StringResources.OpenTextAsFile, Mode=OneTime}" />
                         <!--  ファイルを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileCommand}" Header="{Binding StringResources.OpenFile, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFileCommand}" Header="{Binding StringResources.OpenFile, Mode=OneTime}" />
                         <!--  新規ファイルとして開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFileAsNewFileCommand}" Header="{Binding StringResources.OpenAsNewFile, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFileAsNewFileCommand}" Header="{Binding StringResources.OpenAsNewFile, Mode=OneTime}" />
                         <!--  フォルダを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
                         <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
+                        <MenuItem Command="{Binding ItemViewModel.Commands.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
@@ -105,7 +105,7 @@
                     Grid.Column="0"
                     Width="120"
                     Margin="10,10,10,10"
-                    Command="{Binding QAChatButtonCommand, Mode=OneTime}"
+                    Command="{Binding ItemViewModel.Commands.QAChatButtonCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{Binding StringResources.OpenAIChat, Mode=OneTime}"
                     DockPanel.Dock="Left" />

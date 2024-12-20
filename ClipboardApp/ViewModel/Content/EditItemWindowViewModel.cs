@@ -109,18 +109,6 @@ namespace ClipboardApp.ViewModel.Content {
         public Action CloseUserControl { get; set; } = () => { };
 
 
-        // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            if (ItemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません");
-                return;
-            }
-            ClipboardAppCommandExecute.ExtractTextCommand(ItemViewModel.ClipboardItem);
-            int index = ItemViewModel.SelectedTabIndex;
-            OnPropertyChanged(nameof(ItemViewModel.TabItems));
-            ItemViewModel.SelectedTabIndex = index;
-            OnPropertyChanged(nameof(ItemViewModel.SelectedTabIndex));
-        });
 
         // タグ追加ボタンのコマンド
         public SimpleDelegateCommand<object> AddTagButtonCommand => new((obj) => {
@@ -135,11 +123,6 @@ namespace ClipboardApp.ViewModel.Content {
             });
         });
 
-        // QAChatButtonCommand
-        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
-            // QAChatControlのDrawerを開く
-            ItemViewModel?.OpenOpenAIChatWindowCommand.Execute();
-        });
 
         // Saveコマンド
         public SimpleDelegateCommand<object> SaveCommand => new((obj) => {

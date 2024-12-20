@@ -126,7 +126,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // アイテム削除コマンド
         public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((item) => {
-            item.DeleteItemCommand.Execute();
+            item.Commands.DeleteItemCommand.Execute();
             Items.Remove(item);
 
         });
@@ -301,7 +301,7 @@ namespace ClipboardApp.ViewModel.Folder {
                         continue;
                     }
                     // item.ClipboardItemを削除
-                    item.DeleteItemCommand.Execute();
+                    item.Commands.DeleteItemCommand.Execute();
                 }
 
                 // フォルダ内のアイテムを読み込む

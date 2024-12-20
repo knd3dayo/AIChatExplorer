@@ -33,7 +33,7 @@ namespace ClipboardApp.ViewModel.Content {
                     // 結果をClipboardItemに設定
                     Content = result;
                     // 保存
-                    SaveClipboardItemCommand.Execute(true);
+                    Commands.SaveClipboardItemCommand.Execute(true);
                 });
 
             } catch (Exception e) {
@@ -49,7 +49,7 @@ namespace ClipboardApp.ViewModel.Content {
 
             ClipboardItem.MaskDataCommandExecute();
             // 保存
-            SaveClipboardItemCommand.Execute(true);
+            Commands.SaveClipboardItemCommand.Execute(true);
 
         });
 
