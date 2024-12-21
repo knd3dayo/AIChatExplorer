@@ -13,6 +13,9 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ClipboardAppViewModelBase {
 
+        // 最後に選択されたタブのインデックス
+        public static int LastSelectedTabIndex = 0;
+
         // コンストラクタ
         public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, Model.ClipboardItem clipboardItem) {
             ClipboardItem = clipboardItem;
@@ -56,7 +59,7 @@ namespace ClipboardApp.ViewModel.Content {
         // ChatItemsText
         public string ChatItemsText => ClipboardItem.ChatItemsText;
 
-        // Description
+        // DisplayText
         public string Description { get; set; }
 
         // Tags
@@ -133,17 +136,17 @@ namespace ClipboardApp.ViewModel.Content {
         public ContentTypes.ContentItemTypes ContentType => ClipboardItem.ContentType;
 
         // SelectedTabIndex
-        private int selectedTabIndex = 0;
+        private int selectedTabIndex = LastSelectedTabIndex;
         public int SelectedTabIndex {
             get {
                 return selectedTabIndex;
             }
             set {
                 selectedTabIndex = value;
+                LastSelectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
-
 
         // MergeItems
         public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
@@ -153,7 +156,6 @@ namespace ClipboardApp.ViewModel.Content {
             }
             ClipboardItem.MergeItems(items);
         }
-
 
         // Copy
         public ClipboardItemViewModel Copy() {

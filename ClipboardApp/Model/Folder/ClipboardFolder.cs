@@ -257,24 +257,28 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // --- Export/Import
-        public void ExportToExcel(string fileName, bool exportTitle, bool exportText, bool exportBackgroundInfo, bool exportSummary) {
+        public void ExportToExcel(string fileName, List<ExportImportItem> items) {
             // PythonNetの処理を呼び出す。
             List<List<string>> data = [];
             // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var item in GetItems< ClipboardItem>()) {
+            foreach (var clipboardItem in GetItems< ClipboardItem>()) {
                 List<string> row = [];
+                bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
                 if (exportTitle) {
-                    row.Add(item.Description);
+                    row.Add(clipboardItem.Description);
                 }
+                bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
                 if (exportText) {
-                    row.Add(item.Content);
+                    row.Add(clipboardItem.Content);
                 }
-                if (exportBackgroundInfo) {
-                    row.Add(item.BackgroundInfo);
+                // PromptItemのリスト要素毎に処理を行う
+                foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
+                    if (promptItem.IsChecked) {
+                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
+                        row.Add(promptResult);
+                    }
                 }
-                if (exportSummary) {
-                    row.Add(item.Summary);
-                }
+
                 data.Add(row);
             }
             CommonDataTable dataTable = new(data);
@@ -283,17 +287,15 @@ namespace ClipboardApp.Model.Folder {
 
         }
 
-        public void ImportFromExcel(string fileName, bool executeAutoProcess, bool importTitle, bool importText) {
-            // importTitle, importTextがFalseの場合は何もしない
-            if (importTitle == false && importText == false) {
-                return;
-            }
+        public void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
             if (data == null) {
                 return;
             }
+            bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
+            bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
 
             foreach (var row in data.Rows) {
                 ClipboardItem item = new(Id);
@@ -325,7 +327,7 @@ namespace ClipboardApp.Model.Folder {
             List<ClipboardItem> items = ClipboardFolderUtil.CreateClipboardItem(this, e);
 
             foreach (var item in items) {
-                // Process clipboard item
+                // Process clipboard clipboardItem
                 ClipboardFolderUtil.ProcessClipboardItem(item, _afterClipboardChanged);
             }
         }

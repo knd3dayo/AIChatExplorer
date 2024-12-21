@@ -364,7 +364,7 @@ namespace ClipboardApp.Utils {
                 }
             });
             var task2 = Task.Run(() => {
-                // If AUTO_DESCRIPTION is set, automatically set the Description
+                // If AUTO_DESCRIPTION is set, automatically set the DisplayText
                 if (ClipboardAppConfig.Instance.AutoDescription) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
                     ClipboardItem.CreateAutoTitle(item);

@@ -1,25 +1,44 @@
+using System.Collections.ObjectModel;
 using System.Windows;
+using ClipboardApp.Model.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardolderViewModel, Action AfterUpdate) : ClipboardAppViewModelBase {
+    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ClipboardAppViewModelBase {
+
+
+        // ImportItems
+        public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();
+
+        // ExportItems
+        public ObservableCollection<ExportImportItem> ExportItems { get; set; } = CreateExportItems();
+
+        private static ObservableCollection<ExportImportItem> CreateImportItems() {
+            return [
+                new ExportImportItem("Title", CommonStringResources.Instance.Title, true, false),
+                new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
+            ];
+        }
+
+        private static ObservableCollection<ExportImportItem> CreateExportItems() {
+            // PromptItemの設定 出力タイプがテキストコンテンツのものを取得
+            List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+
+            ObservableCollection<ExportImportItem> items = [
+                new ExportImportItem("Title", CommonStringResources.Instance.Title, true, false),
+                new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
+            ];
+            foreach (PromptItem promptItem in promptItems) {
+                items.Add(new ExportImportItem(promptItem.Name, promptItem.Description, false, true));
+            }
+            return items;
+        }
 
 
         public int SelectedIndex { get; set; }
-
-        // テキストを選択したか否か
-        public bool IsTextChecked { get; set; } = true;
-
-        // タイトルを選択したか否か
-        public bool IsTitleChecked { get; set; } = true;
-
-        // 背景情報を選択したか否か
-        public bool IsBackgroundChecked { get; set; } = true;
-
-        // サマリーを選択したか否か
-        public bool IsSummaryChecked { get; set; } = true;
 
         // 選択したファイル名
         public string SelectedFileName { get; set; } = "";
@@ -45,14 +64,11 @@ namespace ClipboardApp.ViewModel.Folder {
                 switch (SelectedIndex) {
                     case 0:
                         // エクスポート処理
-                        ClipboardolderViewModel.ClipboardItemFolder.ExportToExcel(SelectedFileName, IsTitleChecked, IsTextChecked, IsBackgroundChecked, IsSummaryChecked);
-                        IsIndeterminate = false;
+                        ClipboardFolderViewModel.ClipboardItemFolder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // インポート処理
-                        IsIndeterminate = true;
-                        ClipboardolderViewModel.ClipboardItemFolder.ImportFromExcel(SelectedFileName, IsAutoProcessEnabled, IsTitleChecked, IsTextChecked);
-                        IsIndeterminate = false;
+                        ClipboardFolderViewModel.ClipboardItemFolder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
                         break;
                     default:
                         break;
@@ -68,7 +84,7 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
             // SelectedFileNameが空の場合はデフォルトのファイル名を設定
             if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardolderViewModel.ClipboardItemFolder.Id.ToString() + ".xlsx";
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.ClipboardItemFolder.Id.ToString() + ".xlsx";
                 OnPropertyChanged(nameof(SelectedFileName));
             }
 

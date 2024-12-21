@@ -51,7 +51,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
 
-        // Description
+        // DisplayText
         public string Description {
             get {
                 return ClipboardItemFolder.Description;

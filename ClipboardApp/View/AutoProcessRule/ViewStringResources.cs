@@ -8,7 +8,7 @@ namespace ClipboardApp.View.AutoProcessRule {
 
         // Name
         public static string Name { get; set; } = CommonStringResources.Name;
-        // Description
+        // DisplayText
         public static string Description { get; set; } = CommonStringResources.Description;
 
         // Add
