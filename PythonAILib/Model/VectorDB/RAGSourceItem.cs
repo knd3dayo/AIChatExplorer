@@ -61,7 +61,7 @@ namespace PythonAILib.Model.VectorDB {
         public IEnumerable<VectorDBItem>? VectorDBItems {
             get {
                 var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
-                var items = collection.FindAll().Where(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+                var items = collection.Find(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
                 return items;
             }
         }

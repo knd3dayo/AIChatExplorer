@@ -1,7 +1,6 @@
 using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
-using ClipboardApp.Utils;
 using ClipboardApp.View.Folder;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
@@ -153,7 +152,7 @@ namespace ClipboardApp.ViewModel.Search
         // OpenSelectSearchFolderWindowCommand
         // 検索フォルダを選択する
         public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            SearchFolderViewModel? rootFolderViewModel = new(ClipboardFolderUtil.SearchRootFolder);
+            SearchFolderViewModel? rootFolderViewModel = new(FolderManager.SearchRootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchFolder = (ClipboardFolder)folderViewModel.Folder;
                 SearchConditionRule.SearchFolder = (ClipboardFolder)folderViewModel.Folder;
@@ -164,7 +163,7 @@ namespace ClipboardApp.ViewModel.Search
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            SearchFolderViewModel? rootFolderViewModel = new(ClipboardFolderUtil.RootFolder);
+            SearchFolderViewModel? rootFolderViewModel = new(FolderManager.RootFolder);
             FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
                 SearchConditionRule.TargetFolder = (ClipboardFolder)folderViewModel.Folder;
                 TargetFolderPath = folderViewModel.FolderPath;

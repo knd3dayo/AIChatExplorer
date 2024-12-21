@@ -1,47 +1,37 @@
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using NetOffice;
+using Outlook = NetOffice.OutlookApi;
+using NetOffice.OutlookApi.Enums;
+using NetOffice.OutlookApi;
 using ClipboardApp.Factory;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
-using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using System.IO;
 
 namespace ClipboardApp.Model.Folder {
-    public class FileSystemFolder : ClipboardFolder {
+    public  class OutlookFolder : ClipboardFolder {
 
+        private static Outlook.Application? outlookApplication = null;
 
-        private string _fileSystemFolderPath = "";
-        public string FileSystemFolderPath {
+        private static Outlook.MAPIFolder? inboxFolder = null;
+
+        public static Outlook.MAPIFolder InboxFolder {
             get {
-                return _fileSystemFolderPath ?? "";
-            }
-            set {
-                if (_fileSystemFolderPath == null) {
-                    value = "";
+                if (inboxFolder == null) {
+                    outlookApplication = new Outlook.Application();
+                    Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
+                    inboxFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
                 }
-                _fileSystemFolderPath = value;
+                return inboxFolder;
             }
         }
-        public static List<string> TargetMimeTypes { get; set; } = [
-            "text/",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-        ];
-
-        // コンストラクタ
-        public FileSystemFolder() { }
-        protected FileSystemFolder(FileSystemFolder parent, string folderName) : base(parent, folderName) {
-            FolderType = FolderTypeEnum.FileSystem;
-            // ルートフォルダの場合は FileSystemFolderPath = "" とする。それ以外は、親フォルダのFileSystemFolderPath + FolderName
-            if (IsRootFolder) {
-                FileSystemFolderPath = "";
-            } else {
-                string parentFileSystemFolderPath = parent.FileSystemFolderPath ?? "";
-                FileSystemFolderPath = Path.Combine(parentFileSystemFolderPath, folderName);
-            }
-        }
-
+        /*
 
         // ProcessClipboardItem
         public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
@@ -62,18 +52,18 @@ namespace ClipboardApp.Model.Folder {
 
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
             return items.Cast<T>().ToList();
         }
-        public  void SyncItems() {
+        public void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
             }
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
             // ファイルシステム上のファイル一覧
             List<string> fileSystemFilePaths = [];
@@ -112,7 +102,7 @@ namespace ClipboardApp.Model.Folder {
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             return folders.Cast<FileSystemFolder>().ToList();
 
         }
@@ -121,7 +111,7 @@ namespace ClipboardApp.Model.Folder {
 
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             // ファイルシステム上のフォルダのフルパス一覧
             List<string> fileSystemFolderPaths = [];
             // ルートフォルダの場合は、Environment.GetLogicalDrives()を取得
@@ -161,5 +151,7 @@ namespace ClipboardApp.Model.Folder {
             // 自分自身を保存
             this.Save<FileSystemFolder, ClipboardItem>();
         }
+
+        */
     }
 }

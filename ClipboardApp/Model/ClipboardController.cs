@@ -1,5 +1,5 @@
 using System.Reflection;
-using ClipboardApp.Utils;
+using ClipboardApp.Model.Folder;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -100,7 +100,7 @@ namespace ClipboardApp.Model
             if (_clipboard == null) {
                 return;
             }
-            ClipboardFolderUtil.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
+            FolderManager.RootFolder.ProcessClipboardItem(e, _afterClipboardChanged);
 
         }
 

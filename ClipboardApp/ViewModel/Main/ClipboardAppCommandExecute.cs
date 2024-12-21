@@ -20,7 +20,8 @@ using QAChat.ViewModel;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Main
+{
     public class ClipboardAppCommandExecute {
 
         public ClipboardAppCommandExecute(ClipboardItemViewModel clipboardItemViewModel) {
@@ -203,7 +204,7 @@ namespace ClipboardApp.ViewModel.Main {
                     SearchFolder = folder
                 };
             } else {
-                searchConditionRule = ClipboardFolderUtil.GlobalSearchCondition;
+                searchConditionRule = FolderManager.GlobalSearchCondition;
             }
             SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
         }
@@ -544,7 +545,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
 
-            SearchRule rule = ClipboardFolderUtil.GlobalSearchCondition.Copy();
+            SearchRule rule = FolderManager.GlobalSearchCondition.Copy();
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             QAChatStartupProps props = new(clipboardItem) {

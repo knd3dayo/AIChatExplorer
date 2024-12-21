@@ -35,9 +35,9 @@ namespace PythonAILib.Model.Tag {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetTagCollection<TagItem>();
             if (exclude) {
-                return collection.FindAll().Where(x => x.Tag.Contains(tag) == false);
+                return collection.Find(x => x.Tag.Contains(tag) == false);
             } else {
-                return collection.FindAll().Where(x => x.Tag.Contains(tag));
+                return collection.Find(x => x.Tag.Contains(tag));
             }
         }
 

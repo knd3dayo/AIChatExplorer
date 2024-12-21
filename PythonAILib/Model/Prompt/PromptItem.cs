@@ -44,13 +44,13 @@ namespace PythonAILib.Model.Prompt {
         // 名前を指定してPromptItemを取得
         public static PromptItem? GetPromptItemByName(string name) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            return libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name);
+            return libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name);
         }
         // 名前を指定してシステム定義のPromptItemを取得
         public static PromptItem GetSystemPromptItemByName(SystemDefinedPromptNames name) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
-            var item = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(
+            var item = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(
                 x => x.Name == name.ToString() && (
                 x.PromptTemplateType == PromptTemplateTypeEnum.SystemDefined ||
                 x.PromptTemplateType == PromptTemplateTypeEnum.ModifiedSystemDefined)
@@ -73,7 +73,7 @@ namespace PythonAILib.Model.Prompt {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             // TitleGenerationをDBから取得
             string name1 = SystemDefinedPromptNames.TitleGeneration.ToString();
-            PromptItem? titleGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name1);
+            PromptItem? titleGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name1);
 
             if (titleGeneration != null) {
                 libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(titleGeneration.Id);
@@ -96,7 +96,7 @@ namespace PythonAILib.Model.Prompt {
             }
             // BackgroundInformationGenerationをDBから取得
             string name2 = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-            PromptItem? backgroundInformationGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name2);
+            PromptItem? backgroundInformationGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name2);
 
             if (backgroundInformationGeneration != null) {
                 libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(backgroundInformationGeneration.Id);
@@ -119,7 +119,7 @@ namespace PythonAILib.Model.Prompt {
             }
             // SummaryGenerationをDBから取得
             string name3 = SystemDefinedPromptNames.SummaryGeneration.ToString();
-            PromptItem? summaryGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name3);
+            PromptItem? summaryGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name3);
 
             if (summaryGeneration != null) {
                 libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(summaryGeneration.Id);
@@ -142,7 +142,7 @@ namespace PythonAILib.Model.Prompt {
             }
             // TasksGenerationをDBから取得
             string name4 = SystemDefinedPromptNames.TasksGeneration.ToString();
-            PromptItem? TasksGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name4);
+            PromptItem? TasksGeneration = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name4);
 
             if (TasksGeneration != null) {
                 libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(TasksGeneration.Id);
@@ -166,7 +166,7 @@ namespace PythonAILib.Model.Prompt {
 
             // DocumentReliabilityCheckをDBから取得
             string name5 = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
-            PromptItem? DocumentReliabilityCheck = libManager.DataFactory.GetPromptCollection<PromptItem>().FindAll().FirstOrDefault(x => x.Name == name5);
+            PromptItem? DocumentReliabilityCheck = libManager.DataFactory.GetPromptCollection<PromptItem>().FindOne(x => x.Name == name5);
             if (DocumentReliabilityCheck != null) {
                 libManager.DataFactory.GetPromptCollection<PromptItem>().Delete(DocumentReliabilityCheck.Id);
                 DocumentReliabilityCheck = null;

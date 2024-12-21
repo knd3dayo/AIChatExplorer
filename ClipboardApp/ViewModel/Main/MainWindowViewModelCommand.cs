@@ -53,22 +53,21 @@ namespace ClipboardApp {
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand => new((routedEventArgs) => {
-            // ListBoxの場合
-            if (routedEventArgs.OriginalSource is ListBox) {
-                ListBox listBox = (ListBox)routedEventArgs.OriginalSource;
-                ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)listBox.SelectedItem;
-                SelectedItem = clipboardItemViewModel;
-                // SelectedItemsをMainWindowViewModelにセット
-                SelectedItems.Clear();
-                foreach (ClipboardItemViewModel item in listBox.SelectedItems) {
-                    SelectedItems.Add(item);
-                }
-            }
+
             // DataGridの場合
             if (routedEventArgs.OriginalSource is DataGrid) {
+                // 前回選択していたTabIndexを取得
+                int lastSelectedIndex = SelectedItem?.SelectedTabIndex ?? 0;
+
                 DataGrid dataGrid = (DataGrid)routedEventArgs.OriginalSource;
-                ClipboardItemViewModel clipboardItemViewModel = (ClipboardItemViewModel)dataGrid.SelectedItem;
+                ClipboardItemViewModel? clipboardItemViewModel = (ClipboardItemViewModel)dataGrid.SelectedItem;
+                if (clipboardItemViewModel == null) {
+                    return;
+                }
                 SelectedItem = clipboardItemViewModel;
+                // SelectedTabIndexを更新する処理
+                SelectedItem.SelectedTabIndex = lastSelectedIndex;
+
                 // SelectedItemsをMainWindowViewModelにセット
                 SelectedItems.Clear();
                 foreach (ClipboardItemViewModel item in dataGrid.SelectedItems) {

@@ -1,7 +1,7 @@
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Utils;
 using LiteDB;
+using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
@@ -39,7 +39,19 @@ namespace ClipboardApp.Model.Search {
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
         public override List<T> GetItems<T>() {
-            return ClipboardFolderUtil.GetSearchFolderItems(this).Cast<T>().ToList();
+            List<ClipboardItem> _items = [];
+            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+            // 検索フォルダの場合は、SearchConditionを適用して取得
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            // フォルダに検索条件が設定されている場合
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(this);
+            if (searchConditionRule != null && searchConditionRule.TargetFolder != null) {
+                // 検索対象フォルダのアイテムを検索する。
+                _items = [.. searchConditionRule.TargetFolder.SearchItems(searchConditionRule.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
+
+            }
+            // 検索対象フォルダパスがない場合は何もしない。
+            return _items.Cast<T>().ToList();
         }
 
         // 子フォルダ BSonMapper.GlobalでIgnore設定しているので、LiteDBには保存されない

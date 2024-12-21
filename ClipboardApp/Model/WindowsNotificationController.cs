@@ -1,5 +1,4 @@
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Utils;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
 using Windows.Foundation.Metadata;
@@ -64,7 +63,7 @@ namespace ClipboardApp.Model
                             SourceApplicationTitle = displayName,
                             Content = text
                         };
-                        ClipboardFolderUtil.ProcessClipboardItem(clipboardItem, (item) => {
+                        FolderManager.ProcessClipboardItem(clipboardItem, (item) => {
                             afterUpdate(item);
                         });
 

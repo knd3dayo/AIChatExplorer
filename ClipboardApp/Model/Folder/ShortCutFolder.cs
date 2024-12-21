@@ -15,7 +15,7 @@ namespace ClipboardApp.Model.Folder {
 
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             // ファイルシステム上のフォルダのフルパス一覧
             List<string> fileSystemFolderPaths = [];
             // ルートフォルダの場合、配下のフォルダはショートカット。何もしない。

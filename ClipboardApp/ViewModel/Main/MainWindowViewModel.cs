@@ -77,6 +77,7 @@ namespace ClipboardApp {
 
         }
 
+ 
         public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];
 
         public void AddTabItem(ClipboardAppTabContainer tabItem) {

@@ -42,7 +42,7 @@ namespace PythonAILib.Model.Content {
         public virtual List<T> GetChildren<T>() where T : ContentFolder {
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
-            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             return folders.Cast<T>().ToList();
         }
 
@@ -55,7 +55,7 @@ namespace PythonAILib.Model.Content {
                 }
             }
             // folderのアイテムを削除
-            var items = PythonAILibManager.Instance.DataFactory.GetItemCollection<T2>().FindAll().Where(x => x.CollectionId == folder.Id);
+            var items = PythonAILibManager.Instance.DataFactory.GetItemCollection<T2>().Find(x => x.CollectionId == folder.Id);
             foreach (var item in items) {
                 item.Delete();
             }
@@ -113,7 +113,7 @@ namespace PythonAILib.Model.Content {
 
         public virtual List<T> GetItems<T>() where T : ContentItem {
             var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<T>();
-            var items = collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
+            var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
             return items.Cast<T>().ToList();
         }
         #region ベクトル検索

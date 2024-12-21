@@ -5,8 +5,8 @@ using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Search;
-using ClipboardApp.Utils;
 using LiteDB;
+using NetOffice.OutlookApi;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -15,7 +15,8 @@ using QAChat.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folder
+{
     public partial class ClipboardFolder : ContentFolder {
 
 
@@ -57,11 +58,20 @@ namespace ClipboardApp.Model.Folder {
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
         public override List<T> GetItems<T>() {
-            if (FolderType == FolderTypeEnum.Search) {
-                return ClipboardFolderUtil.GetSearchFolderItems(this).Cast<T>().ToList(); 
+            List<ClipboardItem> _items = [];
+            // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
+            // 検索フォルダの場合は、SearchConditionを適用して取得
+            IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();
+            // 通常のフォルダの場合で、GlobalSearchConditionが設定されている場合
+            if (FolderManager.GlobalSearchCondition.SearchCondition != null && FolderManager.GlobalSearchCondition.SearchCondition.IsEmpty() == false) {
+                _items = [.. SearchItems(FolderManager.GlobalSearchCondition.SearchCondition).OrderByDescending(x => x.UpdatedAt)];
+
+            } else {
+                // 通常のフォルダの場合で、GlobalSearchConditionが設定されていない場合
+                _items = [.. ClipboardDatabaseController.GetItemCollection<ClipboardItem>().Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
             }
-            List<ClipboardItem> items = ClipboardFolderUtil.GetNormalFolderItems(this);
-            return items.Cast<T>().ToList();
+
+            return _items.Cast<T>().ToList();
         }
 
         public override ClipboardFolder CreateChild(string folderName) {
@@ -104,7 +114,7 @@ namespace ClipboardApp.Model.Folder {
 
             // folder内のアイテムを保持するコレクションを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetItemCollection<ClipboardItem>();
-            var clipboardItems = collection.FindAll().Where(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt);
+            var clipboardItems = collection.Find(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt);
             // Filterの結果を結果に追加
             result = Filter(clipboardItems, searchCondition);
 
@@ -112,7 +122,7 @@ namespace ClipboardApp.Model.Folder {
             if (searchCondition.IsIncludeSubFolder) {
                 // 対象フォルダの子フォルダを取得
                 var folderCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>();
-                var childFolders = folderCollection.FindAll().Where(x => x.ParentId == this.Id).OrderBy(x => x.FolderName);
+                var childFolders = folderCollection.Find(x => x.ParentId == this.Id).OrderBy(x => x.FolderName);
                 foreach (var childFolder in childFolders) {
                     // サブフォルダのアイテムを検索
                     var subFolderResult = childFolder.SearchItems(searchCondition);
@@ -311,7 +321,7 @@ namespace ClipboardApp.Model.Folder {
                 item.Save();
                 if (executeAutoProcess) {
                     // システム共通自動処理を適用
-                    ClipboardFolderUtil.ProcessClipboardItem(item, (processedItem) => {
+                    FolderManager.ProcessClipboardItem(item, (processedItem) => {
                         // 自動処理後のアイテムを保存
                         item.Save();
                     });
@@ -324,11 +334,11 @@ namespace ClipboardApp.Model.Folder {
         public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
 
             // Get the cut/copied text.
-            List<ClipboardItem> items = ClipboardFolderUtil.CreateClipboardItem(this, e);
+            List<ClipboardItem> items = FolderManager.CreateClipboardItem(this, e);
 
             foreach (var item in items) {
                 // Process clipboard clipboardItem
-                ClipboardFolderUtil.ProcessClipboardItem(item, _afterClipboardChanged);
+                FolderManager.ProcessClipboardItem(item, _afterClipboardChanged);
             }
         }
         #endregion

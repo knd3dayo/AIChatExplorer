@@ -6,7 +6,6 @@ using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Search;
-using ClipboardApp.Utils;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -14,7 +13,8 @@ using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder {
+namespace ClipboardApp.ViewModel.Folder
+{
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
 
         #region abstract
@@ -98,7 +98,7 @@ namespace ClipboardApp.ViewModel.Folder {
             }
 
             // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = ClipboardFolderUtil.GlobalSearchCondition;
+            SearchRule? searchConditionRule = FolderManager.GlobalSearchCondition;
             if (ClipboardItemFolder.FolderType == FolderTypeEnum.Search) {
                 searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
             }
@@ -161,7 +161,7 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<ClipboardFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
             // ショートカット登録
             // ShortCutRootFolderを取得
-            FileSystemFolder shortCutRootFolder = ClipboardFolderUtil.ShortcutRootFolder;
+            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
             // ショートカットフォルダを作成
             ShortCutFolder subFolder = new() {
                 FolderType = FolderTypeEnum.ShortCut,
@@ -264,8 +264,8 @@ namespace ClipboardApp.ViewModel.Folder {
         /// <param name="parameter"></param>        
         public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
-            if (folderViewModel.ClipboardItemFolder.Id == ClipboardFolderUtil.RootFolder.Id
-                || folderViewModel.FolderPath == ClipboardFolderUtil.SEARCH_ROOT_FOLDER_NAME) {
+            if (folderViewModel.ClipboardItemFolder.Id == FolderManager.RootFolder.Id
+                || folderViewModel.FolderPath == FolderManager.SEARCH_ROOT_FOLDER_NAME) {
                 LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
                 return;
             }

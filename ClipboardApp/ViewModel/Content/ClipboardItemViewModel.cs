@@ -7,14 +7,13 @@ using ClipboardApp.View.ClipboardItem;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
-using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ClipboardAppViewModelBase {
 
         // 最後に選択されたタブのインデックス
-        public static int LastSelectedTabIndex = 0;
+        // public static int LastSelectedTabIndex = 0;
 
         // コンストラクタ
         public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, Model.ClipboardItem clipboardItem) {
@@ -25,12 +24,10 @@ namespace ClipboardApp.ViewModel.Content {
             Tags = ClipboardItem.Tags;
             SourceApplicationTitleText = ClipboardItem.SourceApplicationTitle;
             Commands = new ClipboardAppCommandExecute(this);
-
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(SourceApplicationTitleText));
-
             OnPropertyChanged(nameof(TextTabVisibility));
             OnPropertyChanged(nameof(FileTabVisibility));
 
@@ -53,7 +50,7 @@ namespace ClipboardApp.ViewModel.Content {
             }
         }
 
-        public string Content { get => ClipboardItem.Content; set { ClipboardItem.Content = value;  } }
+        public string Content { get => ClipboardItem.Content; set { ClipboardItem.Content = value; } }
 
 
         // ChatItemsText
@@ -63,7 +60,7 @@ namespace ClipboardApp.ViewModel.Content {
         public string Description { get => ClipboardItem.Description; set { ClipboardItem.Description = value; } }
 
         // Tags
-        public HashSet<string> Tags { get => ClipboardItem.Tags; set { ClipboardItem.Tags = value; }  }
+        public HashSet<string> Tags { get => ClipboardItem.Tags; set { ClipboardItem.Tags = value; } }
 
         public string ToolTipString {
             get {
@@ -82,16 +79,16 @@ namespace ClipboardApp.ViewModel.Content {
         public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ClipboardItem.Description) && ClipboardItem.Tags.Count() == 0));
 
         // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
-        public Visibility ChatItemsTextTabVisibility  => Tools.BoolToVisibility(string.IsNullOrEmpty(ClipboardItem.ChatItemsText) == false);
+        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ClipboardItem.ChatItemsText) == false);
 
         // テキストタブの表示可否
-        public Visibility TextTabVisibility  => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Text);
+        public Visibility TextTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Text);
 
         // ファイルタブの表示可否
-        public Visibility FileTabVisibility  => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
+        public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
 
         // ImageVisibility
-        public Visibility ImageVisibility  => Tools.BoolToVisibility(ClipboardItem.IsImage());
+        public Visibility ImageVisibility => Tools.BoolToVisibility(ClipboardItem.IsImage());
 
 
         public string DescriptionText {
@@ -136,14 +133,14 @@ namespace ClipboardApp.ViewModel.Content {
         public ContentTypes.ContentItemTypes ContentType => ClipboardItem.ContentType;
 
         // SelectedTabIndex
-        private int selectedTabIndex = LastSelectedTabIndex;
+        private int selectedTabIndex = 0;
         public int SelectedTabIndex {
             get {
                 return selectedTabIndex;
             }
             set {
                 selectedTabIndex = value;
-                LastSelectedTabIndex = value;
+                // LastSelectedTabIndex = value;
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
