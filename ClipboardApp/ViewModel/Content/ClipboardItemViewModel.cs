@@ -53,17 +53,17 @@ namespace ClipboardApp.ViewModel.Content {
             }
         }
 
-        public string Content { get; set; }
+        public string Content { get => ClipboardItem.Content; set { ClipboardItem.Content = value;  } }
 
 
         // ChatItemsText
         public string ChatItemsText => ClipboardItem.ChatItemsText;
 
         // DisplayText
-        public string Description { get; set; }
+        public string Description { get => ClipboardItem.Description; set { ClipboardItem.Description = value; } }
 
         // Tags
-        public HashSet<string> Tags { get; set; }
+        public HashSet<string> Tags { get => ClipboardItem.Tags; set { ClipboardItem.Tags = value; }  }
 
         public string ToolTipString {
             get {
@@ -108,7 +108,7 @@ namespace ClipboardApp.ViewModel.Content {
         // Images
         public BitmapImage? Image => ClipboardItem.BitmapImage;
 
-        public string SourceApplicationTitleText { get; set; }
+        public string SourceApplicationTitleText { get => ClipboardItem.SourceApplicationTitle; set { ClipboardItem.SourceApplicationTitle = value; } }
 
         // 表示用の文字列
         public string? HeaderText => ClipboardItem.HeaderText;
