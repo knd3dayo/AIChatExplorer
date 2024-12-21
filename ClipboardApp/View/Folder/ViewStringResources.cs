@@ -69,5 +69,24 @@ namespace ClipboardApp.View.Folder {
 
         // ImportTarget
         public static string ImportTarget { get; set; } = "インポート対象";
+
+        // EditClipboardFolder
+        public static string EditClipboardFolder { get; set; } = CommonStringResources.EditClipboardFolder;
+
+        
+        // InputDescriptionOfThisFolder
+        public static string InputDescriptionOfThisFolder { get; set; } = CommonStringResources.InputDescriptionOfThisFolder;
+
+        // DetailSettings
+        public static string DetailSettings { get; set; } = CommonStringResources.DetailSettings;
+
+        // AddMyFolderToTargetVectorDB
+        public static string AddMyFolderToTargetVectorDB { get; set; } = CommonStringResources.AddMyFolderToTargetVectorDB;
+
+        // ClickHereToAddVectorDB
+        public static string ClickHereToAddVectorDB { get; set; } = CommonStringResources.ClickHereToAddVectorDB;
+
+        // ExcludeFromList
+        public static string ExcludeFromList { get; set; } = CommonStringResources.ExcludeFromList;
     }
 }

@@ -9,7 +9,8 @@
     xmlns:local="clr-namespace:ClipboardApp.ViewModel.Folder"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.EditClipboardFolder, Mode=OneTime}"
+    xmlns:res="clr-namespace:ClipboardApp.View.Folder"
+    Title="{x:Static res:ViewStringResources.EditClipboardFolder}"
     Width="800"
     Height="400"
     d:DataContext="{d:DesignInstance Type=local:FolderEditWindowViewModel}"
@@ -86,7 +87,7 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Name, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Name}" />
                     <TextBox
                         Grid.Row="0"
                         Grid.Column="1"
@@ -97,16 +98,16 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{Binding StringResources.Description, Mode=OneTime}" />
+                        Text="{x:Static res:ViewStringResources.Description}" />
                     <editorControl:MyTextBox
                         Grid.Row="1"
                         Grid.Column="1"
                         Margin="10,10,10,10"
-                        materialDesign:HintAssist.Hint="{Binding StringResources.InputDescriptionOfThisFolder, Mode=OneTime}"
+                        materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.InputDescriptionOfThisFolder}"
                         Text="{Binding FolderViewModel.Description}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="{Binding StringResources.DetailSettings}">
+            <TabItem Header="{x:Static res:ViewStringResources.DetailSettings}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -116,7 +117,7 @@
                     <CheckBox
                         Grid.Row="0"
                         Margin="10,10,10,10"
-                        Content="{Binding StringResources.AddMyFolderToTargetVectorDB, Mode=OneTime}"
+                        Content="{x:Static res:ViewStringResources.AddMyFolderToTargetVectorDB}"
                         IsChecked="{Binding IncludeInReferenceVectorDBItems}" />
                     <ListBox
                         Grid.Row="2"
@@ -135,7 +136,7 @@
                         </i:Interaction.Triggers>
                         <ListBox.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
+                                <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{x:Static res:ViewStringResources.ExcludeFromList}" />
                             </ContextMenu>
                         </ListBox.ContextMenu>
                     </ListBox>
@@ -148,7 +149,7 @@
                     Width="250"
                     Margin="10,0,10,0"
                     Command="{Binding AddVectorDBItemCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.ClickHereToAddVectorDB, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}"
                     Visibility="{Binding VectorDBItemButtonVisibility}" />
             </DockPanel>
             <DockPanel HorizontalAlignment="Right">
@@ -157,13 +158,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding CreateCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>
