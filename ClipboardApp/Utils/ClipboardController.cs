@@ -1,10 +1,10 @@
 using System.Reflection;
+using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Utils {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -13,8 +13,16 @@ namespace ClipboardApp.Model
         // 最後に処理したクリップボードのEventArgs
         public static ClipboardChangedEventArgs? LastClipboardChangedEventArgs { get; set; } = null;
 
+        private static ClipboardController? _instance;
+        public static ClipboardController Instance { 
+            get {
+                _instance ??= new ClipboardController();
+                return _instance;
+            }
+        }
+
         // コンストラクタ
-        public ClipboardController() {
+        private ClipboardController() {
             // コンストラクタ
             _clipboard = new SharpClipboard();
             _clipboard.ClipboardChanged += ClipboardChanged;

@@ -75,13 +75,6 @@ namespace ClipboardApp.ViewModel.Folder
                 return ClipboardItemFolder.IsRootFolder == false;
             }
         }
-        // - コンテキストメニューの編集を表示するかどうか xamlで使う
-        public bool IsEditVisible {
-            get {
-                // RootFolderは編集不可
-                return ClipboardItemFolder.IsRootFolder == false;
-            }
-        }
 
         public ClipboardFolderViewModel? ParentFolderViewModel { get; set; }
 

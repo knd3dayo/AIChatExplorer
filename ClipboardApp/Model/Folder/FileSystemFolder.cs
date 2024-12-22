@@ -42,7 +42,6 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-
         // ProcessClipboardItem
         public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
             // ローカルファイルのフォルダは処理しない

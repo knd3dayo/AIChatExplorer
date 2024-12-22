@@ -33,6 +33,12 @@ namespace ClipboardApp.ViewModel {
             }
         }
 
+        public bool IsNameEditable {
+            get {
+                return Folder.IsRootFolder == false;
+            }
+
+        }
         // フォルダ作成コマンドの実装
         public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する

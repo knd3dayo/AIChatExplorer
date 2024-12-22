@@ -16,8 +16,9 @@ namespace QAChat.Resource {
 
         #region FolderView related
         // Add my folder to target vector DB
-        public override string AddMyFolderToTargetVectorDB { get; } = "Add my folder to target vector DB";
 
+        // AddVectorDBForSaveToReferenceVectorDB
+        public override string AddVectorDBForSaveToReferenceVectorDB { get; } = "Add VectorDB for save to ReferenceVectorDB";
 
         // Input description of this folder here
         public override string InputDescriptionOfThisFolder { get; } = "Input description of this folder here";

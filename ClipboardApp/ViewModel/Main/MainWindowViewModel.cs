@@ -15,7 +15,8 @@ using QAChat;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.AutoGen;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
@@ -55,7 +56,7 @@ namespace ClipboardApp {
             BackupController.BackupNow();
 
             // ClipboardControllerのOnClipboardChangedに処理をセット
-            ClipboardController.OnClipboardChanged = (e) => {
+            ClipboardController.Instance.OnClipboardChanged = (e) => {
                 // CopiedItemsをクリア
                 CopiedObjects.Clear();
             };
@@ -65,8 +66,9 @@ namespace ClipboardApp {
                 DataContext = this
             };
 
-            ClipboardAppTabContainer container = new("main", mainPanel);
-            container.CloseButtonVisibility = Visibility.Collapsed;
+            ClipboardAppTabContainer container = new("main", mainPanel) {
+                CloseButtonVisibility = Visibility.Collapsed
+            };
             TabItems.Add(container);
 
             // AutoGenPropertiesの初期化
@@ -131,9 +133,6 @@ namespace ClipboardApp {
         public RootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
-
-        // ClipboardController
-        public static ClipboardController ClipboardController { get; } = new();
 
         // プログレスインジケータ表示更新用のアクション
         // 

@@ -63,7 +63,7 @@ namespace ClipboardApp.Model
                             SourceApplicationTitle = displayName,
                             Content = text
                         };
-                        FolderManager.ProcessClipboardItem(clipboardItem, (item) => {
+                        ClipboardFolder.ProcessClipboardItem(clipboardItem, (item) => {
                             afterUpdate(item);
                         });
 

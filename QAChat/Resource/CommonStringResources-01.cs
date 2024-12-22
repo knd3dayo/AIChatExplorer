@@ -1149,5 +1149,8 @@ namespace QAChat.Resource {
 
         // デバッグ用のコマンド生成
         public virtual string GenerateDebugCommand { get; } = "デバッグ用のコマンド生成";
+
+        // VectorDBSettings
+        public virtual string VectorDBSettings { get; } = "ベクトルDB設定";
     }
 }

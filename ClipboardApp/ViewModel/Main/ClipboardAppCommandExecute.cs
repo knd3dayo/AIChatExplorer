@@ -107,7 +107,7 @@ namespace ClipboardApp.ViewModel.Main
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsClipboardMonitoringActive = !model.IsClipboardMonitoringActive;
             if (model.IsClipboardMonitoringActive) {
-                MainWindowViewModel.ClipboardController.Start(async (clipboardItem) => {
+                ClipboardController.Instance.Start(async (clipboardItem) => {
                     // Process when a clipboard item is added
                     await Task.Run(() => {
                         model.RootFolderViewModelContainer.RootFolderViewModel?.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, clipboardItem));
@@ -118,7 +118,7 @@ namespace ClipboardApp.ViewModel.Main
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartClipboardWatchMessage);
             } else {
-                MainWindowViewModel.ClipboardController.Stop();
+                ClipboardController.Instance.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopClipboardWatchMessage);
             }
             // Notification
@@ -141,7 +141,7 @@ namespace ClipboardApp.ViewModel.Main
                 });
                 LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
             } else {
-                MainWindowViewModel.ClipboardController.Stop();
+                ClipboardController.Instance.Stop();
                 LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
             }
             // Notification
@@ -327,7 +327,7 @@ namespace ClipboardApp.ViewModel.Main
             }
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
             try {
-                MainWindowViewModel.ClipboardController.SetDataObject(SelectedItem.ClipboardItem);
+                ClipboardController.Instance.SetDataObject(SelectedItem.ClipboardItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
             } catch (Exception e) {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";
@@ -512,7 +512,7 @@ namespace ClipboardApp.ViewModel.Main
                     vectorDBItems.Add(vectorDBItemBase);
                 });
             };
-            vectorSearchWindowViewModel.VectorDBItem = folder.GetVectorDBItem();
+            vectorSearchWindowViewModel.VectorDBItem = folder.MainVectorDBItem;
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
 

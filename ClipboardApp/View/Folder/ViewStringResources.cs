@@ -77,16 +77,25 @@ namespace ClipboardApp.View.Folder {
         // InputDescriptionOfThisFolder
         public static string InputDescriptionOfThisFolder { get; set; } = CommonStringResources.InputDescriptionOfThisFolder;
 
-        // DetailSettings
-        public static string DetailSettings { get; set; } = CommonStringResources.DetailSettings;
+        // VectorDBSettings
+        public static string VectorDBSettings { get; set; } = CommonStringResources.VectorDBSettings;
 
         // AddMyFolderToTargetVectorDB
-        public static string AddMyFolderToTargetVectorDB { get; set; } = CommonStringResources.AddMyFolderToTargetVectorDB;
+        public static string AddMyFolderToTargetVectorDB { get; set; } = CommonStringResources.AddVectorDBForSaveToReferenceVectorDB;
 
         // ClickHereToAddVectorDB
         public static string ClickHereToAddVectorDB { get; set; } = CommonStringResources.ClickHereToAddVectorDB;
 
         // ExcludeFromList
         public static string ExcludeFromList { get; set; } = CommonStringResources.ExcludeFromList;
+
+        // BasicSettings
+        public static string BasicSettings { get; set; } = CommonStringResources.BasicSettings;
+
+        // 保存用ベクトルDB
+        public static string SaveVectorDB { get; set; } = "保存用ベクトルDB";
+
+        // 参照用ベクトルDB
+        public static string ReferenceVectorDB { get; set; } = "参照用ベクトルDB";
     }
 }

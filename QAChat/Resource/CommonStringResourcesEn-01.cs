@@ -964,5 +964,10 @@ namespace QAChat.Resource {
         // デバッグ用のコマンド生成
         public override string GenerateDebugCommand { get; } = "Generate Debug Command";
 
+        // VectorDBSettings
+        public override string VectorDBSettings { get; } = "Vector DB Settings";
+
+
+
     }
 }

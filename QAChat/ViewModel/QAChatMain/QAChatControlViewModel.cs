@@ -222,11 +222,13 @@ namespace QAChat.ViewModel.QAChatMain {
             QAChatStartupProps.ContentItem.ChatItems = [];
             OnPropertyChanged(nameof(ChatHistory));
         });
+
         // 本文を再読み込みコマンド
         public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";
             OnPropertyChanged(nameof(InputText));
         });
+
         // 本文をクリアコマンド
         public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
             InputText = "";

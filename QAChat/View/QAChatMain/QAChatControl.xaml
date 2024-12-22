@@ -167,7 +167,7 @@
                         </ItemsControl.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding DisplayText}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <i:Interaction.Triggers>

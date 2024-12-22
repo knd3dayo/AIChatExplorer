@@ -40,7 +40,7 @@ namespace ClipboardApp.Model.AutoProcess
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
-                VectorDBItems = [clipboardFolder.GetVectorDBItem()]
+                VectorDBItems = [clipboardFolder.MainVectorDBItem]
             };
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });

@@ -158,7 +158,7 @@ namespace QAChat.ViewModel.VectorDB {
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
             else if (SelectedTabIndex == 1) {
-                VectorDBItem? item = FolderViewModel?.Folder.GetVectorDBItem();
+                VectorDBItem? item = FolderViewModel?.Folder.MainVectorDBItem;
                 if (item == null) {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;

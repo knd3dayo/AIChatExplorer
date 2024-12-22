@@ -379,7 +379,7 @@ namespace PythonAILib.Model.Content {
 
 
         public virtual VectorDBItem GetMainVectorDBItem() {
-            return GetFolder<ContentFolder>().GetVectorDBItem();
+            return GetFolder<ContentFolder>().MainVectorDBItem;
         }
         // 参照用のベクトルDBのリストのプロパティ
         private List<VectorDBItem> _referenceVectorDBItems = [];

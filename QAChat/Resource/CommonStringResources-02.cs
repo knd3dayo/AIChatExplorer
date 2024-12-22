@@ -415,8 +415,8 @@ namespace QAChat.Resource {
         #endregion
 
         #region FolderView関連
-        // 自フォルダを参照先ベクトルDBに追加
-        public virtual string AddMyFolderToTargetVectorDB { get; } = "自フォルダを参照先ベクトルDBに追加";
+        // 参照先ベクトルDBに保存用ベクトルDBも追加する
+        public virtual string AddVectorDBForSaveToReferenceVectorDB { get; } = "参照先ベクトルDBに保存用ベクトルDBも追加する";
 
         // こにフォルダの説明を入力
         public virtual string InputDescriptionOfThisFolder { get; } = "こにフォルダの説明を入力";

@@ -16,7 +16,6 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 MenuItem editMenuItem = new() {
                     Header = StringResources.Edit,
                     Command = ClipboardFolderViewModel.EditFolderCommand,
-                    IsEnabled = ClipboardFolderViewModel.IsEditVisible,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(editMenuItem);

@@ -2,6 +2,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -16,12 +17,12 @@ namespace PythonAILib.Model.VectorDB {
     public class VectorDBItem {
 
         // システム共通のベクトルDBの名前
-        public readonly static string SystemCommonVectorDBName = "SystemCommonVectorDB";
+        public readonly static string SystemCommonVectorDBName = "default";
         // デフォルトのコレクション名
         public readonly static string DefaultCollectionName = "ai_app_default_collection";
 
         // システム共通のベクトルDB
-        private static VectorDBItem GetSystemVectorDB() {
+        private static VectorDBItem GetDefaultVectorDB() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var item = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindOne(item => item.Name == SystemCommonVectorDBName);
             if (item == null) {
@@ -119,6 +120,37 @@ namespace PythonAILib.Model.VectorDB {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
+        [BsonIgnore]
+        public string DisplayText {
+            get {
+                if (string.IsNullOrEmpty(CollectionName)) {
+                    return Name;
+                }
+                if (CollectionName == DefaultCollectionName) {
+                    return Name;
+                }
+                // ContentFolderを取得
+                var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+                ContentFolder? folder = collection.FindById(new ObjectId(CollectionName));
+                if (folder == null) {
+                    return Name;
+                }
+
+                return $"{Name}/{folder.FolderName}";
+            }
+        }
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            VectorDBItem other = (VectorDBItem)obj;
+            return VectorDBURL == other.VectorDBURL;
+        }
+        public override int GetHashCode() {
+            return VectorDBURL.GetHashCode();
+        }
+
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
@@ -145,11 +177,11 @@ namespace PythonAILib.Model.VectorDB {
 
         // Json文字列化する
         public static string ToJson(IEnumerable<VectorDBItem> items) {
-            return JsonSerializer.Serialize(items, JsonSerializerOptions);
+            return System.Text.Json.JsonSerializer.Serialize(items, JsonSerializerOptions);
         }
         // Json文字列化する
         public static string ToJson(VectorDBItem item) {
-            return JsonSerializer.Serialize(item, JsonSerializerOptions);
+            return System.Text.Json.JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
         public static IEnumerable<VectorDBItem> GetItems() {
@@ -199,19 +231,8 @@ namespace PythonAILib.Model.VectorDB {
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
 
-        public static VectorDBItem GetFolderVectorDBItem(ContentFolder folder) {
-            VectorDBItem systemVectorItem = VectorDBItem.GetSystemVectorDB();
-            // NameとDescriptionとCollectionNameを設定する
-            systemVectorItem.Name = folder.FolderName;
-            systemVectorItem.Description = folder.Description;
-            systemVectorItem.CollectionName = folder.Id.ToString();
-            systemVectorItem.FolderId = folder.Id.ToString();
-
-            return systemVectorItem;
-        }
-
         public static VectorDBItem GetFolderVectorDBItem() {
-            VectorDBItem systemVectorItem = VectorDBItem.GetSystemVectorDB();
+            VectorDBItem systemVectorItem = VectorDBItem.GetDefaultVectorDB();
             // NameとDescriptionとCollectionNameを設定する
             systemVectorItem.Name = SystemCommonVectorDBName;
             systemVectorItem.Description = SystemCommonVectorDBName;
@@ -219,8 +240,6 @@ namespace PythonAILib.Model.VectorDB {
 
             return systemVectorItem;
         }
-
-
 
         public static List<VectorDBItem> GetExternalVectorDBItems() {
             var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
@@ -230,6 +249,16 @@ namespace PythonAILib.Model.VectorDB {
             }
             return new(items);
         }
+
+        public static List<VectorDBItem> GetVectorDBItems() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            var items = collection.FindAll();
+            if (items == null) {
+                return [];
+            }
+            return new(items);
+        }
+
 
     }
 }

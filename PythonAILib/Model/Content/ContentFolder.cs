@@ -32,18 +32,54 @@ namespace PythonAILib.Model.Content {
             }
         }
 
+        // MainVectorDBのプロパティ
+        private VectorDBItem? _mainVectorDBItem;
+        public VectorDBItem MainVectorDBItem {
+            get {
+                var parentFolder = GetParent<ContentFolder>();
+                if (parentFolder == null) {
+                    _mainVectorDBItem ??= VectorDBItem.GetFolderVectorDBItem();
+                } else {
+                    _mainVectorDBItem = parentFolder.MainVectorDBItem;
+                }
+                _mainVectorDBItem.Description = Description;
+                _mainVectorDBItem.CollectionName = Id.ToString();
+                _mainVectorDBItem.FolderId = Id.ToString();
+
+                return _mainVectorDBItem;
+            }
+            set {
+                var parentFolder = GetParent<ContentFolder>();
+                if (parentFolder == null) {
+                    _mainVectorDBItem = value;
+                } else {
+                    _mainVectorDBItem = parentFolder.MainVectorDBItem;
+                }
+            }
+        }
+
         // フォルダの絶対パス ファイルシステム用
         public virtual string FolderPath { get; } = "";
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";
         // Description
         public virtual string Description { get; set; } = "";
+
         // 子フォルダ
         public virtual List<T> GetChildren<T>() where T : ContentFolder {
             // DBからParentIDが自分のIDのものを取得
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
             var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             return folders.Cast<T>().ToList();
+        }
+
+        // 親フォルダ
+        public virtual T? GetParent<T>() where T : ContentFolder {
+            if (ParentId == ObjectId.Empty) {
+                return null;
+            }
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
+            return collection.FindById(ParentId);
         }
 
         // フォルダを削除
@@ -78,23 +114,14 @@ namespace PythonAILib.Model.Content {
 
         // 保存
         public virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
-            // VectorDBItemの情報をアップデート
-            VectorDBItem vectorDBItem = GetVectorDBItem();
-            vectorDBItem.Name = FolderName;
-            vectorDBItem.Description = Description;
-            vectorDBItem.CollectionName = Id.ToString();
-            vectorDBItem.FolderId = Id.ToString();
-
-            // Save
-            vectorDBItem.Save();
-
+            
             // ReferenceVectorDBItemsに自分自身を追加
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
-                AddVectorDBItem(GetVectorDBItem());
+                AddVectorDBItem(MainVectorDBItem);
             } else {
                 // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
-                RemoveVectorDBItem(GetVectorDBItem());
+                RemoveVectorDBItem(MainVectorDBItem);
             }
 
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
@@ -135,11 +162,10 @@ namespace PythonAILib.Model.Content {
         public void DeleteVectorDBCollection() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            VectorDBItem vectorDBItem = GetVectorDBItem();
 
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = openAIProperties,
-                VectorDBItems = [vectorDBItem]
+                VectorDBItems = [MainVectorDBItem]
             };
 
             PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
@@ -156,10 +182,6 @@ namespace PythonAILib.Model.Content {
                 // Save
                 item.Save();
             }
-        }
-        // SystemCommonVectorDBを取得する。
-        public VectorDBItem GetVectorDBItem() {
-            return VectorDBItem.GetFolderVectorDBItem(this);
         }
 
         #endregion
