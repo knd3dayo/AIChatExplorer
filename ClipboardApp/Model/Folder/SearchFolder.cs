@@ -1,12 +1,11 @@
 using ClipboardApp.Factory;
-using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Search;
 using LiteDB;
-using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Search {
+namespace ClipboardApp.Model.Folder {
     public partial class SearchFolder : ClipboardFolder {
 
 

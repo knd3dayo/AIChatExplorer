@@ -2,7 +2,8 @@ using ClipboardApp.Factory;
 using ClipboardApp.Model.Search;
 using QAChat.Resource;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folder
+{
     public class FolderManager {
 
         public static readonly string CLIPBOARD_ROOT_FOLDER_NAME = CommonStringResources.Instance.Clipboard;

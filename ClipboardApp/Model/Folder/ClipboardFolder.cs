@@ -74,11 +74,6 @@ namespace ClipboardApp.Model.Folder {
             return _items.Cast<T>().ToList();
         }
 
-        public override ClipboardFolder CreateChild(string folderName) {
-            ClipboardFolder child = new(this, folderName);
-            return child;
-        }
-
         // アイテムを追加する処理
         public override void AddItem(ContentItem item) {
             if (item is not ClipboardItem) {
@@ -100,6 +95,10 @@ namespace ClipboardApp.Model.Folder {
                 result.Save();
                 LogWrapper.Info(CommonStringResources.Instance.AutoProcessingApplied);
             }
+        }
+        public override ClipboardFolder CreateChild(string folderName) {
+            ClipboardFolder child = new(this, folderName);
+            return child;
         }
 
         #region 検索
