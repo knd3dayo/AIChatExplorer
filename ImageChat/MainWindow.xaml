@@ -6,7 +6,7 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:qc="clr-namespace:QAChat.View.QAChatMain;assembly=QAChat"
+    xmlns:qc="clr-namespace:QAChat.View.QAChatMain;assembly=PythonAILibUI"
     Title="MainWindow"
     Width="800"
     Height="450"

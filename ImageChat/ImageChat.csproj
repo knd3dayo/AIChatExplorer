@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
-    <ProjectReference Include="..\QAChat\QAChat.csproj" />
+    <ProjectReference Include="..\QAChat\PythonAILibUI.csproj" />
     <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
   </ItemGroup>
 
