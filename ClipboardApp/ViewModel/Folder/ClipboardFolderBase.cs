@@ -5,16 +5,15 @@ using System.Windows.Controls;
 using ClipboardApp.Model;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.Search;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder
-{
+namespace ClipboardApp.ViewModel.Folder {
     public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
 
         #region abstract
@@ -270,7 +269,7 @@ namespace ClipboardApp.ViewModel.Folder
             // 親フォルダを取得
             ClipboardFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
 
-            folderViewModel.ClipboardItemFolder.Delete< ClipboardFolder, ClipboardItem>();
+            folderViewModel.ClipboardItemFolder.Delete<ClipboardFolder, ClipboardItem>();
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {

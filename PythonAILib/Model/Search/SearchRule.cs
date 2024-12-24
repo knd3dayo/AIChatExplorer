@@ -1,8 +1,8 @@
-using ClipboardApp.Factory;
-using ClipboardApp.Model.Folder;
 using LiteDB;
+using PythonAILib.Common;
+using PythonAILib.Model.Content;
 
-namespace ClipboardApp.Model.Search {
+namespace PythonAILib.Model.Search {
     // 検索条件ルールは
     // - 検索条件
     // 検索結果の保存先フォルダ(検索フォルダ)、検索対象フォルダ、検索対象サブフォルダを含むかどうかを保持する
@@ -20,9 +20,9 @@ namespace ClipboardApp.Model.Search {
 
         public SearchCondition SearchCondition { get; set; }
 
-        public ClipboardFolder? SearchFolder { get; set; }
+        public ContentFolder? SearchFolder { get; set; }
 
-        public ClipboardFolder? TargetFolder { get; set; }
+        public ContentFolder? TargetFolder { get; set; }
 
         public string Name { get; set; } = "";
 
@@ -38,12 +38,14 @@ namespace ClipboardApp.Model.Search {
 
         // 保存
         public void Save() {
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetSearchRuleCollection();
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetSearchRuleCollection();
+
             collection.Upsert(this);
         }
 
-        public List<ClipboardItem> SearchItems() {
-            List<ClipboardItem> result = [];
+        public List<ContentItem> SearchItems() {
+            List<ContentItem> result = [];
             if (TargetFolder == null) {
                 return result;
             }

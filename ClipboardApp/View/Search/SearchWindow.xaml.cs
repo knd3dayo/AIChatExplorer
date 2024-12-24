@@ -1,11 +1,9 @@
 using System.Windows;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
-using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Search;
+using PythonAILib.Model.Search;
 
-namespace ClipboardApp.View.Search
-{
+namespace ClipboardApp.View.Search {
     /// <summary>
     /// Window1.xaml の相互作用ロジック
     /// </summary>

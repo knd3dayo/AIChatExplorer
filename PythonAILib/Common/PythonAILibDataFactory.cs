@@ -3,6 +3,7 @@ using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using PythonAILib.Model.Search;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
@@ -20,6 +21,7 @@ namespace PythonAILib.Common {
 
         public const string TAG_COLLECTION_NAME = "tags";
         public const string SCRIPT_COLLECTION_NAME = "scripts";
+        public const string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
 
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
@@ -145,7 +147,9 @@ namespace PythonAILib.Common {
             var collection = GetDatabase().GetCollection<T>(AutoGenNestedChatCollectionName);
             return collection;
         }
-
+        public ILiteCollection<SearchRule> GetSearchRuleCollection() {
+            return GetDatabase().GetCollection<SearchRule>(SEARCH_CONDITION_RULES_COLLECTION_NAME);
+        }
 
         private void Upgrade(ILiteDatabase db) {
 
@@ -159,7 +163,29 @@ namespace PythonAILib.Common {
                 }
             }
 
-            #endregion
+            // SearchRule
+            var searchRuleCollection = db.GetCollection(SEARCH_CONDITION_RULES_COLLECTION_NAME);
+            foreach (var item in searchRuleCollection.FindAll()) {
+                string typeString = item["_type"];
+                if (typeString == "ClipboardApp.Model.Search.SearchFolder, ClipboardApp") {
+                    item["_type"] = "ClipboardApp.Model.Folder.SearchFolder, ClipboardApp";
+                    collection.Update(item);
+                }
+                var searchFolderString = item["SearchFolder"];
+                if (searchFolderString != null) {
+                    var arrayVal = searchFolderString.AsDocument;
+                    if (arrayVal != null) {
+                        var searchFolderTypeString = arrayVal["_type"];
+                        if (searchFolderTypeString == "ClipboardApp.Model.Search.SearchFolder, ClipboardApp") {
+                            arrayVal["_type"] = "ClipboardApp.Model.Folder.SearchFolder, ClipboardApp";
+                            item["SearchFolder"] = searchFolderString;
+                            searchRuleCollection.Update(item);
+                        }
+                    }
+                }
+
+                #endregion
+            }
         }
 
 

@@ -1,7 +1,7 @@
 using ClipboardApp.Factory;
-using ClipboardApp.Model.Search;
 using LiteDB;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Search;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -31,14 +31,14 @@ namespace ClipboardApp.Model.Folder {
                 if (parent == null) {
                     return FolderName;
                 }
-                return Tools.ConcatenateFileSystemPath(parent.FolderPath, FolderName);
+                return $"{parent.FolderPath}/{FolderName}";
             }
         }
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
         public override List<T> GetItems<T>() {
-            List<ClipboardItem> _items = [];
+            List<ContentItem> _items = [];
             // このフォルダが通常フォルダの場合は、GlobalSearchConditionを適用して取得,
             // 検索フォルダの場合は、SearchConditionを適用して取得
             IClipboardDBController ClipboardDatabaseController = ClipboardAppFactory.Instance.GetClipboardDBController();

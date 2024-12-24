@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
 using ClipboardApp.View.Search;
 using ClipboardApp.ViewModel.Content;
+using PythonAILib.Model.Search;
 
 namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {

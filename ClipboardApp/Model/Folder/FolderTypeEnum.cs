@@ -5,7 +5,8 @@ namespace ClipboardApp.Model.Folder {
         ImageCheck,
         Chat,
         FileSystem,
-        ShortCut
+        ShortCut,
+        Outlook,
     }
 }
 

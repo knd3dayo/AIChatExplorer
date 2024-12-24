@@ -1,6 +1,7 @@
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Search;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
@@ -205,6 +206,91 @@ namespace PythonAILib.Model.Content {
             LogWrapper.Info(PythonAILibStringResources.Instance.AddedItems);
 
         }
+        #region 検索
+        // ClipboardItemを検索する。
+        public IEnumerable<ContentItem> SearchItems(SearchCondition searchCondition) {
+            // 結果を格納するIEnumerable<ContentItem>を作成
+            IEnumerable<ContentItem> result = [];
+            // 検索条件が空の場合は、結果を返す
+            if (searchCondition.IsEmpty()) {
+                return result;
+            }
+
+            // folder内のアイテムを保持するコレクションを取得
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetItemCollection<ContentItem>();
+            var clipboardItems = collection.Find(x => x.CollectionId == this.Id).OrderByDescending(x => x.UpdatedAt);
+            // Filterの結果を結果に追加
+            result = Filter(clipboardItems, searchCondition);
+
+            // サブフォルダを含む場合は、対象フォルダとそのサブフォルダを検索
+            if (searchCondition.IsIncludeSubFolder) {
+                // 対象フォルダの子フォルダを取得
+                var folderCollection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
+                var childFolders = folderCollection.Find(x => x.ParentId == this.Id).OrderBy(x => x.FolderName);
+                foreach (var childFolder in childFolders) {
+                    // サブフォルダのアイテムを検索
+                    var subFolderResult = childFolder.SearchItems(searchCondition);
+                    // Filterの結果を結果に追加
+                    result = result.Concat(subFolderResult);
+                }
+            }
+            return result;
+        }
+
+        public IEnumerable<ContentItem> Filter(IEnumerable<ContentItem> liteCollection, SearchCondition searchCondition) {
+            if (searchCondition.IsEmpty()) {
+                return liteCollection;
+            }
+
+            var results = liteCollection;
+            // SearchConditionの内容に従ってフィルタリング
+            if (string.IsNullOrEmpty(searchCondition.Description) == false) {
+                if (searchCondition.ExcludeDescription) {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description) == false);
+                } else {
+                    results = results.Where(x => x.Description != null && x.Description.Contains(searchCondition.Description));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Content) == false) {
+                if (searchCondition.ExcludeContent) {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content) == false);
+                } else {
+                    results = results.Where(x => x.Content != null && x.Content.Contains(searchCondition.Content));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.Tags) == false) {
+                if (searchCondition.ExcludeTags) {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags) == false);
+                } else {
+                    results = results.Where(x => x.Tags != null && x.Tags.Contains(searchCondition.Tags));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationName) == false) {
+                if (searchCondition.ExcludeSourceApplicationName) {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationName != null && x.SourceApplicationName.Contains(searchCondition.SourceApplicationName));
+                }
+            }
+            if (string.IsNullOrEmpty(searchCondition.SourceApplicationTitle) == false) {
+                if (searchCondition.ExcludeSourceApplicationTitle) {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle) == false);
+                } else {
+                    results = results.Where(x => x.SourceApplicationTitle != null && x.SourceApplicationTitle.Contains(searchCondition.SourceApplicationTitle));
+                }
+            }
+            if (searchCondition.EnableStartTime) {
+                results = results.Where(x => x.CreatedAt > searchCondition.StartTime);
+            }
+            if (searchCondition.EnableEndTime) {
+                results = results.Where(x => x.CreatedAt < searchCondition.EndTime);
+            }
+            results = results.OrderByDescending(x => x.UpdatedAt);
+
+            return results;
+        }
+        #endregion
 
     }
 }

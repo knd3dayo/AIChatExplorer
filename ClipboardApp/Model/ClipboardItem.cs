@@ -6,7 +6,6 @@ using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.VectorDB;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 

@@ -3,6 +3,7 @@ using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using PythonAILib.Model.Search;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
 using PythonAILib.Model.VectorDB;
@@ -54,5 +55,9 @@ namespace PythonAILib.Common {
 
         // --- AutoGenNestedChat
         public ILiteCollection<T> GetAutoGenNestedChatCollection<T>() where T : AutoGenNestedChat;
+
+        // -- SearchRule
+        public ILiteCollection<SearchRule> GetSearchRuleCollection();
+
     }
 }

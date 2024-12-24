@@ -1,21 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NetOffice;
-using Outlook = NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
-using NetOffice.OutlookApi;
-using ClipboardApp.Factory;
-using LiteDB;
-using PythonAILib.Common;
-using PythonAILib.PythonIF;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
-using System.IO;
+using Outlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folder {
-    public  class OutlookFolder : ClipboardFolder {
+    public class OutlookFolder : ClipboardFolder {
+
+        // コンストラクタ
+        public OutlookFolder() { }
+        protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
+            FolderType = FolderTypeEnum.Outlook;
+        }
 
         private static Outlook.Application? outlookApplication = null;
 
@@ -31,7 +25,6 @@ namespace ClipboardApp.Model.Folder {
                 return inboxFolder;
             }
         }
-        /*
 
         // ProcessClipboardItem
         public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
@@ -39,11 +32,12 @@ namespace ClipboardApp.Model.Folder {
             throw new NotImplementedException();
         }
 
-        public override FileSystemFolder CreateChild(string folderName) {
-            FileSystemFolder child = new(this, folderName);
+        public override OutlookFolder CreateChild(string folderName) {
+            OutlookFolder child = new(this, folderName);
             return child;
         }
 
+        /*
 
         [BsonIgnore]
         public override List<T> GetItems<T>() {
@@ -57,10 +51,7 @@ namespace ClipboardApp.Model.Folder {
             return items.Cast<T>().ToList();
         }
         public void SyncItems() {
-            // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
-            if (!Directory.Exists(FileSystemFolderPath)) {
-                return;
-            }
+
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
             List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
@@ -151,7 +142,7 @@ namespace ClipboardApp.Model.Folder {
             // 自分自身を保存
             this.Save<FileSystemFolder, ClipboardItem>();
         }
-
         */
+
     }
 }

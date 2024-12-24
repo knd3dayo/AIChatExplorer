@@ -1,12 +1,10 @@
 using System.Windows;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Model.Search;
-using ClipboardApp.View.Folder;
+using PythonAILib.Model.Search;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Search
-{
+namespace ClipboardApp.ViewModel.Search {
     public class SearchWindowViewModel : ClipboardAppViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
@@ -17,7 +15,7 @@ namespace ClipboardApp.ViewModel.Search
             _isSearchFolder = isSearchFolder;
 
             _afterUpdate = afterUpdate;
-            _searchFolder= searchFolder;
+            _searchFolder = searchFolder;
 
             Name = SearchFolder?.FolderName ?? "";
 
