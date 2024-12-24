@@ -96,6 +96,9 @@ namespace QAChat.Resource {
         // Shortcut
         public override string Shortcut { get; } = "Shortcut";
 
+        // Outlook
+        public override string Outlook { get; } = "Outlook";
+
         // ProxyURL
         public override string ProxyURL { get; } = "Proxy Server URL";
         // NoProxyList

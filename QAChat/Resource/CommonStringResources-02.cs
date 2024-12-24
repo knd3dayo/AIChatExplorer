@@ -471,6 +471,9 @@ namespace QAChat.Resource {
         // Shortcut
         public virtual string Shortcut { get; } = "ショートカット";
 
+        // Outlook
+        public virtual string Outlook { get; } = "Outlook";
+
         #endregion
 
         #region SettingWindow

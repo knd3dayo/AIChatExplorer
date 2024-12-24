@@ -1,4 +1,5 @@
 using ClipboardApp.Factory;
+using ClipboardApp.Item;
 using PythonAILib.Model.Search;
 using QAChat.Resource;
 
@@ -11,6 +12,7 @@ namespace ClipboardApp.Model.Folder {
         public static readonly string IMAGECHECK_ROOT_FOLDER_NAME = CommonStringResources.Instance.ImageChat;
         public static readonly string FILESYSTEM_ROOT_FOLDER_NAME = CommonStringResources.Instance.FileSystem;
         public static readonly string SHORTCUT_ROOT_FOLDER_NAME = CommonStringResources.Instance.Shortcut;
+        public static readonly string OUTLOOK_ROOT_FOLDER_NAME = CommonStringResources.Instance.Outlook;
 
 
         #region static methods
@@ -81,8 +83,6 @@ namespace ClipboardApp.Model.Folder {
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
                     clipboardRootFolder = folder;
-
-
                 }
                 return clipboardRootFolder;
             }
@@ -177,6 +177,30 @@ namespace ClipboardApp.Model.Folder {
                     shortcutRootFolder = folder;
                 }
                 return shortcutRootFolder;
+            }
+        }
+        // Outlook Root Folder
+        private static OutlookFolder? outlookRootFolder;
+        public static OutlookFolder OutlookRootFolder {
+            get {
+                if (outlookRootFolder == null) {
+                    var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<OutlookFolder>();
+                    OutlookFolder? folder = collection.Find(x => x.ParentId == LiteDB.ObjectId.Empty && x.FolderType == FolderTypeEnum.Outlook).FirstOrDefault();
+                    if (folder == null) {
+                        folder = new OutlookFolder {
+                            FolderName = OUTLOOK_ROOT_FOLDER_NAME,
+                            FolderType = FolderTypeEnum.Outlook,
+                            IsRootFolder = true,
+                            // 自動処理を無効にする
+                            IsAutoProcessEnabled = false
+                        };
+                        folder.Save<OutlookFolder, OutlookItem>();
+                    }
+                    // 既にOutlookRootFolder作成済みの環境のための措置
+                    folder.IsRootFolder = true;
+                    outlookRootFolder = folder;
+                }
+                return outlookRootFolder;
             }
         }
         #endregion

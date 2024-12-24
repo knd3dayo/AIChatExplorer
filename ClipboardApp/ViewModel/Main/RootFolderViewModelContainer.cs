@@ -1,14 +1,12 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Chat;
 using ClipboardApp.ViewModel.FileSystem;
 using ClipboardApp.ViewModel.Search;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardApp.ViewModel.Main
-{
-    public class RootFolderViewModelContainer: ObservableObject {
+namespace ClipboardApp.ViewModel.Main {
+    public class RootFolderViewModelContainer : ObservableObject {
 
         // RootFolderのClipboardViewModel
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
@@ -23,7 +21,10 @@ namespace ClipboardApp.ViewModel.Main
         public FileSystemFolderViewModel FileSystemFolderViewModel { get; private set; }
 
         // ローカルファイルシステムのショートカットのViewModel
-        public ShortCutFolderViewModel ShortcutFolderViewModel { get; private set; } 
+        public ShortCutFolderViewModel ShortcutFolderViewModel { get; private set; }
+
+        // OutlookフォルダのViewModel
+        public OutlookFolderViewModel OutlookFolderViewModel { get; private set; }
 
         // ClipboardFolder
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
@@ -35,9 +36,15 @@ namespace ClipboardApp.ViewModel.Main
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder);
             ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder);
+
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(FileSystemFolderViewModel);
             FolderViewModels.Add(ShortcutFolderViewModel);
+            if (OutlookFolder.OutlookApplicationExists()) {
+                OutlookFolderViewModel = new OutlookFolderViewModel(FolderManager.OutlookRootFolder);
+                FolderViewModels.Add(OutlookFolderViewModel);
+            }
+
             FolderViewModels.Add(SearchRootFolderViewModel);
             FolderViewModels.Add(ChatRootFolderViewModel);
 

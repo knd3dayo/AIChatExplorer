@@ -78,8 +78,6 @@ namespace ClipboardApp.Model {
 
         }
 
-
-
         public void MergeItems(List<ClipboardItem> items) {
             // itemsが空の場合は何もしない
             if (items.Count == 0) {
@@ -122,7 +120,7 @@ namespace ClipboardApp.Model {
         //--------------------------------------------------------------------------------
 
         // ClipboardItemをJSON文字列に変換する
-        public static string ToJson(ClipboardItem item) {
+        public static string ToJson<T>(T item) where T: ContentItem {
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
@@ -133,13 +131,13 @@ namespace ClipboardApp.Model {
 
 
         // JSON文字列をClipboardItemに変換する
-        public static ClipboardItem? FromJson(string json) {
+        public static T? FromJson<T>(string json) where T: ContentItem{
             JsonSerializerOptions jsonSerializerOptions = new() {
                 Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
                 WriteIndented = true
             };
             var options = jsonSerializerOptions;
-            ClipboardItem? item = System.Text.Json.JsonSerializer.Deserialize<ClipboardItem>(json, options);
+            T? item = System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
             if (item == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
                 return null;

@@ -1,35 +1,50 @@
+using ClipboardApp.Factory;
+using ClipboardApp.Item;
+using LiteDB;
+using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
-using static WK.Libraries.SharpClipboardNS.SharpClipboard;
+using PythonAILib.Common;
+using PythonAILib.Model.Content;
 using Outlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folder {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
-        public OutlookFolder() { }
+        public OutlookFolder() {
+            MAPIFolder = CreateInboxFolder();
+        }
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
             FolderType = FolderTypeEnum.Outlook;
+            // フォルダ名を設定
+            FolderName = folderName;
+            // FolderNameに一致するMAPIFolderがある場合は取得
+            var mAPIFolder = parent.MAPIFolder.Folders.FirstOrDefault(x => x.Name == folderName);
+            if (mAPIFolder != null) {
+                MAPIFolder = mAPIFolder;
+            }
         }
 
         private static Outlook.Application? outlookApplication = null;
 
-        private static Outlook.MAPIFolder? inboxFolder = null;
 
-        public static Outlook.MAPIFolder InboxFolder {
-            get {
-                if (inboxFolder == null) {
-                    outlookApplication = new Outlook.Application();
-                    Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
-                    inboxFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
-                }
-                return inboxFolder;
-            }
+        public Outlook.MAPIFolder? MAPIFolder { get; set; } 
+
+        public static MAPIFolder CreateInboxFolder() {
+
+            outlookApplication = new Outlook.Application();
+            Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
+            MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
+            return inboxFolder;
         }
 
-        // ProcessClipboardItem
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
-            // ローカルファイルのフォルダは処理しない
-            throw new NotImplementedException();
+        public static bool OutlookApplicationExists() {
+            try {
+                new Outlook.Application();
+            }catch (System.Exception) {
+                return false;
+            }
+            return true;
         }
 
         public override OutlookFolder CreateChild(string folderName) {
@@ -37,112 +52,90 @@ namespace ClipboardApp.Model.Folder {
             return child;
         }
 
-        /*
-
         [BsonIgnore]
         public override List<T> GetItems<T>() {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
             SyncItems();
 
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ContentItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<ContentItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
             return items.Cast<T>().ToList();
         }
+
         public void SyncItems() {
-
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
-            // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
-
-            // ファイルシステム上のファイル一覧
-            List<string> fileSystemFilePaths = [];
-            try {
-                fileSystemFilePaths = Directory.GetFiles(FileSystemFolderPath).ToList();
-            } catch (UnauthorizedAccessException e) {
-                LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+            // MAPIFolderが存在しない場合は終了
+            if (MAPIFolder == null) {
+                return;
             }
-            // items内に、fileSystemFilePaths以外のFilePathがある場合は削除
-            foreach (var item in items) {
-                if (!fileSystemFilePaths.Any(x => x == item.FilePath)) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetItemCollection<OutlookItem>();
+            // FileSystemFolderPathフォルダ内のファイルを取得
+            List<OutlookItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+
+            // Outlookのフォルダ内のファイル一覧を取得
+            List<MailItem> mailItems = MAPIFolder.Items.Cast<MailItem>().ToList();
+            foreach (OutlookItem item in items) {
+                // EntryIDが一致するOutlookItemが存在しない場合は削除
+                if (!mailItems.Any(x => x.EntryID == item.EntryID)) {
                     collection.Delete(item.Id);
                 }
             }
-            // itemsのアイテムに、filePathがFileSystemFilePathsにない場合はアイテムを追加
-            foreach (var localFileSystemFilePath in fileSystemFilePaths) {
-                // GetMimeTypeを実行して、ファイルのContentTypeを取得
-                string contentType = PythonExecutor.PythonAIFunctions.GetMimeType(localFileSystemFilePath);
-                // TargetMimeTypesに含まれるContentTypeの場合のみ処理
-                if (!TargetMimeTypes.Any(x => contentType.StartsWith(x))) {
-                    continue;
-                }
-                if (!items.Any(x => x.FilePath == localFileSystemFilePath)) {
-                    ClipboardItem item = new(Id) {
-                        FilePath = localFileSystemFilePath,
-                        ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
-                        Description = Path.GetFileName(localFileSystemFilePath)
+            foreach (MailItem mailItem in mailItems) {
+                // EntryIDが一致するOutlookItemが存在しない場合は追加
+                if (!items.Any(x => x.EntryID == mailItem.EntryID)) {
+                    OutlookItem newItem = new() {
+                        EntryID = mailItem.EntryID,
+                        Description = mailItem.Subject,
+                        ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
+                        Content = mailItem.Body,
                     };
-                    item.Save();
+                    newItem.Save();
                 }
             }
+
         }
 
         // 子フォルダ
-        public override List<FileSystemFolder> GetChildren<FileSystemFolder>() {
+        public override List<OutlookFolder> GetChildren<OutlookFolder>() {
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders();
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<FileSystemFolder>().ToList();
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
+            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            return folders.Cast<OutlookFolder>().ToList();
 
         }
 
         public virtual void SyncFolders() {
 
             // DBからParentIDが自分のIDのものを取得
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<FileSystemFolder>();
-            var folders = collection.FindAll().Where(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            // ファイルシステム上のフォルダのフルパス一覧
-            List<string> fileSystemFolderPaths = [];
-            // ルートフォルダの場合は、Environment.GetLogicalDrives()を取得
-            if (IsRootFolder) {
-                string[] drives = Environment.GetLogicalDrives();
-                foreach (var drive in drives) {
-                    fileSystemFolderPaths.Add(drive);
-                }
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
+            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            // Outlook上のフォルダの一覧を取得。
+            if (MAPIFolder == null) {
+                return;
             } else {
-                // ルートフォルダ以外は自分自身のFolderPath配下のフォルダを取得
-                try {
-                    fileSystemFolderPaths = Directory.GetDirectories(FileSystemFolderPath).ToList();
-                } catch (UnauthorizedAccessException e) {
-                    LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
+
+                // MAPIFolder内のフォルダ一覧を取得
+                List<string> outlookFolderNames = MAPIFolder.Folders.Select(x => x.Name).ToList();
+                // DBに存在するフォルダがOutlookに存在しない場合は削除
+                foreach (var folder in folders) {
+                    if (!outlookFolderNames.Any(x => x == folder.FolderName)) {
+                        collection.Delete(folder.Id);
+                    }
                 }
-            }
-            // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
-            foreach (var folder in folders) {
-                if (!fileSystemFolderPaths.Any(x => x == folder.FileSystemFolderPath)) {
-                    collection.Delete(folder.Id);
-                }
-            }
-            // foldersのアイテムに、folderPath=ドライブ名:\のアイテムがない場合はアイテムを追加
-            foreach (var localFileSystemFolder in fileSystemFolderPaths) {
-                if (!folders.Any(x => x.FileSystemFolderPath == localFileSystemFolder)) {
-                    if (IsRootFolder) {
-                        FileSystemFolder child = CreateChild(localFileSystemFolder);
-                        child.Save<FileSystemFolder, ClipboardItem>();
-                    } else {
-                        // localFileSystemFolder からフォルダ名を取得
-                        string folderName = Path.GetFileName(localFileSystemFolder);
-                        FileSystemFolder child = CreateChild(folderName);
-                        child.Save<FileSystemFolder, ClipboardItem>();
+                // Outlookに存在するフォルダがDBに存在しない場合は追加
+                foreach (var outlookFolderName in outlookFolderNames) {
+                    if (!folders.Any(x => x.FolderName == outlookFolderName)) {
+                        this.CreateChild(outlookFolderName);
                     }
                 }
             }
+
             // 自分自身を保存
-            this.Save<FileSystemFolder, ClipboardItem>();
+            this.Save<OutlookFolder, OutlookItem>();
         }
-        */
 
     }
 }

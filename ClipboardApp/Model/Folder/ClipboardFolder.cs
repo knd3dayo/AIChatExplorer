@@ -168,7 +168,7 @@ namespace ClipboardApp.Model.Folder {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ClipboardItem? item = ClipboardItem.FromJson(jsonString);
+                ClipboardItem? item = ClipboardItem.FromJson< ClipboardItem>(jsonString);
 
                 if (item == null) {
                     continue;
