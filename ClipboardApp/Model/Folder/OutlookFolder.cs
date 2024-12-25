@@ -11,9 +11,7 @@ namespace ClipboardApp.Model.Folder {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
-        public OutlookFolder() {
-            MAPIFolder = CreateInboxFolder();
-        }
+        public OutlookFolder() {}
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
             FolderType = FolderTypeEnum.Outlook;
             // フォルダ名を設定
@@ -27,8 +25,8 @@ namespace ClipboardApp.Model.Folder {
 
         private static Outlook.Application? outlookApplication = null;
 
-
-        public Outlook.MAPIFolder? MAPIFolder { get; set; } 
+        [BsonIgnore]
+        public Outlook.MAPIFolder MAPIFolder { get; set; } = CreateInboxFolder();
 
         public static MAPIFolder CreateInboxFolder() {
 
@@ -52,7 +50,6 @@ namespace ClipboardApp.Model.Folder {
             return child;
         }
 
-        [BsonIgnore]
         public override List<T> GetItems<T>() {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
             SyncItems();

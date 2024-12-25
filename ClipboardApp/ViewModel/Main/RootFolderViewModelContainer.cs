@@ -24,7 +24,7 @@ namespace ClipboardApp.ViewModel.Main {
         public ShortCutFolderViewModel ShortcutFolderViewModel { get; private set; }
 
         // OutlookフォルダのViewModel
-        public OutlookFolderViewModel OutlookFolderViewModel { get; private set; }
+        public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
 
         // ClipboardFolder
         public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
