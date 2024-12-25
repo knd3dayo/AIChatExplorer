@@ -5,6 +5,7 @@ using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
+using PythonAILib.Utils.Common;
 using Outlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folder {
@@ -68,30 +69,34 @@ namespace ClipboardApp.Model.Folder {
             }
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetItemCollection<OutlookItem>();
-            // FileSystemFolderPathフォルダ内のファイルを取得
-            List<OutlookItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
+
+            // EntryIDを格納するリスト
+            List<string> entryIdList = [];
             // Outlookのフォルダ内のファイル一覧を取得
-            List<MailItem> mailItems = MAPIFolder.Items.Cast<MailItem>().ToList();
-            foreach (OutlookItem item in items) {
+            foreach (var outlookItem in MAPIFolder.Items) {
+                if (outlookItem is Outlook.MailItem mailItem) {
+                    entryIdList.Add(mailItem.EntryID);
+
+                    // EntryIDが一致するOutlookItemが存在しない場合は追加
+                    var item = collection.Find(x => x.EntryID == mailItem.EntryID);
+                    if (item != null) {
+                        OutlookItem newItem = new() {
+                            EntryID = mailItem.EntryID,
+                            Description = mailItem.Subject,
+                            ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
+                            Content = mailItem.Body,
+                        };
+                        newItem.Save();
+                    }
+                }
+            }
+            foreach (OutlookItem item in collection.FindAll()) {
                 // EntryIDが一致するOutlookItemが存在しない場合は削除
-                if (!mailItems.Any(x => x.EntryID == item.EntryID)) {
+                if (!entryIdList.Any(x => x == item.EntryID)) {
                     collection.Delete(item.Id);
                 }
             }
-            foreach (MailItem mailItem in mailItems) {
-                // EntryIDが一致するOutlookItemが存在しない場合は追加
-                if (!items.Any(x => x.EntryID == mailItem.EntryID)) {
-                    OutlookItem newItem = new() {
-                        EntryID = mailItem.EntryID,
-                        Description = mailItem.Subject,
-                        ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
-                        Content = mailItem.Body,
-                    };
-                    newItem.Save();
-                }
-            }
-
         }
 
         // 子フォルダ
@@ -113,7 +118,7 @@ namespace ClipboardApp.Model.Folder {
             if (MAPIFolder == null) {
                 return;
             } else {
-
+                LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
                 // MAPIFolder内のフォルダ一覧を取得
                 List<string> outlookFolderNames = MAPIFolder.Folders.Select(x => x.Name).ToList();
                 // DBに存在するフォルダがOutlookに存在しない場合は削除
