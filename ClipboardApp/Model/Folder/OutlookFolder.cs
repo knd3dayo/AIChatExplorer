@@ -12,7 +12,7 @@ namespace ClipboardApp.Model.Folder {
     public class OutlookFolder : ClipboardFolder {
 
         // コンストラクタ
-        public OutlookFolder() {}
+        public OutlookFolder() { }
         protected OutlookFolder(OutlookFolder parent, string folderName) : base(parent, folderName) {
             FolderType = FolderTypeEnum.Outlook;
             // フォルダ名を設定
@@ -27,9 +27,10 @@ namespace ClipboardApp.Model.Folder {
         private static Outlook.Application? outlookApplication = null;
 
         [BsonIgnore]
-        public Outlook.MAPIFolder? MAPIFolder { get; set; } 
+        public Outlook.MAPIFolder? MAPIFolder { get; set; }
 
-        public static MAPIFolder CreateInboxFolder() {
+        public static MAPIFolder InboxFolder { get; private set; } = CreateInboxFolder();
+        private static MAPIFolder CreateInboxFolder() {
 
             outlookApplication = new Outlook.Application();
             Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
@@ -37,15 +38,11 @@ namespace ClipboardApp.Model.Folder {
             return inboxFolder;
         }
 
-        public static MAPIFolder? GetChildMAPIFolder(MAPIFolder? parentFolder, string folderName) {
-            MAPIFolder? childFolder = parentFolder?.Folders.FirstOrDefault(x => x.Name == folderName);
-            return childFolder;
-        }
 
         public static bool OutlookApplicationExists() {
             try {
                 new Outlook.Application();
-            }catch (System.Exception) {
+            } catch (System.Exception) {
                 return false;
             }
             return true;
@@ -108,9 +105,6 @@ namespace ClipboardApp.Model.Folder {
         public override List<T> GetChildren<T>() {
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
             IEnumerable<OutlookFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            foreach (var folder in folders) {
-                folder.MAPIFolder = GetChildMAPIFolder(MAPIFolder, folder.FolderName);
-            }
 
             // ローカルファイルシステムとClipboardFolderのフォルダを同期
             SyncFolders(folders);
@@ -118,26 +112,48 @@ namespace ClipboardApp.Model.Folder {
 
         }
 
-        public virtual void SyncFolders(IEnumerable<OutlookFolder> folders) {
+        public MAPIFolder? GetMAPIFolder() {
+            if (IsRootFolder) {
+                return null;
+            }
+            if (GetParent<OutlookFolder>()?.IsRootFolder == true) {
+                return InboxFolder;
+            }
+            // FolderPathを/で分割した要素のリスト
+            List<string> strings = FolderPath.Split('/').ToList();
 
+            for (int i = 2; i < strings.Count; i++) {
+                MAPIFolder = MAPIFolder?.Folders.FirstOrDefault(x => x.Name == strings[i]);
+            }
+            return MAPIFolder;
+        }
+
+        public virtual void SyncFolders(IEnumerable<OutlookFolder> folders) {
+            List<string> outlookFolderNames = [];
             // Outlook上のフォルダの一覧を取得。
-            if (MAPIFolder == null) {
-                return;
+            if (IsRootFolder) {
+                // ルートフォルダの場合はInboxフォルダを取得
+                outlookFolderNames.Add(InboxFolder.Name);
+
             } else {
-                LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
-                // MAPIFolder内のフォルダ一覧を取得
-                List<string> outlookFolderNames = MAPIFolder.Folders.Select(x => x.Name).ToList();
-                // DBに存在するフォルダがOutlookに存在しない場合は削除
-                foreach (var folder in folders) {
-                    if (!outlookFolderNames.Any(x => x == folder.FolderName)) {
-                        folder.Delete<OutlookFolder, OutlookItem>();
-                    }
+                MAPIFolder = GetMAPIFolder();
+                if (MAPIFolder == null) {
+                    return;
                 }
-                // Outlookに存在するフォルダがDBに存在しない場合は追加
-                foreach (var outlookFolderName in outlookFolderNames) {
-                    if (!folders.Any(x => x.FolderName == outlookFolderName)) {
-                        this.CreateChild(outlookFolderName);
-                    }
+            }
+            LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
+            // MAPIFolder内のフォルダ一覧を取得
+            // DBに存在するフォルダがOutlookに存在しない場合は削除
+            foreach (var folder in folders) {
+                if (!outlookFolderNames.Any(x => x == folder.FolderName)) {
+                    folder.Delete<OutlookFolder, OutlookItem>();
+                }
+            }
+            // Outlookに存在するフォルダがDBに存在しない場合は追加
+            foreach (var outlookFolderName in outlookFolderNames) {
+                if (!folders.Any(x => x.FolderName == outlookFolderName)) {
+                    var child = this.CreateChild(outlookFolderName);
+                    child.Save<OutlookFolder, OutlookItem>();
                 }
             }
 
