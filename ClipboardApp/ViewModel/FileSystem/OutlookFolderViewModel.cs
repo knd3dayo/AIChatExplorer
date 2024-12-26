@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Content;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.FileSystem {
     public class OutlookFolderViewModel(OutlookFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -27,7 +28,6 @@ namespace ClipboardApp.ViewModel.FileSystem {
             };
             return childFolderViewModel;
         }
-
 
 
         // LoadChildren
@@ -57,9 +57,13 @@ namespace ClipboardApp.ViewModel.FileSystem {
             } finally {
                 MainWindowViewModel.Instance.UpdateIndeterminate(false);
             }
-
-
+        
         }
+
+        public static SimpleDelegateCommand<OutlookFolderViewModel> LoadOutlookItemCommand => new((OutlookFolderViewModel folderViewModel) => {
+            OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
+            folder.SyncItems();
+        });
     }
 }
 

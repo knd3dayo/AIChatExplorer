@@ -22,10 +22,10 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 };
                 menuItems.Add(editMenuItem);
 
-                // ショートカット登録
+                // ロード
                 MenuItem createShortCutMenuItem = new() {
-                    Header = StringResources.CreateShortCut,
-                    Command = ClipboardFolderViewModel.CreateShortCutCommand,
+                    Header = StringResources.Load,
+                    Command = OutlookFolderViewModel.LoadOutlookItemCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(createShortCutMenuItem);
