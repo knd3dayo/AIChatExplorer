@@ -27,7 +27,7 @@ namespace ClipboardApp.Model.Folder {
         private static Outlook.Application? outlookApplication = null;
 
         [BsonIgnore]
-        public Outlook.MAPIFolder MAPIFolder { get; set; } = CreateInboxFolder();
+        public Outlook.MAPIFolder? MAPIFolder { get; set; } 
 
         public static MAPIFolder CreateInboxFolder() {
 
@@ -35,6 +35,11 @@ namespace ClipboardApp.Model.Folder {
             Outlook._NameSpace outlookNamespace = outlookApplication.GetNamespace("MAPI");
             MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
             return inboxFolder;
+        }
+
+        public static MAPIFolder? GetChildMAPIFolder(MAPIFolder? parentFolder, string folderName) {
+            MAPIFolder? childFolder = parentFolder?.Folders.FirstOrDefault(x => x.Name == folderName);
+            return childFolder;
         }
 
         public static bool OutlookApplicationExists() {
@@ -53,7 +58,7 @@ namespace ClipboardApp.Model.Folder {
 
         public override List<T> GetItems<T>() {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
-            SyncItems();
+            // SyncItems();
 
             var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ContentItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
@@ -100,20 +105,21 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // 子フォルダ
-        public override List<OutlookFolder> GetChildren<OutlookFolder>() {
-            // ローカルファイルシステムとClipboardFolderのフォルダを同期
-            SyncFolders();
+        public override List<T> GetChildren<T>() {
             var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
-            return folders.Cast<OutlookFolder>().ToList();
+            IEnumerable<OutlookFolder> folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
+            foreach (var folder in folders) {
+                folder.MAPIFolder = GetChildMAPIFolder(MAPIFolder, folder.FolderName);
+            }
+
+            // ローカルファイルシステムとClipboardFolderのフォルダを同期
+            SyncFolders(folders);
+            return folders.Cast<T>().ToList();
 
         }
 
-        public virtual void SyncFolders() {
+        public virtual void SyncFolders(IEnumerable<OutlookFolder> folders) {
 
-            // DBからParentIDが自分のIDのものを取得
-            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<OutlookFolder>();
-            var folders = collection.Find(x => x.ParentId == Id).OrderBy(x => x.FolderName);
             // Outlook上のフォルダの一覧を取得。
             if (MAPIFolder == null) {
                 return;
@@ -124,7 +130,7 @@ namespace ClipboardApp.Model.Folder {
                 // DBに存在するフォルダがOutlookに存在しない場合は削除
                 foreach (var folder in folders) {
                     if (!outlookFolderNames.Any(x => x == folder.FolderName)) {
-                        collection.Delete(folder.Id);
+                        folder.Delete<OutlookFolder, OutlookItem>();
                     }
                 }
                 // Outlookに存在するフォルダがDBに存在しない場合は追加
