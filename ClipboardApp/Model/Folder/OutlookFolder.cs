@@ -120,12 +120,12 @@ namespace ClipboardApp.Model.Folder {
                 return InboxFolder;
             }
             // FolderPathを/で分割した要素のリスト
-            List<string> strings = FolderPath.Split('/').ToList();
-
+            List<string> strings = [.. FolderPath.Split('/')];
+            MAPIFolder? mAPIFolder = InboxFolder;
             for (int i = 2; i < strings.Count; i++) {
-                MAPIFolder = MAPIFolder?.Folders.FirstOrDefault(x => x.Name == strings[i]);
+                mAPIFolder = mAPIFolder?.Folders.FirstOrDefault(x => x.Name == strings[i]);
             }
-            return MAPIFolder;
+            return mAPIFolder;
         }
 
         public virtual void SyncFolders(IEnumerable<OutlookFolder> folders) {
@@ -134,14 +134,16 @@ namespace ClipboardApp.Model.Folder {
             if (IsRootFolder) {
                 // ルートフォルダの場合はInboxフォルダを取得
                 outlookFolderNames.Add(InboxFolder.Name);
+                LogWrapper.Info($"Sync Outlook Folder: {InboxFolder.Name}");
 
             } else {
                 MAPIFolder = GetMAPIFolder();
                 if (MAPIFolder == null) {
                     return;
                 }
+                outlookFolderNames = MAPIFolder.Folders.Select(x => x.Name).ToList();
+                LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
             }
-            LogWrapper.Info($"Sync Outlook Folder: {MAPIFolder.Name}");
             // MAPIFolder内のフォルダ一覧を取得
             // DBに存在するフォルダがOutlookに存在しない場合は削除
             foreach (var folder in folders) {
