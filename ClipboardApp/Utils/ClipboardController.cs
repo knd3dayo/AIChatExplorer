@@ -1,6 +1,7 @@
 using System.Reflection;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using PythonAILib.Model.Content;
 using WK.Libraries.SharpClipboardNS;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
@@ -56,7 +57,7 @@ namespace ClipboardApp.Utils {
         /// Copy the content of ContentItem to the clipboard
         /// </summary>
         /// <param name="item"></param>
-        public void SetDataObject(ClipboardItem item) {
+        public void SetDataObject(ContentItem item) {
             // System.Windows.MessageBox.Show(item.SourcePath);
 
             IsClipboardMonitorEnabled = false;

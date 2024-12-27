@@ -407,6 +407,10 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.FolderNotSelected);
                 return;
             }
+            if (TargetFolder.Folder is not ClipboardFolder clipboardFolder) {
+                LogWrapper.Error(StringResources.FolderNotSelected);
+                return;
+            }
             // RuleNameが空の場合はエラー
             if (string.IsNullOrEmpty(RuleName)) {
                 LogWrapper.Error(StringResources.EnterRuleName);
@@ -435,7 +439,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolder = TargetFolder.ClipboardItemFolder;
+            TargetAutoProcessRule.TargetFolder = (ClipboardFolder)TargetFolder.Folder;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -495,11 +499,11 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
-                    if (TargetFolder.ClipboardItemFolder.Id == DestinationFolder.ClipboardItemFolder.Id) {
+                    if (TargetFolder.Folder.Id == DestinationFolder.Folder.Id) {
                         LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolder = DestinationFolder.ClipboardItemFolder;
+                    TargetAutoProcessRule.DestinationFolder = (ClipboardFolder)DestinationFolder.Folder;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
@@ -533,9 +537,9 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             // LiteDBに保存
             TargetAutoProcessRule.Save();
             // ClipboardItemFolderにAutoProcessRuleIdを追加
-            TargetFolder.ClipboardItemFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
+            clipboardFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
             // ClipboardItemFolderを保存
-            TargetFolder.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
+            clipboardFolder.Save<ClipboardFolder, Model.ClipboardItem>();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);
@@ -550,12 +554,15 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             if (folder == null) {
                 return;
             }
+            if (folder.Folder is not ClipboardFolder clipboardFolder) {
+                return;
+            }
             // コピーor移動先が同じフォルダの場合はエラー
-            if (folder.ClipboardItemFolder.Id == TargetFolder?.ClipboardItemFolder.Id) {
+            if (clipboardFolder.Id == TargetFolder?.Folder.Id) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                 return;
             }// コピーor移動先が標準のフォルダ以外の場合はエラー
-            if (folder.ClipboardItemFolder.FolderType != FolderTypeEnum.Normal) {
+            if (clipboardFolder.FolderType != FolderTypeEnum.Normal) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToNonStandardFolders);
                 return;
             }

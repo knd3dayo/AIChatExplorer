@@ -1,26 +1,26 @@
 using PythonAILib.Model.Content;
+using QAChat.Model;
 using QAChat.Resource;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ContentItemPanel {
-    public abstract class ContentItemPanelViewModel(ContentItem contentItemBase) {
-
-        public static CommonStringResources StringResources { get; } = CommonStringResources.Instance;
+namespace QAChat.ViewModel.Item {
+    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItem contentItemBase) : QAChatViewModelBase {
         public ContentItem ContentItem { get; set; } = contentItemBase;
 
         // 選択中のContentItemBaseを開く
-        public abstract void OpenContentItem();
+        public abstract void OpenItem();
 
         // 選択中のContentItemBaseを削除
-        public abstract void RemoveContentItem();
+        public abstract void RemoveItem();
         // OpenContentItemCommand
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            OpenContentItem();
+            OpenItem();
         });
 
         // RemoveSelectedItemCommand
         public SimpleDelegateCommand<object> RemoveSelectedItemCommand => new((parameter) => {
-            RemoveContentItem();
+            RemoveItem();
         });
     }
 }

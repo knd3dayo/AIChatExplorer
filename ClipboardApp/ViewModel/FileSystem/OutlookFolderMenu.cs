@@ -22,13 +22,13 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 };
                 menuItems.Add(editMenuItem);
 
-                // ロード
-                MenuItem createShortCutMenuItem = new() {
-                    Header = StringResources.Load,
-                    Command = OutlookFolderViewModel.LoadOutlookItemCommand,
+                // 同期
+                MenuItem createSyncMenuItem = new() {
+                    Header = StringResources.Sync,
+                    Command = OutlookFolderViewModel.SyncItemCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
-                menuItems.Add(createShortCutMenuItem);
+                menuItems.Add(createSyncMenuItem);
 
 
                 // エクスポート/インポート

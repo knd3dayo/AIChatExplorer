@@ -76,16 +76,29 @@
                             CommandParameter="{Binding ItemViewModel}"
                             Header="{Binding StringResources.OpenTextAsFile, Mode=OneTime}" />
                         <!--  ファイルを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFileCommand}" Header="{Binding StringResources.OpenFile, Mode=OneTime}" />
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{Binding StringResources.OpenFile, Mode=OneTime}" />
                         <!--  新規ファイルとして開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFileAsNewFileCommand}" Header="{Binding StringResources.OpenAsNewFile, Mode=OneTime}" />
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFileAsNewFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{Binding StringResources.OpenAsNewFile, Mode=OneTime}" />
                         <!--  フォルダを開く  -->
-                        <MenuItem Command="{Binding ItemViewModel.Commands.OpenFolderCommand}" Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFolderCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{Binding StringResources.OpenFolder, Mode=OneTime}" />
                         <!--  テキスト抽出  -->
-                        <MenuItem Command="{Binding ItemViewModel.Commands.ExtractTextCommand}" Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.ExtractTextCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{Binding StringResources.ExtractText, Mode=OneTime}" />
 
                         <MenuItem
                             Command="{Binding ItemViewModel.MaskDataCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
                             Header="{Binding StringResources.MaskData, Mode=OneTime}"
                             Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
                     </MenuItem>

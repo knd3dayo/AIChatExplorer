@@ -5,7 +5,7 @@ using WpfAppCommon.Utils;
 
 
 namespace QAChat.ViewModel.Folder {
-    public partial class ContentFolderViewModel(ContentFolder folder) : ObservableObject {
+    public class ContentFolderViewModel(ContentFolder folder) : ObservableObject {
         protected CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
@@ -30,9 +30,12 @@ namespace QAChat.ViewModel.Folder {
             }
         }
 
-
-
         public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => { });
+
+        // フォルダー保存コマンド
+        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => { });
+
+        public virtual void UpdateIndeterminate(bool isIndeterminate) {}
 
     }
 }

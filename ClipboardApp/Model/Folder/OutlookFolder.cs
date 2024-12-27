@@ -18,7 +18,7 @@ namespace ClipboardApp.Model.Folder {
             // フォルダ名を設定
             FolderName = folderName;
             // FolderNameに一致するMAPIFolderがある場合は取得
-            var mAPIFolder = parent.MAPIFolder.Folders.FirstOrDefault(x => x.Name == folderName);
+            var mAPIFolder = parent.MAPIFolder?.Folders.FirstOrDefault(x => x.Name == folderName);
             if (mAPIFolder != null) {
                 MAPIFolder = mAPIFolder;
             }
@@ -57,11 +57,11 @@ namespace ClipboardApp.Model.Folder {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
             // SyncItems();
 
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ContentItem>();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<T>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ContentItem> items = [.. collection.FindAll().Where(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<T> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
-            return items.Cast<T>().ToList();
+            return items;
         }
 
         public void SyncItems() {

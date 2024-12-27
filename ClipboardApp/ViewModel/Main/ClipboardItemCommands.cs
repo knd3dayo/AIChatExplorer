@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
@@ -9,6 +8,7 @@ using ClipboardApp.View.Search;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
 using QAChat.Resource;
@@ -19,83 +19,42 @@ using QAChat.View.VectorDB;
 using QAChat.ViewModel;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
+using PythonAILibUI.ViewModel.Item;
+using QAChat.ViewModel.Item;
 
-namespace ClipboardApp.ViewModel.Main
-{
-    public class ClipboardAppCommandExecute {
+namespace ClipboardApp.ViewModel.Main {
+    public class ClipboardItemCommands : ContentItemCommands{
 
-        public ClipboardAppCommandExecute(ClipboardItemViewModel clipboardItemViewModel) {
-            ClipboardItemViewModel = clipboardItemViewModel;
-        }
-        private ClipboardItemViewModel ClipboardItemViewModel { get; }
-
-        // フォルダを開くコマンド
-        public SimpleDelegateCommand<object> OpenFolderCommand => new((parameter) => {
-            ClipboardAppCommandExecute.OpenFolder(ClipboardItemViewModel.ClipboardItem);
-        });
-
-        // テキストをファイルとして開くコマンド
-        public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((obj) => {
-            ClipboardAppCommandExecute.OpenContentAsFile(ClipboardItemViewModel.ClipboardItem);
-        });
-
-        // ファイルを開くコマンド
-        public SimpleDelegateCommand<object> OpenFileCommand => new((obj) => {
-            ClipboardAppCommandExecute.OpenFile(ClipboardItemViewModel.ClipboardItem);
-        });
-
-
-        // ファイルを新規ファイルとして開くコマンド
-        public SimpleDelegateCommand<object> OpenFileAsNewFileCommand => new((obj) => {
-            ClipboardAppCommandExecute.OpenFileAsNewFile(ClipboardItemViewModel.ClipboardItem);
-        });
-
-        // QAChatButtonCommand
-        public SimpleDelegateCommand<object> QAChatButtonCommand => new((obj) => {
-            // QAChatControlのDrawerを開く
-            ClipboardAppCommandExecute.OpenOpenAIChatWindowCommand(ClipboardItemViewModel.ClipboardItem);
-        });
 
         // ベクトル検索を実行するコマンド
-        public SimpleDelegateCommand<object> VectorSearchCommand => new((obj) => {
-            ClipboardAppCommandExecute.OpenVectorSearchWindowCommand(ClipboardItemViewModel.ClipboardItem);
+        public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
+            OpenVectorSearchWindowCommand(itemViewModel.ContentItem);
         });
 
         // コンテキストメニューの「テキストを抽出」の実行用コマンド
-        public SimpleDelegateCommand<object> ExtractTextCommand => new((parameter) => {
-            if (ClipboardItemViewModel == null) {
-                LogWrapper.Error("クリップボードアイテムが選択されていません");
+        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
+            if (itemViewModel == null) {
+                LogWrapper.Error("アイテムが選択されていません");
                 return;
             }
-            ClipboardAppCommandExecute.ExtractText(ClipboardItemViewModel.ClipboardItem);
-            int index = ClipboardItemViewModel.SelectedTabIndex;
-            ClipboardItemViewModel.SelectedTabIndex = index;
+            ExtractText(itemViewModel.ClipboardItem);
+            int index = itemViewModel.SelectedTabIndex;
+            itemViewModel.SelectedTabIndex = index;
         });
 
         // ピン留めの切り替えコマンド
-        public SimpleDelegateCommand<object> ChangePinCommand => new((obj) => {
-            ClipboardItemViewModel.IsPinned = !ClipboardItemViewModel.IsPinned;
+        public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
+            itemViewModel.IsPinned = !itemViewModel.IsPinned;
             // ピン留めの時は更新日時を変更しない
-            SaveClipboardItemCommand.Execute(false);
+            SaveClipboardItemCommand.Execute(itemViewModel);
         });
-
-        // アイテム保存
-        public SimpleDelegateCommand<bool> SaveClipboardItemCommand => new(ClipboardItemViewModel.ClipboardItem.Save);
-
-        // Delete
-        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((obj) => {
-            ClipboardItemViewModel.ClipboardItem.Delete();
-        });
-
-
-
 
 
 
         /// <summary>
         /// Application exit command
         /// </summary>
-        public static void ExitCommand() {
+        public override void ExitCommand() {
             // Display exit confirmation dialog. If Yes, exit the application
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
@@ -131,8 +90,14 @@ namespace ClipboardApp.ViewModel.Main
         public static void StartStopWindowsNotificationMonitorCommand() {
             MainWindowViewModel model = MainWindowViewModel.Instance;
             model.IsWindowsNotificationMonitorActive = !model.IsWindowsNotificationMonitorActive;
+
+            if (model.RootFolderViewModelContainer.RootFolderViewModel.Folder is not ClipboardFolder clipboardFolder) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+
             if (model.IsWindowsNotificationMonitorActive) {
-                WindowsNotificationController.Start(model.RootFolderViewModelContainer.RootFolderViewModel.ClipboardItemFolder, (item) => {
+                WindowsNotificationController.Start(clipboardFolder, (item) => {
                     // Process when a clipboard item is added
                     model.RootFolderViewModelContainer.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, item));
                     MainUITask.Run(() => {
@@ -151,10 +116,10 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to open OpenAI Chat
-        public static void OpenOpenAIChatWindowCommand(ClipboardItem? item) {
+        public override void OpenOpenAIChatWindowCommand(ContentItem? item) {
             if (item == null) {
                 // チャット履歴用のItemの設定
-                ClipboardFolder chatFolder = MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder;
+                ClipboardFolder chatFolder = (ClipboardFolder)MainWindowViewModel.Instance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
                 item = new(chatFolder.Id);
                 // タイトルを日付 + 元のタイトルにする
                 item.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
@@ -165,24 +130,24 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to open Image Chat
-        public static void OpenImageChatWindowCommand(Model.ClipboardItem item, Action action) {
+        public override void OpenImageChatWindowCommand(ContentItem item, Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
         }
 
         // Process when "RAG Management" is clicked in the menu
-        public static void OpenRAGManagementWindowCommand() {
+        public override void OpenRAGManagementWindowCommand() {
             // Open RARManagementWindow
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
 
         // Process when "Vector DB Management" is clicked in the menu
-        public static void OpenVectorDBManagementWindowCommand() {
+        public override void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItem) => { });
         }
 
         // Process when "Settings" is clicked in the menu
-        public static void SettingCommandExecute() {
+        public override void SettingCommandExecute() {
             // Open UserControl settings window
             SettingsUserControl settingsControl = new();
             Window window = new() {
@@ -194,7 +159,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process to display the search window
-        public static void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
+        public  void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
             SearchRule? searchConditionRule;
             // If the selected folder is a search folder
             if (folder.FolderType == FolderTypeEnum.Search) {
@@ -210,7 +175,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to reload the folder
-        public static void ReloadFolderCommand(MainWindowViewModel model) {
+        public  void ReloadFolderCommand(MainWindowViewModel model) {
             if (model.SelectedFolder == null) {
                 return;
             }
@@ -225,7 +190,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + Shift + M is pressed
-        public static void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
+        public  void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -244,7 +209,7 @@ namespace ClipboardApp.ViewModel.Main
             );
         }
         // Process when Ctrl + M is pressed
-        public static void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public  void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -264,7 +229,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + X is pressed on a folder
-        public static void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
+        public  void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
             // Do not process if no folder is selected
             if (windowViewModel.SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
@@ -279,7 +244,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
-        public static void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public  void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -304,7 +269,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + C is pressed
-        public static void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public  void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
@@ -336,7 +301,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + V is pressed
-        public static void PasteFromClipboardCommandExecute() {
+        public  void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<object> CopiedItems = windowViewModel.CopiedObjects;
@@ -359,7 +324,10 @@ namespace ClipboardApp.ViewModel.Main
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // If there are no source items, paste from the system clipboard
-                SelectedFolder.ClipboardItemFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
+                if ( SelectedFolder.Folder is not ClipboardFolder clipboardFolder) {
+                    return;
+                }
+                clipboardFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
                     async (clipboardItem) => {
                         // Process when a clipboard item is added
                         await Task.Run(() => {
@@ -374,7 +342,7 @@ namespace ClipboardApp.ViewModel.Main
             }
         }
         // Command to open a folder
-        public static void OpenFolder(Model.ClipboardItem contentItem) {
+        public override void OpenFolder(ContentItem contentItem) {
             // Open the folder only if the ContentType is File
             if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
@@ -393,7 +361,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to extract text
-        public static void ExtractText(Model.ClipboardItem contentItem) {
+        public  void ExtractText(ContentItem contentItem) {
             // プログレスインジケータを表示
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             try {
@@ -410,19 +378,19 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to open a file
-        public static void OpenFile(Model.ClipboardItem contentItem) {
+        public override void OpenFile(ContentItem contentItem) {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
         }
 
         // Command to open a file as a new file
-        public static void OpenFileAsNewFile(Model.ClipboardItem contentItem) {
+        public override void OpenFileAsNewFile(ContentItem contentItem) {
             // Open the selected item
             ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
 
         // Command to generate titles
-        public static async void GenerateTitleCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override async void GenerateTitleCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             LogWrapper.Info(CommonStringResources.Instance.GenerateTitleInformation);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
@@ -439,7 +407,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to execute a prompt template
-        public static async void ExecutePromptTemplateCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction, string promptName) {
+        public override async void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName) {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {
                 foreach (var item in contentItem) {
@@ -456,24 +424,24 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to generate background information
-        public static void GenerateBackgroundInfoCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
 
         // Command to generate a summary
-        public static void GenerateSummaryCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override void GenerateSummaryCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.SummaryGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
 
         // Command to generate a task list
-        public static void GenerateTasksCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override void GenerateTasksCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
             ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
         }
         // Command to check the reliability of the document
-        public static void CheckDocumentReliabilityCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override void CheckDocumentReliabilityCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             foreach (var item in contentItem) {
                 item.CheckDocumentReliability();
                 // Save
@@ -486,7 +454,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to generate vectors
-        public static async void GenerateVectorCommand(List<Model.ClipboardItem> contentItem, object afterExecuteAction) {
+        public override async void GenerateVectorCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
@@ -503,7 +471,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to perform vector search
-        public static void OpenVectorSearchWindowCommand(ClipboardFolder folder) {
+        public override void OpenVectorSearchWindowCommand(ContentFolder folder) {
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
@@ -517,7 +485,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to perform vector search
-        public static void OpenVectorSearchWindowCommand(Model.ClipboardItem contentItem) {
+        public override void OpenVectorSearchWindowCommand(ContentItem contentItem) {
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
@@ -534,7 +502,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to open text content as a file
-        public static void OpenContentAsFile(Model.ClipboardItem contentItem) {
+        public override void OpenContentAsFile(ContentItem contentItem) {
             try {
                 // Open the selected item
                 ClipboardProcessController.OpenClipboardItemContent(contentItem);
@@ -543,7 +511,7 @@ namespace ClipboardApp.ViewModel.Main
             }
         }
 
-        public static QAChatStartupProps CreateQAChatStartupProps(ClipboardItem clipboardItem) {
+        public static QAChatStartupProps CreateQAChatStartupProps(ContentItem clipboardItem) {
 
             SearchRule rule = FolderManager.GlobalSearchCondition.Copy();
 
@@ -570,10 +538,10 @@ namespace ClipboardApp.ViewModel.Main
                 SaveCommand = (item, saveChatHistory) => {
                     bool flag = clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat;
                     clipboardItem.Save();
-   
+
                     if (saveChatHistory && flag) {
                         // チャット履歴用のItemの設定
-                        ClipboardFolder chatFolder = ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.ClipboardItemFolder;
+                        ClipboardFolder chatFolder = (ClipboardFolder)ActiveInstance.RootFolderViewModelContainer.ChatRootFolderViewModel.Folder;
                         ClipboardItem chatHistoryItem = new(chatFolder.Id);
                         clipboardItem.CopyTo(chatHistoryItem);
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {

@@ -1,4 +1,5 @@
 using System.IO;
+using ClipboardApp.Item;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Utils.Common;
@@ -40,11 +41,11 @@ namespace ClipboardApp.Model.Folder {
                     // localFileSystemFolder からフォルダ名を取得
                     string folderName = Path.GetFileName(localFileSystemFolder);
                     FileSystemFolder child = CreateChild(folderName);
-                    child.Save<FileSystemFolder, ClipboardItem>();
+                    child.Save<FileSystemFolder, FileSystemItem>();
                 }
             }
             // 自分自身を保存
-            this.Save<FileSystemFolder, ClipboardItem>();
+            this.Save<FileSystemFolder, FileSystemItem>();
         }
 
     }

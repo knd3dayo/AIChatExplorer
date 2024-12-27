@@ -22,6 +22,14 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 };
                 menuItems.Add(editMenuItem);
 
+                // 同期
+                MenuItem createSyncMenuItem = new() {
+                    Header = StringResources.Sync,
+                    Command = FileSystemFolderViewModel.SyncItemCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(createSyncMenuItem);
+
                 // ショートカット登録
                 MenuItem createShortCutMenuItem = new() {
                     Header = StringResources.CreateShortCut,

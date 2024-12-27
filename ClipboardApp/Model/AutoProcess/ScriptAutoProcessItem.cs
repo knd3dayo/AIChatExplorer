@@ -55,6 +55,7 @@ namespace ClipboardApp.Model.AutoProcess
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);
             ClipboardItem? resultItem = ClipboardItem.FromJson< ClipboardItem>(result);
+
             resultItem?.CopyTo(clipboardItem);
 
         }

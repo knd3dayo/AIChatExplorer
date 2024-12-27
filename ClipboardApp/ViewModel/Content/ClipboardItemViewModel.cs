@@ -5,25 +5,33 @@ using System.Windows.Media.Imaging;
 using ClipboardApp.Model;
 using ClipboardApp.View.ClipboardItem;
 using ClipboardApp.ViewModel.Main;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Content {
-    public partial class ClipboardItemViewModel : ClipboardAppViewModelBase {
+    public partial class ClipboardItemViewModel : ContentItemViewModel {
 
-        // 最後に選択されたタブのインデックス
-        // public static int LastSelectedTabIndex = 0;
+        // OpenItem
+        public override void OpenItem() {
+            throw new NotImplementedException();
+        }
+        // RemoveItem
+        public override void RemoveItem() {
+            throw new NotImplementedException();
+        }
 
         // コンストラクタ
-        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, Model.ClipboardItem clipboardItem) {
+        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ContentItem clipboardItem) :base (folderViewModel, clipboardItem) {
             ClipboardItem = clipboardItem;
             FolderViewModel = folderViewModel;
             Content = ClipboardItem.Content;
             Description = ClipboardItem.Description;
             Tags = ClipboardItem.Tags;
             SourceApplicationTitleText = ClipboardItem.SourceApplicationTitle;
-            Commands = new ClipboardAppCommandExecute(this);
+            Commands = new ClipboardItemCommands();
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
@@ -33,10 +41,10 @@ namespace ClipboardApp.ViewModel.Content {
 
         }
 
-        public ClipboardAppCommandExecute Commands { get; }
+        public ClipboardItemCommands Commands { get; }
 
         // ContentItem
-        public Model.ClipboardItem ClipboardItem { get; }
+        public ContentItem ClipboardItem { get; }
         // FolderViewModel
         public ClipboardFolderViewModel FolderViewModel { get; set; }
 
@@ -147,7 +155,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         // MergeItems
         public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
-            List<Model.ClipboardItem> items = [];
+            List<ContentItem> items = [];
             foreach (var itemViewModel in itemViewModels) {
                 items.Add(itemViewModel.ClipboardItem);
             }
@@ -156,7 +164,8 @@ namespace ClipboardApp.ViewModel.Content {
 
         // Copy
         public ClipboardItemViewModel Copy() {
-            return new ClipboardItemViewModel(FolderViewModel, ClipboardItem.Copy());
+            ClipboardItem newItem = (ClipboardItem)ClipboardItem.Copy();
+            return new ClipboardItemViewModel(FolderViewModel, newItem);
         }
 
         // TabItems 

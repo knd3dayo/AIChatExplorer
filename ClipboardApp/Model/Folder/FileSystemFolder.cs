@@ -1,5 +1,6 @@
 using System.IO;
 using ClipboardApp.Factory;
+using ClipboardApp.Item;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.PythonIF;
@@ -57,22 +58,22 @@ namespace ClipboardApp.Model.Folder {
         [BsonIgnore]
         public override List<T> GetItems<T>() {
             // ローカルファイルシステムとClipboardFolderのファイルを同期
-            SyncItems();
+            // SyncItems();
 
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<T>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<T> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
-            return items.Cast<T>().ToList();
+            return items;
         }
         public  void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
             }
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<ClipboardItem>();
+            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetItemCollection<FileSystemItem>();
             // FileSystemFolderPathフォルダ内のファイルを取得
-            List<ClipboardItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
+            List<FileSystemItem> items = [.. collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt)];
 
             // ファイルシステム上のファイル一覧
             List<string> fileSystemFilePaths = [];
@@ -96,8 +97,9 @@ namespace ClipboardApp.Model.Folder {
                     continue;
                 }
                 if (!items.Any(x => x.FilePath == localFileSystemFilePath)) {
-                    ClipboardItem item = new(Id) {
+                    FileSystemItem item = new() {
                         FilePath = localFileSystemFilePath,
+                        CollectionId = Id,
                         ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
                         Description = Path.GetFileName(localFileSystemFilePath)
                     };
@@ -153,12 +155,13 @@ namespace ClipboardApp.Model.Folder {
                         // localFileSystemFolder からフォルダ名を取得
                         string folderName = Path.GetFileName(localFileSystemFolder);
                         FileSystemFolder child = CreateChild(folderName);
-                        child.Save<FileSystemFolder, ClipboardItem>();
+                        child.Save<FileSystemFolder, FileSystemItem>();
                     }
                 }
             }
             // 自分自身を保存
-            this.Save<FileSystemFolder, ClipboardItem>();
+            this.Save<FileSystemFolder, FileSystemItem>();
         }
+
     }
 }

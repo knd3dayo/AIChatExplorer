@@ -191,6 +191,9 @@ namespace QAChat.Resource {
         // Load
         public override string Load { get; } = "Load";
 
+        // 同期
+        public override string Sync { get; } = "Sync";
+
         // Export/Import
         public override string ExportImport { get; } = "Export/Import";
 

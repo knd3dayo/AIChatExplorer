@@ -3,6 +3,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.View.Search;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Search;
+using QAChat.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Search {
     public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -15,9 +16,9 @@ namespace ClipboardApp.ViewModel.Search {
             return searchFolderViewModel;
         }
 
-        public override void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成
-            ClipboardFolder clipboardFolder = ClipboardItemFolder.CreateChild("新規フォルダ");
+            ClipboardFolder clipboardFolder = (ClipboardFolder)Folder.CreateChild("新規フォルダ");
 
             // 検索フォルダの親フォルダにこのフォルダを追加
 
@@ -39,13 +40,16 @@ namespace ClipboardApp.ViewModel.Search {
         }
 
         public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+            if (Folder is not ClipboardFolder clipboardFolder) {
+                return;
+            }
 
-            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
+            SearchRule? searchConditionRule = SearchRuleController.GetSearchRuleByFolder(Folder);
             searchConditionRule ??= new() {
                 Type = SearchRule.SearchType.SearchFolder,
-                SearchFolder = ClipboardItemFolder
+                SearchFolder = Folder
             };
-            SearchWindow.OpenSearchWindow(searchConditionRule, this.ClipboardItemFolder, true, afterUpdate);
+            SearchWindow.OpenSearchWindow(searchConditionRule, clipboardFolder, true, afterUpdate);
 
         }
 

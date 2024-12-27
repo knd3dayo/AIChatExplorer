@@ -7,19 +7,22 @@ using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Main;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
+    public abstract class ClipboardFolderBase<ItemViewModelType>(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) where ItemViewModelType : ContentItemViewModel {
 
         #region abstract
 
         // フォルダ作成コマンドの実装
-        public abstract void CreateFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate);
+        public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
         /// <summary>
         ///  フォルダ編集コマンド
@@ -31,9 +34,9 @@ namespace ClipboardApp.ViewModel.Folder {
 
         public abstract void CreateItemCommandExecute();
 
-        public abstract ClipboardItemViewModel CreateItemViewModel(Model.ClipboardItem item);
+        public abstract ItemViewModelType CreateItemViewModel(ContentItem item);
 
-        public abstract void OpenItemCommandExecute(ClipboardItemViewModel item);
+        public abstract void OpenItemCommandExecute(ItemViewModelType item);
 
         public abstract void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder);
 
@@ -48,21 +51,21 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // コンストラクタ
 
-        public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
+        // public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
 
         // DisplayText
         public string Description {
             get {
-                return ClipboardItemFolder.Description;
+                return Folder.Description;
             }
             set {
-                ClipboardItemFolder.Description = value;
+                Folder.Description = value;
                 OnPropertyChanged(nameof(Description));
             }
         }
 
         // GetItems
-        public ObservableCollection<ClipboardItemViewModel> Items { get; } = [];
+        public ObservableCollection<ItemViewModelType> Items { get; } = [];
 
         // 子フォルダ
         public ObservableCollection<ClipboardFolderViewModel> Children { get; set; } = [];
@@ -71,36 +74,40 @@ namespace ClipboardApp.ViewModel.Folder {
         public bool IsDeleteVisible {
             get {
                 // RootFolderは削除不可
-                return ClipboardItemFolder.IsRootFolder == false;
+                return Folder.IsRootFolder == false;
             }
         }
 
         public ClipboardFolderViewModel? ParentFolderViewModel { get; set; }
 
-        private void UpdateStatusText() {
+        protected virtual void UpdateStatusText() {
             string message = $"{StringResources.Folder}[{FolderName}]";
-            // AutoProcessRuleが設定されている場合
-            var rules = AutoProcessRuleController.GetAutoProcessRules(ClipboardItemFolder);
-            if (rules.Count > 0) {
-                message += $" {StringResources.AutoProcessingIsSet}[";
-                foreach (AutoProcessRule item in rules) {
-                    message += item.RuleName + " ";
+
+            if (Folder is ClipboardFolder clipboardFolder) {
+                // AutoProcessRuleが設定されている場合
+                var rules = AutoProcessRuleController.GetAutoProcessRules(clipboardFolder);
+                if (rules.Count > 0) {
+                    message += $" {StringResources.AutoProcessingIsSet}[";
+                    foreach (AutoProcessRule item in rules) {
+                        message += item.RuleName + " ";
+                    }
+                    message += "]";
                 }
-                message += "]";
+
+                // folderが検索フォルダの場合
+                SearchRule? searchConditionRule = FolderManager.GlobalSearchCondition;
+                if (clipboardFolder.FolderType == FolderTypeEnum.Search) {
+                    searchConditionRule = SearchRuleController.GetSearchRuleByFolder(clipboardFolder);
+                }
+                SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
+                // SearchConditionがNullでなく、 Emptyでもない場合
+                if (searchCondition != null && !searchCondition.IsEmpty()) {
+                    message += $" {StringResources.SearchCondition}[";
+                    message += searchCondition.ToStringSearchCondition();
+                    message += "]";
+                }
             }
 
-            // folderが検索フォルダの場合
-            SearchRule? searchConditionRule = FolderManager.GlobalSearchCondition;
-            if (ClipboardItemFolder.FolderType == FolderTypeEnum.Search) {
-                searchConditionRule = SearchRuleController.GetSearchRuleByFolder(ClipboardItemFolder);
-            }
-            SearchCondition? searchCondition = searchConditionRule?.SearchCondition;
-            // SearchConditionがNullでなく、 Emptyでもない場合
-            if (searchCondition != null && !searchCondition.IsEmpty()) {
-                message += $" {StringResources.SearchCondition}[";
-                message += searchCondition.ToStringSearchCondition();
-                message += "]";
-            }
             Tools.StatusText.ReadyText = message;
             Tools.StatusText.Text = message;
         }
@@ -112,19 +119,20 @@ namespace ClipboardApp.ViewModel.Folder {
         //--------------------------------------------------------------------------------
 
         // フォルダー保存コマンド
-        public SimpleDelegateCommand<ClipboardFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
-            ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
+        public override SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
+            Folder.Save<ClipboardFolder, Model.ClipboardItem>();
         });
 
         // アイテム削除コマンド
-        public SimpleDelegateCommand<ClipboardItemViewModel> DeleteItemCommand => new((item) => {
-            item.Commands.DeleteItemCommand.Execute();
+        public SimpleDelegateCommand<ItemViewModelType> DeleteItemCommand => new((item) => {
+            ClipboardItemCommands commands = new();
+            commands.DeleteItemCommand.Execute();
             Items.Remove(item);
 
         });
         // アイテム保存コマンド
         public SimpleDelegateCommand<ClipboardItemViewModel> AddItemCommand => new((item) => {
-            ClipboardItemFolder.AddItem(item.ClipboardItem);
+            Folder.AddItem(item.ClipboardItem);
         });
 
 
@@ -133,7 +141,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
+                folderViewModel.Folder.Save<ClipboardFolder, Model.ClipboardItem>();
                 folderViewModel.LoadFolderCommand.Execute();
 
             });
@@ -143,7 +151,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
             EditFolderCommandExecute(folderViewModel, () => {
                 //　フォルダを保存
-                folderViewModel.ClipboardItemFolder.Save<ClipboardFolder, Model.ClipboardItem>();
+                folderViewModel.Folder.Save<ClipboardFolder, Model.ClipboardItem>();
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.FolderEdited);
             });
@@ -168,12 +176,15 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // フォルダ内のアイテムをJSON形式でバックアップする処理
         public SimpleDelegateCommand<object> BackupItemsFromFolderCommand => new((parameter) => {
+            if ( Folder is not ClipboardFolder clipboardFolder) {
+                return;
+            }
             DirectoryInfo directoryInfo = new("export");
             // exportフォルダが存在しない場合は作成
             if (!Directory.Exists("export")) {
                 directoryInfo = Directory.CreateDirectory("export");
             }
-            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.ClipboardItemFolder.Id.ToString() + ".json";
+            string fileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + this.Folder.Id.ToString() + ".json";
 
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
@@ -187,7 +198,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 return;
             } else {
                 string resultFilePath = dialog.FileName;
-                this.ClipboardItemFolder.ExportItemsToJson(resultFilePath);
+                clipboardFolder.ExportItemsToJson(resultFilePath);
                 // フォルダ内のアイテムを読み込む
                 LogWrapper.Info(CommonStringResources.Instance.FolderExported);
             }
@@ -195,6 +206,9 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // フォルダ内のアイテムをJSON形式でリストアする処理
         public SimpleDelegateCommand<object> RestoreItemsToFolderCommand => new((parameter) => {
+            if (Folder is not ClipboardFolder clipboardFolder) {
+                return;
+            }
             //ファイルダイアログを表示
             using var dialog = new CommonOpenFileDialog() {
                 Title = CommonStringResources.Instance.SelectFolderPlease,
@@ -207,7 +221,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 string filaPath = dialog.FileName;
                 // ファイルを読み込む
                 string jsonString = File.ReadAllText(filaPath);
-                this.ClipboardItemFolder.ImportItemsFromJson(jsonString);
+                clipboardFolder.ImportItemsFromJson(jsonString);
                 // フォルダ内のアイテムを読み込む
                 this.LoadFolderCommand.Execute();
                 LogWrapper.Info(CommonStringResources.Instance.FolderImported);
@@ -228,10 +242,10 @@ namespace ClipboardApp.ViewModel.Folder {
             Task.Run(() => {
                 try {
                     // MainWindowViewModelのIsIndeterminateをTrueに設定
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                    ClipboardItemFolder.RefreshVectorDBCollection<Model.ClipboardItem>();
+                    UpdateIndeterminate(true);
+                    Folder.RefreshVectorDBCollection<Model.ClipboardItem>();
                 } finally {
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                    UpdateIndeterminate(false);
                 }
             });
 
@@ -256,7 +270,7 @@ namespace ClipboardApp.ViewModel.Folder {
         /// <param name="parameter"></param>        
         public SimpleDelegateCommand<ClipboardFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
 
-            if (folderViewModel.ClipboardItemFolder.Id == FolderManager.RootFolder.Id
+            if (folderViewModel.Folder.Id == FolderManager.RootFolder.Id
                 || folderViewModel.FolderPath == FolderManager.SEARCH_ROOT_FOLDER_NAME) {
                 LogWrapper.Error(StringResources.RootFolderCannotBeDeleted);
                 return;
@@ -269,7 +283,7 @@ namespace ClipboardApp.ViewModel.Folder {
             // 親フォルダを取得
             ClipboardFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
 
-            folderViewModel.ClipboardItemFolder.Delete<ClipboardFolder, ClipboardItem>();
+            folderViewModel.Folder.Delete<ClipboardFolder, ClipboardItem>();
 
             // 親フォルダが存在する場合は、親フォルダを再読み込み
             if (parentFolderViewModel != null) {
@@ -303,7 +317,7 @@ namespace ClipboardApp.ViewModel.Folder {
         }
 
         //クリップボードアイテムを開く
-        public SimpleDelegateCommand<ClipboardItemViewModel> OpenItemCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<ItemViewModelType> OpenItemCommand => new((itemViewModel) => {
 
             OpenItemCommandExecute(itemViewModel);
 
@@ -315,11 +329,11 @@ namespace ClipboardApp.ViewModel.Folder {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public virtual async void LoadChildren(int nestLevel = 5) {
             try {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
                 await Task.Run(() => {
-                    foreach (var child in ClipboardItemFolder.GetChildren<ClipboardFolder>()) {
+                    foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -336,7 +350,7 @@ namespace ClipboardApp.ViewModel.Folder {
                 OnPropertyChanged(nameof(Children));
 
             } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                UpdateIndeterminate(false);
             }
 
 
@@ -347,18 +361,20 @@ namespace ClipboardApp.ViewModel.Folder {
             // ClipboardItemFolder.Itemsは別スレッドで実行
             List<Model.ClipboardItem> _items = [];
             try {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                UpdateIndeterminate(true);
                 await Task.Run(() => {
-                    _items = ClipboardItemFolder.GetItems<ClipboardItem>();
+                    _items = Folder.GetItems<ClipboardItem>();
                 });
-                foreach (Model.ClipboardItem item in _items) {
+                foreach (ContentItem item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                UpdateIndeterminate(false);
             }
         }
-
+        public override void UpdateIndeterminate(bool isIndeterminate) {
+            MainWindowViewModel.Instance.UpdateIndeterminate(isIndeterminate);
+        }
 
     }
 }

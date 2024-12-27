@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ClipboardApp.Model;
 using ClipboardApp.ViewModel.Main;
 using QAChat.View.Tag;
 using WpfAppCommon.Model;
@@ -16,9 +17,9 @@ namespace ClipboardApp.ViewModel.Content {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
-                Model.ClipboardItem clipboardItem = new(folderViewModel.ClipboardItemFolder.Id) {
+                Model.ClipboardItem clipboardItem = new(folderViewModel.Folder.Id) {
                     // ReferenceVectorDBItemsを設定
-                    ReferenceVectorDBItems = folderViewModel.ClipboardItemFolder.ReferenceVectorDBItems
+                    ReferenceVectorDBItems = folderViewModel.Folder.ReferenceVectorDBItems
                 };
                 ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
                 Title = StringResources.NewItem;
@@ -130,8 +131,11 @@ namespace ClipboardApp.ViewModel.Content {
             if (ItemViewModel == null) {
                 return;
             }
+            if (ItemViewModel.ClipboardItem is not ClipboardItem clipboardItem) {
+                return;
+            }
             // フォルダに自動処理が設定されている場合は実行
-            Model.ClipboardItem? item = ItemViewModel.ClipboardItem.ApplyAutoProcess();
+            Model.ClipboardItem? item = clipboardItem.ApplyAutoProcess();
             // ClipboardItemを更新
             if (item != null) {
 

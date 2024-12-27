@@ -39,13 +39,13 @@ namespace ClipboardApp.ViewModel.Folder {
         }
         public VectorDBItem? SelectedVectorDBItem {
             get {
-                return FolderViewModel.ClipboardItemFolder.MainVectorDBItem;
+                return FolderViewModel.Folder.MainVectorDBItem;
             }
             set {
                 if (value == null) {
                     return;
                 }
-                FolderViewModel.ClipboardItemFolder.MainVectorDBItem = value;
+                FolderViewModel.Folder.MainVectorDBItem = value;
                 OnPropertyChanged(nameof(SelectedVectorDBItem));
             }
         }

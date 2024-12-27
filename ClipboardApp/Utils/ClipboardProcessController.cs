@@ -1,4 +1,5 @@
 using ClipboardApp.Model;
+using PythonAILib.Model.Content;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Utils {
@@ -8,7 +9,7 @@ namespace ClipboardApp.Utils {
     /// </summary>
     public class ClipboardProcessController {
 
-        public static void OpenClipboardItemContent(ClipboardItem item) {
+        public static void OpenClipboardItemContent(ContentItem item) {
 
             ProcessUtil.OpenTempTextFile(item.Content, (process) => { },
             (content) => {
@@ -19,7 +20,7 @@ namespace ClipboardApp.Utils {
 
         }
 
-        public static void OpenClipboardItemFile(ClipboardItem item, bool openAsNew = false) {
+        public static void OpenClipboardItemFile(ContentItem item, bool openAsNew = false) {
 
             // FilePathが存在しない場合かつBase64Stringが存在する場合はByte配列を取得
             if (string.IsNullOrEmpty(item.FilePath)) {

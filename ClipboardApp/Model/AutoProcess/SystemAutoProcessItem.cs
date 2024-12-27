@@ -102,7 +102,7 @@ namespace ClipboardApp.Model.AutoProcess {
                     }
 
                     LogWrapper.Info($"{CommonStringResources.Instance.CopyToFolderDescription}:{args.DestinationFolder.FolderPath}");
-                    ClipboardItem newItem = args.ClipboardItem.Copy();
+                    ClipboardItem newItem = (ClipboardItem)args.ClipboardItem.Copy();
 
                     // Folderに追加
                     args.DestinationFolder.AddItem(newItem);
@@ -118,7 +118,7 @@ namespace ClipboardApp.Model.AutoProcess {
                         return args.ClipboardItem;
                     }
                     // Folderに追加
-                    ClipboardItem newItem = args.ClipboardItem.Copy();
+                    ClipboardItem newItem = (ClipboardItem)args.ClipboardItem.Copy();
                     args.DestinationFolder.AddItem(newItem);
                     // 元のフォルダから削除
                     LogWrapper.Info($"{CommonStringResources.Instance.Delete}:{args.ClipboardItem.FolderPath}");

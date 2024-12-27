@@ -57,6 +57,9 @@ namespace ClipboardApp.ViewModel.Folder {
         }
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
+            if (ClipboardFolderViewModel.Folder is not ClipboardFolder clipboardFolder) {
+                return;
+            }
 
             IsIndeterminate = true;
             // 選択されたインデックスによって処理を分岐
@@ -64,11 +67,11 @@ namespace ClipboardApp.ViewModel.Folder {
                 switch (SelectedIndex) {
                     case 0:
                         // エクスポート処理
-                        ClipboardFolderViewModel.ClipboardItemFolder.ExportToExcel(SelectedFileName, [.. ExportItems]);
+                        clipboardFolder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // インポート処理
-                        ClipboardFolderViewModel.ClipboardItemFolder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
+                        clipboardFolder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
                         break;
                     default:
                         break;
@@ -84,7 +87,7 @@ namespace ClipboardApp.ViewModel.Folder {
         public SimpleDelegateCommand<object> SelectExportFileCommand => new((obj) => {
             // SelectedFileNameが空の場合はデフォルトのファイル名を設定
             if (SelectedFileName == "") {
-                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.ClipboardItemFolder.Id.ToString() + ".xlsx";
+                SelectedFileName = DateTime.Now.ToString("yyyyMMdd-HHmmss") + "-" + ClipboardFolderViewModel.Folder.Id.ToString() + ".xlsx";
                 OnPropertyChanged(nameof(SelectedFileName));
             }
 

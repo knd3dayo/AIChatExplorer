@@ -87,6 +87,9 @@ namespace QAChat.Resource {
         // ロード
         public virtual string Load { get; } = "ロード";
 
+        // 同期
+        public virtual string Sync { get; } = "同期";
+
         // ExportImport
         public virtual string ExportImport { get; } = "エクスポート/インポート";
 

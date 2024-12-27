@@ -121,7 +121,7 @@ namespace ClipboardApp.ViewModel.Content {
                 Header = StringResources.Copy,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
                 Command = MainWindowViewModel.Instance.CopyItemCommand,
-                CommandParameter = this,
+                CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+C"
             };
             menuItems.Add(copyMenuItem);
@@ -153,7 +153,7 @@ namespace ClipboardApp.ViewModel.Content {
             MenuItem vectorSearchMenuItem = new() {
                 Header = StringResources.VectorSearch,
                 // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.VectorSearchCommand,
+                Command = itemViewModel.Commands.VectorSearchCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(vectorSearchMenuItem);

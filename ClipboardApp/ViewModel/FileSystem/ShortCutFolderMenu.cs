@@ -28,6 +28,13 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
                 menuItems.Add(deleteMenuItem);
 
+                // 同期
+                MenuItem createSyncMenuItem = new() {
+                    Header = StringResources.Sync,
+                    Command = FileSystemFolderViewModel.SyncItemCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(createSyncMenuItem);
 
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {

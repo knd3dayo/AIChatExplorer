@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 namespace QAChat.View.QAChatMain {
     /// <summary>
-    /// ContentItemPanel.xaml の相互作用ロジック
+    /// Item.xaml の相互作用ロジック
     /// </summary>
     public partial class ContentItemPanel : UserControl {
         public ContentItemPanel() {

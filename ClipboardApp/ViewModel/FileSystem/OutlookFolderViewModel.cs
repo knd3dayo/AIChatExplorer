@@ -35,12 +35,12 @@ namespace ClipboardApp.ViewModel.FileSystem {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel = 0) {
             try {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
 
                 await Task.Run(() => {
-                    foreach (var child in ClipboardItemFolder.GetChildren<OutlookFolder>()) {
+                    foreach (var child in Folder.GetChildren<OutlookFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -55,15 +55,23 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                UpdateIndeterminate(false);
             }
         
         }
 
-        public static SimpleDelegateCommand<OutlookFolderViewModel> LoadOutlookItemCommand => new((OutlookFolderViewModel folderViewModel) => {
-            OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
-            folder.SyncItems();
+        public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
+            try {
+                OutlookFolder folder = (OutlookFolder)folderViewModel.Folder;
+                folderViewModel.UpdateIndeterminate(true);
+                await Task.Run(() => {
+                    folder.SyncItems();
+                });
+            } finally {
+                folderViewModel.UpdateIndeterminate(false);
+            }
         });
+    
     }
 }
 

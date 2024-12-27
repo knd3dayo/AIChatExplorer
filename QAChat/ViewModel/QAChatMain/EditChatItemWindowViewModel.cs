@@ -12,7 +12,7 @@ namespace QAChat.ViewModel.QAChatMain {
             OnPropertyChanged(nameof(ChatItem));
         }
 
-        public TextWrapping TextWrapping {
+        public  TextWrapping TextWrapping {
             get {
                 if (QAChatManager.Instance == null) {
                     return TextWrapping.NoWrap;

@@ -1,7 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.Item;
+using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Content;
+using NetOffice.OutlookApi;
+using PythonAILib.Model.Content;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.FileSystem {
     public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -15,11 +20,11 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 return clipboardItemMenu.MenuItems;
             }
         }
-
+ 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public override FileSystemFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
             if (childFolder is not FileSystemFolder) {
-                throw new Exception("childFolder is not FileSystemFolder");
+                throw new System.Exception("childFolder is not FileSystemFolder");
             }
             var childFolderViewModel = new FileSystemFolderViewModel((FileSystemFolder)childFolder) {
                 // 親フォルダとして自分自身を設定
@@ -35,12 +40,12 @@ namespace ClipboardApp.ViewModel.FileSystem {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel = 0) {
             try {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
 
                 await Task.Run(() => {
-                    foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
+                    foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -55,11 +60,40 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                UpdateIndeterminate(false);
             }
 
 
         }
+        // LoadItems
+        public override async void LoadItems() {
+            Items.Clear();
+            // ClipboardItemFolder.Itemsは別スレッドで実行
+            List<FileSystemItem> _items = [];
+            try {
+                UpdateIndeterminate(true);
+                await Task.Run(() => {
+                    _items = Folder.GetItems<FileSystemItem>();
+                });
+                foreach (FileSystemItem item in _items) {
+                    Items.Add(CreateItemViewModel(item));
+                }
+            } finally {
+                UpdateIndeterminate(false);
+            }
+        }
+        public static SimpleDelegateCommand<FileSystemFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {
+            try {
+                FileSystemFolder folder = (FileSystemFolder)folderViewModel.Folder;
+                folderViewModel.UpdateIndeterminate(true);
+                await Task.Run(() => {
+                    folder.SyncItems();
+                });
+            } finally {
+                folderViewModel.UpdateIndeterminate(false);
+            }
+        });
+
     }
 }
 

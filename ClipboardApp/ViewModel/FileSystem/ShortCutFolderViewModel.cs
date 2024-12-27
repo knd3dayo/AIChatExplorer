@@ -32,14 +32,14 @@ namespace ClipboardApp.ViewModel.FileSystem {
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public override async void LoadChildren(int nestLevel = 0) {
             try {
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
                 List<ClipboardFolderViewModel> _children = [];
 
                 await Task.Run(() => {
                     // RootFolderの場合は、ShortCutFolderを取得
-                    if (ClipboardItemFolder.IsRootFolder) {
-                        foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
+                    if (Folder.IsRootFolder) {
+                        foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                             if (child == null) {
                                 continue;
                             }
@@ -49,7 +49,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                         return;
                     }
                     // RootFolder以外の場合は、FileSystemFolderを取得 
-                    foreach (var child in ClipboardItemFolder.GetChildren<FileSystemFolder>()) {
+                    foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
                             continue;
                         }
@@ -64,7 +64,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                UpdateIndeterminate(false);
             }
         }
 

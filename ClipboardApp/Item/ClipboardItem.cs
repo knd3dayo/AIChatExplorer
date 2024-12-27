@@ -37,82 +37,12 @@ namespace ClipboardApp.Model {
         // -------------------------------------------------------------------
         // インスタンスメソッド
         // -------------------------------------------------------------------
-
-        // 別フォルダに移動
-        public void MoveToFolder(ClipboardFolder folder) {
-            CollectionId = folder.Id;
-            Save();
-        }
-        // 別フォルダにコピー
-        public void CopyToFolder(ClipboardFolder folder) {
-            ClipboardItem newItem = Copy();
-            newItem.CollectionId = folder.Id;
-            newItem.Save();
+        public override object Copy() {
+            ClipboardItem clipboardItem = new(this.CollectionId);
+            CopyTo(clipboardItem);
+            return clipboardItem;
         }
 
-        public ClipboardItem Copy() {
-            ClipboardItem newItem = new(this.CollectionId);
-            CopyTo(newItem);
-            return newItem;
-
-        }
-
-        public void CopyTo(ContentItem newItem) {
-            if (newItem is not ClipboardItem) {
-                return;
-            }
-            ClipboardItem clipboardItem = (ClipboardItem)newItem;
-            clipboardItem.UpdatedAt = UpdatedAt;
-            clipboardItem.Content = Content;
-            clipboardItem.ContentType = ContentType;
-            clipboardItem.SourceApplicationName = SourceApplicationName;
-            clipboardItem.SourceApplicationTitle = SourceApplicationTitle;
-            clipboardItem.SourceApplicationID = SourceApplicationID;
-            clipboardItem.SourceApplicationPath = SourceApplicationPath;
-            clipboardItem.Tags = new HashSet<string>(Tags);
-            clipboardItem.Description = Description;
-            clipboardItem.PromptChatResult = PromptChatResult;
-
-            //-- ChatItemsをコピー
-            newItem.ChatItems = new List<ChatMessage>(ChatItems);
-
-        }
-
-        public void MergeItems(List<ClipboardItem> items) {
-            // itemsが空の場合は何もしない
-            if (items.Count == 0) {
-                return;
-            }
-
-            string mergeText = "\n";
-            mergeText += "---\n";
-
-            foreach (var item in items) {
-                // itemが自分自身の場合はスキップ
-                if (item.Id == Id) {
-                    continue;
-                }
-                // Contentを追加
-                mergeText += item.Content + "\n";
-            }
-            // mergeTextをContentに追加
-            Content += mergeText;
-
-            // Tagsのマージ。重複を除外して追加
-            Tags.UnionWith(items.SelectMany(item => item.Tags));
-
-            // マージしたアイテムを削除
-            foreach (var item in items) {
-                // itemが自分自身の場合はスキップ
-                if (item.Id == Id) {
-                    continue;
-                }
-                item.Delete();
-            }
-            // 保存
-            Save();
-
-        }
 
 
         //--------------------------------------------------------------------------------
