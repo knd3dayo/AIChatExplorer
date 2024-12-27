@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.Item;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Content;
 using WpfAppCommon.Utils;
@@ -58,6 +59,23 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 UpdateIndeterminate(false);
             }
         
+        }
+        // LoadItems
+        public override async void LoadItems() {
+            Items.Clear();
+            // ClipboardItemFolder.Itemsは別スレッドで実行
+            List<OutlookItem> _items = [];
+            try {
+                UpdateIndeterminate(true);
+                await Task.Run(() => {
+                    _items = Folder.GetItems<OutlookItem>();
+                });
+                foreach (OutlookItem item in _items) {
+                    Items.Add(CreateItemViewModel(item));
+                }
+            } finally {
+                UpdateIndeterminate(false);
+            }
         }
 
         public static SimpleDelegateCommand<OutlookFolderViewModel> SyncItemCommand => new(async (folderViewModel) => {

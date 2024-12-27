@@ -81,8 +81,8 @@ namespace ClipboardApp.Model.Folder {
                     entryIdList.Add(mailItem.EntryID);
 
                     // EntryIDが一致するOutlookItemが存在しない場合は追加
-                    var item = collection.Find(x => x.EntryID == mailItem.EntryID);
-                    if (item != null) {
+                    var items = collection.Find(x => x.EntryID == mailItem.EntryID);
+                    if (items == null || items.Count() == 0) {
                         OutlookItem newItem = new() {
                             EntryID = mailItem.EntryID,
                             Description = mailItem.Subject,
@@ -93,7 +93,7 @@ namespace ClipboardApp.Model.Folder {
                     }
                 }
             }
-            foreach (OutlookItem item in collection.FindAll()) {
+            foreach (var item in collection.Find(x => x.CollectionId == this.Id)) {
                 // EntryIDが一致するOutlookItemが存在しない場合は削除
                 if (!entryIdList.Any(x => x == item.EntryID)) {
                     collection.Delete(item.Id);
