@@ -124,10 +124,9 @@ namespace PythonAILib.Model.Content {
                 // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
                 RemoveVectorDBItem(MainVectorDBItem);
             }
-
+            
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
-
             // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
             foreach (var item in GetItems<T2>()) {
                 item.IsReferenceVectorDBItemsSynced = false;

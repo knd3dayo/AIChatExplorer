@@ -307,7 +307,7 @@ namespace ClipboardApp {
         // タイトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTitleCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.GenerateTitleCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.GenerateTitleCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -318,7 +318,7 @@ namespace ClipboardApp {
         // 背景情報を生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -329,7 +329,7 @@ namespace ClipboardApp {
         // サマリーを生成する処理　複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -340,7 +340,7 @@ namespace ClipboardApp {
         // 課題リストを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTasksCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.GenerateTasksCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.GenerateTasksCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -350,7 +350,7 @@ namespace ClipboardApp {
         // 文書の信頼度を判定する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> CheckDocumentReliabilityCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -362,7 +362,7 @@ namespace ClipboardApp {
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
             ClipboardItemCommands commands = new();
-            commands.GenerateVectorCommand(SelectedItems.Select(x => x.ClipboardItem).ToList(), () => {
+            commands.GenerateVectorCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     SelectedFolder?.LoadFolderCommand.Execute();
@@ -383,9 +383,9 @@ namespace ClipboardApp {
             // チャットを実行
             Task.Run(() => {
                 foreach (var item in SelectedItems) {
-                    item.ClipboardItem.CreateChatResult(promptItem);
+                    item.ContentItem.CreateChatResult(promptItem);
                     //保存
-                    item.ClipboardItem.Save();
+                    item.ContentItem.Save();
                 }
                 MainUITask.Run(() => {
                     // フォルダ内のアイテムを再読み込み

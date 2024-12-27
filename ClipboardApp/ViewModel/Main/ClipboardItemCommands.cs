@@ -37,7 +37,7 @@ namespace ClipboardApp.ViewModel.Main {
                 LogWrapper.Error("アイテムが選択されていません");
                 return;
             }
-            ExtractText(itemViewModel.ClipboardItem);
+            ExtractText(itemViewModel.ContentItem);
             int index = itemViewModel.SelectedTabIndex;
             itemViewModel.SelectedTabIndex = index;
         });
@@ -292,7 +292,7 @@ namespace ClipboardApp.ViewModel.Main {
             }
             windowViewModel.CopiedFolder = windowViewModel.SelectedFolder;
             try {
-                ClipboardController.Instance.SetDataObject(SelectedItem.ClipboardItem);
+                ClipboardController.Instance.SetDataObject(SelectedItem.ContentItem);
                 LogWrapper.Info(CommonStringResources.Instance.Copied);
             } catch (Exception e) {
                 string message = $"{CommonStringResources.Instance.ErrorOccurredAndMessage}:\n{e.Message}\n{CommonStringResources.Instance.StackTrace}:\n{e.StackTrace}";

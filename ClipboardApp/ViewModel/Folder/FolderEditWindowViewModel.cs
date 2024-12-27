@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.VectorDB;
 using QAChat.View.VectorDB;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
@@ -10,13 +11,13 @@ namespace ClipboardApp.ViewModel.Folder {
     public class FolderEditWindowViewModel : ClipboardAppViewModelBase {
 
         // 起動時の処理
-        public FolderEditWindowViewModel(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             FolderViewModel = folderViewModel;
             OnPropertyChanged(nameof(FolderViewModel));
             OnPropertyChanged(nameof(SelectedVectorDBItem));
         }
-        public ClipboardFolderViewModel FolderViewModel { get; set; }
+        public ContentFolderViewModel FolderViewModel { get; set; }
         // フォルダ作成後に実行するコマンド
         private Action AfterUpdate { get; set; }
 

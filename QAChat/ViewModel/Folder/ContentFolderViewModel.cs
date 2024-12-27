@@ -1,12 +1,37 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Content;
+using QAChat.Model;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 
 namespace QAChat.ViewModel.Folder {
-    public class ContentFolderViewModel(ContentFolder folder) : ObservableObject {
-        protected CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
+    public abstract class ContentFolderViewModel(ContentFolder folder) : QAChatViewModelBase {
+
+        // フォルダ作成コマンドの実装
+        public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
+
+        public abstract void CreateItemCommandExecute();
+
+
+        // DisplayText
+        public string Description {
+            get {
+                return Folder.Description;
+            }
+            set {
+                Folder.Description = value;
+                OnPropertyChanged(nameof(Description));
+            }
+        }
+
+        // - コンテキストメニューの削除を表示するかどうか
+        public bool IsDeleteVisible {
+            get {
+                // RootFolderは削除不可
+                return Folder.IsRootFolder == false;
+            }
+        }
 
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public virtual int DefaultNextLevel { get; } = 5;

@@ -3,6 +3,7 @@ using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using QAChat.ViewModel;
 using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Chat {
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -21,8 +22,8 @@ namespace ClipboardApp.ViewModel.Chat {
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             OpenItemCommandExecute(clipboardItemViewModel);
         }
-        public override void OpenItemCommandExecute(ClipboardItemViewModel itemViewModel) {
-            QAChatStartupProps props = new(itemViewModel.ClipboardItem);
+        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel) {
+            QAChatStartupProps props = new(itemViewModel.ContentItem);
 
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
@@ -43,7 +44,7 @@ namespace ClipboardApp.ViewModel.Chat {
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
         }
 

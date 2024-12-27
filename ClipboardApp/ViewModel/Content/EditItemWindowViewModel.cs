@@ -4,6 +4,8 @@ using System.Windows.Media;
 using ClipboardApp.Model;
 using ClipboardApp.ViewModel.Main;
 using QAChat.View.Tag;
+using QAChat.ViewModel.Folder;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
@@ -13,7 +15,7 @@ namespace ClipboardApp.ViewModel.Content {
     /// </summary>
     public class EditItemWindowViewModel : ClipboardAppViewModelBase {
 
-        public EditItemWindowViewModel(ClipboardFolderViewModel folderViewModel, ClipboardItemViewModel? itemViewModel, Action afterUpdate) {
+        public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel? itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
@@ -25,15 +27,15 @@ namespace ClipboardApp.ViewModel.Content {
                 Title = StringResources.NewItem;
 
             } else {
-                Title = itemViewModel.ClipboardItem.Description;
+                Title = itemViewModel.ContentItem.Description;
                 ItemViewModel = itemViewModel;
             }
             _afterUpdate = afterUpdate;
 
         }
 
-        private ClipboardItemViewModel? itemViewModel;
-        public ClipboardItemViewModel? ItemViewModel {
+        private ContentItemViewModel? itemViewModel;
+        public ContentItemViewModel? ItemViewModel {
             get {
                 return itemViewModel;
             }
@@ -44,8 +46,8 @@ namespace ClipboardApp.ViewModel.Content {
                 OnPropertyChanged(nameof(ItemViewModel));
             }
         }
-        private ClipboardFolderViewModel? _folderViewModel;
-        public ClipboardFolderViewModel? FolderViewModel {
+        private ContentFolderViewModel? _folderViewModel;
+        public ContentFolderViewModel? FolderViewModel {
             get {
                 return _folderViewModel;
             }
@@ -118,7 +120,7 @@ namespace ClipboardApp.ViewModel.Content {
                 LogWrapper.Error("クリップボードアイテムが選択されていません");
                 return;
             }
-            TagWindow.OpenTagWindow(ItemViewModel.ClipboardItem, () => {
+            TagWindow.OpenTagWindow(ItemViewModel.ContentItem, () => {
                 // TagsStringを更新
                 TagsString = string.Join(",", ItemViewModel.Tags);
             });
@@ -131,7 +133,7 @@ namespace ClipboardApp.ViewModel.Content {
             if (ItemViewModel == null) {
                 return;
             }
-            if (ItemViewModel.ClipboardItem is not ClipboardItem clipboardItem) {
+            if (ItemViewModel.ContentItem is not ClipboardItem clipboardItem) {
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行

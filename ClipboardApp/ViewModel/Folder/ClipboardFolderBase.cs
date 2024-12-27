@@ -17,12 +17,10 @@ using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folder {
-    public abstract class ClipboardFolderBase<ItemViewModelType>(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) where ItemViewModelType : ContentItemViewModel {
+    public abstract class ClipboardFolderBase(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
 
         #region abstract
 
-        // フォルダ作成コマンドの実装
-        public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
         /// <summary>
         ///  フォルダ編集コマンド
@@ -30,13 +28,12 @@ namespace ClipboardApp.ViewModel.Folder {
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public abstract void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate);
+        public abstract void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
-        public abstract void CreateItemCommandExecute();
+        
+        public abstract ContentItemViewModel CreateItemViewModel(ContentItem item);
 
-        public abstract ItemViewModelType CreateItemViewModel(ContentItem item);
-
-        public abstract void OpenItemCommandExecute(ItemViewModelType item);
+        public abstract void OpenItemCommandExecute(ContentItemViewModel item);
 
         public abstract void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder);
 
@@ -53,30 +50,13 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // public ClipboardFolder ClipboardItemFolder { get; } = clipboardItemFolder;
 
-        // DisplayText
-        public string Description {
-            get {
-                return Folder.Description;
-            }
-            set {
-                Folder.Description = value;
-                OnPropertyChanged(nameof(Description));
-            }
-        }
 
         // GetItems
-        public ObservableCollection<ItemViewModelType> Items { get; } = [];
+        public ObservableCollection<ContentItemViewModel> Items { get; } = [];
 
         // 子フォルダ
         public ObservableCollection<ClipboardFolderViewModel> Children { get; set; } = [];
 
-        // - コンテキストメニューの削除を表示するかどうか
-        public bool IsDeleteVisible {
-            get {
-                // RootFolderは削除不可
-                return Folder.IsRootFolder == false;
-            }
-        }
 
         public ClipboardFolderViewModel? ParentFolderViewModel { get; set; }
 
@@ -124,20 +104,20 @@ namespace ClipboardApp.ViewModel.Folder {
         });
 
         // アイテム削除コマンド
-        public SimpleDelegateCommand<ItemViewModelType> DeleteItemCommand => new((item) => {
+        public SimpleDelegateCommand<ContentItemViewModel> DeleteItemCommand => new((item) => {
             ClipboardItemCommands commands = new();
             commands.DeleteItemCommand.Execute();
             Items.Remove(item);
 
         });
         // アイテム保存コマンド
-        public SimpleDelegateCommand<ClipboardItemViewModel> AddItemCommand => new((item) => {
-            Folder.AddItem(item.ClipboardItem);
+        public SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new((item) => {
+            Folder.AddItem(item.ContentItem);
         });
 
 
         // 新規フォルダ作成コマンド
-        public SimpleDelegateCommand<ClipboardFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+        public SimpleDelegateCommand<ContentFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
 
             CreateFolderCommandExecute(folderViewModel, () => {
                 // 親フォルダを保存
@@ -155,22 +135,6 @@ namespace ClipboardApp.ViewModel.Folder {
                 LoadFolderCommand.Execute();
                 LogWrapper.Info(StringResources.FolderEdited);
             });
-        });
-
-        // ショートカット登録コマンド
-        public SimpleDelegateCommand<ClipboardFolderViewModel> CreateShortCutCommand => new((folderViewModel) => {
-            // ショートカット登録
-            // ShortCutRootFolderを取得
-            FileSystemFolder shortCutRootFolder = FolderManager.ShortcutRootFolder;
-            // ショートカットフォルダを作成
-            ShortCutFolder subFolder = new() {
-                FolderType = FolderTypeEnum.ShortCut,
-                Description = folderViewModel.FolderName,
-                FolderName = folderViewModel.FolderName,
-                ParentId = shortCutRootFolder.Id,
-                FileSystemFolderPath = folderViewModel.FolderPath
-            };
-            subFolder.Save<FileSystemFolder, Model.ClipboardItem>();
         });
 
 
@@ -317,7 +281,7 @@ namespace ClipboardApp.ViewModel.Folder {
         }
 
         //クリップボードアイテムを開く
-        public SimpleDelegateCommand<ItemViewModelType> OpenItemCommand => new((itemViewModel) => {
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
 
             OpenItemCommandExecute(itemViewModel);
 

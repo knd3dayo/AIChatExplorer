@@ -33,7 +33,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 // ショートカット登録
                 MenuItem createShortCutMenuItem = new() {
                     Header = StringResources.CreateShortCut,
-                    Command = ClipboardFolderViewModel.CreateShortCutCommand,
+                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(createShortCutMenuItem);

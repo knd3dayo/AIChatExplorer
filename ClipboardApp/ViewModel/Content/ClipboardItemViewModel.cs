@@ -8,6 +8,7 @@ using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
@@ -24,13 +25,13 @@ namespace ClipboardApp.ViewModel.Content {
         }
 
         // コンストラクタ
-        public ClipboardItemViewModel(ClipboardFolderViewModel folderViewModel, ContentItem clipboardItem) :base (folderViewModel, clipboardItem) {
-            ClipboardItem = clipboardItem;
+        public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItem clipboardItem) :base (folderViewModel, clipboardItem) {
+            ContentItem = clipboardItem;
             FolderViewModel = folderViewModel;
-            Content = ClipboardItem.Content;
-            Description = ClipboardItem.Description;
-            Tags = ClipboardItem.Tags;
-            SourceApplicationTitleText = ClipboardItem.SourceApplicationTitle;
+            Content = ContentItem.Content;
+            Description = ContentItem.Description;
+            Tags = ContentItem.Tags;
+            SourceApplicationTitleText = ContentItem.SourceApplicationTitle;
             Commands = new ClipboardItemCommands();
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
@@ -43,10 +44,8 @@ namespace ClipboardApp.ViewModel.Content {
 
         public ClipboardItemCommands Commands { get; }
 
-        // ContentItem
-        public ContentItem ClipboardItem { get; }
         // FolderViewModel
-        public ClipboardFolderViewModel FolderViewModel { get; set; }
+        public ContentFolderViewModel FolderViewModel { get; set; }
 
 
         // Context Menu
@@ -58,25 +57,23 @@ namespace ClipboardApp.ViewModel.Content {
             }
         }
 
-        public string Content { get => ClipboardItem.Content; set { ClipboardItem.Content = value; } }
+        public string Content { get => ContentItem.Content; set { ContentItem.Content = value; } }
 
 
         // ChatItemsText
-        public string ChatItemsText => ClipboardItem.ChatItemsText;
+        public string ChatItemsText => ContentItem.ChatItemsText;
 
         // DisplayText
-        public string Description { get => ClipboardItem.Description; set { ClipboardItem.Description = value; } }
+        public string Description { get => ContentItem.Description; set { ContentItem.Description = value; } }
 
-        // Tags
-        public HashSet<string> Tags { get => ClipboardItem.Tags; set { ClipboardItem.Tags = value; } }
 
         public string ToolTipString {
             get {
                 string result = "";
-                if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
+                if (string.IsNullOrEmpty(ContentItem.Description) == false) {
                     result += DescriptionText + "\n";
                 }
-                result += HeaderText + "\n" + ClipboardItem.Content;
+                result += HeaderText + "\n" + ContentItem.Content;
                 return result;
             }
         }
@@ -84,10 +81,10 @@ namespace ClipboardApp.ViewModel.Content {
 
         // GUI関連
         // 説明が空かつタグが空の場合はCollapsed,それ以外はVisible
-        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ClipboardItem.Description) && ClipboardItem.Tags.Count() == 0));
+        public Visibility DescriptionVisibility => Tools.BoolToVisibility(false == (string.IsNullOrEmpty(ContentItem.Description) && ContentItem.Tags.Count() == 0));
 
         // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
-        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ClipboardItem.ChatItemsText) == false);
+        public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
 
         // テキストタブの表示可否
         public Visibility TextTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Text);
@@ -96,49 +93,49 @@ namespace ClipboardApp.ViewModel.Content {
         public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
 
         // ImageVisibility
-        public Visibility ImageVisibility => Tools.BoolToVisibility(ClipboardItem.IsImage());
+        public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 
 
         public string DescriptionText {
             get {
                 string result = "";
-                if (string.IsNullOrEmpty(ClipboardItem.Description) == false) {
-                    result += ClipboardItem.Description;
+                if (string.IsNullOrEmpty(ContentItem.Description) == false) {
+                    result += ContentItem.Description;
                 }
                 return result;
             }
         }
-        public string TagsText => string.Join(",", ClipboardItem.Tags);
+        public string TagsText => string.Join(",", ContentItem.Tags);
 
         // Images
-        public BitmapImage? Image => ClipboardItem.BitmapImage;
+        public BitmapImage? Image => ContentItem.BitmapImage;
 
-        public string SourceApplicationTitleText { get => ClipboardItem.SourceApplicationTitle; set { ClipboardItem.SourceApplicationTitle = value; } }
+        public string SourceApplicationTitleText { get => ContentItem.SourceApplicationTitle; set { ContentItem.SourceApplicationTitle = value; } }
 
         // 表示用の文字列
-        public string? HeaderText => ClipboardItem.HeaderText;
+        public string? HeaderText => ContentItem.HeaderText;
 
-        public string UpdatedAtString => ClipboardItem.UpdatedAtString;
+        public string UpdatedAtString => ContentItem.UpdatedAtString;
 
         // VectorizedAtString
-        public string VectorizedAtString => ClipboardItem.VectorizedAtString;
+        public string VectorizedAtString => ContentItem.VectorizedAtString;
 
-        public string ContentTypeString => ClipboardItem.ContentTypeString;
+        public string ContentTypeString => ContentItem.ContentTypeString;
 
         // IsPinned
         public bool IsPinned {
             get {
-                return ClipboardItem.IsPinned;
+                return ContentItem.IsPinned;
             }
             set {
-                ClipboardItem.IsPinned = value;
+                ContentItem.IsPinned = value;
                 // 保存
-                ClipboardItem.Save();
+                ContentItem.Save();
                 OnPropertyChanged(nameof(IsPinned));
             }
         }
         // ContentType
-        public ContentTypes.ContentItemTypes ContentType => ClipboardItem.ContentType;
+        public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
 
         // SelectedTabIndex
         private int selectedTabIndex = 0;
@@ -157,14 +154,14 @@ namespace ClipboardApp.ViewModel.Content {
         public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
             List<ContentItem> items = [];
             foreach (var itemViewModel in itemViewModels) {
-                items.Add(itemViewModel.ClipboardItem);
+                items.Add(itemViewModel.ContentItem);
             }
-            ClipboardItem.MergeItems(items);
+            ContentItem.MergeItems(items);
         }
 
         // Copy
         public ClipboardItemViewModel Copy() {
-            ClipboardItem newItem = (ClipboardItem)ClipboardItem.Copy();
+            ClipboardItem newItem = (ClipboardItem)ContentItem.Copy();
             return new ClipboardItemViewModel(FolderViewModel, newItem);
         }
 
@@ -221,8 +218,8 @@ namespace ClipboardApp.ViewModel.Content {
                     tabItems.Add(promptTabItem);
                 }
                 // ClipboardItemのTypeがFileの場合はFileTabを選択
-                if (ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files
-                    || ClipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
+                if (ContentItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files
+                    || ContentItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
                     SelectedTabIndex = 1;
                 }
                 return tabItems;
@@ -242,7 +239,7 @@ namespace ClipboardApp.ViewModel.Content {
                     SystemDefinedPromptNames.SummaryGeneration.ToString()
                     ];
                 // PromptChatResultのエントリからPromptItemの名前を取得
-                foreach (string name in ClipboardItem.PromptChatResult.Results.Keys) {
+                foreach (string name in ContentItem.PromptChatResult.Results.Keys) {
                     if (promptNames.Contains(name) || SystemDefinedPromptNames.TitleGeneration.ToString().Equals(name)) {
                         continue;
                     }
@@ -250,7 +247,7 @@ namespace ClipboardApp.ViewModel.Content {
                 }
 
                 foreach (string promptName in promptNames) {
-                    PromptResultViewModel promptViewModel = new(ClipboardItem.PromptChatResult, promptName);
+                    PromptResultViewModel promptViewModel = new(ContentItem.PromptChatResult, promptName);
                     PromptItem? item = PromptItem.GetPromptItemByName(promptName);
                     if (item == null) {
                         continue;

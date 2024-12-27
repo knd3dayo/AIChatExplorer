@@ -1,6 +1,7 @@
 using System.Windows;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Folder;
+using QAChat.ViewModel.Folder;
 
 namespace ClipboardApp.View.Folder {
     /// <summary>
@@ -10,7 +11,7 @@ namespace ClipboardApp.View.Folder {
         public FolderEditWindow() {
             InitializeComponent();
         }
-        public static void OpenFolderEditWindow(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public static void OpenFolderEditWindow(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             FolderEditWindow folderEditWindow = new() {
                 DataContext = new FolderEditWindowViewModel(folderViewModel, afterUpdate)
             };

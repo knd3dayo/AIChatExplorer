@@ -39,7 +39,7 @@ namespace ClipboardApp.ViewModel.Search {
 
         }
 
-        public override void EditFolderCommandExecute(ClipboardFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             if (Folder is not ClipboardFolder clipboardFolder) {
                 return;
             }

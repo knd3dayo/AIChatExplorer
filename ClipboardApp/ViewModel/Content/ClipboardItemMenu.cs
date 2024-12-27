@@ -89,12 +89,15 @@ namespace ClipboardApp.ViewModel.Content {
         }
 
         public ObservableCollection<MenuItem> CreateBasicItemContextMenuItems(ClipboardItemViewModel itemViewModel) {
+            if (itemViewModel.FolderViewModel is not ClipboardFolderViewModel clipboardFolderViewModel) {
+                return [];
+            }
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
-                Command = itemViewModel.FolderViewModel.OpenItemCommand,
+                Command = clipboardFolderViewModel.OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
             };

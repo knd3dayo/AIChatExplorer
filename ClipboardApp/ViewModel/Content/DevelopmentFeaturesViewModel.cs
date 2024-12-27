@@ -46,7 +46,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         // コンテキストメニューの「データをマスキング」の実行用コマンド
         public SimpleDelegateCommand<object> MaskDataCommand => new((parameter) => {
-            if (ClipboardItem is not ClipboardItem clipboardItem) {
+            if (ContentItem is not ClipboardItem clipboardItem) {
                 return;
             }
             clipboardItem.MaskDataCommandExecute();
