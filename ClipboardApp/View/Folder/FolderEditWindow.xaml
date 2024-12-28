@@ -142,14 +142,7 @@
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2" Margin="10,10,10,10">
-            <DockPanel HorizontalAlignment="Left">
-                <Button
-                    Width="250"
-                    Margin="10,0,10,0"
-                    Command="{Binding AddVectorDBItemCommand, Mode=OneTime}"
-                    Content="{x:Static res:ViewStringResources.ClickHereToAddVectorDB}"
-                    Visibility="{Binding VectorDBItemButtonVisibility}" />
-            </DockPanel>
+            <DockPanel HorizontalAlignment="Left" />
             <DockPanel HorizontalAlignment="Right">
                 <Button
                     Width="100"

@@ -2,11 +2,10 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Item;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.ViewModel.Content;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.FileSystem {
+namespace ClipboardApp.ViewModel.Mail {
     public class OutlookFolderViewModel(OutlookFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;
@@ -59,7 +58,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
             } finally {
                 UpdateIndeterminate(false);
             }
-        
+
         }
         // LoadItems
         public override async void LoadItems() {
@@ -90,7 +89,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 folderViewModel.UpdateIndeterminate(false);
             }
         });
-    
+
     }
 }
 

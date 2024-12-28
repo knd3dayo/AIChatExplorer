@@ -2,10 +2,12 @@ using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Chat;
 using ClipboardApp.ViewModel.FileSystem;
+using ClipboardApp.ViewModel.Mail;
 using ClipboardApp.ViewModel.Search;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Main
+{
     public class RootFolderViewModelContainer : ObservableObject {
 
         // RootFolderのClipboardViewModel

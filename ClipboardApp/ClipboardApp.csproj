@@ -79,7 +79,6 @@
 
   <ItemGroup>
     <Folder Include="ViewModel\VectorDB\" />
-    <Folder Include="ViewModel\Mail\" />
   </ItemGroup>
 
 </Project>

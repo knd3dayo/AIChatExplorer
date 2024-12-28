@@ -94,7 +94,7 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding ClipboardItem.FolderAndFileName, Mode=OneWay}"
+                    Text="{Binding ContentItem.FolderAndFileName, Mode=OneWay}"
                     TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="4"
@@ -111,7 +111,7 @@
                     <editorControl:MyTextBox
                         Margin="10,3,10,3"
                         IsReadOnly="True"
-                        Text="{Binding ClipboardItem.Content, Mode=OneWay}"
+                        Text="{Binding ContentItem.Content, Mode=OneWay}"
                         TextWrappingMode="{Binding TextWrappingMode}" />
                 </ScrollViewer>
                 <TextBlock
@@ -126,7 +126,7 @@
                     Grid.Column="1"
                     MaxWidth="600"
                     Margin="10,3,10,3"
-                    Source="{Binding ClipboardItem.BitmapImage, Mode=OneWay}"
+                    Source="{Binding ContentItem.BitmapImage, Mode=OneWay}"
                     Stretch="Uniform"
                     Visibility="{Binding ImageVisibility}" />
             </Grid>

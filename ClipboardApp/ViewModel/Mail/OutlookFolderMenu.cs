@@ -1,10 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resource;
 
-namespace ClipboardApp.ViewModel.FileSystem {
+namespace ClipboardApp.ViewModel.Mail {
     public class OutlookFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
 
         // -- virtual
@@ -34,7 +32,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {
                     Header = StringResources.ExportImport,
-                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
+                    Command = QAChat.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(exportImportMenuItem);
