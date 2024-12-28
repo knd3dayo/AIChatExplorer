@@ -8,6 +8,7 @@ using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
 using LibGit2Sharp;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.AutoGen;
@@ -24,7 +25,7 @@ namespace ClipboardApp {
         // メニューの「終了」をクリックしたときの処理
 
         public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.ExitCommand();
         });
 
@@ -32,15 +33,10 @@ namespace ClipboardApp {
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
         public SimpleDelegateCommand<object> ToggleClipboardMonitor => new((parameter) => {
-            ClipboardItemCommands.StartStopClipboardMonitorCommand();
+            ClipboardItemViewModelCommands.StartStopClipboardMonitorCommand();
         });
 
-        // Windows通知監視開始終了フラグを反転させる
-        // メニューの「開始」、「停止」をクリックしたときの処理
-        public SimpleDelegateCommand<object> ToggleWindowsNotificationMonitor => new((parameter) => {
-            ClipboardItemCommands.StartStopWindowsNotificationMonitorCommand();
-        });
-
+        
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
@@ -151,7 +147,7 @@ namespace ClipboardApp {
         // チャット履歴フォルダーに新規作成
         public SimpleDelegateCommand<object> OpenOpenAIWindowCommand => new((parameter) => {
 
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
 
             commands.OpenOpenAIChatWindowCommand(null);
 
@@ -161,7 +157,7 @@ namespace ClipboardApp {
         public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
             ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.OpenImageChatWindowCommand(dummyItem, () => {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
@@ -170,24 +166,24 @@ namespace ClipboardApp {
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {
             ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.OpenVectorSearchWindowCommand(folderViewModel.Folder);
         });
 
         // OpenRAGManagementWindowCommandメニュー　「RAG管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenRAGManagementWindowCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.OpenRAGManagementWindowCommand();
         });
         // OpenVectorDBManagementWindowCommandメニュー　「ベクトルDB管理」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorDBManagementWindowCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.OpenVectorDBManagementWindowCommand();
         });
 
         // メニューの「設定」をクリックしたときの処理
         public static SimpleDelegateCommand<object> SettingCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.SettingCommandExecute();
         });
 
@@ -197,7 +193,7 @@ namespace ClipboardApp {
         public SimpleDelegateCommand<object> SearchCommand => new((parameter) => {
 
             ClipboardFolderViewModel folderViewModel = SelectedFolder ?? RootFolderViewModelContainer.RootFolderViewModel;
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             if (folderViewModel.Folder is not ClipboardFolder clipboardFolder) {
                 return;
             }
@@ -209,7 +205,7 @@ namespace ClipboardApp {
         #region フォルダツリーのInputBinding用のコマンド
         // Ctrl + R が押された時の処理
         public SimpleDelegateCommand<object> ReloadCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.ReloadFolderCommand(this);
         });
 
@@ -227,13 +223,13 @@ namespace ClipboardApp {
 
         // Ctrl + V が押された時の処理
         public SimpleDelegateCommand<object> PasteCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.PasteFromClipboardCommandExecute();
         });
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutFolderCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.CutFolderCommandExecute(this);
         });
 
@@ -271,23 +267,23 @@ namespace ClipboardApp {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.CutItemCommandExecute(this);
         });
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.CopyToClipboardCommandExecute(this);
         });
         // Ctrl + M が押された時の処理
         public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.MergeItemCommandExecute(this);
         });
 
         // Ctrl + Shift + M が押された時の処理
         public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.MergeItemWithHeaderCommandExecute(this);
         });
 
@@ -306,7 +302,7 @@ namespace ClipboardApp {
 
         // タイトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTitleCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.GenerateTitleCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -317,7 +313,7 @@ namespace ClipboardApp {
 
         // 背景情報を生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -328,7 +324,7 @@ namespace ClipboardApp {
 
         // サマリーを生成する処理　複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -339,7 +335,7 @@ namespace ClipboardApp {
 
         // 課題リストを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTasksCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.GenerateTasksCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -349,7 +345,7 @@ namespace ClipboardApp {
         });
         // 文書の信頼度を判定する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> CheckDocumentReliabilityCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -361,7 +357,7 @@ namespace ClipboardApp {
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
-            ClipboardItemCommands commands = new();
+            ClipboardItemViewModelCommands commands = new();
             commands.GenerateVectorCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
@@ -383,7 +379,7 @@ namespace ClipboardApp {
             // チャットを実行
             Task.Run(() => {
                 foreach (var item in SelectedItems) {
-                    item.ContentItem.CreateChatResult(promptItem);
+                    ContentItemCommands.CreateChatResult(itemViewModel.ContentItem, promptItem);
                     //保存
                     item.ContentItem.Save();
                 }

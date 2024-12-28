@@ -69,7 +69,7 @@ namespace ClipboardApp.Model.AutoProcess {
                 } else if (ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI) {
 
                     LogWrapper.Info(CommonStringResources.Instance.AutoExtractImageText);
-                    item.ExtractImageWithOpenAI();
+                    ContentItemCommands.ExtractImageWithOpenAI(item);
                 }
             }
 
@@ -90,35 +90,35 @@ namespace ClipboardApp.Model.AutoProcess {
                 } else if (ClipboardAppConfig.Instance.AutoDescriptionWithOpenAI) {
 
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetTitle);
-                    item.CreateAutoTitleWithOpenAI();
+                    ContentItemCommands.CreateAutoTitleWithOpenAI(item);
                 }
             });
             var task3 = Task.Run(() => {
                 // 背景情報
                 if (ClipboardAppConfig.Instance.AutoBackgroundInfo) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoSetBackgroundInfo);
-                    item.CreateAutoBackgroundInfo();
+                    ContentItemCommands.CreateAutoBackgroundInfo(item);
                 }
             });
             var task4 = Task.Run(() => {
                 // サマリー
                 if (ClipboardAppConfig.Instance.AutoSummary) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateSummary);
-                    item.CreateChatResult(SystemDefinedPromptNames.SummaryGeneration.ToString());
+                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.SummaryGeneration.ToString());
                 }
             });
             var task5 = Task.Run(() => {
                 // Tasks
                 if (ClipboardAppConfig.Instance.AutoGenerateTasks) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCreateTaskList);
-                    item.CreateChatResult(SystemDefinedPromptNames.TasksGeneration.ToString());
+                    ContentItemCommands.CreateChatResult(item, SystemDefinedPromptNames.TasksGeneration.ToString());
                 }
             });
             var task6 = Task.Run(() => {
                 // Tasks
                 if (ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck) {
                     LogWrapper.Info(CommonStringResources.Instance.AutoCheckDocumentReliability);
-                    item.CheckDocumentReliability();
+                    ContentItemCommands.CheckDocumentReliability(item);
                 }
             });
 

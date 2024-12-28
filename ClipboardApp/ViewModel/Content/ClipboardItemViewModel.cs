@@ -32,7 +32,7 @@ namespace ClipboardApp.ViewModel.Content {
             Description = ContentItem.Description;
             Tags = ContentItem.Tags;
             SourceApplicationTitleText = ContentItem.SourceApplicationTitle;
-            Commands = new ClipboardItemCommands();
+            Commands = new ClipboardItemViewModelCommands();
             OnPropertyChanged(nameof(Content));
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
@@ -42,7 +42,7 @@ namespace ClipboardApp.ViewModel.Content {
 
         }
 
-        public ClipboardItemCommands Commands { get; }
+        public ClipboardItemViewModelCommands Commands { get; }
 
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; }

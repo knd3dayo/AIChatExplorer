@@ -154,15 +154,7 @@ namespace ClipboardApp
             }
         }
 
-        // Windows通知監視が開始されている場合は「停止」、停止されている場合は「開始」を返す
-        public string WindowsNotificationMonitorButtonText {
-            get {
-                return IsWindowsNotificationMonitorActive ? StringResources.StopNotificationWatch : StringResources.StartNotificationWatch;
-            }
-        }
-        // Windows通知監視が実行中であるかどうか
-        public bool IsWindowsNotificationMonitorActive { get; set; } = false;
-
+        
         // Cutフラグ
         public enum CutFlagEnum {
             None,

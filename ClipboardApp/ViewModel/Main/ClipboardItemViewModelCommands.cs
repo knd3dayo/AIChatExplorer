@@ -23,7 +23,7 @@ using PythonAILibUI.ViewModel.Item;
 using QAChat.ViewModel.Item;
 
 namespace ClipboardApp.ViewModel.Main {
-    public class ClipboardItemCommands : ContentItemCommands{
+    public class ClipboardItemViewModelCommands : ContentItemViewModelCommands{
 
 
         // ベクトル検索を実行するコマンド
@@ -84,35 +84,6 @@ namespace ClipboardApp.ViewModel.Main {
             model.NotifyPropertyChanged(nameof(model.IsClipboardMonitoringActive));
             // Change button text
             model.NotifyPropertyChanged(nameof(model.ClipboardMonitorButtonText));
-        }
-
-        // Toggle flag to start/stop Windows notification monitoring
-        public static void StartStopWindowsNotificationMonitorCommand() {
-            MainWindowViewModel model = MainWindowViewModel.Instance;
-            model.IsWindowsNotificationMonitorActive = !model.IsWindowsNotificationMonitorActive;
-
-            if (model.RootFolderViewModelContainer.RootFolderViewModel.Folder is not ClipboardFolder clipboardFolder) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-
-            if (model.IsWindowsNotificationMonitorActive) {
-                WindowsNotificationController.Start(clipboardFolder, (item) => {
-                    // Process when a clipboard item is added
-                    model.RootFolderViewModelContainer.RootFolderViewModel.AddItemCommand.Execute(new ClipboardItemViewModel(model.RootFolderViewModelContainer.RootFolderViewModel, item));
-                    MainUITask.Run(() => {
-                        model.SelectedFolder?.LoadFolderCommand.Execute();
-                    });
-                });
-                LogWrapper.Info(CommonStringResources.Instance.StartNotificationWatchMessage);
-            } else {
-                ClipboardController.Instance.Stop();
-                LogWrapper.Info(CommonStringResources.Instance.StopNotificationWatchMessage);
-            }
-            // Notification
-            model.NotifyPropertyChanged(nameof(model.IsWindowsNotificationMonitorActive));
-            // Change button text
-            model.NotifyPropertyChanged(nameof(model.WindowsNotificationMonitorButtonText));
         }
 
         // Command to open OpenAI Chat
@@ -369,7 +340,7 @@ namespace ClipboardApp.ViewModel.Main {
                     LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
                     return;
                 }
-                contentItem.ExtractTextCommandExecute();
+                ContentItemCommands.ExtractTextCommandExecute(contentItem);
                 // 保存を行う
                 contentItem.Save(false);
             } finally {
@@ -394,7 +365,7 @@ namespace ClipboardApp.ViewModel.Main {
             LogWrapper.Info(CommonStringResources.Instance.GenerateTitleInformation);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.CreateAutoTitleWithOpenAI();
+                    ContentItemCommands.CreateAutoTitleWithOpenAI(item);
                     // Save
                     item.Save(false);
                 }
@@ -411,7 +382,7 @@ namespace ClipboardApp.ViewModel.Main {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.CreateChatResult(promptName);
+                    ContentItemCommands.CreateChatResult(item,promptName);
                     // Save
                     item.Save(false);
                 }
@@ -443,7 +414,7 @@ namespace ClipboardApp.ViewModel.Main {
         // Command to check the reliability of the document
         public override void CheckDocumentReliabilityCommand(List<ContentItem> contentItem, object afterExecuteAction) {
             foreach (var item in contentItem) {
-                item.CheckDocumentReliability();
+                ContentItemCommands.CheckDocumentReliability(item);
                 // Save
                 item.Save(false);
             }
@@ -458,7 +429,7 @@ namespace ClipboardApp.ViewModel.Main {
             LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    item.UpdateEmbedding();
+                    ContentItemCommands.UpdateEmbedding(item);
                     // Save
                     item.Save(false);
                 }

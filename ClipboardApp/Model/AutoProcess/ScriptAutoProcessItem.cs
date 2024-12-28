@@ -35,12 +35,12 @@ namespace ClipboardApp.Model.AutoProcess {
             if (ScriptItem == null) {
                 return null;
             }
-            Func<AutoProcessItemArgs, ContentItem?> action = RunPythonAction(ScriptItem);
-            ContentItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
+            Func<AutoProcessItem, ContentItem?> action = RunPythonAction(ScriptItem);
+            ContentItem? result = action(new AutoProcessItem(clipboardItem, destinationFolder));
             return result;
         }
 
-        public static Func<AutoProcessItemArgs, ContentItem?> RunPythonAction(ScriptItem item) {
+        public static Func<AutoProcessItem, ContentItem?> RunPythonAction(ScriptItem item) {
             return (args) => {
                 RunPythonScriptCommandExecute(item, args.ContentItem);
                 return args.ContentItem;

@@ -74,13 +74,6 @@
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding ClipboardMonitorButtonText}"
                             ToolTip="{Binding StringResources.ToggleClipboardWatchToolTop}" />
-                        <!--  Toggle Windows Notification Monitoring  -->
-                        <MenuItem
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding ToggleWindowsNotificationMonitor, Mode=OneTime}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding WindowsNotificationMonitorButtonText}"
-                            ToolTip="{Binding StringResources.ToggleNotificationWatchToolTop}" />
 
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"

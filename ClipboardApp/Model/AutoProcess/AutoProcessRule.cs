@@ -7,9 +7,6 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model.AutoProcess {
 
-    // 自動処理ルールの条件
-
-
     public class AutoProcessRule {
         public ObjectId Id { get; set; } = ObjectId.Empty;
 

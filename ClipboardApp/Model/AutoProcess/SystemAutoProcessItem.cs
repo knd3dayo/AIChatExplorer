@@ -49,8 +49,8 @@ namespace ClipboardApp.Model.AutoProcess {
 
         public virtual ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
 
-            Func<AutoProcessItemArgs, ContentItem?> action = GetAction(Name);
-            ContentItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
+            Func<AutoProcessItem, ContentItem?> action = GetAction(Name);
+            ContentItem? result = action(new AutoProcessItem(clipboardItem, destinationFolder));
             return result;
         }
 
@@ -88,7 +88,7 @@ namespace ClipboardApp.Model.AutoProcess {
             }
         }
 
-        public static Func<AutoProcessItemArgs, ContentItem?> GetAction(string name) {
+        public static Func<AutoProcessItem, ContentItem?> GetAction(string name) {
             if (name == TypeEnum.Ignore.ToString()) {
                 return (args) => {
                     return null;
@@ -129,7 +129,8 @@ namespace ClipboardApp.Model.AutoProcess {
             }
             if (name == TypeEnum.ExtractText.ToString()) {
                 return (args) => {
-                    return (ClipboardItem)args.ContentItem.ExtractTextCommandExecute();
+                    ContentItem.ExtractTextCommandExecute(args.ContentItem);
+                    return (ClipboardItem)args.ContentItem;
                 };
             }
             if (name == TypeEnum.MergeAllItems.ToString()) {

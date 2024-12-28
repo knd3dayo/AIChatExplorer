@@ -202,7 +202,7 @@ namespace PythonAILib.Model.Content {
             // ベクトルを再作成
             // フォルダ内のアイテムを取得して、ベクトルを作成
             foreach (var item in GetItems<T>()) {
-                item.UpdateEmbedding();
+                ContentItemCommands.UpdateEmbedding(item);
                 // Save
                 item.Save();
             }

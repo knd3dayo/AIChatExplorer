@@ -3,7 +3,7 @@ using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace PythonAILibUI.ViewModel.Item {
-    public abstract class ContentItemCommands {
+    public abstract class ContentItemViewModelCommands {
 
         // フォルダを開くコマンド
         public SimpleDelegateCommand<ContentItemViewModel> OpenFolderCommand => new((itemViewModel) => {

@@ -8,10 +8,8 @@ using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
-using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
