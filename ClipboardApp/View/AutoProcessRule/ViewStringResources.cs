@@ -40,7 +40,7 @@ namespace ClipboardApp.View.AutoProcessRule {
         // Enable
         public static string Enable { get; set; } = CommonStringResources.Enable;
 
-        // TargetFolder
+        // TargetFolderId
         public static string TargetFolder { get; set; } = CommonStringResources.TargetFolder;
 
         // ApplyAllItems

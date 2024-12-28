@@ -1,3 +1,4 @@
+using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
@@ -63,7 +64,7 @@ namespace ClipboardApp.Model
                             SourceApplicationTitle = displayName,
                             Content = text
                         };
-                        ClipboardFolder.ProcessClipboardItem(clipboardItem, (item) => {
+                        AutoProcessRuleController.ProcessClipboardItem(clipboardItem, (item) => {
                             afterUpdate(item);
                         });
 

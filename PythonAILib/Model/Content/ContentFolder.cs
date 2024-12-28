@@ -64,6 +64,8 @@ namespace PythonAILib.Model.Content {
                 }
             }
         }
+        // AutoProcessを有効にするかどうか
+        public bool IsAutoProcessEnabled { get; set; } = false;
 
         // フォルダの絶対パス ファイルシステム用
         public virtual string FolderPath { get; } = "";

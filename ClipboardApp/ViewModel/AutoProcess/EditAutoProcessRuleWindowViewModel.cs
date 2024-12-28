@@ -4,7 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
@@ -281,7 +283,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         // 
         // 初期化
         public EditAutoProcessRuleWindowViewModel(
-            Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule? autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+            Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
             if (mainWindowViewModel == null) {
                 LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
                 return;
@@ -289,15 +291,24 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             CurrentMode = mode;
             MainWindowViewModel = mainWindowViewModel;
             TargetAutoProcessRule = autoProcessRule;
-            IsAutoProcessRuleEnabled = autoProcessRule?.IsEnabled ?? true;
+            IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
 
-            if (autoProcessRule?.TargetFolder != null) {
-                TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)autoProcessRule.TargetFolder);
-            }
 
-            if (autoProcessRule?.DestinationFolder != null) {
-                DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)autoProcessRule.DestinationFolder);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
+
+            // TargetFolderIdに一致するフォルダを取得
+            ContentFolder? targetFolder = collection.FindById(autoProcessRule.TargetFolderId);
+
+            if (autoProcessRule.TargetFolderId != null) {
+                TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)targetFolder);
+            }
+            // DestinationIdに一致するフォルダを取得
+            ContentFolder? destinationFolder = collection.FindById(autoProcessRule.DestinationFolderId);
+
+            if (destinationFolder != null) {
+                DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)destinationFolder);
             }
 
             // autoProcessRuleがNullでない場合は初期化
@@ -368,10 +379,8 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                     }
                 }
                 // DestinationFolderが設定されている場合はFolderSelectionPanelEnabledをTrueにする
-                if (TargetAutoProcessRule.DestinationFolder != null) {
+                if (DestinationFolder != null) {
                     FolderSelectionPanelEnabled = true;
-                    DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)TargetAutoProcessRule.DestinationFolder);
-
                 }
                 // PromptAutoProcessItemの場合
                 if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
@@ -439,7 +448,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolder = (ClipboardFolder)TargetFolder.Folder;
+            TargetAutoProcessRule.TargetFolderId = TargetFolder.Folder.Id;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -503,7 +512,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                         LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolder = (ClipboardFolder)DestinationFolder.Folder;
+                    TargetAutoProcessRule.DestinationFolderId = DestinationFolder.Folder.Id;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
@@ -536,10 +545,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
 
             // LiteDBに保存
             TargetAutoProcessRule.Save();
-            // ClipboardItemFolderにAutoProcessRuleIdを追加
-            clipboardFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
-            // ClipboardItemFolderを保存
-            clipboardFolder.Save();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

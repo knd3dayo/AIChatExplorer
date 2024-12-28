@@ -1,7 +1,7 @@
 using ClipboardApp.Factory;
 using LiteDB;
+using PythonAILib.Common;
 using PythonAILib.Model.Content;
-using PythonAILib.Model.File;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
@@ -9,141 +9,7 @@ namespace ClipboardApp.Model.AutoProcess {
 
     // 自動処理ルールの条件
 
-    public class AutoProcessRuleCondition {
-        // 条件の種類
-        public ConditionTypeEnum Type { get; set; }
 
-        // アイテムのタイプ種類のリスト
-        public List<ContentTypes.ContentItemTypes> ContentTypes { get; set; } = [];
-
-        // 条件のキーワード
-        public string Keyword { get; set; } = "";
-
-        public AutoProcessRuleCondition(ConditionTypeEnum type, string keyword) {
-            Type = type;
-            Keyword = keyword;
-        }
-        public AutoProcessRuleCondition(List<ContentTypes.ContentItemTypes> contentTypes, int minLineCount, int maxLineCount) {
-            ContentTypes = contentTypes;
-            MinLineCount = minLineCount;
-            MaxLineCount = maxLineCount;
-            Type = ConditionTypeEnum.ContentTypeIs;
-        }
-
-
-        public enum ConditionTypeEnum {
-            AllItems,
-            DescriptionContains,
-            ContentContains,
-            SourceApplicationNameContains,
-            SourceApplicationTitleContains,
-            SourceApplicationPathContains,
-            ContentTypeIs,
-
-        }
-
-        public ConditionTypeEnum ConditionType { get; set; } = ConditionTypeEnum.AllItems;
-        public int MinLineCount { get; set; } = -1;
-
-        public int MaxLineCount { get; set; } = -1;
-
-        //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public bool IsDescriptionContains(ContentItem clipboardItem, string keyword) {
-            // DescriptionがNullの場合はFalseを返す
-            if (clipboardItem.Description == null) {
-                return false;
-            }
-            LogWrapper.Info("Description:" + clipboardItem.Description);
-            LogWrapper.Info("Keyword:" + keyword);
-            LogWrapper.Info("Contains:" + clipboardItem.Description.Contains(keyword));
-
-            return clipboardItem.Description.Contains(keyword);
-
-        }
-        //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public bool IsContentContains(ContentItem clipboardItem, string keyword) {
-            // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
-                return false;
-            }
-            return clipboardItem.Content.Contains(keyword);
-        }
-        // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationNameContains(ContentItem clipboardItem, string keyword) {
-            // SourceApplicationNameがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationName == null) {
-                return false;
-            }
-            return clipboardItem.SourceApplicationName.Contains(keyword);
-        }
-        // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationTitleContains(ContentItem clipboardItem, string keyword) {
-            // SourceApplicationTitleがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationTitle == null) {
-                return false;
-            }
-            return clipboardItem.SourceApplicationTitle.Contains(keyword);
-        }
-        // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationPathContains(ContentItem clipboardItem, string keyword) {
-            // SourceApplicationPathがnullの場合は、falseを返す
-            if (clipboardItem.SourceApplicationPath == null) {
-                return false;
-            }
-            return clipboardItem.SourceApplicationPath != null && clipboardItem.SourceApplicationPath.Contains(keyword);
-        }
-
-        // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public bool IsContentLineCountOver(ContentItem clipboardItem) {
-            // MinLineCountが-1の場合はTrueを返す
-            if (MinLineCount == -1) {
-                return true;
-            }
-            // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
-                return false;
-            }
-            return clipboardItem.Content.Split('\n').Length >= MinLineCount;
-        }
-        // ClipboardItemのContentの行数が指定した行数以下かどうか
-        public bool IsContentLineCountUnder(ContentItem clipboardItem) {
-            // MaxLineCountが-1の場合はTrueを返す
-            if (MaxLineCount == -1) {
-                return true;
-            }
-            // ContentがNullの場合はFalseを返す
-            if (clipboardItem.Content == null) {
-                return false;
-            }
-            return clipboardItem.Content.Split('\n').Length <= MaxLineCount;
-        }
-
-        // ConditionTypeに対応する関数を実行してBoolを返す
-        // ★TODO SearchConditionと共通化する
-        public bool CheckCondition(ContentItem clipboardItem) {
-            return Type switch {
-                ConditionTypeEnum.DescriptionContains => IsDescriptionContains(clipboardItem, Keyword),
-                ConditionTypeEnum.ContentContains => IsContentContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationNameContains => IsSourceApplicationNameContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationTitleContains => IsSourceApplicationTitleContains(clipboardItem, Keyword),
-                ConditionTypeEnum.SourceApplicationPathContains => IsSourceApplicationPathContains(clipboardItem, Keyword),
-                ConditionTypeEnum.ContentTypeIs => CheckContentTypeIs(clipboardItem),
-                _ => false,
-            };
-        }
-
-        // ContentTypeIsの条件にマッチするかどうか
-        public bool CheckContentTypeIs(ContentItem clipboardItem) {
-            if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
-                return false;
-            }
-            if (clipboardItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
-                return IsContentLineCountOver(clipboardItem) && IsContentLineCountUnder(clipboardItem);
-            }
-            return true;
-        }
-
-    }
     public class AutoProcessRule {
         public ObjectId Id { get; set; } = ObjectId.Empty;
 
@@ -159,10 +25,10 @@ namespace ClipboardApp.Model.AutoProcess {
 
         public SystemAutoProcessItem? RuleAction { get; set; }
 
-        public ContentFolder? TargetFolder { get; set; }
+        public ObjectId TargetFolderId { get; set; } = ObjectId.Empty;
 
         // 移動またはコピー先のフォルダ
-        public ContentFolder? DestinationFolder { get; set; }
+        public ObjectId DestinationFolderId { get; set; } = ObjectId.Empty;
 
         public AutoProcessRule() {
         }
@@ -232,8 +98,14 @@ namespace ClipboardApp.Model.AutoProcess {
                 LogWrapper.Warn(CommonStringResources.Instance.NoActionSet);
                 return clipboardItem;
             }
-            return RuleAction.Execute(clipboardItem, DestinationFolder);
+            // DestinationIdに一致するフォルダを取得
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
+            ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
+
+            return RuleAction.Execute(clipboardItem, destinationFolder);
         }
+
         public string GetDescriptionString() {
             string result = $"{CommonStringResources.Instance.Condition}\n";
             foreach (var condition in Conditions) {
@@ -264,8 +136,13 @@ namespace ClipboardApp.Model.AutoProcess {
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
                 if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
                     // DestinationFolderが設定されている場合
-                    if (DestinationFolder != null) {
-                        result += $"{CommonStringResources.Instance.Folder}:{DestinationFolder.FolderPath}\n";
+                    // DestinationIdに一致するフォルダを取得
+                    PythonAILibManager libManager = PythonAILibManager.Instance;
+                    var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
+                    ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
+
+                    if (destinationFolder != null) {
+                        result += $"{CommonStringResources.Instance.Folder}:{destinationFolder.FolderPath}\n";
                     } else {
                         result += $"{CommonStringResources.Instance.FolderNone}\n";
                     }
@@ -301,14 +178,14 @@ namespace ClipboardApp.Model.AutoProcess {
             Dictionary<string, List<string>> fromToDictionary = [];
             foreach (var r in copyToMoveToRules) {
                 // TargetFolderとDestinationFolderが設定されている場合
-                if (r.TargetFolder != null && r.DestinationFolder != null) {
+                if (r.TargetFolderId != null && r.DestinationFolderId != null) {
                     // keyが存在しない場合は新しいLinkedListを作成
-                    if (!fromToDictionary.TryGetValue(r.TargetFolder.Id.ToString(), out List<string>? value)) {
+                    if (!fromToDictionary.TryGetValue(r.TargetFolderId.ToString(), out List<string>? value)) {
                         value = [];
-                        fromToDictionary[r.TargetFolder.Id.ToString()] = value;
+                        fromToDictionary[r.TargetFolderId.ToString()] = value;
                     }
 
-                    value.Add(r.DestinationFolder.Id.ToString());
+                    value.Add(r.DestinationFolderId.ToString());
                 }
             }
 
