@@ -1,3 +1,7 @@
+using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -126,7 +130,7 @@ namespace PythonAILib.Model.Content {
 
         // 保存
         protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
-            
+
             // ReferenceVectorDBItemsに自分自身を追加
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
             if (IncludeInReferenceVectorDBItems) {
@@ -135,7 +139,7 @@ namespace PythonAILib.Model.Content {
                 // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
                 RemoveVectorDBItem(MainVectorDBItem);
             }
-            
+
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
             // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
@@ -149,7 +153,7 @@ namespace PythonAILib.Model.Content {
             Delete<ContentFolder, ContentItem>();
         }
 
-        protected virtual void Delete<T1,T2>() where T1 : ContentFolder where T2 : ContentItem {
+        protected virtual void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
             DeleteFolder<T1, T2>((T1)this);
         }
 
@@ -364,5 +368,38 @@ namespace PythonAILib.Model.Content {
             }
         }
         public virtual void ImportItemsFromJson(string json) { }
+
+        // 指定されたフォルダの全アイテムをマージするコマンド
+        public void MergeItems(ContentItem item) {
+            item.MergeItems(GetItems<ContentItem>());
         }
+        // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
+        public void MergeItemsBySourceApplicationTitleCommandExecute(ContentItem newItem) {
+            // SourceApplicationNameが空の場合は何もしない
+            if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
+                return;
+            }
+            // NewItemのSourceApplicationTitleが空の場合は何もしない
+            if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
+                return;
+            }
+            List<ContentItem> items = GetItems<ContentItem>();
+            if (items.Count == 0) {
+                return;
+            }
+            List<ContentItem> sameTitleItems = [];
+            // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
+            foreach (var item in items) {
+                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
+                    && newItem.SourceApplicationName == item.SourceApplicationName) {
+                    // TypeがTextのアイテムのみマージ
+                    if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
+                        sameTitleItems.Add(item);
+                    }
+                }
+            }
+            newItem.MergeItems(sameTitleItems);
+        }
+
+    }
 }

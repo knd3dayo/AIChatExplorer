@@ -1,4 +1,3 @@
-using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -25,7 +24,7 @@ namespace ClipboardApp.Model.Folder {
         public override void Delete() {
             Delete<ClipboardFolder, ClipboardItem>();
         }
- 
+
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardFolder() { }
@@ -92,7 +91,7 @@ namespace ClipboardApp.Model.Folder {
             // 自動処理を適用
             if (IsAutoProcessEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
-                ClipboardItem? result = clipboardItem.ApplyAutoProcess();
+                ContentItem? result = clipboardItem.ApplyAutoProcess();
                 if (result == null) {
                     // 自動処理で削除または移動された場合は何もしない
                     LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);
@@ -109,54 +108,10 @@ namespace ClipboardApp.Model.Folder {
 
 
         #region マージ
-        // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public void MergeItemsBySourceApplicationTitleCommandExecute(ClipboardItem newItem) {
-            // SourceApplicationNameが空の場合は何もしない
-            if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
-                return;
-            }
-            // NewItemのSourceApplicationTitleが空の場合は何もしない
-            if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
-                return;
-            }
-            List<ClipboardItem> items = GetItems<ClipboardItem>();
-            if (items.Count == 0) {
-                return;
-            }
-            List<ClipboardItem> sameTitleItems = [];
-            // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
-            foreach (var item in items) {
-                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
-                    && newItem.SourceApplicationName == item.SourceApplicationName) {
-                    // TypeがTextのアイテムのみマージ
-                    if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
-                        sameTitleItems.Add(item);
-                    }
-                }
-            }
-            newItem.MergeItems(sameTitleItems);
-        }
-
-        // 指定されたフォルダの全アイテムをマージするコマンド
-        public void MergeItems(ClipboardItem item) {
-            item.MergeItems(GetItems<ClipboardItem>());
-
-        }
         #endregion
 
         #region エクスポート/インポート
-        // フォルダ内のアイテムをJSON形式でExport
-        public void ExportItemsToJson(string fileName) {
-            JsonSerializerOptions jsonSerializerOptions = new() {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            var options = jsonSerializerOptions;
-            string jsonString = System.Text.Json.JsonSerializer.Serialize((Func<List<ClipboardItem>>)GetItems<ClipboardItem>, options);
 
-            File.WriteAllText(fileName, jsonString);
-
-        }
 
         //exportしたJSONファイルをインポート
         public override void ImportItemsFromJson(string json) {
@@ -176,7 +131,7 @@ namespace ClipboardApp.Model.Folder {
                     continue;
                 }
                 string jsonString = jsonValue.ToString();
-                ClipboardItem? item = ClipboardItem.FromJson< ClipboardItem>(jsonString);
+                ClipboardItem? item = ClipboardItem.FromJson<ClipboardItem>(jsonString);
 
                 if (item == null) {
                     continue;
@@ -187,7 +142,7 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-        public override  void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
+        public override void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
@@ -438,6 +393,18 @@ namespace ClipboardApp.Model.Folder {
         }
 
 
+        // フォルダ内のアイテムをJSON形式でExport
+        public void ExportItemsToJson(string fileName) {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            string jsonString = System.Text.Json.JsonSerializer.Serialize(GetItems<ClipboardItem>, options);
+
+            System.IO.File.WriteAllText(fileName, jsonString);
+
+        }
 
     }
 }

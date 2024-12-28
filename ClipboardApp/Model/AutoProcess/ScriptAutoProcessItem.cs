@@ -1,11 +1,10 @@
-using ClipboardApp.Factory;
-using ClipboardApp.Model.Folder;
-using PythonAILib.PythonIF;
-using PythonAILib.Model.Script;
 using PythonAILib.Common;
+using PythonAILib.Model.Content;
+using PythonAILib.Model.Script;
+using PythonAILib.PythonIF;
+using PythonAILib.Model.AutoProcess;
 
-namespace ClipboardApp.Model.AutoProcess
-{
+namespace ClipboardApp.Model.AutoProcess {
     public class ScriptAutoProcessItem : SystemAutoProcessItem {
         public ScriptItem? ScriptItem { get; set; }
 
@@ -31,30 +30,30 @@ namespace ClipboardApp.Model.AutoProcess
             }
             return result;
         }
-        public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
+        public override ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
 
             if (ScriptItem == null) {
                 return null;
             }
-            Func<AutoProcessItemArgs, ClipboardItem?> action = RunPythonAction(ScriptItem);
-            ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
+            Func<AutoProcessItemArgs, ContentItem?> action = RunPythonAction(ScriptItem);
+            ContentItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
             return result;
         }
 
-        public static Func<AutoProcessItemArgs, ClipboardItem?> RunPythonAction(ScriptItem item) {
+        public static Func<AutoProcessItemArgs, ContentItem?> RunPythonAction(ScriptItem item) {
             return (args) => {
-                RunPythonScriptCommandExecute(item, args.ClipboardItem);
-                return args.ClipboardItem;
+                RunPythonScriptCommandExecute(item, args.ContentItem);
+                return args.ContentItem;
             };
 
         }
 
         // 自動実行でPythonスクリプトを実行するコマンド
-        public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ClipboardItem clipboardItem) {
+        public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ContentItem clipboardItem) {
             string inputJson = ClipboardItem.ToJson(clipboardItem);
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);
-            ClipboardItem? resultItem = ClipboardItem.FromJson< ClipboardItem>(result);
+            ClipboardItem? resultItem = ClipboardItem.FromJson<ClipboardItem>(result);
 
             resultItem?.CopyTo(clipboardItem);
 

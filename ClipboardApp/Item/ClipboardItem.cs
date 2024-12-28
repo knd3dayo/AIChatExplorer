@@ -22,9 +22,9 @@ namespace ClipboardApp.Model {
         }
 
         // 自動処理を適用する処理
-        public ClipboardItem? ApplyAutoProcess() {
+        public ContentItem? ApplyAutoProcess() {
 
-            ClipboardItem? result = this;
+            ContentItem? result = this;
             // AutoProcessRulesを取得
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this.GetFolder<ClipboardFolder>());
             foreach (var rule in AutoProcessRules) {

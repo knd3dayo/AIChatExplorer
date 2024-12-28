@@ -1,6 +1,6 @@
 using ClipboardApp.Factory;
-using ClipboardApp.Model.Folder;
 using LiteDB;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
@@ -48,7 +48,7 @@ namespace ClipboardApp.Model.AutoProcess {
         public int MaxLineCount { get; set; } = -1;
 
         //ClipboardItemのDescriptionが指定したキーワードを含むかどうか
-        public bool IsDescriptionContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsDescriptionContains(ContentItem clipboardItem, string keyword) {
             // DescriptionがNullの場合はFalseを返す
             if (clipboardItem.Description == null) {
                 return false;
@@ -61,7 +61,7 @@ namespace ClipboardApp.Model.AutoProcess {
 
         }
         //ClipboardItemのContentが指定したキーワードを含むかどうか
-        public bool IsContentContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsContentContains(ContentItem clipboardItem, string keyword) {
             // ContentがNullの場合はFalseを返す
             if (clipboardItem.Content == null) {
                 return false;
@@ -69,7 +69,7 @@ namespace ClipboardApp.Model.AutoProcess {
             return clipboardItem.Content.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationNameが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationNameContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationNameContains(ContentItem clipboardItem, string keyword) {
             // SourceApplicationNameがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationName == null) {
                 return false;
@@ -77,7 +77,7 @@ namespace ClipboardApp.Model.AutoProcess {
             return clipboardItem.SourceApplicationName.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationTitleが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationTitleContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationTitleContains(ContentItem clipboardItem, string keyword) {
             // SourceApplicationTitleがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationTitle == null) {
                 return false;
@@ -85,7 +85,7 @@ namespace ClipboardApp.Model.AutoProcess {
             return clipboardItem.SourceApplicationTitle.Contains(keyword);
         }
         // ClipboardItemのSourceApplicationPathが指定したキーワードを含むかどうか
-        public bool IsSourceApplicationPathContains(ClipboardItem clipboardItem, string keyword) {
+        public bool IsSourceApplicationPathContains(ContentItem clipboardItem, string keyword) {
             // SourceApplicationPathがnullの場合は、falseを返す
             if (clipboardItem.SourceApplicationPath == null) {
                 return false;
@@ -94,7 +94,7 @@ namespace ClipboardApp.Model.AutoProcess {
         }
 
         // ClipboardItemのContentの行数が指定した行数以上かどうか
-        public bool IsContentLineCountOver(ClipboardItem clipboardItem) {
+        public bool IsContentLineCountOver(ContentItem clipboardItem) {
             // MinLineCountが-1の場合はTrueを返す
             if (MinLineCount == -1) {
                 return true;
@@ -106,7 +106,7 @@ namespace ClipboardApp.Model.AutoProcess {
             return clipboardItem.Content.Split('\n').Length >= MinLineCount;
         }
         // ClipboardItemのContentの行数が指定した行数以下かどうか
-        public bool IsContentLineCountUnder(ClipboardItem clipboardItem) {
+        public bool IsContentLineCountUnder(ContentItem clipboardItem) {
             // MaxLineCountが-1の場合はTrueを返す
             if (MaxLineCount == -1) {
                 return true;
@@ -120,7 +120,7 @@ namespace ClipboardApp.Model.AutoProcess {
 
         // ConditionTypeに対応する関数を実行してBoolを返す
         // ★TODO SearchConditionと共通化する
-        public bool CheckCondition(ClipboardItem clipboardItem) {
+        public bool CheckCondition(ContentItem clipboardItem) {
             return Type switch {
                 ConditionTypeEnum.DescriptionContains => IsDescriptionContains(clipboardItem, Keyword),
                 ConditionTypeEnum.ContentContains => IsContentContains(clipboardItem, Keyword),
@@ -133,7 +133,7 @@ namespace ClipboardApp.Model.AutoProcess {
         }
 
         // ContentTypeIsの条件にマッチするかどうか
-        public bool CheckContentTypeIs(ClipboardItem clipboardItem) {
+        public bool CheckContentTypeIs(ContentItem clipboardItem) {
             if (ContentTypes.Contains(clipboardItem.ContentType) == false) {
                 return false;
             }
@@ -159,10 +159,10 @@ namespace ClipboardApp.Model.AutoProcess {
 
         public SystemAutoProcessItem? RuleAction { get; set; }
 
-        public ClipboardFolder? TargetFolder { get; set; }
+        public ContentFolder? TargetFolder { get; set; }
 
         // 移動またはコピー先のフォルダ
-        public ClipboardFolder? DestinationFolder { get; set; }
+        public ContentFolder? DestinationFolder { get; set; }
 
         public AutoProcessRule() {
         }
@@ -199,7 +199,7 @@ namespace ClipboardApp.Model.AutoProcess {
 
 
         // RuleConditionTypesの条件に全てマッチした場合にTrueを返す。マッチしない場合とルールがない場合はFalseを返す。
-        public bool IsMatch(ClipboardItem clipboardItem) {
+        public bool IsMatch(ContentItem clipboardItem) {
             if (Conditions.Count == 0) {
                 return false;
             }
@@ -217,7 +217,7 @@ namespace ClipboardApp.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public ClipboardItem? RunAction(ClipboardItem clipboardItem) {
+        public ContentItem? RunAction(ContentItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.RuleNameIsInvalid(RuleName));

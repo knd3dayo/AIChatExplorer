@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ClipboardApp.Model;
-using ClipboardApp.ViewModel.Main;
+using PythonAILib.Model.Content;
 using QAChat.View.Tag;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
@@ -137,7 +137,7 @@ namespace ClipboardApp.ViewModel.Content {
                 return;
             }
             // フォルダに自動処理が設定されている場合は実行
-            Model.ClipboardItem? item = clipboardItem.ApplyAutoProcess();
+            ContentItem? item = clipboardItem.ApplyAutoProcess();
             // ClipboardItemを更新
             if (item != null) {
 

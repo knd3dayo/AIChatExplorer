@@ -1,5 +1,6 @@
-using ClipboardApp.Model.Folder;
 using LiteDB;
+using PythonAILib.Model.AutoProcess;
+using PythonAILib.Model.Content;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
@@ -11,7 +12,6 @@ namespace ClipboardApp.Model.AutoProcess {
             CopyToFolder,
             MoveToFolder,
             ExtractText,
-            MaskData,
             MergeAllItems,
             MergeItemsWithSameSourceApplicationTitle,
             RunPythonScript,
@@ -47,10 +47,10 @@ namespace ClipboardApp.Model.AutoProcess {
             throw new Exception(CommonStringResources.Instance.AutoProcessItemNotFound);
         }
 
-        public virtual ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder) {
+        public virtual ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
 
-            Func<AutoProcessItemArgs, ClipboardItem?> action = GetAction(Name);
-            ClipboardItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
+            Func<AutoProcessItemArgs, ContentItem?> action = GetAction(Name);
+            ContentItem? result = action(new AutoProcessItemArgs(clipboardItem, destinationFolder));
             return result;
         }
 
@@ -88,7 +88,7 @@ namespace ClipboardApp.Model.AutoProcess {
             }
         }
 
-        public static Func<AutoProcessItemArgs, ClipboardItem?> GetAction(string name) {
+        public static Func<AutoProcessItemArgs, ContentItem?> GetAction(string name) {
             if (name == TypeEnum.Ignore.ToString()) {
                 return (args) => {
                     return null;
@@ -98,30 +98,30 @@ namespace ClipboardApp.Model.AutoProcess {
                 return (args) => {
                     if (args.DestinationFolder == null) {
                         LogWrapper.Warn(CommonStringResources.Instance.NoFolderSelected);
-                        return args.ClipboardItem;
+                        return args.ContentItem;
                     }
 
                     LogWrapper.Info($"{CommonStringResources.Instance.CopyToFolderDescription}:{args.DestinationFolder.FolderPath}");
-                    ClipboardItem newItem = (ClipboardItem)args.ClipboardItem.Copy();
+                    ClipboardItem newItem = (ClipboardItem)args.ContentItem.Copy();
 
                     // Folderに追加
                     args.DestinationFolder.AddItem(newItem);
 
                     // コピーの場合は元のアイテムを返す
-                    return args.ClipboardItem;
+                    return args.ContentItem;
                 };
             }
             if (name == TypeEnum.MoveToFolder.ToString()) {
                 return (args) => {
                     if (args.DestinationFolder == null) {
                         LogWrapper.Warn(CommonStringResources.Instance.NoFolderSelected);
-                        return args.ClipboardItem;
+                        return args.ContentItem;
                     }
                     // Folderに追加
-                    ClipboardItem newItem = (ClipboardItem)args.ClipboardItem.Copy();
+                    ClipboardItem newItem = (ClipboardItem)args.ContentItem.Copy();
                     args.DestinationFolder.AddItem(newItem);
 
-                    args.ClipboardItem.Delete();
+                    args.ContentItem.Delete();
 
                     // Moveの場合は元のアイテムを返さない
                     return null;
@@ -129,32 +129,27 @@ namespace ClipboardApp.Model.AutoProcess {
             }
             if (name == TypeEnum.ExtractText.ToString()) {
                 return (args) => {
-                    return (ClipboardItem)args.ClipboardItem.ExtractTextCommandExecute();
-                };
-            }
-            if (name == TypeEnum.MaskData.ToString()) {
-                return (args) => {
-                    return args.ClipboardItem.MaskDataCommandExecute();
+                    return (ClipboardItem)args.ContentItem.ExtractTextCommandExecute();
                 };
             }
             if (name == TypeEnum.MergeAllItems.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
+                    ContentFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
 
-                    folder.MergeItems(args.ClipboardItem);
-                    return args.ClipboardItem;
+                    folder.MergeItems(args.ContentItem);
+                    return args.ContentItem;
                 };
             }
             if (name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString()) {
                 return (args) => {
-                    ClipboardFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
+                    ContentFolder folder = args.DestinationFolder ?? throw new Exception(CommonStringResources.Instance.NoFolderSelected);
 
-                    folder.MergeItemsBySourceApplicationTitleCommandExecute(args.ClipboardItem);
-                    return args.ClipboardItem;
+                    folder.MergeItemsBySourceApplicationTitleCommandExecute(args.ContentItem);
+                    return args.ContentItem;
                 };
             }
             return (args) => {
-                return args.ClipboardItem;
+                return args.ContentItem;
             };
         }
 

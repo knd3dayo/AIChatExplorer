@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ViewModel\VectorDB\**" />
+    <EmbeddedResource Remove="ViewModel\VectorDB\**" />
+    <None Remove="ViewModel\VectorDB\**" />
+    <Page Remove="ViewModel\VectorDB\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="clipboard_app_utils.py" />
   </ItemGroup>
 
@@ -75,10 +82,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ViewModel\VectorDB\" />
   </ItemGroup>
 
 </Project>

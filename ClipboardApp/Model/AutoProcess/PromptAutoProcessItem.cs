@@ -1,6 +1,7 @@
 using ClipboardApp.Model.Folder;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 
 namespace ClipboardApp.Model.AutoProcess
@@ -22,7 +23,7 @@ namespace ClipboardApp.Model.AutoProcess
             PromptItemId = promptItem.Id;
 
         }
-        public override ClipboardItem? Execute(ClipboardItem clipboardItem, ClipboardFolder? destinationFolder)
+        public override ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder)
         {
 
             if (PromptItemId == LiteDB.ObjectId.Empty)
