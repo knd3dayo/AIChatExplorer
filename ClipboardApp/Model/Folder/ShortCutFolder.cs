@@ -7,6 +7,14 @@ using PythonAILib.Utils.Common;
 namespace ClipboardApp.Model.Folder {
     public class ShortCutFolder : FileSystemFolder {
 
+        public override void Save() {
+            Save<ShortCutFolder, FileSystemItem>();
+        }
+        // 削除
+        public override void Delete() {
+            DeleteFolder<ShortCutFolder, FileSystemItem>(this);
+        }
+
 
         public override void SyncFolders() {
 
@@ -41,7 +49,7 @@ namespace ClipboardApp.Model.Folder {
                     // localFileSystemFolder からフォルダ名を取得
                     string folderName = Path.GetFileName(localFileSystemFolder);
                     FileSystemFolder child = CreateChild(folderName);
-                    child.Save<FileSystemFolder, FileSystemItem>();
+                    child.Save();
                 }
             }
             // 自分自身を保存

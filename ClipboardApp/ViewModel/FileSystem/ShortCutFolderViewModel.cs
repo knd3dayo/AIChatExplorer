@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
+using QAChat.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.FileSystem {
     public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder) : FileSystemFolderViewModel(clipboardItemFolder) {
@@ -61,7 +62,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                         _children.Add(childViewModel);
                     }
                 });
-                Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
+                Children = new ObservableCollection<ContentFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
                 UpdateIndeterminate(false);

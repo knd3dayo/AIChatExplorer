@@ -7,6 +7,7 @@ using ClipboardApp.Factory;
 using LiteDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
@@ -17,7 +18,14 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace ClipboardApp.Model.Folder {
     public partial class ClipboardFolder : ContentFolder {
 
-
+        public override void Save() {
+            Save<ClipboardFolder, ClipboardItem>();
+        }
+        // 削除
+        public override void Delete() {
+            Delete<ClipboardFolder, ClipboardItem>();
+        }
+ 
         //--------------------------------------------------------------------------------
         // コンストラクタ
         public ClipboardFolder() { }
@@ -151,7 +159,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         //exportしたJSONファイルをインポート
-        public void ImportItemsFromJson(string json) {
+        public override void ImportItemsFromJson(string json) {
             JsonNode? node = JsonNode.Parse(json);
             if (node == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FailedToParseJSONString);
@@ -179,38 +187,7 @@ namespace ClipboardApp.Model.Folder {
             }
         }
 
-        // --- Export/Import
-        public void ExportToExcel(string fileName, List<ExportImportItem> items) {
-            // PythonNetの処理を呼び出す。
-            List<List<string>> data = [];
-            // ClipboardItemのリスト要素毎に処理を行う
-            foreach (var clipboardItem in GetItems<ClipboardItem>()) {
-                List<string> row = [];
-                bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
-                if (exportTitle) {
-                    row.Add(clipboardItem.Description);
-                }
-                bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
-                if (exportText) {
-                    row.Add(clipboardItem.Content);
-                }
-                // PromptItemのリスト要素毎に処理を行う
-                foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
-                    if (promptItem.IsChecked) {
-                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
-                        row.Add(promptResult);
-                    }
-                }
-
-                data.Add(row);
-            }
-            CommonDataTable dataTable = new(data);
-
-            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
-
-        }
-
-        public void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
+        public override  void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
 
             // PythonNetの処理を呼び出す。
             CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
@@ -233,7 +210,7 @@ namespace ClipboardApp.Model.Folder {
                 }
                 item.Save();
                 if (executeAutoProcess) {
-                    // システム共通自動処理を適用
+                    // システム共通自動処理を適用s
                     ProcessClipboardItem(item, (processedItem) => {
                         // 自動処理後のアイテムを保存
                         item.Save();

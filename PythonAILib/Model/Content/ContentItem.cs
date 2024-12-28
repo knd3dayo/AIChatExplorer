@@ -1,4 +1,7 @@
 using System.IO;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LiteDB;
 using PythonAILib.Common;
@@ -740,6 +743,28 @@ namespace PythonAILib.Model.Content {
             UpdateEmbedding(VectorDBUpdateMode.update);
         }
 
+        // ClipboardItemをJSON文字列に変換する
+        public static string ToJson<T>(T item) where T : ContentItem {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            return System.Text.Json.JsonSerializer.Serialize(item, options);
+        }
+
+
+        // JSON文字列をClipboardItemに変換する
+        public static T? FromJson<T>(string json) where T : ContentItem {
+            JsonSerializerOptions jsonSerializerOptions = new() {
+                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+                WriteIndented = true
+            };
+            var options = jsonSerializerOptions;
+            T? item = System.Text.Json.JsonSerializer.Deserialize<T>(json, options);
+            return item;
+
+        }
 
     }
 }

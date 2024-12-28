@@ -8,6 +8,13 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace ClipboardApp.Model.Folder {
     public partial class SearchFolder : ClipboardFolder {
 
+        public override void Save() {
+            Save<SearchFolder, ClipboardItem>();
+        }
+        // 削除
+        public override void Delete() {
+            DeleteFolder<SearchFolder, ClipboardItem>(this);
+        }
 
         //--------------------------------------------------------------------------------
         // コンストラクタ

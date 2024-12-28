@@ -6,6 +6,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Content;
 using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.FileSystem {
@@ -42,7 +43,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
             try {
                 UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-                List<ClipboardFolderViewModel> _children = [];
+                List<ContentFolderViewModel> _children = [];
 
                 await Task.Run(() => {
                     foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
@@ -57,7 +58,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                         _children.Add(childViewModel);
                     }
                 });
-                Children = new ObservableCollection<ClipboardFolderViewModel>(_children);
+                Children = new ObservableCollection<ContentFolderViewModel>(_children);
                 OnPropertyChanged(nameof(Children));
             } finally {
                 UpdateIndeterminate(false);
@@ -107,7 +108,7 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 ParentId = shortCutRootFolder.Id,
                 FileSystemFolderPath = folderViewModel.FolderPath
             };
-            subFolder.Save<FileSystemFolder, Model.ClipboardItem>();
+            subFolder.Save();
         });
 
     }

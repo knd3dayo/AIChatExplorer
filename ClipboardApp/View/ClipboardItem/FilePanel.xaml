@@ -53,7 +53,7 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding ClipboardItem.FilePath, Mode=OneWay}"
+                    Text="{Binding ContentItem.FilePath, Mode=OneWay}"
                     TextWrappingMode="{Binding TextWrappingMode}" />
 
                 <TextBlock
@@ -68,7 +68,7 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding ClipboardItem.FolderName, Mode=OneWay}"
+                    Text="{Binding ContentItem.FolderName, Mode=OneWay}"
                     TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="2"
@@ -81,7 +81,7 @@
                     Grid.Column="1"
                     Margin="10,3,10,3"
                     IsReadOnly="True"
-                    Text="{Binding ClipboardItem.FileName, Mode=OneWay}"
+                    Text="{Binding ContentItem.FileName, Mode=OneWay}"
                     TextWrappingMode="{Binding TextWrappingMode}" />
                 <TextBlock
                     Grid.Row="3"

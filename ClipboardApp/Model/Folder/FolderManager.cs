@@ -25,39 +25,40 @@ namespace ClipboardApp.Model.Folder {
             ClipboardFolder? clipboardRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Normal).FirstOrDefault();
             if (clipboardRootFolder != null) {
                 clipboardRootFolder.FolderName = toRes.Clipboard;
-                clipboardRootFolder.Save<ClipboardFolder, ClipboardItem>();
+                clipboardRootFolder.Save();
             }
             var searchCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<SearchFolder>();
             // SearchRootFolder
             SearchFolder? searchRootFolder = searchCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Search).FirstOrDefault();
             if (searchRootFolder != null) {
                 searchRootFolder.FolderName = toRes.SearchFolder;
-                searchRootFolder.Save<SearchFolder, ClipboardItem>();
+                searchRootFolder.Save();
             }
             // ChatRootFolder
             ClipboardFolder? chatRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.Chat).FirstOrDefault();
             if (chatRootFolder != null) {
                 chatRootFolder.FolderName = toRes.ChatHistory;
-                chatRootFolder.Save<ClipboardFolder, ClipboardItem>();
+                chatRootFolder.Save();
             }
             // ImageCheckRootFolder
             ClipboardFolder? imageCheckRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ImageCheck).FirstOrDefault();
             if (imageCheckRootFolder != null) {
                 imageCheckRootFolder.FolderName = toRes.ImageChat;
-                imageCheckRootFolder.Save<ClipboardFolder, ClipboardItem>();
+                imageCheckRootFolder.Save();
             }
             // FileSystemRootFolder
-            ClipboardFolder? fileSystemRootFolder = collection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
+            var fileSystemCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<FileSystemFolder>();
+            FileSystemFolder? fileSystemRootFolder = fileSystemCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.FileSystem).FirstOrDefault();
             if (fileSystemRootFolder != null) {
                 fileSystemRootFolder.FolderName = toRes.FileSystem;
-                fileSystemRootFolder.Save<FileSystemFolder, ClipboardItem>();
+                fileSystemRootFolder.Save();
             }
             // ShortcutRootFolder
             var shortCutCollection = ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ShortCutFolder>();
             ShortCutFolder? shortcutRootFolder = shortCutCollection.Find(x => x.ParentId == null && x.FolderType == FolderTypeEnum.ShortCut).FirstOrDefault();
             if (shortcutRootFolder != null) {
                 shortcutRootFolder.FolderName = toRes.Shortcut;
-                shortcutRootFolder.Save<ShortCutFolder, ClipboardItem>();
+                shortcutRootFolder.Save();
             }
         }
 
@@ -78,7 +79,7 @@ namespace ClipboardApp.Model.Folder {
                             IsAutoProcessEnabled = true,
                             FolderType = FolderTypeEnum.Normal
                         };
-                        folder.Save<ClipboardFolder, ClipboardItem>();
+                        folder.Save();
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
@@ -100,7 +101,7 @@ namespace ClipboardApp.Model.Folder {
                             IsAutoProcessEnabled = true,
                             FolderType = FolderTypeEnum.Search
                         };
-                        folder.Save<SearchFolder, ClipboardItem>();
+                        folder.Save();
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
@@ -123,7 +124,7 @@ namespace ClipboardApp.Model.Folder {
                             IsAutoProcessEnabled = true,
                             FolderType = FolderTypeEnum.Chat
                         };
-                        folder.Save<ClipboardFolder, ClipboardItem>();
+                        folder.Save();
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
@@ -146,7 +147,7 @@ namespace ClipboardApp.Model.Folder {
                             IsAutoProcessEnabled = true,
                             FolderType = FolderTypeEnum.FileSystem
                         };
-                        folder.Save<FileSystemFolder, ClipboardItem>();
+                        folder.Save();
                     }
                     // 既にRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
@@ -170,7 +171,7 @@ namespace ClipboardApp.Model.Folder {
                             // 自動処理を無効にする
                             IsAutoProcessEnabled = false
                         };
-                        folder.Save<ShortCutFolder, ClipboardItem>();
+                        folder.Save();
                     }
                     // 既にSearchRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;
@@ -194,7 +195,7 @@ namespace ClipboardApp.Model.Folder {
                             // 自動処理を無効にする
                             IsAutoProcessEnabled = false
                         };
-                        folder.Save<OutlookFolder, OutlookItem>();
+                        folder.Save();
                     }
                     // 既にOutlookRootFolder作成済みの環境のための措置
                     folder.IsRootFolder = true;

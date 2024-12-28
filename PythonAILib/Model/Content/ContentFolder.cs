@@ -1,6 +1,8 @@
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.File;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
@@ -75,7 +77,11 @@ namespace PythonAILib.Model.Content {
         }
 
         // 親フォルダ
-        public virtual T? GetParent<T>() where T : ContentFolder {
+        public ContentFolder? GetParent() {
+            return GetParent<ContentFolder>();
+        }
+
+        protected virtual T? GetParent<T>() where T : ContentFolder {
             if (ParentId == ObjectId.Empty) {
                 return null;
             }
@@ -83,8 +89,9 @@ namespace PythonAILib.Model.Content {
             return collection.FindById(ParentId);
         }
 
+
         // フォルダを削除
-        public virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
+        protected virtual void DeleteFolder<T1, T2>(T1 folder) where T1 : ContentFolder where T2 : ContentItem {
             // folderの子フォルダを再帰的に削除
             foreach (var child in folder.GetChildren<T1>()) {
                 if (child != null) {
@@ -113,8 +120,12 @@ namespace PythonAILib.Model.Content {
             Save<ContentFolder, ContentItem>();
         }
 
+        public virtual void Save() {
+            Save<ContentFolder, ContentItem>();
+        }
+
         // 保存
-        public virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
+        protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
             
             // ReferenceVectorDBItemsに自分自身を追加
             // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
@@ -134,7 +145,11 @@ namespace PythonAILib.Model.Content {
             }
         }
         // 削除
-        public virtual void Delete<T1,T2>() where T1 : ContentFolder where T2 : ContentItem {
+        public virtual void Delete() {
+            Delete<ContentFolder, ContentItem>();
+        }
+
+        protected virtual void Delete<T1,T2>() where T1 : ContentFolder where T2 : ContentItem {
             DeleteFolder<T1, T2>((T1)this);
         }
 
@@ -143,6 +158,9 @@ namespace PythonAILib.Model.Content {
             var items = collection.Find(x => x.CollectionId == Id).OrderByDescending(x => x.UpdatedAt);
             return items.Cast<T>().ToList();
         }
+
+
+
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除
         public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
@@ -290,6 +308,61 @@ namespace PythonAILib.Model.Content {
             return results;
         }
         #endregion
+        // --- Export/Import
+        public void ExportToExcel(string fileName, List<ExportImportItem> items) {
+            // PythonNetの処理を呼び出す。
+            List<List<string>> data = [];
+            // ClipboardItemのリスト要素毎に処理を行う
+            foreach (var clipboardItem in GetItems<ContentItem>()) {
+                List<string> row = [];
+                bool exportTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
+                if (exportTitle) {
+                    row.Add(clipboardItem.Description);
+                }
+                bool exportText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
+                if (exportText) {
+                    row.Add(clipboardItem.Content);
+                }
+                // PromptItemのリスト要素毎に処理を行う
+                foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
+                    if (promptItem.IsChecked) {
+                        string promptResult = clipboardItem.PromptChatResult.GetTextContent(promptItem.Name);
+                        row.Add(promptResult);
+                    }
+                }
 
-    }
+                data.Add(row);
+            }
+            CommonDataTable dataTable = new(data);
+
+            PythonExecutor.PythonAIFunctions.ExportToExcel(fileName, dataTable);
+
+        }
+
+        public virtual void ImportFromExcel(string fileName, List<ExportImportItem> items, bool executeAutoProcess) {
+
+            // PythonNetの処理を呼び出す。
+            CommonDataTable data = PythonExecutor.PythonAIFunctions.ImportFromExcel(fileName);
+            if (data == null) {
+                return;
+            }
+            bool importTitle = items.FirstOrDefault(x => x.Name == "Title")?.IsChecked ?? false;
+            bool importText = items.FirstOrDefault(x => x.Name == "Text")?.IsChecked ?? false;
+
+            foreach (var row in data.Rows) {
+                ContentItem item = new(Id);
+                // importTitleと、importTextがTrueの場合は、row[0]をTitle、row[1]をContentに設定。Row.Countが足りない場合は空文字を設定
+                if (importTitle && importText) {
+                    item.Description = row.Count > 0 ? row[0] : "";
+                    item.Content = row.Count > 1 ? row[1] : "";
+                } else if (importTitle) {
+                    item.Description = row.Count > 0 ? row[0] : "";
+                } else if (importText) {
+                    item.Content = row.Count > 0 ? row[0] : "";
+                }
+                item.Save();
+            }
+        }
+        public virtual void ImportItemsFromJson(string json) { }
+        }
 }

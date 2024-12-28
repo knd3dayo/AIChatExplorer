@@ -1,13 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Model.Folder;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
+using QAChat.Model;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ClipboardFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.Folder {
+    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : QAChatViewModelBase {
 
 
         // ImportItems
@@ -46,20 +47,8 @@ namespace ClipboardApp.ViewModel.Folder {
         // インポート時に自動処理を実行
         public bool IsAutoProcessEnabled { get; set; } = false;
 
-        // プログレスインジケーター
-        private bool _isIndeterminate = false;
-        public bool IsIndeterminate {
-            get => _isIndeterminate;
-            set {
-                _isIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
-            }
-        }
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
-            if (ClipboardFolderViewModel.Folder is not ClipboardFolder clipboardFolder) {
-                return;
-            }
 
             IsIndeterminate = true;
             // 選択されたインデックスによって処理を分岐
@@ -67,11 +56,11 @@ namespace ClipboardApp.ViewModel.Folder {
                 switch (SelectedIndex) {
                     case 0:
                         // エクスポート処理
-                        clipboardFolder.ExportToExcel(SelectedFileName, [.. ExportItems]);
+                        ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
                         // インポート処理
-                        clipboardFolder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
+                        ClipboardFolderViewModel.Folder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
                         break;
                     default:
                         break;

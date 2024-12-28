@@ -120,8 +120,6 @@ namespace ClipboardApp.Model.AutoProcess {
                     // Folderに追加
                     ClipboardItem newItem = (ClipboardItem)args.ClipboardItem.Copy();
                     args.DestinationFolder.AddItem(newItem);
-                    // 元のフォルダから削除
-                    LogWrapper.Info($"{CommonStringResources.Instance.Delete}:{args.ClipboardItem.FolderPath}");
 
                     args.ClipboardItem.Delete();
 

@@ -10,6 +10,13 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace ClipboardApp.Model.Folder {
     public class FileSystemFolder : ClipboardFolder {
 
+        public override void Save() {
+            Save<FileSystemFolder, FileSystemItem>();
+        }
+        // 削除
+        public override void Delete() {
+            DeleteFolder<FileSystemFolder, FileSystemItem>(this);
+        }
 
         private string _fileSystemFolderPath = "";
         public string FileSystemFolderPath {
@@ -150,17 +157,17 @@ namespace ClipboardApp.Model.Folder {
                 if (!folders.Any(x => x.FileSystemFolderPath == localFileSystemFolder)) {
                     if (IsRootFolder) {
                         FileSystemFolder child = CreateChild(localFileSystemFolder);
-                        child.Save<FileSystemFolder, ClipboardItem>();
+                        child.Save();
                     } else {
                         // localFileSystemFolder からフォルダ名を取得
                         string folderName = Path.GetFileName(localFileSystemFolder);
                         FileSystemFolder child = CreateChild(folderName);
-                        child.Save<FileSystemFolder, FileSystemItem>();
+                        child.Save();
                     }
                 }
             }
             // 自分自身を保存
-            this.Save<FileSystemFolder, FileSystemItem>();
+            this.Save();
         }
 
     }

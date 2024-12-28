@@ -4,12 +4,21 @@ using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
-using PythonAILib.Model.Content;
 using PythonAILib.Utils.Common;
 using Outlook = NetOffice.OutlookApi;
 
 namespace ClipboardApp.Model.Folder {
     public class OutlookFolder : ClipboardFolder {
+
+        public override void Save() {
+            Save<OutlookFolder, OutlookItem>();
+        }
+        // 削除
+        public override void Delete() {
+            DeleteFolder<OutlookFolder, OutlookItem>(this);
+        }
+
+
 
         // コンストラクタ
         public OutlookFolder() { }
@@ -155,12 +164,12 @@ namespace ClipboardApp.Model.Folder {
             foreach (var outlookFolderName in outlookFolderNames) {
                 if (!folders.Any(x => x.FolderName == outlookFolderName)) {
                     var child = this.CreateChild(outlookFolderName);
-                    child.Save<OutlookFolder, OutlookItem>();
+                    child.Save();
                 }
             }
 
             // 自分自身を保存
-            this.Save<OutlookFolder, OutlookItem>();
+            this.Save();
         }
 
     }

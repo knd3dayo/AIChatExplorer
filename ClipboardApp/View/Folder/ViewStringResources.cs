@@ -34,14 +34,6 @@ namespace ClipboardApp.View.Folder {
         // Edit
         public static string Edit { get; set; } = CommonStringResources.Edit;
 
-        // ImportClipboardItemsWindow
-        public static string ImportClipboardItemsWindow { get; set; } = "エクスポート/インポート";
-
-        // Export
-        public static string Export { get; set; } = CommonStringResources.Export;
-
-        // Import
-        public static string Import { get; set; } = CommonStringResources.Import;
 
         // Title
         public static string Title { get; set; } = CommonStringResources.Title;
@@ -51,10 +43,6 @@ namespace ClipboardApp.View.Folder {
 
         // ExportTheFollowingItems
         public static string ExportTheFollowingItems { get; set; } = CommonStringResources.ExportTheFollowingItems;
-
-        // ExecuteAutoProcessingOnImport
-        public static string ExecuteAutoProcessingOnImport { get; set; } = CommonStringResources.ExecuteAutoProcessingOnImport;
-
         // BackgroundInformation
         public static string BackgroundInformation { get; set; } = CommonStringResources.BackgroundInformation;
 
@@ -63,12 +51,6 @@ namespace ClipboardApp.View.Folder {
 
         // SelectFile
         public static string SelectFile { get; set; } = CommonStringResources.SelectFile;
-
-        // ExportTarget
-        public static string ExportTarget { get; set; } = "エクスポート対象";
-
-        // ImportTarget
-        public static string ImportTarget { get; set; } = "インポート対象";
 
         // EditClipboardFolder
         public static string EditClipboardFolder { get; set; } = CommonStringResources.EditClipboardFolder;

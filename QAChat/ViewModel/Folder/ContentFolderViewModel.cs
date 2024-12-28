@@ -1,7 +1,10 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
 using PythonAILib.Model.Content;
 using QAChat.Model;
-using QAChat.Resource;
+using QAChat.View.Folder;
+using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 
@@ -12,7 +15,58 @@ namespace QAChat.ViewModel.Folder {
         public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
         public abstract void CreateItemCommandExecute();
+        public abstract void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
+        public abstract ContentItemViewModel CreateItemViewModel(ContentItem item);
 
+        public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
+
+        public abstract void OpenItemCommandExecute(ContentItemViewModel item);
+
+        // フォルダー保存コマンド
+        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {
+            Folder.Save();
+        });
+        // 新規フォルダ作成コマンド
+        public SimpleDelegateCommand<ContentFolderViewModel> CreateFolderCommand => new((folderViewModel) => {
+
+            CreateFolderCommandExecute(folderViewModel, () => {
+                // 親フォルダを保存
+                folderViewModel.Folder.Save();
+                folderViewModel.LoadFolderCommand.Execute();
+
+            });
+        });
+
+        // フォルダ編集コマンド
+        public SimpleDelegateCommand<ContentFolderViewModel> EditFolderCommand => new((folderViewModel) => {
+
+            EditFolderCommandExecute(folderViewModel, () => {
+                //　フォルダを保存
+                folderViewModel.Folder.Save();
+                LoadFolderCommand.Execute();
+                LogWrapper.Info(StringResources.FolderEdited);
+            });
+        });
+
+        // GetItems
+        public ObservableCollection<ContentItemViewModel> Items { get; } = [];
+
+        // 子フォルダ
+        public ObservableCollection<ContentFolderViewModel> Children { get; set; } = [];
+
+        public ContentFolderViewModel? ParentFolderViewModel { get; set; }
+
+        // アイテム保存コマンド
+        public SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new((item) => {
+            Folder.AddItem(item.ContentItem);
+        });
+
+        //クリップボードアイテムを開く
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+
+            OpenItemCommandExecute(itemViewModel);
+
+        });
 
         // DisplayText
         public string Description {
@@ -57,10 +111,50 @@ namespace QAChat.ViewModel.Folder {
 
         public virtual SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => { });
 
-        // フォルダー保存コマンド
-        public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => { });
 
-        public virtual void UpdateIndeterminate(bool isIndeterminate) {}
+        public virtual void UpdateIndeterminate(bool isIndeterminate) { }
+
+        public SimpleDelegateCommand<ContentFolderViewModel> DeleteFolderCommand => new((folderViewModel) => {
+
+            // フォルダ削除するかどうか確認
+            if (MessageBox.Show(StringResources.ConfirmDeleteFolder, StringResources.Confirm, MessageBoxButton.YesNo) != MessageBoxResult.Yes) {
+                return;
+            }
+            // 親フォルダを取得
+            ContentFolderViewModel? parentFolderViewModel = folderViewModel.ParentFolderViewModel;
+
+            folderViewModel.Folder.Delete();
+
+            // 親フォルダが存在する場合は、親フォルダを再読み込み
+            if (parentFolderViewModel != null) {
+                parentFolderViewModel.LoadFolderCommand.Execute();
+            }
+
+            LogWrapper.Info(StringResources.FolderDeleted);
+        });
+        // ベクトルのリフレッシュ
+        public SimpleDelegateCommand<object> RefreshVectorDBCollectionCommand => new((parameter) => {
+            Task.Run(() => {
+                try {
+                    // MainWindowViewModelのIsIndeterminateをTrueに設定
+                    UpdateIndeterminate(true);
+                    Folder.RefreshVectorDBCollection<ContentItem>();
+                } finally {
+                    UpdateIndeterminate(false);
+                }
+            });
+
+        });
+        // ExportImportFolderCommand
+        public static SimpleDelegateCommand<ContentFolderViewModel> ExportImportFolderCommand => new((folderViewModel) => {
+            // ExportImportFolderWindowを開く
+            ExportImportWindow.OpenExportImportFolderWindow(folderViewModel, () => {
+                // ファイルを再読み込み
+                folderViewModel.LoadFolderCommand.Execute();
+            });
+        });
+
+
 
     }
 }

@@ -539,7 +539,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             // ClipboardItemFolderにAutoProcessRuleIdを追加
             clipboardFolder.AutoProcessRuleIds.Add(TargetAutoProcessRule.Id);
             // ClipboardItemFolderを保存
-            clipboardFolder.Save<ClipboardFolder, Model.ClipboardItem>();
+            clipboardFolder.Save();
 
             // AutoProcessRuleを更新したあとの処理を実行
             _AfterUpdate?.Invoke(TargetAutoProcessRule);

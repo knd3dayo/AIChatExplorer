@@ -1,4 +1,4 @@
-namespace ClipboardApp.Model.Folder {
+namespace PythonAILib.Model.Folder {
     public class ExportImportItem {
 
         public string Name { get; set; }
