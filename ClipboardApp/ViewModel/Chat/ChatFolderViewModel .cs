@@ -1,6 +1,7 @@
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
+using PythonAILib.Model.Folder;
 using QAChat.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;

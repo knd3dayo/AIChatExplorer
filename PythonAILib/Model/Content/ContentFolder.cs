@@ -14,6 +14,9 @@ namespace PythonAILib.Model.Content {
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
+        // フォルダの種類
+        public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
+
         // プロパティ
         // 親フォルダのID
         public ObjectId ParentId { get; set; } = ObjectId.Empty;

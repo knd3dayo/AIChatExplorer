@@ -21,6 +21,7 @@ using WpfAppCommon.Utils;
 using PythonAILibUI.ViewModel.Item;
 using QAChat.ViewModel.Item;
 using ClipboardApp.Common;
+using PythonAILib.Model.Folder;
 
 namespace ClipboardApp.ViewModel.Main
 {

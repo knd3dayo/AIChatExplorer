@@ -170,6 +170,43 @@ namespace PythonAILib.Common {
                     item["_type"] = "ClipboardApp.Model.Folder.SearchFolder, ClipboardApp";
                     collection.Update(item);
                 }
+                var folderTypeString = item["FolderType"];
+                if (folderTypeString.GetType() == typeof(string)) {
+                    // Normal
+                    if (folderTypeString == "Normal") {
+                        item["FolderType"] = new BsonDocument { { "Name", "Normal" } };
+                        collection.Update(item);
+                    }
+                    if (folderTypeString == "Search") {
+                        item["FolderType"] = new BsonDocument { { "Name", "Search" } };
+                        collection.Update(item);
+                    }
+                    // Chat
+                    if (folderTypeString == "Chat") {
+                        item["FolderType"] = new BsonDocument { { "Name", "Chat" } };
+                        collection.Update(item);
+                    }
+                    // ImageCheck
+                    if (folderTypeString == "ImageCheck") {
+                        item["FolderType"] = new BsonDocument { { "Name", "ImageCheck" } };
+                        collection.Update(item);
+                    }
+                    // FileSystem
+                    if (folderTypeString == "FileSystem") {
+                        item["FolderType"] = new BsonDocument { { "Name", "FileSystem" } };
+                        collection.Update(item);
+                    }
+                    // ShortCut
+                    if (folderTypeString == "ShortCut") {
+                        item["FolderType"] = new BsonDocument { { "Name", "ShortCut" } };
+                        collection.Update(item);
+                    }
+                    // Outlook
+                    if (folderTypeString == "Outlook") {
+                        item["FolderType"] = new BsonDocument { { "Name", "Outlook" } };
+                        collection.Update(item);
+                    }
+                }
             }
 
             // SearchRule

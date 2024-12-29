@@ -2,43 +2,43 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model.Folder;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
+using QAChat.Model;
 using QAChat.View.Folder;
 using QAChat.View.PromptTemplate;
 using QAChat.View.PythonScript;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.AutoProcess {
-    public class EditAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.AutoProcess {
+    public class EditAutoProcessRuleWindowViewModel : QAChatViewModelBase {
 
         // 初期化
-        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ContentFolderViewModel rootFolderViewModel, Action<AutoProcessRule> afterUpdate) {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
-
-            ContentFolder? targetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
-            if (targetFolder != null) {
-
-                TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)targetFolder);
-            }
+            TargetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
             // DestinationIdに一致するフォルダを取得
-            ContentFolder? destinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
+            DestinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
 
-            if (destinationFolder != null) {
-                DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)destinationFolder);
-            }
+            // RootFolderViewModelを設定
+            RootFolderViewModel = rootFolderViewModel;
+
             LoadConditions();
 
         }
+
+        // RootFolderViewModel
+        public ContentFolderViewModel RootFolderViewModel { get; set; }
 
         private void LoadConditions() {
             // autoProcessRuleがNullでない場合は初期化
@@ -141,16 +141,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         }
 
         // ルール適用対象のClipboardItemFolder
-        private ClipboardFolderViewModel? targetFolder;
-        public ClipboardFolderViewModel? TargetFolder {
-            get {
-                return targetFolder;
-            }
-            set {
-                targetFolder = value;
-                OnPropertyChanged(nameof(TargetFolder));
-            }
-        }
+        public ContentFolder? TargetFolder { get; set; }
 
         // 編集対象の自動処理ルール
         AutoProcessRule TargetAutoProcessRule { get; set; }
@@ -316,16 +307,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
 
 
         // コピーまたは移動先のフォルダ
-        private ClipboardFolderViewModel? _DestinationFolder = null;
-        public ClipboardFolderViewModel? DestinationFolder {
-            get {
-                return _DestinationFolder;
-            }
-            set {
-                _DestinationFolder = value;
-                OnPropertyChanged(nameof(DestinationFolder));
-            }
-        }
+        public ContentFolder? DestinationFolder { get; set; }
 
         // アクションがコピーまたは移動の場合にFolderSelectionPanelをEnabledにする
         private bool _FolderSelectionPanelEnabled = false;
@@ -403,10 +385,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.FolderNotSelected);
                 return;
             }
-            if (TargetFolder.Folder is not ClipboardFolder clipboardFolder) {
-                LogWrapper.Error(StringResources.FolderNotSelected);
-                return;
-            }
             // RuleNameが空の場合はエラー
             if (string.IsNullOrEmpty(RuleName)) {
                 LogWrapper.Error(StringResources.EnterRuleName);
@@ -432,7 +410,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             TargetAutoProcessRule.IsEnabled = IsAutoProcessRuleEnabled;
 
             // TargetFolderを設定
-            TargetAutoProcessRule.TargetFolderId = TargetFolder.Folder.Id;
+            TargetAutoProcessRule.TargetFolderId = TargetFolder.Id;
             // IsAllItemsRuleCheckedがTrueの場合は条件を追加
             if (IsAllItemsRuleChecked) {
                 // AllItemsを条件に追加
@@ -492,11 +470,11 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                         return;
                     }
                     // TargetFolderとDestinationFolderが同じ場合はエラー
-                    if (TargetFolder.Folder.Id == DestinationFolder.Folder.Id) {
+                    if (TargetFolder.Id == DestinationFolder.Id) {
                         LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                         return;
                     }
-                    TargetAutoProcessRule.DestinationFolderId = DestinationFolder.Folder.Id;
+                    TargetAutoProcessRule.DestinationFolderId = DestinationFolder.Id;
                 }
                 // 無限ループのチェック処理
                 if (AutoProcessRule.CheckInfiniteLoop(TargetAutoProcessRule)) {
@@ -539,19 +517,17 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         });
 
         // OnSelectedFolderChanged
-        public void OnSelectedFolderChanged(ClipboardFolderViewModel? folder) {
+        public void OnSelectedFolderChanged(ContentFolder? folder) {
             if (folder == null) {
                 return;
             }
-            if (folder.Folder is not ClipboardFolder clipboardFolder) {
-                return;
-            }
+
             // コピーor移動先が同じフォルダの場合はエラー
-            if (clipboardFolder.Id == TargetFolder?.Folder.Id) {
+            if (folder.Id == TargetFolder?.Id) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToTheSameFolder);
                 return;
             }// コピーor移動先が標準のフォルダ以外の場合はエラー
-            if (clipboardFolder.FolderType != FolderTypeEnum.Normal) {
+            if (folder.FolderType != FolderTypeEnum.Normal) {
                 LogWrapper.Error(StringResources.CannotCopyOrMoveToNonStandardFolders);
                 return;
             }
@@ -561,30 +537,15 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModelContainer.RootFolderViewModel;
-            if (rootFolderViewModel == null) {
-                LogWrapper.Error(StringResources.RootFolderViewModelIsNull);
-                return;
-            }
-            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                if (folderViewModel is ClipboardFolderViewModel clipboardFolder) {
-                    DestinationFolder = clipboardFolder;
-                }
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModel, (folderViewModel) => {
+                DestinationFolder = folderViewModel.Folder;
             });
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            // フォルダが選択されたら、TargetFolderに設定
-            ClipboardFolderViewModel? rootFolderViewModel = MainWindowViewModel?.RootFolderViewModelContainer.RootFolderViewModel;
-            if (rootFolderViewModel == null) {
-                LogWrapper.Error(StringResources.RootFolderViewModelIsNull);
-                return;
-            }
-            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                if (folderViewModel is ClipboardFolderViewModel clipboardFolder) {
-                    TargetFolder = clipboardFolder;
-                }
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModel, (folderViewModel) => {
+                TargetFolder = folderViewModel.Folder;
             });
         });
 

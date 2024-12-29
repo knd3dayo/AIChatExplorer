@@ -11,6 +11,7 @@ using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;

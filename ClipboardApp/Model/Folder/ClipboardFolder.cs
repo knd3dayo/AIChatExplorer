@@ -42,8 +42,6 @@ namespace ClipboardApp.Model.Folder {
 
         }
 
-        // フォルダの種類
-        public FolderTypeEnum FolderType { get; set; } = FolderTypeEnum.Normal;
 
         // フォルダの絶対パス
         public override string FolderPath {

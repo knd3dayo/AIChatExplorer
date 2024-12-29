@@ -3,6 +3,7 @@ using System.Windows;
 using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRule;
 using PythonAILib.Model.AutoProcess;
+using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.AutoProcess {
@@ -85,7 +86,14 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, AutoProcessRuleUpdated);
+            // RootFolderViewModelを取得
+            ContentFolderViewModel? rootFolderViewModel = _mainWindowViewModel?.RootFolderViewModelContainer?.RootFolderViewModel;
+            if (rootFolderViewModel == null) {
+                LogWrapper.Error(StringResources.SelectedFolderNotFound);
+                return;
+            }
+
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, rootFolderViewModel, AutoProcessRuleUpdated);
         });
 
         // 自動処理を追加する処理
@@ -97,8 +105,14 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
+            // RootFolderViewModelを取得
+            ContentFolderViewModel? rootFolderViewModel = _mainWindowViewModel?.RootFolderViewModelContainer?.RootFolderViewModel;
+            if (rootFolderViewModel == null) {
+                LogWrapper.Error(StringResources.SelectedFolderNotFound);
+                return;
+            }
             AutoProcessRule rule = new();
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, rootFolderViewModel,  AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理

@@ -1,8 +1,9 @@
 using System.Collections.ObjectModel;
 using PythonAILib.Model.AutoProcess;
+using QAChat.Model;
 
-namespace ClipboardApp.ViewModel.AutoProcess {
-    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.AutoProcess {
+    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : QAChatViewModelBase {
         public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
         public string Name {

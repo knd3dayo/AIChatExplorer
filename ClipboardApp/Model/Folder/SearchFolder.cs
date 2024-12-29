@@ -1,6 +1,7 @@
 using ClipboardApp.Factory;
 using LiteDB;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;

@@ -4,6 +4,7 @@ using ClipboardApp.Item;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
 using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;

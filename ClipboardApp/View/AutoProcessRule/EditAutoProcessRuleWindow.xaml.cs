@@ -1,5 +1,7 @@
 using System.Windows;
 using ClipboardApp.ViewModel.AutoProcess;
+using QAChat.ViewModel.AutoProcess;
+using QAChat.ViewModel.Folder;
 
 namespace ClipboardApp.View.AutoProcessRule {
     /// <summary>
@@ -9,9 +11,9 @@ namespace ClipboardApp.View.AutoProcessRule {
         public EditAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
+        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, ContentFolderViewModel rootFolderViewModel, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
-                DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, afterUpdate)
+                DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, rootFolderViewModel, afterUpdate)
             };
             editAutoProcessRuleWindow.ShowDialog();
         }

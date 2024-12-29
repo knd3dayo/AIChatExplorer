@@ -6,6 +6,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Content;
 using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Folder;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 

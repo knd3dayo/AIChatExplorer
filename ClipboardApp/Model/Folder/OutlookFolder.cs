@@ -4,6 +4,7 @@ using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
+using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
 using Outlook = NetOffice.OutlookApi;
 
