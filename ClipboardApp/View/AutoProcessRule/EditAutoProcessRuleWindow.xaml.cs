@@ -1,9 +1,7 @@
 using System.Windows;
-using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.ViewModel.AutoProcess;
 
-namespace ClipboardApp.View.AutoProcessRule
-{
+namespace ClipboardApp.View.AutoProcessRule {
     /// <summary>
     /// EditAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>
@@ -11,7 +9,7 @@ namespace ClipboardApp.View.AutoProcessRule
         public EditAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenEditAutoProcessRuleWindow(Model.AutoProcess.AutoProcessRule autoProcessRule, Action<Model.AutoProcess.AutoProcessRule> afterUpdate) {
+        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
                 DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, afterUpdate)
             };

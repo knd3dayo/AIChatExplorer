@@ -1,5 +1,6 @@
 using LiteDB;
 using PythonAILib.Model.AutoGen;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
@@ -23,6 +24,8 @@ namespace PythonAILib.Common {
         public const string SCRIPT_COLLECTION_NAME = "scripts";
         public const string SEARCH_CONDITION_RULES_COLLECTION_NAME = "search_condition_rules";
 
+        public const string AUTO_PROCESS_RULES_COLLECTION_NAME = "auto_process_rules";
+        public const string SEARCH_CONDITION_APPLIED_CONDITION_NAME = "applied_globally";
 
         public const string PromptTemplateCollectionName = "PromptTemplate";
 
@@ -149,6 +152,12 @@ namespace PythonAILib.Common {
         }
         public ILiteCollection<SearchRule> GetSearchRuleCollection() {
             return GetDatabase().GetCollection<SearchRule>(SEARCH_CONDITION_RULES_COLLECTION_NAME);
+        }
+
+
+        //---- 自動処理関連 ----------------------------------------------
+        public ILiteCollection<AutoProcessRule> GetAutoProcessRuleCollection() {
+            return GetDatabase().GetCollection<AutoProcessRule>(AUTO_PROCESS_RULES_COLLECTION_NAME);
         }
 
         private void Upgrade(ILiteDatabase db) {

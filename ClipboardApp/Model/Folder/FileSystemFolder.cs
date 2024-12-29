@@ -3,6 +3,7 @@ using ClipboardApp.Factory;
 using ClipboardApp.Item;
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
@@ -51,7 +52,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         // ProcessClipboardItem
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
+        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItem> _afterClipboardChanged) {
             // ローカルファイルのフォルダは処理しない
             throw new NotImplementedException();
         }

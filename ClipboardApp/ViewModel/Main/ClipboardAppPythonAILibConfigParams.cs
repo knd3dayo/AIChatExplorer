@@ -78,5 +78,66 @@ namespace ClipboardApp.ViewModel.Main {
             string dbUrl =  string.Concat("sqlite:///", Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "catalog.db"));
             return dbUrl;
         }
+
+        public bool AutoTag() {
+            return ClipboardAppConfig.Instance.AutoTag;
+        }
+
+        // AutoTitle
+        public bool AutoTitle() {
+            return ClipboardAppConfig.Instance.AutoDescription;
+        }
+        // AutoTitleWithOpenAI
+        public bool AutoTitleWithOpenAI() {
+            return ClipboardAppConfig.Instance.AutoDescriptionWithOpenAI;
+        }
+
+        // AutoBackgroundInfo
+        public bool AutoBackgroundInfo() {
+            return ClipboardAppConfig.Instance.AutoBackgroundInfo;
+        }
+
+        // AutoSummary
+        public bool AutoSummary() {
+            return ClipboardAppConfig.Instance.AutoSummary;
+        }
+
+        // AutoGenerateTasks
+        public bool AutoGenerateTasks() {
+            return ClipboardAppConfig.Instance.AutoGenerateTasks;
+        }
+
+        // AutoDocumentReliabilityCheck
+        public bool AutoDocumentReliabilityCheck() {
+            return ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck;
+        }
+        // AutoMergeItemsBySourceApplicationTitle
+        public bool AutoMergeItemsBySourceApplicationTitle() {
+            return ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle;
+        }
+
+        // AutoFileExtract
+        public bool AutoFileExtract() {
+            return ClipboardAppConfig.Instance.AutoFileExtract;
+        }
+
+        // AutoExtractImageWithPyOCR
+        public bool AutoExtractImageWithPyOCR() {
+            return ClipboardAppConfig.Instance.AutoExtractImageWithPyOCR;
+        }
+
+        // AutoExtractImageWithOpenAI
+        public bool AutoExtractImageWithOpenAI() {
+            return ClipboardAppConfig.Instance.AutoExtractImageWithOpenAI;
+        }
+        // IgnoreLineCount
+        public int IgnoreLineCount() {
+            return ClipboardAppConfig.Instance.IgnoreLineCount;
+        }
+        // TesseractExePath
+        public string TesseractExePath() {
+            return ClipboardAppConfig.Instance.TesseractExePath;
+        }
+
     }
 }

@@ -2,9 +2,10 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
+using ClipboardApp.Common;
 using ClipboardApp.Factory;
-using ClipboardApp.Model.AutoProcess;
 using LiteDB;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
@@ -161,7 +162,7 @@ namespace ClipboardApp.Model.Folder {
                 item.Save();
                 if (executeAutoProcess) {
                     // システム共通自動処理を適用s
-                    AutoProcessRuleController.ProcessClipboardItem(item, (processedItem) => {
+                    ClipboardController.ProcessClipboardItem(item, (processedItem) => {
                         // 自動処理後のアイテムを保存
                         item.Save();
                     });
@@ -171,14 +172,14 @@ namespace ClipboardApp.Model.Folder {
         #endregion
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
+        public virtual void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItem> _afterClipboardChanged) {
 
             // Get the cut/copied text.
             List<ClipboardItem> items = CreateClipboardItem(this, e);
 
             foreach (var item in items) {
                 // Process clipboard clipboardItem
-                AutoProcessRuleController.ProcessClipboardItem(item, _afterClipboardChanged);
+                ClipboardController.ProcessClipboardItem(item, _afterClipboardChanged);
             }
         }
         #endregion

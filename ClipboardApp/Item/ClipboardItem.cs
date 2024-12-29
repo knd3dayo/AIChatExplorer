@@ -1,6 +1,5 @@
-using ClipboardApp.Factory;
-using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using QAChat.Resource;
 using WpfAppCommon.Utils;

@@ -286,6 +286,59 @@ namespace PythonAILib.Resource {
         public override string CopyToFolderDescription { get; } = "Copy to Folder Description";
         public override string CannotOpenDirectoryAsNewFile { get; } = "Cannot Open Directory as New File";
 
+        // Auto Process Rule
+        public override string NoMatch { get; } = "No Match";
+        public override string NoActionSet { get; } = "No Action Set";
+        public override string Condition { get; } = "Condition";
+        public override string Action { get; } = "Action";
+        public override string ActionNone { get; } = "Action None";
+        public override string FolderNone { get; } = "Folder None";
+        public override string DetectedAnInfiniteLoop { get; } = "Detected an Infinite Loop";
+        public override string RuleNameIsInvalid(string RuleName) {
+            return RuleName + " is Invalid";
+        }
+        public override string DescriptionContains(string Keyword) {
+            return "Description Contains " + Keyword;
+        }
+        public override string ContentContains(string Keyword) {
+            return "Content Contains " + Keyword;
+        }
+        public override string SourceApplicationNameContains(string Keyword) {
+            return "Source Application Name Contains " + Keyword;
+        }
+        public override string SourceApplicationTitleContains(string Keyword) {
+            return "Source Application Title Contains " + Keyword;
+        }
+        public override string SourceApplicationPathContains(string Keyword) {
+            return "Source Application Path Contains " + Keyword;
+        }
+
+        public override string AutoExtractImageText { get; } = "Executing auto image text extraction process";
+
+        // ファイル
+        public override string File { get; } = "File";
+
+        // フォルダ
+        public override string Folder { get; } = "Folder";
+
+        public override string AutoSetBackgroundInfo { get; } = "Executing auto background information addition process";
+        public override string AddBackgroundInfoFailed { get; } = "Failed to add background information";
+
+        public override string AutoCreateSummary { get; } = "Executing auto summary creation process";
+
+        // Execute automatic document reliability check process
+        public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
+        // Document reliability check process failed
+        public override string CheckDocumentReliabilityFailed { get; } = "Document reliability check process failed";
+
+        public override string CreateSummaryFailed { get; } = "Failed to create summary";
+
+        // 自動課題リスト作成処理を実行します
+        public override string AutoCreateTaskList { get; } = "Execute auto Task list creation process";
+        // 課題リスト作成処理が失敗しました
+        public override string CreateTaskListFailed { get; } = "Failed to create Task list";
+
+
 
         #region Statistics and Logging
 

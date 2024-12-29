@@ -383,8 +383,7 @@ namespace QAChat.Resource {
         // 課題リスト作成処理が失敗しました
         public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
 
-        // 自動イメージテキスト抽出処理を実行します
-        public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
+
         // イメージテキスト抽出処理が失敗しました
         public virtual string ExtractImageTextFailed { get; } = "イメージテキスト抽出処理が失敗しました";
 

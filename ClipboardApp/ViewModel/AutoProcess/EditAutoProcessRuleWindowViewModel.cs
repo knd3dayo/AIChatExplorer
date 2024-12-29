@@ -2,9 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
-using PythonAILib.Common;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -29,7 +27,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
 
             ContentFolder? targetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
             if (targetFolder != null) {
-                
+
                 TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)targetFolder);
             }
             // DestinationIdに一致するフォルダを取得
@@ -140,10 +138,10 @@ namespace ClipboardApp.ViewModel.AutoProcess {
 
             OnPropertyChanged(nameof(Conditions));
 
-    }
+        }
 
-    // ルール適用対象のClipboardItemFolder
-    private ClipboardFolderViewModel? targetFolder;
+        // ルール適用対象のClipboardItemFolder
+        private ClipboardFolderViewModel? targetFolder;
         public ClipboardFolderViewModel? TargetFolder {
             get {
                 return targetFolder;

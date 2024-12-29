@@ -413,6 +413,82 @@ namespace PythonAILib.Resource {
         // ディレクトリは新規ファイルとして開けません
         public virtual string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
 
+        // --- AutoProcessRule.cs ---
+        // RuleName + "は無効です"
+        public virtual string RuleNameIsInvalid(string RuleName) {
+            return RuleName + "は無効です";
+        }
+        // 条件にマッチしませんでした
+        public virtual string NoMatch { get; } = "条件にマッチしませんでした";
+
+        // アクションが設定されていません
+        public virtual string NoActionSet { get; } = "アクションが設定されていません";
+
+        // 条件
+        public virtual string Condition { get; } = "条件";
+
+        // アクション
+        public virtual string Action { get; } = "アクション";
+
+        // アクション:なし
+        public virtual string ActionNone { get; } = "アクション:なし";
+
+        // フォルダ:なし
+        public virtual string FolderNone { get; } = "フォルダ:なし";
+
+        // 無限ループを検出しました
+        public virtual string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
+
+        // "Descriptionが" + condition.Keyword + "を含む
+        public virtual string DescriptionContains(string Keyword) {
+            return "Descriptionが" + Keyword + "を含む";
+        }
+        // "Contentが" + condition.Keyword + "を含む 
+        public virtual string ContentContains(string Keyword) {
+            return "Contentが" + Keyword + "を含む";
+        }
+        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
+        public virtual string SourceApplicationNameContains(string Keyword) {
+            return "SourceApplicationNameが" + Keyword + "を含む \n";
+        }
+        // "SourceApplicationTitleが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationTitleContains(string Keyword) {
+            return "SourceApplicationTitleが" + Keyword + "を含む";
+        }
+        // "SourceApplicationPathが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationPathContains(string Keyword) {
+            return "SourceApplicationPathが" + Keyword + "を含む";
+        }
+        // 自動イメージテキスト抽出処理を実行します
+        public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
+
+        // File
+        public virtual string File { get; } = "ファイル";
+        // Folder
+        public virtual string Folder { get; } = "フォルダ";
+
+
+        // 自動背景情報追加処理を実行します
+        public virtual string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
+        // 背景情報追加処理が失敗しました
+        public virtual string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
+
+        // 自動サマリー作成処理を実行します
+        public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
+        // サマリー作成処理が失敗しました
+
+        // 自動文書信頼度チェック処理を実行します
+        public virtual string AutoCheckDocumentReliability { get; } = "自動文書信頼度チェック処理を実行します";
+        // 文書信頼度チェック処理が失敗しました
+        public virtual string CheckDocumentReliabilityFailed { get; } = "文書信頼度チェック処理が失敗しました";
+
+        public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
+
+        // 自動課題リスト作成処理を実行します
+        public virtual string AutoCreateTaskList { get; } = "自動課題リスト作成処理を実行します";
+        // 課題リスト作成処理が失敗しました
+        public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
+
 
         #region 統計、ログ関連
 

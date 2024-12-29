@@ -371,8 +371,6 @@ namespace QAChat.Resource {
         // 課題リスト作成処理が失敗しました
         public override string CreateTaskListFailed { get; } = "Failed to create Task list";
 
-
-        public override string AutoExtractImageText { get; } = "Executing auto image text extraction process";
         public override string ExtractImageTextFailed { get; } = "Failed to extract image text";
 
         public override string AutoSetTag { get; } = "Executing auto tag setting process";
@@ -881,13 +879,6 @@ namespace QAChat.Resource {
 
         public override string Statistics { get; } = "Statistics";
 
-        public override string NoMatch { get; } = "No Match";
-        public override string NoActionSet { get; } = "No Action Set";
-        public override string Condition { get; } = "Condition";
-        public override string Action { get; } = "Action";
-        public override string ActionNone { get; } = "Action None";
-        public override string FolderNone { get; } = "Folder None";
-        public override string DetectedAnInfiniteLoop { get; } = "Detected an Infinite Loop";
         public override string Clipboard { get; } = "Clipboard";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
@@ -907,24 +898,6 @@ namespace QAChat.Resource {
         public override string OpenAsTextFile { get; } = "Open as Text File";
         public override string ChatItem { get; } = "Chat Item";
         public override string ExportTheFollowingItems { get; } = "Export the Following Items";
-        public override string RuleNameIsInvalid(string RuleName) {
-            return RuleName + " is Invalid";
-        }
-        public override string DescriptionContains(string Keyword) {
-            return "Description Contains " + Keyword;
-        }
-        public override string ContentContains(string Keyword) {
-            return "Content Contains " + Keyword;
-        }
-        public override string SourceApplicationNameContains(string Keyword) {
-            return "Source Application Name Contains " + Keyword;
-        }
-        public override string SourceApplicationTitleContains(string Keyword) {
-            return "Source Application Title Contains " + Keyword;
-        }
-        public override string SourceApplicationPathContains(string Keyword) {
-            return "Source Application Path Contains " + Keyword;
-        }
         public override string WorkingDirectory { get; } = "Working Directory";
         public override string RepositoryURL { get; } = "Repository URL";
         public override string LastIndexedCommit { get; } = "Last Indexed Commit";

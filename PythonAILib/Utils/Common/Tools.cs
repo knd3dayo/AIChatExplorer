@@ -31,5 +31,10 @@ namespace PythonAILib.Utils.Common {
                 }
             }
         }
+        // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
+        // Listの要素がNullの場合はNull > と返す
+        public static string ListToString(List<string> list) {
+            return list == null ? "Null" : string.Join(" > ", list);
+        }
     }
 }

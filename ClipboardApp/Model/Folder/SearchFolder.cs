@@ -81,7 +81,7 @@ namespace ClipboardApp.Model.Folder {
         }
 
         #region システムのクリップボードへ貼り付けられたアイテムに関連する処理
-        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ClipboardItem> _afterClipboardChanged) {
+        public override void ProcessClipboardItem(ClipboardChangedEventArgs e, Action<ContentItem> _afterClipboardChanged) {
             // 何もしない
         }
         #endregion

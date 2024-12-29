@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Settings;
 using ClipboardApp.View.AutoProcessRule;
+using PythonAILib.Model.AutoProcess;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.AutoProcess {
@@ -85,7 +85,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow( SelectedAutoProcessRule, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, AutoProcessRuleUpdated);
         });
 
         // 自動処理を追加する処理

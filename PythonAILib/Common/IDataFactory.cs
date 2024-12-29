@@ -1,5 +1,6 @@
 using LiteDB;
 using PythonAILib.Model.AutoGen;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Script;
@@ -58,6 +59,9 @@ namespace PythonAILib.Common {
 
         // -- SearchRule
         public ILiteCollection<SearchRule> GetSearchRuleCollection();
+
+        // -- AutoProcessRule
+        public ILiteCollection<AutoProcessRule> GetAutoProcessRuleCollection();
 
     }
 }

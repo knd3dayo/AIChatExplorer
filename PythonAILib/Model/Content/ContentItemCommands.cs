@@ -300,6 +300,22 @@ namespace PythonAILib.Model.Content {
         public static void UpdateEmbedding(ContentItem item) {
             UpdateEmbedding(item, VectorDBUpdateMode.update);
         }
+        public static void CreateAutoTitle(ContentItem item) {
+            // TextとImageの場合
+            if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
+                item.Description = $"{item.SourceApplicationTitle}";
+            }
+            // Fileの場合
+            else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
+                item.Description = $"{item.SourceApplicationTitle}";
+                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
+                if (item.Content.Length > 20) {
+                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
+                } else {
+                    item.Description += $" {PythonAILibStringResources.Instance.File}:" + item.Content;
+                }
+            }
+        }
 
     }
 }

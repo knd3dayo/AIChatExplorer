@@ -939,52 +939,6 @@ namespace QAChat.Resource {
         // 統計
         public virtual string Statistics { get; } = "統計";
 
-        // --- AutoProcessRule.cs ---
-        // RuleName + "は無効です"
-        public virtual string RuleNameIsInvalid(string RuleName) {
-            return RuleName + "は無効です";
-        }
-        // 条件にマッチしませんでした
-        public virtual string NoMatch { get; } = "条件にマッチしませんでした";
-
-        // アクションが設定されていません
-        public virtual string NoActionSet { get; } = "アクションが設定されていません";
-
-        // 条件
-        public virtual string Condition { get; } = "条件";
-
-        // アクション
-        public virtual string Action { get; } = "アクション";
-
-        // アクション:なし
-        public virtual string ActionNone { get; } = "アクション:なし";
-
-        // フォルダ:なし
-        public virtual string FolderNone { get; } = "フォルダ:なし";
-
-        // 無限ループを検出しました
-        public virtual string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
-
-        // "Descriptionが" + condition.Keyword + "を含む
-        public virtual string DescriptionContains(string Keyword) {
-            return "Descriptionが" + Keyword + "を含む";
-        }
-        // "Contentが" + condition.Keyword + "を含む 
-        public virtual string ContentContains(string Keyword) {
-            return "Contentが" + Keyword + "を含む";
-        }
-        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
-        public virtual string SourceApplicationNameContains(string Keyword) {
-            return "SourceApplicationNameが" + Keyword + "を含む \n";
-        }
-        // "SourceApplicationTitleが" + condition.Keyword + "を含む
-        public virtual string SourceApplicationTitleContains(string Keyword) {
-            return "SourceApplicationTitleが" + Keyword + "を含む";
-        }
-        // "SourceApplicationPathが" + condition.Keyword + "を含む
-        public virtual string SourceApplicationPathContains(string Keyword) {
-            return "SourceApplicationPathが" + Keyword + "を含む";
-        }
         // --- ClipboardAppVectorDBItem
 
         // --- ClipboardFolder.cs ---

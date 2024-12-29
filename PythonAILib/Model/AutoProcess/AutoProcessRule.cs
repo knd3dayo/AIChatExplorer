@@ -1,12 +1,10 @@
-using ClipboardApp.Factory;
 using LiteDB;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using QAChat.Resource;
-using WpfAppCommon.Utils;
+using PythonAILib.Resource;
+using PythonAILib.Utils.Common;
 
-namespace ClipboardApp.Model.AutoProcess {
+namespace PythonAILib.Model.AutoProcess {
 
     public class AutoProcessRule {
         public ObjectId Id { get; set; } = ObjectId.Empty;
@@ -45,19 +43,19 @@ namespace ClipboardApp.Model.AutoProcess {
             if (Priority == -1) {
                 Priority = GetAllAutoProcessRules().Count() + 1;
             }
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
             collection.Upsert(this);
         }
         // 削除
         public void Delete() {
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
             collection.Delete(Id);
             // 削除後はIdをNullにする
             Id = ObjectId.Empty;
         }
         // 取得
         public static IEnumerable<AutoProcessRule> GetAllAutoProcessRules() {
-            var collection = ClipboardAppFactory.Instance.GetClipboardDBController().GetAutoProcessRuleCollection();
+            var collection = PythonAILibManager.Instance.DataFactory.GetAutoProcessRuleCollection();
             return collection.FindAll().OrderBy(x => x.Priority);
         }
 
@@ -84,16 +82,16 @@ namespace ClipboardApp.Model.AutoProcess {
         public void RunAction(ContentItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
-                LogWrapper.Info(CommonStringResources.Instance.RuleNameIsInvalid(RuleName));
+                LogWrapper.Info(PythonAILibStringResources.Instance.RuleNameIsInvalid(RuleName));
                 return;
             }
 
             if (!IsMatch(clipboardItem)) {
-                LogWrapper.Info(CommonStringResources.Instance.NoMatch);
+                LogWrapper.Info(PythonAILibStringResources.Instance.NoMatch);
                 return;
             }
             if (RuleAction == null) {
-                LogWrapper.Warn(CommonStringResources.Instance.NoActionSet);
+                LogWrapper.Warn(PythonAILibStringResources.Instance.NoActionSet);
                 return;
             }
             // DestinationIdに一致するフォルダを取得
@@ -105,31 +103,31 @@ namespace ClipboardApp.Model.AutoProcess {
         }
 
         public string GetDescriptionString() {
-            string result = $"{CommonStringResources.Instance.Condition}\n";
+            string result = $"{PythonAILibStringResources.Instance.Condition}\n";
             foreach (var condition in Conditions) {
                 // ConditionTypeごとに処理
                 switch (condition.Type) {
                     case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
-                        result += CommonStringResources.Instance.DescriptionContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.DescriptionContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
-                        result += CommonStringResources.Instance.ContentContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.ContentContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
-                        result += CommonStringResources.Instance.SourceApplicationNameContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationNameContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
-                        result += CommonStringResources.Instance.SourceApplicationTitleContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationTitleContains(condition.Keyword) + "\n";
                         break;
                     case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationPathContains:
-                        result += CommonStringResources.Instance.SourceApplicationPathContains(condition.Keyword) + "\n";
+                        result += PythonAILibStringResources.Instance.SourceApplicationPathContains(condition.Keyword) + "\n";
                         break;
                 }
                 // AutoProcessItemが設定されている場合
                 if (RuleAction != null) {
-                    result += $"{CommonStringResources.Instance.Action}:{RuleAction.Description}\n";
+                    result += $"{PythonAILibStringResources.Instance.Action}:{RuleAction.Description}\n";
                 } else {
-                    result += $"{CommonStringResources.Instance.ActionNone}\n";
+                    result += $"{PythonAILibStringResources.Instance.ActionNone}\n";
                 }
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
                 if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
@@ -140,9 +138,9 @@ namespace ClipboardApp.Model.AutoProcess {
                     ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
 
                     if (destinationFolder != null) {
-                        result += $"{CommonStringResources.Instance.Folder}:{destinationFolder.FolderPath}\n";
+                        result += $"{PythonAILibStringResources.Instance.Folder}:{destinationFolder.FolderPath}\n";
                     } else {
-                        result += $"{CommonStringResources.Instance.FolderNone}\n";
+                        result += $"{PythonAILibStringResources.Instance.FolderNone}\n";
                     }
                 }
             }
@@ -208,7 +206,7 @@ namespace ClipboardApp.Model.AutoProcess {
             };
             // PathList内に重複があるかどうかをチェック。重複がある場合はTrueを返す
             if (pathList.Distinct().Count() != pathList.Count) {
-                LogWrapper.Warn($"{CommonStringResources.Instance.DetectedAnInfiniteLoop}\n{Tools.ListToString(pathList)}");
+                LogWrapper.Warn($"{PythonAILibStringResources.Instance.DetectedAnInfiniteLoop}\n{Tools.ListToString(pathList)}");
                 return true;
             }
             // fromToDictionaryのうちKeyがFromのものを取得

@@ -30,5 +30,46 @@ namespace PythonAILib.Common {
         public string GetAutoGenWorkDir();
 
         public string GetCatalogDBURL();
+
+        public bool AutoTag();
+
+        // AutoTitle
+        public bool AutoTitle();
+        // AutoTitleWithOpenAI
+        public bool AutoTitleWithOpenAI();
+
+        // AutoBackgroundInfo
+        public bool AutoBackgroundInfo();
+
+        // AutoSummary
+        public bool AutoSummary();
+
+        // AutoGenerateTasks
+        public bool AutoGenerateTasks();
+
+        // AutoDocumentReliabilityCheck
+        public bool AutoDocumentReliabilityCheck();
+
+        // AutoMergeItemsBySourceApplicationTitle
+        public bool AutoMergeItemsBySourceApplicationTitle();
+
+        // AutoFileExtract
+        public bool AutoFileExtract();
+        
+        // AutoExtractImageWithPyOCR
+        public bool AutoExtractImageWithPyOCR();
+
+        // AutoExtractImageWithOpenAI
+        public bool AutoExtractImageWithOpenAI();
+
+        // IgnoreLineCount
+        public int IgnoreLineCount();
+
+        // TesseractExePath
+        public string TesseractExePath();
+
+
+
+
     }
 }

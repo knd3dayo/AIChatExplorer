@@ -11,22 +11,7 @@ namespace ClipboardApp.Model {
     public partial class ClipboardItem {
 
 
-        public static void CreateAutoTitle(ClipboardItem item) {
-            // TextとImageの場合
-            if (item.ContentType == ContentTypes.ContentItemTypes.Text || item.ContentType == ContentTypes.ContentItemTypes.Image) {
-                item.Description = $"{item.SourceApplicationTitle}";
-            }
-            // Fileの場合
-            else if (item.ContentType == ContentTypes.ContentItemTypes.Files) {
-                item.Description = $"{item.SourceApplicationTitle}";
-                // Contentのサイズが50文字以上の場合は先頭20文字 + ... + 最後の30文字をDescriptionに設定
-                if (item.Content.Length > 20) {
-                    item.Description += $" {CommonStringResources.Instance.File}:" + item.Content[..20] + "..." + item.Content[^30..];
-                } else {
-                    item.Description += $" {CommonStringResources.Instance.File}:" + item.Content;
-                }
-            }
-        }
+
 
 
         // 自動でタグを付与するコマンド
