@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Folder;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.PythonIF;

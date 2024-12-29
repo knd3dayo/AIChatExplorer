@@ -43,7 +43,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             }
         }
 
-
         // AutoProcessRule用のButtonのVisibility
         public Visibility AutoProcessRuleButtonVisibility {
             get {
@@ -86,7 +85,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.AutoProcessRuleNotSelected);
                 return;
             }
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(EditAutoProcessRuleWindowViewModel.Mode.Edit, _mainWindowViewModel, SelectedAutoProcessRule, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow( SelectedAutoProcessRule, AutoProcessRuleUpdated);
         });
 
         // 自動処理を追加する処理
@@ -98,7 +97,8 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(EditAutoProcessRuleWindowViewModel.Mode.Create, _mainWindowViewModel, null, AutoProcessRuleUpdated);
+            AutoProcessRule rule = new();
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理

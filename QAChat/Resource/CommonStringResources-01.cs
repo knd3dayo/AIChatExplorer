@@ -1032,49 +1032,6 @@ namespace QAChat.Resource {
         // サマリー
         public virtual string Summary { get; } = "サマリー";
 
-        // --- SystemAutoProcessItem.cs ---
-        // 無視
-        public virtual string Ignore { get; } = "無視";
-        // "何もしません"
-        public virtual string DoNothing { get; } = "何もしません";
-
-        // フォルダにコピー
-        public virtual string CopyToFolder { get; } = "フォルダにコピー";
-        // クリップボードの内容を指定されたフォルダにコピーします
-        public virtual string CopyClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダにコピーします";
-
-        // フォルダに移動"
-        public virtual string MoveToFolder { get; } = "フォルダに移動";
-        // "クリップボードの内容を指定されたフォルダに移動します"
-        public virtual string MoveClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダに移動します";
-
-        // "クリップボードのテキストを抽出します"
-        public virtual string ExtractClipboardText { get; } = "クリップボードのテキストを抽出します";
-
-        // "データマスキング",
-        public virtual string DataMasking { get; } = "データマスキング";
-        // "クリップボードのテキストをマスキングします"
-        public virtual string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
-
-        //  "フォルダ内のアイテムをマージ", 
-        public virtual string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
-
-        // "フォルダ内のアイテムをマージします"
-        public virtual string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
-
-        // "同じSourceApplicationTitleを持つアイテムをマージ",
-        public virtual string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
-        // "同じSourceApplicationTitleを持つアイテムをマージします"
-        public virtual string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
-
-        // フォルダが選択されていません
-        public virtual string NoFolderSelected { get; } = "フォルダが選択されていません";
-
-        // フォルダにコピーします
-        public virtual string CopyToFolderDescription { get; } = "フォルダにコピーします";
-
-        // ディレクトリは新規ファイルとして開けません
-        public virtual string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
 
         // --- TextSelector.cs ---
         // ファイルを実行できませんでした

@@ -1,6 +1,7 @@
 using ClipboardApp.Factory;
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
@@ -80,27 +81,27 @@ namespace ClipboardApp.Model.AutoProcess {
         }
 
         // 条件にマッチした場合にRunActionを実行する
-        public ContentItem? RunAction(ContentItem clipboardItem) {
+        public void RunAction(ContentItem clipboardItem) {
             // ルールが有効でない場合はそのまま返す
             if (!IsEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.RuleNameIsInvalid(RuleName));
-                return clipboardItem;
+                return;
             }
 
             if (!IsMatch(clipboardItem)) {
                 LogWrapper.Info(CommonStringResources.Instance.NoMatch);
-                return clipboardItem;
+                return;
             }
             if (RuleAction == null) {
                 LogWrapper.Warn(CommonStringResources.Instance.NoActionSet);
-                return clipboardItem;
+                return;
             }
             // DestinationIdに一致するフォルダを取得
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
             ContentFolder? destinationFolder = collection.FindById(DestinationFolderId);
 
-            return RuleAction.Execute(clipboardItem, destinationFolder);
+            RuleAction.Execute(clipboardItem, destinationFolder);
         }
 
         public string GetDescriptionString() {

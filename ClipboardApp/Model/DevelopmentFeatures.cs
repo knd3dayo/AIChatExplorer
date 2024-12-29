@@ -1,3 +1,4 @@
+using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
 using QAChat.Resource;
@@ -29,7 +30,7 @@ namespace ClipboardApp.Model {
 
 
         // 自動でタグを付与するコマンド
-        public static void CreateAutoTags(ClipboardItem item) {
+        public static void CreateAutoTags(ContentItem item) {
             // PythonでItem.ContentからEntityを抽出
             string spacyModel = Properties.Settings.Default.SpacyModel;
             HashSet<string> entities = PythonExecutor.PythonMiscFunctions.ExtractEntity(spacyModel, item.Content);

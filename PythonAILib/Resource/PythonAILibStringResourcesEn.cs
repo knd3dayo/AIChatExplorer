@@ -267,6 +267,26 @@ namespace PythonAILib.Resource {
 
         public override string AddedItems { get; } = "Added Items";
 
+        // Auto processing rule
+        public override string ExtractText { get; } = "Extract text";
+        public override string Ignore { get; } = "Ignore";
+        public override string DoNothing { get; } = "Do Nothing";
+        public override string CopyToFolder { get; } = "Copy to Folder";
+        public override string CopyClipboardContentToSpecifiedFolder { get; } = "Copy Clipboard Content to Specified Folder";
+        public override string MoveToFolder { get; } = "Move to Folder";
+        public override string MoveClipboardContentToSpecifiedFolder { get; } = "Move Clipboard Content to Specified Folder";
+        public override string ExtractClipboardText { get; } = "Extract Clipboard Text";
+        public override string DataMasking { get; } = "Data Masking";
+        public override string MaskClipboardText { get; } = "Mask Clipboard Text";
+        public override string MergeItemsInFolder { get; } = "Merge Items in Folder";
+        public override string MergeItemsInFolderDescription { get; } = "Merge Items in Folder Description";
+        public override string MergeItemsWithTheSameSourceApplicationTitle { get; } = "Merge Items with the Same Source Application Title";
+        public override string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "Merge Items with the Same Source Application Title Description";
+        public override string NoFolderSelected { get; } = "No Folder Selected";
+        public override string CopyToFolderDescription { get; } = "Copy to Folder Description";
+        public override string CannotOpenDirectoryAsNewFile { get; } = "Cannot Open Directory as New File";
+
+
         #region Statistics and Logging
 
         // Daily token count

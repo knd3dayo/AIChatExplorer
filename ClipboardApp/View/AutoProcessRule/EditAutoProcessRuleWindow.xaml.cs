@@ -11,9 +11,9 @@ namespace ClipboardApp.View.AutoProcessRule
         public EditAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenEditAutoProcessRuleWindow(EditAutoProcessRuleWindowViewModel.Mode mode, MainWindowViewModel? mainWindowViewModel, Model.AutoProcess.AutoProcessRule? autoProcessRule, Action<Model.AutoProcess.AutoProcessRule> afterUpdate) {
+        public static void OpenEditAutoProcessRuleWindow(Model.AutoProcess.AutoProcessRule autoProcessRule, Action<Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
-                DataContext = new EditAutoProcessRuleWindowViewModel(mode, mainWindowViewModel, autoProcessRule, afterUpdate)
+                DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, afterUpdate)
             };
             editAutoProcessRuleWindow.ShowDialog();
         }

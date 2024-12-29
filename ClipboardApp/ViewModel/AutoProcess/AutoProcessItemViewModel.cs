@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model.AutoProcess;
+using PythonAILib.Model.AutoProcess;
 
 namespace ClipboardApp.ViewModel.AutoProcess {
     public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ClipboardAppViewModelBase {

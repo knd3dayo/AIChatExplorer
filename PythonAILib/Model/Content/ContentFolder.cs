@@ -1,7 +1,3 @@
-using System.IO;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Unicode;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -74,6 +70,11 @@ namespace PythonAILib.Model.Content {
         // Description
         public virtual string Description { get; set; } = "";
 
+        // Idを指定してフォルダを取得
+        public static T? GetFolderById<T>(ObjectId id) where T : ContentFolder {
+            var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>();
+            return collection.FindById(id);
+        }
         // 子フォルダ
         public virtual List<T> GetChildren<T>() where T : ContentFolder {
             // DBからParentIDが自分のIDのものを取得

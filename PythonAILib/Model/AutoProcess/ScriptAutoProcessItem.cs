@@ -2,9 +2,8 @@ using PythonAILib.Common;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Script;
 using PythonAILib.PythonIF;
-using PythonAILib.Model.AutoProcess;
 
-namespace ClipboardApp.Model.AutoProcess {
+namespace PythonAILib.Model.AutoProcess {
     public class ScriptAutoProcessItem : SystemAutoProcessItem {
         public ScriptItem? ScriptItem { get; set; }
 
@@ -16,7 +15,7 @@ namespace ClipboardApp.Model.AutoProcess {
             Name = scriptItem.Name;
             DisplayName = scriptItem.Name;
             Description = scriptItem.Description;
-            Type = TypeEnum.RunPythonScript;
+            TypeName = TypeEnum.RunPythonScript;
         }
 
         public static List<ScriptAutoProcessItem> GetScriptAutoProcessItems() {
@@ -30,30 +29,29 @@ namespace ClipboardApp.Model.AutoProcess {
             }
             return result;
         }
-        public override ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
+        public override void Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
 
             if (ScriptItem == null) {
-                return null;
+                return;
             }
-            Func<AutoProcessItem, ContentItem?> action = RunPythonAction(ScriptItem);
-            ContentItem? result = action(new AutoProcessItem(clipboardItem, destinationFolder));
-            return result;
+            Action<ContentItem> action = RunPythonAction(ScriptItem);
+            ContentFolder? folder = ContentFolder.GetFolderById<ContentFolder>(DestinationFolderId);
+            action(clipboardItem);
         }
 
-        public static Func<AutoProcessItem, ContentItem?> RunPythonAction(ScriptItem item) {
+        public static Action<ContentItem> RunPythonAction(ScriptItem item) {
             return (args) => {
-                RunPythonScriptCommandExecute(item, args.ContentItem);
-                return args.ContentItem;
+                RunPythonScriptCommandExecute(item, args);
             };
 
         }
 
         // 自動実行でPythonスクリプトを実行するコマンド
         public static void RunPythonScriptCommandExecute(ScriptItem scriptItem, ContentItem clipboardItem) {
-            string inputJson = ClipboardItem.ToJson(clipboardItem);
+            string inputJson = ContentItem.ToJson(clipboardItem);
 
             string result = PythonExecutor.PythonMiscFunctions.RunScript(scriptItem.Content, inputJson);
-            ClipboardItem? resultItem = ClipboardItem.FromJson<ClipboardItem>(result);
+            ContentItem? resultItem = ContentItem.FromJson<ContentItem>(result);
 
             resultItem?.CopyTo(clipboardItem);
 

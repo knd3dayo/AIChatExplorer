@@ -4,7 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Model;
-using ClipboardApp.Utils;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Content;
@@ -14,6 +13,7 @@ using PythonAILib.Common;
 using QAChat;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.AutoGen;
+using ClipboardApp.Common;
 
 namespace ClipboardApp
 {

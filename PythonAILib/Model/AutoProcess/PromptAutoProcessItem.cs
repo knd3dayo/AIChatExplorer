@@ -1,34 +1,27 @@
-using ClipboardApp.Model.Folder;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 
-namespace ClipboardApp.Model.AutoProcess
-{
-    public class PromptAutoProcessItem : SystemAutoProcessItem
-    {
+namespace PythonAILib.Model.AutoProcess {
+    public class PromptAutoProcessItem : SystemAutoProcessItem {
         public LiteDB.ObjectId PromptItemId { get; set; } = LiteDB.ObjectId.Empty;
         public OpenAIExecutionModeEnum Mode { get; set; } = OpenAIExecutionModeEnum.Normal;
-        public PromptAutoProcessItem()
-        {
+        public PromptAutoProcessItem() {
         }
-        public PromptAutoProcessItem(PromptItem promptItem)
-        {
+        public PromptAutoProcessItem(PromptItem promptItem) {
 
             Name = promptItem.Name;
             DisplayName = promptItem.Name;
             Description = promptItem.Description;
-            Type = TypeEnum.PromptTemplate;
+            TypeName = TypeEnum.PromptTemplate;
             PromptItemId = promptItem.Id;
 
         }
-        public override ContentItem? Execute(ContentItem clipboardItem, ContentFolder? destinationFolder)
-        {
+        public override void Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
 
-            if (PromptItemId == LiteDB.ObjectId.Empty)
-            {
-                return null;
+            if (PromptItemId == LiteDB.ObjectId.Empty) {
+                return;
             }
             ChatRequest chatRequest = new();
 
@@ -36,24 +29,22 @@ namespace ClipboardApp.Model.AutoProcess
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
             chatRequest.PromptTemplateText = PromptItem.Prompt;
             chatRequest.ChatMode = Mode;
-            ClipboardFolder clipboardFolder = clipboardItem.GetFolder<ClipboardFolder>();
+            ContentFolder clipboardFolder = clipboardItem.GetFolder<ContentFolder>();
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
-                OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
                 VectorDBItems = [clipboardFolder.MainVectorDBItem]
             };
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });
-            if (result == null)
-            {
-                return clipboardItem;
+            if (result == null) {
+                return;
             }
             // ClipboardItemのContentにレスポンスを設定
             clipboardItem.Content = result.Output;
             // レスポンスをClipboardItemに設定
             clipboardItem.ChatItems = chatRequest.ChatHistory;
-            return clipboardItem;
         }
     }
 

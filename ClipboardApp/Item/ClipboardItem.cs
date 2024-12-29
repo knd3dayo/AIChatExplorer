@@ -29,7 +29,7 @@ namespace ClipboardApp.Model {
             var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(this.GetFolder<ClipboardFolder>());
             foreach (var rule in AutoProcessRules) {
                 LogWrapper.Info($"{CommonStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
-                result = rule.RunAction(result);
+                rule.RunAction(result);
                 // resultがNullの場合は処理を中断
                 if (result == null) {
                     LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedByAutoProcessing);

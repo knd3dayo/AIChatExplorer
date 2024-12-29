@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Windows;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.Utils;
 using ClipboardApp.View.Search;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
@@ -21,8 +20,10 @@ using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 using PythonAILibUI.ViewModel.Item;
 using QAChat.ViewModel.Item;
+using ClipboardApp.Common;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Main
+{
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands{
 
 

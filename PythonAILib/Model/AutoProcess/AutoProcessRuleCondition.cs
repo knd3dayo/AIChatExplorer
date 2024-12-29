@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Utils.Common;
 
-namespace ClipboardApp.Model.AutoProcess {
+namespace PythonAILib.Model.AutoProcess {
     public class AutoProcessRuleCondition {
         // 条件の種類
         public ConditionTypeEnum Type { get; set; }

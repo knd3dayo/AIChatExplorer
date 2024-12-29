@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using ClipboardApp.Model.AutoProcess;
 using ClipboardApp.Model.Folder;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
@@ -19,13 +20,130 @@ using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
-        public enum Mode {
-            Create,
-            Edit
+
+        // 初期化
+        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
+            TargetAutoProcessRule = autoProcessRule;
+            IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
+            _AfterUpdate = afterUpdate;
+
+            ContentFolder? targetFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.TargetFolderId);
+            if (targetFolder != null) {
+                
+                TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)targetFolder);
+            }
+            // DestinationIdに一致するフォルダを取得
+            ContentFolder? destinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
+
+            if (destinationFolder != null) {
+                DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)destinationFolder);
+            }
+            LoadConditions();
+
         }
 
-        // ルール適用対象のClipboardItemFolder
-        private ClipboardFolderViewModel? targetFolder;
+        private void LoadConditions() {
+            // autoProcessRuleがNullでない場合は初期化
+            if (TargetAutoProcessRule.RuleAction == null) {
+                return;
+            }
+            RuleName = TargetAutoProcessRule.RuleName;
+            OnPropertyChanged(nameof(RuleName));
+            Conditions = new ObservableCollection<AutoProcessRuleCondition>(TargetAutoProcessRule.Conditions);
+            SelectedAutoProcessItem = new AutoProcessItemViewModel(TargetAutoProcessRule.RuleAction);
+
+            foreach (var condition in TargetAutoProcessRule.Conditions) {
+                switch (condition.Type) {
+                    case AutoProcessRuleCondition.ConditionTypeEnum.AllItems:
+                        IsAllItemsRuleChecked = true;
+                        OnPropertyChanged(nameof(IsAllItemsRuleChecked));
+                        break;
+
+                    case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
+                        IsNotAllItemsRuleChecked = true;
+
+                        IsDescriptionRuleChecked = true;
+                        OnPropertyChanged(nameof(IsDescriptionRuleChecked));
+                        Description = condition.Keyword;
+                        OnPropertyChanged(nameof(Description));
+                        break;
+                    case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
+                        IsNotAllItemsRuleChecked = true;
+
+                        IsContentRuleChecked = true;
+                        OnPropertyChanged(nameof(IsContentRuleChecked));
+                        Content = condition.Keyword;
+                        OnPropertyChanged(nameof(Content));
+                        break;
+                    case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
+                        IsNotAllItemsRuleChecked = true;
+
+                        IsSourceApplicationRuleChecked = true;
+                        OnPropertyChanged(nameof(IsSourceApplicationRuleChecked));
+                        SourceApplicationName = condition.Keyword;
+                        OnPropertyChanged(nameof(SourceApplicationName));
+                        break;
+                    case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
+                        IsNotAllItemsRuleChecked = true;
+
+                        IsSourceApplicationTitleRuleChecked = true;
+                        OnPropertyChanged(nameof(IsSourceApplicationTitleRuleChecked));
+                        SourceApplicationTitle = condition.Keyword;
+                        OnPropertyChanged(nameof(SourceApplicationTitle));
+                        break;
+                    case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
+                        IsNotAllItemsRuleChecked = true;
+
+                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Text)) {
+                            IsTextItemApplied = true;
+                            OnPropertyChanged(nameof(IsTextItemApplied));
+                            MinTextLineCount = condition.MinLineCount.ToString();
+                            MaxTextLineCount = condition.MaxLineCount.ToString();
+                        }
+                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Image)) {
+                            IsImageItemApplied = true;
+                            OnPropertyChanged(nameof(IsImageItemApplied));
+                        }
+                        if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Files)) {
+                            IsFileItemApplied = true;
+                            OnPropertyChanged(nameof(IsFileItemApplied));
+                        }
+                        break;
+
+                }
+            }
+            // DestinationFolderが設定されている場合はFolderSelectionPanelEnabledをTrueにする
+            if (DestinationFolder != null) {
+                FolderSelectionPanelEnabled = true;
+            }
+            // PromptAutoProcessItemの場合
+            if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
+                if (promptAutoProcessItem.PromptItemId == LiteDB.ObjectId.Empty) {
+                    return;
+                }
+                IsPromptTemplateChecked = true;
+                // PromptItemを取得
+                PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
+                SelectedPromptItem = new PromptItemViewModel(promptItem);
+                // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
+                OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
+
+            }
+            // ScriptAutoProcessItemの場合
+            else if (TargetAutoProcessRule.RuleAction is ScriptAutoProcessItem scriptAutoProcessItem) {
+                if (scriptAutoProcessItem.ScriptItem == null) {
+                    return;
+                }
+                IsPythonScriptChecked = true;
+                SelectedScriptItem = scriptAutoProcessItem.ScriptItem;
+            }
+
+            OnPropertyChanged(nameof(Conditions));
+
+    }
+
+    // ルール適用対象のClipboardItemFolder
+    private ClipboardFolderViewModel? targetFolder;
         public ClipboardFolderViewModel? TargetFolder {
             get {
                 return targetFolder;
@@ -37,7 +155,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         }
 
         // 編集対象の自動処理ルール
-        AutoProcessRule? TargetAutoProcessRule { get; set; }
+        AutoProcessRule TargetAutoProcessRule { get; set; }
 
         // 自動処理ルールの名前
         public string RuleName { get; set; } = "";
@@ -84,9 +202,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 }
             }
         }
-
-        // モード
-        public Mode CurrentMode { get; set; }
 
         // すべてのアイテムに対してルールを有効にするかどうか
         private bool _IsAllItemsRuleChecked = false;
@@ -281,132 +396,6 @@ namespace ClipboardApp.ViewModel.AutoProcess {
         // ImageChatMainWindowViewModel
         public MainWindowViewModel? MainWindowViewModel { get; set; }
         // 
-        // 初期化
-        public EditAutoProcessRuleWindowViewModel(
-            Mode mode, MainWindowViewModel? mainWindowViewModel, AutoProcessRule autoProcessRule, Action<AutoProcessRule> afterUpdate) {
-            if (mainWindowViewModel == null) {
-                LogWrapper.Error(StringResources.MainWindowViewModelIsNull);
-                return;
-            }
-            CurrentMode = mode;
-            MainWindowViewModel = mainWindowViewModel;
-            TargetAutoProcessRule = autoProcessRule;
-            IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
-            _AfterUpdate = afterUpdate;
-
-
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            var collection = libManager.DataFactory.GetFolderCollection<ContentFolder>();
-
-            // TargetFolderIdに一致するフォルダを取得
-            ContentFolder? targetFolder = collection.FindById(autoProcessRule.TargetFolderId);
-
-            if (autoProcessRule.TargetFolderId != null) {
-                TargetFolder = new ClipboardFolderViewModel((ClipboardFolder)targetFolder);
-            }
-            // DestinationIdに一致するフォルダを取得
-            ContentFolder? destinationFolder = collection.FindById(autoProcessRule.DestinationFolderId);
-
-            if (destinationFolder != null) {
-                DestinationFolder = new ClipboardFolderViewModel((ClipboardFolder)destinationFolder);
-            }
-
-            // autoProcessRuleがNullでない場合は初期化
-            if (TargetAutoProcessRule != null && TargetAutoProcessRule.RuleAction != null) {
-                RuleName = TargetAutoProcessRule.RuleName;
-                OnPropertyChanged(nameof(RuleName));
-                Conditions = new ObservableCollection<AutoProcessRuleCondition>(TargetAutoProcessRule.Conditions);
-                SelectedAutoProcessItem = new AutoProcessItemViewModel(TargetAutoProcessRule.RuleAction);
-
-                foreach (var condition in TargetAutoProcessRule.Conditions) {
-                    switch (condition.Type) {
-                        case AutoProcessRuleCondition.ConditionTypeEnum.AllItems:
-                            IsAllItemsRuleChecked = true;
-                            OnPropertyChanged(nameof(IsAllItemsRuleChecked));
-                            break;
-
-                        case AutoProcessRuleCondition.ConditionTypeEnum.DescriptionContains:
-                            IsNotAllItemsRuleChecked = true;
-
-                            IsDescriptionRuleChecked = true;
-                            OnPropertyChanged(nameof(IsDescriptionRuleChecked));
-                            Description = condition.Keyword;
-                            OnPropertyChanged(nameof(Description));
-                            break;
-                        case AutoProcessRuleCondition.ConditionTypeEnum.ContentContains:
-                            IsNotAllItemsRuleChecked = true;
-
-                            IsContentRuleChecked = true;
-                            OnPropertyChanged(nameof(IsContentRuleChecked));
-                            Content = condition.Keyword;
-                            OnPropertyChanged(nameof(Content));
-                            break;
-                        case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationNameContains:
-                            IsNotAllItemsRuleChecked = true;
-
-                            IsSourceApplicationRuleChecked = true;
-                            OnPropertyChanged(nameof(IsSourceApplicationRuleChecked));
-                            SourceApplicationName = condition.Keyword;
-                            OnPropertyChanged(nameof(SourceApplicationName));
-                            break;
-                        case AutoProcessRuleCondition.ConditionTypeEnum.SourceApplicationTitleContains:
-                            IsNotAllItemsRuleChecked = true;
-
-                            IsSourceApplicationTitleRuleChecked = true;
-                            OnPropertyChanged(nameof(IsSourceApplicationTitleRuleChecked));
-                            SourceApplicationTitle = condition.Keyword;
-                            OnPropertyChanged(nameof(SourceApplicationTitle));
-                            break;
-                        case AutoProcessRuleCondition.ConditionTypeEnum.ContentTypeIs:
-                            IsNotAllItemsRuleChecked = true;
-
-                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Text)) {
-                                IsTextItemApplied = true;
-                                OnPropertyChanged(nameof(IsTextItemApplied));
-                                MinTextLineCount = condition.MinLineCount.ToString();
-                                MaxTextLineCount = condition.MaxLineCount.ToString();
-                            }
-                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Image)) {
-                                IsImageItemApplied = true;
-                                OnPropertyChanged(nameof(IsImageItemApplied));
-                            }
-                            if (condition.ContentTypes.Contains(ContentTypes.ContentItemTypes.Files)) {
-                                IsFileItemApplied = true;
-                                OnPropertyChanged(nameof(IsFileItemApplied));
-                            }
-                            break;
-
-                    }
-                }
-                // DestinationFolderが設定されている場合はFolderSelectionPanelEnabledをTrueにする
-                if (DestinationFolder != null) {
-                    FolderSelectionPanelEnabled = true;
-                }
-                // PromptAutoProcessItemの場合
-                if (TargetAutoProcessRule.RuleAction is PromptAutoProcessItem promptAutoProcessItem) {
-                    if (promptAutoProcessItem.PromptItemId == LiteDB.ObjectId.Empty) {
-                        return;
-                    }
-                    IsPromptTemplateChecked = true;
-                    // PromptItemを取得
-                    PromptItem promptItem = PromptItem.GetPromptItemById(promptAutoProcessItem.PromptItemId);
-                    SelectedPromptItem = new PromptItemViewModel(promptItem);
-                    // OpenAIExecutionModeEnumの値からOpenAIExecutionModeSelectedIndexを設定
-                    OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
-
-                }
-                // ScriptAutoProcessItemの場合
-                else if (TargetAutoProcessRule.RuleAction is ScriptAutoProcessItem scriptAutoProcessItem) {
-                    if (scriptAutoProcessItem.ScriptItem == null) {
-                        return;
-                    }
-                    IsPythonScriptChecked = true;
-                    SelectedScriptItem = scriptAutoProcessItem.ScriptItem;
-                }
-
-                OnPropertyChanged(nameof(Conditions));
-            }
-        }
 
         // ---　コマンド 
         // OKボタンが押されたときの処理
@@ -430,10 +419,7 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 LogWrapper.Error(StringResources.SelectAction);
                 return;
             }
-            // 新規作成
-            if (CurrentMode == Mode.Create) {
-                TargetAutoProcessRule = new AutoProcessRule(RuleName);
-            }
+
             // 編集
             else {
                 if (TargetAutoProcessRule == null) {

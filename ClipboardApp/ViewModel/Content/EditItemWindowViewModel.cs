@@ -143,7 +143,7 @@ namespace ClipboardApp.ViewModel.Content {
 
                 Task.Run(() => {
                     // ベクトル化
-                    item.UpdateEmbedding();
+                    ContentItemCommands.UpdateEmbedding(item);
                     // 保存
                     item.Save();
                     MainUITask.Run(() => {
