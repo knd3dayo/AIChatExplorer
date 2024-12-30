@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
-using ClipboardApp.View.ClipboardItem;
+using ClipboardApp.View.Item;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;

@@ -33,22 +33,20 @@ namespace ClipboardApp.ViewModel.Main
             OpenVectorSearchWindowCommand(itemViewModel.ContentItem);
         });
 
-        // コンテキストメニューの「テキストを抽出」の実行用コマンド
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
         public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
-            if (itemViewModel == null) {
-                LogWrapper.Error("アイテムが選択されていません");
-                return;
+            foreach (var item in MainWindowViewModel.Instance.SelectedItems) {
+                ExtractText(item.ContentItem);
             }
-            ExtractText(itemViewModel.ContentItem);
-            int index = itemViewModel.SelectedTabIndex;
-            itemViewModel.SelectedTabIndex = index;
         });
 
-        // ピン留めの切り替えコマンド
+        // ピン留めの切り替えコマンド (複数選択可能)
         public SimpleDelegateCommand<ClipboardItemViewModel> ChangePinCommand => new((itemViewModel) => {
-            itemViewModel.IsPinned = !itemViewModel.IsPinned;
-            // ピン留めの時は更新日時を変更しない
-            SaveClipboardItemCommand.Execute(itemViewModel);
+            foreach (var item in MainWindowViewModel.Instance.SelectedItems) {
+                item.IsPinned = !item.IsPinned;
+                // ピン留めの時は更新日時を変更しない
+                SaveClipboardItemCommand.Execute(item);
+            }
         });
 
 
@@ -379,7 +377,7 @@ namespace ClipboardApp.ViewModel.Main
             LogWrapper.Info(CommonStringResources.Instance.GeneratedTitleInformation);
         }
 
-        // Command to execute a prompt template
+        // Command to execute a prompt template (複数選択可能)
         public override async void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName) {
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {

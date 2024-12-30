@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ClipboardApp.Settings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Settings"
     d:DataContext="{d:DesignInstance Type=local:TestResultUserControlViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -39,7 +40,7 @@
                     Margin="10,10,0,10"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Close}"
+                    Content="{x:Static res:ViewStringResources.Close}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

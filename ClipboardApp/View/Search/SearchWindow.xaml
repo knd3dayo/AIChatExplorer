@@ -8,7 +8,8 @@
     xmlns:local="clr-namespace:ClipboardApp.ViewModel.Search"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="{Binding StringResources.Search, Mode=OneTime}"
+    xmlns:res="clr-namespace:ClipboardApp.View.Search"
+    Title="{x:Static res:ViewStringResources.Search}"
     Width="800"
     Height="500"
     d:DataContext="{d:DesignInstance Type=local:SearchWindowViewModel}"
@@ -77,19 +78,19 @@
             <TextBlock
                 Grid.Column="0"
                 Margin="10,10,10,0"
-                Text="{Binding StringResources.Name, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Name}" />
             <TextBox
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 Text="{Binding Name}" />
         </Grid>
         <DockPanel Grid.Row="2" HorizontalAlignment="Stretch">
-            <TextBlock Margin="10,10,10,00" Text="{Binding StringResources.SearchTargetFolder, Mode=OneTime}" />
+            <TextBlock Margin="10,10,10,00" Text="{x:Static res:ViewStringResources.SearchTargetFolder}" />
             <!--  適用対象を選択するツリービューを表示するボタン  -->
             <Button
                 Margin="10,10,10,0"
                 Command="{Binding OpenSelectTargetFolderWindowCommand, Mode=OneTime}"
-                Content="{Binding StringResources.Select}" />
+                Content="{x:Static res:ViewStringResources.Select}" />
             <TextBox
                 Margin="10,10,10,0"
                 IsEnabled="False"
@@ -116,14 +117,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Exclude, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeDescription}" />
             <TextBlock
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.Description, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Description}" />
             <TextBox
                 Grid.Row="0"
                 Grid.Column="2"
@@ -136,14 +137,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Exclude, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeContent}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.Content, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Content}" />
             <TextBox
                 Grid.Row="1"
                 Grid.Column="2"
@@ -156,14 +157,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Exclude, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeTags}" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.Tag, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.Tag}" />
             <TextBox
                 Grid.Row="2"
                 Grid.Column="2"
@@ -176,14 +177,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Exclude, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationName}" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.CopySourceAppName, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.CopySourceAppName}" />
             <TextBox
                 Grid.Row="3"
                 Grid.Column="2"
@@ -196,14 +197,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Exclude, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Exclude}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.ExcludeSourceApplicationTitle}" />
             <TextBlock
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.SourceTitle, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.SourceTitle}" />
             <TextBox
                 Grid.Row="4"
                 Grid.Column="2"
@@ -216,14 +217,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Enable, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Enable}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableStartTime}" />
             <TextBlock
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.StartDate, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.StartDate}" />
             <DatePicker
                 Grid.Row="5"
                 Grid.Column="2"
@@ -236,14 +237,14 @@
                 Grid.Column="0"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Content="{Binding StringResources.Enable, Mode=OneTime}"
+                Content="{x:Static res:ViewStringResources.Enable}"
                 IsChecked="{Binding SearchConditionRule.SearchCondition.EnableEndTime}" />
             <TextBlock
                 Grid.Row="6"
                 Grid.Column="1"
                 Margin="10,10,10,0"
                 VerticalAlignment="Center"
-                Text="{Binding StringResources.EndDate, Mode=OneTime}" />
+                Text="{x:Static res:ViewStringResources.EndDate}" />
             <DatePicker
                 Grid.Row="6"
                 Grid.Column="2"
@@ -254,7 +255,7 @@
                 <!--  適用対象配下も対象にするかどうか  -->
                 <CheckBox
                     Margin="10,10,10,0"
-                    Content="{Binding StringResources.IncludeSubfolders, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.IncludeSubfolders}"
                     IsChecked="{Binding SearchConditionRule.SearchCondition.IsIncludeSubFolder}" />
             </DockPanel>
         </Grid>
@@ -268,7 +269,7 @@
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding ClearCommand, Mode=OneTime}"
-                    Content="{Binding StringResources.Clear, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Clear}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
@@ -280,13 +281,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding ApplyCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
                     Width="100"
                     Margin="10,0,10,0"
                     Command="{Binding CloseCommand, Mode=OneTime}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

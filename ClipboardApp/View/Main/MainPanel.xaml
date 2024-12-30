@@ -8,12 +8,12 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Main"
     xmlns:viewModel="clr-namespace:ClipboardApp"
     x:Name="Root"
     d:DataContext="{d:DesignInstance Type=viewModel:MainWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <commonModel:CommonStringResources x:Key="StringResources" />
         <ContextMenu
             x:Key="GridRowContextMenu"
             FontSize="12"
@@ -181,13 +181,13 @@
                     <DataGridCheckBoxColumn
                         Width="100"
                         Binding="{Binding IsPinned}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Pin}" />
+                        Header="{x:Static res:ViewStringResources.Pin}" />
                     <DataGridTextColumn
                         Width="150"
                         MaxWidth="300"
                         Binding="{Binding UpdatedAtString}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.UpdateDate}"
+                        Header="{x:Static res:ViewStringResources.UpdateDate}"
                         IsReadOnly="True" />
                     <!--  LastVectorizedAt  -->
                     <DataGridTextColumn
@@ -195,32 +195,32 @@
                         MaxWidth="300"
                         Binding="{Binding VectorizedAtString}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.VectorizedDate}"
+                        Header="{x:Static res:ViewStringResources.VectorizedDate}"
                         IsReadOnly="True" />
                     <!--  ContentType  -->
                     <DataGridTextColumn
                         Width="100"
                         Binding="{Binding ContentTypeString}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Type}"
+                        Header="{x:Static res:ViewStringResources.Type}"
                         IsReadOnly="True" />
                     <DataGridTextColumn
                         Width="100"
                         Binding="{Binding TagsText}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Tag}"
+                        Header="{x:Static res:ViewStringResources.Tag}"
                         IsReadOnly="True" />
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding DescriptionText}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.Title}"
+                        Header="{x:Static res:ViewStringResources.Title}"
                         IsReadOnly="True" />
                     <DataGridTextColumn
                         Width="*"
                         Binding="{Binding SourceApplicationTitleText}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{Binding Source={StaticResource StringResources}, Mode=OneTime, Path=Instance.SourceTitle}"
+                        Header="{x:Static res:ViewStringResources.SourceTitle}"
                         IsReadOnly="True" />
                 </DataGrid.Columns>
                 <DataGrid.RowStyle>

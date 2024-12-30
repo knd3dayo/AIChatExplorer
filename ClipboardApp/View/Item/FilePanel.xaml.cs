@@ -13,12 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ClipboardApp.View.ClipboardItem {
+namespace ClipboardApp.View.Item {
     /// <summary>
     /// TaskPanel.xaml の相互作用ロジック
     /// </summary>
-    public partial class ContentPanel : UserControl {
-        public ContentPanel() {
+    public partial class FilePanel : UserControl {
+        public FilePanel() {
             InitializeComponent();
         }
     }

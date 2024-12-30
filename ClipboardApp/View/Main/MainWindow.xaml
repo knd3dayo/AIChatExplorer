@@ -8,8 +8,9 @@
     xmlns:local="clr-namespace:ClipboardApp"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Main"
     x:Name="window1"
-    Title="{Binding StringResources.AppName, Mode=OneTime}"
+    Title="{x:Static res:ViewStringResources.AppName}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
@@ -66,98 +67,98 @@
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.File, Mode=OneTime}">
+                        Header="{x:Static res:ViewStringResources.File}">
                         <!--  Toggle Clipbord Monitoring  -->
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ToggleClipboardMonitor, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{Binding ClipboardMonitorButtonText}"
-                            ToolTip="{Binding StringResources.ToggleClipboardWatchToolTop}" />
+                            ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
 
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.Create, Mode=OneTime}">
+                            Header="{x:Static res:ViewStringResources.Create}">
                             <!--  Create Item  -->
                             <MenuItem
                                 Background="{DynamicResource MaterialDesign.Brush.Primary}"
                                 Command="{Binding CreateItemCommand, Mode=OneTime}"
                                 Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{Binding StringResources.CreateItem, Mode=OneTime}"
-                                ToolTip="{Binding StringResources.CreateItemToolTip, Mode=OneTime}" />
+                                Header="{x:Static res:ViewStringResources.CreateItem}"
+                                ToolTip="{x:Static res:ViewStringResources.CreateItemToolTip}" />
                         </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ExitCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.Exit, Mode=OneTime}"
-                            ToolTip="{Binding StringResources.ExitToolTip, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.Exit}"
+                            ToolTip="{x:Static res:ViewStringResources.ExitToolTip}" />
                     </MenuItem>
                     <!--  Edit  -->
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Edit, Mode=OneTime}">
+                        Header="{x:Static res:ViewStringResources.Edit}">
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenTagWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditTag, Mode=OneTime}"
-                            ToolTip="{Binding StringResources.EditTagToolTip, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditTag}"
+                            ToolTip="{x:Static res:ViewStringResources.EditTagToolTip}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListAutoProcessRuleWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditAutoProcessRule}" />
+                            Header="{x:Static res:ViewStringResources.EditAutoProcessRule}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPythonScriptWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditPythonScript}"
+                            Header="{x:Static res:ViewStringResources.EditPythonScript}"
                             Visibility="{Binding EnableDevFeaturesVisibility}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPromptTemplateWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditPromptTemplate, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenRAGManagementWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditGitRagSource, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditGitRagSource}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorDBManagementWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditVectorDB, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditVectorDB}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListAutoGenItemWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.EditAutoGenDefinition, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.EditAutoGenDefinition}" />
                     </MenuItem>
                     <!--  View  -->
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.View}">
+                        Header="{x:Static res:ViewStringResources.View}">
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.TextWrapping, Mode=OneTime}"
+                            Header="{x:Static res:ViewStringResources.TextWrapping}"
                             IsCheckable="True"
                             IsChecked="{Binding TextWrapping}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.AutoTextWrapping, Mode=OneTime}"
+                            Header="{x:Static res:ViewStringResources.AutoTextWrapping}"
                             IsCheckable="True"
                             IsChecked="{Binding AutoTextWrapping}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.PreviewMode, Mode=OneTime}"
+                            Header="{x:Static res:ViewStringResources.PreviewMode}"
                             IsCheckable="True"
                             IsChecked="{Binding PreviewMode}" />
                     </MenuItem>
@@ -165,43 +166,43 @@
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Tool}">
+                        Header="{x:Static res:ViewStringResources.Tool}">
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenOpenAIWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.OpenAIChat, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.OpenAIChat}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenScreenshotCheckerWindow, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.ImageChat, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.ImageChat}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.VectorSearch, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.VectorSearch}" />
                     </MenuItem>
 
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding SearchCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Search, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Search}" />
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Command="{Binding SettingCommand, Mode=OneTime}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Setting, Mode=OneTime}" />
+                        Header="{x:Static res:ViewStringResources.Setting}" />
                     <MenuItem
                         Background="{DynamicResource MaterialDesign.Brush.Primary}"
                         Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="{Binding StringResources.Help, Mode=OneTime}">
+                        Header="{x:Static res:ViewStringResources.Help}">
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVersionInfoCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{Binding StringResources.VersionInfo, Mode=OneTime}" />
+                            Header="{x:Static res:ViewStringResources.VersionInfo}" />
                     </MenuItem>
                 </Menu>
             </materialDesign:ColorZone>

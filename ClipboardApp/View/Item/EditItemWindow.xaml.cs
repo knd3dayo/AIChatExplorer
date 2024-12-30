@@ -2,7 +2,7 @@ using System.Windows;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Content;
 
-namespace ClipboardApp.View.ClipboardItem
+namespace ClipboardApp.View.Item
 {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック

@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:ClipboardApp.Settings"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Settings"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -22,10 +23,10 @@
     </UserControl.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
         <i:EventTrigger EventName="Activated">
-            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
@@ -58,7 +59,7 @@
             </materialDesign:ColorZone>
         </StackPanel>
         <TabControl Grid.Row="1" HorizontalContentAlignment="Left">
-            <TabItem Header="{Binding StringResources.BasicSettings, Mode=OneTime}">
+            <TabItem Header="{x:Static res:ViewStringResources.BasicSettings}">
                 <ScrollViewer
                     Grid.Row="1"
                     Height="Auto"
@@ -91,7 +92,7 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.BasicSettings, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.BasicSettings}" />
 
                             <!--  Language  -->
                             <TextBlock
@@ -113,7 +114,7 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.ProxyURL, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.ProxyURL}" />
                             <TextBox
                                 Grid.Row="1"
                                 Grid.Column="2"
@@ -124,7 +125,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.NoProxyList, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.NoProxyList}" />
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="2"
@@ -136,13 +137,13 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.ClipboardDBBackupGenerations, Mode=OneTime}"
+                                Text="{x:Static res:ViewStringResources.ClipboardDBBackupGenerations}"
                                 Visibility="Collapsed" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.ClipboardDBBackupGenerationsDescription, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ClipboardDBBackupGenerationsDescription}"
                                 Text="{Binding BackupGeneration}"
                                 Visibility="Collapsed" />
 
@@ -151,24 +152,24 @@
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.PythonDLLPath, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.PythonDLLPath}" />
                             <TextBox
                                 Grid.Row="4"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyPython3Dll, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyPython3Dll}"
                                 Text="{Binding PythonDllPath}" />
                             <!--  PythonVenvPth  -->
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.PythonVenvPath, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.PythonVenvPath}" />
                             <TextBox
                                 Grid.Row="5"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SpecifyVenvPath, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SpecifyVenvPath}"
                                 Text="{Binding PythonVenvPath}" />
 
                         </Grid>
@@ -194,18 +195,18 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAISettings, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAISettings}" />
                             <!--  OpenAI  API Key  -->
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAIKey, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAIKey}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIKey, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIKey}"
                                 Text="{Binding OpenAIKey}" />
 
                             <!--  Azure OpenAI  -->
@@ -213,13 +214,13 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.UseAzureOpenAI, Mode=OneTime}"
+                                Text="{x:Static res:ViewStringResources.UseAzureOpenAI}"
                                 TextWrapping="Wrap" />
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.UseAzureOpenAIInsteadOfOpenAI, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.UseAzureOpenAIInsteadOfOpenAI}"
                                 IsChecked="{Binding AzureOpenAI}" />
 
                             <!--  Azure OpenAI Endpoint  -->
@@ -227,12 +228,12 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AzureOpenAIEndpoint, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AzureOpenAIEndpoint}" />
                             <TextBox
                                 Grid.Row="2"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetAzureOpenAIEndpoint, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetAzureOpenAIEndpoint}"
                                 Text="{Binding AzureOpenAIEndpoint}" />
 
                             <!--  OpenAI Completion Model  -->
@@ -240,12 +241,12 @@
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAIModel, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAIModel}" />
                             <TextBox
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIModel, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIModel}"
                                 Text="{Binding OpenAICompletionModel}" />
 
                             <!--  OpenAI Embedding Model  -->
@@ -253,24 +254,24 @@
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAIEmbeddingModel, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAIEmbeddingModel}" />
                             <TextBox
                                 Grid.Row="4"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingModel, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIEmbeddingModel}"
                                 Text="{Binding OpenAIEmbeddingModel}" />
                             <!--  OpenAI Complition Base URL  -->
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAIChatBaseURL, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAIChatBaseURL}" />
                             <TextBox
                                 Grid.Row="5"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIChatBaseURL, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIChatBaseURL}"
                                 Text="{Binding OpenAICompletionBaseURL}" />
 
                             <!--  OpenAI Embedding Base URL  -->
@@ -278,12 +279,12 @@
                                 Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.OpenAIEmbeddingBaseURL, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.OpenAIEmbeddingBaseURL}" />
                             <TextBox
                                 Grid.Row="6"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetOpenAIEmbeddingBaseURL, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIEmbeddingBaseURL}"
                                 Text="{Binding OpenAIEmbeddingBaseURL}" />
                         </Grid>
 
@@ -301,18 +302,18 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.PythonSpacySettings, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.PythonSpacySettings}" />
                             <!--  SpacyModel  -->
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.SpacyModelName, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.SpacyModelName}" />
                             <TextBox
                                 Grid.Row="1"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SetSpacyModelName, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetSpacyModelName}"
                                 Text="{Binding SpacyModel}" />
                         </Grid>
                         <!--  Python OCR設定  -->
@@ -329,13 +330,13 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.PythonOCRSettings, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.PythonOCRSettings}" />
                             <!--  TesseractExePath  -->
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.TesseractPath, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.TesseractPath}" />
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="2"
@@ -356,14 +357,14 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.Other, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.Other}" />
 
                             <!--  開発中機能を有効にする  -->
                             <TextBlock
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.EnableDevelopmentFeatures, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.EnableDevelopmentFeatures}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="2"
@@ -373,7 +374,7 @@
                     </Grid>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="{Binding StringResources.DetailSettings}">
+            <TabItem Header="{x:Static res:ViewStringResources.DetailSettings}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -405,21 +406,21 @@
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                Text="{Binding StringResources.SourceApp, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.SourceApp}" />
 
                             <TextBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 VerticalAlignment="Center"
-                                materialDesign:HintAssist.Hint="{Binding StringResources.SourceAppExample, Mode=OneTime}"
+                                materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SourceAppExample}"
                                 Text="{Binding MonitorTargetAppNames}" />
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Margin="10,0,10,0"
                                 VerticalAlignment="Center"
-                                Content="{Binding StringResources.IgnoreTextLessOrEqualToSpecifiedLines, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.IgnoreTextLessOrEqualToSpecifiedLines}"
                                 IsChecked="{Binding IgnoreLineCountChecked}" />
 
                             <DockPanel
@@ -434,48 +435,48 @@
                                 <TextBlock
                                     Margin="10,0,0,0"
                                     VerticalAlignment="Center"
-                                    Text="{Binding StringResources.LineOrLess, Mode=OneTime}" />
+                                    Text="{x:Static res:ViewStringResources.LineOrLess}" />
                             </DockPanel>
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyMerge, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyMerge}" />
                             <CheckBox
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame}"
                                 IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyExtractTextFromFile, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFile}" />
                             <CheckBox
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromFileIfClipboardItemIsFile}"
                                 IsChecked="{Binding AutoFileExtract}" />
                             <!--  AutoExtractImageWithPyOCR  -->
                             <TextBlock
                                 Grid.Row="4"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyExtractTextFromImage, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyExtractTextFromImage}" />
                             <RadioButton
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.DoNot}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding AutoExtractImageNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.ExtractTextUsingPyOCR, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.ExtractTextUsingPyOCR}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding AutoExtractImageWithPyOCR}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
@@ -483,19 +484,19 @@
                                 Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.ExtractTextUsingOpenAI, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.ExtractTextUsingOpenAI}"
                                 GroupName="AutoExtractImage"
                                 IsChecked="{Binding AutoExtractImageWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.EmbeddingWhenExtractingTextFromImage, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.EmbeddingWhenExtractingTextFromImage}" />
                             <CheckBox
                                 Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.EmbeddingWhenExtractingTextFromImageDescription, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.EmbeddingWhenExtractingTextFromImageDescription}"
                                 IsChecked="{Binding EmbeddingWhenExtractingTextFromImage}" />
                         </Grid>
                         <!--  自動処理 プロンプト実行  -->
@@ -518,19 +519,19 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutoTitleGeneration}" />
                             <RadioButton
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.DoNot, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.DoNot}"
                                 GroupName="AutoDescription"
                                 IsChecked="{Binding AutoDescriptionNone, Mode=OneWay}" />
                             <RadioButton
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutoTitleGeneration, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.AutoTitleGeneration}"
                                 GroupName="AutoDescription"
                                 IsChecked="{Binding AutoDescription}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
@@ -538,65 +539,65 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyGenerateTitleUsingOpenAI, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyGenerateTitleUsingOpenAI}"
                                 GroupName="AutoDescription"
                                 IsChecked="{Binding AutoDescriptionWithOpenAI}" />
                             <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyGenerateTags, Mode=OneTime}"
+                                Text="{x:Static res:ViewStringResources.AutomaticallyGenerateTags}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.AutomaticallyGenerateTagsFromClipboardContent, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.AutomaticallyGenerateTagsFromClipboardContent}"
                                 IsChecked="{Binding AutoTag}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
                             <TextBlock
                                 Grid.Row="4"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyAddBackgroundInformation, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyAddBackgroundInformation}" />
                             <CheckBox
                                 Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.GenerateBackgroundInformation, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.GenerateBackgroundInformation}"
                                 IsChecked="{Binding AutoSummary}" />
                             <TextBlock
                                 Grid.Row="5"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyGenerateSummary, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyGenerateSummary}" />
                             <CheckBox
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.GenerateSummaryTextFromContent, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.GenerateSummaryTextFromContent}"
                                 IsChecked="{Binding AutoSummary}" />
                             <TextBlock
                                 Grid.Row="6"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutomaticallyGenerateTaskList, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutomaticallyGenerateTaskList}" />
                             <CheckBox
                                 Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.GenerateTaskListFromContent, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.GenerateTaskListFromContent}"
                                 IsChecked="{Binding AutoGenerateTasks}" />
                             <TextBlock
                                 Grid.Row="7"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.AutoCheckDocumentReliability, Mode=OneTime}" />
+                                Text="{x:Static res:ViewStringResources.AutoCheckDocumentReliability}" />
                             <CheckBox
                                 Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.CheckDocumentReliabilityOfContent, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.CheckDocumentReliabilityOfContent}"
                                 IsChecked="{Binding AutoDocumentReliabilityCheck}" />
                         </Grid>
                         <!--  その他の設定  -->
@@ -626,13 +627,13 @@
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"
-                                Text="{Binding StringResources.EntityExtractionDataMasking, Mode=OneTime}"
+                                Text="{x:Static res:ViewStringResources.EntityExtractionDataMasking}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent}"
                                 IsChecked="{Binding UseSpacy}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
 
@@ -640,7 +641,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
-                                Content="{Binding StringResources.MaskPersonalInformationInDataSentToOpenAI, Mode=OneTime}"
+                                Content="{x:Static res:ViewStringResources.MaskPersonalInformationInDataSentToOpenAI}"
                                 IsChecked="{Binding UserMaskedDataInOpenAI}"
                                 Visibility="{Binding EnableDevFeaturesVisibility}" />
                         </Grid>
@@ -658,7 +659,7 @@
                     Width="180"
                     Margin="10,0,10,0"
                     Command="{Binding CheckCommand}"
-                    Content="{Binding StringResources.CheckSettings, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.CheckSettings}"
                     DockPanel.Dock="Left" />
             </DockPanel>
             <DockPanel
@@ -670,13 +671,13 @@
                     Margin="10,0,10,0"
                     Command="{Binding SaveCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.OK, Mode=OneTime}" />
+                    Content="{x:Static res:ViewStringResources.OK}" />
                 <Button
                     Width="150"
                     Margin="10,0,10,0"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{Binding StringResources.Cancel, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.Cancel}"
                     DockPanel.Dock="Right" />
             </DockPanel>
         </Grid>

@@ -5,7 +5,7 @@ using ClipboardApp.ViewModel.Content;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 
-namespace ClipboardApp.View.ClipboardItem
+namespace ClipboardApp.View.Item
 {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック

@@ -1,21 +1,21 @@
 <UserControl
-    x:Class="ClipboardApp.View.ClipboardItem.FilePanel"
+    x:Class="ClipboardApp.View.Item.FilePanel"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:commonModel="clr-namespace:QAChat.Resource;assembly=PythonAILibUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp.View.ClipboardItem"
+    xmlns:local="clr-namespace:ClipboardApp.View.Item"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Item"
     xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Content"
     d:DataContext="{d:DesignInstance Type=viewModel:ClipboardItemViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <commonModel:CommonStringResources x:Key="StringResources" />
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
             <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
@@ -47,7 +47,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Center"
-                    Text="{Binding StringResources.FilePath, Mode=OneTime}" />
+                    Text="{x:Static res:ViewStringResources.FilePath}" />
                 <editorControl:MyTextBox
                     Grid.Row="0"
                     Grid.Column="1"
@@ -61,7 +61,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Center"
-                    Text="{Binding StringResources.Folder, Mode=OneTime}" />
+                    Text="{x:Static res:ViewStringResources.Folder}" />
 
                 <editorControl:MyTextBox
                     Grid.Row="1"
@@ -75,7 +75,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Center"
-                    Text="{Binding StringResources.FileName, Mode=OneTime}" />
+                    Text="{x:Static res:ViewStringResources.FileName}" />
                 <editorControl:MyTextBox
                     Grid.Row="2"
                     Grid.Column="1"
@@ -88,7 +88,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Center"
-                    Text="{Binding StringResources.FolderNameAndFileName, Mode=OneTime}" />
+                    Text="{x:Static res:ViewStringResources.FolderNameAndFileName}" />
                 <editorControl:MyTextBox
                     Grid.Row="3"
                     Grid.Column="1"
@@ -101,7 +101,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Top"
-                    Text="{Binding StringResources.ExtractedText, Mode=OneTime}" />
+                    Text="{x:Static res:ViewStringResources.ExtractedText}" />
                 <ScrollViewer
                     Grid.Row="4"
                     Grid.Column="1"
@@ -119,7 +119,7 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Top"
-                    Text="{Binding StringResources.Image, Mode=OneTime}"
+                    Text="{x:Static res:ViewStringResources.Image}"
                     Visibility="{Binding ImageVisibility}" />
                 <Image
                     Grid.Row="5"
