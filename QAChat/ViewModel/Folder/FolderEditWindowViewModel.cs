@@ -14,9 +14,12 @@ namespace QAChat.ViewModel.Folder {
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             AfterUpdate = afterUpdate;
             FolderViewModel = folderViewModel;
+
+
             OnPropertyChanged(nameof(FolderViewModel));
             OnPropertyChanged(nameof(SelectedVectorDBItem));
         }
+
         public ContentFolderViewModel FolderViewModel { get; set; }
         // フォルダ作成後に実行するコマンド
         private Action AfterUpdate { get; set; }
@@ -96,12 +99,6 @@ namespace QAChat.ViewModel.Folder {
             }
         });
 
-        // 選択したVectorDBItemの編集画面を開くコマンド
-        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, FolderViewModel.GetRootFolderViewModel(), (selectedItem) => {
-
-            });
-        });
     }
 
 }

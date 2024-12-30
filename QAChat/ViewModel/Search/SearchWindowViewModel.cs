@@ -1,14 +1,16 @@
 using System.Windows;
-using ClipboardApp.Model.Folder;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
+using PythonAILibUI.ViewModel.Folder;
+using QAChat.Model;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Search {
-    public class SearchWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.Search {
+    public class SearchWindowViewModel : QAChatViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
-            ClipboardFolder searchFolder, bool isSearchFolder,
+            ContentFolder searchFolder, bool isSearchFolder,
             Action afterUpdate
             ) {
             _searchConditionRule = searchConditionRule;
@@ -26,8 +28,10 @@ namespace ClipboardApp.ViewModel.Search {
             OnPropertyChanged(nameof(SearchFolderVisibility));
             OnPropertyChanged(nameof(NameVisibility));
         }
+        private bool _isSearchFolder;
 
-        public MainWindowViewModel? MainWindowViewModel { get; private set; }
+        private Action? _afterUpdate;
+
 
         private SearchRule _searchConditionRule;
         public SearchRule SearchConditionRule {
@@ -40,8 +44,8 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
 
-        private ClipboardFolder _searchFolder;
-        public ClipboardFolder SearchFolder {
+        private ContentFolder _searchFolder;
+        public ContentFolder SearchFolder {
             get {
                 return _searchFolder;
             }
@@ -51,21 +55,9 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
         // 検索フォルダの場合は表示する、それ以外は非表示
-        public Visibility SearchFolderVisibility {
+        public Visibility SearchFolderVisibility => Tools.BoolToVisibility(SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder);
 
-            get {
-                if (SearchConditionRule?.Type == SearchRule.SearchType.SearchFolder) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
-
-        public Visibility NameVisibility {
-            get {
-                return _isSearchFolder ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public Visibility NameVisibility => Tools.BoolToVisibility(_isSearchFolder == true);
 
         // 検索タイプ 標準 or 検索フォルダ
         public string SearchTypeText {
@@ -100,9 +92,6 @@ namespace ClipboardApp.ViewModel.Search {
             }
         }
 
-        private bool _isSearchFolder;
-
-        private Action? _afterUpdate;
 
         public string Name {
             get {
@@ -147,23 +136,10 @@ namespace ClipboardApp.ViewModel.Search {
             window.Close();
         });
 
-        // OpenSelectSearchFolderWindowCommand
-        // 検索フォルダを選択する
-        public SimpleDelegateCommand<object> OpenSelectSearchFolderWindowCommand => new((parameter) => {
-            SearchFolderViewModel? rootFolderViewModel = new(FolderManager.SearchRootFolder);
-            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                SearchFolder = (ClipboardFolder)folderViewModel.Folder;
-                SearchConditionRule.SearchFolder = (ClipboardFolder)folderViewModel.Folder;
-                SearchFolderPath = folderViewModel.FolderPath;
-                OnPropertyChanged(nameof(SearchFolderPath));
-            });
-        });
-
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            SearchFolderViewModel? rootFolderViewModel = new(FolderManager.RootFolder);
-            FolderSelectWindow.OpenFolderSelectWindow(rootFolderViewModel, (folderViewModel) => {
-                SearchConditionRule.TargetFolder = (ClipboardFolder)folderViewModel.Folder;
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel) => {
+                SearchConditionRule.TargetFolder = folderViewModel.Folder;
                 TargetFolderPath = folderViewModel.FolderPath;
                 OnPropertyChanged(nameof(TargetFolderPath));
             });

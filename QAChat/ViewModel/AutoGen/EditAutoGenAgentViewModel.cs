@@ -9,9 +9,9 @@ using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
     public class EditAutoGenAgentViewModel : QAChatViewModelBase {
-        public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, ContentFolderViewModel rootFolderViewModel, Action afterUpdate) {
+        public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action afterUpdate) {
             AutoGenAgent = autoGenAgent;
-            RootFolderViewModel = rootFolderViewModel;
+            RootFolderViewModels = rootFolderViewModels;
             AfterUpdate = afterUpdate;
             LoadTools();
             // TypeValue
@@ -30,7 +30,7 @@ namespace QAChat.ViewModel.AutoGen {
             }
         }
 
-        public ContentFolderViewModel RootFolderViewModel { get; set; }
+        public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; }
 
         public AutoGenAgent AutoGenAgent { get; set; }
 
@@ -177,7 +177,7 @@ namespace QAChat.ViewModel.AutoGen {
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModel, (selectedItem) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
                 VectorDBItems.Add(new VectorDBItemViewModel(selectedItem));
             });
             OnPropertyChanged(nameof(VectorDBItems));
@@ -185,7 +185,7 @@ namespace QAChat.ViewModel.AutoGen {
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModel, (selectedItem) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels, (selectedItem) => {
 
             });
         });

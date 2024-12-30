@@ -130,7 +130,7 @@ namespace ClipboardApp
 
         // Null許容型
         [AllowNull]
-        public RootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public ClipboardAppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
 
         public static MainWindowViewModel Instance { get; set; } = new MainWindowViewModel();
 

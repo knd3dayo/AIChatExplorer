@@ -22,6 +22,7 @@ using QAChat.ViewModel.Item;
 using ClipboardApp.Common;
 using PythonAILib.Model.Folder;
 using ClipboardApp.Model.Item;
+using PythonAILibUI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main
 {
@@ -122,7 +123,7 @@ namespace ClipboardApp.ViewModel.Main
         // Process when "Vector DB Management" is clicked in the menu
         public override void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItem) => { });
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, RootFolderViewModelContainer.FolderViewModels, (vectorDBItem) => { });
         }
 
         // Process when "Settings" is clicked in the menu
@@ -455,7 +456,7 @@ namespace ClipboardApp.ViewModel.Main
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     vectorDBItems.Add(vectorDBItemBase);
                 });
             };
@@ -469,7 +470,7 @@ namespace ClipboardApp.ViewModel.Main
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
             vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     vectorDBItems.Add(vectorDBItemBase);
                 });
             };
@@ -500,7 +501,7 @@ namespace ClipboardApp.ViewModel.Main
                 // フォルダ選択アクション
                 SelectVectorDBItemAction = (vectorDBItems) => {
                     ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                        ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                        PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                             vectorDBItems.Add(vectorDBItemBase);
                         });
 
@@ -508,7 +509,7 @@ namespace ClipboardApp.ViewModel.Main
                 // フォルダ編集アクション
                 EditVectorDBItemAction = (vectorDBItems) => {
                     ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit,
-                        ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel, (vectorDBItemBase) => {
+                        PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                             vectorDBItems.Add(vectorDBItemBase);
                         });
 
@@ -533,9 +534,8 @@ namespace ClipboardApp.ViewModel.Main
                 },
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {
-                    ClipboardFolderViewModel? folderViewModel = ActiveInstance.SelectedFolder ?? ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel;
-
-                    FolderSelectWindow.OpenFolderSelectWindow(folderViewModel, (folder) => {
+                    
+                    FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folder) => {
                         ClipboardItem chatHistoryItem = new(folder.Folder.Id);
                         // タイトルを日付 + 元のタイトルにする
                         chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";

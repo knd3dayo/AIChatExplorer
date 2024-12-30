@@ -20,15 +20,15 @@ namespace QAChat.ViewModel.AutoProcess {
             }
         }
         private static MainWindowViewModel? _mainWindowViewModel;
-        public ListAutoProcessRuleWindowViewModel(ContentFolderViewModel rootFolderViewModel) {
-            RootFolderViewModel = rootFolderViewModel;
+        public ListAutoProcessRuleWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModel) {
+            RootFolderViewModels = rootFolderViewModel;
             // AutoProcessRulesを更新
             AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
         // RootFolderViewModel
-        public ContentFolderViewModel RootFolderViewModel { get; set; }
+        public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; }
 
         // TabIndex
         private int _tabIndex = 0;
@@ -86,7 +86,7 @@ namespace QAChat.ViewModel.AutoProcess {
             }
             // RootFolderViewModelを取得
 
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, RootFolderViewModel, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, RootFolderViewModels, AutoProcessRuleUpdated);
         });
 
         // 自動処理を追加する処理
@@ -99,7 +99,7 @@ namespace QAChat.ViewModel.AutoProcess {
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
             AutoProcessRule rule = new();
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModel, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModels, AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理

@@ -10,13 +10,12 @@ namespace QAChat.ViewModel.Folder {
 
     public class FolderSelectWindowViewModel : QAChatViewModelBase {
 
-        public FolderSelectWindowViewModel(ContentFolderViewModel rootFolderViewModel, Action<ContentFolderViewModel> _FolderSelectedAction) {
+        public FolderSelectWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModelList, Action<ContentFolderViewModel> _FolderSelectedAction) {
 
             FolderSelectedAction = _FolderSelectedAction;
-            if (rootFolderViewModel == null) {
-                return;
+            foreach ( var rootFolderViewModel in rootFolderViewModelList) {
+                RootFolders.Add(rootFolderViewModel);
             }
-            RootFolders.Add(rootFolderViewModel);
         }
 
         // フォルダツリーのルート

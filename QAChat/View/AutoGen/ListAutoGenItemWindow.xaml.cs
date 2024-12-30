@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using QAChat.ViewModel.AutoGen;
 using QAChat.ViewModel.Folder;
@@ -11,7 +12,7 @@ namespace QAChat.View.AutoGen {
             InitializeComponent();
         }
 
-        public static void OpenListAutoGenItemWindow(ContentFolderViewModel rootFolderViewModel , bool selectGroupChatMode = false) {
+        public static void OpenListAutoGenItemWindow(ObservableCollection<ContentFolderViewModel> rootFolderViewModel , bool selectGroupChatMode = false) {
             ListAutoGenItemWindow listAutoGenItemWindow = new();
             ListAutoGenItemWindowViewModel listAutoGenItemWindowViewModel = new(rootFolderViewModel, selectGroupChatMode);
             listAutoGenItemWindow.DataContext = listAutoGenItemWindowViewModel;

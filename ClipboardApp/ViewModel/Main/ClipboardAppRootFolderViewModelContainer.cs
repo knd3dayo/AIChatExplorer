@@ -5,10 +5,11 @@ using ClipboardApp.ViewModel.FileSystem;
 using ClipboardApp.ViewModel.Mail;
 using ClipboardApp.ViewModel.Search;
 using CommunityToolkit.Mvvm.ComponentModel;
+using PythonAILibUI.ViewModel.Folder;
+using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.ViewModel.Main
-{
-    public class RootFolderViewModelContainer : ObservableObject {
+namespace ClipboardApp.ViewModel.Main {
+    public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel
         public ClipboardFolderViewModel RootFolderViewModel { get; private set; }
@@ -28,17 +29,16 @@ namespace ClipboardApp.ViewModel.Main
         // OutlookフォルダのViewModel
         public OutlookFolderViewModel? OutlookFolderViewModel { get; private set; }
 
-        // ClipboardFolder
-        public ObservableCollection<ClipboardFolderViewModel> FolderViewModels { get; set; } = [];
 
         // コンストラクタ
-        public RootFolderViewModelContainer() {
+        public ClipboardAppRootFolderViewModelContainer() {
             RootFolderViewModel = new ClipboardFolderViewModel(FolderManager.RootFolder);
             SearchRootFolderViewModel = new SearchFolderViewModel(FolderManager.SearchRootFolder);
             ChatRootFolderViewModel = new ChatFolderViewModel(FolderManager.ChatRootFolder);
             FileSystemFolderViewModel = new FileSystemFolderViewModel(FolderManager.FileSystemRootFolder);
             ShortcutFolderViewModel = new ShortCutFolderViewModel(FolderManager.ShortcutRootFolder);
 
+            FolderViewModels.Clear();
             FolderViewModels.Add(RootFolderViewModel);
             FolderViewModels.Add(FileSystemFolderViewModel);
             FolderViewModels.Add(ShortcutFolderViewModel);

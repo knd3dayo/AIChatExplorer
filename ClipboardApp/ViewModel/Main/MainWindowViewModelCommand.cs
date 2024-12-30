@@ -8,6 +8,7 @@ using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
+using PythonAILibUI.ViewModel.Folder;
 using QAChat.Resource;
 using QAChat.View.AutoGen;
 using QAChat.View.AutoProcessRule;
@@ -107,8 +108,7 @@ namespace ClipboardApp
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public void OpenListAutoProcessRuleWindowCommandExecute() {
             // ListAutoProcessRuleWindowを開く
-            ContentFolderViewModel folderViewModel = RootFolderViewModelContainer.RootFolderViewModel;
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(folderViewModel);
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
 
         }
         // メニューの「タグ編集」をクリックしたときの処理
@@ -137,7 +137,7 @@ namespace ClipboardApp
         });
         // メニューの「AutoGen定義編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
-            ListAutoGenItemWindow.OpenListAutoGenItemWindow(RootFolderViewModelContainer.RootFolderViewModel);
+            ListAutoGenItemWindow.OpenListAutoGenItemWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
         });
 
         // バージョン情報画面を開く処理

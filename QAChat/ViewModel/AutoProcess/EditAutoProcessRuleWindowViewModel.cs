@@ -22,7 +22,7 @@ namespace QAChat.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : QAChatViewModelBase {
 
         // 初期化
-        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ContentFolderViewModel rootFolderViewModel, Action<AutoProcessRule> afterUpdate) {
+        public EditAutoProcessRuleWindowViewModel(AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<AutoProcessRule> afterUpdate) {
             TargetAutoProcessRule = autoProcessRule;
             IsAutoProcessRuleEnabled = autoProcessRule.IsEnabled;
             _AfterUpdate = afterUpdate;
@@ -31,14 +31,14 @@ namespace QAChat.ViewModel.AutoProcess {
             DestinationFolder = ContentFolder.GetFolderById<ContentFolder>(autoProcessRule.DestinationFolderId);
 
             // RootFolderViewModelを設定
-            RootFolderViewModel = rootFolderViewModel;
+            RootFolderViewModels = rootFolderViewModels;
 
             LoadConditions();
 
         }
 
         // RootFolderViewModel
-        public ContentFolderViewModel RootFolderViewModel { get; set; }
+        public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; } = [];
 
         private void LoadConditions() {
             // autoProcessRuleがNullでない場合は初期化
@@ -556,14 +556,14 @@ namespace QAChat.ViewModel.AutoProcess {
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModel, (folderViewModel) => {
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel) => {
                 DestinationFolder = folderViewModel.Folder;
             });
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModel, (folderViewModel) => {
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel) => {
                 TargetFolder = folderViewModel.Folder;
             });
         });

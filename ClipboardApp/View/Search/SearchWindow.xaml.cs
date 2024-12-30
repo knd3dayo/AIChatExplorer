@@ -2,6 +2,7 @@ using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Search;
 using PythonAILib.Model.Search;
+using QAChat.ViewModel.Search;
 
 namespace ClipboardApp.View.Search {
     /// <summary>

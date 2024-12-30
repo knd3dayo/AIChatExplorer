@@ -9,7 +9,7 @@ namespace ClipboardApp.ViewModel.Main {
         public ClipboardItemViewModel? SelectedItem { get; set; }
         public ClipboardFolderViewModel? SelectedFolder { get; set; }
         // FolderViewModels
-        public RootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
+        public ClipboardAppRootFolderViewModelContainer RootFolderViewModelContainer { get; set; }
         // Item
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand { get; }
         public SimpleDelegateCommand<object> OpenSelectedItemCommand { get; }

@@ -20,13 +20,13 @@ namespace QAChat.ViewModel.AutoGen {
 
         public ObservableCollection<AutoGenNestedChat> AutoGenNestedChats { get; set; } = [];
 
-        public ListAutoGenItemWindowViewModel(ContentFolderViewModel rootFolderViewModel, bool selectGroupChatMode) {
+        public ListAutoGenItemWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModels, bool selectGroupChatMode) {
             SelectGroupChatMode = selectGroupChatMode;
-            RootFolderViewModel = rootFolderViewModel;
+            RootFolderViewModels = rootFolderViewModels;
             LoadItems();
         }
 
-        public ContentFolderViewModel RootFolderViewModel { get; set; }
+        public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; } = [];
 
         public bool SelectGroupChatMode { get; set; }
 
@@ -96,7 +96,7 @@ namespace QAChat.ViewModel.AutoGen {
             if (SelectedAutoGenAgent == null) {
                 return;
             }
-            EditAutoGenAgentWindow.OpenWindow(SelectedAutoGenAgent, RootFolderViewModel, () => {
+            EditAutoGenAgentWindow.OpenWindow(SelectedAutoGenAgent, RootFolderViewModels, () => {
                 LoadItems();
             });
         });
@@ -134,7 +134,7 @@ namespace QAChat.ViewModel.AutoGen {
                     break;
                 case 3:
                     AutoGenAgent autoGenAgent = new();
-                    EditAutoGenAgentWindow.OpenWindow(autoGenAgent, RootFolderViewModel, () => {
+                    EditAutoGenAgentWindow.OpenWindow(autoGenAgent, RootFolderViewModels, () => {
                         LoadItems();
                     });
                     break;

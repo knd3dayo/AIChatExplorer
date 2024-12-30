@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.AutoGen;
 using QAChat.ViewModel.AutoGen;
@@ -11,9 +12,9 @@ namespace QAChat.View.AutoGen {
         public EditAutoGenAgentWindow() {
             InitializeComponent();
         }
-        public static void OpenWindow(AutoGenAgent autoGenAgent, ContentFolderViewModel rootFolderViewModel, Action afterUpdate) {
+        public static void OpenWindow(AutoGenAgent autoGenAgent, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action afterUpdate) {
             var window = new EditAutoGenAgentWindow();
-            window.DataContext = new EditAutoGenAgentViewModel(autoGenAgent, rootFolderViewModel, afterUpdate);
+            window.DataContext = new EditAutoGenAgentViewModel(autoGenAgent, rootFolderViewModels, afterUpdate);
             window.ShowDialog();
         }
     }

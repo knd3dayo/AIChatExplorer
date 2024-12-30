@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using QAChat.ViewModel.AutoProcess;
 using QAChat.ViewModel.Folder;
@@ -10,7 +11,7 @@ namespace QAChat.View.AutoProcessRule {
         public ListAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenListAutoProcessRuleWindow(ContentFolderViewModel viewModel) {
+        public static void OpenListAutoProcessRuleWindow(ObservableCollection<ContentFolderViewModel> viewModel) {
             ListAutoProcessRuleWindow listAutoProcessRuleWindow = new();
             listAutoProcessRuleWindow.DataContext = new ListAutoProcessRuleWindowViewModel(viewModel);
             listAutoProcessRuleWindow.ShowDialog();

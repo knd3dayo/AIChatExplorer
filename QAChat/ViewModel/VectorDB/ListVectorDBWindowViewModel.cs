@@ -13,15 +13,15 @@ namespace QAChat.ViewModel.VectorDB {
     /// </summary>
     public class ListVectorDBWindowViewModel : QAChatViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, ContentFolderViewModel folder, Action<VectorDBItem> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBItem> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
+
             LoadVectorItemsCommand.Execute();
-            FolderSelectWindowViewModel = new(folder, (selectedFolder) => {
+            FolderSelectWindowViewModel = new(rootFolderViewModels, (selectedFolder) => {
                 FolderViewModel = selectedFolder;
             });
-            FolderViewModel = folder;
 
         }
 

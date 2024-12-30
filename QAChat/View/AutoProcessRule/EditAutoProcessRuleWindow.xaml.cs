@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using QAChat.ViewModel.AutoProcess;
 using QAChat.ViewModel.Folder;
@@ -10,7 +11,7 @@ namespace QAChat.View.AutoProcessRule {
         public EditAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, ContentFolderViewModel rootFolderViewModel, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
+        public static void OpenEditAutoProcessRuleWindow(PythonAILib.Model.AutoProcess.AutoProcessRule autoProcessRule, ObservableCollection<ContentFolderViewModel> rootFolderViewModel, Action<PythonAILib.Model.AutoProcess.AutoProcessRule> afterUpdate) {
             EditAutoProcessRuleWindow editAutoProcessRuleWindow = new() {
                 DataContext = new EditAutoProcessRuleWindowViewModel(autoProcessRule, rootFolderViewModel, afterUpdate)
             };

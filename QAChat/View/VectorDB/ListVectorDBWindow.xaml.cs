@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.VectorDB;
 using QAChat.ViewModel.Folder;
@@ -12,9 +13,9 @@ namespace QAChat.View.VectorDB
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ContentFolderViewModel folderViewModel, Action<VectorDBItem> callBackup) {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBItem> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
-            ListVectorDBWindowViewModel listVectorDBWindowViewModel = new(mode, folderViewModel, callBackup);
+            ListVectorDBWindowViewModel listVectorDBWindowViewModel = new(mode, rootFolderViewModels, callBackup);
             listVectorDBWindow.DataContext = listVectorDBWindowViewModel;
             listVectorDBWindow.ShowDialog();
         }
