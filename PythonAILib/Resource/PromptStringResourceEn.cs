@@ -1,11 +1,14 @@
 namespace PythonAILib.Resource {
     public class PromptStringResourceEn : PromptStringResource {
 
-        // Instance 
-        public static PromptStringResourceEn Instance { get; set; } = new();
-
         // For any unclear points about the above text, please refer to the following related information
-        public override string RelatedInformation { get; } = "Related information. Please note that it may contain inaccurate information.";
+        public override string RelatedInformation {
+            get {
+                return "------ The following is reference information.---\nInformation may have a reliability score assigned. If there is conflicting content in the reference information, please prioritize the information with the higher reliability. The definition of reliability is as follows:\n" +
+                    DocumentReliabilityDefinition + "\n " +
+                    "To inform the user of the reliability of the information, please provide the reference information used with the response, sorted by reliability score\n ------";
+            }
+        }
 
         // Please analyze the following text and identify sentences containing undefined terms. " +
         // "Undefined terms are those whose genus, specific difference, cause, purpose, function, or components are unclear." +
@@ -37,32 +40,6 @@ namespace PythonAILib.Resource {
         // Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n
         public override string BackgroundInformationGenerationPrompt { get; } = "Please generate background information (such as circumstances, purpose, cause, components, who, when, where, etc.) from the following text.\n";
 
-        public override string AnalyzeJapaneseSentenceRequest { get; } = "* A proposition is a sentence that expresses that the subject (or topic) is something.\r\n" +
-            "* In general, Japanese has the following structure:\r\n " +
-            "Japanese structure = [Topic] is [something + particle] + predicate + [tense, modality, aspect]\r\n" +
-            "* In Japanese, parts that already have common recognition between the speaker and the listener may be omitted, and you can have a conversation with just the predicate.\r\n" +
-            "* \"Modality\" refers to the way the speaker expresses their judgment about the content of the sentence or how they convey it to the listener.\r\n" +
-            "* Modality can be broadly classified into four types:\r\n" +
-            "   - Modality that expresses communicative differentiation of the sentence: Expressive modality\r\n" +
-            "   - Modality that expresses the way of perceiving the situation: Evaluative modality, Recognitional modality\r\n" +
-            "   - Modality that expresses the association between the sentence and the preceding context: Explanatory modality\r\n" +
-            "   - Modality that expresses the way of conveying to the listener: Politeness modality, Attitudinal modality\r\n" +
-            "* \"Expressive modality\" represents the basic nature of the sentence, such as [narrative], [volition], [imperative], and [interrogative].\r\n" +
-            "  - [Narrative] Read the textbook.\r\n  - [Volition] Let's read the textbook.\r\n  - [Imperative] Read the textbook.\r\n  - [Interrogative] Will you read the textbook?\r\n" +
-            "* \"Evaluative modality\" represents the speaker's evaluative perception of the situation, such as necessary or unnecessary.\r\n" +
-            "  - In the library, you must be quiet.\r\n" +
-            "* \"Recognitional modality\" represents how the speaker perceives the content of the proposition.\r\n" +
-            "  - It will probably be sunny tomorrow.\r\n" +
-            "* \"Explanatory modality\" represents that the modality in the sentence is related to the preceding sentence.\r\n" +
-            "  - Is it snowing? No wonder it's cold.\r\n" +
-            "* \"Politeness modality\" refers to the style choice of whether to convey the sentence in [plain form] or [polite form] to the listener.\r\n" +
-            "  - [Plain form] I read this book today.\r\n  - [Polite form] I read this book today.\r\n" +
-            "* \"Attitudinal modality\" refers to fine adjustments when conveying to the listener or expressing the speaker's recognition state.\r\n" +
-            "  - Look at this.\r\n  - What a beautiful view.\r\n\r\n" +
-            "Please perform the following processing for the following sentence:\r\n" +
-            "- Complete the omitted parts and create a list of propositions in the format of the above \"Japanese structure\". Also, explain the modality of each proposition.\r\n" +
-            "  If there are multiple expected results, list up to 10 of the most likely ones.";
-
 
         public override string GenerateQuestionRequest { get; } = "Please analyze the text and generate questions.\r\nExample:\r\n# Questions about definition (genus and specific difference)\r\n Text: Ponchororin soup is delicious.\r\n Question: Does Ponchororin soup belong to the category of soup dishes? Or what makes it different from other items in the category?\r\n# Questions about purpose and reason\r\n Text: The task of XX must be completed by the end of today.\r\n Question: What is the reason for needing to complete the task of XX by the end of today? Also, what is the purpose of performing the task of XX?\r\n# Questions about cause, background, and history\r\n Text: Tokugawa Ieyasu is a shogun.\r\n Question: What is the cause of Tokugawa Ieyasu becoming a shogun?\r\n# Questions about components and functions\r\n Text: Ponchororin soup is good for health.\r\n Question: What ingredients are used to make Ponchororin soup? And what effects does it have?";
 
@@ -76,6 +53,48 @@ namespace PythonAILib.Resource {
         // Please extract the text from this image.\n
         public override string ExtractTextRequest { get; } = "Please extract the text from this image.\n";
 
+        // Document reliability
+        public override string DocumentReliability { get; } = "Document Reliability";
+
+        // Document reliability judgment
+        public override string DocumentReliabilityCheckPrompt { get; } = "# Information Reliability Judgment" +
+            "## Overview\r\nThe level at which information can be used as evidence for other information." +
+            "## How to Judge" +
+            "First, set the following indicators as rough guidelines." +
+            "### Judgment based on the source and scope of the text" +
+            "* If it is written by an authoritative organization, institution, or person and is generally available information, the reliability level is high (reliability: 90-100%)." +
+            "  However, further classification of sites with high reliability is required." +
+            "* Information from sites that require reliable information, such as Wikipedia, is of medium to high reliability (reliability: 70-90%)." +
+            "  However, further classification of sites with medium to high reliability is required." +
+            "* Information from sites such as StackOverflow, which may contain errors but can be checked by many people, is of low to medium reliability (reliability: 40-60%)." +
+            "* If it is written by an organization or person within the company and the scope of disclosure is limited to the organization, the reliability level is low to high (reliability: 40-90%)." +
+            "  * Documents that are expected to be seen by many people within the organization, such as emails, Teams chats for requests or confirmations, notifications, and research presentation materials." +
+            "  * The information may include works in progress or unreviewed information." +
+            "* If the assumed scope of disclosure is unknown or the text is considered to be between individuals, the reliability level is low (reliability: 10-30%)." +
+            "  * Personal ideas, memos, and texts with unclear context." +
+            "### Judgment based on the content" +
+            "* The reliability of texts at each reliability level can be influenced by their content." +
+            "  * Information that can be determined to be correct based on existing logic, mathematical laws, or natural scientific laws should have the upper limit of reliability within the level." +
+            "  * Information that can be determined to be somewhat correct based on general sociological laws, customs, etc. should have the middle value of reliability within the level." +
+            "  * Information for which correctness cannot be determined and verification is required should have the lower limit of reliability within the level." +
+            "" +
+            "\"Based on the above, please determine the reliability level of the following text and output the reliability score (0-100) along with the reason for the reliability determination.";
+
+        // Prompt to get reliability from the document reliability check result
+        public override string DocumentReliabilityDictionaryPrompt { get; } = "The following text is the result of determining the reliability of a document. Please output the final reliability score (0-100)." +
+            "Please format the output in the following JSON format: {\"reliability\": reliability score, \"reason\": \"reason for the reliability score\"}";
+
+        public override string DocumentReliabilityDefinition { get; } = "Document reliability indicates the level at which a document can be considered as a basis for another document.\n" +
+            "### Determination based on document origin and publication scope\n" +
+            "* High reliability level (reliability: 90-100%) if the document is written by authoritative organizations or individuals and publicly available information.\n" +
+            "* Medium to high reliability level (reliability: 70-90%) if the information is from sites like Wikipedia where reliable information is required.\n" +
+            "* Low to high reliability level (reliability: 40-90%) if the document is written by internal organizations or individuals and the scope of publication is limited to the organization.\n" +
+            "* Low reliability level (reliability: 10-30%) if the publication scope is unclear or if the document is believed to be personal communication.\n" +
+            "## Determination based on content\n" +
+            "* The reliability of documents at each level can vary based on their content.\n" +
+            "  * Information that can be determined to be correct based on existing logical, mathematical, or natural scientific laws is assigned the upper limit of reliability within the level.\n" +
+            "  * Information that can be somewhat reliably determined based on general sociological laws or customs is assigned the middle value of reliability within the level.\n" +
+            "  * Information whose accuracy cannot be determined and requires verification is assigned the lower limit of reliability within the level.\n";
 
     }
 }

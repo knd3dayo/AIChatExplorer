@@ -1,52 +1,7 @@
 namespace QAChat.Resource {
     public partial class CommonStringResources {
 
-        private static CommonStringResources? _instance;
-        public static CommonStringResources Instance {
-            get {
-                if (_instance == null || _LangChanged) {
-                    _LangChanged = false;
-                    switch (Lang) {
-                        case "ja-JP":
-                            _instance = new CommonStringResources();
-                            break;
-                        default:
-                            _instance = new CommonStringResourcesEn();
-                            break;
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private static bool _LangChanged = false;
-        private static string _Lang = "ja-JP";
-        public static string Lang {
-            get { return _Lang; }
-            set {
-                if (_Lang != value) {
-                    _LangChanged = true;
-                }
-                _Lang = value;
-            }
-        }
-
-        #region 共通
-        // ファイル
-        public virtual string File { get; } = "ファイル";
-
-        // ファイル/画像
-        public virtual string FileOrImage { get; } = "ファイル/画像";
-        // 作成
-        public virtual string Create { get; } = "作成";
-        // アイテム作成
-        public virtual string CreateItem { get; } = "アイテム作成";
-        // 終了
-        public virtual string Exit { get; } = "終了";
-        // 編集
-        public virtual string Edit { get; } = "編集";
-
-        #region プロンプトメニュー
+        #region --- プロンプトメニュー --------------------------------------------------
 
         public virtual string PromptMenu { get; } = "プロンプトメニュー";
         // タイトルを生成
@@ -65,47 +20,6 @@ namespace QAChat.Resource {
 
         //ベクトル検索
         public virtual string VectorSearch { get; } = "ベクトル検索";
-
-        // 開始
-        public virtual string Start { get; } = "開始";
-        // 停止
-        public virtual string Stop { get; } = "停止";
-        // 選択
-        public virtual string Select { get; } = "選択";
-        // ヘルプ
-        public virtual string Help { get; } = "ヘルプ";
-        // バージョン情報
-        public virtual string VersionInfo { get; } = "バージョン情報";
-
-        // 表示
-        public virtual string View { get; } = "表示";
-
-        // 検索
-        public virtual string Search { get; } = "検索";
-        // 設定
-        public virtual string Setting { get; } = "設定";
-        // 削除
-        public virtual string Delete { get; } = "削除";
-        // 追加
-        public virtual string Add { get; } = "追加";
-        // OK
-        public virtual string OK { get; } = "OK";
-        // キャンセル
-        public virtual string Cancel { get; } = "キャンセル";
-        // 閉じる
-        public virtual string Close { get; } = "閉じる";
-
-        // ExportImport
-        public virtual string ExportImport { get; } = "エクスポート/インポート";
-
-        // Export
-        public virtual string Export { get; } = "エクスポート";
-        // Import
-        public virtual string Import { get; } = "インポート";
-
-        // モード
-        public virtual string Mode { get; } = "モード";
-
         // バックアップ/リストア
         public virtual string BackupRestore { get; } = "バックアップ/リストア";
 
@@ -114,105 +28,10 @@ namespace QAChat.Resource {
         // アイテムのリストア
         public virtual string RestoreItem { get; } = "アイテムのリストア";
 
-        #endregion
-        // -- SettingsUserControl.xaml --
-        // -- 設定を反映させるためにアプリケーションの再起動を行ってください。
-        public virtual string RestartAppToApplyChanges { get; } = "設定を反映させるためにアプリケーションの再起動を行ってください。";
+        // ベクトルDBのリフレッシュ
+        public virtual string RefreshVectorDB { get; } = "ベクトルDBのリフレッシュ";
 
-        // 基本設定
-        public virtual string BasicSettings { get; } = "基本設定";
 
-        // 詳細設定
-        public virtual string DetailSettings { get; } = "詳細設定";
-
-        // Pythonインストール先のpython3**.dllを指定
-        public virtual string SpecifyPython3Dll { get; } = "Pythonインストール先のpython3**.dllを指定";
-
-        // PythonDLLのパス
-        public virtual string PythonDLLPath { get; } = "PythonDLLのパス";
-
-        // Python仮想環境の場所
-        public virtual string PythonVenvPath { get; } = "Python仮想環境の場所";
-
-        // Python venvを使用する場合はvenvの場所を設定
-        public virtual string SpecifyVenvPath { get; } = "Python venvを使用する場合はvenvの場所を設定";
-
-        // クリップボードDBのバックアップ世代数
-        public virtual string ClipboardDBBackupGenerations { get; } = "クリップボードDBのバックアップ世代数";
-
-        // clipbord.db,clipboard-log.dbのバックアップ世代数
-        public virtual string ClipboardDBBackupGenerationsDescription { get; } = "clipbord.db,clipboard-log.dbのバックアップ世代数";
-
-        // OpenAI設定
-        public virtual string OpenAISettings { get; } = "OpenAI設定";
-
-        // OpenAIのAPI Key
-        public virtual string OpenAIKey { get; } = "OpenAIのAPI Key";
-
-        // OpenAIまたはAzure OpenAIのAPIキーを設定
-        public virtual string SetOpenAIKey { get; } = "OpenAIまたはAzure OpenAIのAPIキーを設定";
-
-        // Azure OpenAIを使用する
-        public virtual string UseAzureOpenAI { get; } = "Azure OpenAIを使用する";
-
-        // OpenAIの代わりにAzure OpenAIを使用します
-        public virtual string UseAzureOpenAIInsteadOfOpenAI { get; } = "OpenAIの代わりにAzure OpenAIを使用します";
-
-        // Azure OpenAIのエンドポイント
-        public virtual string AzureOpenAIEndpoint { get; } = "Azure OpenAIのエンドポイント";
-
-        // Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する
-        public virtual string SetAzureOpenAIEndpoint { get; } = "Azure OpenAIを使用する場合はAzure OpenAIのエンドポイントを設定する";
-
-        // OpenAIのチャットで使用するモデル
-        public virtual string OpenAIModel { get; } = "OpenAIのチャットで使用するモデル";
-
-        // OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど
-        public virtual string SetOpenAIModel { get; } = "OpenAIまたはAzure OpenAIのチャット用モデルを設定。例：　gpt-4-turbo,gpt-4-1106-previewなど";
-
-        // OpenAIのEmbeddingで使用するモデル
-        public virtual string OpenAIEmbeddingModel { get; } = "OpenAIのEmbeddingで使用するモデル";
-
-        // OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど
-        public virtual string SetOpenAIEmbeddingModel { get; } = "OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど";
-
-        // OpenAIのチャットモデルのBaseUR
-        public virtual string OpenAIChatBaseURL { get; } = "OpenAIのチャットモデルのBaseUR";
-
-        // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
-        public virtual string SetOpenAIChatBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
-
-        // OpenAIのEmbeddingモデルのBaseURL
-        public virtual string OpenAIEmbeddingBaseURL { get; } = "OpenAIのEmbeddingモデルのBaseURL";
-
-        // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
-        public virtual string SetOpenAIEmbeddingBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
-
-        // Python Spacy設定
-        public virtual string PythonSpacySettings { get; } = "Python Spacy設定";
-
-        // Spacyのモデル名
-        public virtual string SpacyModelName { get; } = "Spacyのモデル名";
-
-        // インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど
-        public virtual string SetSpacyModelName { get; } = "インストール済みのSpacyのモデル名を指定。例:ja_core_news_sm,ja_core_news_lgなど";
-
-        // Python OCR設定
-        public virtual string PythonOCRSettings { get; } = "Python OCR設定";
-
-        // Tesseractのパス
-        public virtual string TesseractPath { get; } = "Tesseractのパス";
-
-        // その他
-        public virtual string Other { get; } = "その他";
-
-        // 開発中機能を有効にする
-        public virtual string EnableDevelopmentFeatures { get; } = "開発中機能を有効にする";
-
-        // 設定のチェック
-        public virtual string CheckSettings { get; } = "設定のチェック";
-
-        public virtual string AppName { get; } = "RAG Clipboard";
         // 自動処理ルール一覧
         public virtual string ListAutoProcessRule { get; } = "自動処理ルール一覧";
         // Pythonスクリプト一覧
@@ -232,12 +51,6 @@ namespace QAChat.Resource {
         public virtual string EditVectorDB { get; } = "ベクトルDB編集";
 
         // --- ToolTip ---
-        // 開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。
-        public virtual string ToggleClipboardWatchToolTop { get; } = "開始：クリップボード監視を開始します。停止：クリップボード監視を停止します。";
-
-        // 開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.
-        public virtual string ToggleNotificationWatchToolTop { get; } = "開始：Windows通知監視を開始します。停止：Windows通知監視を停止します.";
-
         // 選択中のフォルダにアイテムを作成します。
         public virtual string CreateItemToolTip { get; } = "選択中のフォルダにアイテムを作成します。";
 
@@ -248,10 +61,7 @@ namespace QAChat.Resource {
 
         // 選択したタグを削除します。
         public virtual string DeleteSelectedTag { get; } = "選択したタグを削除";
-        // すべて選択します。
-        public virtual string SelectAll { get; } = "すべて選択";
-        // すべて選択解除します。
-        public virtual string UnselectAll { get; } = "すべて選択解除";
+
 
         // --- 画面タイトル ---
 
@@ -277,18 +87,6 @@ namespace QAChat.Resource {
         public virtual string EditPythonScriptWindowTitle {
             get {
                 return $"{AppName} - {EditPythonScript}";
-            }
-        }
-        // 設定
-        public virtual string SettingWindowTitle {
-            get {
-                return $"{AppName} - {Setting}";
-            }
-        }
-        // 設定チェック結果
-        public virtual string SettingCheckResultWindowTitle {
-            get {
-                return $"{AppName} - 設定チェック結果";
             }
         }
 
@@ -353,57 +151,6 @@ namespace QAChat.Resource {
 
         // --- DefaultClipboardController.cs ---
         // クリップボードの内容が変更されました
-        public virtual string ClipboardChangedMessage { get; } = "クリップボードの内容が変更されました";
-        // クリップボードアイテムを処理
-        public virtual string ProcessClipboardItem { get; } = "クリップボードアイテムを処理";
-        // 自動処理を実行中
-        public virtual string AutoProcessing { get; } = "自動処理を実行中";
-        // クリップボードアイテムの追加処理が失敗しました。
-        public virtual string AddItemFailed { get; } = "クリップボードアイテムの追加処理が失敗しました。";
-
-        // 自動タイトル設定処理を実行します
-        public virtual string AutoSetTitle { get; } = "自動タイトル設定処理を実行します";
-        // タイトル設定処理が失敗しました
-        public virtual string SetTitleFailed { get; } = "タイトル設定処理が失敗しました";
-
-        // 自動背景情報追加処理を実行します
-        public virtual string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
-        // 背景情報追加処理が失敗しました
-        public virtual string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
-
-        // 自動サマリー作成処理を実行します
-        public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
-        // サマリー作成処理が失敗しました
-        public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
-
-        // 自動課題リスト作成処理を実行します
-        public virtual string AutoCreateTaskList { get; } = "自動課題リスト作成処理を実行します";
-        // 課題リスト作成処理が失敗しました
-        public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
-
-        // 自動イメージテキスト抽出処理を実行します
-        public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
-        // イメージテキスト抽出処理が失敗しました
-        public virtual string ExtractImageTextFailed { get; } = "イメージテキスト抽出処理が失敗しました";
-
-        // 自動タグ設定処理を実行します
-        public virtual string AutoSetTag { get; } = "自動タグ設定処理を実行します";
-        // タグ設定処理が失敗しました
-        public virtual string SetTagFailed { get; } = "タグ設定処理が失敗しました";
-        // 自動マージ処理を実行します
-        public virtual string AutoMerge { get; } = "自動マージ処理を実行します";
-        // マージ処理が失敗しました
-        public virtual string MergeFailed { get; } = "マージ処理が失敗しました";
-        // OCR処理を実行します
-        public virtual string OCR { get; } = "OCR処理を実行します";
-        // OCR処理が失敗しました
-        public virtual string OCRFailed { get; } = "OCR処理が失敗しました";
-
-        // 自動ファイル抽出処理を実行します
-        public virtual string ExecuteAutoFileExtract { get; } = "自動ファイル抽出処理を実行します";
-        // 自動ファイル抽出処理が失敗しました
-        public virtual string AutoFileExtractFailed { get; } = "自動ファイル抽出処理が失敗しました";
-
         // --- EmptyPythonFunctions.cs ---
         // Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。
         public virtual string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
@@ -467,6 +214,8 @@ namespace QAChat.Resource {
         // -- ClipboardApp.MainWindowDataGrid1 --
         // 更新日
         public virtual string UpdateDate { get; } = "更新日";
+        // ベクトル化日時
+        public virtual string VectorizedDate { get; } = "ベクトル化日時";
         // タイトル
         public virtual string Title { get; } = "タイトル";
 
@@ -553,132 +302,13 @@ namespace QAChat.Resource {
         // 下へ
         public virtual string Down { get; } = "下へ";
 
-        // クリップボード監視対象のソースアプリ名
-        public virtual string SourceApp { get; } = "クリップボード監視対象のソースアプリ名";
-
-        // 監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe
-        public virtual string SourceAppExample { get; } = "監視対象のアプリ名をカンマ区切りで入力。例：notepad.exe,Teams.exe";
-
-        // 指定した行数以下のテキストアイテムを無視
-        public virtual string IgnoreTextLessOrEqualToSpecifiedLines { get; } = "指定した行数以下のテキストアイテムを無視";
-
-        // 自動タイトル生成
-        public virtual string AutoTitleGeneration { get; } = "自動タイトル生成";
-
         // しない
         public virtual string DoNot { get; } = "しない";
 
-        // OpenAIを使用して自動的にタイトルを生成する
-        public virtual string AutomaticallyGenerateTitleUsingOpenAI { get; } = "OpenAIを使用して自動的にタイトルを生成する";
-
-        // 自動でタグ生成する
-        public virtual string AutomaticallyGenerateTags { get; } = "自動でタグ生成する";
-
-        // クリップボードの内容から自動的にタグを生成します
-        public virtual string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
-
-        // 自動でマージ
-        public virtual string AutomaticallyMerge { get; } = "自動でマージ";
-
-        // コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします
-        public virtual string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; } = "コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします";
-
-        // 自動でEmbedding
-        public virtual string AutomaticallyEmbedding { get; } = "自動でEmbedding";
-
-        // クリップボードアイテム保存時に自動でEmbeddingを行います
-        public virtual string AutomaticallyEmbeddingWhenSavingClipboardItems { get; } = "クリップボードアイテム保存時に自動でEmbeddingを行います";
-
-        // ファイルから自動でテキスト抽出
-        public virtual string AutomaticallyExtractTextFromFile { get; } = "ファイルから自動でテキスト抽出";
-
-        // クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います
-        public virtual string AutomaticallyExtractTextFromFileIfClipboardItemIsFile { get; } = "クリップボードアイテムがファイルの場合、自動でテキスト抽出を行います";
-
-        // 画像から自動でテキスト抽出
-        public virtual string AutomaticallyExtractTextFromImage { get; } = "画像から自動でテキスト抽出";
-
-        // PyOCRを使用してテキスト抽出します
-        public virtual string ExtractTextUsingPyOCR { get; } = "PyOCRを使用してテキスト抽出します";
-
-        // OpenAIを使用してテキスト抽出します
-        public virtual string ExtractTextUsingOpenAI { get; } = "OpenAIを使用してテキスト抽出します";
-
-        // 画像からテキスト抽出時にEmbedding
-        public virtual string EmbeddingWhenExtractingTextFromImage { get; } = "画像からテキスト抽出時にEmbedding";
-        // 画像からテキスト抽出時にEmbeddingを行います
-        public virtual string EmbeddingWhenExtractingTextFromImageDescription { get; } = "画像からテキスト抽出時にEmbeddingを行います";
-
-
-        // 自動背景情報追加
-        public virtual string AutomaticallyAddBackgroundInformation { get; } = "自動背景情報追加";
-
-        // 自動背景情報に日本語文章解析結果を追加します
-        public virtual string AutomaticallyAddJapaneseSentenceAnalysisResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に日本語文章解析結果を追加します";
-
-        // 自動背景情報に自動QA結果を追加します
-        public virtual string AutomaticallyAddAutoQAResultsToBackgroundInformation { get; } = "(実験的機能)自動背景情報に自動QA結果を追加します";
-
-        // 同じフォルダにあるアイテムから背景情報を生成します。
-        public virtual string GenerateBackgroundInformationFromItemsInTheSameFolder { get; } = "同じフォルダにあるアイテムから背景情報を生成します。";
-
-        // Embeddingに背景情報を含める
-        public virtual string IncludeBackgroundInformationInEmbedding { get; } = "Embeddingに背景情報を含める";
-
-        // Embedding対象テキストに背景情報を含めます。
-        public virtual string IncludeBackgroundInformationInEmbeddingTargetText { get; } = "Embedding対象テキストに背景情報を含めます。";
-
-        // 自動サマリー生成
-        public virtual string AutomaticallyGenerateSummary { get; } = "自動サマリー生成";
-
-        // コンテンツからサマリーテキストを生成します。
-        public virtual string GenerateSummaryTextFromContent { get; } = "コンテンツからサマリーテキストを生成します。";
-
-        // 自動課題リスト生成
-        public virtual string AutomaticallyGenerateTaskList { get; } = "自動課題リスト生成";
-
-        // コンテンツから課題リストを生成します。
-        public virtual string GenerateTaskListFromContent { get; } = "コンテンツから課題リストを生成します。";
-
-        // クリップボードアイテムをOS上のフォルダと同期させる
-        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "クリップボードアイテムをOS上のフォルダと同期させる";
-
-        // クリップボードアイテムをOS上のフォルダと同期させます。
-        public virtual string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "クリップボードアイテムをOS上のフォルダと同期させます。";
-
-        // 同期先のフォルダ名
-        public virtual string SyncTargetFolderName { get; } = "同期先のフォルダ名";
-
-        // クリップボードアイテムを同期するOS上のフォルダ名を指定。
-        public virtual string SpecifyTheFolderNameOnTheOSToSynchronizeTheClipboardItems { get; } = "クリップボードアイテムを同期するOS上のフォルダ名を指定。";
-
-        // 同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。
-        public virtual string IfTheSyncTargetFolderIsAGitRepositoryItWillAutomaticallyCommitWhenTheFileIsUpdated { get; } = "同期先のフォルダがGitリポジトリの場合、ファイル更新時に自動的にコミットします。";
-
-        // エンティティ抽出/データマスキング
-        public virtual string EntityExtractionDataMasking { get; } = "エンティティ抽出/データマスキング";
-
-        // クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います
-        public virtual string ExtractEntitiesAndMaskDataUsingSpacyFromClipboardContent { get; } = "クリップボードの内容からSpacyを使用してエンティティ抽出、データマスキングを行います";
-
-        // OpenAIに送信するデータ内の個人情報などをマスキングします。
-        public virtual string MaskPersonalInformationInDataSentToOpenAI { get; } = "OpenAIに送信するデータ内の個人情報などをマスキングします。";
-
-        // 新規自動処理ルール
-        public virtual string NewAutoProcessRule { get; } = "新規自動処理ルール";
-
-        // システム共通設定を保存
-        public virtual string SaveSystemCommonSettings { get; } = "システム共通設定を保存";
 
         // -- FolderEditWindow --
         // クリップボードフォルダ編集
         public virtual string EditClipboardFolder { get; } = "クリップボードフォルダ編集";
-
-        // 名前
-        public virtual string Name { get; } = "名前";
-
-        // 説明
-        public virtual string Description { get; } = "説明";
 
         // 自動処理時の設定
         public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
@@ -687,24 +317,12 @@ namespace QAChat.Resource {
         public virtual string ChatType { get; } = "Chatタイプ";
         // 出力形式
         public virtual string OutputType { get; } = "出力形式";
-        // 文字列
-        public virtual string StringType { get; } = "文字列";
-        // リスト
-        public virtual string ListType { get; } = "リスト";
-        // テーブル
-        public virtual string TableType { get; } = "テーブル";
-        // 出力先
-        public virtual string OutputDestination { get; } = "出力先";
         // 新規タブ
         public virtual string NewTab { get; } = "新規タブ";
         // 本文を上書き
         public virtual string OverwriteContent { get; } = "本文を上書き";
         // タイトルを上書き
         public virtual string OverwriteTitle { get; } = "タイトルを上書き";
-
-
-
-
 
         // フォルダ選択
         public virtual string SelectFolder { get; } = "フォルダ選択";
@@ -786,9 +404,6 @@ namespace QAChat.Resource {
         // 適用対象配下のフォルダも対象にする
         public virtual string IncludeSubfolders { get; } = "適用対象配下のフォルダも対象にする";
 
-        // クリア
-        public virtual string Clear { get; } = "クリア";
-
         // -- TagSearchWindow
         // タグ検索
         public virtual string TagSearch { get; } = "タグ検索";
@@ -807,8 +422,6 @@ namespace QAChat.Resource {
         // チェックタイプ
         public virtual string CheckType { get; } = "チェックタイプ";
 
-        // 貼り付け
-        public virtual string Paste { get; } = "貼り付け";
 
         // -- ImageCheck.MainWindow --
         // 画像ファイル選択
@@ -817,20 +430,11 @@ namespace QAChat.Resource {
         // 画像エビデンスチェック項目編集
         public virtual string EditImageEvidenceCheckItem { get; } = "画像エビデンスチェック項目編集";
 
-        // 開く
-        public virtual string Open { get; } = "開く";
-
         // ここに回答が表示されます
         public virtual string TheAnswerWillBeDisplayedHere { get; } = "ここに回答が表示されます";
 
         // ここに質問を入力
         public virtual string EnterYourQuestionHere { get; } = "ここに質問を入力";
-
-        // 保存
-        public virtual string Save { get; } = "保存";
-
-        // 送信
-        public virtual string Send { get; } = "送信";
 
         // -- ListVectorDBWindow --
         // システム用のベクトルを表示
@@ -893,14 +497,9 @@ namespace QAChat.Resource {
         // プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。
         public virtual string PromptTemplate { get; } = "プロンプトテンプレート。ダブルクリックするとプロンプトテンプレート選択画面が開きます。";
 
-        // プレビュー
-        public virtual string Preview { get; } = "プレビュー";
 
-        // プレビュー(JSON)
-        public virtual string PreviewJSON { get; } = "プレビュー(JSON)";
-
-        // Copy
-        public virtual string Copy { get; } = "Copy";
+        // リクエストパラメーター(JSON)
+        public virtual string RequestParameterJson { get; } = "リクエストパラメーター(JSON)";
 
         // --- ClipboardFolderViewModel ---
         // 自動処理が設定されています
@@ -929,9 +528,6 @@ namespace QAChat.Resource {
 
         // ルートフォルダは削除できません
         public virtual string RootFolderCannotBeDeleted { get; } = "ルートフォルダは削除できません";
-
-        // 確認
-        public virtual string Confirm { get; } = "確認";
 
         // "フォルダを削除しますか？"
         public virtual string ConfirmDeleteFolder { get; } = "フォルダを削除しますか？";
@@ -1012,6 +608,13 @@ namespace QAChat.Resource {
 
         // "課題リストを生成しました"
         public virtual string GeneratedTasks { get; } = "課題リストを生成しました";
+
+        // 文書信頼度をチェックします
+        public virtual string CheckDocumentReliability { get; } = "文書信頼度をチェックします";
+
+        // "文書信頼度をチェックしました"
+        public virtual string CheckedDocumentReliability { get; } = "文書信頼度をチェックしました";
+
 
         // その他のプロンプト
         public virtual string OtherPrompts { get; } = "その他のプロンプト";
@@ -1095,8 +698,6 @@ namespace QAChat.Resource {
         public virtual string NoChangesToSystemCommonSettings { get; } = "システム共通設定の変更はありません。";
 
         // --- ListPythonScriptWindowViewModel ---
-        // 実行
-        public virtual string Execute { get; } = "実行";
 
         // スクリプトを選択してください
         public virtual string SelectScript { get; } = "スクリプトを選択してください";
@@ -1150,9 +751,6 @@ namespace QAChat.Resource {
 
         // "選択中のアイテムを削除しますか?"
         public virtual string ConfirmDeleteSelectedItems { get; } = "選択中のアイテムを削除しますか?";
-
-        // "削除しました"
-        public virtual string Deleted { get; } = "削除しました";
 
         // --- ImageCHat ---
         // 画像を確認して以下の各文が正しいか否かを教えてください\n\n
@@ -1322,77 +920,6 @@ namespace QAChat.Resource {
         public virtual string FailedToSendChat { get; } = "チャットの送信に失敗しました。";
 
 
-        // --- SettingUserControlViewModel
-        // Pythonの設定チェック
-        public virtual string PythonSettingCheck { get; } = "Pythonの設定チェック";
-
-        // PythonDLLのパスが設定されていません
-        public virtual string PythonDLLPathNotSet { get; } = "PythonDLLのパスが設定されていません";
-
-        // PythonDLLのパスが設定されています
-        public virtual string PythonDLLPathSet { get; } = "PythonDLLのパスが設定されています";
-
-        // PythonDLLのファイルが存在しません
-        public virtual string PythonDLLFileDoesNotExist { get; } = "PythonDLLのファイルが存在しません";
-
-        // PythonDLLのファイルが存在します
-        public virtual string PythonDLLFileExists { get; } = "PythonDLLのファイルが存在します";
-
-        // Pythonスクリプトをテスト実行
-        public virtual string TestRunPythonScript { get; } = "Pythonスクリプトをテスト実行";
-
-        // OpenAIの設定チェック
-        public virtual string OpenAISettingCheck { get; } = "OpenAIの設定チェック";
-
-        // OpenAIのAPIキーが設定されていません
-        public virtual string OpenAIKeyNotSet { get; } = "OpenAIのAPIキーが設定されていません";
-        // OpenAIのAPIキーが設定されています
-        public virtual string OpenAIKeySet { get; } = "OpenAIのAPIキーが設定されています";
-
-        // OpenAIのCompletionModelが設定されていません
-        public virtual string OpenAICompletionModelNotSet { get; } = "OpenAIのCompletionModelが設定されていません";
-
-        // OpenAIのCompletionModelが設定されています
-        public virtual string OpenAICompletionModelSet { get; } = "OpenAIのCompletionModelが設定されています";
-
-        // OpenAIのEmbeddingModelが設定されていません
-        public virtual string OpenAIEmbeddingModelNotSet { get; } = "OpenAIのEmbeddingModelが設定されていません";
-
-        // OpenAIのEmbeddingModelが設定されています
-        public virtual string OpenAIEmbeddingModelSet { get; } = "OpenAIのEmbeddingModelが設定されています";
-
-        // Azure OpenAIの設定チェック
-        public virtual string AzureOpenAISettingCheck { get; } = "Azure OpenAIの設定チェック";
-
-        // Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック
-        public virtual string AzureOpenAIEndpointNotSet { get; } = "Azure OpenAIのエンドポイントが設定されていないためBaseURL設定をチェック";
-
-        // Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください
-        public virtual string SetAzureOpenAIEndpointOrBaseURL { get; } = "Azure OpenAIのエンドポイント、BaseURLのいずれかを設定してください";
-
-        // Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません
-        public virtual string CannotSetBothAzureOpenAIEndpointAndBaseURL { get; } = "Azure OpenAIのエンドポイントとBaseURLの両方を設定することはできません";
-
-        // OpenAIのテスト実行
-        public virtual string TestRunOpenAI { get; } = "OpenAIのテスト実行";
-
-        // Pythonの実行に失敗しました
-        public virtual string FailedToRunPython { get; } = "Pythonの実行に失敗しました";
-
-        // Pythonの実行が可能です
-        public virtual string PythonRunIsPossible { get; } = "Pythonの実行が可能です";
-
-        // OpenAIの実行に失敗しました
-        public virtual string FailedToRunOpenAI { get; } = "OpenAIの実行に失敗しました";
-
-        // OpenAIの実行が可能です。
-        public virtual string OpenAIRunIsPossible { get; } = "OpenAIの実行が可能です。";
-
-        // LangChainの実行に失敗しました
-        public virtual string FailedToRunLangChain { get; } = "LangChainの実行に失敗しました";
-
-        // LangChainの実行が可能です。
-        public virtual string LangChainRunIsPossible { get; } = "LangChainの実行が可能です。";
         // 実行しますか？
         public virtual string ConfirmRun { get; } = "実行しますか？";
 
@@ -1412,52 +939,6 @@ namespace QAChat.Resource {
         // 統計
         public virtual string Statistics { get; } = "統計";
 
-        // --- AutoProcessRule.cs ---
-        // RuleName + "は無効です"
-        public virtual string RuleNameIsInvalid(string RuleName) {
-            return RuleName + "は無効です";
-        }
-        // 条件にマッチしませんでした
-        public virtual string NoMatch { get; } = "条件にマッチしませんでした";
-
-        // アクションが設定されていません
-        public virtual string NoActionSet { get; } = "アクションが設定されていません";
-
-        // 条件
-        public virtual string Condition { get; } = "条件";
-
-        // アクション
-        public virtual string Action { get; } = "アクション";
-
-        // アクション:なし
-        public virtual string ActionNone { get; } = "アクション:なし";
-
-        // フォルダ:なし
-        public virtual string FolderNone { get; } = "フォルダ:なし";
-
-        // 無限ループを検出しました
-        public virtual string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
-
-        // "Descriptionが" + condition.Keyword + "を含む
-        public virtual string DescriptionContains(string Keyword) {
-            return "Descriptionが" + Keyword + "を含む";
-        }
-        // "Contentが" + condition.Keyword + "を含む 
-        public virtual string ContentContains(string Keyword) {
-            return "Contentが" + Keyword + "を含む";
-        }
-        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
-        public virtual string SourceApplicationNameContains(string Keyword) {
-            return "SourceApplicationNameが" + Keyword + "を含む \n";
-        }
-        // "SourceApplicationTitleが" + condition.Keyword + "を含む
-        public virtual string SourceApplicationTitleContains(string Keyword) {
-            return "SourceApplicationTitleが" + Keyword + "を含む";
-        }
-        // "SourceApplicationPathが" + condition.Keyword + "を含む
-        public virtual string SourceApplicationPathContains(string Keyword) {
-            return "SourceApplicationPathが" + Keyword + "を含む";
-        }
         // --- ClipboardAppVectorDBItem
 
         // --- ClipboardFolder.cs ---
@@ -1470,11 +951,12 @@ namespace QAChat.Resource {
         // 自動処理でアイテムが削除または移動されました
         public virtual string ItemsDeletedOrMovedByAutoProcessing { get; } = "自動処理でアイテムが削除または移動されました";
 
-        // "アイテムを追加しました"
-        public virtual string AddedItems { get; } = "アイテムを追加しました";
-
+        
         // 自動処理を適用します
         public virtual string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理を適用しました
+        public virtual string AutoProcessingApplied { get; } = "自動処理を適用しました";
 
         // 自動処理でアイテムが削除されました
         public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
@@ -1501,77 +983,9 @@ namespace QAChat.Resource {
         // フォルダを取得できません
         public virtual string CannotGetFolder { get; } = "フォルダを取得できません";
 
-        // OS上のファイルに保存します
-        public virtual string SaveToFileOnOS { get; } = "OS上のファイルに保存します";
-
-        // Gitコミットしました
-        public virtual string CommittedToGit { get; } = "Gitコミットしました";
-
-        // リポジトリが見つかりませんでした
-        public virtual string RepositoryNotFound { get; } = "リポジトリが見つかりませんでした";
-
-        // コミットが空です
-        public virtual string CommitIsEmpty { get; } = "コミットが空です";
-
-        // OS上のファイルに保存しました
-        public virtual string SavedToFileOnOS { get; } = "OS上のファイルに保存しました";
-
-
         // サマリー
         public virtual string Summary { get; } = "サマリー";
 
-        
-
-        // "OS上のファイルを削除します"
-        public virtual string DeleteFileOnOS { get; } = "OS上のファイルを削除します";
-        // OS上のファイルを削除しました
-        public virtual string DeletedFileOnOS { get; } = "OS上のファイルを削除しました";
-
-
-
-        // --- SystemAutoProcessItem.cs ---
-        // 無視
-        public virtual string Ignore { get; } = "無視";
-        // "何もしません"
-        public virtual string DoNothing { get; } = "何もしません";
-
-        // フォルダにコピー
-        public virtual string CopyToFolder { get; } = "フォルダにコピー";
-        // クリップボードの内容を指定されたフォルダにコピーします
-        public virtual string CopyClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダにコピーします";
-
-        // フォルダに移動"
-        public virtual string MoveToFolder { get; } = "フォルダに移動";
-        // "クリップボードの内容を指定されたフォルダに移動します"
-        public virtual string MoveClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダに移動します";
-
-        // "クリップボードのテキストを抽出します"
-        public virtual string ExtractClipboardText { get; } = "クリップボードのテキストを抽出します";
-
-        // "データマスキング",
-        public virtual string DataMasking { get; } = "データマスキング";
-        // "クリップボードのテキストをマスキングします"
-        public virtual string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
-
-        //  "フォルダ内のアイテムをマージ", 
-        public virtual string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
-
-        // "フォルダ内のアイテムをマージします"
-        public virtual string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
-
-        // "同じSourceApplicationTitleを持つアイテムをマージ",
-        public virtual string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
-        // "同じSourceApplicationTitleを持つアイテムをマージします"
-        public virtual string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
-
-        // フォルダが選択されていません
-        public virtual string NoFolderSelected { get; } = "フォルダが選択されていません";
-
-        // フォルダにコピーします
-        public virtual string CopyToFolderDescription { get; } = "フォルダにコピーします";
-
-        // ディレクトリは新規ファイルとして開けません
-        public virtual string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
 
         // --- TextSelector.cs ---
         // ファイルを実行できませんでした
@@ -1580,7 +994,7 @@ namespace QAChat.Resource {
         // テキストファイルとして開きます。
         public virtual string OpenAsTextFile { get; } = "テキストファイルとして開きます。";
 
-        // --- EditChatItemWindow ---
+        // --- EditChatItem ---
         // チャットアイテム
         public virtual string ChatItem { get; } = "チャットアイテム";
 
@@ -1644,7 +1058,10 @@ namespace QAChat.Resource {
         // タブ削除
         public virtual string DeleteTab { get; } = "タブ削除";
 
-        // 全チャット内容をエクスポート
-        public virtual string ExportAllChatContents { get; } = "全チャット内容をエクスポート";
+        // デバッグ用のコマンド生成
+        public virtual string GenerateDebugCommand { get; } = "デバッグ用のコマンド生成";
+
+        // VectorDBSettings
+        public virtual string VectorDBSettings { get; } = "ベクトルDB設定";
     }
 }

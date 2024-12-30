@@ -78,12 +78,6 @@ namespace PythonAILib.Resource {
         // カスタムPythonスクリプトの、templateファイル
         public virtual string TemplateScript { get; } = "python/script_template.py";
 
-        // OpenAI用のPythonスクリプト
-        public virtual string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
-
-        // その他用のPythonスクリプト
-        public virtual string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
-
         // テンプレートファイルが見つかりません
         public virtual string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";
 
@@ -190,6 +184,9 @@ namespace PythonAILib.Resource {
         // UpdateVectorDBIndex実行
         public virtual string UpdateVectorDBIndexExecute { get; } = "UpdateVectorDBIndex実行";
 
+        // ベクトルDBのコレクション削除を実行
+        public virtual string DeleteVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション削除を実行";
+
         // モードが不正です
         public virtual string InvalidMode { get; } = "モードが不正です";
 
@@ -203,6 +200,9 @@ namespace PythonAILib.Resource {
 
         // VectorSearch実行
         public virtual string VectorSearchExecute { get; } = "VectorSearch実行";
+
+        // ベクトルDB
+        public virtual string VectorDBItems { get; } = "ベクトルDBアイテム";
 
         // ベクトル検索リクエスト
         public virtual string VectorSearchRequest { get; } = "ベクトル検索リクエスト";
@@ -224,6 +224,9 @@ namespace PythonAILib.Resource {
 
         // 更新日
         public virtual string UpdateDate { get; } = "更新日";
+
+        // ベクトル化日時
+        public virtual string VectorizedDate { get; } = "ベクトル化日時";
         // タイトル
         public virtual string Title { get; } = "タイトル";
 
@@ -231,6 +234,12 @@ namespace PythonAILib.Resource {
         public virtual string SourceTitle { get; } = "ソースタイトル";
         // ピン留め
         public virtual string Pin { get; } = "ピン留め";
+
+        // 文章の信頼度
+        public virtual string DocumentReliability { get; } = "文章の信頼度";
+        
+        // 文章カテゴリ概要
+        public virtual string DocumentCategorySummary { get; } = "文章カテゴリ概要";
 
         // 種別
         public virtual string Type { get; } = "種別";
@@ -354,6 +363,139 @@ namespace PythonAILib.Resource {
 
         // "プロンプトテンプレート[promptName]を実行しました."
         public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+
+        // "アイテムを追加しました"
+        public virtual string AddedItems { get; } = "アイテムを追加しました";
+
+        // --- SystemAutoProcessItem.cs ---
+        // 無視
+        public virtual string Ignore { get; } = "無視";
+        // "何もしません"
+        public virtual string DoNothing { get; } = "何もしません";
+
+        // フォルダにコピー
+        public virtual string CopyToFolder { get; } = "フォルダにコピー";
+        // クリップボードの内容を指定されたフォルダにコピーします
+        public virtual string CopyClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダにコピーします";
+        // テキストを抽出
+        public virtual string ExtractText { get; } = "テキストを抽出";
+
+        // フォルダに移動"
+        public virtual string MoveToFolder { get; } = "フォルダに移動";
+        // "クリップボードの内容を指定されたフォルダに移動します"
+        public virtual string MoveClipboardContentToSpecifiedFolder { get; } = "クリップボードの内容を指定されたフォルダに移動します";
+
+        // "クリップボードのテキストを抽出します"
+        public virtual string ExtractClipboardText { get; } = "クリップボードのテキストを抽出します";
+
+        // "データマスキング",
+        public virtual string DataMasking { get; } = "データマスキング";
+        // "クリップボードのテキストをマスキングします"
+        public virtual string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
+
+        //  "フォルダ内のアイテムをマージ", 
+        public virtual string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
+
+        // "フォルダ内のアイテムをマージします"
+        public virtual string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
+
+        // "同じSourceApplicationTitleを持つアイテムをマージ",
+        public virtual string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
+        // "同じSourceApplicationTitleを持つアイテムをマージします"
+        public virtual string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
+
+        // フォルダが選択されていません
+        public virtual string NoFolderSelected { get; } = "フォルダが選択されていません";
+
+        // フォルダにコピーします
+        public virtual string CopyToFolderDescription { get; } = "フォルダにコピーします";
+
+        // ディレクトリは新規ファイルとして開けません
+        public virtual string CannotOpenDirectoryAsNewFile { get; } = "ディレクトリは新規ファイルとして開けません";
+
+        // --- AutoProcessRule.cs ---
+        // RuleName + "は無効です"
+        public virtual string RuleNameIsInvalid(string RuleName) {
+            return RuleName + "は無効です";
+        }
+        // 条件にマッチしませんでした
+        public virtual string NoMatch { get; } = "条件にマッチしませんでした";
+
+        // アクションが設定されていません
+        public virtual string NoActionSet { get; } = "アクションが設定されていません";
+
+        // 条件
+        public virtual string Condition { get; } = "条件";
+
+        // アクション
+        public virtual string Action { get; } = "アクション";
+
+        // アクション:なし
+        public virtual string ActionNone { get; } = "アクション:なし";
+
+        // フォルダ:なし
+        public virtual string FolderNone { get; } = "フォルダ:なし";
+
+        // 無限ループを検出しました
+        public virtual string DetectedAnInfiniteLoop { get; } = "無限ループを検出しました";
+
+        // "Descriptionが" + condition.Keyword + "を含む
+        public virtual string DescriptionContains(string Keyword) {
+            return "Descriptionが" + Keyword + "を含む";
+        }
+        // "Contentが" + condition.Keyword + "を含む 
+        public virtual string ContentContains(string Keyword) {
+            return "Contentが" + Keyword + "を含む";
+        }
+        // "SourceApplicationNameが" + condition.Keyword + "を含む \n";
+        public virtual string SourceApplicationNameContains(string Keyword) {
+            return "SourceApplicationNameが" + Keyword + "を含む \n";
+        }
+        // "SourceApplicationTitleが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationTitleContains(string Keyword) {
+            return "SourceApplicationTitleが" + Keyword + "を含む";
+        }
+        // "SourceApplicationPathが" + condition.Keyword + "を含む
+        public virtual string SourceApplicationPathContains(string Keyword) {
+            return "SourceApplicationPathが" + Keyword + "を含む";
+        }
+        // 自動イメージテキスト抽出処理を実行します
+        public virtual string AutoExtractImageText { get; } = "自動イメージテキスト抽出処理を実行します";
+
+        // File
+        public virtual string File { get; } = "ファイル";
+        // Folder
+        public virtual string Folder { get; } = "フォルダ";
+
+
+        // 自動背景情報追加処理を実行します
+        public virtual string AutoSetBackgroundInfo { get; } = "自動背景情報追加処理を実行します";
+        // 背景情報追加処理が失敗しました
+        public virtual string AddBackgroundInfoFailed { get; } = "背景情報追加処理が失敗しました";
+
+        // 自動サマリー作成処理を実行します
+        public virtual string AutoCreateSummary { get; } = "自動サマリー作成処理を実行します";
+        // サマリー作成処理が失敗しました
+
+        // 自動文書信頼度チェック処理を実行します
+        public virtual string AutoCheckDocumentReliability { get; } = "自動文書信頼度チェック処理を実行します";
+        // 文書信頼度チェック処理が失敗しました
+        public virtual string CheckDocumentReliabilityFailed { get; } = "文書信頼度チェック処理が失敗しました";
+
+        public virtual string CreateSummaryFailed { get; } = "サマリー作成処理が失敗しました";
+
+        // 自動課題リスト作成処理を実行します
+        public virtual string AutoCreateTaskList { get; } = "自動課題リスト作成処理を実行します";
+        // 課題リスト作成処理が失敗しました
+        public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
+
+
+        // 自動処理を適用します
+        public virtual string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理でアイテムが削除されました
+        public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
+
         #region 統計、ログ関連
 
         // 日次トークン数

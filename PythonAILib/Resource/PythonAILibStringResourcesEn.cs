@@ -45,12 +45,6 @@ namespace PythonAILib.Resource {
         // Custom Python script template file
         public override string TemplateScript { get; } = "python/script_template.py";
 
-        // Python script for OpenAI
-        public override string WpfAppCommonOpenAIScript { get; } = "python/ai_app_wrapper.py";
-
-        // Python script for miscellaneous
-        public override string WpfAppCommonMiscScript { get; } = "python/dev/misc_app.py";
-
         // Template file not found
         public override string TemplateScriptNotFound { get; } = "Template file not found";
 
@@ -141,10 +135,29 @@ namespace PythonAILib.Resource {
         // Property information
         public override string PropertyInfo { get; } = "Property information";
 
+        public override string VectorDBItems { get; } = "Vector DB Items";
+
+        // ベクトル検索リクエスト
+        public override string VectorSearchRequest { get; } = "Vector Search Request";
+
+        // Excelへのエクスポートを実行します
+        public override string ExportToExcelExecute { get; } = "Export to Excel Execute";
+        // Excelへのエクスポートが失敗しました
+        public override string ExportToExcelFailed { get; } = "Export to Excel Failed";
+        // Excelへのエクスポートが成功しました
+        public override string ExportToExcelSuccess { get; } = "Export to Excel Success";
+
+        // ファイルパス
+        public override string FilePath { get; } = "ファイルパス";
+        // データ
+        public override string Data { get; } = "データ";
+
+
+
         // Text
         public override string Text { get; } = "Text";
 
-        // Response
+        // Output
         public override string Response { get; } = "Response";
 
         // Execute OpenAI
@@ -152,13 +165,31 @@ namespace PythonAILib.Resource {
 
         // Chat history
         public override string ChatHistory { get; } = "Chat history";
+
+        // UpdateVectorDBIndex実行
+        public override string UpdateVectorDBIndexExecute { get; } = "Execute UpdateVectorDBIndex";
+
+        // ベクトルDBのコレクション削除を実行
+        public override string DeleteVectorDBCollectionExecute { get; } = "Execute DeleteVectorDBCollection";
+
+
         public override string TextExtracted { get; } = "Extracted Text";
 
         public override string UpdateDate { get; } = "Update Date";
+
+        // VectorizedDate
+        public override string VectorizedDate { get; } = "Vectorized Date";
+
         public override string Title { get; } = "Title";
 
         public override string SourceTitle { get; } = "Source Title";
         public override string Pin { get; } = "Pin";
+
+        // Document reliability
+        public override string DocumentReliability { get; } = "Document reliability";
+
+        // Document category summary
+        public override string DocumentCategorySummary { get; } = "Document category summary";
 
         public override string Type { get; } = "Type";
 
@@ -233,6 +264,83 @@ namespace PythonAILib.Resource {
 
         // "The prompt template [promptName] has been executed."
         public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
+
+        public override string AddedItems { get; } = "Added Items";
+
+        // Auto processing rule
+        public override string ExtractText { get; } = "Extract text";
+        public override string Ignore { get; } = "Ignore";
+        public override string DoNothing { get; } = "Do Nothing";
+        public override string CopyToFolder { get; } = "Copy to Folder";
+        public override string CopyClipboardContentToSpecifiedFolder { get; } = "Copy Clipboard Content to Specified Folder";
+        public override string MoveToFolder { get; } = "Move to Folder";
+        public override string MoveClipboardContentToSpecifiedFolder { get; } = "Move Clipboard Content to Specified Folder";
+        public override string ExtractClipboardText { get; } = "Extract Clipboard Text";
+        public override string DataMasking { get; } = "Data Masking";
+        public override string MaskClipboardText { get; } = "Mask Clipboard Text";
+        public override string MergeItemsInFolder { get; } = "Merge Items in Folder";
+        public override string MergeItemsInFolderDescription { get; } = "Merge Items in Folder Description";
+        public override string MergeItemsWithTheSameSourceApplicationTitle { get; } = "Merge Items with the Same Source Application Title";
+        public override string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "Merge Items with the Same Source Application Title Description";
+        public override string NoFolderSelected { get; } = "No Folder Selected";
+        public override string CopyToFolderDescription { get; } = "Copy to Folder Description";
+        public override string CannotOpenDirectoryAsNewFile { get; } = "Cannot Open Directory as New File";
+
+        // Auto Process Rule
+        public override string NoMatch { get; } = "No Match";
+        public override string NoActionSet { get; } = "No Action Set";
+        public override string Condition { get; } = "Condition";
+        public override string Action { get; } = "Action";
+        public override string ActionNone { get; } = "Action None";
+        public override string FolderNone { get; } = "Folder None";
+        public override string DetectedAnInfiniteLoop { get; } = "Detected an Infinite Loop";
+        public override string RuleNameIsInvalid(string RuleName) {
+            return RuleName + " is Invalid";
+        }
+        public override string DescriptionContains(string Keyword) {
+            return "Description Contains " + Keyword;
+        }
+        public override string ContentContains(string Keyword) {
+            return "Content Contains " + Keyword;
+        }
+        public override string SourceApplicationNameContains(string Keyword) {
+            return "Source Application Name Contains " + Keyword;
+        }
+        public override string SourceApplicationTitleContains(string Keyword) {
+            return "Source Application Title Contains " + Keyword;
+        }
+        public override string SourceApplicationPathContains(string Keyword) {
+            return "Source Application Path Contains " + Keyword;
+        }
+
+        public override string AutoExtractImageText { get; } = "Executing auto image text extraction process";
+
+        // ファイル
+        public override string File { get; } = "File";
+
+        // フォルダ
+        public override string Folder { get; } = "Folder";
+
+        public override string AutoSetBackgroundInfo { get; } = "Executing auto background information addition process";
+        public override string AddBackgroundInfoFailed { get; } = "Failed to add background information";
+
+        public override string AutoCreateSummary { get; } = "Executing auto summary creation process";
+
+        // Execute automatic document reliability check process
+        public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
+        // Document reliability check process failed
+        public override string CheckDocumentReliabilityFailed { get; } = "Document reliability check process failed";
+
+        public override string CreateSummaryFailed { get; } = "Failed to create summary";
+
+        // 自動課題リスト作成処理を実行します
+        public override string AutoCreateTaskList { get; } = "Execute auto Task list creation process";
+        // 課題リスト作成処理が失敗しました
+        public override string CreateTaskListFailed { get; } = "Failed to create Task list";
+
+        public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";
+
+        public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
 
         #region Statistics and Logging
 

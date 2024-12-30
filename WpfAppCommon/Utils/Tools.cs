@@ -1,6 +1,6 @@
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using NLog;
 using WpfAppCommon.Model;
 
 namespace WpfAppCommon.Utils {
@@ -20,11 +20,7 @@ namespace WpfAppCommon.Utils {
 
         public static StatusText StatusText { get; set; } = new();
 
-        // Listの要素を要素 > 要素 ... の形式にして返す.最後の要素の後には>はつかない
-        // Listの要素がNullの場合はNull > と返す
-        public static string ListToString(List<string> list) {
-            return list == null ? "Null" : string.Join(" > ", list);
-        }
+
 
         public static int[] GetInAngleBracketPosition(string text) {
             // int[0] = start、int[1] = end
@@ -55,6 +51,21 @@ namespace WpfAppCommon.Utils {
             // それ以外はNullを返す。
             return null;
         }
+        //------------
+        // 親フォルダのパスと子フォルダ名を連結する。ファイルシステム用
+        public static string ConcatenateFileSystemPath(string parentPath, string childPath) {
+            if (string.IsNullOrEmpty(parentPath))
+                return childPath;
+            if (string.IsNullOrEmpty(childPath))
+                return parentPath;
+            return Path.Combine(parentPath, childPath);
+        }
+        // ------------
+        // Visibilityを切り替える TrueならVisible、FalseならCollapsed
+        public static Visibility BoolToVisibility(bool value) {
+            return value ? Visibility.Visible : Visibility.Collapsed;
+        }
+
 
         [GeneratedRegex(@"<[^>]+>")]
         private static partial Regex MyRegex();

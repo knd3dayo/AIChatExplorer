@@ -2,7 +2,7 @@ using PythonAILib.Model.Script;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using QAChat.View.PythonScriptView;
+using QAChat.View.PythonScript;
 using QAChat.Resource;
 
 namespace QAChat.ViewModel.Script {

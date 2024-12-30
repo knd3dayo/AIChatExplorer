@@ -1,8 +1,10 @@
 using System.Windows;
-using ClipboardApp.Model;
 using QAChat.Resource;
+using ClipboardApp.View.Main;
+using ClipboardApp.Settings;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     /// <summary>
     /// StartupWindow.xaml の相互作用ロジック
     /// </summary>

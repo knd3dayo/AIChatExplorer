@@ -18,3 +18,10 @@ chardet
 SQLAlchemy
 langchain_postgres
 psycopg-binary
+autogenstudio==0.1.5
+autogen-agentchat~=0.2
+wikipedia
+flaml[automl]
+selenium
+webdriver-manager
+duckduckgo-search

@@ -1,10 +1,8 @@
 using System.Windows.Input;
 
-namespace WpfAppCommon.Utils
-{
+namespace WpfAppCommon.Utils {
     // Create a class that implements ICommand and accepts a delegate.
-    public class SimpleDelegateCommand<T> : ICommand
-    {
+    public class SimpleDelegateCommand<T> : ICommand {
         // Specify the keys and mouse actions that invoke the command. 
         public Key GestureKey { get; set; }
         public ModifierKeys GestureModifier { get; set; }
@@ -12,8 +10,7 @@ namespace WpfAppCommon.Utils
 
         readonly Action<T?> _executeDelegate;
 
-        public SimpleDelegateCommand(Action<T> executeDelegate)
-        {
+        public SimpleDelegateCommand(Action<T> executeDelegate) {
             _executeDelegate = executeDelegate!;
         }
 
@@ -21,10 +18,9 @@ namespace WpfAppCommon.Utils
             Execute(null);
         }
 
-        public void Execute(object? parameter)
-        {
+        public void Execute(object? parameter) {
             // System.Windows.MessageBox.Show("Execute");
-                _executeDelegate((T?)parameter);
+            _executeDelegate((T?)parameter);
         }
 
         public bool CanExecute(object? parameter) { return true; }

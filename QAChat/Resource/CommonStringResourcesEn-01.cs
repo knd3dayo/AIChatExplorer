@@ -107,6 +107,10 @@ namespace QAChat.Resource {
 
         // File / Image
         public override string FileOrImage { get; } = "File/Image";
+
+        // チャット内容
+        public override string ChatContent { get; } = "Chat Content";
+
         // Create
         public override string Create { get; } = "Create";
         // Create Item
@@ -134,10 +138,15 @@ namespace QAChat.Resource {
         public override string TasksList { get; } = "Task List";
 
         // "Generate the list of Tasks"
-        public virtual string GenerateTTasks { get; } = "Generate the list of Tasks";
+        public override string GenerateTasks { get; } = "Generate the list of Tasks";
 
         // "The list of Tasks has been generated"
-        public virtual string GeneratedTTasks { get; } = "The list of Tasks has been generated";
+        public override string GeneratedTasks { get; } = "The list of Tasks has been generated";
+
+        // Checks the document reliability
+        public override string CheckDocumentReliability { get; } = "Checks the document reliability";
+        // "Checked the document reliability"
+        public override string CheckedDocumentReliability { get; } = "Checked the document reliability";
 
         #endregion
 
@@ -175,6 +184,15 @@ namespace QAChat.Resource {
         public override string Cancel { get; } = "Cancel";
         // Close
         public override string Close { get; } = "Close";
+
+        // ショートカット登録
+        public override string CreateShortCut { get; } = "Create ShortCut";
+
+        // Load
+        public override string Load { get; } = "Load";
+
+        // 同期
+        public override string Sync { get; } = "Sync";
 
         // Export/Import
         public override string ExportImport { get; } = "Export/Import";
@@ -214,11 +232,6 @@ namespace QAChat.Resource {
         public override string EditVectorDB { get; } = "Edit Vector DB";
 
         // --- ToolTip ---
-        // Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.
-        public override string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.";
-
-        // Start: Start Notification Watch. Stop: Stop Notification Watch.
-        public override string ToggleNotificationWatchToolTop { get; } = "Start: Start Notification Watch. Stop: Stop Notification Watch.";
 
         // Create items in the selected folder.
         public override string CreateItemToolTip { get; } = "Create items in the selected folder.";
@@ -345,6 +358,12 @@ namespace QAChat.Resource {
         public override string AddBackgroundInfoFailed { get; } = "Failed to add background information";
 
         public override string AutoCreateSummary { get; } = "Executing auto summary creation process";
+
+        // Execute automatic document reliability check process
+        public override string AutoCheckDocumentReliability { get; } = "Executing auto document reliability check process";
+        // Document reliability check process failed
+        public override string CheckDocumentReliabilityFailed { get; } = "Document reliability check process failed";
+
         public override string CreateSummaryFailed { get; } = "Failed to create summary";
 
         // 自動課題リスト作成処理を実行します
@@ -352,8 +371,6 @@ namespace QAChat.Resource {
         // 課題リスト作成処理が失敗しました
         public override string CreateTaskListFailed { get; } = "Failed to create Task list";
 
-
-        public override string AutoExtractImageText { get; } = "Executing auto image text extraction process";
         public override string ExtractImageTextFailed { get; } = "Failed to extract image text";
 
         public override string AutoSetTag { get; } = "Executing auto tag setting process";
@@ -408,6 +425,9 @@ namespace QAChat.Resource {
 
         // -- ClipboardApp.MainWindowDataGrid1 --
         public override string UpdateDate { get; } = "Update Date";
+        // VectorizedDate
+        public override string VectorizedDate { get; } = "Vectorized Date";
+
         public override string Title { get; } = "Title";
 
         public override string SourceTitle { get; } = "Source Title";
@@ -519,6 +539,11 @@ namespace QAChat.Resource {
 
         // Generate Task list from content
         public override string GenerateTaskListFromContent { get; } = "Generate Task list from content";
+
+        // Checks the document reliability of the content.
+        public override string CheckDocumentReliabilityOfContent { get; } = "Checks the document reliability of the content.";
+
+
         public override string SynchronizeClipboardItemsWithFoldersOnTheOS { get; } = "Synchronize clipboard items with folders on the OS";
 
         public override string SynchronizeClipboardItemsWithFoldersOnTheOSDescription { get; } = "Synchronize clipboard items with folders on the OS";
@@ -654,8 +679,7 @@ namespace QAChat.Resource {
         public override string ClickHereToAddImageFile { get; } = "Click here to add image file";
         public override string Chat { get; } = "Chat";
         public override string PromptTemplate { get; } = "Prompt template";
-        public override string Preview { get; } = "Preview";
-        public override string PreviewJSON { get; } = "Preview (JSON)";
+        public override string RequestParameterJson { get; } = "Request Parameters (JSON)";
         public override string Copy { get; } = "Copy";
 
         // --- ClipboardFolderViewModel ---
@@ -855,18 +879,13 @@ namespace QAChat.Resource {
 
         public override string Statistics { get; } = "Statistics";
 
-        public override string NoMatch { get; } = "No Match";
-        public override string NoActionSet { get; } = "No Action Set";
-        public override string Condition { get; } = "Condition";
-        public override string Action { get; } = "Action";
-        public override string ActionNone { get; } = "Action None";
-        public override string FolderNone { get; } = "Folder None";
-        public override string DetectedAnInfiniteLoop { get; } = "Detected an Infinite Loop";
         public override string Clipboard { get; } = "Clipboard";
         public override string ChatHistory { get; } = "Chat History";
         public override string ItemsDeletedOrMovedByAutoProcessing { get; } = "Items Deleted or Moved by Auto Processing";
-        public override string AddedItems { get; } = "Added Items";
         public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";
+
+        // 自動処理を適用しました
+        public override string AutoProcessingApplied { get; } = "Auto Processing Applied";
         public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
         public override string FailedToParseJSONString { get; } = "Failed to Parse JSON String";
         public override string CannotMergeToNonTextItems { get; } = "Cannot Merge to Non-Text Items";
@@ -875,52 +894,10 @@ namespace QAChat.Resource {
         public override string SourceAppName { get; } = "Source App Name";
         public override string Pinned { get; } = "Pinned";
         public override string CannotGetFolder { get; } = "Cannot Get Folder";
-        public override string SaveToFileOnOS { get; } = "Save to File on OS";
-        public override string CommittedToGit { get; } = "Committed to Git";
-        public override string RepositoryNotFound { get; } = "Repository Not Found";
-        public override string CommitIsEmpty { get; } = "Commit is Empty";
-        public override string SavedToFileOnOS { get; } = "Saved to File on OS";
-        public override string Summary { get; } = "Summary";
-        public override string DeleteFileOnOS { get; } = "Delete File on OS";
-        public override string DeletedFileOnOS { get; } = "Deleted File on OS";
-        public override string Ignore { get; } = "Ignore";
-        public override string DoNothing { get; } = "Do Nothing";
-        public override string CopyToFolder { get; } = "Copy to Folder";
-        public override string CopyClipboardContentToSpecifiedFolder { get; } = "Copy Clipboard Content to Specified Folder";
-        public override string MoveToFolder { get; } = "Move to Folder";
-        public override string MoveClipboardContentToSpecifiedFolder { get; } = "Move Clipboard Content to Specified Folder";
-        public override string ExtractClipboardText { get; } = "Extract Clipboard Text";
-        public override string DataMasking { get; } = "Data Masking";
-        public override string MaskClipboardText { get; } = "Mask Clipboard Text";
-        public override string MergeItemsInFolder { get; } = "Merge Items in Folder";
-        public override string MergeItemsInFolderDescription { get; } = "Merge Items in Folder Description";
-        public override string MergeItemsWithTheSameSourceApplicationTitle { get; } = "Merge Items with the Same Source Application Title";
-        public override string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "Merge Items with the Same Source Application Title Description";
-        public override string NoFolderSelected { get; } = "No Folder Selected";
-        public override string CopyToFolderDescription { get; } = "Copy to Folder Description";
-        public override string CannotOpenDirectoryAsNewFile { get; } = "Cannot Open Directory as New File";
         public override string FailedToRunFile { get; } = "Failed to Run File";
         public override string OpenAsTextFile { get; } = "Open as Text File";
         public override string ChatItem { get; } = "Chat Item";
         public override string ExportTheFollowingItems { get; } = "Export the Following Items";
-        public override string RuleNameIsInvalid(string RuleName) {
-            return RuleName + " is Invalid";
-        }
-        public override string DescriptionContains(string Keyword) {
-            return "Description Contains " + Keyword;
-        }
-        public override string ContentContains(string Keyword) {
-            return "Content Contains " + Keyword;
-        }
-        public override string SourceApplicationNameContains(string Keyword) {
-            return "Source Application Name Contains " + Keyword;
-        }
-        public override string SourceApplicationTitleContains(string Keyword) {
-            return "Source Application Title Contains " + Keyword;
-        }
-        public override string SourceApplicationPathContains(string Keyword) {
-            return "Source Application Path Contains " + Keyword;
-        }
         public override string WorkingDirectory { get; } = "Working Directory";
         public override string RepositoryURL { get; } = "Repository URL";
         public override string LastIndexedCommit { get; } = "Last Indexed Commit";
@@ -937,18 +914,24 @@ namespace QAChat.Resource {
         public override string ExampleVectorDBLocationChroma { get; } = "Example：C:\\Users\\Username\\vector.db";
         public override string ExampleVectorDBLocationPostgres { get; } = "Example：postgresql+psycopg://langchain:langchain@localhost:5432/langchain";
         public override string ClearChatContents { get; } = "Clear Chat Contents";
-        // Clear Content
+        // Clear SourcePath
         public override string ClearContent { get; } = "Clear Content";
 
-        // Reload Content
+        // Reload SourcePath
         public override string ReloadContent { get; } = "Reload Content";
 
         public override string ExtractedText { get; } = "Extracted Text";
 
         // タブ削除
         public override string DeleteTab { get; } = "Delete Tab";
-        // Export all chat contents
-        public override string ExportAllChatContents { get; } = "Export All Chat Contents";
+
+        // デバッグ用のコマンド生成
+        public override string GenerateDebugCommand { get; } = "Generate Debug Command";
+
+        // VectorDBSettings
+        public override string VectorDBSettings { get; } = "Vector DB Settings";
+
+
 
     }
 }

@@ -1,14 +1,12 @@
 using System.Text;
 using System.Windows;
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel;
-using PythonAILib.Model;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using WpfAppCommon.Utils;
 using QAChat.Resource;
+using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Settings {
     /// <summary>
@@ -230,20 +228,6 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // IncludeBackgroundInfoInEmbedding
-        public bool IncludeBackgroundInfoInEmbedding {
-            get {
-                return ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding;
-            }
-            set {
-                ClipboardAppConfig.Instance.IncludeBackgroundInfoInEmbedding = value;
-                OnPropertyChanged(nameof(IncludeBackgroundInfoInEmbedding));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
         // -------------------------------------
         // その他の設定
         // -------------------------------------
@@ -260,46 +244,7 @@ namespace ClipboardApp.Settings {
                 isPropertyChanged = true;
             }
         }
-        // クリップボードアイテムとOS上のフォルダを同期するかどうか
-        public bool SyncClipboardItemAndOSFolder {
-            get {
-                return ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder;
-            }
-            set {
-                ClipboardAppConfig.Instance.SyncClipboardItemAndOSFolder = value;
-                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolder));
-                OnPropertyChanged(nameof(SyncClipboardItemAndOSFolderVisibility));
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // ファイル更新時に自動的にコミットするかどうか
-        public bool AutoCommit {
-            get {
-                return ClipboardAppConfig.Instance.AutoCommit;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoCommit = value;
-                OnPropertyChanged(nameof(AutoCommit));
 
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-
-        // SyncFolderName
-        public string SyncFolderName {
-            get {
-                return ClipboardAppConfig.Instance.SyncFolderName;
-            }
-            set {
-                ClipboardAppConfig.Instance.SyncFolderName = value;
-                OnPropertyChanged(nameof(SyncFolderName));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoDescriptionNone
         public bool AutoDescriptionNone {
             get {
@@ -398,14 +343,30 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // SyncClipboardItemAndOSFolderが有効かどうか
-        public Visibility SyncClipboardItemAndOSFolderVisibility {
+        // ProxyURL
+        public string ProxyURL {
             get {
-                if (SyncClipboardItemAndOSFolder == true) {
-                    return Visibility.Visible;
-                } else {
-                    return Visibility.Collapsed;
-                }
+                return ClipboardAppConfig.Instance.ProxyURL;
+            }
+            set {
+                ClipboardAppConfig.Instance.ProxyURL = value;
+                OnPropertyChanged(nameof(ProxyURL));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+        // NoProxyList
+        public string NoProxyList {
+            get {
+                return ClipboardAppConfig.Instance.NoProxyList;
+            }
+            set {
+                ClipboardAppConfig.Instance.NoProxyList = value;
+                OnPropertyChanged(nameof(NoProxyList));
+
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
             }
         }
 
@@ -496,7 +457,9 @@ namespace ClipboardApp.Settings {
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
+                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
+                );
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -515,18 +478,24 @@ namespace ClipboardApp.Settings {
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath);
+            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
+                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
+                );
             try {
                 // ChatControllerを作成
-                Chat chatController = new();
-                List<ChatHistoryItem> chatItems = [];
+                ChatRequest chatRequest = new();
+                List<ChatMessage> chatItems = [];
                 // ChatItemを追加
-                ChatHistoryItem chatItem = new(ChatHistoryItem.UserRole, "Hello");
+                ChatMessage chatItem = new(ChatMessage.UserRole, "Hello");
                 chatItems.Add(chatItem);
-                chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
+                chatRequest.ChatHistory = chatItems;
+                chatRequest.ChatMode = OpenAIExecutionModeEnum.Normal;
+                // ChatRequestContextを作成
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                };
 
-                string resultString = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties())?.Response ?? "";
+                string resultString = chatRequest.ExecuteChat(chatRequestContext, (message) => { })?.Output ?? "";
                 if (string.IsNullOrEmpty(resultString)) {
                     testResult.Message = $"[NG]:{StringResources.FailedToRunOpenAI}";
                     testResult.Result = false;
@@ -544,12 +513,17 @@ namespace ClipboardApp.Settings {
         // TestLangChain
         private void TestLangChain() {
             try {
-                Chat chatController = new();
-                List<ChatHistoryItem> chatItems = [new ChatHistoryItem(ChatHistoryItem.UserRole, "Hello")];
-                chatController.ChatHistory = chatItems;
-                chatController.ChatMode = OpenAIExecutionModeEnum.LangChain;
-                ChatResult? result = chatController.ExecuteChat(ClipboardAppConfig.Instance.CreateOpenAIProperties());
-                if (string.IsNullOrEmpty(result?.Response)) {
+                ChatRequest chatRequest = new();
+                List<ChatMessage> chatItems = [new ChatMessage(ChatMessage.UserRole, "Hello")];
+                chatRequest.ChatHistory = chatItems;
+                chatRequest.ChatMode = OpenAIExecutionModeEnum.LangChain;
+
+                // ChatRequestContextを作成
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                };
+                ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
+                if (string.IsNullOrEmpty(result?.Output)) {
                     LogWrapper.Error($"[NG]:{StringResources.FailedToRunLangChain}");
                 } else {
                     string Message = $"[OK]:{StringResources.LangChainRunIsPossible}";
@@ -648,24 +622,33 @@ namespace ClipboardApp.Settings {
             set {
                 // 空文字の場合は-1にする
                 if (value == "") {
-                        IgnoreLineCount = -1;
+                    IgnoreLineCount = -1;
                 } else {
                     IgnoreLineCount = int.Parse(value);
                 }
                 OnPropertyChanged(nameof(IgnoreLineCountText));
             }
         }
+        // AutoDocumentReliabilityCheck
+        public bool AutoDocumentReliabilityCheck {
+            get {
+                return ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck;
+            }
+            set {
+                ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck = value;
+                OnPropertyChanged(nameof(AutoDocumentReliabilityCheck));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
 
         #endregion
 
-
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-
             if (Save()) {
                 //追加設定.言語を変更
-                ClipboardFolder.ChangeRootFolderNames(CommonStringResources.Instance);
-
+                FolderManager.ChangeRootFolderNames(CommonStringResources.Instance);
                 LogWrapper.Info(StringResources.SettingsSaved);
                 // アプリケーションの再起動を促すメッセージを表示
                 MessageBox.Show(StringResources.RestartAppToApplyChanges, StringResources.Information, MessageBoxButton.OK);

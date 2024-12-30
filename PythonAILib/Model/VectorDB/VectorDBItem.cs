@@ -2,10 +2,13 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using LiteDB;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
-using QAChat;
+using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.VectorDB {
     /// <summary>
@@ -14,21 +17,52 @@ namespace PythonAILib.Model.VectorDB {
     public class VectorDBItem {
 
         // システム共通のベクトルDBの名前
-        public static string SystemCommonVectorDBName = "SystemCommonVectorDB";
+        public readonly static string SystemCommonVectorDBName = "default";
+        // デフォルトのコレクション名
+        public readonly static string DefaultCollectionName = "ai_app_default_collection";
 
         // システム共通のベクトルDB
-        public static VectorDBItem SystemCommonVectorDB {
-            get {
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                return libManager.DataFactory.GetMainVectorDBItem();
+        private static VectorDBItem GetDefaultVectorDB() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var item = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindOne(item => item.Name == SystemCommonVectorDBName);
+            if (item == null) {
+                string vectorDBPath = libManager.ConfigParams.GetSystemVectorDBPath();
+                string docDBPath = libManager.ConfigParams.GetSystemDocDBPath();
+                item = new VectorDBItem() {
+                    Id = LiteDB.ObjectId.Empty,
+                    Name = VectorDBItem.SystemCommonVectorDBName,
+                    Description = PythonAILibStringResources.Instance.GeneralVectorDBForSearchingPastDocumentsBasedOnUserQuestions,
+                    Type = VectorDBTypeEnum.Chroma,
+                    VectorDBURL = vectorDBPath,
+                    DocStoreURL = $"sqlite:///{docDBPath}",
+                    IsUseMultiVectorRetriever = true,
+                    IsEnabled = true,
+                    IsSystem = true,
+                    CollectionName = DefaultCollectionName
+                };
+                item.Save();
             }
+            // IsSystemフラグ導入前のバージョンへの対応
+            item.IsSystem = true;
+            return item;
         }
+
+        public static string GetCatalogDBURL() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            return libManager.ConfigParams.GetCatalogDBURL();
+        }
+
+        private static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true
+        };
+
 
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
         [JsonPropertyName("VectorDBName")]
-        public string Name { get; set; } = "";
+        public string Name { get; set; } = DefaultCollectionName;
         // 説明
         [JsonPropertyName("VectorDBDescription")]
         public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
@@ -57,17 +91,22 @@ namespace PythonAILib.Model.VectorDB {
             }
         }
 
+        // FolderId
+        [JsonPropertyName("folder_id")]
+        public string FolderId { get; set; } = "";
+
         // コレクション名
         [JsonPropertyName("CollectionName")]
         public string? CollectionName { get; set; } = null;
 
+        // カタログ用のDBURL
+        [JsonPropertyName("CatalogDBURL")]
+        public string CatalogDBURL { get; set; } = GetCatalogDBURL();
+
+
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
         [JsonPropertyName("ChunkSize")]
         public int ChunkSize { get; set; } = 500;
-
-        // マルチベクトルリトリーバを使う場合のドキュメントのチャンクサイズ
-        [JsonPropertyName("MultiVectorDocChunkSize")]
-        public int MultiVectorDocChunkSize { get; set; } = 10000;
 
         // ベクトル検索時の検索結果上限
         [JsonPropertyName("MaxSearchResults")]
@@ -81,26 +120,73 @@ namespace PythonAILib.Model.VectorDB {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
+        [BsonIgnore]
+        public string DisplayText {
+            get {
+                if (string.IsNullOrEmpty(CollectionName)) {
+                    return Name;
+                }
+                if (CollectionName == DefaultCollectionName) {
+                    return Name;
+                }
+                // ContentFolderを取得
+                var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+                ContentFolder? folder = collection.FindById(new ObjectId(CollectionName));
+                if (folder == null) {
+                    return Name;
+                }
+
+                return $"{Name}/{folder.FolderName}";
+            }
+        }
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            VectorDBItem other = (VectorDBItem)obj;
+            return VectorDBURL == other.VectorDBURL;
+        }
+        public override int GetHashCode() {
+            return VectorDBURL.GetHashCode();
+        }
+
+        // ToDictList
+        public Dictionary<string, object> ToDict() {
+            Dictionary<string, object> dict = new() {
+                { "VectorDBName", Name },
+                { "VectorDBDescription", Description },
+                { "VectorDBURL", VectorDBURL },
+                { "IsUseMultiVectorRetriever", IsUseMultiVectorRetriever },
+                { "DocStoreURL", DocStoreURL },
+                { "VectorDBTypeString", VectorDBTypeString },
+                { "CollectionName", CollectionName ?? ""},
+                { "folder_id", FolderId ?? ""},
+                { "ChunkSize", ChunkSize },
+                { "MaxSearchResults", MaxSearchResults },
+                { "IsEnabled", IsEnabled },
+                { "IsSystem", IsSystem },
+                { "CatalogDBURL", CatalogDBURL }
+            };
+            return dict;
+        }
+        // ToDictList
+        public static List<Dictionary<string, object>> ToDictList(IEnumerable<VectorDBItem> items) {
+            return items.Select(item => item.ToDict()).ToList();
+        }
+
         // Json文字列化する
         public static string ToJson(IEnumerable<VectorDBItem> items) {
-            var options = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize(items, options);
+            return System.Text.Json.JsonSerializer.Serialize(items, JsonSerializerOptions);
         }
         // Json文字列化する
         public static string ToJson(VectorDBItem item) {
-            var options = new JsonSerializerOptions {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true
-            };
-            return JsonSerializer.Serialize(item, options);
+            return System.Text.Json.JsonSerializer.Serialize(item, JsonSerializerOptions);
         }
 
         public static IEnumerable<VectorDBItem> GetItems() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            return libManager.DataFactory.GetVectorDBItems();
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            return libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindAll();
         }
         // GetItemById
         public static VectorDBItem? GetItemById(LiteDB.ObjectId id) {
@@ -109,62 +195,70 @@ namespace PythonAILib.Model.VectorDB {
 
         // Save
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.UpsertVectorDBItem(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            collection.Upsert(this);
         }
 
         // Delete
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.DeleteVectorDBItem(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            collection.Delete(this.Id);
         }
 
-        public void UpdateIndex(ContentInfo contentInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+        public void UpdateIndex(VectorDBEntry contentInfo) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            UpdateIndex(contentInfo, openAIProperties);
-        }
-
-        public void DeleteIndex(ContentInfo contentInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            DeleteIndex(contentInfo, openAIProperties);
-
-        }
-
-        public void UpdateIndex(ImageInfo imageInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            UpdateIndex(imageInfo, openAIProperties);
-        }
-
-        public void DeleteIndex(ImageInfo imageInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            DeleteIndex(imageInfo, openAIProperties);
-        }
-
-        public void UpdateIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
             LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
         }
-        public void DeleteIndex(ContentInfo contentInfo, OpenAIProperties openAIProperties) {
+
+        public void DeleteIndex(VectorDBEntry contentInfo) {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            ChatRequestContext chatRequestContext = new() {
+                VectorDBItems = [this],
+                OpenAIProperties = openAIProperties
+            };
             LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, contentInfo, this);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
             LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
         }
-        public void UpdateIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
-            LogWrapper.Info(PythonAILibStringResources.Instance.SaveTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedTextEmbeddingFromImage);
 
+        public static VectorDBItem GetFolderVectorDBItem() {
+            VectorDBItem systemVectorItem = VectorDBItem.GetDefaultVectorDB();
+            // NameとDescriptionとCollectionNameを設定する
+            systemVectorItem.Name = SystemCommonVectorDBName;
+            systemVectorItem.Description = SystemCommonVectorDBName;
+            systemVectorItem.CollectionName = DefaultCollectionName;
+
+            return systemVectorItem;
         }
-        public void DeleteIndex(ImageInfo imageInfo, OpenAIProperties openAIProperties) {
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteTextEmbeddingFromImage);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(openAIProperties, imageInfo, this);
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedTextEmbeddingFromImage);
+
+        public static List<VectorDBItem> GetExternalVectorDBItems() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            var items = collection.Find(item => !item.IsSystem && item.Name != VectorDBItem.SystemCommonVectorDBName);
+            if (items == null) {
+                return [];
+            }
+            return new(items);
         }
+
+        public static List<VectorDBItem> GetVectorDBItems() {
+            var collection = PythonAILibManager.Instance.DataFactory.GetVectorDBCollection<VectorDBItem>();
+            var items = collection.FindAll();
+            if (items == null) {
+                return [];
+            }
+            return new(items);
+        }
+
 
     }
 }

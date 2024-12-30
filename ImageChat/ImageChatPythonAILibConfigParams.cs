@@ -1,14 +1,19 @@
+using System.IO;
 using System.Windows;
-using PythonAILib.Model;
-using PythonAILib.Model.Abstract;
+using ImageChat.Model;
+using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
-using ImageChat.Model;
-using System.IO;
 
 namespace ImageChat {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
+        public string GetHttpProxy() {
+            return ImageChatConfig.Instance.ProxyURL;
+        }
+        public string GetNoProxy() {
+            return ImageChatConfig.Instance.NoProxyList;
+        }
         public string GetLang() {
             return ImageChatConfig.Instance.ActualLang;
         }
@@ -18,6 +23,10 @@ namespace ImageChat {
         public string GetPathToVirtualEnv() {
             return ImageChatConfig.Instance.PythonVenvPath;
         }
+        public string GetAppDataPath() {
+            return ImageChatConfig.Instance.AppDataFolder;
+        }
+
         public IDataFactory GetDataFactory() {
             return ImageChatDataFactory.Instance;
         }
@@ -58,7 +67,76 @@ namespace ImageChat {
             return docDBPath;
 
         }
+        public string GetAutoGenWorkDir() {
+            string workDir = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "autogen");
+            return workDir;
+        }
+        public string GetCatalogDBURL() {
+            string dbUrl = string.Concat("sqlite:///", Path.Combine(ImageChatConfig.Instance.AppDataFolder, "catalog.db"));
+            return dbUrl;
+        }
+        public bool AutoTag() {
+            throw new System.NotImplementedException();
+        }
 
+        // AutoTitle
+        public bool AutoTitle() {
+            throw new System.NotImplementedException();
+        }
+        // AutoTitleWithOpenAI
+        public bool AutoTitleWithOpenAI() {
+            throw new System.NotImplementedException();
+        }
 
+        // AutoBackgroundInfo
+        public bool AutoBackgroundInfo() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoSummary
+        public bool AutoSummary() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoGenerateTasks
+        public bool AutoGenerateTasks() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoDocumentReliabilityCheck
+        public bool AutoDocumentReliabilityCheck() {
+            throw new System.NotImplementedException();
+        }
+        // AutoMergeItemsBySourceApplicationTitle
+        public bool AutoMergeItemsBySourceApplicationTitle() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoFileExtract
+        public bool AutoFileExtract() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoExtractImageWithPyOCR
+        public bool AutoExtractImageWithPyOCR() {
+            throw new System.NotImplementedException();
+        }
+
+        // AutoExtractImageWithOpenAI
+        public bool AutoExtractImageWithOpenAI() {
+            throw new System.NotImplementedException();
+        }
+        // IgnoreLineCount
+        public int IgnoreLineCount() {
+            throw new System.NotImplementedException();
+        }
+        // TesseractExePath
+        public string TesseractExePath() {
+            throw new System.NotImplementedException();
+        }
+        // public bool DevFeaturesEnabled();
+        public bool DevFeaturesEnabled() {
+            throw new System.NotImplementedException();
+        }
     }
 }

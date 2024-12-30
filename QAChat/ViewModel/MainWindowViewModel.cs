@@ -1,10 +1,7 @@
-using System.Collections.ObjectModel;
-using PythonAILib.Model;
-using QAChat.Control;
-using QAChat.View.PromptTemplateWindow;
+using QAChat.View.Common;
+using QAChat.Model;
 using QAChat.ViewModel.QAChatMain;
 using WpfAppCommon.Utils;
-using QAChat.Model;
 
 namespace QAChat.ViewModel {
     public class MainWindowViewModel : QAChatViewModelBase {
@@ -12,7 +9,7 @@ namespace QAChat.ViewModel {
         //初期化
         public MainWindowViewModel(QAChatStartupProps props) {
             // PythonAILibのLogWrapperのログ出力設定
-            PythonAILib.Utils.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
+            PythonAILib.Utils.Common.LogWrapper.SetActions(LogWrapper.Info, LogWrapper.Warn, LogWrapper.Error);
             // QAChatControlViewModelを生成
             QAChatControlViewModel = new(props);
         }

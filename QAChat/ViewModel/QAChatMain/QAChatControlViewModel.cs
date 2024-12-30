@@ -1,29 +1,27 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILib.Model;
+using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.Resource;
-using QAChat.Control;
+using PythonAILib.Utils.Python;
+using QAChat.Model;
 using QAChat.Resource;
-using QAChat.View.EditChatItemWindow;
-using QAChat.View.PromptTemplateWindow;
-using QAChat.View.VectorDBWindow;
-using QAChat.ViewModel.PromptTemplateWindow;
-using QAChat.ViewModel.VectorDBWindow;
+using QAChat.View.PromptTemplate;
+using QAChat.View.QAChatMain;
+using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
+    public class QAChatControlViewModel : QAChatViewModelBase {
 
-    public class QAChatControlViewModel : CommonViewModelBase {
+
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 
             QAChatStartupProps = props;
-
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
             List<VectorDBItem> vectorDBItems = props.ContentItem.ReferenceVectorDBItems;
             VectorDBItems = new(vectorDBItems);
@@ -34,30 +32,13 @@ namespace QAChat.ViewModel.QAChatMain {
             if (QAChatStartupProps.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
+            // AutoGenGroupChatを設定
+            SelectedAutoGenGroupChat = AutoGenGroupChat.FindAll().FirstOrDefault();
         }
-
-        public CommonStringResources StringResources { get; set; } = CommonStringResources.Instance;
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
 
-
-        // CollectionName
-        private string? _CollectionName = null;
-        public string? CollectionName {
-            get {
-                return _CollectionName;
-            }
-            set {
-                _CollectionName = value;
-                OnPropertyChanged(nameof(CollectionName));
-            }
-        }
-
-        // 選択中のフォルダの全てのClipboardItem
-        public ObservableCollection<ContentItem> ClipboardItems { get; set; } = new();
-
-
-        public Chat ChatController { get; set; } = new();
+        public ChatRequest ChatRequest { get; set; } = new();
 
         private void PromptTemplateCommandExecute(object parameter) {
             ListPromptTemplateWindow.OpenListPromptTemplateWindow(ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptTemplateWindowViewModel, Mode) => {
@@ -65,36 +46,34 @@ namespace QAChat.ViewModel.QAChatMain {
             });
         }
 
-        // Progress Indicatorの表示状態
-        private bool _IsIndeterminate = false;
-        public bool IsIndeterminate {
+        // Temperature
+        public double Temperature {
             get {
-                return _IsIndeterminate;
+                return ChatRequest.Temperature;
             }
             set {
-                _IsIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
+                ChatRequest.Temperature = value;
+                OnPropertyChanged(nameof(Temperature));
             }
         }
-
         public int Mode {
             get {
-                return (int)ChatController.ChatMode;
+                return (int)ChatRequest.ChatMode;
             }
             set {
-                ChatController.ChatMode = (OpenAIExecutionModeEnum)value;
+                ChatRequest.ChatMode = (OpenAIExecutionModeEnum)value;
                 OnPropertyChanged(nameof(Mode));
             }
         }
 
-        public static ChatHistoryItem? SelectedItem { get; set; }
+        public static ChatMessage? SelectedItem { get; set; }
 
-        public ObservableCollection<ChatHistoryItem> ChatHistory {
+        public ObservableCollection<ChatMessage> ChatHistory {
             get {
-                return [.. ChatController.ChatHistory];
+                return [.. ChatRequest.ChatHistory];
             }
             set {
-                ChatController.ChatHistory = [.. value];
+                ChatRequest.ChatHistory = [.. value];
                 OnPropertyChanged(nameof(ChatHistory));
             }
 
@@ -124,10 +103,10 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string InputText {
             get {
-                return ChatController.ContentText;
+                return ChatRequest.ContentText;
             }
             set {
-                ChatController.ContentText = value;
+                ChatRequest.ContentText = value;
                 OnPropertyChanged(nameof(InputText));
             }
         }
@@ -135,10 +114,10 @@ namespace QAChat.ViewModel.QAChatMain {
         // プロンプトの文字列
         public string PromptText {
             get {
-                return ChatController.PromptTemplateText;
+                return ChatRequest.PromptTemplateText;
             }
             set {
-                ChatController.PromptTemplateText = value;
+                ChatRequest.PromptTemplateText = value;
                 OnPropertyChanged(nameof(PromptText));
             }
         }
@@ -157,71 +136,61 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILib.Resource.PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-                return ChatController.CreateOpenAIRequestJSON(libManager.ConfigParams.GetOpenAIProperties());
-            }
-        }
-
-        public string PreviewText {
-            get {
-                return ChatController.CreatePromptText();
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
+                return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
 
         //
-        public Visibility VectorDBItemVisibility {
-            get {
-                if (ChatController.ChatMode == OpenAIExecutionModeEnum.Normal) {
-                    return Visibility.Collapsed;
-                } else {
-                    return Visibility.Visible;
-                }
-            }
-        }
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal);
 
-        public TextWrapping TextWrapping {
-            get {
-                if (QAChatManager.Instance == null) {
-                    return TextWrapping.NoWrap;
-                }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
-            }
-        }
-        // チャット履歴を保存するか否かのフラグ
-        private bool _SaveChatHistory = false;
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
-            PythonAILibManager? libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
+
+            PythonAILibManager? libManager = PythonAILibManager.Instance;
+
             // OpenAIにチャットを送信してレスポンスを受け取る
             try {
                 ChatResult? result = null;
                 // プログレスバーを表示
                 IsIndeterminate = true;
 
+                // チャット内容を更新
                 await Task.Run(() => {
-
-                    // LangChainChat用。VectorDBItemsを設定
+                    // VectorDBItemsを設定
                     List<VectorDBItem> items = [.. VectorDBItems];
-                    ChatController.VectorDBItems = items;
+
+                    // ★TODO AutoGenPropertiesを実行時に指定可能にする
+                    AutoGenProperties autoGenProperties = new() {
+                        WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
+                    };
+                    // ChatRequestContextを設定
+                    ChatRequestContext chatRequestContext = new() {
+                        VectorDBItems = items,
+                        OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                        AutoGenProperties = autoGenProperties
+                    };
 
                     // OpenAIChat or LangChainChatを実行
-                    result = ChatController.ExecuteChat(libManager.ConfigParams.GetOpenAIProperties());
+                    result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
+                        MainUITask.Run(() => {
+                            // チャット内容を更新
+                            UpdateChatHistoryList();
+                        });
+                    });
+
                 });
 
                 if (result == null) {
                     LogWrapper.Error(StringResources.FailedToSendChat);
                     return;
                 }
-                // ClipboardItemがある場合はClipboardItemのChatItemsを更新
-                QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+                // チャット内容を更新
+                UpdateChatHistoryList();
+
                 // inputTextをクリア
                 InputText = "";
-                OnPropertyChanged(nameof(ChatHistory));
-
-                // _SaveChatHistoryをTrueに設定
-                _SaveChatHistory = true;
-
 
             } catch (Exception e) {
                 LogWrapper.Error($"{StringResources.ErrorOccurredAndMessage}:\n{e.Message}\n{StringResources.StackTrace}:\n{e.StackTrace}");
@@ -231,6 +200,23 @@ namespace QAChat.ViewModel.QAChatMain {
 
         });
 
+        // チャット内容のリストを更新するメソッド
+        public void UpdateChatHistoryList() {
+            // ClipboardItemがある場合はClipboardItemのChatItemsを更新
+            QAChatStartupProps.ContentItem.ChatItems = [.. ChatHistory];
+            OnPropertyChanged(nameof(ChatHistory));
+
+            // ListBoxの一番最後のアイテムに移動
+            UserControl? userControl = (UserControl?)ThisWindow?.FindName("QAChtControl");
+            if (userControl != null) {
+
+                ListBox? listBox = (ListBox?)userControl.FindName("ChatContentList");
+                if (listBox != null) {
+                    listBox.SelectedIndex = listBox.Items.Count - 1;
+                    listBox.ScrollIntoView(listBox.SelectedItem);
+                }
+            }
+        }
         // チャット履歴をクリアコマンド
         public SimpleDelegateCommand<object> ClearChatContentsCommand => new((parameter) => {
             ChatHistory = [];
@@ -238,11 +224,13 @@ namespace QAChat.ViewModel.QAChatMain {
             QAChatStartupProps.ContentItem.ChatItems = [];
             OnPropertyChanged(nameof(ChatHistory));
         });
+
         // 本文を再読み込みコマンド
         public SimpleDelegateCommand<object> ReloadInputTextCommand => new((parameter) => {
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";
             OnPropertyChanged(nameof(InputText));
         });
+
         // 本文をクリアコマンド
         public SimpleDelegateCommand<object> ClearInputTextCommand => new((parameter) => {
             InputText = "";
@@ -258,10 +246,10 @@ namespace QAChat.ViewModel.QAChatMain {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
-            ChatController.ChatMode = (OpenAIExecutionModeEnum)index;
+            ChatRequest.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがNormal以外の場合は、VectorDBItemを取得
             VectorDBItems = [];
-            if (ChatController.ChatMode != OpenAIExecutionModeEnum.Normal) {
+            if (ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal) {
                 List<VectorDBItem> items = QAChatStartupProps.ContentItem.ReferenceVectorDBItems;
                 foreach (var item in items) {
                     VectorDBItems.Add(item);
@@ -269,39 +257,59 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             // VectorDBItemVisibilityを更新
             OnPropertyChanged(nameof(VectorDBItemVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenNormalChatVisibility));
+            // AutoGenVisibilityを更新
+            OnPropertyChanged(nameof(AutoGenNestedChatVisibility));
 
         });
 
-        // Tabが変更されたときの処理
+        // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
+                // リクエストのメッセージをアップデート
+                ChatRequest.UpdateMessage();
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
-                    // プレビュータブが選択された場合、プレビューテキストを更新
-                    OnPropertyChanged(nameof(PreviewText));
-                }
-                if (tabControl.SelectedIndex == 2) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
                     OnPropertyChanged(nameof(PreviewJson));
+                }
+                if (tabControl.SelectedIndex == 2) {
+                    // デバッグタブが選択された場合、デバッグコマンドを更新
+                    OnPropertyChanged(nameof(GeneratedDebugCommand));
                 }
             }
         });
 
         // プロンプトテンプレート画面を開くコマンド
         public SimpleDelegateCommand<object> PromptTemplateCommand => new((parameter) => {
-
             PromptTemplateCommandExecute(parameter);
-
         });
 
         // チャットアイテムを編集するコマンド
-        public SimpleDelegateCommand<ChatHistoryItem> OpenChatItemCommand => new((chatItem) => {
+        public SimpleDelegateCommand<ChatMessage> OpenChatItemCommand => new((chatItem) => {
             EditChatItemWindow.OpenEditChatItemWindow(chatItem);
         });
 
         // チャット内容をエクスポートするコマンド
         public SimpleDelegateCommand<object> ExportChatCommand => new((parameter) => {
             QAChatStartupProps.ExportChatCommand([.. ChatHistory]);
+        });
+        // 選択したチャット内容をクリップボードにコピーするコマンド
+        public SimpleDelegateCommand<ChatMessage> CopySelectedChatItemCommand => new((item) => {
+            string text = $"{item.Role}:\n{item.Content}";
+            Clipboard.SetText(text);
+
+        });
+        // 全てのチャット内容をクリップボードにコピーするコマンド
+        public SimpleDelegateCommand<object> CopyAllChatItemCommand => new((parameter) => {
+            string text = "";
+            foreach (var item in ChatHistory) {
+                text += $"{item.Role}:\n{item.Content}\n";
+            }
+            Clipboard.SetText(text);
         });
 
         // ベクトルDBをリストから削除するコマンド
@@ -314,6 +322,7 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             OnPropertyChanged(nameof(VectorDBItems));
         });
+
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
@@ -326,20 +335,133 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, (selectedItem) => {
-                VectorDBItems.Add(selectedItem);
-            });
+            // フォルダを選択
+            QAChatStartupProps.EditVectorDBItemAction(VectorDBItems);
+            // 元のVectorDBItemsに追加
+            QAChatStartupProps.ContentItem.ReferenceVectorDBItems = [.. VectorDBItems];
         });
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, _SaveChatHistory);
+            QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, true);
             window.Close();
         });
-        // Windowを閉じるコマンド
-        public SimpleDelegateCommand<Window> CloseCommand => new((window) => {
 
-            window.Close();
+
+        // GeneratedDebugCommand
+        public string GeneratedDebugCommand {
+            get {
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
+                return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
+            }
+        }
+
+
+        #region AutoGen Normal Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat);
+
+        // AutoGenNormalChatList
+        public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
+            get {
+                ObservableCollection<AutoGenNormalChat> autoGenNormalChatList = [];
+                foreach (var item in AutoGenNormalChat.FindAll()) {
+                    autoGenNormalChatList.Add(item);
+                }
+                return autoGenNormalChatList;
+            }
+        }
+
+        // SelectedAutoGenNormalChat
+        private AutoGenNormalChat? _SelectedAutoGenNormalChat = null;
+        public AutoGenNormalChat? SelectedAutoGenNormalChat {
+            get {
+                return _SelectedAutoGenNormalChat;
+            }
+            set {
+                _SelectedAutoGenNormalChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenNormalChat));
+            }
+        }
+        // AutoGenNormalChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNormalChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenNormalChat = AutoGenNormalChatList[index];
+            }
         });
+        #endregion
+
+        #region AutoGen Group Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
+
+        // AutoGenGroupChatList
+        public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
+            get {
+                ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
+                foreach (var item in AutoGenGroupChat.FindAll()) {
+                    autoGenGroupChatList.Add(item);
+                }
+                return autoGenGroupChatList;
+            }
+        }
+        // SelectedAutoGenGroupChat
+        private AutoGenGroupChat? _SelectedAutoGenGroupChat = null;
+        public AutoGenGroupChat? SelectedAutoGenGroupChat {
+            get {
+                return _SelectedAutoGenGroupChat;
+            }
+            set {
+                _SelectedAutoGenGroupChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
+            }
+        }
+        // AutoGenGroupChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenGroupChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
+            }
+        });
+        #endregion
+
+        #region AutoGen Nested Chat
+        // AutoGen関連のVisibility
+        public Visibility AutoGenNestedChatVisibility  => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat);
+
+        // AutoGenNestedChatList
+        public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {
+            get {
+                ObservableCollection<AutoGenNestedChat> autoGenNestedChatList = [];
+                foreach (var item in AutoGenNestedChat.FindAll()) {
+                    autoGenNestedChatList.Add(item);
+                }
+                return autoGenNestedChatList;
+            }
+        }
+        // SelectedAutoGenNestedChat
+        private AutoGenNestedChat? _SelectedAutoGenNestedChat = null;
+        public AutoGenNestedChat? SelectedAutoGenNestedChat {
+            get {
+                return _SelectedAutoGenNestedChat;
+            }
+            set {
+                _SelectedAutoGenNestedChat = value;
+                OnPropertyChanged(nameof(SelectedAutoGenNestedChat));
+            }
+        }
+        // AutoGenNestedChatSelectionChangedCommand
+        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNestedChatSelectionChangedCommand => new((routedEventArgs) => {
+            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
+                // 選択されたComboBoxItemのIndexを取得
+                int index = comboBox.SelectedIndex;
+                SelectedAutoGenNestedChat = AutoGenNestedChatList[index];
+            }
+        });
+        #endregion
+
 
     }
 

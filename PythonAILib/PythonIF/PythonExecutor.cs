@@ -2,9 +2,9 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Python.Runtime;
 using PythonAILib.Resource;
-using PythonAILib.Utils;
-
-namespace PythonAILib.PythonIF {
+using PythonAILib.Utils.Common;
+namespace PythonAILib.PythonIF
+{
     public class PythonExecutor {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
@@ -14,14 +14,31 @@ namespace PythonAILib.PythonIF {
         public static string TemplateScript { get; } = StringResources.TemplateScript;
 
         // Python script for OpenAI
-        public static string WpfAppCommonOpenAIScript { get; } = StringResources.WpfAppCommonOpenAIScript;
-        // Python script for Misc
-        public static string WpfAppCommonMiscScript { get; } = StringResources.WpfAppCommonMiscScript;
+        public static string WpfAppCommonOpenAIScript {
+            get {
+                string path = Path.Combine(PythonAILibPath, "ai_app_wrapper.py");
+                return path;
+            }
+        }
 
+        // Python script for Misc
+        public static string WpfAppCommonMiscScript {
+            get {
+                string devPath = Path.Combine(PythonAILibPath, "dev");
+                string path = Path.Combine(devPath, "misc_app.py");
+                return path;
+            }
+        }
+        // HttpsProxy
+        public static string HttpsProxy { get; set; } = "";
+        // NoProxy
+        public static string NoProxy { get; set; } = "";
 
         public static string? PythonPath { get; set; }
 
         private static string PathToVirtualEnv { get; set; } = "";
+
+        private static string PythonAILibPath { get; set; } = "python_ai_lib";
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
@@ -31,7 +48,7 @@ namespace PythonAILib.PythonIF {
                     throw new Exception(StringResources.PythonDLLNotFound);
                 }
                 if (_pythonAIFunctions == null) {
-                    InitPythonNet(PythonPath, PathToVirtualEnv);
+                    InitPythonNet(PythonPath, PathToVirtualEnv, PythonAILibPath, HttpsProxy, NoProxy);
                     _pythonAIFunctions = new PythonNetFunctions();
                 }
                 return _pythonAIFunctions;
@@ -54,14 +71,34 @@ namespace PythonAILib.PythonIF {
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv = "") {
+        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot, string httpsProxy, string noProxy) {
+            
+            HttpsProxy = httpsProxy;
+            NoProxy = noProxy;
 
             PythonPath = pythonPath;
-            PathToVirtualEnv = pathToVirtualEnv;
+            if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
+                PathToVirtualEnv = pathToVirtualEnv;
+            }
+            if (!string.IsNullOrEmpty(pythonAILibPathRoot)) {
+
+                // ★TODO Pythonスクリプトをアプリケーション用ディレクトリにコピーする処理
+                // バージョンアップ時には、アプリケーション用ディレクトリにコピーする処理が必要となるが、
+                // 未実装のため、一旦コメントアウトしておく
+                // PythonAILibPath = Path.Combine(pythonAILibPathRoot, "python_ai_lib");
+
+                PythonAILibPath = "python_ai_lib";
+
+                // Check if the PythonAILibPath exists
+                if (!Directory.Exists(PythonAILibPath)) {
+                    // ./pythonディレクトリをPythonAILibPathRootへコピーする
+                    Tools.CopyDirectory("python_ai_lib", PythonAILibPath, true);
+                }
+            }
         }
 
 
-        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv = "") {
+        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath, string httpsProxy, string noProxy) {
             // Pythonスクリプトを実行するための準備
 
             // 既に初期化されている場合は初期化しない
@@ -102,25 +139,37 @@ namespace PythonAILib.PythonIF {
                 PythonEngine.Initialize();
                 PythonEngine.BeginAllowThreads();
 
-                if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
 
-                    // sys.prefix、sys.exec_prefixを venvのパスに変更
+                // sys.prefix、sys.exec_prefixを venvのパスに変更
 
-                    using (Py.GIL()) {
-                        // fix the prefixes to point to our venv
-                        // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
-                        dynamic sys = Py.Import("sys");
+                using (Py.GIL()) {
+                    // fix the prefixes to point to our venv
+                    // (This is for Windows, there may be some difference with sys.exec_prefix on other platforms)
+                    dynamic sys = Py.Import("sys");
+                    dynamic site = Py.Import("site");
+                    dynamic os = Py.Import("os");
+                    if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                         sys.prefix = pathToVirtualEnv;
                         sys.exec_prefix = pathToVirtualEnv;
 
-                        dynamic site = Py.Import("site");
                         // This has to be overwritten because site module may already have 
                         // been loaded by the interpreter (but not run yet)
                         site.PREFIXES = new List<PyObject> { sys.prefix, sys.exec_prefix };
-                        // Run site path modification with tweaked prefixes
-                        site.main();
-
                     }
+                    // set the path to pythonAILib
+                    site.addsitedir(pythonAILibPath);
+
+                    // set the proxy settings
+                    if (!string.IsNullOrEmpty(httpsProxy)) {
+                        os.environ["HTTPS_PROXY"] = new PyString(httpsProxy);
+                        os.environ["NO_PROXY"] = new PyString(noProxy);
+                    } else {
+                        // NO_PROXY="*"
+                        os.environ["NO_PROXY"] = new PyString("*");
+                    }
+
+                    // Run site path modification with tweaked prefixes
+                    site.main();
                 }
 
             } catch (TypeInitializationException e) {

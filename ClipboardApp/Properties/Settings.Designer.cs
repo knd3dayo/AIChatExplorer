@@ -241,42 +241,6 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool SyncClipboardItemAndOSFolder {
-            get {
-                return ((bool)(this["SyncClipboardItemAndOSFolder"]));
-            }
-            set {
-                this["SyncClipboardItemAndOSFolder"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SyncFolderName {
-            get {
-                return ((string)(this["SyncFolderName"]));
-            }
-            set {
-                this["SyncFolderName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoCommit {
-            get {
-                return ((bool)(this["AutoCommit"]));
-            }
-            set {
-                this["AutoCommit"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PreviewMode {
             get {
@@ -434,30 +398,6 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AnalyzeJapaneseSentence {
-            get {
-                return ((bool)(this["AnalyzeJapaneseSentence"]));
-            }
-            set {
-                this["AnalyzeJapaneseSentence"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoGenerateQA {
-            get {
-                return ((bool)(this["AutoGenerateQA"]));
-            }
-            set {
-                this["AutoGenerateQA"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoGenerateTasks {
             get {
                 return ((bool)(this["AutoGenerateTasks"]));
@@ -524,6 +464,42 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["AutoTextWrapping"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ProxyURL {
+            get {
+                return ((string)(this["ProxyURL"]));
+            }
+            set {
+                this["ProxyURL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NoProxyList {
+            get {
+                return ((string)(this["NoProxyList"]));
+            }
+            set {
+                this["NoProxyList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoDocumentReliabilityCheck {
+            get {
+                return ((bool)(this["AutoDocumentReliabilityCheck"]));
+            }
+            set {
+                this["AutoDocumentReliabilityCheck"] = value;
             }
         }
     }

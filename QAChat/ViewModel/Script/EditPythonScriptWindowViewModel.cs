@@ -1,7 +1,7 @@
 using PythonAILib.Model.Script;
 using QAChat.Model;
 using WpfAppCommon.Utils;
-using QAChat.View.PythonScriptView;
+using QAChat.View.PythonScript;
 
 namespace QAChat.ViewModel.Script {
     class EditPythonScriptWindowViewModel : QAChatViewModelBase {

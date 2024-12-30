@@ -1,6 +1,5 @@
 using LiteDB;
-using PythonAILib.Resource;
-using QAChat;
+using PythonAILib.Common;
 
 namespace PythonAILib.Model.Tag {
     public class TagItem {
@@ -11,22 +10,35 @@ namespace PythonAILib.Model.Tag {
         public bool IsPinned { get; set; } = false;
 
         public void Delete() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.DeleteTag(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
+            collection.Delete(Id);
         }
         public void Save() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            libManager.DataFactory.UpsertTag(this);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
+            var tag = collection.FindOne(x => x.Tag == Tag);
+            if (tag != null) {
+                tag.IsPinned = IsPinned;
+                collection.Update(tag);
+            } else {
+                collection.Insert(this);
+            }
         }
 
         public static IEnumerable<TagItem> GetTagList() {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            return libManager.DataFactory.GetTagList();
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            return libManager.DataFactory.GetTagCollection<TagItem>().FindAll();
         }
         // タグを検索
         public static IEnumerable<TagItem> FilterTag(string tag, bool exclude) {
-            PythonAILibManager libManager = PythonAILibManager.Instance ?? throw new Exception(PythonAILibStringResources.Instance.PythonAILibManagerIsNotInitialized);
-            return libManager.DataFactory.FilterTag(tag, exclude);
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetTagCollection<TagItem>();
+            if (exclude) {
+                return collection.Find(x => x.Tag.Contains(tag) == false);
+            } else {
+                return collection.Find(x => x.Tag.Contains(tag));
+            }
         }
 
     }

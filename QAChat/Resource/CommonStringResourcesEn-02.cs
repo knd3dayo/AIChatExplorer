@@ -16,14 +16,23 @@ namespace QAChat.Resource {
 
         #region FolderView related
         // Add my folder to target vector DB
-        public override string AddMyFolderToTargetVectorDB { get; } = "Add my folder to target vector DB";
 
+        // AddVectorDBForSaveToReferenceVectorDB
+        public override string AddVectorDBForSaveToReferenceVectorDB { get; } = "Add VectorDB for save to ReferenceVectorDB";
 
         // Input description of this folder here
         public override string InputDescriptionOfThisFolder { get; } = "Input description of this folder here";
 
         #endregion
 
+        #region ToolTip
+        // Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.
+        public override string ToggleClipboardWatchToolTop { get; } = "Start: Start Clipboard Watch. Stop: Stop Clipboard Watch.";
+
+        // Start: Start Notification Watch. Stop: Stop Notification Watch.
+        public override string ToggleNotificationWatchToolTop { get; } = "Start: Start Notification Watch. Stop: Stop Notification Watch.";
+
+        #endregion
         #region ClipboardApp MainWindow
 
         // Start Clipboard Watch
@@ -44,6 +53,11 @@ namespace QAChat.Resource {
         // Stopped Notification Watch
         public override string StopNotificationWatchMessage { get; } = "Stopped Notification Watch";
 
+        // Started AutoGenStudio
+        public override string StartAutoGenStudioMessage { get; } = "Started AutoGenStudio";
+        // Stopped AutoGenStudio
+        public override string StopAutoGenStudioMessage { get; } = "Stopped AutoGenStudio";
+
         // Edit Tag
         public override string EditTag { get; } = "Edit Tag";
         // Edit Auto Process Rule
@@ -54,6 +68,9 @@ namespace QAChat.Resource {
         public override string EditPromptTemplate { get; } = "Edit Prompt Template";
         // Edit Git RAG Source
         public override string EditGitRagSource { get; } = "Edit Git RAG Source";
+
+        // AutoGen定義編集
+        public override string EditAutoGenDefinition { get; } = "Edit AutoGen Definition";
 
         // -- View Menu --
         // Wrap text at the right edge
@@ -73,7 +90,20 @@ namespace QAChat.Resource {
         public override string OpenAIChat { get; } = "OpenAI Chat";
         // BitmapImage Chat
         public override string ImageChat { get; } = "Image Chat";
+        // Local FileSystem
+        public override string FileSystem { get; } = "Local FileSystem";
 
+        // Shortcut
+        public override string Shortcut { get; } = "Shortcut";
+
+        // Outlook
+        public override string Outlook { get; } = "Outlook";
+
+        // ProxyURL
+        public override string ProxyURL { get; } = "Proxy Server URL";
+        // NoProxyList
+        public override string NoProxyList { get; } = "Proxy Exclusion List";
         #endregion
+
     }
 }

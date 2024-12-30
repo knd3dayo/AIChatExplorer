@@ -1,0 +1,145 @@
+<Window
+    x:Class="ClipboardApp.View.Item.EditItemWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="clr-namespace:QAChat.View.Common;assembly=PythonAILibUI"
+    xmlns:commonModel="clr-namespace:QAChat.Resource;assembly=PythonAILibUI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=WpfAppCommon"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:ClipboardApp.View.Item"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:res="clr-namespace:ClipboardApp.View.Item"
+    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Content"
+    Title="{Binding Title}"
+    Width="900"
+    Height="600"
+    d:DataContext="{d:DesignInstance Type=viewModel:EditItemWindowViewModel}"
+    Style="{StaticResource MaterialDesignWindow}"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.Primary}" />
+            <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.Primary.Foreground}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Activated">
+            <i:InvokeCommandAction Command="{Binding ActivatedCommand, Mode=OneTime}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{Binding CloseCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" />
+        <!--  Ctrl + Sで保存  -->
+        <KeyBinding
+            Key="S"
+            Command="{Binding SaveCommand, Mode=OneTime}"
+            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+            Modifiers="Ctrl" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="18" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  メニューバー  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,0"
+            Orientation="Vertical">
+            <materialDesign:ColorZone
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                DockPanel.Dock="Top"
+                Mode="PrimaryMid">
+                <Menu
+                    Name="menu1"
+                    Margin="0,0,0,0"
+                    materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
+                    IsMainMenu="False">
+                    <MenuItem
+                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                        Header="ファイル">
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenContentAsFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.OpenTextAsFile}" />
+                        <!--  ファイルを開く  -->
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.OpenFile}" />
+                        <!--  新規ファイルとして開く  -->
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFileAsNewFileCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.OpenAsNewFile}" />
+                        <!--  フォルダを開く  -->
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.OpenFolderCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.OpenFolder}" />
+                        <!--  テキスト抽出  -->
+                        <MenuItem
+                            Command="{Binding ItemViewModel.Commands.ExtractTextCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.ExtractText}" />
+
+                        <MenuItem
+                            Command="{Binding ItemViewModel.MaskDataCommand}"
+                            CommandParameter="{Binding ItemViewModel}"
+                            Header="{x:Static res:ViewStringResources.MaskData}"
+                            Visibility="{Binding ItemViewModel.DevFeaturesVisibility}" />
+                    </MenuItem>
+                </Menu>
+            </materialDesign:ColorZone>
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="0,0,0,0">
+            <local:EditItemControl DataContext="{Binding}" />
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Width="120"
+                    Margin="10,10,10,10"
+                    Command="{Binding ItemViewModel.Commands.QAChatButtonCommand, Mode=OneTime}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                    Content="{x:Static res:ViewStringResources.OpenAIChat}"
+                    DockPanel.Dock="Left" />
+                <DockPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <Button
+                        Width="100"
+                        Margin="10,10,10,10"
+                        Command="{Binding OKButtonCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{x:Static res:ViewStringResources.Save}" />
+                    <Button
+                        Width="100"
+                        Margin="10,10,10,10"
+                        Command="{Binding CloseCommand, Mode=OneTime}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
+                        Content="{x:Static res:ViewStringResources.Close}"
+                        DockPanel.Dock="Right" />
+                </DockPanel>
+            </Grid>
+        </Grid>
+        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+
+    </Grid>
+</Window>

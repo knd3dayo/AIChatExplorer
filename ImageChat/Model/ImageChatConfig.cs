@@ -1,8 +1,9 @@
 
 using System.IO;
-using PythonAILib.Model;
+using PythonAILib.Common;
 
-namespace ImageChat.Model {
+namespace ImageChat.Model
+{
     public class ImageChatConfig {
 
         private static ImageChatConfig? _instance;
@@ -177,6 +178,36 @@ namespace ImageChat.Model {
             set {
                 _openAIEmbeddingBaseURL = value;
                 Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
+            }
+        }
+
+        // ProxyURL
+        private string? _proxyUrl;
+        public string ProxyURL {
+            get {
+                if (_proxyUrl == null) {
+                    _proxyUrl = Properties.Settings.Default.ProxyURL;
+                }
+                return _proxyUrl;
+            }
+            set {
+                _proxyUrl = value;
+                Properties.Settings.Default.ProxyURL = value;
+            }
+        }
+
+        // NoProxyList
+        private string? _noProxyList;
+        public string NoProxyList {
+            get {
+                if (_noProxyList == null) {
+                    _noProxyList = Properties.Settings.Default.NoProxyList;
+                }
+                return _noProxyList;
+            }
+            set {
+                _noProxyList = value;
+                Properties.Settings.Default.NoProxyList = value;
             }
         }
 

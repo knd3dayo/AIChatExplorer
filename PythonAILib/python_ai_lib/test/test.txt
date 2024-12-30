@@ -1,0 +1,33 @@
+Messages sent to: current_time | num messages: 1
+role:[user] name:[user_proxy]
+------------------------------------------
+明日の東京の天気を教えてください。
+
+Messages sent to: user_proxy | num messages: 2
+role:[assistant] name:[current_time]
+------------------------------------------
+現在の時刻を取得して、明日の東京の天気を確認します。
+
+Messages sent to: web_searcher | num messages: 3
+role:[tool] name:[user_proxy]
+------------------------------------------
+
+Messages sent to: user_proxy | num messages: 4
+role:[assistant] name:[web_searcher]
+------------------------------------------
+
+
+Messages sent to: user_proxy | num messages: 5
+role:[tool] name:[user_proxy]
+------------------------------------------
+
+Messages sent to: user_proxy | num messages: 6
+role:[assistant] name:[user_proxy]
+------------------------------------------
+Tokyoの2024年12月1日の天気予報は、気温が13°C程度で、12月の平均気温に近いとされています。 詳細な予報を見るには[AccuWeatherのページ](https://www.accuweather.com/en/jp/tokyo/226396/december-weather/226396)や[EaseWeatherのページ](https://www.easeweather.com/asia/japan/tokyo/december)を確認してください。 [End Meeting]
+
+Messages sent to: user_proxy | num messages: 6
+role:[assistant] name:[user_proxy]
+------------------------------------------
+Tokyoの2024年12月1日の天気予報は、気温が13°C程度で、12月の平均気温に近いとされています。 詳細な予報を見るには[AccuWeatherのページ](https://www.accuweather.com/en/jp/tokyo/226396/december-weather/226396)や[EaseWeatherのページ](https://www.easeweather.com/asia/japan/tokyo/december)を確認してください。 [End Meeting]
+
