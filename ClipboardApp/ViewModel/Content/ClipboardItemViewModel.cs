@@ -15,15 +15,6 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {
 
-        // OpenItem
-        public override void OpenItem() {
-            throw new NotImplementedException();
-        }
-        // RemoveItem
-        public override void RemoveItem() {
-            throw new NotImplementedException();
-        }
-
         // コンストラクタ
         public ClipboardItemViewModel(ContentFolderViewModel folderViewModel, ContentItem clipboardItem) : base(folderViewModel, clipboardItem) {
             ContentItem = clipboardItem;

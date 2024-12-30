@@ -2,13 +2,13 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.VectorDB;
+using QAChat.Model;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Folder {
-    public class FolderEditWindowViewModel : ClipboardAppViewModelBase {
+namespace QAChat.ViewModel.Folder {
+    public class FolderEditWindowViewModel : QAChatViewModelBase {
 
         // 起動時の処理
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {
@@ -98,7 +98,7 @@ namespace ClipboardApp.ViewModel.Folder {
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel, (selectedItem) => {
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, FolderViewModel.GetRootFolderViewModel(), (selectedItem) => {
 
             });
         });

@@ -11,6 +11,7 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel.Folder {
     public abstract class ContentFolderViewModel(ContentFolder folder) : QAChatViewModelBase {
 
+
         // フォルダ作成コマンドの実装
         public abstract void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate);
 
@@ -21,6 +22,10 @@ namespace QAChat.ViewModel.Folder {
         public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
 
         public abstract void OpenItemCommandExecute(ContentItemViewModel item);
+
+        // RootFolderのViewModelを取得する
+        public abstract ContentFolderViewModel GetRootFolderViewModel();
+
 
         // フォルダー保存コマンド
         public virtual SimpleDelegateCommand<ContentFolderViewModel> SaveFolderCommand => new((folderViewModel) => {

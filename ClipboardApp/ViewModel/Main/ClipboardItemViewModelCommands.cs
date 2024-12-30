@@ -49,7 +49,15 @@ namespace ClipboardApp.ViewModel.Main
             }
         });
 
+        // 選択中のContentItemBaseを開く
+        public override void OpenItem(ContentItem contentItem) {
+            throw new System.NotImplementedException();
+        }
 
+        // 選択中のContentItemBaseを削除
+        public override void RemoveItem(ContentItem contentItem) {
+            throw new System.NotImplementedException();
+        }
 
         /// <summary>
         /// Application exit command

@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
-using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -17,14 +16,20 @@ using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
+using QAChat.View.Folder;
 
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
         public override ClipboardItemViewModel CreateItemViewModel(ContentItem item) {
             return new ClipboardItemViewModel(this, item);
         }
+
+        // RootFolderのViewModelを取得する
+        public override ContentFolderViewModel GetRootFolderViewModel() {
+            return MainWindowViewModel.Instance.RootFolderViewModelContainer.RootFolderViewModel;
+        }
+
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
         public virtual ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {

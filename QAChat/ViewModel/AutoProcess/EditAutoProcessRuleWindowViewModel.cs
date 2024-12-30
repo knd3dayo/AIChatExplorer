@@ -141,7 +141,16 @@ namespace QAChat.ViewModel.AutoProcess {
         }
 
         // ルール適用対象のClipboardItemFolder
-        public ContentFolder? TargetFolder { get; set; }
+        private ContentFolder? _ClipboardItemFolder = null;
+        public ContentFolder? TargetFolder {
+            get {
+                return _ClipboardItemFolder;
+            }
+            set {
+                _ClipboardItemFolder = value;
+                OnPropertyChanged(nameof(TargetFolder));
+            }
+        }
 
         // 編集対象の自動処理ルール
         AutoProcessRule TargetAutoProcessRule { get; set; }
@@ -307,7 +316,17 @@ namespace QAChat.ViewModel.AutoProcess {
 
 
         // コピーまたは移動先のフォルダ
-        public ContentFolder? DestinationFolder { get; set; }
+        private ContentFolder? _DestinationFolder = null;
+        public ContentFolder? DestinationFolder {
+            get {
+                return _DestinationFolder;
+            }
+            set {
+                _DestinationFolder = value;
+                OnPropertyChanged(nameof(DestinationFolder));
+            }
+        }
+
 
         // アクションがコピーまたは移動の場合にFolderSelectionPanelをEnabledにする
         private bool _FolderSelectionPanelEnabled = false;

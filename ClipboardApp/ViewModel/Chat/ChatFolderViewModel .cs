@@ -1,14 +1,13 @@
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
-using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Folder;
 using QAChat.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
+using QAChat.View.Folder;
 
-namespace ClipboardApp.ViewModel.Chat
-{
+namespace ClipboardApp.ViewModel.Chat {
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド

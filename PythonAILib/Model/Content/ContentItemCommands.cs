@@ -229,18 +229,8 @@ namespace PythonAILib.Model.Content {
             if (string.IsNullOrEmpty(contentText)) {
                 return;
             }
-            var task1 = Task.Run(() => {
-                // 標準背景情報を生成
-                CreateChatResult(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
-                return item.PromptChatResult.GetTextContent(SystemDefinedPromptNames.BackgroundInformationGeneration.ToString()); ;
-            });
-
-            // すべてのタスクが完了するまで待機
-            Task.WaitAll(task1);
-            // 背景情報を更新 taskの結果がNullでない場合は追加
-            if (task1.Result != null) {
-                item.BackgroundInfo += task1.Result;
-            }
+            // 標準背景情報を生成
+            CreateChatResult(item, SystemDefinedPromptNames.BackgroundInformationGeneration.ToString());
         }
 
         // ベクトルを更新する

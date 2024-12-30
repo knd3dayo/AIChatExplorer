@@ -67,7 +67,17 @@ namespace PythonAILib.Model.Content {
         public bool IsAutoProcessEnabled { get; set; } = false;
 
         // フォルダの絶対パス ファイルシステム用
-        public virtual string FolderPath { get; } = "";
+        public virtual string FolderPath {
+            get {
+                // 親フォルダを取得
+                var parentFolder = GetParent();
+                if (parentFolder == null) {
+                    return FolderName;
+                }
+                return $"{parentFolder.FolderPath}/{FolderName}";
+            }
+        }
+
         //　フォルダ名
         public virtual string FolderName { get; set; } = "";
         // Description
@@ -87,7 +97,7 @@ namespace PythonAILib.Model.Content {
         }
 
         // 親フォルダ
-        public ContentFolder? GetParent() {
+        public virtual ContentFolder? GetParent() {
             return GetParent<ContentFolder>();
         }
 

@@ -18,8 +18,10 @@ namespace ClipboardApp.Model.Folder {
         public override void Delete() {
             DeleteFolder<OutlookFolder, OutlookItem>(this);
         }
-
-
+        // 親フォルダ
+        public override OutlookFolder? GetParent() {
+            return GetParent<OutlookFolder>();
+        }
 
         // コンストラクタ
         public OutlookFolder() { }

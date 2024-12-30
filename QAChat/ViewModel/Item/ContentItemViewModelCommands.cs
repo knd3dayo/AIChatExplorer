@@ -42,6 +42,23 @@ namespace PythonAILibUI.ViewModel.Item {
         });
 
 
+        // OpenContentItemCommand
+        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
+            OpenItem(itemViewModel.ContentItem);
+        });
+
+        // RemoveSelectedItemCommand
+        public SimpleDelegateCommand<ContentItemViewModel> RemoveCommand => new((itemViewModel) => {
+            RemoveItem(itemViewModel.ContentItem);
+        });
+
+        // 選択中のContentItemBaseを開く
+        public abstract void OpenItem(ContentItem contentItem);
+
+        // 選択中のContentItemBaseを削除
+        public abstract void RemoveItem(ContentItem contentItem);
+
+
         public abstract void ExitCommand();
 
 

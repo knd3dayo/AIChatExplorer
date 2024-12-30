@@ -17,6 +17,11 @@ namespace ClipboardApp.Model.Folder {
         public override void Delete() {
             DeleteFolder<SearchFolder, ClipboardItem>(this);
         }
+        // 親フォルダ
+        public override SearchFolder? GetParent() {
+            return GetParent<SearchFolder>();
+        }
+
 
         //--------------------------------------------------------------------------------
         // コンストラクタ

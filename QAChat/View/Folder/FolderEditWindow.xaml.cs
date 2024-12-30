@@ -1,9 +1,7 @@
 using System.Windows;
-using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.Folder;
 using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.View.Folder {
+namespace QAChat.View.Folder {
     /// <summary>
     /// FolderEditWindow.xaml の相互作用ロジック
     /// </summary>

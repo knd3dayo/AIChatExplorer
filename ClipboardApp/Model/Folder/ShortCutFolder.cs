@@ -4,8 +4,7 @@ using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Utils.Common;
 
-namespace ClipboardApp.Model.Folder
-{
+namespace ClipboardApp.Model.Folder {
     public class ShortCutFolder : FileSystemFolder {
 
         public override void Save() {
@@ -15,11 +14,15 @@ namespace ClipboardApp.Model.Folder
         public override void Delete() {
             DeleteFolder<ShortCutFolder, FileSystemItem>(this);
         }
+        // 親フォルダ
+        public override ShortCutFolder? GetParent() {
+            return GetParent<ShortCutFolder>();
+        }
 
 
         public override void SyncFolders() {
 
-            if ( string.IsNullOrEmpty(FileSystemFolderPath)) {
+            if (string.IsNullOrEmpty(FileSystemFolderPath)) {
                 return;
             }
 
@@ -38,8 +41,8 @@ namespace ClipboardApp.Model.Folder
             } catch (UnauthorizedAccessException e) {
                 LogWrapper.Info($"Access Denied:{FileSystemFolderPath} {e.Message}");
             }
-                // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
-                foreach (var folder in folders) {
+            // folders内に、fileSystemFolderPaths以外のFolderPathがある場合は削除
+            foreach (var folder in folders) {
                 if (!fileSystemFolderPaths.Any(x => x == folder.FileSystemFolderPath)) {
                     collection.Delete(folder.Id);
                 }

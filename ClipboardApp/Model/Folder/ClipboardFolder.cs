@@ -6,7 +6,6 @@ using ClipboardApp.Common;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
 using LiteDB;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
@@ -15,8 +14,7 @@ using QAChat.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder
-{
+namespace ClipboardApp.Model.Folder {
     public partial class ClipboardFolder : ContentFolder {
 
         public override void Save() {
@@ -25,6 +23,11 @@ namespace ClipboardApp.Model.Folder
         // 削除
         public override void Delete() {
             Delete<ClipboardFolder, ClipboardItem>();
+        }
+
+        // 親フォルダ
+        public override ContentFolder? GetParent() {
+            return GetParent<ClipboardFolder>();
         }
 
         //--------------------------------------------------------------------------------
@@ -44,17 +47,6 @@ namespace ClipboardApp.Model.Folder
 
         }
 
-
-        // フォルダの絶対パス
-        public override string FolderPath {
-            get {
-                ClipboardFolder? parent = (ClipboardFolder?)ClipboardAppFactory.Instance.GetClipboardDBController().GetFolderCollection<ClipboardFolder>().FindById(ParentId);
-                if (parent == null) {
-                    return FolderName;
-                }
-                return $"{parent.FolderPath}/{FolderName}";
-            }
-        }
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
@@ -102,9 +94,6 @@ namespace ClipboardApp.Model.Folder
             return child;
         }
 
-
-        #region マージ
-        #endregion
 
         #region エクスポート/インポート
 

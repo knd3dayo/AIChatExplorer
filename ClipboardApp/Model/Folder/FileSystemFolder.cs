@@ -9,8 +9,7 @@ using PythonAILib.PythonIF;
 using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder
-{
+namespace ClipboardApp.Model.Folder {
     public class FileSystemFolder : ClipboardFolder {
 
         public override void Save() {
@@ -20,6 +19,11 @@ namespace ClipboardApp.Model.Folder
         public override void Delete() {
             DeleteFolder<FileSystemFolder, FileSystemItem>(this);
         }
+        // 親フォルダ
+        public override FileSystemFolder? GetParent() {
+            return GetParent<FileSystemFolder>();
+        }
+
 
         private string _fileSystemFolderPath = "";
         public string FileSystemFolderPath {
@@ -76,7 +80,7 @@ namespace ClipboardApp.Model.Folder
 
             return items;
         }
-        public  void SyncItems() {
+        public void SyncItems() {
             // FileSystemFolderPathフォルダ内のファイルを取得. FileSystemFolderPathが存在しない場合は処理しない
             if (!Directory.Exists(FileSystemFolderPath)) {
                 return;
