@@ -68,8 +68,8 @@ namespace PythonAILib.Common {
         // TesseractExePath
         public string TesseractExePath();
 
-
-
+        // DevFeaturesEnabled
+        public bool DevFeaturesEnabled();
 
     }
 }

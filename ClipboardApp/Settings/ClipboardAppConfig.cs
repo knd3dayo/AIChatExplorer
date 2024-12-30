@@ -1,9 +1,7 @@
-
 using System.IO;
 using PythonAILib.Common;
 
-namespace ClipboardApp.Model
-{
+namespace ClipboardApp.Settings {
     public class ClipboardAppConfig {
 
         private static ClipboardAppConfig? _instance;

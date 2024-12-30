@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resource;
 
-namespace ClipboardApp.ViewModel.Content {
+namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemMenu : ClipboardAppViewModelBase {
 
         public ClipboardItemViewModel ClipboardItemViewModel { get; private set; }
@@ -178,6 +179,6 @@ namespace ClipboardApp.ViewModel.Content {
             menuItems.Add(checkDocumentTrustMenuItem);
             return menuItems;
         }
- 
+
     }
 }

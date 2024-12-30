@@ -1,6 +1,6 @@
 using QAChat.Resource;
 
-namespace ClipboardApp.View.Search {
+namespace QAChat.View.Search {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;

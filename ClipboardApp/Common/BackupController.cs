@@ -1,5 +1,5 @@
 using System.IO;
-using ClipboardApp.Model;
+using ClipboardApp.Settings;
 
 namespace ClipboardApp.Common
 {

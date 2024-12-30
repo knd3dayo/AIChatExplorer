@@ -134,5 +134,9 @@ namespace ImageChat {
         public string TesseractExePath() {
             throw new System.NotImplementedException();
         }
+        // public bool DevFeaturesEnabled();
+        public bool DevFeaturesEnabled() {
+            throw new System.NotImplementedException();
+        }
     }
 }

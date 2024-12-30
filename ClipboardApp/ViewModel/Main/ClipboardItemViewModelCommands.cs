@@ -1,32 +1,33 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
+using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.Search;
+using ClipboardApp.Model.Item;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
-using PythonAILib.Model.File;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Content;
+using PythonAILib.Model.File;
+using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
+using PythonAILibUI.ViewModel.Folder;
+using PythonAILibUI.ViewModel.Item;
 using QAChat.Resource;
 using QAChat.View.Folder;
 using QAChat.View.QAChatMain;
 using QAChat.View.RAG;
+using QAChat.View.Search;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel;
+using QAChat.ViewModel.Item;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
-using PythonAILibUI.ViewModel.Item;
-using QAChat.ViewModel.Item;
-using ClipboardApp.Common;
-using PythonAILib.Model.Folder;
-using ClipboardApp.Model.Item;
-using PythonAILibUI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main
 {
-    public class ClipboardItemViewModelCommands : ContentItemViewModelCommands{
+    public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
 
         // ベクトル検索を実行するコマンド
@@ -139,7 +140,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process to display the search window
-        public  void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
+        public void OpenSearchWindowCommand(ClipboardFolder folder, Action action) {
             SearchRule? searchConditionRule;
             // If the selected folder is a search folder
             if (folder.FolderType == FolderTypeEnum.Search) {
@@ -155,7 +156,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to reload the folder
-        public  void ReloadFolderCommand(MainWindowViewModel model) {
+        public void ReloadFolderCommand(MainWindowViewModel model) {
             if (model.SelectedFolder == null) {
                 return;
             }
@@ -170,7 +171,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + Shift + M is pressed
-        public  void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
+        public void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -189,7 +190,7 @@ namespace ClipboardApp.ViewModel.Main
             );
         }
         // Process when Ctrl + M is pressed
-        public  void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -209,7 +210,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + X is pressed on a folder
-        public  void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
+        public void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
             // Do not process if no folder is selected
             if (windowViewModel.SelectedFolder == null) {
                 LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
@@ -224,7 +225,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + X is pressed on clipboard items; multiple items can be processed
-        public  void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
+        public void CutItemCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             // Do not process if no items are selected
@@ -249,7 +250,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + C is pressed
-        public  void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
+        public void CopyToClipboardCommandExecute(MainWindowViewModel windowViewModel) {
             ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
             ClipboardItemViewModel? SelectedItem = windowViewModel.SelectedItem;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
@@ -281,7 +282,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Process when Ctrl + V is pressed
-        public  void PasteFromClipboardCommandExecute() {
+        public void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
             ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
             List<object> CopiedItems = windowViewModel.CopiedObjects;
@@ -304,7 +305,7 @@ namespace ClipboardApp.ViewModel.Main
                 CopiedItems.Clear();
             } else if (ClipboardController.LastClipboardChangedEventArgs != null) {
                 // If there are no source items, paste from the system clipboard
-                if ( SelectedFolder.Folder is not ClipboardFolder clipboardFolder) {
+                if (SelectedFolder.Folder is not ClipboardFolder clipboardFolder) {
                     return;
                 }
                 clipboardFolder.ProcessClipboardItem(ClipboardController.LastClipboardChangedEventArgs,
@@ -341,7 +342,7 @@ namespace ClipboardApp.ViewModel.Main
         }
 
         // Command to extract text
-        public  void ExtractText(ContentItem contentItem) {
+        public void ExtractText(ContentItem contentItem) {
             // プログレスインジケータを表示
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             try {
@@ -391,7 +392,7 @@ namespace ClipboardApp.ViewModel.Main
             LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
             await Task.Run(() => {
                 foreach (var item in contentItem) {
-                    ContentItemCommands.CreateChatResult(item,promptName);
+                    ContentItemCommands.CreateChatResult(item, promptName);
                     // Save
                     item.Save(false);
                 }
@@ -534,7 +535,7 @@ namespace ClipboardApp.ViewModel.Main
                 },
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {
-                    
+
                     FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folder) => {
                         ClipboardItem chatHistoryItem = new(folder.Folder.Id);
                         // タイトルを日付 + 元のタイトルにする

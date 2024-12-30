@@ -1,7 +1,7 @@
 using System.IO;
 using System.Windows;
 using ClipboardApp.Factory;
-using ClipboardApp.Model;
+using ClipboardApp.Settings;
 using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
@@ -75,7 +75,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
         // GetCatalogDBURL
         public string GetCatalogDBURL() {
-            string dbUrl =  string.Concat("sqlite:///", Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "catalog.db"));
+            string dbUrl = string.Concat("sqlite:///", Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "catalog.db"));
             return dbUrl;
         }
 
@@ -138,6 +138,9 @@ namespace ClipboardApp.ViewModel.Main {
         public string TesseractExePath() {
             return ClipboardAppConfig.Instance.TesseractExePath;
         }
-
+        // public bool DevFeaturesEnabled();
+        public bool DevFeaturesEnabled() {
+            return ClipboardAppConfig.Instance.EnableDevFeatures;
+        }
     }
 }

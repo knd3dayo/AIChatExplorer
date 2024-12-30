@@ -1,6 +1,6 @@
 using System.Reflection;
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Settings;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using QAChat.Resource;
@@ -9,7 +9,8 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Common {
+namespace ClipboardApp.Common
+{
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>

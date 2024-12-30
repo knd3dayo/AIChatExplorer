@@ -1,36 +1,25 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ClipboardApp.Model.Item;
 using PythonAILib.Model.Content;
+using QAChat.Model;
 using QAChat.View.Tag;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Content
-{
+namespace QAChat.ViewModel.Content {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : ClipboardAppViewModelBase {
+    public class EditItemWindowViewModel : QAChatViewModelBase {
 
-        public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel? itemViewModel, Action afterUpdate) {
+        public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action afterUpdate) {
 
             FolderViewModel = folderViewModel;
-            if (itemViewModel == null) {
-                ClipboardItem clipboardItem = new(folderViewModel.Folder.Id) {
-                    // ReferenceVectorDBItemsを設定
-                    ReferenceVectorDBItems = folderViewModel.Folder.ReferenceVectorDBItems
-                };
-                ItemViewModel = new ClipboardItemViewModel(folderViewModel, clipboardItem);
-                Title = StringResources.NewItem;
-
-            } else {
-                Title = itemViewModel.ContentItem.Description;
-                ItemViewModel = itemViewModel;
-            }
+            Title = itemViewModel.ContentItem.Description;
+            ItemViewModel = itemViewModel;
             _afterUpdate = afterUpdate;
 
         }
@@ -134,11 +123,9 @@ namespace ClipboardApp.ViewModel.Content
             if (ItemViewModel == null) {
                 return;
             }
-            if (ItemViewModel.ContentItem is not ClipboardItem clipboardItem) {
-                return;
-            }
+
             // フォルダに自動処理が設定されている場合は実行
-            ContentItem? item = clipboardItem.ApplyAutoProcess();
+            ContentItem? item = ItemViewModel.ContentItem.ApplyAutoProcess();
             // ClipboardItemを更新
             if (item != null) {
 

@@ -490,6 +490,12 @@ namespace PythonAILib.Resource {
         public virtual string CreateTaskListFailed { get; } = "課題リスト作成処理が失敗しました";
 
 
+        // 自動処理を適用します
+        public virtual string ApplyAutoProcessing { get; } = "自動処理を適用します";
+
+        // 自動処理でアイテムが削除されました
+        public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
+
         #region 統計、ログ関連
 
         // 日次トークン数

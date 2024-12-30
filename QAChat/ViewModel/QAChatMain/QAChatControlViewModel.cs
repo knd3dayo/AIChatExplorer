@@ -16,6 +16,8 @@ using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
     public class QAChatControlViewModel : QAChatViewModelBase {
+
+
         //初期化
         public QAChatControlViewModel(QAChatStartupProps props) {
 

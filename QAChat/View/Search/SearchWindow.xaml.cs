@@ -1,10 +1,9 @@
 using System.Windows;
-using ClipboardApp.Model.Folder;
-using ClipboardApp.ViewModel.Search;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using QAChat.ViewModel.Search;
 
-namespace ClipboardApp.View.Search {
+namespace QAChat.View.Search {
     /// <summary>
     /// Window1.xaml の相互作用ロジック
     /// </summary>
@@ -14,7 +13,7 @@ namespace ClipboardApp.View.Search {
         }
 
         public static void OpenSearchWindow(SearchRule searchConditionRule,
-            ClipboardFolder searchFolder, bool isSearchFolder, Action afterUpdate) {
+            ContentFolder searchFolder, bool isSearchFolder, Action afterUpdate) {
             SearchWindow searchWindow = new() {
                 DataContext = new SearchWindowViewModel(searchConditionRule, searchFolder, isSearchFolder, afterUpdate)
             };

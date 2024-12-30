@@ -338,7 +338,9 @@ namespace PythonAILib.Resource {
         // 課題リスト作成処理が失敗しました
         public override string CreateTaskListFailed { get; } = "Failed to create Task list";
 
+        public override string ApplyAutoProcessing { get; } = "Apply Auto Processing";
 
+        public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
 
         #region Statistics and Logging
 

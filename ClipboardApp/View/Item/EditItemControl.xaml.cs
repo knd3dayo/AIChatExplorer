@@ -1,12 +1,9 @@
-using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.Content;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
+using QAChat.ViewModel.Content;
 
-namespace ClipboardApp.View.Item
-{
+namespace ClipboardApp.View.Item {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>
@@ -14,9 +11,9 @@ namespace ClipboardApp.View.Item
         public EditItemControl() {
             InitializeComponent();
         }
-        public static EditItemControl CreateEditItemControl(ContentFolderViewModel folderViewModel, ContentItemViewModel? itemViewModel, Action action) {
+        public static EditItemControl CreateEditItemControl(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action action) {
             EditItemControl editItemControl = new();
-            EditItemWindowViewModel editItemWindowViewModel = new(folderViewModel, itemViewModel, action) ;
+            EditItemWindowViewModel editItemWindowViewModel = new(folderViewModel, itemViewModel, action);
             editItemControl.DataContext = editItemWindowViewModel;
             return editItemControl;
         }

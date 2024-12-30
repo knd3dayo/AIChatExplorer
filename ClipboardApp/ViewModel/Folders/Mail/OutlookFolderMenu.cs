@@ -1,21 +1,24 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel.Content;
-using PythonAILib.Model.Prompt;
-using PythonAILib.Resource;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 
-namespace ClipboardApp.ViewModel.FileSystem {
-    public class FileSystemFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+namespace ClipboardApp.ViewModel.Folders.Mail
+{
+    public class OutlookFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel)
+    {
 
         // -- virtual
-        public override ObservableCollection<MenuItem> MenuItems {
-            get {
+        public override ObservableCollection<MenuItem> MenuItems
+        {
+            get
+            {
                 #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
 
                 // 編集
-                MenuItem editMenuItem = new() {
+                MenuItem editMenuItem = new()
+                {
                     Header = StringResources.Edit,
                     Command = ClipboardFolderViewModel.EditFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
@@ -23,38 +26,34 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 menuItems.Add(editMenuItem);
 
                 // 同期
-                MenuItem createSyncMenuItem = new() {
+                MenuItem createSyncMenuItem = new()
+                {
                     Header = StringResources.Sync,
-                    Command = FileSystemFolderViewModel.SyncItemCommand,
+                    Command = OutlookFolderViewModel.SyncItemCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(createSyncMenuItem);
 
-                // ショートカット登録
-                MenuItem createShortCutMenuItem = new() {
-                    Header = StringResources.CreateShortCut,
-                    Command = FileSystemFolderViewModel.CreateShortCutCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createShortCutMenuItem);
-
 
                 // エクスポート/インポート
-                MenuItem exportImportMenuItem = new() {
+                MenuItem exportImportMenuItem = new()
+                {
                     Header = StringResources.ExportImport,
-                    Command = ClipboardFolderViewModel.ExportImportFolderCommand,
+                    Command = QAChat.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(exportImportMenuItem);
 
 
                 // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new() {
+                MenuItem backupRestoreMenuItem = new()
+                {
                     Header = StringResources.BackupRestore
                 };
 
                 // バックアップ
-                MenuItem backupMenuItem = new() {
+                MenuItem backupMenuItem = new()
+                {
                     Header = StringResources.BackupItem,
                     Command = ClipboardFolderViewModel.BackupItemsFromFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
@@ -63,7 +62,8 @@ namespace ClipboardApp.ViewModel.FileSystem {
 
 
                 // リストア
-                MenuItem restoreMenuItem = new() {
+                MenuItem restoreMenuItem = new()
+                {
                     Header = StringResources.RestoreItem,
                     Command = ClipboardFolderViewModel.RestoreItemsToFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
@@ -73,7 +73,8 @@ namespace ClipboardApp.ViewModel.FileSystem {
                 menuItems.Add(backupRestoreMenuItem);
 
                 // ベクトルのリフレッシュ
-                MenuItem refreshMenuItem = new() {
+                MenuItem refreshMenuItem = new()
+                {
                     Header = StringResources.RefreshVectorDB,
                     Command = ClipboardFolderViewModel.RefreshVectorDBCollectionCommand,
                     CommandParameter = ClipboardFolderViewModel

@@ -1,9 +1,10 @@
 using System.Windows;
-using ClipboardApp.Model;
+using ClipboardApp.Settings;
 using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class ClipboardAppViewModelBase : CommonViewModelBase {
 
         // CommonStringResources

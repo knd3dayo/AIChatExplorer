@@ -1,16 +1,28 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.ViewModel.Content;
 
-namespace ClipboardApp.ViewModel.Mail {
-    public class OutlookFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) : ClipboardFolderMenu(clipboardFolderViewModel) {
+namespace ClipboardApp.ViewModel.Folders.Clipboard {
+    public class ClipboardFolderMenu : ClipboardAppViewModelBase {
+
+        public ClipboardFolderViewModel ClipboardFolderViewModel { get; private set; }
+
+        public ClipboardFolderMenu(ClipboardFolderViewModel clipboardFolderViewModel) {
+            ClipboardFolderViewModel = clipboardFolderViewModel;
+        }
 
         // -- virtual
-        public override ObservableCollection<MenuItem> MenuItems {
+        public virtual ObservableCollection<MenuItem> MenuItems {
             get {
                 #region 全フォルダ共通
                 // MenuItemのリストを作成
                 ObservableCollection<MenuItem> menuItems = [];
+                // 新規作成
+                MenuItem createMenuItem = new() {
+                    Header = StringResources.Create,
+                    Command = ClipboardFolderViewModel.CreateFolderCommand,
+                    CommandParameter = ClipboardFolderViewModel
+                };
+                menuItems.Add(createMenuItem);
 
                 // 編集
                 MenuItem editMenuItem = new() {
@@ -20,14 +32,13 @@ namespace ClipboardApp.ViewModel.Mail {
                 };
                 menuItems.Add(editMenuItem);
 
-                // 同期
-                MenuItem createSyncMenuItem = new() {
-                    Header = StringResources.Sync,
-                    Command = OutlookFolderViewModel.SyncItemCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                menuItems.Add(createSyncMenuItem);
-
+                // 削除
+                MenuItem deleteMenuItem = new();
+                deleteMenuItem.Header = StringResources.Delete;
+                deleteMenuItem.Command = ClipboardFolderViewModel.DeleteFolderCommand;
+                deleteMenuItem.IsEnabled = ClipboardFolderViewModel.IsDeleteVisible;
+                deleteMenuItem.CommandParameter = ClipboardFolderViewModel;
+                menuItems.Add(deleteMenuItem);
 
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {

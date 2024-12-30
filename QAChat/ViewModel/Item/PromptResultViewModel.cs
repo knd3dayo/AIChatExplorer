@@ -6,8 +6,8 @@ using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Content {
-    internal class PromptResultViewModel : ObservableObject {
+namespace QAChat.ViewModel.Item {
+    public class PromptResultViewModel : ObservableObject {
 
         public PromptResultViewModel(PromptChatResult promptChatResult, string promptName) {
 

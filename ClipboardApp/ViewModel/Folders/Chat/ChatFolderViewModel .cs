@@ -6,12 +6,16 @@ using QAChat.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using QAChat.View.Folder;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 
-namespace ClipboardApp.ViewModel.Chat {
-    public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
+namespace ClipboardApp.ViewModel.Folders.Chat
+{
+    public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder)
+    {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
-        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder) {
+        public override ClipboardFolderViewModel CreateChildFolderViewModel(ClipboardFolder childFolder)
+        {
             var chatFolderViewModel = new ChatFolderViewModel(childFolder);
             // チャットフォルダの親フォルダにこのフォルダを追加
             chatFolderViewModel.ParentFolderViewModel = this;
@@ -19,18 +23,21 @@ namespace ClipboardApp.ViewModel.Chat {
         }
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
-        public override void CreateItemCommandExecute() {
+        public override void CreateItemCommandExecute()
+        {
             ClipboardItem clipboardItem = new(Folder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             OpenItemCommandExecute(clipboardItemViewModel);
         }
-        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel) {
+        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel)
+        {
             QAChatStartupProps props = new(itemViewModel.ContentItem);
 
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 
-        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate)
+        {
             // 子フォルダを作成する
             // 自身が画像チェックの場合は、画像チェックを作成
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
@@ -46,7 +53,8 @@ namespace ClipboardApp.ViewModel.Chat {
         ///  フォルダ編集後に実行するコマンドが設定されている場合は、実行する.
         /// </summary>
         /// <param name="parameter"></param>
-        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
+        public override void EditFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate)
+        {
             FolderEditWindow.OpenFolderEditWindow(folderViewModel, afterUpdate);
         }
 

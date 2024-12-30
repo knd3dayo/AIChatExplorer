@@ -1,9 +1,9 @@
 using System.Windows;
-using ClipboardApp.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.Script;
 using ClipboardApp.Model.Item;
+using ClipboardApp.Settings;
 
 namespace ClipboardApp.ViewModel.Content
 {

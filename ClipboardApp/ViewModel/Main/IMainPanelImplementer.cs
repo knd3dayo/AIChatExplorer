@@ -1,8 +1,10 @@
 using System.Windows;
 using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.ViewModel.Main
+{
     public interface IMainPanelImplementer {
 
         public Visibility PreviewModeVisibility { get; }
