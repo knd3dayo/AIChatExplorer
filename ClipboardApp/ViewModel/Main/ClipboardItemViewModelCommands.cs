@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.View.Search;
 using ClipboardApp.View.Settings;
@@ -22,6 +21,7 @@ using PythonAILibUI.ViewModel.Item;
 using QAChat.ViewModel.Item;
 using ClipboardApp.Common;
 using PythonAILib.Model.Folder;
+using ClipboardApp.Model.Item;
 
 namespace ClipboardApp.ViewModel.Main
 {
@@ -530,7 +530,7 @@ namespace ClipboardApp.ViewModel.Main
                     ClipboardFolderViewModel? folderViewModel = ActiveInstance.SelectedFolder ?? ActiveInstance.RootFolderViewModelContainer.RootFolderViewModel;
 
                     FolderSelectWindow.OpenFolderSelectWindow(folderViewModel, (folder) => {
-                        Model.ClipboardItem chatHistoryItem = new(folder.Folder.Id);
+                        ClipboardItem chatHistoryItem = new(folder.Folder.Id);
                         // タイトルを日付 + 元のタイトルにする
                         chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
                         if (!string.IsNullOrEmpty(clipboardItem.Description)) {

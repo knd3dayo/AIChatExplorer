@@ -1,10 +1,11 @@
 using System.IO;
-using ClipboardApp.Item;
+using ClipboardApp.Model.Item;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Utils.Common;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folder
+{
     public class ShortCutFolder : FileSystemFolder {
 
         public override void Save() {

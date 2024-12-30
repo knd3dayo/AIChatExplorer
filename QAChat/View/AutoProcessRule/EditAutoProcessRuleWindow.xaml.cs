@@ -1,9 +1,8 @@
 using System.Windows;
-using ClipboardApp.ViewModel.AutoProcess;
 using QAChat.ViewModel.AutoProcess;
 using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.View.AutoProcessRule {
+namespace QAChat.View.AutoProcessRule {
     /// <summary>
     /// EditAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>

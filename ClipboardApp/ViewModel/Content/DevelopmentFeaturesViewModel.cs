@@ -3,8 +3,10 @@ using ClipboardApp.Model;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.Script;
+using ClipboardApp.Model.Item;
 
-namespace ClipboardApp.ViewModel.Content {
+namespace ClipboardApp.ViewModel.Content
+{
 
     public partial class ClipboardItemViewModel {
 

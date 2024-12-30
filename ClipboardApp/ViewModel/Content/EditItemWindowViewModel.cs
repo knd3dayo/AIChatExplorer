@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Item;
 using PythonAILib.Model.Content;
 using QAChat.View.Tag;
 using QAChat.ViewModel.Folder;
@@ -9,7 +9,8 @@ using QAChat.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Content {
+namespace ClipboardApp.ViewModel.Content
+{
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
@@ -19,7 +20,7 @@ namespace ClipboardApp.ViewModel.Content {
 
             FolderViewModel = folderViewModel;
             if (itemViewModel == null) {
-                Model.ClipboardItem clipboardItem = new(folderViewModel.Folder.Id) {
+                ClipboardItem clipboardItem = new(folderViewModel.Folder.Id) {
                     // ReferenceVectorDBItemsを設定
                     ReferenceVectorDBItems = folderViewModel.Folder.ReferenceVectorDBItems
                 };

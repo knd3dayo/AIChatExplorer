@@ -163,6 +163,26 @@ namespace PythonAILib.Common {
         private void Upgrade(ILiteDatabase db) {
 
             #region バージョンアップ後の暫定処理
+            var items_collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
+            foreach (var item in items_collection.FindAll()) {
+                // ClipboardApp.item.ClipboardItem, ClipboardApp -> ClipboardApp.Model.Item.ClipboardItem, ClipboardApp
+                string typeString = item["_type"];
+                if (typeString == "ClipboardApp.Item.ClipboardItem, ClipboardApp") {
+                    item["_type"] = "ClipboardApp.Model.Item.ClipboardItem, ClipboardApp";
+                    items_collection.Update(item);
+                }
+                // ClipboardApp.Model.FileSystemItem, ClipboardApp -> ClipboardApp.Model.Item.FileSystemItem, ClipboardApp
+                if (typeString == "ClipboardApp.Item.FileSystemItem, ClipboardApp") {
+                    item["_type"] = "ClipboardApp.Model.Item.FileSystemItem, ClipboardApp";
+                    items_collection.Update(item);
+                }
+                // ClipboardApp.Model.OutlookItem, ClipboardApp -> ClipboardApp.Model.Item.OutlookItem, ClipboardApp
+                if (typeString == "ClipboardApp.Item.OutlookItem, ClipboardApp") {
+                    item["_type"] = "ClipboardApp.Model.Item.OutlookItem, ClipboardApp";
+                    items_collection.Update(item);
+                }
+            }
+
             var collection = db.GetCollection(CONTENT_FOLDERS_COLLECTION_NAME);
             foreach (var item in collection.FindAll()) {
                 string typeString = item["_type"];

@@ -1,24 +1,25 @@
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
-using ClipboardApp.View.AutoProcessRule;
+using ClipboardApp.Model.Item;
 using ClipboardApp.View.Help;
 using ClipboardApp.ViewModel;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Main;
-using LibGit2Sharp;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using QAChat.Resource;
 using QAChat.View.AutoGen;
+using QAChat.View.AutoProcessRule;
 using QAChat.View.PromptTemplate;
 using QAChat.View.Tag;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp {
+namespace ClipboardApp
+{
     public partial class MainWindowViewModel {
         // アプリケーションを終了する。
         // Ctrl + Q が押された時の処理
@@ -36,7 +37,7 @@ namespace ClipboardApp {
             ClipboardItemViewModelCommands.StartStopClipboardMonitorCommand();
         });
 
-        
+
         // フォルダが選択された時の処理
         // TreeViewで、SelectedItemChangedが発生したときの処理
         public SimpleDelegateCommand<RoutedEventArgs> FolderSelectionChangedCommand => new((routedEventArgs) => {
@@ -106,7 +107,8 @@ namespace ClipboardApp {
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public void OpenListAutoProcessRuleWindowCommandExecute() {
             // ListAutoProcessRuleWindowを開く
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(this);
+            ContentFolderViewModel folderViewModel = RootFolderViewModelContainer.RootFolderViewModel;
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(folderViewModel);
 
         }
         // メニューの「タグ編集」をクリックしたときの処理

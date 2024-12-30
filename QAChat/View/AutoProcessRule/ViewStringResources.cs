@@ -1,6 +1,6 @@
 using QAChat.Resource;
 
-namespace ClipboardApp.View.AutoProcessRule {
+namespace QAChat.View.AutoProcessRule {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;

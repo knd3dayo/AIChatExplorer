@@ -1,17 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using ClipboardApp.Settings;
-using ClipboardApp.View.AutoProcessRule;
 using PythonAILib.Model.AutoProcess;
+using QAChat.Model;
+using QAChat.View.AutoProcessRule;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.AutoProcess {
-    public class ListAutoProcessRuleWindowViewModel : ClipboardAppViewModelBase {
-
-
-        // システム共通ルール設定用
-        public SettingUserControlViewModel SettingUserControlViewModel { get; } = new SettingUserControlViewModel();
+namespace QAChat.ViewModel.AutoProcess {
+    public class ListAutoProcessRuleWindowViewModel : QAChatViewModelBase {
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];
@@ -24,13 +20,15 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             }
         }
         private static MainWindowViewModel? _mainWindowViewModel;
-        public ListAutoProcessRuleWindowViewModel(MainWindowViewModel mainWindowViewModel) {
-            _mainWindowViewModel = mainWindowViewModel;
+        public ListAutoProcessRuleWindowViewModel(ContentFolderViewModel rootFolderViewModel) {
+            RootFolderViewModel = rootFolderViewModel;
             // AutoProcessRulesを更新
             AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
             OnPropertyChanged(nameof(AutoProcessRules));
 
         }
+        // RootFolderViewModel
+        public ContentFolderViewModel RootFolderViewModel { get; set; }
 
         // TabIndex
         private int _tabIndex = 0;
@@ -87,13 +85,8 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 return;
             }
             // RootFolderViewModelを取得
-            ContentFolderViewModel? rootFolderViewModel = _mainWindowViewModel?.RootFolderViewModelContainer?.RootFolderViewModel;
-            if (rootFolderViewModel == null) {
-                LogWrapper.Error(StringResources.SelectedFolderNotFound);
-                return;
-            }
 
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, rootFolderViewModel, AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(SelectedAutoProcessRule, RootFolderViewModel, AutoProcessRuleUpdated);
         });
 
         // 自動処理を追加する処理
@@ -105,14 +98,8 @@ namespace ClipboardApp.ViewModel.AutoProcess {
                 AutoProcessRules = [.. AutoProcessRule.GetAllAutoProcessRules()];
                 OnPropertyChanged(nameof(AutoProcessRules));
             }
-            // RootFolderViewModelを取得
-            ContentFolderViewModel? rootFolderViewModel = _mainWindowViewModel?.RootFolderViewModelContainer?.RootFolderViewModel;
-            if (rootFolderViewModel == null) {
-                LogWrapper.Error(StringResources.SelectedFolderNotFound);
-                return;
-            }
             AutoProcessRule rule = new();
-            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, rootFolderViewModel,  AutoProcessRuleUpdated);
+            EditAutoProcessRuleWindow.OpenEditAutoProcessRuleWindow(rule, RootFolderViewModel, AutoProcessRuleUpdated);
         });
 
         // 自動処理を削除する処理
@@ -131,14 +118,5 @@ namespace ClipboardApp.ViewModel.AutoProcess {
             OnPropertyChanged(nameof(AutoProcessRules));
         });
 
-        // SaveSystemCommonSettingCommand
-        public SimpleDelegateCommand<object> SaveSystemCommonSettingCommand => new((parameter) => {
-            if (SettingUserControlViewModel.Save()) {
-
-                LogWrapper.Info(StringResources.SavedSystemCommonSettings);
-            } else {
-                LogWrapper.Warn(StringResources.NoChangesToSystemCommonSettings);
-            }
-        });
     }
 }

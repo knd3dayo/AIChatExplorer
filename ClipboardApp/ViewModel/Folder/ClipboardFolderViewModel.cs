@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Item;
 using ClipboardApp.View.ClipboardItem;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Common;
@@ -19,7 +19,8 @@ using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp.ViewModel {
+namespace ClipboardApp.ViewModel
+{
     public class ClipboardFolderViewModel(ClipboardFolder clipboardItemFolder) : ContentFolderViewModel(clipboardItemFolder) {
         public override ClipboardItemViewModel CreateItemViewModel(ContentItem item) {
             return new ClipboardItemViewModel(this, item);
@@ -228,7 +229,7 @@ namespace ClipboardApp.ViewModel {
         public virtual async void LoadItems() {
             Items.Clear();
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<Model.ClipboardItem> _items = [];
+            List<ClipboardItem> _items = [];
             try {
                 UpdateIndeterminate(true);
                 await Task.Run(() => {

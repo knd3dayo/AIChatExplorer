@@ -1,11 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.Item;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Item;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Mail {
+namespace ClipboardApp.ViewModel.Mail
+{
     public class OutlookFolderViewModel(OutlookFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;

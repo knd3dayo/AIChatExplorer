@@ -26,6 +26,19 @@ namespace PythonAILib.Model.AutoProcess {
         // 移動またはコピー先のフォルダ
         public ObjectId DestinationFolderId { get; set; } = ObjectId.Empty;
 
+        [BsonIgnore]
+        public ContentFolder? DestinationFolder {
+            get {
+                return ContentFolder.GetFolderById<ContentFolder>(DestinationFolderId);
+            }
+        }
+        [BsonIgnore]
+        public ContentFolder? TargetFolder {
+            get {
+                return ContentFolder.GetFolderById<ContentFolder>(TargetFolderId);
+            }
+        }
+
         public AutoProcessRule() {
         }
 

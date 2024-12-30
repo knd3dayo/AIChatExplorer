@@ -1,8 +1,8 @@
 using System.Windows;
-using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.AutoProcess;
+using QAChat.ViewModel.AutoProcess;
+using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.View.AutoProcessRule {
+namespace QAChat.View.AutoProcessRule {
     /// <summary>
     /// ListAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>
@@ -10,7 +10,7 @@ namespace ClipboardApp.View.AutoProcessRule {
         public ListAutoProcessRuleWindow() {
             InitializeComponent();
         }
-        public static void OpenListAutoProcessRuleWindow(MainWindowViewModel viewModel) {
+        public static void OpenListAutoProcessRuleWindow(ContentFolderViewModel viewModel) {
             ListAutoProcessRuleWindow listAutoProcessRuleWindow = new();
             listAutoProcessRuleWindow.DataContext = new ListAutoProcessRuleWindowViewModel(viewModel);
             listAutoProcessRuleWindow.ShowDialog();

@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-using ClipboardApp.Item;
 using ClipboardApp.Model;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Content;
 using NetOffice.OutlookApi;
 using PythonAILib.Model.Content;
@@ -10,7 +10,8 @@ using PythonAILib.Model.Folder;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.FileSystem {
+namespace ClipboardApp.ViewModel.FileSystem
+{
     public class FileSystemFolderViewModel(FileSystemFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
         // LoadChildrenで再帰読み込みするデフォルトのネストの深さ
         public override int DefaultNextLevel { get; } = 0;

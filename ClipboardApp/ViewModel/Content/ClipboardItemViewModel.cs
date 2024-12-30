@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using ClipboardApp.Model;
+using ClipboardApp.Model.Item;
 using ClipboardApp.View.ClipboardItem;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Content;
@@ -12,7 +12,8 @@ using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Content {
+namespace ClipboardApp.ViewModel.Content
+{
     public partial class ClipboardItemViewModel : ContentItemViewModel {
 
         // OpenItem

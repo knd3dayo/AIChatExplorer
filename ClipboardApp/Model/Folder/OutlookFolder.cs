@@ -1,5 +1,5 @@
 using ClipboardApp.Factory;
-using ClipboardApp.Item;
+using ClipboardApp.Model.Item;
 using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;

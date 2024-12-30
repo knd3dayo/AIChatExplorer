@@ -1,4 +1,5 @@
 using ClipboardApp.Model.Folder;
+using ClipboardApp.Model.Item;
 using ClipboardApp.View.Folder;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Folder;
@@ -6,7 +7,8 @@ using QAChat.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 
-namespace ClipboardApp.ViewModel.Chat {
+namespace ClipboardApp.ViewModel.Chat
+{
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
 
         // 子フォルダのClipboardFolderViewModelを作成するメソッド
@@ -19,7 +21,7 @@ namespace ClipboardApp.ViewModel.Chat {
 
         // アイテム作成コマンドの実装. 画像チェックの場合は、画像チェックー画面を開く
         public override void CreateItemCommandExecute() {
-            Model.ClipboardItem clipboardItem = new(Folder.Id);
+            ClipboardItem clipboardItem = new(Folder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             OpenItemCommandExecute(clipboardItemViewModel);
         }

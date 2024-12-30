@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using ClipboardApp.Common;
 using ClipboardApp.Factory;
+using ClipboardApp.Model.Item;
 using LiteDB;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
@@ -14,7 +15,8 @@ using QAChat.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folder
+{
     public partial class ClipboardFolder : ContentFolder {
 
         public override void Save() {

@@ -5,7 +5,7 @@ using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 
-namespace ClipboardApp.Model {
+namespace ClipboardApp.Model.Item {
     public partial class ClipboardItem : ContentItem {
         // コンストラクタ
         public ClipboardItem(LiteDB.ObjectId folderObjectId) {

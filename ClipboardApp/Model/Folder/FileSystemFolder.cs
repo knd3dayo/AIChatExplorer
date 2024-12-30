@@ -1,6 +1,6 @@
 using System.IO;
 using ClipboardApp.Factory;
-using ClipboardApp.Item;
+using ClipboardApp.Model.Item;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Content;
@@ -9,7 +9,8 @@ using PythonAILib.PythonIF;
 using PythonAILib.Utils.Common;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Model.Folder {
+namespace ClipboardApp.Model.Folder
+{
     public class FileSystemFolder : ClipboardFolder {
 
         public override void Save() {
