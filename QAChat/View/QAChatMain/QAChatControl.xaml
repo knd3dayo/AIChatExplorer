@@ -81,12 +81,10 @@
                     SelectedIndex="{Binding Mode}">
                     <ComboBoxItem Content="OpenAI" />
                     <ComboBoxItem Content="OpenAI+RAG" />
-                    <!--
                     <ComboBoxItem Content="LangChain" />
                     <ComboBoxItem Content="AutoGen GroupChat" />
                     <ComboBoxItem Content="AutoGen NormalChat" />
                     <ComboBoxItem Content="AutoGen NestedChat" />
-                    -->
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
                             <i:InvokeCommandAction Command="{Binding ModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
