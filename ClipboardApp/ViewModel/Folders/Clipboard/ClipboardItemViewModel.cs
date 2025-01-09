@@ -13,8 +13,7 @@ using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Content
-{
+namespace ClipboardApp.ViewModel.Content {
     public partial class ClipboardItemViewModel : ContentItemViewModel {
 
         // コンストラクタ
@@ -30,7 +29,6 @@ namespace ClipboardApp.ViewModel.Content
             OnPropertyChanged(nameof(Description));
             OnPropertyChanged(nameof(Tags));
             OnPropertyChanged(nameof(SourceApplicationTitleText));
-            OnPropertyChanged(nameof(TextTabVisibility));
             OnPropertyChanged(nameof(FileTabVisibility));
 
         }
@@ -79,12 +77,10 @@ namespace ClipboardApp.ViewModel.Content
         // ChatItemsTextが空でない場合はVisible,それ以外はCollapsed
         public Visibility ChatItemsTextTabVisibility => Tools.BoolToVisibility(string.IsNullOrEmpty(ContentItem.ChatItemsText) == false);
 
-        // テキストタブの表示可否
-        public Visibility TextTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Text);
 
         // ファイルタブの表示可否
         public Visibility FileTabVisibility => Tools.BoolToVisibility(ContentType == ContentTypes.ContentItemTypes.Files || ContentType == ContentTypes.ContentItemTypes.Image);
-
+   
         // ImageVisibility
         public Visibility ImageVisibility => Tools.BoolToVisibility(ContentItem.IsImage());
 
@@ -174,7 +170,7 @@ namespace ClipboardApp.ViewModel.Content
                     Margin = new Thickness(3, 0, 3, 0),
                     Padding = new Thickness(0, 0, 0, 0),
                     FontSize = 10,
-                    Visibility = TextTabVisibility
+                    Visibility = Visibility.Visible
                 };
                 tabItems.Add(contentTabItem);
                 // FileOrImage

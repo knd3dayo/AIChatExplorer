@@ -11,7 +11,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:ClipboardApp.View.Item"
-    xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Content"
+    xmlns:viewModel="clr-namespace:QAChat.ViewModel.Content;assembly=PythonAILibUI"
     d:DataContext="{d:DesignInstance Type=viewModel:EditItemWindowViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>

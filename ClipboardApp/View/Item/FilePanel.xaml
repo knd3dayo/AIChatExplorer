@@ -39,7 +39,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock
@@ -101,28 +100,10 @@
                     Grid.Column="0"
                     Margin="10,3,10,3"
                     VerticalAlignment="Top"
-                    Text="{x:Static res:ViewStringResources.ExtractedText}" />
-                <ScrollViewer
-                    Grid.Row="4"
-                    Grid.Column="1"
-                    Margin="10,3,10,3"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Auto">
-                    <editorControl:MyTextBox
-                        Margin="10,3,10,3"
-                        IsReadOnly="True"
-                        Text="{Binding ContentItem.Content, Mode=OneWay}"
-                        TextWrappingMode="{Binding TextWrappingMode}" />
-                </ScrollViewer>
-                <TextBlock
-                    Grid.Row="5"
-                    Grid.Column="0"
-                    Margin="10,3,10,3"
-                    VerticalAlignment="Top"
                     Text="{x:Static res:ViewStringResources.Image}"
                     Visibility="{Binding ImageVisibility}" />
                 <Image
-                    Grid.Row="5"
+                    Grid.Row="4"
                     Grid.Column="1"
                     MaxWidth="600"
                     Margin="10,3,10,3"
