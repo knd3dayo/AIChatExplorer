@@ -91,6 +91,8 @@ namespace ClipboardApp.ViewModel.Folders.FileSystem {
             } finally {
                 folderViewModel.UpdateIndeterminate(false);
             }
+            folderViewModel.LoadItems();
+
         });
 
         // ショートカット登録コマンド

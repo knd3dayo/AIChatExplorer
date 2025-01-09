@@ -89,6 +89,8 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
             } finally {
                 folderViewModel.UpdateIndeterminate(false);
             }
+            folderViewModel.LoadItems();
+
         });
 
     }

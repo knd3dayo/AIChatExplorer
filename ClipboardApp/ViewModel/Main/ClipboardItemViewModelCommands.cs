@@ -25,21 +25,14 @@ using QAChat.ViewModel.Item;
 using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Main
-{
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
+        #region プログレスインジケーター不要の処理
 
         // ベクトル検索を実行するコマンド
         public SimpleDelegateCommand<ContentItemViewModel> VectorSearchCommand => new((itemViewModel) => {
             OpenVectorSearchWindowCommand(itemViewModel.ContentItem);
-        });
-
-        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
-        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
-            foreach (var item in MainWindowViewModel.Instance.SelectedItems) {
-                ExtractText(item.ContentItem);
-            }
         });
 
         // ピン留めの切り替えコマンド (複数選択可能)
@@ -50,6 +43,7 @@ namespace ClipboardApp.ViewModel.Main
                 SaveClipboardItemCommand.Execute(item);
             }
         });
+
 
         // 選択中のContentItemBaseを開く
         public override void OpenItem(ContentItem contentItem) {
@@ -155,59 +149,6 @@ namespace ClipboardApp.ViewModel.Main
             SearchWindow.OpenSearchWindow(searchConditionRule, folder, false, action);
         }
 
-        // Command to reload the folder
-        public void ReloadFolderCommand(MainWindowViewModel model) {
-            if (model.SelectedFolder == null) {
-                return;
-            }
-            // Display ProgressIndicator until processing is complete
-            try {
-                model.UpdateIndeterminate(true);
-                model.SelectedFolder.LoadFolderCommand.Execute();
-                LogWrapper.Info(CommonStringResources.Instance.Reloaded);
-            } finally {
-                model.UpdateIndeterminate(false);
-            }
-        }
-
-        // Process when Ctrl + Shift + M is pressed
-        public void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
-            ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // Do not process if no folder is selected
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            SelectedFolder.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems
-            );
-        }
-        // Process when Ctrl + M is pressed
-        public void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
-            ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
-            // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // Do not process if no folder is selected
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            SelectedFolder.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems
-            );
-        }
 
         // Process when Ctrl + X is pressed on a folder
         public void CutFolderCommandExecute(MainWindowViewModel windowViewModel) {
@@ -281,6 +222,161 @@ namespace ClipboardApp.ViewModel.Main
             }
         }
 
+        // Command to open a folder
+        public override void OpenFolder(ContentItem contentItem) {
+            // Open the folder only if the ContentType is File
+            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
+                LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
+                return;
+            }
+            // Open the folder with Process.Start
+            string? folderPath = contentItem.FolderName;
+            if (folderPath != null) {
+                var p = new Process {
+                    StartInfo = new ProcessStartInfo(folderPath) {
+                        UseShellExecute = true
+                    }
+                };
+                p.Start();
+            }
+        }
+
+        // Command to open a file
+        public override void OpenFile(ContentItem contentItem) {
+            // Open the selected item
+            ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
+        }
+
+        // Command to open a file as a new file
+        public override void OpenFileAsNewFile(ContentItem contentItem) {
+            // Open the selected item
+            ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
+        }
+
+        // Command to perform vector search
+        public override void OpenVectorSearchWindowCommand(ContentFolder folder) {
+            // Open vector search result window
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
+            // Action when a vector DB item is selected
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    vectorDBItems.Add(vectorDBItemBase);
+                });
+            };
+            vectorSearchWindowViewModel.VectorDBItem = folder.MainVectorDBItem;
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+        }
+
+        // Command to perform vector search
+        public override void OpenVectorSearchWindowCommand(ContentItem contentItem) {
+            // Open vector search result window
+            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
+            // Action when a vector DB item is selected
+            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
+                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    vectorDBItems.Add(vectorDBItemBase);
+                });
+            };
+            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
+            vectorSearchWindowViewModel.InputText = contentItem.Content;
+            // Execute vector search
+            vectorSearchWindowViewModel.SendCommand.Execute(null);
+            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
+        }
+
+        // Command to open text content as a file
+        public override void OpenContentAsFile(ContentItem contentItem) {
+            try {
+                // Open the selected item
+                ClipboardProcessController.OpenClipboardItemContent(contentItem);
+            } catch (Exception e) {
+                LogWrapper.Error(e.Message);
+            }
+        }
+
+
+        #endregion
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
+        // 処理中はプログレスインジケータを表示
+        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
+            Task.Run(() => {
+                // プログレスインジケータを表示
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                try {
+                    foreach (var itemViewModel in MainWindowViewModel.Instance.SelectedItems) {
+                        ContentItem item = itemViewModel.ContentItem;
+                        if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                            LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                            return;
+                        }
+                        ContentItemCommands.ExtractTextCommandExecute(item);
+                        // 保存を行う
+                        item.Save(false);
+                    }
+                } finally {
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                }
+            });
+        });
+
+
+        // Command to reload the folder
+        public void ReloadFolderCommand(MainWindowViewModel model) {
+            if (model.SelectedFolder == null) {
+                return;
+            }
+            Task.Run(() => {
+                // Display ProgressIndicator until processing is complete
+                try {
+                    model.UpdateIndeterminate(true);
+                    model.SelectedFolder.LoadFolderCommand.Execute();
+                    LogWrapper.Info(CommonStringResources.Instance.Reloaded);
+                } finally {
+                    model.UpdateIndeterminate(false);
+                }
+            });
+        }
+
+        // Process when Ctrl + Shift + M is pressed
+        public void MergeItemWithHeaderCommandExecute(MainWindowViewModel windowViewModel) {
+            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
+            ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
+            // Do not process if no items are selected
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                return;
+            }
+            // Do not process if no folder is selected
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            SelectedFolder.MergeItemCommandExecute(
+                SelectedFolder,
+                SelectedItems
+            );
+        }
+        // Process when Ctrl + M is pressed
+        public void MergeItemCommandExecute(MainWindowViewModel windowViewModel) {
+            ObservableCollection<ClipboardItemViewModel> SelectedItems = windowViewModel.SelectedItems;
+            ClipboardFolderViewModel? SelectedFolder = windowViewModel.SelectedFolder;
+            // Do not process if no items are selected
+            if (SelectedItems == null || SelectedItems.Count == 0) {
+                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                return;
+            }
+            // Do not process if no folder is selected
+            if (SelectedFolder == null) {
+                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
+                return;
+            }
+            SelectedFolder.MergeItemCommandExecute(
+                SelectedFolder,
+                SelectedItems
+            );
+        }
+
         // Process when Ctrl + V is pressed
         public void PasteFromClipboardCommandExecute() {
             MainWindowViewModel windowViewModel = MainWindowViewModel.Instance;
@@ -321,53 +417,6 @@ namespace ClipboardApp.ViewModel.Main
                         });
                     });
             }
-        }
-        // Command to open a folder
-        public override void OpenFolder(ContentItem contentItem) {
-            // Open the folder only if the ContentType is File
-            if (contentItem.ContentType != ContentTypes.ContentItemTypes.Files) {
-                LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
-                return;
-            }
-            // Open the folder with Process.Start
-            string? folderPath = contentItem.FolderName;
-            if (folderPath != null) {
-                var p = new Process {
-                    StartInfo = new ProcessStartInfo(folderPath) {
-                        UseShellExecute = true
-                    }
-                };
-                p.Start();
-            }
-        }
-
-        // Command to extract text
-        public void ExtractText(ContentItem contentItem) {
-            // プログレスインジケータを表示
-            MainWindowViewModel.Instance.UpdateIndeterminate(true);
-            try {
-                if (contentItem.ContentType == ContentTypes.ContentItemTypes.Text) {
-                    LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                    return;
-                }
-                ContentItemCommands.ExtractTextCommandExecute(contentItem);
-                // 保存を行う
-                contentItem.Save(false);
-            } finally {
-                MainWindowViewModel.Instance.UpdateIndeterminate(false);
-            }
-        }
-
-        // Command to open a file
-        public override void OpenFile(ContentItem contentItem) {
-            // Open the selected item
-            ClipboardProcessController.OpenClipboardItemFile(contentItem, false);
-        }
-
-        // Command to open a file as a new file
-        public override void OpenFileAsNewFile(ContentItem contentItem) {
-            // Open the selected item
-            ClipboardProcessController.OpenClipboardItemFile(contentItem, true);
         }
 
         // Command to generate titles
@@ -451,46 +500,6 @@ namespace ClipboardApp.ViewModel.Main
             LogWrapper.Info(CommonStringResources.Instance.GeneratedVector);
         }
 
-        // Command to perform vector search
-        public override void OpenVectorSearchWindowCommand(ContentFolder folder) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
-                });
-            };
-            vectorSearchWindowViewModel.VectorDBItem = folder.MainVectorDBItem;
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-        // Command to perform vector search
-        public override void OpenVectorSearchWindowCommand(ContentItem contentItem) {
-            // Open vector search result window
-            VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
-            // Action when a vector DB item is selected
-            vectorSearchWindowViewModel.SelectVectorDBItemAction = (vectorDBItems) => {
-                ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                    vectorDBItems.Add(vectorDBItemBase);
-                });
-            };
-            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
-            vectorSearchWindowViewModel.InputText = contentItem.Content;
-            // Execute vector search
-            vectorSearchWindowViewModel.SendCommand.Execute(null);
-            VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
-        }
-
-        // Command to open text content as a file
-        public override void OpenContentAsFile(ContentItem contentItem) {
-            try {
-                // Open the selected item
-                ClipboardProcessController.OpenClipboardItemContent(contentItem);
-            } catch (Exception e) {
-                LogWrapper.Error(e.Message);
-            }
-        }
 
         public static QAChatStartupProps CreateQAChatStartupProps(ContentItem clipboardItem) {
 

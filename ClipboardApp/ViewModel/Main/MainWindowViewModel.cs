@@ -1,23 +1,21 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using ClipboardApp.Common;
 using ClipboardApp.Factory;
+using ClipboardApp.Settings;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel;
-using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Common;
+using ClipboardApp.ViewModel.Content;
+using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoGen;
 using QAChat;
 using WpfAppCommon.Utils;
-using PythonAILib.Model.AutoGen;
-using ClipboardApp.Common;
-using ClipboardApp.Settings;
-using ClipboardApp.ViewModel.Folders.Clipboard;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
@@ -80,7 +78,7 @@ namespace ClipboardApp
 
         }
 
- 
+
         public ObservableCollection<ClipboardAppTabContainer> TabItems { get; set; } = [];
 
         public void AddTabItem(ClipboardAppTabContainer tabItem) {
@@ -89,7 +87,7 @@ namespace ClipboardApp
             }
             // ClipboardAppTabContainerのHeaderWidthを設定. 現在のタブ数 * ClipboardAppTabContainerのHeaderWidth > ThisWindow.Widthの場合はThisWindow.Widthを超えないようにする
             double tabControlWidth = ThisWindow.ActualWidth - 500;
-            if ( (TabItems.Count + 1) * ClipboardAppTabContainer.HeaderWidthStatic > tabControlWidth ) {
+            if ((TabItems.Count + 1) * ClipboardAppTabContainer.HeaderWidthStatic > tabControlWidth) {
                 ClipboardAppTabContainer.HeaderWidthStatic = tabControlWidth / (TabItems.Count + 1);
                 for (int i = 1; i < TabItems.Count; i++) {
                     TabItems[i].HeaderWidth = ClipboardAppTabContainer.HeaderWidthStatic;
@@ -105,17 +103,6 @@ namespace ClipboardApp
             TabItems.Remove(tabItem);
             OnPropertyChanged(nameof(TabItems));
         }
-
-        public SimpleDelegateCommand<ClipboardAppTabContainer> CloseTabCommand => new((tabItem) => {
-            if (tabItem == null) {
-                return;
-            }
-            if (TabItems.Count == 1) {
-                return;
-            }
-            TabItems.Remove(tabItem);
-            OnPropertyChanged(nameof(TabItems));
-        });
 
         // SelectedTabItem
         private ClipboardAppTabContainer? _selectedTabItem;
@@ -155,7 +142,7 @@ namespace ClipboardApp
             }
         }
 
-        
+
         // Cutフラグ
         public enum CutFlagEnum {
             None,
@@ -178,15 +165,13 @@ namespace ClipboardApp
             }
         }
 
-        // 選択中のアイテム
-        private ClipboardItemViewModel? _selectedItem;
         public ClipboardItemViewModel? SelectedItem {
             get {
-                return _selectedItem;
-            }
-            set {
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
+                // SelectedItemsの最後のアイテムを返す
+                if (SelectedItems.Count > 0) {
+                    return SelectedItems[SelectedItems.Count - 1];
+                }
+                return null;
             }
         }
 
@@ -224,11 +209,7 @@ namespace ClipboardApp
         }
 
         // プレビューモード　プレビューを表示するかどうか
-        public Visibility PreviewModeVisibility {
-            get {
-                return ClipboardAppConfig.Instance.PreviewMode ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
+        public Visibility PreviewModeVisibility => Tools.BoolToVisibility(ClipboardAppConfig.Instance.PreviewMode);
 
         //　プレビューモード表示するかどうか
         public bool PreviewMode {

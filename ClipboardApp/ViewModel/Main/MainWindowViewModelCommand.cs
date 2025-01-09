@@ -3,24 +3,22 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Help;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
-using PythonAILibUI.ViewModel.Folder;
 using QAChat.Resource;
 using QAChat.View.AutoGen;
 using QAChat.View.AutoProcessRule;
 using QAChat.View.PromptTemplate;
 using QAChat.View.Tag;
-using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.PromptTemplate;
 using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp
-{
+namespace ClipboardApp {
     public partial class MainWindowViewModel {
         // アプリケーションを終了する。
         // Ctrl + Q が押された時の処理
@@ -31,6 +29,16 @@ namespace ClipboardApp
             commands.ExitCommand();
         });
 
+        public SimpleDelegateCommand<ClipboardAppTabContainer> CloseTabCommand => new((tabItem) => {
+            if (tabItem == null) {
+                return;
+            }
+            if (TabItems.Count == 1) {
+                return;
+            }
+            TabItems.Remove(tabItem);
+            OnPropertyChanged(nameof(TabItems));
+        });
 
         // クリップボード監視開始終了フラグを反転させる
         // メニューの「開始」、「停止」をクリックしたときの処理
@@ -65,15 +73,17 @@ namespace ClipboardApp
                 if (clipboardItemViewModel == null) {
                     return;
                 }
-                SelectedItem = clipboardItemViewModel;
-                // SelectedTabIndexを更新する処理
-                SelectedItem.SelectedTabIndex = lastSelectedIndex;
 
                 // SelectedItemsをMainWindowViewModelにセット
                 SelectedItems.Clear();
                 foreach (ClipboardItemViewModel item in dataGrid.SelectedItems) {
                     SelectedItems.Add(item);
                 }
+                // SelectedTabIndexを更新する処理
+                if (SelectedItem != null) {
+                    SelectedItem.SelectedTabIndex = lastSelectedIndex;
+                }
+                OnPropertyChanged(nameof(SelectedItem));
             }
 
         });
@@ -294,6 +304,8 @@ namespace ClipboardApp
             this.SelectedFolder?.OpenItemCommand.Execute(this.SelectedItem);
 
         });
+
+
         #endregion
 
         #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
@@ -393,6 +405,8 @@ namespace ClipboardApp
         });
 
         #endregion
+
+
 
     }
 }

@@ -206,11 +206,6 @@ namespace ClipboardApp.ViewModel.Content {
                 foreach (TabItem promptTabItem in SystemPromptResultTabItems) {
                     tabItems.Add(promptTabItem);
                 }
-                // ClipboardItemのTypeがFileの場合はFileTabを選択
-                if (ContentItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files
-                    || ContentItem.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Image) {
-                    SelectedTabIndex = 1;
-                }
                 return tabItems;
             }
 

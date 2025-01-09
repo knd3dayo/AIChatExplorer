@@ -64,7 +64,7 @@ namespace PythonAILib.Common {
                     Upgrade(db);
 
                 } catch (Exception e) {
-                    throw new Exception("データベースのオープンに失敗しました。" + e.Message);
+                    throw new Exception("Failed to open the database." + e.Message);
                 }
             }
             return db;
@@ -163,6 +163,7 @@ namespace PythonAILib.Common {
         private void Upgrade(ILiteDatabase db) {
 
             #region バージョンアップ後の暫定処理
+            /**
             var items_collection = db.GetCollection(CONTENT_ITEM_COLLECTION_NAME);
             foreach (var item in items_collection.FindAll()) {
                 // ClipboardApp.item.ClipboardItem, ClipboardApp -> ClipboardApp.Model.Item.ClipboardItem, ClipboardApp
@@ -249,11 +250,10 @@ namespace PythonAILib.Common {
                         }
                     }
                 }
+            **/
 
-                #endregion
-            }
+            #endregion
         }
-
-
     }
+
 }
