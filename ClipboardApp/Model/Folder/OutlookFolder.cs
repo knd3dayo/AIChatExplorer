@@ -95,8 +95,7 @@ namespace ClipboardApp.Model.Folder {
                     // EntryIDが一致するOutlookItemが存在しない場合は追加
                     var items = collection.Find(x => x.EntryID == mailItem.EntryID);
                     if (items == null || items.Count() == 0) {
-                        OutlookItem newItem = new() {
-                            EntryID = mailItem.EntryID,
+                        OutlookItem newItem = new(this.Id, mailItem.EntryID) {
                             Description = mailItem.Subject,
                             ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
                             Content = mailItem.Body,
