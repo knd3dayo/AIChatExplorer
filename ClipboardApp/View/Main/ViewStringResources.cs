@@ -59,8 +59,6 @@ namespace ClipboardApp.View.Main {
         // SourceTitle
         public static string SourceTitle { get; set; } = CommonStringResources.SourceTitle;
 
-        // PreviewMode
-        public static string PreviewMode { get; set; } = CommonStringResources.PreviewMode;
         // OpenAIChat
         public static string OpenAIChat { get; set; } = CommonStringResources.OpenAIChat;
 

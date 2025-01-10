@@ -388,21 +388,6 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // PreviewMode
-        private bool? _previewMode;
-        public bool PreviewMode {
-            get {
-                if (_previewMode == null) {
-                    _previewMode = Properties.Settings.Default.PreviewMode;
-                }
-                return _previewMode.Value;
-            }
-            set {
-                _previewMode = value;
-                Properties.Settings.Default.PreviewMode = value;
-            }
-        }
-
         // IgnoreLineCount
         private int _ignoreLineCount = -1;
         public int IgnoreLineCount {

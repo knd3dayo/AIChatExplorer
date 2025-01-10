@@ -56,9 +56,6 @@
     <Setting Name="TesseractExePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:\Program Files\Tesseract-OCR\tesseract.exe</Value>
     </Setting>
-    <Setting Name="PreviewMode" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
-    </Setting>
     <Setting Name="AutoDescriptionWithOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
@@ -120,7 +117,7 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AutoDocumentReliabilityCheck" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

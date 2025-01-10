@@ -92,7 +92,7 @@ namespace ClipboardApp {
         public SimpleDelegateCommand<object> ChangePinCommand => new((parameter) => {
 
             // 選択中のアイテムがない場合は処理をしない
-            if (SelectedItems == null || SelectedItems.Count == 0) {
+            if (SelectedItems.Count == 0) {
                 LogWrapper.Error(StringResources.NoItemSelected);
                 return;
             }
@@ -127,6 +127,7 @@ namespace ClipboardApp {
             TagWindow.OpenTagWindow(null, () => { });
 
         }
+        #region 別Windowを開く処理
 
         // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListPythonScriptWindowCommand => new((parameter) => {
@@ -165,6 +166,7 @@ namespace ClipboardApp {
 
         });
 
+
         // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
@@ -198,6 +200,13 @@ namespace ClipboardApp {
             ClipboardItemViewModelCommands commands = new();
             commands.SettingCommandExecute();
         });
+
+        // ベクトル検索を実行する処理 複数アイテム処理不可
+        public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
+            this.SelectedItem?.Commands.VectorSearchCommand.Execute(SelectedItem);
+        });
+
+        #endregion
 
 
         #region Window全体のInputBinding用のコマンド
@@ -378,11 +387,6 @@ namespace ClipboardApp {
                     SelectedFolder?.LoadFolderCommand.Execute();
                 });
             });
-        });
-
-        // ベクトル検索を実行する処理 複数アイテム処理不可
-        public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
-            this.SelectedItem?.Commands.VectorSearchCommand.Execute(SelectedItem);
         });
 
 

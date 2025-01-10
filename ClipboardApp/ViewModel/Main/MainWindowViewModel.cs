@@ -208,26 +208,6 @@ namespace ClipboardApp {
             }
         }
 
-        // プレビューモード　プレビューを表示するかどうか
-        public Visibility PreviewModeVisibility => Tools.BoolToVisibility(ClipboardAppConfig.Instance.PreviewMode);
-
-        //　プレビューモード表示するかどうか
-        public bool PreviewMode {
-            get {
-                return ClipboardAppConfig.Instance.PreviewMode;
-            }
-            set {
-                ClipboardAppConfig.Instance.PreviewMode = value;
-                // Save
-                ClipboardAppConfig.Instance.Save();
-
-                OnPropertyChanged(nameof(PreviewMode));
-                OnPropertyChanged(nameof(PreviewModeVisibility));
-                // アプリケーション再起動後に反映されるようにメッセージを表示
-                MessageBox.Show(StringResources.DisplayModeWillChangeWhenYouRestartTheApplication, StringResources.Information, MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-        }
-
         /// <summary>
         /// 外部からプロパティの変更を通知する
         /// </summary>

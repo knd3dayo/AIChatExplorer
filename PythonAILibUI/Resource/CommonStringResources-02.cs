@@ -453,8 +453,6 @@ namespace QAChat.Resource {
         // サイズの大きなテキストの場合は自動的に折り返しを解除する
         public virtual string AutoTextWrapping { get; } = "サイズの大きなテキストの場合は自動的に折り返しを解除する";
 
-        // プレビューモード
-        public virtual string PreviewMode { get; } = "プレビューを有効にする";
         // コンパクト表示モード
         public virtual string CompactMode { get; } = "コンパクト表示にする";
 

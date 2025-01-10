@@ -242,18 +242,6 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool PreviewMode {
-            get {
-                return ((bool)(this["PreviewMode"]));
-            }
-            set {
-                this["PreviewMode"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool AutoDescriptionWithOpenAI {
             get {
                 return ((bool)(this["AutoDescriptionWithOpenAI"]));
@@ -493,7 +481,7 @@ namespace ClipboardApp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AutoDocumentReliabilityCheck {
             get {
                 return ((bool)(this["AutoDocumentReliabilityCheck"]));
