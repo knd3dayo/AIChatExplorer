@@ -457,15 +457,9 @@ namespace PythonAILib.Model.Content {
             };
 
             string contentText = Content;
-            // VectorSearchRequestを作成
-            VectorSearchRequest request = new() {
-                Query = contentText,
-                SearchKWArgs = new Dictionary<string, object> {
-                    ["k"] = 10
-                }
-            };
+
             // ベクトル検索を実行
-            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, request);
+            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions.VectorSearch(chatRequestContext, contentText);
             return results;
         }
 

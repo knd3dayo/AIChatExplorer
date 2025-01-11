@@ -419,19 +419,17 @@ namespace PythonAILib.PythonIF {
             return vectorSearchResults;
         }
 
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest vectorSearchRequest) {
+        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query) {
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
-            // vectorSearchRequestをJSON文字列に変換
-            string vectorSearchRequestJson = vectorSearchRequest.ToJson();
-
+            
             LogWrapper.Info(PythonAILibStringResources.Instance.VectorSearchExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{vectorSearchRequestJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.VectorSearchRequest}:{query}");
 
             // VectorSearch関数を呼び出す
             return VectorSearchExecute("vector_search", (function_object) => {
-                string resultString = function_object(chatRequestContextJson, vectorSearchRequestJson);
+                string resultString = function_object(chatRequestContextJson, query);
                 return resultString;
             });
         }

@@ -291,7 +291,7 @@ def get_catalog(context_json: str) -> dict:
 
 ########################
 
-def vector_search(context_json: str, request_json: str):
+def vector_search(context_json: str, query: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
@@ -300,7 +300,7 @@ def vector_search(context_json: str, request_json: str):
         vector_db_items = get_vector_db_objects(context_json)
 
         from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
-        params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, request_json)
+        params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
         result = ai_app.vector_search(params)
         return result
     

@@ -130,20 +130,8 @@ namespace PythonAILib.Utils.Python {
         public static string GenerateVectorSearchResult(ChatRequestContext chatRequestContext, string query) {
             // ベクトル検索が存在するか否かのフラグ
             bool hasVectorSearch = false;
-            // VectorSearchRequestを作成. テスト用にFilterを設定
-            VectorSearchRequest request = new() {
-                Query = query,
-                SearchKWArgs = new Dictionary<string, object> {
-                    ["k"] = 4,
-                    // filter
-                    ["filter"] = new Dictionary<string, object> {
-                        ["content_type"] = "text"
-                    }
-                }
-            };
-
             StringBuilder sb = new();
-            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, request) ?? [];
+            List<VectorDBEntry> results = PythonExecutor.PythonAIFunctions?.VectorSearch(chatRequestContext, query) ?? [];
             sb.AppendLine();
             for (int i = 0; i < results.Count; i++) {
                 VectorDBEntry vectorSearchResult = results[i];

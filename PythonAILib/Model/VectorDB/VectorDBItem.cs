@@ -22,7 +22,7 @@ namespace PythonAILib.Model.VectorDB {
         public readonly static string DefaultCollectionName = "ai_app_default_collection";
 
         // システム共通のベクトルDB
-        private static VectorDBItem GetDefaultVectorDB() {
+        public static VectorDBItem GetDefaultVectorDB() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var item = libManager.DataFactory.GetVectorDBCollection<VectorDBItem>().FindOne(item => item.Name == SystemCommonVectorDBName);
             if (item == null) {

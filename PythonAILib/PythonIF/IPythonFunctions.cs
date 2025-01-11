@@ -23,7 +23,7 @@ namespace PythonAILib.PythonIF {
         public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext);
 
 
-        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, VectorSearchRequest request);
+        public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
 
