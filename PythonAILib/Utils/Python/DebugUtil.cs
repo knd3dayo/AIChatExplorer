@@ -123,13 +123,6 @@ namespace PythonAILib.Utils.Python {
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
                 return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
             }
-            // ModeがLangChainの場合は、LangChainChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                // パラメーターファイルを作成
-                string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
-                File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-                return string.Join("\n\n", DebugUtil.CreateLangChainChatCommandLine(DebugUtil.DebugRequestParametersFile));
-            }
             // ModeがAutoGenの場合は、AutoGenのNormalChatを実行するコマンドを返す
             if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
                 // パラメーターファイルを作成

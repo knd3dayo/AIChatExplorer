@@ -180,13 +180,6 @@ namespace PythonAILib.Utils.Python {
             return result;
         }
 
-        public static ChatResult? ExecuteChatLangChain(ChatRequestContext chatRequestContext, ChatRequest chat) {
-            // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-            // GenerateVectorSearchResult(openAIProperties);
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.LangChainChat(chatRequestContext, chat);
-            return result;
-        }
-
         public static ChatResult? ExecuteChatNormal(ChatRequestContext chatRequestContext, ChatRequest chat) {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(chatRequestContext, chat);
             return result;

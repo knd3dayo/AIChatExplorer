@@ -166,19 +166,7 @@ namespace PythonAILib.Model.Chat {
                 return result;
 
             }
-            if (this.ChatMode == OpenAIExecutionModeEnum.LangChain) {
-                // リクエストメッセージを最新化
-                UpdateMessage();
 
-                // ChatModeがLangChainの場合は、LangChainChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatLangChain(chatRequestContext, this);
-                if (result == null) {
-                    return null;
-                }
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
-                return result;
-            }
             if (this.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // AutoGenGroupChatを実行する
                 return ExecuteAutoGenGroupChat(chatRequestContext, iterateAction);

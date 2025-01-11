@@ -510,32 +510,6 @@ namespace ClipboardApp.Settings {
             return testResult;
         }
 
-        // TestLangChain
-        private void TestLangChain() {
-            try {
-                ChatRequest chatRequest = new();
-                List<ChatMessage> chatItems = [new ChatMessage(ChatMessage.UserRole, "Hello")];
-                chatRequest.ChatHistory = chatItems;
-                chatRequest.ChatMode = OpenAIExecutionModeEnum.LangChain;
-
-                // ChatRequestContextを作成
-                ChatRequestContext chatRequestContext = new() {
-                    OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
-                };
-                ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
-                if (string.IsNullOrEmpty(result?.Output)) {
-                    LogWrapper.Error($"[NG]:{StringResources.FailedToRunLangChain}");
-                } else {
-                    string Message = $"[OK]:{StringResources.LangChainRunIsPossible}";
-                    LogWrapper.Info(Message);
-                }
-            } catch (Exception ex) {
-                string Message = $"[NG]:{StringResources.ErrorOccurredAndMessage} ex.Message  \n[{StringResources.StackTrace}] {ex.StackTrace}";
-                LogWrapper.Error(Message);
-            }
-        }
-
-
         // プログレスインジケーターを表示するかどうか
         private bool isIndeterminate = false;
         public bool IsIndeterminate {

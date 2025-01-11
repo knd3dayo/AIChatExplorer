@@ -613,13 +613,17 @@ namespace QAChat.ViewModel.AutoProcess {
             var selectedItem = comboBox.SelectedItem;
             // 選択中のアイテムのインデックスを取得
             int selectedIndex = comboBox.SelectedIndex;
-            // インデックスが0の場合はModeをNormalにする, 1の場合はModeをLangChainWithVectorDBにする.それ以外はエラー
+
             if (selectedIndex == 0) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.Normal;
             } else if (selectedIndex == 1) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.OpenAIRAG;
             } else if (selectedIndex == 2) {
-                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.LangChain;
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenNormalChat;
+            } else if (selectedIndex == 3) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenGroupChat;
+            } else if (selectedIndex == 4) {
+                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenNestedChat;
             } else {
                 return;
             }

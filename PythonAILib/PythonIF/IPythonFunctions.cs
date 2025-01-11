@@ -11,8 +11,6 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatController);
 
-        public ChatResult LangChainChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
-
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
         public ChatResult AutoGenNormalChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);

@@ -81,7 +81,6 @@
                     SelectedIndex="{Binding Mode}">
                     <ComboBoxItem Content="OpenAI" />
                     <ComboBoxItem Content="OpenAI+RAG" />
-                    <ComboBoxItem Content="LangChain" />
                     <ComboBoxItem Content="AutoGen GroupChat" />
                     <ComboBoxItem Content="AutoGen NormalChat" />
                     <ComboBoxItem Content="AutoGen NestedChat" />

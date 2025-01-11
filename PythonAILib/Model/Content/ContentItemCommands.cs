@@ -111,7 +111,6 @@ namespace PythonAILib.Model.Content {
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
                 OpenAIExecutionModeEnum.OpenAIRAG => item.ReferenceVectorDBItems,
-                OpenAIExecutionModeEnum.LangChain => item.ReferenceVectorDBItems,
                 _ => []
             };
             // ChatRequestContextを作成
