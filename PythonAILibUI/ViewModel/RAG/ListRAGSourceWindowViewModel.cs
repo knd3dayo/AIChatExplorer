@@ -6,8 +6,7 @@ using QAChat.Model;
 using QAChat.View.RAG;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.RAG
-{
+namespace QAChat.ViewModel.RAG {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>

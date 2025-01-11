@@ -239,7 +239,7 @@ namespace PythonAILib.Resource {
         public virtual string DocumentReliability { get; } = "文章の信頼度";
         
         // 文章カテゴリ概要
-        public virtual string DocumentCategorySummary { get; } = "文章カテゴリ概要";
+        public virtual string DocumentCategorySummary { get; } = "文章カテゴリ";
 
         // 種別
         public virtual string Type { get; } = "種別";

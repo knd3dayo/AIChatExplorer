@@ -65,17 +65,10 @@ namespace QAChat.ViewModel.VectorDB {
         // FolderSelectWindowViewModel
         public FolderSelectWindowViewModel FolderSelectWindowViewModel { get; set; } 
         // ContentFolderViewModel 
-        public ContentFolderViewModel? FolderViewModel { get; set; } 
+        public ContentFolderViewModel? FolderViewModel { get; set; }
 
         // 選択ボタンの表示可否
-        public Visibility SelectModeVisibility {
-            get {
-                if (mode == ActionModeEnum.Select) {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-        }
+        public Visibility SelectModeVisibility => Tools.BoolToVisibility(mode == ActionModeEnum.Select);
 
         // SelectedTabIndex
         private int selectedTabIndex;

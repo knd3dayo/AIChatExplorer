@@ -13,14 +13,14 @@ namespace PythonAILib.Resource {
         public virtual string SummaryGeneration { get; } = "サマリー";
 
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
-        public virtual string SummaryGenerationPrompt { get; } = "以下の文章から最大400文字程度のサマリーを生成してください。\n";
+        public virtual string SummaryGenerationPrompt { get; } = "以下の文章から最大400文字程度のサマリーを生成してください。50文字程度のところで改行してください\n";
 
 
         // BackgroundInformationGeneration
         public virtual string BackgroundInformationGeneration { get; } = "背景情報";
 
         // "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n"
-        public virtual string BackgroundInformationGenerationPrompt { get; } = "以下の文章の背景情報(経緯、目的、原因、構成要素、誰が？いつ？どこで？など)を生成してください。\n";
+        public virtual string BackgroundInformationGenerationPrompt { get; } = "以下の文章の背景情報(過去から現在に至るまでの経緯、目的、原因など)を生成してください。\n";
 
         // 質問生成
         public virtual string GenerateQuestionRequest { get; } = "文章を分析して質問を挙げてください。\r\n例：\r\n# 定義(類と種差)に関する質問\r\n 文章. ぽんちょろりん汁はおいしいです。\r\n 質問. ぽんちょろりん汁は汁物料理のカテゴリに属するものですか？またはカテゴリ内の他のものとの異なる点はなんですか？\r\n# 目的・理由に関する質問\r\n 文章. 〇〇という仕事は今日中に終えなければならない\r\n 質問.  〇〇という仕事を今日中に終えなければいけない理由は何ですか？ また、〇〇という仕事を行う目的はなんですか？\r\n# 原因・経緯・歴史に関する質問\r\n 文章. 徳川家康は将軍である\r\n  質問. 徳川家康が将軍になった原因はなんですか？\r\n# 構成要素、機能に関する質問\r\n 文章. ぽんちょろりん汁は健康に良い\r\n 質問. ぽんちょろりん汁はどのような材料で作成されていますか？また、どの様な効果があるのですか？";

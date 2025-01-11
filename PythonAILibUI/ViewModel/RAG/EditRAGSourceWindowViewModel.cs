@@ -1,20 +1,17 @@
 using System.Windows;
+using QAChat.Model;
 using QAChat.View.RAG;
 using WpfAppCommon.Utils;
-using QAChat.Model;
 
 namespace QAChat.ViewModel.RAG {
-    public class EditRAGSourceWindowViewModel : QAChatViewModelBase
-    {
+    public class EditRAGSourceWindowViewModel : QAChatViewModelBase {
 
         // 初期化
-        public EditRAGSourceWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate)
-        {
+        public EditRAGSourceWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {
             ItemViewModel = itemViewModel;
 
             // test
-            if (ItemViewModel != null)
-            {
+            if (ItemViewModel != null) {
                 ItemViewModel.SelectedVectorDBItem = itemViewModel?.SelectedVectorDBItem;
             }
 
@@ -22,14 +19,11 @@ namespace QAChat.ViewModel.RAG {
         }
 
         private RAGSourceItemViewModel? itemViewModel;
-        public RAGSourceItemViewModel? ItemViewModel
-        {
-            get
-            {
+        public RAGSourceItemViewModel? ItemViewModel {
+            get {
                 return itemViewModel;
             }
-            set
-            {
+            set {
                 itemViewModel = value;
                 OnPropertyChanged(nameof(ItemViewModel));
             }
@@ -39,11 +33,9 @@ namespace QAChat.ViewModel.RAG {
         private Action<RAGSourceItemViewModel> AfterUpdate { get; set; } = (promptItem) => { };
 
         // OKボタンのコマンド
-        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) =>
-        {
+        public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
             // TitleとContentの更新を反映
-            if (ItemViewModel == null)
-            {
+            if (ItemViewModel == null) {
                 return;
             }
             // RAGSourceItemを更新
@@ -55,35 +47,27 @@ namespace QAChat.ViewModel.RAG {
         });
 
         // キャンセルボタンのコマンド
-        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) =>
-        {
+        public SimpleDelegateCommand<Window> CancelButtonCommand => new((window) => {
             // ウィンドウを閉じる
             window.Close();
         });
         // UpdateIndexButtonCommand UpdateRAGIndexWindowを開く。
-        public SimpleDelegateCommand<object> UpdateIndexButtonCommand => new((parameter) =>
-        {
-            if (ItemViewModel == null)
-            {
+        public SimpleDelegateCommand<object> UpdateIndexButtonCommand => new((parameter) => {
+            if (ItemViewModel == null) {
                 return;
             }
-            if (ItemViewModel.Item == null)
-            {
+            if (ItemViewModel.Item == null) {
                 return;
             }
-            UpdateRAGIndexWindow.OpenUpdateRAGIndexWindow(ItemViewModel, (afterUpdate) =>
-            {
+            UpdateRAGIndexWindow.OpenUpdateRAGIndexWindow(ItemViewModel, (afterUpdate) => {
                 // 更新
             });
         });
 
         // WorkingDirectoryのチェック
-        public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) =>
-        {
-            try
-            {
-                if (ItemViewModel == null)
-                {
+        public SimpleDelegateCommand<object> CheckWorkingDirCommand => new((parameter) => {
+            try {
+                if (ItemViewModel == null) {
                     LogWrapper.Error(StringResources.ItemViewModelIsNull);
                     return;
                 }
@@ -91,9 +75,7 @@ namespace QAChat.ViewModel.RAG {
 
                 ItemViewModel.CheckWorkingDirectory();
 
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 LogWrapper.Error(e.Message);
             }
         });
