@@ -34,7 +34,7 @@ class CustomMultiVectorRetriever(MultiVectorRetriever):
         Returns:
             List of relevant documents
         """
-        results = self.vectorstore.similarity_search_with_score(query, **self.search_kwargs)
+        results = self.vectorstore.similarity_search_with_relevance_scores(query, **self.search_kwargs)
 
         # Map doc_ids to list of sub-documents, adding scores to metadata
         id_to_doc = defaultdict(list)
@@ -206,7 +206,7 @@ class LangChainVectorDB:
             if kwargs:
                 params = kwargs
             params["query"] = query
-            docs, scores = zip(*vectorstore.similarity_search_with_score(**params))
+            docs, scores = zip(*vectorstore.similarity_search_with_relevance_scores(**params))
             for doc, score in zip(docs, scores):
                 doc.metadata["score"] = score
                 result.append(doc)
