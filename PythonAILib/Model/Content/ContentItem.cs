@@ -14,7 +14,6 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
-using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.Content {
     public class ContentItem {
@@ -46,8 +45,43 @@ namespace PythonAILib.Model.Content {
         public string Content { get; set; } = "";
         //説明
         public string Description { get; set; } = "";
+
+        // クリップボードの内容の種類
+        public ContentTypes.ContentItemTypes ContentType { get; set; }
+
+        // OpenAIチャットのChatItemコレクション
+        // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
+        public List<ChatMessage> ChatItems { get; set; } = [];
+
+        // プロンプトテンプレートに基づくチャットの結果
+        public PromptChatResult PromptChatResult { get; set; } = new();
+
+        //Tags
+        public HashSet<string> Tags { get; set; } = [];
+
+        // 画像ファイルチェッカー
+        public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
+
+        //　貼り付け元のアプリケーション名
+        public string SourceApplicationName { get; set; } = "";
+        //　貼り付け元のアプリケーションのタイトル
+        public string SourceApplicationTitle { get; set; } = "";
+        //　貼り付け元のアプリケーションのID
+        public int? SourceApplicationID { get; set; }
+        //　貼り付け元のアプリケーションのパス
+        public string? SourceApplicationPath { get; set; }
+        // ピン留め
+        public bool IsPinned { get; set; }
+
+        // 文書の信頼度(0-100)
+        public int DocumentReliability { get; set; } = 0;
+        // 文書の信頼度の判定理由
+        public string DocumentReliabilityReason { get; set; } = "";
+
         // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
         public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
+
+
 
         // 別フォルダに移動
         public virtual void MoveToFolder<T>(T folder) where T : ContentFolder {
@@ -85,7 +119,7 @@ namespace PythonAILib.Model.Content {
         }
 
 
-        public void MergeItems<T>(List<T> items) where T: ContentItem{
+        public void MergeItems<T>(List<T> items) where T : ContentItem {
             // itemsが空の場合は何もしない
             if (items.Count == 0) {
                 return;
@@ -120,38 +154,6 @@ namespace PythonAILib.Model.Content {
             Save();
 
         }
-
-        // クリップボードの内容の種類
-        public ContentTypes.ContentItemTypes ContentType { get; set; }
-
-        // OpenAIチャットのChatItemコレクション
-        // LiteDBの同一コレクションで保存されているオブジェクト。ClipboardItemオブジェクト生成時にロード、Save時に保存される。
-        public List<ChatMessage> ChatItems { get; set; } = [];
-
-        // プロンプトテンプレートに基づくチャットの結果
-        public PromptChatResult PromptChatResult { get; set; } = new();
-
-        //Tags
-        public HashSet<string> Tags { get; set; } = [];
-
-        // 画像ファイルチェッカー
-        public ScreenShotCheckItem ScreenShotCheckItem { get; set; } = new();
-
-        //　貼り付け元のアプリケーション名
-        public string SourceApplicationName { get; set; } = "";
-        //　貼り付け元のアプリケーションのタイトル
-        public string SourceApplicationTitle { get; set; } = "";
-        //　貼り付け元のアプリケーションのID
-        public int? SourceApplicationID { get; set; }
-        //　貼り付け元のアプリケーションのパス
-        public string? SourceApplicationPath { get; set; }
-        // ピン留め
-        public bool IsPinned { get; set; }
-
-        // 文書の信頼度(0-100)
-        public int DocumentReliability { get; set; } = 0;
-        // 文書の信頼度の判定理由
-        public string DocumentReliabilityReason { get; set; } = "";
 
         // タグ表示用の文字列
         public string TagsString() {
@@ -244,29 +246,6 @@ namespace PythonAILib.Model.Content {
             }
         }
 
-
-        // ReferenceVectorDBItems
-        public List<VectorDBItem> GetReferenceVectorDBItems {
-
-            get {
-                // IsReferenceVectorDBItemsSyncedがTrueの場合はそのまま返す
-                if (IsReferenceVectorDBItemsSynced) {
-                    return ReferenceVectorDBItems;
-                }
-                // folderを取得
-                var folder = GetFolder<ContentFolder>();
-                if (folder == null) {
-                    return [];
-                }
-                ReferenceVectorDBItems = new(folder.ReferenceVectorDBItems);
-                IsReferenceVectorDBItemsSynced = true;
-                return ReferenceVectorDBItems;
-
-            }
-            set {
-                ReferenceVectorDBItems = value;
-            }
-        }
         // Collectionに対応するClipboardFolderを取得
         public T GetFolder<T>() where T : ContentFolder {
             T folder = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T>().FindById(CollectionId);
@@ -408,18 +387,8 @@ namespace PythonAILib.Model.Content {
         #endregion
 
 
-        public virtual VectorDBItem GetMainVectorDBItem() {
-            return GetFolder<ContentFolder>().MainVectorDBItem;
-        }
-        // 参照用のベクトルDBのリストのプロパティ
-        private List<VectorDBItem> _referenceVectorDBItems = [];
-        public virtual List<VectorDBItem> ReferenceVectorDBItems {
-            get {
-                return _referenceVectorDBItems;
-            }
-            set {
-                _referenceVectorDBItems = value;
-            }
+        public virtual VectorSearchProperty GetMainVectorSearchProperty() {
+            return GetFolder<ContentFolder>().GetMainVectorSearchProperty();
         }
 
         public virtual void Delete() {
@@ -439,7 +408,7 @@ namespace PythonAILib.Model.Content {
             }
             if (applyAutoProcess) {
                 // 自動処理を適用
-                
+
             }
             libManager.DataFactory.GetItemCollection<ContentItem>().Upsert(this);
 
@@ -447,12 +416,12 @@ namespace PythonAILib.Model.Content {
 
 
         // ベクトル検索を実行する
-        public List<VectorDBEntry> VectorSearch(List<VectorDBItem> vectorDBItems) {
+        public List<VectorDBEntry> VectorSearch(List<VectorSearchProperty> vectorSearchProperties) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = vectorDBItems,
+                VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties
             };
 

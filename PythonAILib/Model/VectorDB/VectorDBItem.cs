@@ -126,17 +126,17 @@ namespace PythonAILib.Model.VectorDB {
                 if (string.IsNullOrEmpty(CollectionName)) {
                     return Name;
                 }
-                if (CollectionName == DefaultCollectionName) {
+                if (string.IsNullOrEmpty(FolderId)) {
                     return Name;
                 }
                 // ContentFolderを取得
                 var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                ContentFolder? folder = collection.FindById(new ObjectId(CollectionName));
+                ContentFolder? folder = collection.FindById(new ObjectId(FolderId));
                 if (folder == null) {
                     return Name;
                 }
 
-                return $"{Name}/{folder.FolderName}";
+                return $"{Name}:{folder.FolderName}";
             }
         }
         // Equals
@@ -207,29 +207,6 @@ namespace PythonAILib.Model.VectorDB {
             collection.Delete(this.Id);
         }
 
-        public void UpdateIndex(VectorDBEntry contentInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = [this],
-                OpenAIProperties = openAIProperties
-            };
-            LogWrapper.Info(PythonAILibStringResources.Instance.SaveEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
-            LogWrapper.Info(PythonAILibStringResources.Instance.SavedEmbedding);
-        }
-
-        public void DeleteIndex(VectorDBEntry contentInfo) {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = [this],
-                OpenAIProperties = openAIProperties
-            };
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteEmbedding);
-            PythonExecutor.PythonAIFunctions.UpdateVectorDBIndex(chatRequestContext, contentInfo);
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeletedEmbedding);
-        }
 
         public static VectorDBItem GetFolderVectorDBItem() {
             VectorDBItem systemVectorItem = VectorDBItem.GetDefaultVectorDB();

@@ -109,36 +109,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="{x:Static res:ViewStringResources.VectorDBSettings}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="10,0,10,10"
-                        HorizontalAlignment="Left"
-                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                        Text="{x:Static res:ViewStringResources.SaveVectorDB}" />
-                    <ComboBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="10,0,10,10"
-                        DisplayMemberPath="Name"
-                        IsEnabled="{Binding SaveVectorDBEditable}"
-                        ItemsSource="{Binding VectorDBItems}"
-                        SelectedItem="{Binding SelectedVectorDBItem}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding VectorDBSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                </Grid>
+                <Grid />
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2" Margin="10,10,10,10">

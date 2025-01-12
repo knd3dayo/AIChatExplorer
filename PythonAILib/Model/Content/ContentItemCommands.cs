@@ -73,7 +73,7 @@ namespace PythonAILib.Model.Content {
 
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = item.ReferenceVectorDBItems,
+                VectorSearchProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -109,13 +109,13 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorDBItem> vectorDBItems = promptItem.ChatType switch {
-                OpenAIExecutionModeEnum.OpenAIRAG => item.ReferenceVectorDBItems,
+            List<VectorSearchProperty> vectorSearchProperties = promptItem.ChatType switch {
+                OpenAIExecutionModeEnum.OpenAIRAG => item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 _ => []
             };
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = vectorDBItems,
+                VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties
             };
             // ヘッダー情報とコンテンツ情報を結合
@@ -183,7 +183,7 @@ namespace PythonAILib.Model.Content {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
             ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = item.ReferenceVectorDBItems,
+                VectorSearchProperties = item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 OpenAIProperties = openAIProperties
             };
 
@@ -236,9 +236,7 @@ namespace PythonAILib.Model.Content {
         public static void UpdateEmbedding(ContentItem item, VectorDBUpdateMode mode) {
 
             // VectorDBItemを取得
-            VectorDBItem folderVectorDBItem = item.GetMainVectorDBItem();
-            // システム共通のベクトルDBを取得
-            VectorDBItem systemCommonVectorDBItem = VectorDBItem.GetFolderVectorDBItem();
+            VectorSearchProperty folderVectorDBItem = item.GetMainVectorSearchProperty();
 
             if (mode == VectorDBUpdateMode.delete) {
                 // IPythonAIFunctions.ClipboardInfoを作成
@@ -246,8 +244,6 @@ namespace PythonAILib.Model.Content {
 
                 // Embeddingを削除
                 folderVectorDBItem.DeleteIndex(vectorDBEntry);
-                // ★TODO システム共通のベクトルDBにも削除
-                systemCommonVectorDBItem.DeleteIndex(vectorDBEntry);
                 return;
             }
             if (mode == VectorDBUpdateMode.update) {
@@ -259,8 +255,6 @@ namespace PythonAILib.Model.Content {
                     vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.Clipboard, "", "", "", "");
                     // Embeddingを保存
                     folderVectorDBItem.UpdateIndex(vectorDBEntry);
-                    // ★TODO システム共通のベクトルDBにも保存
-                    systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
 
                 } else {
                     if (item.IsImage()) {
@@ -268,15 +262,11 @@ namespace PythonAILib.Model.Content {
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", item.Base64String);
                         // Embeddingを保存
                         folderVectorDBItem.UpdateIndex(vectorDBEntry);
-                        // ★TODO システム共通のベクトルDBにも保存
-                        systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
 
                     } else {
                         vectorDBEntry.UpdateSourceInfo(description, item.Content, VectorSourceType.File, item.FilePath, "", "", "");
                         // Embeddingを保存
                         folderVectorDBItem.UpdateIndex(vectorDBEntry);
-                        // ★TODO システム共通のベクトルDBにも保存
-                        systemCommonVectorDBItem.UpdateIndex(vectorDBEntry);
 
                     }
                 }

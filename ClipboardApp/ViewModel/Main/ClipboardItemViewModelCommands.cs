@@ -264,7 +264,7 @@ namespace ClipboardApp.ViewModel.Main {
                     vectorDBItems.Add(vectorDBItemBase);
                 });
             };
-            vectorSearchWindowViewModel.VectorDBItem = folder.MainVectorDBItem;
+            vectorSearchWindowViewModel.VectorSearchProperty = folder.GetMainVectorSearchProperty();
             VectorSearchWindow.OpenVectorSearchResultWindow(vectorSearchWindowViewModel);
         }
 
@@ -278,7 +278,7 @@ namespace ClipboardApp.ViewModel.Main {
                     vectorDBItems.Add(vectorDBItemBase);
                 });
             };
-            vectorSearchWindowViewModel.VectorDBItem = contentItem.GetMainVectorDBItem();
+            vectorSearchWindowViewModel.VectorSearchProperty = contentItem.GetMainVectorSearchProperty();
             vectorSearchWindowViewModel.InputText = contentItem.Content;
             // Execute vector search
             vectorSearchWindowViewModel.SendCommand.Execute(null);

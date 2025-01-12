@@ -17,7 +17,7 @@ namespace PythonAILib.Model.Chat {
         // ベクトルDBアイテム
 
         [JsonPropertyName("vector_db_items")]
-        public List<VectorDBItem> VectorDBItems { get; set; } = [];
+        public List<VectorSearchProperty> VectorSearchProperties { get; set; } = [];
 
         // AutoGenProperties
         [JsonPropertyName("autogen_props")]
@@ -30,7 +30,7 @@ namespace PythonAILib.Model.Chat {
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                { "vector_db_items", VectorDBItem.ToDictList(VectorDBItems) },
+                { "vector_db_items", VectorSearchProperty.ToDictList(VectorSearchProperties) },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
             };
@@ -42,7 +42,7 @@ namespace PythonAILib.Model.Chat {
         }
 
         // CreateDefaultChatRequestContext 
-        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorDBItem> vectorDBItems , AutoGenGroupChat? groupChat ) {
+        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorSearchProperty> vectorSearchProperties , AutoGenGroupChat? groupChat ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             AutoGenProperties autoGenProperties;
 
@@ -58,7 +58,7 @@ namespace PythonAILib.Model.Chat {
             }
 
             ChatRequestContext chatRequestContext = new() {
-                VectorDBItems = vectorDBItems,
+                VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 AutoGenProperties = autoGenProperties,
             };

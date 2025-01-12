@@ -1,5 +1,4 @@
 using System.IO;
-using LibGit2Sharp;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
@@ -68,7 +67,7 @@ namespace PythonAILib.Model.VectorDB {
 
 
         public string LastIndexedCommitInfoDisplayString {
-            get{
+            get {
                 return GitUtil.GetCommitInfoDisplayString(WorkingDirectory, LastIndexCommitHash);
             }
         }
@@ -126,7 +125,7 @@ namespace PythonAILib.Model.VectorDB {
             }
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = openAIProperties,
-                VectorDBItems = [VectorDBItem]
+                VectorSearchProperties = [new VectorSearchProperty(VectorDBItem)]
             };
 
             try {

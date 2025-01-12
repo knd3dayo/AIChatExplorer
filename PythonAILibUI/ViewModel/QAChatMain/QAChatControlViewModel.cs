@@ -23,8 +23,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
             QAChatStartupProps = props;
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            List<VectorDBItem> vectorDBItems = props.ContentItem.ReferenceVectorDBItems;
-            VectorDBItems = new(vectorDBItems);
+            VectorSearchProperties = [..  props.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
 
             // InputTextを設定
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";
@@ -79,25 +78,25 @@ namespace QAChat.ViewModel.QAChatMain {
 
         }
 
-        private ObservableCollection<VectorDBItem> _vectorDBItemBases = [];
-        public ObservableCollection<VectorDBItem> VectorDBItems {
+        private ObservableCollection<VectorSearchProperty> _vectorDBItemBases = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
                 return _vectorDBItemBases;
             }
             set {
                 _vectorDBItemBases = value;
-                OnPropertyChanged(nameof(VectorDBItems));
+                OnPropertyChanged(nameof(VectorSearchProperties));
             }
         }
 
-        private VectorDBItem? _SelectedVectorDBItem = null;
-        public VectorDBItem? SelectedVectorDBItem {
+        private VectorSearchProperty? _SelectedVectorDBItem = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
                 return _SelectedVectorDBItem;
             }
             set {
                 _SelectedVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedVectorDBItem));
+                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
             }
         }
 
@@ -136,7 +135,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
@@ -159,7 +158,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 // チャット内容を更新
                 await Task.Run(() => {
                     // VectorDBItemsを設定
-                    List<VectorDBItem> items = [.. VectorDBItems];
+                    List<VectorSearchProperty> items = [.. VectorSearchProperties];
 
                     // ★TODO AutoGenPropertiesを実行時に指定可能にする
                     AutoGenProperties autoGenProperties = new() {
@@ -167,7 +166,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     };
                     // ChatRequestContextを設定
                     ChatRequestContext chatRequestContext = new() {
-                        VectorDBItems = items,
+                        VectorSearchProperties = items,
                         OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                         AutoGenProperties = autoGenProperties
                     };
@@ -248,11 +247,11 @@ namespace QAChat.ViewModel.QAChatMain {
             int index = comboBox.SelectedIndex;
             ChatRequest.ChatMode = (OpenAIExecutionModeEnum)index;
             // ModeがNormal以外の場合は、VectorDBItemを取得
-            VectorDBItems = [];
+            VectorSearchProperties = [];
             if (ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal) {
-                List<VectorDBItem> items = QAChatStartupProps.ContentItem.ReferenceVectorDBItems;
+                List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
                 foreach (var item in items) {
-                    VectorDBItems.Add(item);
+                    VectorSearchProperties.Add(item);
                 }
             }
             // VectorDBItemVisibilityを更新
@@ -314,31 +313,25 @@ namespace QAChat.ViewModel.QAChatMain {
 
         // ベクトルDBをリストから削除するコマンド
         public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
-            if (SelectedVectorDBItem != null) {
-                // 元のVectorDBItemsから削除
-                QAChatStartupProps.ContentItem.ReferenceVectorDBItems.Remove(SelectedVectorDBItem);
+            if (SelectedVectorSearchProperty != null) {
                 // VectorDBItemsから削除
-                VectorDBItems.Remove(SelectedVectorDBItem);
+                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
             }
-            OnPropertyChanged(nameof(VectorDBItems));
+            OnPropertyChanged(nameof(VectorSearchProperties));
         });
 
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            QAChatStartupProps.SelectVectorDBItemAction(VectorDBItems);
-            // 元のVectorDBItemsに追加
-            QAChatStartupProps.ContentItem.ReferenceVectorDBItems = [.. VectorDBItems];
+            QAChatStartupProps.SelectVectorDBItemAction(VectorSearchProperties);
 
-            OnPropertyChanged(nameof(VectorDBItems));
+            OnPropertyChanged(nameof(VectorSearchProperties));
         });
 
         // 選択したVectorDBItemの編集画面を開くコマンド
         public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            QAChatStartupProps.EditVectorDBItemAction(VectorDBItems);
-            // 元のVectorDBItemsに追加
-            QAChatStartupProps.ContentItem.ReferenceVectorDBItems = [.. VectorDBItems];
+            QAChatStartupProps.EditVectorDBItemAction(VectorSearchProperties);
         });
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
@@ -350,7 +343,7 @@ namespace QAChat.ViewModel.QAChatMain {
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorDBItems], SelectedAutoGenGroupChat);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }

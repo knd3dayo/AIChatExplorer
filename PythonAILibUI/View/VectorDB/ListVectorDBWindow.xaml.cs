@@ -13,7 +13,7 @@ namespace QAChat.View.VectorDB
         public ListVectorDBWindow() {
             InitializeComponent();
         }
-        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBItem> callBackup) {
+        public static void OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
             ListVectorDBWindow listVectorDBWindow = new();
             ListVectorDBWindowViewModel listVectorDBWindowViewModel = new(mode, rootFolderViewModels, callBackup);
             listVectorDBWindow.DataContext = listVectorDBWindowViewModel;

@@ -154,8 +154,8 @@
                         Margin="10,0,10,0"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
-                        ItemsSource="{Binding VectorDBItems}"
-                        SelectedItem="{Binding SelectedVectorDBItem}"
+                        ItemsSource="{Binding VectorSearchProperties}"
+                        SelectedItem="{Binding SelectedVectorSearchProperty}"
                         Visibility="{Binding VectorDBItemVisibility}">
                         <ItemsControl.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">

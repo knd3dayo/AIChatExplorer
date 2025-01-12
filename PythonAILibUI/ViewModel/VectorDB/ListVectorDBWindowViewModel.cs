@@ -13,7 +13,7 @@ namespace QAChat.ViewModel.VectorDB {
     /// </summary>
     public class ListVectorDBWindowViewModel : QAChatViewModelBase {
 
-        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorDBItem> callBackup) {
+        public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
 
             this.mode = mode;
             this.callBackup = callBackup;
@@ -33,7 +33,7 @@ namespace QAChat.ViewModel.VectorDB {
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         private ActionModeEnum mode;
-        Action<VectorDBItem>? callBackup;
+        Action<VectorSearchProperty>? callBackup;
 
 
         // 選択中のVectorDBItem
@@ -147,11 +147,11 @@ namespace QAChat.ViewModel.VectorDB {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;
                 }
-                callBackup?.Invoke(SelectedVectorDBItem.Item);
+                callBackup?.Invoke(new VectorSearchProperty(SelectedVectorDBItem.Item));
             }
             // SelectedTabIndexが1の場合は、選択したFolderのVectorDBItemを返す
             else if (SelectedTabIndex == 1) {
-                VectorDBItem? item = FolderViewModel?.Folder.MainVectorDBItem;
+                VectorSearchProperty? item = FolderViewModel?.Folder.GetMainVectorSearchProperty();
                 if (item == null) {
                     LogWrapper.Error(StringResources.SelectVectorDBPlease);
                     return;

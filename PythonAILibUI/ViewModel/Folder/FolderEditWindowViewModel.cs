@@ -15,9 +15,7 @@ namespace QAChat.ViewModel.Folder {
             AfterUpdate = afterUpdate;
             FolderViewModel = folderViewModel;
 
-
             OnPropertyChanged(nameof(FolderViewModel));
-            OnPropertyChanged(nameof(SelectedVectorDBItem));
         }
 
         public ContentFolderViewModel FolderViewModel { get; set; }
@@ -41,18 +39,6 @@ namespace QAChat.ViewModel.Folder {
                 return [.. VectorDBItem.GetVectorDBItems()];
             }
         }
-        public VectorDBItem? SelectedVectorDBItem {
-            get {
-                return FolderViewModel.Folder.MainVectorDBItem;
-            }
-            set {
-                if (value == null) {
-                    return;
-                }
-                FolderViewModel.Folder.MainVectorDBItem = value;
-                OnPropertyChanged(nameof(SelectedVectorDBItem));
-            }
-        }
 
         private int _selectedTabIndex = 0;
         public int SelectedTabIndex {
@@ -69,7 +55,6 @@ namespace QAChat.ViewModel.Folder {
 
         public Visibility VectorDBItemButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex != 0);
 
-        public bool SaveVectorDBEditable => FolderViewModel.Folder.IsRootFolder;
 
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
             // フォルダ名が空の場合はエラー
@@ -95,7 +80,6 @@ namespace QAChat.ViewModel.Folder {
             if (routedEventArgs.OriginalSource is ComboBox comboBox) {
                 // 選択されたComboBoxItemのIndexを取得
                 int index = comboBox.SelectedIndex;
-                SelectedVectorDBItem = VectorDBItems[index];
             }
         });
 

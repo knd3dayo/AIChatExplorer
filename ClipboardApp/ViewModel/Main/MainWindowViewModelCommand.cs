@@ -278,7 +278,7 @@ namespace ClipboardApp {
             if (result == MessageBoxResult.Yes) {
                 // 選択中のアイテムを削除
                 foreach (var item in SelectedItems) {
-                    item.Commands.DeleteItemCommand.Execute();
+                    item.Commands.DeleteItemCommand.Execute(item);
                 }
                 // フォルダ内のアイテムを再読み込む
                 SelectedFolder?.LoadFolderCommand.Execute();

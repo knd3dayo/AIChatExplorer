@@ -24,45 +24,36 @@ namespace PythonAILib.Model.Content {
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
 
-        // フォルダに設定されたメインベクトルDBを参照用のベクトルDBのリストに含めるかどうかを示すプロパティ名を変更
-        public bool IncludeInReferenceVectorDBItems { get; set; } = true;
+        public List<VectorSearchProperty> ReferenceVectorSearchProperties { init; get; } = new();
 
-        // 参照用のベクトルDBのリストのプロパティ
-        private List<VectorDBItem> _referenceVectorDBItems = [];
-        public List<VectorDBItem> ReferenceVectorDBItems {
+        private VectorDBItem MainVectorDBItem {
             get {
-                return _referenceVectorDBItems;
-            }
-            set {
-                _referenceVectorDBItems = value;
+                var item = VectorDBItem.GetDefaultVectorDB();
+                item.Description = Description;
+                item.FolderId = Id.ToString();
+
+                return item;
             }
         }
 
-        // MainVectorDBのプロパティ
-        private VectorDBItem? _mainVectorDBItem;
-        public VectorDBItem MainVectorDBItem {
-            get {
-                var parentFolder = GetParent<ContentFolder>();
-                if (parentFolder == null) {
-                    _mainVectorDBItem ??= VectorDBItem.GetFolderVectorDBItem();
-                } else {
-                    _mainVectorDBItem = parentFolder.MainVectorDBItem;
-                }
-                _mainVectorDBItem.Description = Description;
-                _mainVectorDBItem.CollectionName = Id.ToString();
-                _mainVectorDBItem.FolderId = Id.ToString();
+        public VectorSearchProperty GetMainVectorSearchProperty() {
 
-                return _mainVectorDBItem;
-            }
-            set {
-                var parentFolder = GetParent<ContentFolder>();
-                if (parentFolder == null) {
-                    _mainVectorDBItem = value;
-                } else {
-                    _mainVectorDBItem = parentFolder.MainVectorDBItem;
-                }
-            }
+            VectorSearchProperty searchProperty = new(MainVectorDBItem) {
+                FolderId = Id
+            };
+            return searchProperty;
         }
+
+        public List<VectorSearchProperty> GetVectorSearchProperties() {
+            List<VectorSearchProperty> searchProperties = new();
+            searchProperties.Add(GetMainVectorSearchProperty());
+            // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
+            foreach (var item in ReferenceVectorSearchProperties) {
+                searchProperties.Add(item);
+            }
+            return searchProperties;
+        }
+
         // AutoProcessを有効にするかどうか
         public bool IsAutoProcessEnabled { get; set; } = false;
 
@@ -75,7 +66,7 @@ namespace PythonAILib.Model.Content {
                     return FolderName;
                 }
                 return $"{parentFolder.FolderPath}/{FolderName}";
-            }
+            }           
         }
 
         //　フォルダ名
@@ -147,15 +138,6 @@ namespace PythonAILib.Model.Content {
         // 保存
         protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
 
-            // ReferenceVectorDBItemsに自分自身を追加
-            // IncludeInReferenceVectorDBItemsがTrueの場合は、ReferenceVectorDBItemsに自分自身を追加
-            if (IncludeInReferenceVectorDBItems) {
-                AddVectorDBItem(MainVectorDBItem);
-            } else {
-                // IncludeInReferenceVectorDBItemsがFalseの場合は、ReferenceVectorDBItemsから自分自身を削除
-                RemoveVectorDBItem(MainVectorDBItem);
-            }
-
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
             // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
@@ -183,17 +165,17 @@ namespace PythonAILib.Model.Content {
 
         #region ベクトル検索
         // ReferenceVectorDBItemsからVectorDBItemを削除
-        public void RemoveVectorDBItem(VectorDBItem vectorDBItem) {
-            List<VectorDBItem> existingItems = new(ReferenceVectorDBItems.Where(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName && x.FolderId == vectorDBItem.FolderId));
+        public void RemoveVectorSearchProperty(VectorSearchProperty vectorDBItem) {
+            List<VectorSearchProperty> existingItems = new(ReferenceVectorSearchProperties.Where(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId && x.FolderId == vectorDBItem.FolderId));
             foreach (var item in existingItems) {
-                ReferenceVectorDBItems.Remove(item);
+                ReferenceVectorSearchProperties.Remove(item);
             }
         }
         // ReferenceVectorDBItemsにVectorDBItemを追加
-        public void AddVectorDBItem(VectorDBItem vectorDBItem) {
-            var existingItems = ReferenceVectorDBItems.FirstOrDefault(x => x.Name == vectorDBItem.Name && x.CollectionName == vectorDBItem.CollectionName && x.FolderId == vectorDBItem.FolderId);
+        public void AddVectorSearchProperty(VectorSearchProperty vectorDBItem) {
+            var existingItems = ReferenceVectorSearchProperties.FirstOrDefault(x => x.VectorDBItemId == vectorDBItem.VectorDBItemId);
             if (existingItems == null) {
-                ReferenceVectorDBItems.Add(vectorDBItem);
+                ReferenceVectorSearchProperties.Add(vectorDBItem);
             }
         }
         // フォルダに設定されたVectorDBのコレクションを削除
@@ -203,7 +185,7 @@ namespace PythonAILib.Model.Content {
 
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = openAIProperties,
-                VectorDBItems = [MainVectorDBItem]
+                VectorSearchProperties = [GetMainVectorSearchProperty()]
             };
 
             PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
@@ -234,9 +216,6 @@ namespace PythonAILib.Model.Content {
         public virtual void AddItem(ContentItem item) {
             // CollectionNameを設定
             item.CollectionId = Id;
-            // ReferenceVectorDBItemsを設定
-            item.ReferenceVectorDBItems = ReferenceVectorDBItems;
-
             // 保存
             item.Save();
             // 通知

@@ -36,7 +36,7 @@ namespace QAChat.ViewModel.RAG
             }
         }
 
-        // VectorDBItem
+        // VectorSearchProperty
         public VectorDBItem? VectorDBItem {
             get => Item.VectorDBItem;
             set {

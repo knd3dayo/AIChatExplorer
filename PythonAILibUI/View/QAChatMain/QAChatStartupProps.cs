@@ -11,9 +11,9 @@ namespace QAChat.ViewModel {
         }
         public ContentItem ContentItem { get; set; }
 
-        public Action<ObservableCollection<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (folders) => { };
+        public Action<ObservableCollection<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (folders) => { };
 
-        public Action<ObservableCollection<VectorDBItem>> EditVectorDBItemAction { get; set; } = (folders) => { };
+        public Action<ObservableCollection<VectorSearchProperty>> EditVectorDBItemAction { get; set; } = (folders) => { };
 
         public Action<ContentItem, bool> SaveCommand { get; set; } = (item, saveChatHistory) => { };
 

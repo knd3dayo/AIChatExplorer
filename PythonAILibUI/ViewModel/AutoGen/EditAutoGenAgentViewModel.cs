@@ -103,7 +103,7 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged();
             }
         }
-        // VectorDBItem
+        // VectorSearchProperty
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         public VectorDBItemViewModel? SelectedVectorDBItem { get; set; }
@@ -178,7 +178,11 @@ namespace QAChat.ViewModel.AutoGen {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select, RootFolderViewModels,  (selectedItem) => {
-                VectorDBItems.Add(new VectorDBItemViewModel(selectedItem));
+                var item = selectedItem.GetVectorDBItem();
+                if (item == null) {
+                    return;
+                }
+                VectorDBItems.Add(new VectorDBItemViewModel(item));
             });
             OnPropertyChanged(nameof(VectorDBItems));
         });

@@ -34,7 +34,7 @@ namespace PythonAILib.Model.AutoProcess {
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
-                VectorDBItems = [clipboardFolder.MainVectorDBItem]
+                VectorSearchProperties = [clipboardFolder.GetMainVectorSearchProperty()]
             };
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });

@@ -76,10 +76,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
 
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(Folder.Id) {
-                // ReferenceVectorDBItemsを設定
-                ReferenceVectorDBItems = Folder.ReferenceVectorDBItems
-            };
+            ClipboardItem clipboardItem = new(Folder.Id) ;
             ContentItemViewModel ItemViewModel = new ClipboardItemViewModel(this, clipboardItem);
 
 
@@ -192,7 +189,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                         continue;
                     }
                     // item.ClipboardItemを削除
-                    item.Commands.DeleteItemCommand.Execute();
+                    item.Commands.DeleteItemCommand.Execute(item);
                 }
 
                 // フォルダ内のアイテムを読み込む

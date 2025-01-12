@@ -20,20 +20,21 @@ namespace QAChat.ViewModel.VectorDB {
             LogWrapper.TemporaryStatusText.Add(StatusBar.StatusText);
 
         }
-        // VectorDBItem
-        private VectorDBItem? _vectorDBItem;
-        public VectorDBItem? VectorDBItem {
-            get => _vectorDBItem;
+        // VectorSearchProperty
+        private VectorSearchProperty? _vectorSearchProperty;
+        public VectorSearchProperty? VectorSearchProperty {
+            get => _vectorSearchProperty;
             set {
-                _vectorDBItem = value;
+                _vectorSearchProperty = value;
                 // マルチベクターリトリーバーの場合はSelectedIndex=1
-                if (VectorDBItem != null && VectorDBItem.IsUseMultiVectorRetriever) {
+                var item = VectorSearchProperty?.GetVectorDBItem();
+                if (item != null && item.IsUseMultiVectorRetriever) {
                     SelectedIndex = 1;
                 } else {
                     SelectedIndex = 0;
                 }
 
-                OnPropertyChanged(nameof(VectorDBItem));
+                OnPropertyChanged(nameof(VectorSearchProperty));
                 OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
                 OnPropertyChanged(nameof(NormalVectorRetrieverVisibility));
                 OnPropertyChanged(nameof(SubDocsVectorSearchResults));
@@ -48,7 +49,7 @@ namespace QAChat.ViewModel.VectorDB {
         public ObservableCollection<VectorDBEntry> SubDocsVectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
-        public Action<List<VectorDBItem>> SelectVectorDBItemAction { get; set; } = (items) => { };
+        public Action<List<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
 
         // ProgressIndicatorの表示
         private bool _isIndeterminate = false;
@@ -73,10 +74,11 @@ namespace QAChat.ViewModel.VectorDB {
         // MultiVectorRetrieverの場合のVisibility 
         public Visibility MultiVectorRetrieverVisibility {
             get {
-                if (VectorDBItem == null) {
+                var item = VectorSearchProperty?.GetVectorDBItem();
+                if (item == null) {
                     return Visibility.Collapsed;
                 }
-                if (VectorDBItem.IsUseMultiVectorRetriever) {
+                if (item.IsUseMultiVectorRetriever) {
                     return Visibility.Visible;
                 }
                 return Visibility.Collapsed;
@@ -85,10 +87,11 @@ namespace QAChat.ViewModel.VectorDB {
         // 通常のVectorRetrieverの場合のVisibility
         public Visibility NormalVectorRetrieverVisibility {
             get {
-                if (VectorDBItem == null) {
+                var item = VectorSearchProperty?.GetVectorDBItem();
+                if (item == null) {
                     return Visibility.Visible;
                 }
-                if (VectorDBItem.IsUseMultiVectorRetriever) {
+                if (item.IsUseMultiVectorRetriever) {
                     return Visibility.Collapsed;
                 }
                 return Visibility.Visible;
@@ -106,7 +109,7 @@ namespace QAChat.ViewModel.VectorDB {
         // SendCommand
         public SimpleDelegateCommand<object> SendCommand => new(async (parameter) => {
             // VectorDBItemがnullの場合は何もしない
-            if (VectorDBItem == null) {
+            if (VectorSearchProperty == null) {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
@@ -119,7 +122,7 @@ namespace QAChat.ViewModel.VectorDB {
                     Content = InputText
                 };
                 try {
-                    vectorSearchResults.AddRange(contentItem.VectorSearch([VectorDBItem]));
+                    vectorSearchResults.AddRange(contentItem.VectorSearch([VectorSearchProperty]));
                 } finally {
                     IsIndeterminate = false;
                 }
@@ -143,21 +146,24 @@ namespace QAChat.ViewModel.VectorDB {
         // ベクトルDB検索画面の表示
         public SimpleDelegateCommand<object> SelectVectorDBItemCommand => new((parameter) => {
             // ベクトルDB検索画面を表示
-            List<VectorDBItem> items = [];
+            List<VectorSearchProperty> items = [];
             SelectVectorDBItemAction(items);
             // itemsが1つ以上ある場合は、VectorDBItemを設定
             if (items.Count > 0) {
-                VectorDBItem = items[0];
+                VectorSearchProperty = items[0];
                 // MultiVectorRetrieverの場合のVisibilityを更新
                 OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
 
                 // StatusTextを更新
-                if (VectorDBItem.CollectionName != null) {
-                    StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]:[{VectorDBItem.CollectionName}]";
-                    StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]:[{VectorDBItem.CollectionName}]";
-                } else {
-                    StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]";
-                    StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{VectorDBItem.Name}]";
+                var item = VectorSearchProperty?.GetVectorDBItem();
+                if (item != null) {
+                    if (item.CollectionName != null) {
+                        StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{item.Name}]:[{item.CollectionName}]";
+                        StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{item.Name}]:[{item.CollectionName}]";
+                    } else {
+                        StatusBar.StatusText.ReadyText = $"{StringResources.VectorDB}:[{item.Name}]";
+                        StatusBar.StatusText.Text = $"{StringResources.VectorDB}:[{item.Name}]";
+                    }
                 }
             }
         });
