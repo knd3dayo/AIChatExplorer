@@ -6,6 +6,7 @@ using ClipboardApp.Common;
 using ClipboardApp.Factory;
 using ClipboardApp.Model.Item;
 using LiteDB;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
@@ -79,7 +80,7 @@ namespace ClipboardApp.Model.Folder {
             // 自動処理を適用
             if (IsAutoProcessEnabled) {
                 LogWrapper.Info(CommonStringResources.Instance.ApplyAutoProcessing);
-                ContentItem? result = clipboardItem.ApplyAutoProcess();
+                ContentItem? result = AutoProcessRuleController.ApplyFolderAutoAction(clipboardItem);
                 if (result == null) {
                     // 自動処理で削除または移動された場合は何もしない
                     LogWrapper.Info(CommonStringResources.Instance.ItemsDeletedOrMovedByAutoProcessing);

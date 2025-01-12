@@ -153,7 +153,7 @@ namespace ClipboardApp.Common
                 });
                 try {
                     // Apply automatic processing
-                    Task<ContentItem?> updatedItemTask = AutoProcessRuleController.ApplyAutoAction(item);
+                    Task<ContentItem?> updatedItemTask = AutoProcessRuleController.ApplyGlobalAutoAction(item);
                     if (updatedItemTask.Result == null) {
                         // If the item is ignored, return
                         return;

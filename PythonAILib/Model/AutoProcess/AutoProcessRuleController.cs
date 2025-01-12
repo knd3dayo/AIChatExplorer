@@ -42,7 +42,7 @@ namespace PythonAILib.Model.AutoProcess {
         /// </summary>
         /// <param name="item"></param>
         /// <param name="image"></param>
-        public static async Task<ContentItem?> ApplyAutoAction(ContentItem item) {
+        public static async Task<ContentItem> ApplyGlobalAutoAction(ContentItem item) {
 
             IPythonAILibConfigParams configParams = PythonAILibManager.Instance.ConfigParams;
 
@@ -50,7 +50,7 @@ namespace PythonAILib.Model.AutoProcess {
             // 指定した行数以下のテキストアイテムは無視
             int lineCount = item.Content.Split('\n').Length;
             if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= configParams.IgnoreLineCount()) {
-                return null;
+                return item;
             }
 
             // ★TODO Implement processing based on automatic processing rules.
@@ -133,6 +133,24 @@ namespace PythonAILib.Model.AutoProcess {
             await Task.WhenAll(task1, task2, task3, task4, task5, task6);
 
             return item;
+        }
+
+        // 自動処理を適用する処理
+        public static ContentItem? ApplyFolderAutoAction(ContentItem item) {
+
+            ContentItem? result = item;
+            // AutoProcessRulesを取得
+            var AutoProcessRules = AutoProcessRuleController.GetAutoProcessRules(item.GetFolder<ContentFolder>());
+            foreach (var rule in AutoProcessRules) {
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.ApplyAutoProcessing} {rule.GetDescriptionString()}");
+                rule.RunAction(result);
+                // resultがNullの場合は処理を中断
+                if (result == null) {
+                    LogWrapper.Info(PythonAILibStringResources.Instance.ItemsDeletedByAutoProcessing);
+                    return null;
+                }
+            }
+            return result;
         }
 
 

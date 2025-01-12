@@ -4,6 +4,8 @@ using LiteDB;
 using NetOffice.OutlookApi;
 using NetOffice.OutlookApi.Enums;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoProcess;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
 using Outlook = NetOffice.OutlookApi;
@@ -100,7 +102,10 @@ namespace ClipboardApp.Model.Folder {
                             ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text,
                             Content = mailItem.Body,
                         };
-                        newItem.Save();
+                        // 自動処理ルールを適用
+                        Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(newItem);
+                        ContentItem result = task.Result;
+                        result.Save();
                     }
                 }
             }

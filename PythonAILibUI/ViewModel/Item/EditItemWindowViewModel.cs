@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using QAChat.Model;
 using QAChat.View.Tag;
@@ -125,7 +126,7 @@ namespace QAChat.ViewModel.Content {
             }
 
             // フォルダに自動処理が設定されている場合は実行
-            ContentItem? item = ItemViewModel.ContentItem.ApplyAutoProcess();
+            ContentItem? item = AutoProcessRuleController.ApplyFolderAutoAction(ItemViewModel.ContentItem);
             // ClipboardItemを更新
             if (item != null) {
 

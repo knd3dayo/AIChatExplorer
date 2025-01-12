@@ -4,6 +4,7 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.Settings;
 using LiteDB;
 using PythonAILib.Common;
+using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
@@ -118,11 +119,11 @@ namespace ClipboardApp.Model.Folder {
                         ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
                         Description = Path.GetFileName(localFileSystemFilePath)
                     };
-                    // 自動的にテキスト抽出が有効な場合は、テキストを抽出
-                    if (ClipboardAppConfig.Instance.AutoFileExtract) {
-                        ContentItemCommands.ExtractTextCommandExecute(item);
-                    }
-                    item.Save();
+                    // 自動処理ルールを適用
+                    Task<ContentItem> task = AutoProcessRuleController.ApplyGlobalAutoAction(item);
+                    ContentItem result = task.Result;
+                    result.Save();
+
                 }
             }
         }
