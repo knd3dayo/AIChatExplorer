@@ -44,34 +44,6 @@ namespace ClipboardApp.ViewModel.Folders.Mail
                 };
                 menuItems.Add(exportImportMenuItem);
 
-
-                // アイテムのバックアップ/リストア
-                MenuItem backupRestoreMenuItem = new()
-                {
-                    Header = StringResources.BackupRestore
-                };
-
-                // バックアップ
-                MenuItem backupMenuItem = new()
-                {
-                    Header = StringResources.BackupItem,
-                    Command = ClipboardFolderViewModel.BackupItemsFromFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                backupRestoreMenuItem.Items.Add(backupMenuItem);
-
-
-                // リストア
-                MenuItem restoreMenuItem = new()
-                {
-                    Header = StringResources.RestoreItem,
-                    Command = ClipboardFolderViewModel.RestoreItemsToFolderCommand,
-                    CommandParameter = ClipboardFolderViewModel
-                };
-                backupRestoreMenuItem.Items.Add(restoreMenuItem);
-
-                menuItems.Add(backupRestoreMenuItem);
-
                 // ベクトルのリフレッシュ
                 MenuItem refreshMenuItem = new()
                 {

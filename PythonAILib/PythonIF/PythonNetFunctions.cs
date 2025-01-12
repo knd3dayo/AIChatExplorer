@@ -474,19 +474,21 @@ namespace PythonAILib.PythonIF {
             }, result);
         }
 
-        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, string vectorTargetJson, string function_name) {
+        public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry, string function_name) {
 
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
+            // contentInfoをJSON文字列に変換
+            string contentInfoJson = vectorDBEntry.ToJson();
 
 
             LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBIndexExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
-            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo}:{vectorTargetJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo}:{contentInfoJson}");
             // UpdateVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper(function_name, (function_object) => {
-                return function_object(chatRequestContextJson, vectorTargetJson);
+                return function_object(chatRequestContextJson, contentInfoJson);
             }, result);
 
         }
@@ -494,9 +496,7 @@ namespace PythonAILib.PythonIF {
         public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry) {
 
             string function_name = "delete_index";
-            // contentInfoをJSON文字列に変換
-            string contentInfoJson = vectorDBEntry.ToJson();
-            UpdateVectorDBIndex(chatRequestContext, contentInfoJson, function_name);
+            UpdateVectorDBIndex(chatRequestContext, vectorDBEntry, function_name);
 
         }
 
@@ -504,9 +504,7 @@ namespace PythonAILib.PythonIF {
 
             string function_name;
             function_name = "update_content_index";
-            // contentInfoをJSON文字列に変換
-            string contentInfoJson = vectorDBEntry.ToJson();
-            UpdateVectorDBIndex(chatRequestContext, contentInfoJson, function_name);
+            UpdateVectorDBIndex(chatRequestContext, vectorDBEntry, function_name);
         }
 
         // ExportToExcelを実行する

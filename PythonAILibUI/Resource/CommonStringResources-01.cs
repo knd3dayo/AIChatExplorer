@@ -20,13 +20,6 @@ namespace QAChat.Resource {
 
         //ベクトル検索
         public virtual string VectorSearch { get; } = "ベクトル検索";
-        // バックアップ/リストア
-        public virtual string BackupRestore { get; } = "バックアップ/リストア";
-
-        // アイテムのバックアップ
-        public virtual string BackupItem { get; } = "アイテムのバックアップ";
-        // アイテムのリストア
-        public virtual string RestoreItem { get; } = "アイテムのリストア";
 
         // ベクトルDBのリフレッシュ
         public virtual string RefreshVectorDB { get; } = "ベクトルDBのリフレッシュ";

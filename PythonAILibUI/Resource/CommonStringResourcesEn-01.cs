@@ -205,14 +205,6 @@ namespace QAChat.Resource {
         // Mode
         public override string Mode { get; } = "Mode";
 
-        // Backup/Restore
-        public override string BackupRestore { get; } = "Backup/Restore";
-
-        // Backup Items
-        public override string BackupItem { get; } = "Backup Items";
-        // Restore Items
-        public override string RestoreItem { get; } = "Restore Items";
-
         // List of Auto Process Rules
         public override string ListAutoProcessRule { get; } = "List of Auto Process Rules";
         // List of Python Scripts

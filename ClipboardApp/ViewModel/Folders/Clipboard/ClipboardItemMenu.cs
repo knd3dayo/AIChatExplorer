@@ -169,14 +169,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 CommandParameter = itemViewModel
             };
             menuItems.Add(extractTextMenuItem);
-            // 文章の信頼度判定
-            MenuItem checkDocumentTrustMenuItem = new() {
-                Header = StringResources.CheckDocumentReliability,
-                // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.CheckDocumentReliabilityCommand,
-                CommandParameter = itemViewModel
-            };
-            menuItems.Add(checkDocumentTrustMenuItem);
+
+
             return menuItems;
         }
 
