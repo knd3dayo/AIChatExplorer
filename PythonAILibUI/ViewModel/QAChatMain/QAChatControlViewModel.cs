@@ -11,7 +11,9 @@ using QAChat.Model;
 using QAChat.Resource;
 using QAChat.View.PromptTemplate;
 using QAChat.View.QAChatMain;
+using QAChat.View.VectorDB;
 using QAChat.ViewModel.PromptTemplate;
+using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.QAChatMain {
@@ -78,24 +80,24 @@ namespace QAChat.ViewModel.QAChatMain {
 
         }
 
-        private ObservableCollection<VectorSearchProperty> _vectorDBItemBases = [];
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
         public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
             get {
-                return _vectorDBItemBases;
+                return _vectorSearchProperties;
             }
             set {
-                _vectorDBItemBases = value;
+                _vectorSearchProperties = value;
                 OnPropertyChanged(nameof(VectorSearchProperties));
             }
         }
 
-        private VectorSearchProperty? _SelectedVectorDBItem = null;
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
         public VectorSearchProperty? SelectedVectorSearchProperty {
             get {
-                return _SelectedVectorDBItem;
+                return _selectedVectorSearchProperty;
             }
             set {
-                _SelectedVectorDBItem = value;
+                _selectedVectorSearchProperty = value;
                 OnPropertyChanged(nameof(SelectedVectorSearchProperty));
             }
         }
@@ -316,15 +318,12 @@ namespace QAChat.ViewModel.QAChatMain {
         // ベクトルDBを追加するコマンド
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
-            QAChatStartupProps.SelectVectorDBItemAction(VectorSearchProperties);
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
+                PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    VectorSearchProperties.Add(vectorDBItemBase);
+                });
 
             OnPropertyChanged(nameof(VectorSearchProperties));
-        });
-
-        // 選択したVectorDBItemの編集画面を開くコマンド
-        public SimpleDelegateCommand<object> OpenVectorDBItemCommand => new((parameter) => {
-            // フォルダを選択
-            QAChatStartupProps.EditVectorDBItemAction(VectorSearchProperties);
         });
 
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {

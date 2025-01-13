@@ -11,7 +11,7 @@ namespace QAChat.View.Folder {
             InitializeComponent();
         }
 
-        public static void OpenFolderSelectWindow(ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<ContentFolderViewModel> folderSelectedAction) {
+        public static void OpenFolderSelectWindow(ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<ContentFolderViewModel, bool> folderSelectedAction) {
             FolderSelectWindow folderSelectWindow = new();
             FolderSelectWindowViewModel folderSelectWindowViewModel = new(rootFolderViewModels, folderSelectedAction);
             folderSelectWindow.DataContext = folderSelectWindowViewModel;

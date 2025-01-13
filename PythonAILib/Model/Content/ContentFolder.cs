@@ -24,7 +24,7 @@ namespace PythonAILib.Model.Content {
         // ルートフォルダか否か
         public bool IsRootFolder { get; set; } = false;
 
-        public List<VectorSearchProperty> ReferenceVectorSearchProperties { init; get; } = new();
+        public List<VectorSearchProperty> ReferenceVectorSearchProperties { get; set; } = [];
 
         private VectorDBItem MainVectorDBItem {
             get {

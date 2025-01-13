@@ -138,10 +138,12 @@ namespace QAChat.ViewModel.Search {
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel) => {
-                SearchConditionRule.TargetFolder = folderViewModel.Folder;
-                TargetFolderPath = folderViewModel.FolderPath;
-                OnPropertyChanged(nameof(TargetFolderPath));
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
+                if (finished) {
+                    SearchConditionRule.TargetFolder = folderViewModel.Folder;
+                    TargetFolderPath = folderViewModel.FolderPath;
+                    OnPropertyChanged(nameof(TargetFolderPath));
+                }
             });
         });
     }

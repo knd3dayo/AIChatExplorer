@@ -1,8 +1,11 @@
+using System.Collections;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Xml.Linq;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
+using PythonAILib.Model.Content;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
@@ -57,7 +60,23 @@ namespace PythonAILib.Model.VectorDB {
         public string DisplayText {
             get {
                 VectorDBItem? item = GetVectorDBItem();
-                return item?.DisplayText ?? "";
+                if (item == null) {
+                    return "";
+                }
+                if (string.IsNullOrEmpty(item.CollectionName)) {
+                    return item.Name;
+                }
+                if (FolderId == LiteDB.ObjectId.Empty) {
+                    return item.Name;
+                }
+                // ContentFolderを取得
+                var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
+                ContentFolder? folder = collection.FindById(FolderId);
+                if (folder == null) {
+                    return item.Name;
+                }
+
+                return $"{item.Name}:{folder.FolderName}";
             }
         }
 

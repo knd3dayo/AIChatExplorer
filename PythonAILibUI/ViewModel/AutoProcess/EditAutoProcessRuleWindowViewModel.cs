@@ -556,15 +556,19 @@ namespace QAChat.ViewModel.AutoProcess {
         // OpenSelectDestinationFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectDestinationFolderWindowCommand => new((parameter) => {
             // フォルダが選択されたら、DestinationFolderに設定
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel) => {
-                DestinationFolder = folderViewModel.Folder;
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel, finished) => {
+                if (finished) {
+                    DestinationFolder = folderViewModel.Folder;
+                }
             });
         });
 
         // OpenSelectTargetFolderWindowCommand
         public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
-            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel) => {
-                TargetFolder = folderViewModel.Folder;
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModels, (folderViewModel, finished) => {
+                if (finished) {
+                    TargetFolder = folderViewModel.Folder;
+                }
             });
         });
 

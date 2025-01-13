@@ -151,7 +151,7 @@
                     </Grid>
                     <ListBox
                         Grid.Row="1"
-                        Margin="10,0,10,0"
+                        Margin="0,10,0,10"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         ItemsSource="{Binding VectorSearchProperties}"
@@ -169,11 +169,6 @@
                                 <TextBlock Text="{Binding DisplayText}" />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseDoubleClick">
-                                <i:InvokeCommandAction Command="{Binding OpenVectorDBItemCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
                         <ListBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Command="{Binding RemoveVectorDBItemCommand, Mode=OneTime}" Header="{Binding StringResources.ExcludeFromList, Mode=OneTime}" />
@@ -229,6 +224,7 @@
                     Text="グループチャット" />
                 <ComboBox
                     Grid.Column="1"
+                    Width="200"
                     Margin="10,0,0,0"
                     DisplayMemberPath="Name"
                     ItemsSource="{Binding AutoGenGroupChatList}"

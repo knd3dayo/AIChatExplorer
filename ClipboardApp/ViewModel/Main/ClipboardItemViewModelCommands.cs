@@ -542,23 +542,6 @@ namespace ClipboardApp.ViewModel.Main {
 
             MainWindowViewModel ActiveInstance = MainWindowViewModel.Instance;
             QAChatStartupProps props = new(clipboardItem) {
-
-                // フォルダ選択アクション
-                SelectVectorDBItemAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                        PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                            vectorDBItems.Add(vectorDBItemBase);
-                        });
-
-                },
-                // フォルダ編集アクション
-                EditVectorDBItemAction = (vectorDBItems) => {
-                    ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit,
-                        PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
-                            vectorDBItems.Add(vectorDBItemBase);
-                        });
-
-                },
                 // Saveアクション
                 SaveCommand = (item, saveChatHistory) => {
                     bool flag = clipboardItem.GetFolder<ClipboardFolder>().FolderType != FolderTypeEnum.Chat;
@@ -580,22 +563,23 @@ namespace ClipboardApp.ViewModel.Main {
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {
 
-                    FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folder) => {
-                        ClipboardItem chatHistoryItem = new(folder.Folder.Id);
-                        // タイトルを日付 + 元のタイトルにする
-                        chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
-                        if (!string.IsNullOrEmpty(clipboardItem.Description)) {
-                            chatHistoryItem.Description += " " + clipboardItem.Description;
+                    FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
+                        if (finished) {
+                            ClipboardItem chatHistoryItem = new(folder.Folder.Id);
+                            // タイトルを日付 + 元のタイトルにする
+                            chatHistoryItem.Description = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + " Chat";
+                            if (!string.IsNullOrEmpty(clipboardItem.Description)) {
+                                chatHistoryItem.Description += " " + clipboardItem.Description;
+                            }
+                            // chatHistoryItemの内容をテキスト化
+                            string chatHistoryText = "";
+                            foreach (var item in chatHistory) {
+                                chatHistoryText += $"--- {item.Role} ---\n";
+                                chatHistoryText += item.ContentWithSources + "\n\n";
+                            }
+                            chatHistoryItem.Content = chatHistoryText;
+                            chatHistoryItem.Save();
                         }
-                        // chatHistoryItemの内容をテキスト化
-                        string chatHistoryText = "";
-                        foreach (var item in chatHistory) {
-                            chatHistoryText += $"--- {item.Role} ---\n";
-                            chatHistoryText += item.ContentWithSources + "\n\n";
-                        }
-                        chatHistoryItem.Content = chatHistoryText;
-                        chatHistoryItem.Save();
-
                     });
 
                 }

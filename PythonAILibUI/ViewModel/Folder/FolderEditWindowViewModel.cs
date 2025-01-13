@@ -53,7 +53,50 @@ namespace QAChat.ViewModel.Folder {
             }
         }
 
-        public Visibility VectorDBItemButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex != 0);
+        public Visibility VectorDBItemButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex == 1);
+
+        private ObservableCollection<VectorSearchProperty> _vectorSearchProperties = [];
+        public ObservableCollection<VectorSearchProperty> VectorSearchProperties {
+            get {
+                return _vectorSearchProperties;
+            }
+            set {
+                _vectorSearchProperties = value;
+                OnPropertyChanged(nameof(VectorSearchProperties));
+            }
+        }
+
+        private VectorSearchProperty? _selectedVectorSearchProperty = null;
+        public VectorSearchProperty? SelectedVectorSearchProperty {
+            get {
+                return _selectedVectorSearchProperty;
+            }
+            set {
+                _selectedVectorSearchProperty = value;
+                OnPropertyChanged(nameof(SelectedVectorSearchProperty));
+            }
+        }
+
+        // ベクトルDBをリストから削除するコマンド
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorSearchProperty != null) {
+                // VectorDBItemsから削除
+                VectorSearchProperties.Remove(SelectedVectorSearchProperty);
+            }
+            OnPropertyChanged(nameof(VectorSearchProperties));
+        });
+
+        // ベクトルDBを追加するコマンド
+        public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
+            // フォルダを選択
+            ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
+                PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                    VectorSearchProperties.Add(vectorDBItemBase);
+                });
+
+            OnPropertyChanged(nameof(VectorSearchProperties));
+        });
+
 
 
         public SimpleDelegateCommand<Window> CreateCommand => new((window) => {
@@ -67,20 +110,14 @@ namespace QAChat.ViewModel.Folder {
                 LogWrapper.Error(StringResources.EnterDescription);
                 return;
             }
+            // VectorSearchPropertiesを設定
+            FolderViewModel.Folder.ReferenceVectorSearchProperties = [.. VectorSearchProperties];
 
             FolderViewModel.SaveFolderCommand.Execute(null);
             // フォルダ作成後に実行するコマンドが設定されている場合
             AfterUpdate?.Invoke();
             // ウィンドウを閉じる
             window.Close();
-        });
-
-        // VectorDBSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> VectorDBSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
-                // 選択されたComboBoxItemのIndexを取得
-                int index = comboBox.SelectedIndex;
-            }
         });
 
     }

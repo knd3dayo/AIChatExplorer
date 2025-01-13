@@ -19,7 +19,7 @@ namespace QAChat.ViewModel.VectorDB {
             this.callBackup = callBackup;
 
             LoadVectorItemsCommand.Execute();
-            FolderSelectWindowViewModel = new(rootFolderViewModels, (selectedFolder) => {
+            FolderSelectWindowViewModel = new(rootFolderViewModels, (selectedFolder, finished) => {
                 FolderViewModel = selectedFolder;
             });
 
@@ -161,5 +161,6 @@ namespace QAChat.ViewModel.VectorDB {
             // Windowを閉じる
             window.Close();
         });
+
     }
 }

@@ -120,25 +120,6 @@ namespace PythonAILib.Model.VectorDB {
         [JsonIgnore]
         public bool IsSystem { get; set; } = false;
 
-        [BsonIgnore]
-        public string DisplayText {
-            get {
-                if (string.IsNullOrEmpty(CollectionName)) {
-                    return Name;
-                }
-                if (string.IsNullOrEmpty(FolderId)) {
-                    return Name;
-                }
-                // ContentFolderを取得
-                var collection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<ContentFolder>();
-                ContentFolder? folder = collection.FindById(new ObjectId(FolderId));
-                if (folder == null) {
-                    return Name;
-                }
-
-                return $"{Name}:{folder.FolderName}";
-            }
-        }
         // Equals
         public override bool Equals(object? obj) {
             if (obj == null || GetType() != obj.GetType()) {

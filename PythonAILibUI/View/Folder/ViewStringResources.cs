@@ -105,5 +105,7 @@ namespace QAChat.View.Folder {
         // 参照用ベクトルDB
         public static string ReferenceVectorDB { get; set; } = "参照用ベクトルDB";
 
+        // SelectVectorDB
+        public static string SelectVectorDB { get; set; } = CommonStringResources.SelectVectorDB;
     }
 }

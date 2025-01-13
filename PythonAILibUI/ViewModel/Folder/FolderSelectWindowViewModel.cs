@@ -10,7 +10,7 @@ namespace QAChat.ViewModel.Folder {
 
     public class FolderSelectWindowViewModel : QAChatViewModelBase {
 
-        public FolderSelectWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModelList, Action<ContentFolderViewModel> _FolderSelectedAction) {
+        public FolderSelectWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModelList, Action<ContentFolderViewModel, bool> _FolderSelectedAction) {
 
             FolderSelectedAction = _FolderSelectedAction;
             foreach ( var rootFolderViewModel in rootFolderViewModelList) {
@@ -22,7 +22,7 @@ namespace QAChat.ViewModel.Folder {
         public ObservableCollection<ContentFolderViewModel> RootFolders { get; set; } = [];
 
         // フォルダ選択時のAction
-        public Action<ContentFolderViewModel>? FolderSelectedAction { get; set; }
+        public Action<ContentFolderViewModel, bool>? FolderSelectedAction { get; set; }
 
         // 選択されたフォルダ
         public ContentFolderViewModel? SelectedFolder { get; set; }
@@ -44,7 +44,7 @@ namespace QAChat.ViewModel.Folder {
                 LogWrapper.Warn(CommonStringResources.Instance.SelectedFolderNotFound);
                 return;
             }
-            FolderSelectedAction?.Invoke(SelectedFolder);
+            FolderSelectedAction?.Invoke(SelectedFolder, true);
             // Windowを閉じる
             folderSelectWindow.Close();
 
@@ -56,6 +56,8 @@ namespace QAChat.ViewModel.Folder {
 
             SelectedFolder = clipboardItemFolderViewModel;
             SelectedFolderAbsoluteCollectionName = clipboardItemFolderViewModel.FolderPath;
+            FolderSelectedAction?.Invoke(SelectedFolder, false);
+
             SelectedFolder.LoadFolderCommand.Execute(null);
 
         });
