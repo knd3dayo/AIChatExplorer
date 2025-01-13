@@ -312,12 +312,14 @@
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
                                             </Grid.RowDefinitions>
+                                            <!--  ロール名  -->
                                             <TextBlock
                                                 Grid.Row="0"
                                                 Margin="10,5,10,5"
                                                 HorizontalAlignment="Left"
                                                 FontSize="8pt"
                                                 Text="{Binding Role, Mode=OneWay}" />
+                                            <!--  コンテンツ  -->
                                             <TextBlock
                                                 Grid.Row="1"
                                                 MinHeight="30"
@@ -326,26 +328,24 @@
                                                 FontSize="8pt"
                                                 Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBox}}"
                                                 Text="{Binding ContentWithSources, Mode=OneWay}"
-                                                TextTrimming="WordEllipsis">
-                                                <TextBlock.InputBindings>
-                                                    <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
-                                                    <MouseBinding
-                                                        Command="{Binding DataContext.OpenChatItemCommand, ElementName=Root}"
+                                                TextTrimming="WordEllipsis" />
+                                            <Grid.InputBindings>
+                                                <!--  ダブルクリックしたらEditChatItemWindowを開く  -->
+                                                <MouseBinding
+                                                    Command="{Binding DataContext.OpenChatItemCommand, ElementName=Root}"
+                                                    CommandParameter="{Binding}"
+                                                    MouseAction="LeftDoubleClick" />
+                                            </Grid.InputBindings>
+                                            <Grid.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Command="{Binding PlacementTarget.Tag.ExportChatCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.ExportAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                    <MenuItem
+                                                        Command="{Binding PlacementTarget.Tag.CopySelectedChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
                                                         CommandParameter="{Binding}"
-                                                        MouseAction="LeftDoubleClick" />
-                                                </TextBlock.InputBindings>
-                                                <TextBlock.ContextMenu>
-                                                    <ContextMenu>
-                                                        <MenuItem Command="{Binding PlacementTarget.Tag.ExportChatCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.ExportAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
-                                                        <MenuItem
-                                                            Command="{Binding PlacementTarget.Tag.CopySelectedChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}"
-                                                            CommandParameter="{Binding}"
-                                                            Header="{Binding PlacementTarget.Tag.StringResources.CopySelectedChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
-                                                        <MenuItem Command="{Binding PlacementTarget.Tag.CopyAllChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.CopyAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
-                                                    </ContextMenu>
-                                                </TextBlock.ContextMenu>
-                                            </TextBlock>
-
+                                                        Header="{Binding PlacementTarget.Tag.StringResources.CopySelectedChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                    <MenuItem Command="{Binding PlacementTarget.Tag.CopyAllChatItemCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" Header="{Binding PlacementTarget.Tag.StringResources.CopyAllChatContents, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" />
+                                                </ContextMenu>
+                                            </Grid.ContextMenu>
                                         </Grid>
                                     </materialDesign:Card>
                                 </DataTemplate>

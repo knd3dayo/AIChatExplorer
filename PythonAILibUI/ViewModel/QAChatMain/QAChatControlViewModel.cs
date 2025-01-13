@@ -135,7 +135,8 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequest.UpdateMessage(chatRequestContext);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
@@ -160,16 +161,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     // VectorDBItemsを設定
                     List<VectorSearchProperty> items = [.. VectorSearchProperties];
 
-                    // ★TODO AutoGenPropertiesを実行時に指定可能にする
-                    AutoGenProperties autoGenProperties = new() {
-                        WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                    };
-                    // ChatRequestContextを設定
-                    ChatRequestContext chatRequestContext = new() {
-                        VectorSearchProperties = items,
-                        OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                        AutoGenProperties = autoGenProperties
-                    };
+                    ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
 
                     // OpenAIChat or LangChainChatを実行
                     result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
@@ -269,7 +261,8 @@ namespace QAChat.ViewModel.QAChatMain {
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // リクエストのメッセージをアップデート
-                ChatRequest.UpdateMessage();
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequest.UpdateMessage(chatRequestContext);
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
@@ -343,7 +336,8 @@ namespace QAChat.ViewModel.QAChatMain {
         // GeneratedDebugCommand
         public string GeneratedDebugCommand {
             get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequest.UpdateMessage(chatRequestContext);
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }

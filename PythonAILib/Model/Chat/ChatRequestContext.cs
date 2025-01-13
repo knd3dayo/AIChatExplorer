@@ -5,6 +5,7 @@ using System.Text.Unicode;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.VectorDB;
+using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.Chat {
     // リクエストと共に送信するコンテキスト情報
@@ -62,6 +63,7 @@ namespace PythonAILib.Model.Chat {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 AutoGenProperties = autoGenProperties,
             };
+
             return chatRequestContext;
         }
 

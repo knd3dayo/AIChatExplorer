@@ -77,7 +77,7 @@ namespace PythonAILib.Model.Chat {
             return lastAssistantChatItem;
         }
 
-        public void UpdateMessage() {
+        public void UpdateMessage(ChatRequestContext chatRequestContext) {
             // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
             ChatMessage lastUserRoleMessage;
             if (ChatHistory.Count == 0 || ChatHistory.Last().Role == ChatMessage.AssistantRole) {
@@ -96,7 +96,11 @@ namespace PythonAILib.Model.Chat {
             }
             // ContentTextを追加
             promptText += ContentText;
-
+            
+            // ModeがRAGの場合は、ベクトル検索の結果を追加
+            if (ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+                promptText += ChatUtil.GenerateVectorSearchResult(chatRequestContext, ContentText);
+            }
             // 最後のユーザー発言のContentにPromptTextを追加
             lastUserRoleMessage.Content = promptText;
             // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加
@@ -136,9 +140,9 @@ namespace PythonAILib.Model.Chat {
 
         // Chatを実行する
         public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            if (this.ChatMode == OpenAIExecutionModeEnum.Normal) {
+            if (this.ChatMode == OpenAIExecutionModeEnum.Normal || this.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
                 // リクエストメッセージを最新化
-                UpdateMessage();
+                UpdateMessage(chatRequestContext);
                 // 通常のChatを実行する。
                 ChatResult? result = ChatUtil.ExecuteChatNormal(chatRequestContext, this);
                 if (result == null) {
@@ -147,24 +151,6 @@ namespace PythonAILib.Model.Chat {
                 // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
                 ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
                 return result;
-            }
-            if (this.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
-                // リクエストメッセージを最新化
-                UpdateMessage();
-                // ContentTextの内容でベクトル検索して、コンテキスト情報を生成する
-                ContentText += ChatUtil.GenerateVectorSearchResult(chatRequestContext, ContentText);
-                // リクエストメッセージを最新化
-                UpdateMessage();
-
-                // ChatModeがOpenAIRAGの場合は、OpenAIRAGChatを実行する。
-                ChatResult? result = ChatUtil.ExecuteChatOpenAIRAG(chatRequestContext, this);
-                if (result == null) {
-                    return null;
-                }
-                // レスポンスをChatItemsに追加. inputTextはOpenAIChat or LangChainChatの中で追加される
-                ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
-                return result;
-
             }
 
             if (this.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
@@ -186,7 +172,7 @@ namespace PythonAILib.Model.Chat {
         // AutoGenNormalChatを実行する
         public ChatResult? ExecuteAutoGenNormalChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
-            UpdateMessage();
+            UpdateMessage(chatRequestContext);
             // 結果
             ChatMessage result = new(ChatMessage.AssistantRole, "", []);
             ChatHistory.Add(result);
@@ -200,7 +186,7 @@ namespace PythonAILib.Model.Chat {
         // AutoGenGroupChatを実行する
         public ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
-            UpdateMessage();
+            UpdateMessage(chatRequestContext);
             // 結果
             ChatMessage result = new(ChatMessage.AssistantRole, "", []);
             ChatHistory.Add(result);
@@ -215,7 +201,7 @@ namespace PythonAILib.Model.Chat {
         // AutoGenNestedChatを実行する
         public ChatResult? ExecuteAutoGenNestedChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
-            UpdateMessage();
+            UpdateMessage(chatRequestContext);
             // 結果
             ChatMessage result = new(ChatMessage.AssistantRole, "", []);
             ChatHistory.Add(result);

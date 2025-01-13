@@ -144,7 +144,7 @@ namespace PythonAILib.Utils.Python {
 
             if (hasVectorSearch) {
                 // 結果をContentTextに追加
-                string result = PromptStringResource.Instance.RelatedInformation;
+                string result = "\n" + PromptStringResource.Instance.RelatedInformation;
                 result += sb.ToString();
                 return result;
             }
@@ -172,15 +172,6 @@ namespace PythonAILib.Utils.Python {
             ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(chatRequestContext, chat);
             return result;
         }
-
-        public static ChatResult? ExecuteChatOpenAIRAG(ChatRequestContext chatRequestContext, ChatRequest chat) {
-
-            ChatResult? result = PythonExecutor.PythonAIFunctions?.OpenAIChat(chatRequestContext, chat);
-            return result;
-
-        }
-
-
 
         public static string CreateImageURLFromFilePath(string filePath) {
             // filePathから画像のBase64文字列を作成
