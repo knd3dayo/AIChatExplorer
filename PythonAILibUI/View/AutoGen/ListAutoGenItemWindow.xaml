@@ -10,7 +10,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:QAChat.View.AutoGen"
-    Title="ListAutoGenItemWindow"
+    Title="{x:Static res:ViewStringResources.ListAutoGenItemWindow}"
     Width="800"
     Height="450"
     d:DataContext="{d:DesignInstance Type=local:ListAutoGenItemWindowViewModel}"
