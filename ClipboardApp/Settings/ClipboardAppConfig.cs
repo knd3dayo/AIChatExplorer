@@ -534,6 +534,21 @@ namespace ClipboardApp.Settings {
             }
         }
 
+        // ShowHooter
+        private bool? _showHooter;
+        public bool ShowHooter {
+            get {
+                if (_showHooter == null) {
+                    _showHooter = Properties.Settings.Default.ShowHooter;
+                }
+                return _showHooter.Value;
+            }
+            set {
+                _showHooter = value;
+                Properties.Settings.Default.ShowHooter = value;
+            }
+        }
+
         #endregion
 
 

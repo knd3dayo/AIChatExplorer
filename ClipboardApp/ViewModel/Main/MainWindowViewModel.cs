@@ -216,7 +216,23 @@ namespace ClipboardApp {
             OnPropertyChanged(propertyName);
         }
 
-
+        // ShowHooter
+        public bool ShowHooter {
+            get {
+                return ClipboardAppConfig.Instance.ShowHooter;
+            }
+            set {
+                ClipboardAppConfig.Instance.ShowHooter = value;
+                OnPropertyChanged(nameof(ShowHooter));
+                OnPropertyChanged(nameof(HooterVisibility));
+            }
+        }
+        // HooterVisibility
+        public Visibility HooterVisibility {
+            get {
+                return Tools.BoolToVisibility(ShowHooter);
+            }
+        }
     }
 
 }

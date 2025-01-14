@@ -490,5 +490,17 @@ namespace ClipboardApp.Properties {
                 this["AutoDocumentReliabilityCheck"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowHooter {
+            get {
+                return ((bool)(this["ShowHooter"]));
+            }
+            set {
+                this["ShowHooter"] = value;
+            }
+        }
     }
 }

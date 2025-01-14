@@ -145,5 +145,8 @@ namespace ClipboardApp.View.Main {
 
         // VersionInfo
         public static string VersionInfo { get; set; } = CommonStringResources.Instance.VersionInfo;
+
+        // ShowHooter
+        public static string ShowHooter { get; set; } = CommonStringResources.Instance.ShowHooter;
     }
 }

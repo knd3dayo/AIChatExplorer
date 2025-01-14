@@ -167,6 +167,8 @@ namespace QAChat.Resource {
         // Version Info
         public override string VersionInfo { get; } = "Version Info";
 
+        // ShowHooter
+        public override string ShowHooter { get; } = "Show Hooter";
         // View
         public override string View { get; } = "View";
 

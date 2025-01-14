@@ -182,7 +182,7 @@
                         Width="100"
                         Binding="{Binding IsPinned}"
                         Header="{x:Static res:ViewStringResources.Pin}" />
-                    <!-- CreatedAt, UpdatedAt  -->
+                    <!--  CreatedAt, UpdatedAt  -->
                     <DataGridTextColumn
                         Width="150"
                         MaxWidth="300"
@@ -245,6 +245,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBox
                         Name="DescriptionText"
@@ -268,7 +269,14 @@
                         HorizontalAlignment="Stretch"
                         FontSize="8pt"
                         Text="{Binding Path=SelectedItem.HeaderText}"
-                        TextTrimming="None" />
+                        TextTrimming="None"
+                        Visibility="{Binding HooterVisibility}" />
+                    <CheckBox
+                        Grid.Row="3"
+                        Margin="10,0,10,10"
+                        HorizontalAlignment="Left"
+                        Content="{x:Static res:ViewStringResources.ShowHooter}"
+                        IsChecked="{Binding ShowHooter}" />
                 </Grid>
                 <materialDesign:Card.InputBindings>
                     <!--  Open selected item window by double-clicking  -->
