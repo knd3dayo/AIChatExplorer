@@ -207,6 +207,10 @@ namespace QAChat.Resource {
         // -- ClipboardApp.MainWindowDataGrid1 --
         // 更新日
         public virtual string UpdateDate { get; } = "更新日";
+
+        // 作成日
+        public virtual string CreateDate { get; } = "作成日";
+
         // ベクトル化日時
         public virtual string VectorizedDate { get; } = "ベクトル化日時";
         // タイトル

@@ -417,6 +417,9 @@ namespace QAChat.Resource {
 
         // -- ClipboardApp.MainWindowDataGrid1 --
         public override string UpdateDate { get; } = "Update Date";
+
+        // Create Date
+        public override string CreateDate { get; } = "Create Date";
         // VectorizedDate
         public override string VectorizedDate { get; } = "Vectorized Date";
 

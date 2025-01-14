@@ -182,20 +182,20 @@
                         Width="100"
                         Binding="{Binding IsPinned}"
                         Header="{x:Static res:ViewStringResources.Pin}" />
+                    <!-- CreatedAt, UpdatedAt  -->
+                    <DataGridTextColumn
+                        Width="150"
+                        MaxWidth="300"
+                        Binding="{Binding CreatedAtString}"
+                        ElementStyle="{StaticResource SingleLineTextBlock}"
+                        Header="{x:Static res:ViewStringResources.CreateDate}"
+                        IsReadOnly="True" />
                     <DataGridTextColumn
                         Width="150"
                         MaxWidth="300"
                         Binding="{Binding UpdatedAtString}"
                         ElementStyle="{StaticResource SingleLineTextBlock}"
                         Header="{x:Static res:ViewStringResources.UpdateDate}"
-                        IsReadOnly="True" />
-                    <!--  LastVectorizedAt  -->
-                    <DataGridTextColumn
-                        Width="150"
-                        MaxWidth="300"
-                        Binding="{Binding VectorizedAtString}"
-                        ElementStyle="{StaticResource SingleLineTextBlock}"
-                        Header="{x:Static res:ViewStringResources.VectorizedDate}"
                         IsReadOnly="True" />
                     <!--  ContentType  -->
                     <DataGridTextColumn

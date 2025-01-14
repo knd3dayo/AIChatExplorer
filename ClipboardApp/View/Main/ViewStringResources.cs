@@ -47,6 +47,9 @@ namespace ClipboardApp.View.Main {
         // UpdateDate
         public static string UpdateDate { get; set; } = CommonStringResources.Instance.UpdateDate;
 
+        // UpdateDate
+        public static string CreateDate { get; set; } = CommonStringResources.Instance.CreateDate;
+
         // VectorizedDate
         public static string VectorizedDate { get; set; } = CommonStringResources.Instance.VectorizedDate;
 

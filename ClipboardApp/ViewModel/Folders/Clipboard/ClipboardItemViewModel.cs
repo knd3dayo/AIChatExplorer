@@ -106,6 +106,9 @@ namespace ClipboardApp.ViewModel.Content {
 
         public string UpdatedAtString => ContentItem.UpdatedAtString;
 
+        // 作成時
+        public string CreatedAtString => ContentItem.CreatedAtString;
+
         // VectorizedAtString
         public string VectorizedAtString => ContentItem.VectorizedAtString;
 
