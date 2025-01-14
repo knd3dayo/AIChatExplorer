@@ -25,8 +25,11 @@ namespace ClipboardApp {
         // メニューの「終了」をクリックしたときの処理
 
         public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.ExitCommand();
+            // Display exit confirmation dialog. If Yes, exit the application
+            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.Yes) {
+                Application.Current.Shutdown();
+            }
         });
 
         public SimpleDelegateCommand<ClipboardAppTabContainer> CloseTabCommand => new((tabItem) => {
@@ -396,15 +399,23 @@ namespace ClipboardApp {
             PromptItem promptItem = tuple.Item2;
             // チャットを実行
             Task.Run(() => {
-                foreach (var item in SelectedItems) {
-                    ContentItemCommands.CreateChatResult(itemViewModel.ContentItem, promptItem);
-                    //保存
-                    item.ContentItem.Save();
+                try {
+                    // プログレスインジケータを表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+
+                    foreach (var item in SelectedItems.Select(x => x.ContentItem).ToList()) {
+                        ContentItemCommands.CreateChatResult(item, promptItem);
+                        //保存
+                        item.Save();
+                    }
+                    MainUITask.Run(() => {
+                        // フォルダ内のアイテムを再読み込み
+                        SelectedFolder?.LoadFolderCommand.Execute();
+                    });
+                } finally {
+                    // プログレスインジケータを非表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
                 }
-                MainUITask.Run(() => {
-                    // フォルダ内のアイテムを再読み込み
-                    SelectedFolder?.LoadFolderCommand.Execute();
-                });
             });
         });
 

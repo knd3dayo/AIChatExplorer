@@ -58,10 +58,6 @@ namespace PythonAILibUI.ViewModel.Item {
         // 選択中のContentItemBaseを削除
         public abstract void RemoveItem(ContentItem contentItem);
 
-
-        public abstract void ExitCommand();
-
-
         public abstract void OpenFolder(ContentItem contentItem);
 
         // Command to open text content as a file

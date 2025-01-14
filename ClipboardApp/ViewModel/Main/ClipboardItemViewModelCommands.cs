@@ -55,16 +55,6 @@ namespace ClipboardApp.ViewModel.Main {
             throw new System.NotImplementedException();
         }
 
-        /// <summary>
-        /// Application exit command
-        /// </summary>
-        public override void ExitCommand() {
-            // Display exit confirmation dialog. If Yes, exit the application
-            MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmExit, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
-            if (result == MessageBoxResult.Yes) {
-                Application.Current.Shutdown();
-            }
-        }
 
         // Command to start/stop clipboard monitoring
         public static void StartStopClipboardMonitorCommand() {
@@ -470,9 +460,22 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to generate background information
-        public override void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction) {
-            string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-            ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
+        public override async void GenerateBackgroundInfoCommand(List<ContentItem> items, object afterExecuteAction) {
+            await Task.Run(() => {
+                try {
+                    // プログレスインジケータを表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                    string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
+                    ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
+                    // Execute if obj is an Action
+                    if (afterExecuteAction is Action action) {
+                        action();
+                    }
+                } finally {
+                    // プログレスインジケータを非表示
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                }
+            });
         }
 
         // Command to generate a summary
