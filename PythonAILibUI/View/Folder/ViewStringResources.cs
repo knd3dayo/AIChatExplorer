@@ -27,12 +27,15 @@ namespace QAChat.View.Folder {
         public static string ImportClipboardItemsWindow { get; set; } = CommonStringResources.Instance.ExportImport;
 
         // Export
-        public static string Export { get; set; } = CommonStringResources.Instance.Export;
+        public static string ExportToExcel { get; set; } = CommonStringResources.Instance.ExportToExcel;
 
         // Import
-        public static string Import { get; set; } = CommonStringResources.Instance.Import;
+        public static string ImportFromExcel { get; set; } = CommonStringResources.Instance.ImportFromExcel;
 
-        // ExportTarget
+        // ImportFromRULList
+        public static string ImportFromRULList { get; set; } = CommonStringResources.Instance.ImportFromRULList;
+
+        // ExportToExcel
         public static string ExportTarget { get; set; } = CommonStringResources.Instance.ExportTarget;
 
         // ImportTarget

@@ -86,5 +86,8 @@ namespace ClipboardApp.View.Item {
         // ExtractedText
         public static string ExtractedText { get; set; } = CommonStringResources.Instance.ExtractedText;
 
+        // SourcePath
+        public static string SourcePath { get; set; } = CommonStringResources.Instance.SourcePath;
+
     }
 }

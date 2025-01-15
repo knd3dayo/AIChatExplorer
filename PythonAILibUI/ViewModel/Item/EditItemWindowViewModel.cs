@@ -18,15 +18,17 @@ namespace QAChat.ViewModel.Content {
 
         public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action afterUpdate) {
 
+            this.itemViewModel = itemViewModel;
             FolderViewModel = folderViewModel;
-            Title = itemViewModel.ContentItem.Description;
-            ItemViewModel = itemViewModel;
             _afterUpdate = afterUpdate;
+            OnPropertyChanged(nameof(ItemViewModel));
+            OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(SourcePath));
 
         }
 
-        private ContentItemViewModel? itemViewModel;
-        public ContentItemViewModel? ItemViewModel {
+        private ContentItemViewModel itemViewModel;
+        public ContentItemViewModel ItemViewModel {
             get {
                 return itemViewModel;
             }
@@ -57,18 +59,24 @@ namespace QAChat.ViewModel.Content {
             statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
         }
 
-        private string title = "";
         public string Title {
             get {
-                return title;
+                return itemViewModel.ContentItem.Description;
             }
             set {
-                if (value == null) {
-                    return;
-                }
-                title = value;
+                itemViewModel.ContentItem.Description = value;
                 OnPropertyChanged(nameof(Title));
+            }
+        }
 
+        // SourcePath
+        public string SourcePath {
+            get {
+                return itemViewModel.ContentItem.SourcePath;
+            }
+            set {
+                itemViewModel.ContentItem.SourcePath = value;
+                OnPropertyChanged(nameof(SourcePath));
             }
         }
 

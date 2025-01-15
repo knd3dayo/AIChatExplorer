@@ -115,6 +115,7 @@ namespace ClipboardApp.Model.Folder {
                 if (!items.Any(x => x.FilePath == localFileSystemFilePath)) {
                     FileSystemItem item = new() {
                         FilePath = localFileSystemFilePath,
+                        SourcePath = localFileSystemFilePath,
                         CollectionId = Id,
                         ContentType = PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files,
                         Description = Path.GetFileName(localFileSystemFilePath)

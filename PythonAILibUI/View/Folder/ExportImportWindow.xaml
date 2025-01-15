@@ -75,7 +75,7 @@
                 Margin="10,3,10,3"
                 Padding="0"
                 FontSize="10"
-                Header="{x:Static res:ViewStringResources.Export}">
+                Header="{x:Static res:ViewStringResources.ExportToExcel}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
@@ -109,7 +109,7 @@
                 Margin="10,3,10,3"
                 Padding="0"
                 FontSize="10"
-                Header="{x:Static res:ViewStringResources.Import}">
+                Header="{x:Static res:ViewStringResources.ImportFromExcel}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -144,6 +144,27 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
+                </Grid>
+            </TabItem>
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,3,10,3"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.ImportFromRULList}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  インポート時に自動処理を実行します  -->
+                    <CheckBox
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="{x:Static res:ViewStringResources.ExecuteAutoProcessingOnImport}"
+                        IsChecked="{Binding IsAutoProcessEnabled}" />
                 </Grid>
             </TabItem>
         </TabControl>

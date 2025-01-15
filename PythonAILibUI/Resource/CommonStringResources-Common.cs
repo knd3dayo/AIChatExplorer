@@ -97,9 +97,12 @@ namespace QAChat.Resource {
         public virtual string ExportImport { get; } = "エクスポート/インポート";
 
         // Export
-        public virtual string Export { get; } = "エクスポート";
+        public virtual string ExportToExcel { get; } = "Excelへエクスポート";
         // Import
-        public virtual string Import { get; } = "インポート";
+        public virtual string ImportFromExcel { get; } = "Excelからインポート";
+
+        // ImportFromRULList
+        public virtual string ImportFromRULList { get; } = "URLリストからインポート";
 
         // モード
         public virtual string Mode { get; } = "モード";

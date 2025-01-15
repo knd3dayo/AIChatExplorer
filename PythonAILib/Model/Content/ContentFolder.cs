@@ -1,3 +1,5 @@
+using System.IO;
+using System.Net.Http;
 using LiteDB;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -322,6 +324,12 @@ namespace PythonAILib.Model.Content {
                 if (exportText) {
                     row.Add(clipboardItem.Content);
                 }
+                // SourcePath
+                bool exportSourcePath = items.FirstOrDefault(x => x.Name == "SourcePath")?.IsChecked ?? false;
+                if (exportSourcePath) {
+                    row.Add(clipboardItem.SourcePath);
+                }
+
                 // PromptItemのリスト要素毎に処理を行う
                 foreach (var promptItem in items.Where(x => x.IsPromptItem)) {
                     if (promptItem.IsChecked) {
@@ -361,6 +369,54 @@ namespace PythonAILib.Model.Content {
                 }
                 item.Save();
             }
+        }
+
+        public virtual void ImportFromURLList(string filePath, bool executeAutoProcess) {
+
+            // filePathのファイルが存在しない場合は何もしない
+            if (System.IO.File.Exists(filePath) == false) {
+                LogWrapper.Error(PythonAILibStringResources.Instance.FileNotFound);
+                return;
+            }
+            // ファイルからすべての行を読み込んでリストに格納します
+            List<string> lines = new List<string>(System.IO.File.ReadAllLines(filePath));
+            foreach (var line in lines) {
+                // URLを取得
+                string url = line;
+                // URLからデータを取得して一時ファイルに保存
+                // Task.Runを使用して非同期操作を開始します
+                Task.Run(async () => {
+                    // HttpClientを使用してデータを取得します
+                    using HttpClient client = new();
+                    string tempFilePath = Path.GetTempFileName();
+                    try {
+                        string data = await client.GetStringAsync(url);
+                        // 一時ファイルのパスを取得します
+                        
+                        // データを一時ファイルに書き込みます
+                        await System.IO.File.WriteAllTextAsync(tempFilePath, data);
+                        // 成功メッセージを表示します
+                        Console.WriteLine($"データは一時ファイルに保存されました: {tempFilePath}");
+                        // 一時ファイルからテキスト抽出
+                        string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(tempFilePath);
+
+                        // アイテムの作成
+                        ContentItem item = new(Id) {
+                            Content = text,
+                            Description = url,
+                            SourcePath = url
+                        };
+                        item.Save();
+
+                    } catch (Exception ex) {
+                        LogWrapper.Warn($"エラーが発生しました: {ex.Message}");
+                    } finally {
+                        // 一時ファイルを削除します
+                        System.IO.File.Delete(tempFilePath);
+                    }
+                }).Wait();
+            }
+
         }
         public virtual void ImportItemsFromJson(string json) { }
 

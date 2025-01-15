@@ -10,7 +10,6 @@ using WpfAppCommon.Utils;
 namespace QAChat.ViewModel.Folder {
     public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : QAChatViewModelBase {
 
-
         // ImportItems
         public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();
 
@@ -55,12 +54,16 @@ namespace QAChat.ViewModel.Folder {
             Task.Run(() => {
                 switch (SelectedIndex) {
                     case 0:
-                        // エクスポート処理
+                        // Excelエクスポート処理
                         ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
-                        // インポート処理
+                        // Excelインポート処理
                         ClipboardFolderViewModel.Folder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
+                        break;
+                    case 2:
+                        // URLリストインポート処理
+                        ClipboardFolderViewModel.Folder.ImportFromURLList(SelectedFileName, IsAutoProcessEnabled);
                         break;
                     default:
                         break;

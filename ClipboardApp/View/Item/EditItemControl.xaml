@@ -61,6 +61,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label
                     Grid.Row="0"
@@ -74,16 +75,29 @@
                     Grid.Column="1"
                     Margin="10,10,10,0"
                     IsEnabled="True"
-                    Text="{Binding ItemViewModel.Description, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" />
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
                     Width="100"
                     Margin="10,10,10,0"
                     VerticalAlignment="Center"
-                    Content="{x:Static res:ViewStringResources.Tag}" />
+                    Content="{x:Static res:ViewStringResources.SourcePath}" />
                 <TextBox
                     Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="10,10,10,0"
+                    IsEnabled="True"
+                    Text="{Binding SourcePath, UpdateSourceTrigger=PropertyChanged}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Width="100"
+                    Margin="10,10,10,0"
+                    VerticalAlignment="Center"
+                    Content="{x:Static res:ViewStringResources.Tag}" />
+                <TextBox
+                    Grid.Row="2"
                     Grid.Column="1"
                     Margin="10,10,10,0"
                     materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.ClickHereToOpenTheTagEditScreen}"

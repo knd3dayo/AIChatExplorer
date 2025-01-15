@@ -232,6 +232,10 @@ namespace PythonAILib.Resource {
 
         // ソースタイトル
         public virtual string SourceTitle { get; } = "ソースタイトル";
+
+        // SourcePath
+        public virtual string SourcePath { get; } = "ソースパス";
+
         // ピン留め
         public virtual string Pin { get; } = "ピン留め";
 

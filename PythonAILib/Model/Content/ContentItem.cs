@@ -5,7 +5,6 @@ using System.Text.Unicode;
 using System.Windows.Media.Imaging;
 using LiteDB;
 using PythonAILib.Common;
-using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Image;
@@ -13,7 +12,6 @@ using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
-using PythonAILib.Utils.Common;
 
 namespace PythonAILib.Model.Content {
     public class ContentItem {
@@ -81,7 +79,8 @@ namespace PythonAILib.Model.Content {
         // ReferenceVectorDBItemsがフォルダのReferenceVectorDBItemsと同期済みかどうか
         public bool IsReferenceVectorDBItemsSynced { get; set; } = false;
 
-
+        // SourcePath
+        public string SourcePath { get; set; } = "";
 
         // 別フォルダに移動
         public virtual void MoveToFolder<T>(T folder) where T : ContentFolder {
@@ -116,6 +115,8 @@ namespace PythonAILib.Model.Content {
             clipboardItem.PromptChatResult = PromptChatResult;
             //-- ChatItemsをコピー
             clipboardItem.ChatItems = new List<ChatMessage>(ChatItems);
+            // SourcePath
+            clipboardItem.SourcePath = SourcePath;
         }
 
 
@@ -205,6 +206,8 @@ namespace PythonAILib.Model.Content {
                 header1 += $"[{PythonAILibStringResources.Instance.SourceAppName}]" + SourceApplicationName + "\n";
                 // 貼り付け元のアプリケーションのタイトルを追加
                 header1 += $"[{PythonAILibStringResources.Instance.SourceTitle}]" + SourceApplicationTitle + "\n";
+                // SourcePathを追加
+                header1 += $"[{PythonAILibStringResources.Instance.SourcePath}]" + SourcePath + "\n";
 
                 if (ContentType == ContentTypes.ContentItemTypes.Text) {
                     header1 += $"[{PythonAILibStringResources.Instance.Type}]Text";

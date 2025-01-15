@@ -200,9 +200,12 @@ namespace QAChat.Resource {
         public override string ExportImport { get; } = "Export/Import";
 
         // Export
-        public override string Export { get; } = "Export";
+        public override string ExportToExcel { get; } = "Export to Excel";
         // Import
-        public override string Import { get; } = "Import";
+        public override string ImportFromExcel { get; } = "Import from Excel";
+
+        // ImportFromRULList
+        public override string ImportFromRULList { get; } = "Import from URL List";
 
         // Mode
         public override string Mode { get; } = "Mode";

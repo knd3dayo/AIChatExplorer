@@ -183,6 +183,10 @@ namespace PythonAILib.Resource {
         public override string Title { get; } = "Title";
 
         public override string SourceTitle { get; } = "Source Title";
+
+        // SourcePath
+        public override string SourcePath { get; } = "Source Path";
+
         public override string Pin { get; } = "Pin";
 
         // Document reliability
