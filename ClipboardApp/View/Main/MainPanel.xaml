@@ -276,6 +276,7 @@
                         Margin="10,0,10,10"
                         HorizontalAlignment="Left"
                         Content="{x:Static res:ViewStringResources.ShowHooter}"
+                        FontSize="8pt"
                         IsChecked="{Binding ShowHooter}" />
                 </Grid>
                 <materialDesign:Card.InputBindings>
