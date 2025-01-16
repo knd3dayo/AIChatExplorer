@@ -136,8 +136,8 @@ def openai_embedding(context_json: str, input_text: str):
     def func() -> dict[str, Any]:
         # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
         _, openai_client = get_openai_objects(context_json)
-        result: dict = {}
         vector =  openai_client.openai_embedding(input_text)
+        result: dict = {}
         result["vector"] = vector
         return result
 
@@ -146,6 +146,20 @@ def openai_embedding(context_json: str, input_text: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
+def get_token_count(context_json: str, input_text: str):
+    # get_token_countを実行する関数を定義
+    def func() -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # OpenAIClientを生成
+        openai_client = OpenAIClient(openai_props)
+        result: dict = {}
+        result["total_tokens"] = openai_client.get_token_count(input_text)
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 def list_openai_models(context_json: str):
     # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
@@ -414,6 +428,19 @@ def extract_base64_to_text(base64_data: str, extension: str):
     def func () -> dict:
         text = ai_app.extract_base64_to_text(base64_data, extension)
         return {"output": text}
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def extract_webpage(url):
+    def func () -> dict:
+        text, urls = ai_app.extract_webpage(url)
+        result = {}
+        result["output"] = text
+        result["urls"] = urls
+        return result
+    
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す

@@ -40,6 +40,12 @@ namespace PythonAILib.PythonIF {
         // GetMimeType
         public string GetMimeType(string filePath);
 
+        // GetTokenCount
+        public long GetTokenCount(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
+
+        // extract_webpage
+        public string ExtractWebPage(string url);
+
         //テスト用
         public string HelloWorld();
 

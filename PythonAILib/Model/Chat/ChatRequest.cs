@@ -109,6 +109,12 @@ namespace PythonAILib.Model.Chat {
             }
         }
 
+        public string GetMessages(ChatRequestContext chatRequestContext) {
+            UpdateMessage(chatRequestContext);
+            // ChatHistoryのContentの文字列を連結して返す
+            return string.Join("", ChatHistory.Select(x => x.Content));
+        }
+
         public Dictionary<string, object> ToDict() {
             // OpenAIのAPIに送信するJSONを作成
 

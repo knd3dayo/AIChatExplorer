@@ -74,6 +74,8 @@ namespace PythonAILib.PythonIF {
                 // extract_text関数を呼び出す
                 try {
                     string resultString = function_object(path);
+                    // resultStringをログに出力
+                    LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
                     result.LoadFromJson(resultString);
                     // Errorがある場合はLogWrapper.Errorを呼び出す
                     if (!string.IsNullOrEmpty(result.Error)) {
@@ -122,6 +124,10 @@ namespace PythonAILib.PythonIF {
                 // extract_text関数を呼び出す
                 try {
                     string resultString = function_object(base64, extension);
+
+                    // resultStringをログに出力
+                    LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+
                     // resultStringからDictionaryに変換する。
                     result.LoadFromJson(resultString);
                     // Errorがある場合はLogWrapper.Errorを呼び出す
@@ -570,6 +576,61 @@ namespace PythonAILib.PythonIF {
 
             });
             return contentType ?? "";
+        }
+
+        // GetTokenCount
+        public long GetTokenCount(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
+            // ChatRequestのMessagesを取得
+            string chatRequestMessages = chatRequest.GetMessages(chatRequestContext);
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.GetTokenCountExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.ChatHistory}:{chatRequestMessages}");
+
+            long totalTokens = 0;
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "get_token_count");
+
+                // get_token_count関数を呼び出す
+                string resultString = function_object(chatRequestContextJson, chatRequestMessages);
+                // resultStringをログに出力
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                Dictionary<string, dynamic?> resultDict = JsonUtil.ParseJson(resultString);
+                // total_tokensを取得
+                if (resultDict.TryGetValue("total_tokens", out dynamic? totalTokensValue)) {
+                    if (totalTokensValue is decimal totalTokensDecimal) {
+                        totalTokens = decimal.ToInt64(totalTokensDecimal);
+                    }
+                }
+            });
+            return totalTokens;
+        }
+
+        // public string ExtractWebPage(string url);
+        public string ExtractWebPage(string url) {
+            // ResultContainerを作成
+            PythonScriptResult result = new();
+            // Pythonスクリプトを実行する
+            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+                // Pythonスクリプトの関数を呼び出す
+                dynamic function_object = GetPythonFunction(ps, "extract_webpage");
+                // extract_webpage関数を呼び出す
+                string resultString = function_object(url);
+                // resultStringをログに出力
+                LogWrapper.Info($"{PythonAILibStringResources.Instance.Response}:{resultString}");
+                // resultStringからDictionaryに変換する。
+                result.LoadFromJson(resultString);
+                // Errorがある場合はLogWrapper.Errorを呼び出す
+                if (!string.IsNullOrEmpty(result.Error)) {
+                    LogWrapper.Error(result.Error);
+                }
+            });
+            return result.Output;
         }
     }
 }

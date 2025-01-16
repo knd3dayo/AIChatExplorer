@@ -25,3 +25,4 @@ flaml[automl]
 selenium
 webdriver-manager
 duckduckgo-search
+tiktoken

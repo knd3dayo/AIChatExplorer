@@ -181,6 +181,9 @@ namespace PythonAILib.Resource {
         // チャット履歴
         public virtual string ChatHistory { get; } = "チャット履歴";
 
+        // GetTokenCountExecute
+        public virtual string GetTokenCountExecute { get; } = "GetTokenCount実行";
+
         // UpdateVectorDBIndex実行
         public virtual string UpdateVectorDBIndexExecute { get; } = "UpdateVectorDBIndex実行";
 

@@ -163,6 +163,9 @@ namespace PythonAILib.Resource {
         // Execute OpenAI
         public override string OpenAIExecute { get; } = "Execute OpenAI";
 
+        // GetTokenCountExecute
+        public override string GetTokenCountExecute { get; } = "Execute GetTokenCount";
+
         // Chat history
         public override string ChatHistory { get; } = "Chat history";
 

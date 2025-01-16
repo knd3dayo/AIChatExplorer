@@ -3,6 +3,7 @@ import os, json
 import base64
 from mimetypes import guess_type
 from typing import Any, Type
+import tiktoken
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
@@ -286,3 +287,10 @@ class OpenAIClient:
                 response_format="verbose_json"
             )
         return json.loads(response.model_dump_json())
+
+    def get_token_count(self, input_text: str) -> int:
+        # completion_modelに対応するencoderを取得する
+        encoder = tiktoken.encoding_for_model(self.props.OpenAICompletionModel)
+        # token数を取得する
+        return len(encoder.encode(input_text))
+    

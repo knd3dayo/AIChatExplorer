@@ -386,13 +386,11 @@ namespace PythonAILib.Model.Content {
                 // URLからデータを取得して一時ファイルに保存
                 // Task.Runを使用して非同期操作を開始します
                 Task.Run(async () => {
-                    // HttpClientを使用してデータを取得します
-                    using HttpClient client = new();
                     string tempFilePath = Path.GetTempFileName();
                     try {
-                        string data = await client.GetStringAsync(url);
+                        string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
                         // 一時ファイルのパスを取得します
-                        
+
                         // データを一時ファイルに書き込みます
                         await System.IO.File.WriteAllTextAsync(tempFilePath, data);
                         // 成功メッセージを表示します

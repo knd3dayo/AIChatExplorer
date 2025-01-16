@@ -2,13 +2,18 @@ import os, json
 from typing import Any, Tuple, Generator
 import tempfile
 import base64
-import sys
 
 from ai_app_openai import OpenAIProps, OpenAIClient
 from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
 from ai_app_autogen import AutoGenGroupChatWrapper, AutoGenProps, AutoGenNormalChatWrapper
+
+from selenium import webdriver
+from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.options import Options
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from typing import Annotated
 
 ########################
 # ファイル関連
@@ -47,6 +52,34 @@ def extract_base64_to_text(base64_data:str, extension:str) -> str:
         os.remove(temp_path)
         return text
 
+def extract_webpage(url: Annotated[str, "URL of the web page to extract text and links from"]) -> Annotated[tuple[str, list[tuple[str, str]]], "Page text, list of links (href attribute and link text from <a> tags)"]:
+    """
+    This function extracts text and links from the specified URL of a web page.
+    """
+    # ヘッドレスモードのオプションを設定
+    edge_options = Options()
+    edge_options.add_argument("--headless")
+    edge_options.add_argument("--disable-gpu")
+    edge_options.add_argument("--no-sandbox")
+    edge_options.add_argument("--disable-dev-shm-usage")
+
+    # Edgeドライバをセットアップ
+    driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=edge_options)
+    # Wait for the page to fully load (set explicit wait conditions if needed)
+    driver.implicitly_wait(10)
+    # Retrieve HTML of the web page and extract text and links
+    driver.get(url)
+    # Get the entire HTML of the page
+    page_html = driver.page_source
+
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(page_html, "html.parser")
+    text = soup.get_text()
+    # Retrieve href attribute and text from <a> tags
+    urls: list[tuple[str, str]] = [(a.get("href"), a.get_text()) for a in soup.find_all("a")]
+    driver.close()
+    return text, urls
+    
 ########################
 # openai関連
 ########################
@@ -61,6 +94,10 @@ def openai_embedding(openai_props: OpenAIProps, input_text: str):
 def list_openai_models(openai_props: OpenAIProps):
     client = OpenAIClient(openai_props)
     return client.list_openai_models()
+
+def get_token_count(openai_props: OpenAIProps, input_text: str):
+    client = OpenAIClient(openai_props)
+    return client.get_token_count(input_text)
 
 ########################
 # autogen関連
