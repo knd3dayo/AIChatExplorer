@@ -28,31 +28,21 @@ namespace PythonAILib.Model.Content {
 
         public List<VectorSearchProperty> ReferenceVectorSearchProperties { get; set; } = [];
 
-        private VectorDBItem MainVectorDBItem {
-            get {
-                var item = VectorDBItem.GetDefaultVectorDB();
-                item.Description = Description;
-                item.FolderId = Id.ToString();
-
-                return item;
-            }
-        }
-
         public VectorSearchProperty GetMainVectorSearchProperty() {
 
-            VectorSearchProperty searchProperty = new(MainVectorDBItem) {
+            VectorSearchProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB()) {
                 FolderId = Id
             };
             return searchProperty;
         }
 
         public List<VectorSearchProperty> GetVectorSearchProperties() {
-            List<VectorSearchProperty> searchProperties = new();
-            searchProperties.Add(GetMainVectorSearchProperty());
-            // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
-            foreach (var item in ReferenceVectorSearchProperties) {
-                searchProperties.Add(item);
-            }
+            List<VectorSearchProperty> searchProperties =
+            [
+                GetMainVectorSearchProperty(),
+                // ReferenceVectorDBItemsに設定されたVectorDBItemを取得
+                .. ReferenceVectorSearchProperties,
+            ];
             return searchProperties;
         }
 
@@ -116,9 +106,13 @@ namespace PythonAILib.Model.Content {
             foreach (var item in items) {
                 item.Delete();
             }
+            
+            // ベクトルを全削除
+            folder.DeleteVectorDBCollection();
             // folderを削除
             var folderCollection = PythonAILibManager.Instance.DataFactory.GetFolderCollection<T1>();
             folderCollection.Delete(folder.Id);
+
         }
 
         // フォルダを移動する
@@ -140,6 +134,9 @@ namespace PythonAILib.Model.Content {
         // 保存
         protected virtual void Save<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
 
+            // ベクトルDBのコレクションを更新
+            UpdateVectorDBCollection();
+
             IDataFactory dataFactory = PythonAILibManager.Instance.DataFactory;
             dataFactory.GetFolderCollection<T1>().Upsert((T1)this);
             // ItemsのIsReferenceVectorDBItemsSyncedをFalseに設定
@@ -151,6 +148,7 @@ namespace PythonAILib.Model.Content {
         // 削除
         public virtual void Delete() {
             Delete<ContentFolder, ContentItem>();
+
         }
 
         protected virtual void Delete<T1, T2>() where T1 : ContentFolder where T2 : ContentItem {
@@ -182,21 +180,41 @@ namespace PythonAILib.Model.Content {
         }
         // フォルダに設定されたVectorDBのコレクションを削除
         public void DeleteVectorDBCollection() {
-            PythonAILibManager libManager = PythonAILibManager.Instance;
-            OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+            Task.Run(() => {
 
-            ChatRequestContext chatRequestContext = new() {
-                OpenAIProperties = openAIProperties,
-                VectorSearchProperties = [GetMainVectorSearchProperty()]
-            };
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
 
-            PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = openAIProperties,
+                    VectorSearchProperties = [GetMainVectorSearchProperty()]
+                };
+                PythonExecutor.PythonAIFunctions.DeleteVectorDBCollection(chatRequestContext);
+
+            });
+        }
+        // フォルダに設定されたVectorDBのコレクションをアップデート
+        public void UpdateVectorDBCollection() {
+            Task.Run(() => {
+                PythonAILibManager libManager = PythonAILibManager.Instance;
+                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
+
+                ChatRequestContext chatRequestContext = new() {
+                    OpenAIProperties = openAIProperties,
+                    VectorSearchProperties = GetVectorSearchProperties()
+                };
+
+                PythonExecutor.PythonAIFunctions.UpdateVectorDBCollection(chatRequestContext);
+            });
         }
 
         // フォルダに設定されたVectorDBのインデックスを更新
         public void RefreshVectorDBCollection<T>() where T : ContentItem {
             // ベクトルを全削除
             DeleteVectorDBCollection();
+            // コレクション/カタログの更新
+            UpdateVectorDBCollection();
+
             // ベクトルを再作成
             // フォルダ内のアイテムを取得して、ベクトルを作成
             foreach (var item in GetItems<T>()) {

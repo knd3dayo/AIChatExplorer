@@ -9,6 +9,7 @@ openai==1.52.1
 langchain==0.3.4
 langchain-openai==0.2.3
 langchain-community==0.3.3
+langchain-chroma
 langchain-postgres==0.0.12
 magika
 openpyxl

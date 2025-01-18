@@ -27,6 +27,8 @@ namespace PythonAILib.PythonIF {
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);
 
+        public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
+
         public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);
 
         public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);

@@ -466,6 +466,19 @@ namespace PythonAILib.PythonIF {
                 }
             });
         }
+        public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext) {
+            // ChatRequestContextをJSON文字列に変換
+            string chatRequestContextJson = chatRequestContext.ToJson();
+
+            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
+            LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
+            // DeleteVectorDBIndexExecuteを呼び出す
+            PythonScriptResult result = new();
+            ExecutePythonScriptWrapper("update_collection", (function_object) => {
+                return function_object(chatRequestContextJson);
+            }, result);
+        }
+
         // 指定されたベクトルDBのインデックスを削除する
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
             // ChatRequestContextをJSON文字列に変換

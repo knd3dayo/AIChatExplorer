@@ -54,6 +54,9 @@ class VectorDBProps:
         # search_kwarg
         self.SearchKwarg = props_dict.get(VectorDBProps.search_kwargs_name, {})
 
+        # description
+        self.Description = props_dict.get(VectorDBProps.desccription_name, "")
+        
         # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
         if props_dict.get(VectorDBProps.is_use_multi_vector_retriever_name, False) == True:
             self.IsUseMultiVectorRetriever = True

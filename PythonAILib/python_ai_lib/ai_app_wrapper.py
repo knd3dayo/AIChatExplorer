@@ -323,6 +323,29 @@ def vector_search(context_json: str, query: str):
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
+def update_collection(context_json: str):
+    def func() -> dict:
+        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        openai_props, _ = get_openai_objects(context_json)
+        # ChatRequestContextからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
+
+        ai_app.update_collection(openai_props, vector_db_items)
+
+        # Catalogを更新
+        for vector_db_props in vector_db_items:
+            catalog_db_url = vector_db_props.CatalogDBURL
+            db_url = vector_db_props.VectorDBURL
+            collection = vector_db_props.CollectionName
+            description = vector_db_props.VectorDBDescription
+            ai_app.update_catalog(catalog_db_url, db_url, collection, description)
+
+        return {}
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
 
 def delete_collection(context_json: str):
     def func() -> dict:

@@ -162,6 +162,14 @@ def run_langchain_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDB
     return result
 
 # vector db関連
+def update_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps]):
+    # vector_db_itemsからVectorDBPropsを取得
+    # LangChainVectorDBを生成
+    for vector_db_props in vector_db_items:
+        vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
+        # update_catalogを実行
+        update_catalog(vector_db_props.CatalogDBURL, vector_db_props.VectorDBURL, vector_db_props.CollectionName, vector_db_props.Description)
+        
 def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps]):
     # vector_db_itemsからVectorDBPropsを取得
     # LangChainVectorDBを生成
@@ -169,6 +177,8 @@ def delete_collection(openai_props: OpenAIProps, vector_db_items: list[VectorDBP
         vector_db = LangChainVectorDB.get_vector_db(openai_props, vector_db_props)
         # delete_collectionを実行
         vector_db.delete_collection()
+        # delete_catalogを実行
+        delete_catalog(vector_db_props.CatalogDBURL, vector_db_props.VectorDBURL, vector_db_props.CollectionName)
 
 def delete_index(params: ContentUpdateOrDeleteRequestParams):
     vector_db_props = params.vector_db_props_list[0]

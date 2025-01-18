@@ -3,7 +3,7 @@ import os, sys
 sys.path.append("python")
 
 from typing import Tuple, List
-from langchain_community.vectorstores.chroma import Chroma
+from langchain_chroma.vectorstores import Chroma
 import chromadb
 from langchain_core.vectorstores import VectorStore
 from ai_app_langchain.ai_app_langchain_util import LangChainOpenAIClient
