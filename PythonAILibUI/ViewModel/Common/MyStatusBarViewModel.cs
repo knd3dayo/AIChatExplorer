@@ -8,7 +8,7 @@ namespace QAChat.ViewModel.Common {
     public class MyStatusBarViewModel : ObservableObject {
 
         // ステータスバーのテキスト
-        public StatusText StatusText { get; set; } = Tools.StatusText;
+        public StatusText StatusText { get; } = StatusText.Instance;
 
 
         // ステータスメッセージのログ画面を表示する。

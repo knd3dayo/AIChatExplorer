@@ -2,13 +2,13 @@ using System.Windows;
 using ClipboardApp.Settings;
 using QAChat.Resource;
 using WpfAppCommon.Control.Editor;
+using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel
-{
+namespace ClipboardApp.ViewModel {
     public class ClipboardAppViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
-        public CommonStringResources StringResources {
+        public static CommonStringResources StringResources {
             get {
                 // 文字列リソースの言語設定
                 CommonStringResources.Lang = ClipboardAppConfig.Instance.ActualLang;
@@ -77,13 +77,6 @@ namespace ClipboardApp.ViewModel
             }
         }
         // 開発中機能の表示
-        public Visibility EnableDevFeaturesVisibility {
-            get {
-                return ClipboardAppConfig.Instance.EnableDevFeatures ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-
-
+        public Visibility EnableDevFeaturesVisibility => Tools.BoolToVisibility(ClipboardAppConfig.Instance.EnableDevFeatures);
     }
 }

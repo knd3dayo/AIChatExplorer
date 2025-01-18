@@ -574,21 +574,23 @@ namespace QAChat.Resource {
         // スタックトレース
         public virtual string StackTrace { get; } = "スタックトレース";
 
-        // --- ClipboardItemViewModel ---
+        // --- ClipboardItemViewModelCommands ---
+        // OpenFolder
+
         // ファイル以外のコンテンツはフォルダを開けません
         public virtual string CannotOpenFolderForNonFileContent { get; } = "ファイル以外のコンテンツはフォルダを開けません";
+
+        // フォルダを開きます
+        public virtual string ExecuteOpenFolder { get; } = "フォルダを開きます";
+
+        // フォルダを開きました
+        public virtual string ExecuteOpenFolderSuccess { get; } = "フォルダを開きました";
 
         // ファイル以外のコンテンツはテキストを抽出できません
         public virtual string CannotExtractTextForNonFileContent { get; } = "ファイル以外のコンテンツはテキストを抽出できません";
 
         // "MainWindowViewModelがNullです"
         public virtual string MainWindowViewModelIsNull { get; } = "MainWindowViewModelがNullです";
-
-        // タイトルを生成します
-        public virtual string GenerateTitleInformation { get; } = "タイトルを生成します";
-        // "タイトルを生成しました"
-        public virtual string GeneratedTitleInformation { get; } = "タイトルを生成しました";
-
 
 
         // 背景情報
@@ -625,11 +627,6 @@ namespace QAChat.Resource {
         // その他のプロンプト
         public virtual string OtherPrompts { get; } = "その他のプロンプト";
 
-        // ベクトルを生成します
-        public virtual string GenerateVector2 { get; } = "ベクトルを生成します";
-
-        // "ベクトルを生成しました"
-        public virtual string GeneratedVector { get; } = "ベクトルを生成しました";
 
         // 画像以外のコンテンツはテキストを抽出できません
         public virtual string CannotExtractTextForNonImageContent { get; } = "画像以外のコンテンツはテキストを抽出できません";
@@ -731,7 +728,42 @@ namespace QAChat.Resource {
         // バージョン情報
         public virtual string VersionInformation { get; } = "バージョン情報";
 
-        // -- ClipboardApp.MainWindowViewModel --
+
+        #region  ClipboardItemViewModelCommands
+        // **********************************************************************************
+        // -- ExtractTextCommand
+        // テキスト抽出処理実行中
+        public virtual string TextExtractionInProgress { get; } = "テキスト抽出処理実行中";
+
+        // テキスト抽出処理が完了しました
+        public virtual string TextExtractionCompleted { get; } = "テキスト抽出処理が完了しました";
+
+
+        // タイトル生成処理実行中
+        public virtual string TitleGenerationInProgress { get; } = "タイトル生成処理実行中";
+
+        // "タイトルを生成しました"
+        public virtual string TitleGenerationCompleted { get; } = "タイトルを生成しました";
+
+        // ベクトルを生成します
+        public virtual string GenerateVectorInProgress { get; } = "ベクトル生成処理実行中";
+
+        // "ベクトルを生成しました"
+        public virtual string GenerateVectorCompleted { get; } = "ベクトルを生成しました";
+
+
+        // プロンプトテンプレート[promptName]を実行します.
+        public virtual string PromptTemplateExecute(string promptName) => $"プロンプトテンプレート[{promptName}]を実行します.";
+
+        // プロンプトテンプレート[promptName]を実行中
+        public virtual string PromptTemplateInProgress(string promptName) => $"プロンプトテンプレート[{promptName}]を実行中";
+
+        // "プロンプトテンプレート[promptName]を実行しました."
+        public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
+
+        // **********************************************************************************
+        #endregion
+
         // "アプリケーションを再起動すると、表示モードが変更されます。"
         public virtual string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "アプリケーションを再起動すると、表示モードが変更されます。";
         // 情報
@@ -742,6 +774,7 @@ namespace QAChat.Resource {
 
         // 選択中のアイテムがない"
         public virtual string NoItemSelected { get; } = "選択中のアイテムがない";
+
 
         // 切り取りました"
         public virtual string Cut { get; } = "切り取りました";

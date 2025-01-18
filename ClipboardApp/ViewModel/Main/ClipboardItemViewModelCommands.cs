@@ -23,6 +23,7 @@ using QAChat.View.VectorDB;
 using QAChat.ViewModel;
 using QAChat.ViewModel.Item;
 using QAChat.ViewModel.VectorDB;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
@@ -220,6 +221,9 @@ namespace ClipboardApp.ViewModel.Main {
                 LogWrapper.Error(CommonStringResources.Instance.CannotOpenFolderForNonFileContent);
                 return;
             }
+            string message = $"{CommonStringResources.Instance.ExecuteOpenFolder} {contentItem.FolderName}";
+            LogWrapper.Info(message);
+
             // Open the folder with Process.Start
             string? folderPath = contentItem.FolderName;
             if (folderPath != null) {
@@ -230,6 +234,9 @@ namespace ClipboardApp.ViewModel.Main {
                 };
                 p.Start();
             }
+            message = $"{CommonStringResources.Instance.ExecuteOpenFolderSuccess} {contentItem.FolderName}";
+            LogWrapper.Info(message);
+
         }
 
         // Command to open a file
@@ -371,30 +378,6 @@ namespace ClipboardApp.ViewModel.Main {
 
         // -----------------------------------------------------------------------------------
         #region プログレスインジケーター表示の処理
-
-        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
-        // 処理中はプログレスインジケータを表示
-        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
-            Task.Run(() => {
-                // プログレスインジケータを表示
-                MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                try {
-                    foreach (var itemViewModel in MainWindowViewModel.Instance.SelectedItems) {
-                        ContentItem item = itemViewModel.ContentItem;
-                        if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                            LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                            return;
-                        }
-                        ContentItemCommands.ExtractTextCommandExecute(item);
-                        // 保存を行う
-                        item.Save(false);
-                    }
-                } finally {
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                }
-            });
-        });
-
         // Command to reload the folder
         public void ReloadFolderCommand(MainWindowViewModel model) {
             if (model.SelectedFolder == null) {
@@ -411,14 +394,92 @@ namespace ClipboardApp.ViewModel.Main {
                 }
             });
         }
+
+
+
+        // Command to generate vectors
+        public override void GenerateVectorCommand(List<ContentItem> items, object afterExecuteAction) {
+            try {
+                Task[] taskList = [];
+                // Display ProgressIndicator
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                int count = items.Count;
+
+                for (int i = 0; i < count; i++) {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    Task task = Task.Run(() => {
+                        string message = $"{CommonStringResources.Instance.GenerateVectorInProgress} ({index + 1}/{count})";
+                        StatusText.Instance.UpdateInProgress(true, message);
+                        ContentItem item = items[index];
+                        ContentItemCommands.UpdateEmbedding(item);
+                        // Save
+                        item.Save(false);
+                    });
+                    taskList.Append(task);
+                }
+                Task.WaitAll(taskList);
+
+                // Execute if obj is an Action
+                if (afterExecuteAction is Action action) {
+                    action();
+                }
+
+                LogWrapper.Info(CommonStringResources.Instance.GenerateVectorCompleted);
+            } finally {
+                // Hide ProgressIndicator
+                MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                StatusText.Instance.UpdateInProgress(false);
+            }
+        }
+
+        // コンテキストメニューの「テキストを抽出」の実行用コマンド (複数選択可能)
+        // 処理中はプログレスインジケータを表示
+        public SimpleDelegateCommand<ClipboardItemViewModel> ExtractTextCommand => new((itemViewModel) => {
+            Task.Run(() => {
+                // プログレスインジケータを表示
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                try {
+                    int count = MainWindowViewModel.Instance.SelectedItems.Count;
+                    if (count == 0) {
+                        LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
+                        return;
+                    }
+                    for (int i = 0; i < count; i++) {
+                        int index = i; // Store the current index in a separate variable to avoid closure issues
+                        string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({index + 1}/{count})";
+                        StatusText.Instance.UpdateInProgress(true, message);
+                        var itemViewModel = MainWindowViewModel.Instance.SelectedItems[index];
+
+                        ContentItem item = itemViewModel.ContentItem;
+                        if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                            LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                            continue;
+                        }
+                        ContentItemCommands.ExtractTextCommandExecute(item);
+                        // Save the item
+                        item.Save(false);
+                    }
+                    LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
+                } finally {
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                    StatusText.Instance.UpdateInProgress(false);
+                }
+            });
+        });
+
         // Command to generate titles
-        public override async void GenerateTitleCommand(List<ContentItem> contentItem, object afterExecuteAction) {
+        public override async void GenerateTitleCommand(List<ContentItem> contentItems, object afterExecuteAction) {
             await Task.Run(() => {
-                LogWrapper.Info(CommonStringResources.Instance.GenerateTitleInformation);
                 try {
                     // プログレスインジケータを表示
                     MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                    foreach (var item in contentItem) {
+                    int count = contentItems.Count;
+
+                    for (int i = 0; i < count; i++) {
+                        int index = i; // Store the current index in a separate variable to avoid closure issues
+                        string message = $"{CommonStringResources.Instance.TitleGenerationInProgress} ({index + 1}/{count})";
+                        StatusText.Instance.UpdateInProgress(true, message);
+                        ContentItem item = contentItems[index];
                         ContentItemCommands.CreateAutoTitleWithOpenAI(item);
                         // Save
                         item.Save(false);
@@ -427,22 +488,33 @@ namespace ClipboardApp.ViewModel.Main {
                     if (afterExecuteAction is Action action) {
                         action();
                     }
-                    LogWrapper.Info(CommonStringResources.Instance.GeneratedTitleInformation);
+                    LogWrapper.Info(CommonStringResources.Instance.TitleGenerationCompleted);
                 } finally {
                     // プログレスインジケータを非表示
                     MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                    StatusText.Instance.UpdateInProgress(false);
                 }
             });
         }
 
         // Command to execute a prompt template (複数選択可能)
-        public override async void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName) {
+        public override async void ExecutePromptTemplateCommand(List<ContentItem> contentItems, object afterExecuteAction, string promptName) {
             await Task.Run(() => {
                 try {
-                    LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecute(promptName));
+                    // promptNameからDescriptionを取得
+                    string description = PromptItem.GetPromptItemByName(promptName)?.Description ?? promptName;
+
+                    LogWrapper.Info(CommonStringResources.Instance.PromptTemplateExecute(description));
                     // プログレスインジケータを表示
                     MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                    foreach (var item in contentItem) {
+                    int count = contentItems.Count;
+
+                    for (int i = 0; i < count; i++) {
+                        int index = i; // Store the current index in a separate variable to avoid closure issues
+                        string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({index + 1}/{count})";
+                        StatusText.Instance.UpdateInProgress(true, message);
+                        ContentItem item = contentItems[index];
+
                         ContentItemCommands.CreateChatResult(item, promptName);
                         // Save
                         item.Save(false);
@@ -451,7 +523,7 @@ namespace ClipboardApp.ViewModel.Main {
                     if (afterExecuteAction is Action action) {
                         action();
                     }
-                    LogWrapper.Info(PythonAILib.Resource.PythonAILibStringResources.Instance.PromptTemplateExecuted(promptName));
+                    LogWrapper.Info(CommonStringResources.Instance.PromptTemplateExecuted(description));
                 } finally {
                     // プログレスインジケータを非表示
                     MainWindowViewModel.Instance.UpdateIndeterminate(false);
@@ -462,78 +534,26 @@ namespace ClipboardApp.ViewModel.Main {
         // Command to generate background information
         public override async void GenerateBackgroundInfoCommand(List<ContentItem> items, object afterExecuteAction) {
             await Task.Run(() => {
-                try {
-                    // プログレスインジケータを表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                    string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
-                    ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
-                    // Execute if obj is an Action
-                    if (afterExecuteAction is Action action) {
-                        action();
-                    }
-                } finally {
-                    // プログレスインジケータを非表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                }
+                string promptName = SystemDefinedPromptNames.BackgroundInformationGeneration.ToString();
+                ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
             });
         }
 
         // Command to generate a summary
-        public override void GenerateSummaryCommand(List<ContentItem> contentItem, object afterExecuteAction) {
+        public override void GenerateSummaryCommand(List<ContentItem> items, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.SummaryGeneration.ToString();
-            ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
+            ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
         }
 
         // Command to generate a task list
-        public override void GenerateTasksCommand(List<ContentItem> contentItem, object afterExecuteAction) {
+        public override void GenerateTasksCommand(List<ContentItem> items, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
-            ExecutePromptTemplateCommand(contentItem, afterExecuteAction, promptName);
+            ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
         }
         // Command to check the reliability of the document
-        public override void CheckDocumentReliabilityCommand(List<ContentItem> contentItem, object afterExecuteAction) {
-            Task.Run(() => {
-                try {
-                    // プログレスインジケータを表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
-                    foreach (var item in contentItem) {
-                        ContentItemCommands.CheckDocumentReliability(item);
-                        // Save
-                        item.Save(false);
-                    }
-                    // Execute if obj is an Action
-                    if (afterExecuteAction is Action action) {
-                        action();
-                    }
-                } finally {
-                    // プログレスインジケータを表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                }
-            });
-        }
-
-        // Command to generate vectors
-        public override async void GenerateVectorCommand(List<ContentItem> contentItem, object afterExecuteAction) {
-            await Task.Run(() => {
-                try {
-                    LogWrapper.Info(CommonStringResources.Instance.GenerateVector2);
-                    // プログレスインジケータを表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
-
-                    foreach (var item in contentItem) {
-                        ContentItemCommands.UpdateEmbedding(item);
-                        // Save
-                        item.Save(false);
-                    }
-                    // Execute if obj is an Action
-                    if (afterExecuteAction is Action action) {
-                        action();
-                    }
-                    LogWrapper.Info(CommonStringResources.Instance.GeneratedVector);
-                } finally {
-                    // プログレスインジケータを非表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                }
-            });
+        public override void CheckDocumentReliabilityCommand(List<ContentItem> items, object afterExecuteAction) {
+            string promptName = SystemDefinedPromptNames.DocumentReliabilityCheck.ToString();
+            ExecutePromptTemplateCommand(items, afterExecuteAction, promptName);
         }
 
         #endregion

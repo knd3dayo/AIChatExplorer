@@ -718,11 +718,22 @@ namespace QAChat.Resource {
         public override string StackTrace { get; } = "Stack trace";
 
         // --- ClipboardItemViewModel ---
+        // OpenFolder
         public override string CannotOpenFolderForNonFileContent { get; } = "Cannot open folder for non-file content";
+
+        // ExecuteOpenFolder
+        public override string ExecuteOpenFolder { get; } = "Execute open folder";
+
+        // ExecuteOpenedFolderSuccess
+        public override string ExecuteOpenFolderSuccess { get; } = "Execute opened folder success";
+
         public override string CannotExtractTextForNonFileContent { get; } = "Cannot extract text for non-file content";
         public override string MainWindowViewModelIsNull { get; } = "MainWindowViewModel is null";
-        public override string GenerateTitleInformation { get; } = "Generate title information";
-        public override string GeneratedTitleInformation { get; } = "Generated title information";
+
+        // TitleGenerationInProgress
+        public override string TitleGenerationInProgress { get; } = "Title generation in progress";
+
+        public override string TitleGenerationCompleted { get; } = "Generated title information";
         public override string GenerateBackgroundInformation { get; } = "Generate background information";
         public override string GeneratedBackgroundInformation { get; } = "Generated background information";
         public override string GenerateSummary2 { get; } = "Generate summary";
@@ -730,8 +741,8 @@ namespace QAChat.Resource {
 
         // Other prompts
         public override string OtherPrompts { get; } = "Other Prompts";
-        public override string GenerateVector2 { get; } = "Generate vector";
-        public override string GeneratedVector { get; } = "Generated vector";
+        public override string GenerateVectorInProgress { get; } = "Generate vector";
+        public override string GenerateVectorCompleted { get; } = "Generated vector";
         public override string CannotExtractTextForNonImageContent { get; } = "Cannot extract text for non-image content";
         public override string EnterANumber { get; } = "Enter a number";
         public override string FolderNotSelected { get; } = "Folder not selected";
@@ -777,11 +788,30 @@ namespace QAChat.Resource {
         public override string TagIsEmpty { get; } = "Tag is empty";
         public override string TagAlreadyExists { get; } = "Tag already exists";
 
-        // --- ClipboardApp.MainWindowViewModel ---
+        #region  ClipboardItemViewModelCommands
+        // **********************************************************************************
         public override string DisplayModeWillChangeWhenYouRestartTheApplication { get; } = "Display mode will change when you restart the application";
         public override string Information { get; } = "Information";
         public override string ConfirmExit { get; } = "Confirm exit";
         public override string NoItemSelected { get; } = "No item selected";
+
+        // TextExtractionInProgress
+        public override string TextExtractionInProgress { get; } = "Text extraction in progress";
+
+        // TextExtractionCompleted
+        public override string TextExtractionCompleted { get; } = "Text extraction completed";
+
+        // Execute the prompt template [promptName].
+        public override string PromptTemplateExecute(string promptName) => $"Execute the prompt template [{promptName}].";
+
+        // プロンプトテンプレート[promptName]を実行中
+        public override string PromptTemplateInProgress(string promptName) => $"Executing the prompt template [{promptName}].";
+
+        // "The prompt template [promptName] has been executed."
+        public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
+
+        #endregion
+
         public override string Cut { get; } = "Cut";
         public override string Copied { get; } = "Copied";
         public override string NoPasteFolder { get; } = "No paste folder";

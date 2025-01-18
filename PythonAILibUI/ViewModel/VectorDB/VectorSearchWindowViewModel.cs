@@ -15,9 +15,8 @@ namespace QAChat.ViewModel.VectorDB {
         public VectorSearchWindowViewModel() {
             InputText = string.Empty;
 
-            StatusBar = new MyStatusBarViewModel {
-                StatusText = new StatusText()
-            };
+            StatusBar = new();
+
             // StatusTextをLogWrapperに登録
             LogWrapper.TemporaryStatusText.Add(StatusBar.StatusText);
 

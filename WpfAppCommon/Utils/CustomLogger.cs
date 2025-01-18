@@ -9,7 +9,7 @@ namespace WpfAppCommon.Utils {
 
         private static StatusText StatusText {
             get {
-                return Tools.StatusText;
+                return StatusText.Instance;
             }
         }
 

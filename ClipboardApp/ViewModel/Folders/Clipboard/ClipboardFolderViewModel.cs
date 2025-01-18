@@ -16,6 +16,7 @@ using QAChat.Resource;
 using QAChat.View.Folder;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 
@@ -283,8 +284,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 }
             }
 
-            Tools.StatusText.ReadyText = message;
-            Tools.StatusText.Text = message;
+            StatusText.Instance.ReadyText = message;
+            StatusText.Instance.Text = message;
         }
 
     }

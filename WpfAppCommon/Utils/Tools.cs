@@ -18,10 +18,6 @@ namespace WpfAppCommon.Utils {
             }
         }
 
-        public static StatusText StatusText { get; set; } = new();
-
-
-
         public static int[] GetInAngleBracketPosition(string text) {
             // int[0] = start、int[1] = end
             // < > で囲まれた文字列のStartとEndを返す。< >は含まない。

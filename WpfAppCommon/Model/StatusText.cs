@@ -4,19 +4,39 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace WpfAppCommon.Model {
     public class StatusText : ObservableObject {
 
-        public static string DefaultText { get; } = "Ready";
+        private static StatusText? _instance;
+        public static StatusText Instance {
+            get {
+                if (_instance == null) {
+                    _instance = new StatusText();
+                }
+                return _instance;
+            }
+        }
 
-        private string _text = DefaultText;
+        private const string _DefaultText = "Ready";
+        private const string _InProgressText = "In progress...";
+
         private CancellationTokenSource? _tokenSource;
 
-        public string ReadyText { get; set; } = DefaultText;
+        public string ReadyText { get; set; } = _DefaultText;
 
-        public string InProgressText { get; set; } = "In progress...";
+        public string InProgressText { get; set; } = _InProgressText;
 
-        public bool IsInProgress { get; set; } = false;
+        public bool IsInProgress { get; private set; } = false;
+
+        public void UpdateInProgress(bool value, string inProgressText = "") {
+            IsInProgress = value;
+            if (value) {
+                InProgressText = inProgressText;
+            } else {
+                Init();
+            }
+        }
 
         public static List<string> Messages { get; } = new List<string>();
 
+        private string _text = _DefaultText;
         public string Text {
             get {
                 return _text;
@@ -58,14 +78,11 @@ namespace WpfAppCommon.Model {
             if (IsInProgress) {
                 Text = InProgressText;
             } else {
-                Ready();
+                Init();
             }
         }
         public void Init() {
-            ReadyText = DefaultText;
-            Ready();
-        }
-        public void Ready() {
+            ReadyText = _DefaultText;
             Text = ReadyText;
             OnPropertyChanged(nameof(Text));
         }

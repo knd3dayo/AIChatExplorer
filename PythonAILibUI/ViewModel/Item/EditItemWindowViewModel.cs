@@ -55,7 +55,7 @@ namespace QAChat.ViewModel.Content {
                 return;
             }
             // StatusText.Readyにフォルダ名を設定
-            StatusText statusText = Tools.StatusText;
+            StatusText statusText = StatusText.Instance;
             statusText.ReadyText = $"{StringResources.Folder}:[{FolderViewModel.FolderName}]";
         }
 

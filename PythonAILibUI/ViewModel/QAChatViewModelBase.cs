@@ -7,7 +7,7 @@ namespace QAChat.Model
     public class QAChatViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
-        public CommonStringResources StringResources {
+        public static CommonStringResources StringResources {
             get {
                 // 文字列リソースの言語設定
                 PythonAILibManager? libManager = PythonAILibManager.Instance;

@@ -146,10 +146,9 @@ namespace ClipboardApp.Common
 
             // Execute in a separate thread
             Task.Run(() => {
-                StatusText statusText = Tools.StatusText;
+                StatusText statusText = StatusText.Instance;
                 MainUITask.Run(() => {
-                    statusText.InProgressText = CommonStringResources.Instance.AutoProcessing;
-                    statusText.IsInProgress = true;
+                    statusText.UpdateInProgress(true, CommonStringResources.Instance.AutoProcessing);
                 });
                 try {
                     // Apply automatic processing
@@ -166,7 +165,7 @@ namespace ClipboardApp.Common
 
                 } finally {
                     MainUITask.Run(() => {
-                        statusText.IsInProgress = false;
+                        statusText.UpdateInProgress(false);
                     });
                 }
             });

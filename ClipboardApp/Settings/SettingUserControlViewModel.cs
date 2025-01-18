@@ -6,6 +6,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
 using QAChat.Resource;
+using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Settings {
@@ -538,14 +539,14 @@ namespace ClipboardApp.Settings {
                     resultString = CheckSetting();
                 });
                 IsIndeterminate = false;
-                Tools.StatusText.Init();
+                StatusText.Instance.Init();
                 // 結果をTestResultWindowで表示
                 // UserControlの設定ウィンドウを開く
                 TestResultUserControl.OpenTestResultWindow(resultString);
 
             } finally {
                 IsIndeterminate = false;
-                Tools.StatusText.Init();
+                StatusText.Instance.Init();
             }
         });
 

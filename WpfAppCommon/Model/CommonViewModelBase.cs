@@ -13,6 +13,7 @@ namespace QAChat.Resource {
             set { _textWrappingMode = value; }
         }
 
+
         public virtual void OnLoadedAction() { }
         public virtual void OnActivatedAction() { }
 
