@@ -392,10 +392,6 @@ namespace QAChat.ViewModel.AutoProcess {
         // 自動処理を更新したあとの処理
         private Action<AutoProcessRule>? _AfterUpdate;
 
-        // ImageChatMainWindowViewModel
-        public MainWindowViewModel? MainWindowViewModel { get; set; }
-        // 
-
         // ---　コマンド 
         // OKボタンが押されたときの処理
         public SimpleDelegateCommand<Window> OKButtonClickedCommand => new((window) => {

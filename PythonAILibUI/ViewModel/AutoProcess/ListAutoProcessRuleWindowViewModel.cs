@@ -19,7 +19,7 @@ namespace QAChat.ViewModel.AutoProcess {
                 _selectedAutoProcessRule = value;
             }
         }
-        private static MainWindowViewModel? _mainWindowViewModel;
+
         public ListAutoProcessRuleWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModel) {
             RootFolderViewModels = rootFolderViewModel;
             // AutoProcessRulesを更新
