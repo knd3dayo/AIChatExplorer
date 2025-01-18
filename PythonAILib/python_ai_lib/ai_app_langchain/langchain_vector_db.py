@@ -259,6 +259,8 @@ class LangChainVectorDB:
 
         vector_db_props = self.vector_db_props
         if not search_kwargs:
+            # デフォルトの検索パラメータを設定
+            print("search_kwargs is empty. Set default search_kwargs")
             search_kwargs = {"k": 10}
 
         # IsUseMultiVectorRetriever=Trueの場合はMultiVectorRetrieverを生成
@@ -314,10 +316,9 @@ class LangChainVectorDB:
 
             # デバッグ出力
             print(f'検索文字列: {params.query}')
-            print(f'検索条件: {params.search_kwarg}')
             print('ベクトルDBの設定')
             print(f'Name:{vector_db_item.Name} VectorDBDescription:{vector_db_item.VectorDBDescription} VectorDBTypeString:{vector_db_item.VectorDBTypeString} VectorDBURL:{vector_db_item.VectorDBURL} CollectionName:{vector_db_item.CollectionName}')
-            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(params.search_kwarg)
+            retriever = LangChainVectorDB(client, vector_db_item).create_retriever(vector_db_item.SearchKwarg)
             documents: list[Document] = retriever.invoke(params.query)
 
             print(f"documents:\n{documents}")

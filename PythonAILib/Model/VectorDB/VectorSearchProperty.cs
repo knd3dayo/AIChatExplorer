@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Xml.Linq;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
@@ -33,7 +31,7 @@ namespace PythonAILib.Model.VectorDB {
         // SearchKWArgs
         private Dictionary<string, object> GetSearchKWArgs() {
             Dictionary<string, object> dict = new();
-            dict["top_k"] = TopK;
+            dict["k"] = TopK;
             // filter 
             Dictionary<string, object> filter = new();
             // folder_idが指定されている場合

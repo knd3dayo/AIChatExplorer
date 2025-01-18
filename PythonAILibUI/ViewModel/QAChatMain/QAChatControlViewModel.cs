@@ -66,6 +66,8 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(Mode));
             }
         }
+        // VectorDBSearchResultMax
+        public int VectorDBSearchResultMax { get; set; } = 10;
 
         public static ChatMessage? SelectedItem { get; set; }
 
@@ -137,11 +139,28 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public string PreviewJson {
             get {
+                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+                foreach (var item in VectorSearchProperties) {
+                    item.TopK = VectorDBSearchResultMax;
+                }
                 ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
                 ChatRequest.UpdateMessage(chatRequestContext);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
+        // GeneratedDebugCommand
+        public string GeneratedDebugCommand {
+            get {
+                // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+                foreach (var item in VectorSearchProperties) {
+                    item.TopK = VectorDBSearchResultMax;
+                }
+                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                ChatRequest.UpdateMessage(chatRequestContext);
+                return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
+            }
+        }
+
 
         //
         public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal);
@@ -160,9 +179,11 @@ namespace QAChat.ViewModel.QAChatMain {
 
                 // チャット内容を更新
                 await Task.Run(() => {
-                    // VectorDBItemsを設定
-                    List<VectorSearchProperty> items = [.. VectorSearchProperties];
 
+                    // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+                    foreach (var item in VectorSearchProperties) {
+                        item.TopK = VectorDBSearchResultMax;
+                    }
                     ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
 
                     // OpenAIChat or LangChainChatを実行
@@ -326,20 +347,13 @@ namespace QAChat.ViewModel.QAChatMain {
             OnPropertyChanged(nameof(VectorSearchProperties));
         });
 
+
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
             QAChatStartupProps.SaveCommand(QAChatStartupProps.ContentItem, true);
             window.Close();
         });
 
 
-        // GeneratedDebugCommand
-        public string GeneratedDebugCommand {
-            get {
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
-                ChatRequest.UpdateMessage(chatRequestContext);
-                return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
-            }
-        }
 
 
         #region AutoGen Normal Chat

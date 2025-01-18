@@ -680,6 +680,9 @@ namespace QAChat.Resource {
         public override string VectorDB { get; } = "Vector DB";
         public override string VectorDBExternal { get; } = "Vector DB (external)";
         public override string ClickHereToAddVectorDB { get; } = "Click here to add Vector DB";
+
+        // ベクトルDB検索結果の最大値
+        public override string VectorDBSearchResultMax { get; } = "Maximum value of Vector DB search results";
         public override string AdditionalItem { get; } = "Additional Item";
         public override string ClickHereToPasteTheSelectedItem { get; } = "Click here to paste the selected item";
         public override string ImageFile { get; } = "Image file";

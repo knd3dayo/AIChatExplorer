@@ -23,10 +23,10 @@ class VectorDBProps:
     vector_db_description_name = "VectorDBDescription"
     catalog_db_url_name = "CatalogDBURL"
     chunk_size_name = "ChunkSize"
-    max_search_results_name = "MaxSearchResults"
     is_use_multi_vector_retriever_name = "IsUseMultiVectorRetriever"
     doc_store_url_name = "DocStoreURL"
     collection_name = "CollectionName"
+    search_kwargs_name = "search_kwargs"
 
     score_name = "score"
 
@@ -50,8 +50,9 @@ class VectorDBProps:
         
         # チャンクサイズ
         self.ChunkSize = props_dict.get(VectorDBProps.chunk_size_name, 500)
-        # ベクトル検索時の検索結果上限数
-        self.MaxSearchResults = props_dict.get(VectorDBProps.max_search_results_name, 10)
+
+        # search_kwarg
+        self.SearchKwarg = props_dict.get(VectorDBProps.search_kwargs_name, {})
 
         # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
         if props_dict.get(VectorDBProps.is_use_multi_vector_retriever_name, False) == True:
@@ -94,8 +95,6 @@ class VectorDBProps:
             "ChunkSize": int(os.getenv("ChunkSize", 500)),
             # マルチベクトルリトリーバーの場合のドキュメントチャンクサイズ
             "MultiVectorDocChunkSize": int(os.getenv("MultiVectorDocChunkSize", 500)),
-            # ベクトル検索時の検索結果上限数
-            "MaxSearchResults": int(os.getenv("MaxSearchResults", 10))
             
         }
         vectorDBProps = VectorDBProps(props)
@@ -103,7 +102,7 @@ class VectorDBProps:
 
 
 class VectorSearchParameter:
-    def __init__(self, openai_props: OpenAIProps = None, vector_db_props: list[VectorDBProps] = None, query: str = "", search_kwarg: dict = {}):
+    def __init__(self, openai_props: OpenAIProps = None, vector_db_props: list[VectorDBProps] = None, query: str = ""):
 
         # OpenAIPorpsを生成
         self.openai_props = openai_props
@@ -113,7 +112,6 @@ class VectorSearchParameter:
 
         #  openai_props, vector_db_items, query, search_kwargを設定する
         self.query = query
-        self.search_kwarg = search_kwarg
 
     @classmethod
     def from_json(cls, openai_props_json: str = "{}", vector_db_items_json: str = "{}", request_json: str = "{}"):

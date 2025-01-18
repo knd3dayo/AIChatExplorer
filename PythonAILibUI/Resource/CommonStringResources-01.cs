@@ -482,6 +482,9 @@ namespace QAChat.Resource {
         // ここをクリックしてベクトルDBを追加
         public virtual string ClickHereToAddVectorDB { get; } = "ここをクリックしてベクトルDBを追加";
 
+        // ベクトルDB検索結果の最大値
+        public virtual string VectorDBSearchResultMax { get; } = "ベクトルDB検索結果の最大値";
+
         // 画像アイテム
         public virtual string AdditionalItem { get; } = "追加アイテム";
 

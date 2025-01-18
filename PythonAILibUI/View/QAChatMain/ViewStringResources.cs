@@ -60,6 +60,9 @@ namespace QAChat.View.QAChatMain {
         // ClickHereToAddVectorDB
         public static string ClickHereToAddVectorDB => CommonStringResources.Instance.ClickHereToAddVectorDB;
 
+        // ベクトルDB検索結果の最大値
+        public static string VectorDBSearchResultMax => CommonStringResources.Instance.VectorDBSearchResultMax;
+
         // RequestParameterJson
         public static string RequestParameterJson => CommonStringResources.Instance.RequestParameterJson;
 
