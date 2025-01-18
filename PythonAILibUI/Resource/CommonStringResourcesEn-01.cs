@@ -571,8 +571,15 @@ namespace QAChat.Resource {
 
         public override string Description { get; } = "Description";
 
+        // 別のプロンプト結果を入力にする
+        public override string PromptResultToInput { get; } = "Use another prompt result as input";
+
         // 自動処理時の設定
         public override string AutoProcessSetting { get; } = "Auto Process Setting";
+
+        // 入力となるプロンプトテンプレート
+        public override string PromptInputName { get; } = "Prompt Input Name";
+
         // Chatタイプ
         public override string ChatType { get; } = "Chat Type";
         // 出力形式

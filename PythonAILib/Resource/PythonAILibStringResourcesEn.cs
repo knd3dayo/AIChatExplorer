@@ -272,6 +272,9 @@ namespace PythonAILib.Resource {
         // "The prompt template [promptName] has been executed."
         public override string PromptTemplateExecuted(string promptName) => $"The prompt template [{promptName}] has been executed.";
 
+        // InputContentNotFound
+        public override string InputContentNotFound { get; } = "Input content not found";
+
         public override string AddedItems { get; } = "Added Items";
 
         // Auto processing rule

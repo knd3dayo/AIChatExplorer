@@ -1,14 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using PythonAILib.Common;
+using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 using QAChat.Model;
 using QAChat.View.PromptTemplate;
 using WpfAppCommon.Utils;
-using PythonAILib.Common;
-using PythonAILib.Model.Chat;
 
-namespace QAChat.ViewModel.PromptTemplate
-{
+namespace QAChat.ViewModel.PromptTemplate {
     public class ListPromptTemplateWindowViewModel : QAChatViewModelBase {
         // 初期化
 
@@ -167,7 +166,7 @@ namespace QAChat.ViewModel.PromptTemplate
             }
             PromptItems.Remove(itemViewModel);
             // PromptItemを保存
-            item.Save();
+            item.Delete();
 
             OnPropertyChanged(nameof(PromptItems));
         }

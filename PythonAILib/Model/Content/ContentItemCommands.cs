@@ -89,7 +89,7 @@ namespace PythonAILib.Model.Content {
 
             int reliabilityValue = int.Parse(reliability?.ToString() ?? "0");
 
-            // DocumentReliabilityにreliabilityを設定
+            // DocumentReliabilityにReliabilityを設定
             item.DocumentReliability = reliabilityValue;
             // responseからキー：reasonを取得
             if (response.ContainsKey("reason")) {
@@ -102,9 +102,25 @@ namespace PythonAILib.Model.Content {
         // PromptItemの内容でチャットを実行して結果をPromptChatResultに保存する
         public static void CreateChatResult(ContentItem item, PromptItem promptItem) {
 
-            // Contentがない場合は処理しない
-            if (string.IsNullOrEmpty(item.Content)) {
-                return;
+            // PromptItemのPromptInputNameがある場合はPromptInputNameのContentを取得
+            string contentText;
+            if (string.IsNullOrEmpty(promptItem.PromptInputName) == false) {
+                // PromptInputNameのContentを取得
+                contentText = item.PromptChatResult.GetTextContent(promptItem.PromptInputName);
+                // inputContentがない場合は処理しない
+                if (string.IsNullOrEmpty(contentText)) {
+                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                    return;
+                }
+            } else {
+                // Contentがない場合は処理しない
+                if (string.IsNullOrEmpty(item.Content)) {
+                    LogWrapper.Info(PythonAILibStringResources.Instance.InputContentNotFound);
+                    return;
+                }
+                // ヘッダー情報とコンテンツ情報を結合
+                // ★TODO タグ情報を追加する
+                contentText = item.HeaderText + "\n" + item.Content;
             }
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -118,9 +134,7 @@ namespace PythonAILib.Model.Content {
                 VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = openAIProperties
             };
-            // ヘッダー情報とコンテンツ情報を結合
-            // ★TODO タグ情報を追加する
-            string contentText = item.HeaderText + "\n" + item.Content;
+
 
             // PromptResultTypeがTextContentの場合
             if (promptItem.PromptResultType == PromptResultTypeEnum.TextContent) {

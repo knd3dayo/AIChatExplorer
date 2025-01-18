@@ -380,12 +380,14 @@ namespace PythonAILib.Model.Content {
             }
             // ファイルからすべての行を読み込んでリストに格納します
             List<string> lines = new List<string>(System.IO.File.ReadAllLines(filePath));
+            Task[] tasks = [];
+
             foreach (var line in lines) {
                 // URLを取得
                 string url = line;
                 // URLからデータを取得して一時ファイルに保存
                 // Task.Runを使用して非同期操作を開始します
-                Task.Run(async () => {
+                Task task = Task.Run(async () => {
                     string tempFilePath = Path.GetTempFileName();
                     try {
                         string data = PythonExecutor.PythonAIFunctions.ExtractWebPage(url);
@@ -412,8 +414,11 @@ namespace PythonAILib.Model.Content {
                         // 一時ファイルを削除します
                         System.IO.File.Delete(tempFilePath);
                     }
-                }).Wait();
+                });
+                tasks.Append(task);
             }
+            // すべてのタスクが完了するまで待機します
+            Task.WaitAll(tasks);
 
         }
         public virtual void ImportItemsFromJson(string json) { }

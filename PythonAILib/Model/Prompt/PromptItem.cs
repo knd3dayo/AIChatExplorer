@@ -28,12 +28,21 @@ namespace PythonAILib.Model.Prompt {
         // プロンプトの出力タイプ
         public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
 
+        // PromptInputName
+        public string PromptInputName { get; set; } = string.Empty;
+
         // Save
         public void Save() {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
             collection.Upsert(this);
+        }
+        // Delete
+        public void Delete() {
+            PythonAILibManager libManager = PythonAILibManager.Instance;
+            var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
+            collection.Delete(Id);
         }
 
         // PromptItemを取得
@@ -185,6 +194,20 @@ namespace PythonAILib.Model.Prompt {
                 var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
                 collection.Upsert(DocumentReliabilityCheck);
             }
+        }
+
+        // Equals
+        public override bool Equals(object? obj) {
+            if (obj == null || GetType() != obj.GetType()) {
+                return false;
+            }
+            PromptItem item = (PromptItem)obj;
+            return Id == item.Id;
+        }
+
+        // GetHashCode
+        public override int GetHashCode() {
+            return Id.GetHashCode();
         }
     }
 }

@@ -310,6 +310,12 @@ namespace QAChat.Resource {
         // 自動処理時の設定
         public virtual string AutoProcessSetting { get; } = "自動処理時の設定";
 
+        // 別のプロンプトの結果を入力にする
+        public virtual string PromptResultToInput { get; } = "別のプロンプト結果を入力にする";
+
+        // 入力となるプロンプトテンプレート
+        public virtual string PromptInputName { get; } = "入力となるプロンプトテンプレート";
+
         // Chatタイプ
         public virtual string ChatType { get; } = "Chatタイプ";
         // 出力形式

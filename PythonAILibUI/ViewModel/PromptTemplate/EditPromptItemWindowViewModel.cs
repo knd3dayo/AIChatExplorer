@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.Chat;
@@ -15,10 +16,13 @@ namespace QAChat.ViewModel.PromptTemplate {
             Name = ItemViewModel.PromptItem.Name ?? "";
             Description = ItemViewModel.Description ?? "";
             Prompt = ItemViewModel.Content ?? "";
+            PromptResultToInput = !string.IsNullOrEmpty(ItemViewModel.PromptItem.PromptInputName);
+            SelectedInputItem = InputTypeItems.FirstOrDefault(x => x.Name == ItemViewModel.PromptItem.PromptInputName);
             AfterUpdate = afterUpdate;
             OnPropertyChanged(nameof(PromptResultTypeIndex));
             OnPropertyChanged(nameof(PromptOutputTypeIndex));
             OnPropertyChanged(nameof(ChatTypeIndex));
+            OnPropertyChanged(nameof(InputTypeItems));
 
         }
 
@@ -64,6 +68,32 @@ namespace QAChat.ViewModel.PromptTemplate {
                 OnPropertyChanged(nameof(Prompt));
             }
         }
+        // PromptResultToInput
+        private bool promptResultToInput = false;
+        public bool PromptResultToInput {
+            get {
+                return promptResultToInput;
+            }
+            set {
+                promptResultToInput = value;
+                OnPropertyChanged(nameof(PromptResultToInput));
+                OnPropertyChanged(nameof(InputTypeItemsVisibility));
+            }
+        }
+        // InputTypeItemsVisibility
+        public Visibility InputTypeItemsVisibility  => Tools.BoolToVisibility(PromptResultToInput);
+
+        // InputTypeItems
+        public ObservableCollection<PromptItem> InputTypeItems {
+            get {
+                // DBからプロンプトテンプレートを取得し、選択させる
+                List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(x => x.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
+                return [.. promptItems];
+            }
+        }
+
+        // SelectedInputTypeItem
+        public PromptItem? SelectedInputItem { get; set; }
 
 
         public int PromptResultTypeIndex {
@@ -136,14 +166,7 @@ namespace QAChat.ViewModel.PromptTemplate {
         });
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
-        public TextWrapping TextWrapping {
-            get {
-                if (QAChatManager.Instance == null) {
-                    return TextWrapping.NoWrap;
-                }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
-            }
-        }
+
 
         // OKボタンのコマンド
         public SimpleDelegateCommand<Window> OKButtonCommand => new((window) => {
@@ -161,6 +184,12 @@ namespace QAChat.ViewModel.PromptTemplate {
             promptItem.PromptResultType = (PromptResultTypeEnum)PromptResultTypeIndex;
             promptItem.PromptOutputType = (PromptOutputTypeEnum)PromptOutputTypeIndex;
             promptItem.ChatType = (OpenAIExecutionModeEnum)ChatTypeIndex;
+
+            // 入力がプロンプト結果の場合はPromptInputNameを設定
+            if (PromptResultToInput) {
+                // PromptResultToInputが選択されている場合は、PromptInputNameを設定
+                promptItem.PromptInputName = SelectedInputItem?.Name ?? "";
+            }
 
             // Nameが空の場合はエラーメッセージを表示
             if (string.IsNullOrEmpty(Name)) {

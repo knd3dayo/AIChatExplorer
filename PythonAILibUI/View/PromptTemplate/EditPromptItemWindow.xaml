@@ -126,76 +126,111 @@
                 VerticalScrollBarVisibility="Auto" />
         </Grid>
         <Grid Grid.Row="2">
-            <DockPanel Margin="10,0,10,10" HorizontalAlignment="Left">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <TextBlock
+                    Grid.Row="0"
                     Width="100"
                     Margin="10,0,10,0"
                     HorizontalAlignment="Left"
                     FontSize="12"
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{Binding StringResourcesAutoProcessSetting}" />
-                <TextBlock
-                    Margin="10,0,10,0"
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Text="{x:Static res:ViewStringResources.ChatType}" />
-                <ComboBox
-                    Width="100"
-                    Margin="10,0,10,0"
-                    FontSize="12"
-                    SelectedIndex="{Binding ChatTypeIndex}">
-                    <ComboBoxItem Content="OpenAI" />
-                    <ComboBoxItem Content="OpenAI+RAG" />
-                    <ComboBoxItem Content="LangChain" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.ExperimentalFunction1}" />
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding ChatTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ComboBox>
-                <TextBlock
-                    Margin="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    FontSize="12"
-                    Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{x:Static res:ViewStringResources.OutputType}" />
-                <ComboBox
-                    Width="100"
-                    Margin="10,0,10,0"
-                    FontSize="12"
-                    SelectedIndex="{Binding PromptResultTypeIndex}">
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.StringType}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.ListType}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.TableType}" />
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding PromptResultTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    Text="{x:Static res:ViewStringResources.AutoProcessSetting}" />
+                <DockPanel
+                    Grid.Row="1"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left">
+                    <CheckBox
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        Content="{x:Static res:ViewStringResources.PromptResultToInput}"
+                        FontSize="12"
+                        IsChecked="{Binding PromptResultToInput}" />
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static res:ViewStringResources.PromptInputName}"
+                        Visibility="{Binding InputTypeItemsVisibility}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        DisplayMemberPath="Description"
+                        FontSize="12"
+                        ItemsSource="{Binding InputTypeItems}"
+                        SelectedItem="{Binding SelectedInputItem}"
+                        Visibility="{Binding InputTypeItemsVisibility}" />
+                </DockPanel>
+                <DockPanel
+                    Grid.Row="2"
+                    Margin="10,0,10,10"
+                    HorizontalAlignment="Left">
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static res:ViewStringResources.ChatType}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding ChatTypeIndex}">
+                        <ComboBoxItem Content="OpenAI" />
+                        <ComboBoxItem Content="OpenAI+RAG" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ExperimentalFunction1}" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding ChatTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Left"
+                        FontSize="12"
+                        Style="{StaticResource MaterialDesignBody1TextBlock}"
+                        Text="{x:Static res:ViewStringResources.OutputType}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding PromptResultTypeIndex}">
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.StringType}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ListType}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.TableType}" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding PromptResultTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
 
-                </ComboBox>
-                <TextBlock
-                    Margin="10,0,10,0"
-                    HorizontalAlignment="Left"
-                    FontSize="12"
-                    Style="{StaticResource MaterialDesignBody1TextBlock}"
-                    Text="{Binding StringResourcesOutputDestination}" />
-                <ComboBox
-                    Width="100"
-                    Margin="10,0,10,0"
-                    FontSize="12"
-                    SelectedIndex="{Binding PromptOutputTypeIndex}">
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.NewTab}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.OverwriteContent}" />
-                    <ComboBoxItem Content="{x:Static res:ViewStringResources.OverwriteTitle}" />
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding PromptOutputTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </ComboBox>
-            </DockPanel>
+                    </ComboBox>
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        HorizontalAlignment="Left"
+                        FontSize="12"
+                        Style="{StaticResource MaterialDesignBody1TextBlock}"
+                        Text="{x:Static res:ViewStringResources.OutputDestination}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding PromptOutputTypeIndex}">
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.NewTab}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.OverwriteContent}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.OverwriteTitle}" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding PromptOutputTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                </DockPanel>
+            </Grid>
         </Grid>
         <Grid Grid.Row="3">
             <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">

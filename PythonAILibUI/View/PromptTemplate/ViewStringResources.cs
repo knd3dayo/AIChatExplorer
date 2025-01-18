@@ -26,6 +26,12 @@ namespace QAChat.View.PromptTemplate {
         public static string Description { get; set; } = CommonStringResources.Instance.Description;
         // 自動処理時の設定
         public static string AutoProcessSetting { get; set; } = CommonStringResources.Instance.AutoProcessSetting;
+
+        // プロンプト結果を入力にする
+        public static string PromptResultToInput { get; set; } = CommonStringResources.Instance.PromptResultToInput;
+        // 入力となるプロンプトテンプレート
+        public static string PromptInputName { get; set; } = CommonStringResources.Instance.PromptInputName;
+
         // Chatタイプ
         public static string ChatType { get; set; } = CommonStringResources.Instance.ChatType;
         // 出力形式

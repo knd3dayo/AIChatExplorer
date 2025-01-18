@@ -388,7 +388,7 @@ def update_content_index(context_json: str, request_json: str):
             db_url = vector_db_props.VectorDBURL
             collection = vector_db_props.CollectionName
             description = vector_db_props.VectorDBDescription
-            ai_app.update_catalog(catalog_db_url, db_url, collection, description)
+            # ai_app.update_catalog(catalog_db_url, db_url, collection, description)
 
         return {}
 

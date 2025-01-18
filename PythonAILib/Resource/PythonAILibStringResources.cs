@@ -201,6 +201,7 @@ namespace PythonAILib.Resource {
         // プロンプト
         public virtual string Prompt { get; } = "プロンプト";
 
+
         // VectorSearch実行
         public virtual string VectorSearchExecute { get; } = "VectorSearch実行";
 
@@ -371,6 +372,10 @@ namespace PythonAILib.Resource {
         // "プロンプトテンプレート[promptName]を実行しました."
         public virtual string PromptTemplateExecuted(string promptName) => $"プロンプトテンプレート[{promptName}]を実行しました.";
 
+        // InputContentNotFound
+        public virtual string InputContentNotFound { get; } = "入力内容が見つかりません";
+
+
         // "アイテムを追加しました"
         public virtual string AddedItems { get; } = "アイテムを追加しました";
 
@@ -502,6 +507,7 @@ namespace PythonAILib.Resource {
 
         // 自動処理でアイテムが削除されました
         public virtual string ItemsDeletedByAutoProcessing { get; } = "自動処理でアイテムが削除されました";
+
 
         #region 統計、ログ関連
 
