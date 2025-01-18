@@ -99,12 +99,12 @@ namespace QAChat.ViewModel.VectorDB {
             }
         }
 
-        // MaxSearchResults
-        public int MaxSearchResults {
-            get => Item.MaxSearchResults;
+        // DefaultSearchResultLimit
+        public int DefaultSearchResultLimit {
+            get => Item.DefaultSearchResultLimit;
             set {
-                Item.MaxSearchResults = value;
-                OnPropertyChanged(nameof(MaxSearchResults));
+                Item.DefaultSearchResultLimit = value;
+                OnPropertyChanged(nameof(DefaultSearchResultLimit));
             }
         }
 

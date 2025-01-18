@@ -172,13 +172,13 @@
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left"
                     Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                    Text="{x:Static res:ViewStringResources.VectorSearchResultLimit}" />
+                    Text="{x:Static res:ViewStringResources.DefaultSearchResultLimit}" />
                 <TextBox
                     Grid.Row="6"
                     Grid.Column="1"
                     Margin="10,0,10,10"
                     IsEnabled="True"
-                    Text="{Binding ItemViewModel.MaxSearchResults}" />
+                    Text="{Binding ItemViewModel.DefaultSearchResultLimit}" />
                 <CheckBox
                     Grid.Row="8"
                     Grid.Column="0"

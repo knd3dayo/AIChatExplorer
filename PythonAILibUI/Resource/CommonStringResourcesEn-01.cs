@@ -916,7 +916,9 @@ namespace QAChat.Resource {
         public override string ExecuteAutoProcessingOnImport { get; } = "Execute Auto Processing on Import";
         public override string ExampleGeneralVectorDB { get; } = "Example: General Vector DB for Searching Past Documents Based on User Questions";
         public override string DocumentChunkSize { get; } = "Document Chunk Size";
-        public override string VectorSearchResultLimit { get; } = "Vector Search Result Limit";
+
+        // ベクトル検索結果のデフォルト上限値
+        public override string DefaultSearchResultLimit { get; } = "Default Search Result Limit";
         public override string UseMultiVectorRetriever { get; } = "Use MultiVectorRetriever";
         public override string SQLite3LocationForDocStore { get; } = "SQLite3 Location for DocStore";
         public override string ExampleSQLite3Location { get; } = "Example: sqlite:///C:\\Users\\Username\\sqlite3.db";

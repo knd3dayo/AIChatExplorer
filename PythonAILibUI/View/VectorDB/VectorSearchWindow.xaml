@@ -48,6 +48,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -75,16 +76,16 @@
         </StackPanel>
         <TabControl
             Grid.Row="1"
-            Margin="10,10,10,10"
+            Margin="10,10,0,10"
             HorizontalContentAlignment="Left"
-            SelectedIndex="{Binding SelectedIndex}">
+            SelectedIndex="{Binding SelectedTabIndex}">
             <TabItem
                 Width="Auto"
                 Height="Auto"
                 Margin="10,10,10,10"
                 HorizontalAlignment="Left"
-                Header="{x:Static res:ViewStringResources.VectorSearchResult}"
-                Visibility="{Binding NormalVectorRetrieverVisibility}">
+                Header="{x:Static res:ViewStringResources.MultiVectorRetrieverFinalSearchResult}"
+                Visibility="{Binding MultiVectorRetrieverVisibility}">
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
@@ -102,20 +103,12 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn
                             Width="100"
-                            Binding="{Binding Score}"
-                            Header="Score" />
-                        <DataGridTextColumn
-                            Width="100"
                             Binding="{Binding DocId}"
                             Header="DocId" />
                         <DataGridTextColumn
                             Width="100"
-                            Binding="{Binding Source}"
-                            Header="Source" />
-                        <DataGridTextColumn
-                            Width="100"
-                            Binding="{Binding SourceUrl}"
-                            Header="SourceUrl" />
+                            Binding="{Binding SourcePath}"
+                            Header="SourcePath" />
                         <DataGridTemplateColumn Width="*" Header="Content">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -135,7 +128,7 @@
             <TabItem
                 Width="Auto"
                 Height="Auto"
-                Margin="10,10,10,10"
+                Margin="10,10,0,10"
                 HorizontalAlignment="Left"
                 Header="{x:Static res:ViewStringResources.VectorSearchResult}"
                 Visibility="{Binding MultiVectorRetrieverVisibility}">
@@ -182,58 +175,21 @@
                 </DataGrid>
             </TabItem>
             <TabItem
-                Width="Auto"
-                Height="Auto"
-                Margin="10,10,10,10"
-                HorizontalAlignment="Left"
-                Header="{x:Static res:ViewStringResources.MultiVectorRetrieverFinalSearchResult}"
-                Visibility="{Binding MultiVectorRetrieverVisibility}">
-                <DataGrid
-                    Margin="10,10,10,10"
-                    AutoGenerateColumns="False"
-                    BorderThickness="1"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    CanUserReorderColumns="False"
-                    CanUserResizeColumns="True"
-                    CanUserResizeRows="False"
-                    CanUserSortColumns="True"
-                    ItemsSource="{Binding VectorSearchResults}"
-                    VerticalScrollBarVisibility="Auto"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    VirtualizingStackPanel.IsVirtualizing="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="100"
-                            Binding="{Binding Source}"
-                            Header="Source" />
-                        <DataGridTextColumn
-                            Width="100"
-                            Binding="{Binding DocId}"
-                            Header="DocId" />
-                        <DataGridTextColumn
-                            Width="100"
-                            Binding="{Binding SourceUrl}"
-                            Header="SourceUrl" />
-                        <DataGridTemplateColumn Width="*" Header="Content">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <editorControl:MyTextBox
-                                        Height="200"
-                                        ScrollViewer.CanContentScroll="True"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                        Text="{Binding Content}"
-                                        TextWrappingMode="{Binding TextWrappingMode}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                Margin="10,0,0,0"
+                Padding="0"
+                FontSize="10"
+                Header="{x:Static res:ViewStringResources.RequestParameterJson}">
+                <ScrollViewer VerticalAlignment="Top" VerticalScrollBarVisibility="Auto">
+                    <TextBox
+                        VerticalAlignment="Top"
+                        Text="{Binding PreviewJson, Mode=OneWay}"
+                        TextWrapping="{Binding TextWrapping, Mode=OneWay}" />
+                </ScrollViewer>
             </TabItem>
         </TabControl>
+        <Separator Grid.Row="2" />
         <ScrollViewer
-            Grid.Row="2"
+            Grid.Row="3"
             Height="100"
             Margin="0,0,0,0"
             VerticalScrollBarVisibility="Auto">
@@ -245,7 +201,7 @@
                 Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                 TextWrappingMode="{Binding TextWrappingMode}" />
         </ScrollViewer>
-        <DockPanel Grid.Row="3" Margin="10,10,10,10">
+        <DockPanel Grid.Row="4" Margin="10,10,10,10">
             <DockPanel HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Button
                     Width="200"
@@ -255,6 +211,16 @@
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.SelectVectorDB}"
                     DockPanel.Dock="Left" />
+                <TextBlock
+                    Margin="100,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:ViewStringResources.VectorDBSearchResultMax}" />
+                <TextBox
+                    Width="100"
+                    Margin="10,0,0,0"
+                    Text="{Binding VectorDBSearchResultMax, UpdateSourceTrigger=PropertyChanged}" />
+
             </DockPanel>
             <DockPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
                 <Button
@@ -282,7 +248,7 @@
             </DockPanel>
         </DockPanel>
         <cc:MyStatusBar
-            Grid.Row="4"
+            Grid.Row="5"
             VerticalAlignment="Bottom"
             DataContext="{Binding StatusBar}" />
         <ProgressBar

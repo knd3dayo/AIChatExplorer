@@ -62,8 +62,8 @@ namespace QAChat.View.VectorDB {
         // DocumentChunkSize
         public static string DocumentChunkSize { get; set; } = CommonStringResources.Instance.DocumentChunkSize;
 
-        // VectorSearchResultLimit
-        public static string VectorSearchResultLimit { get; set; } = CommonStringResources.Instance.VectorSearchResultLimit;
+        // DefaultSearchResultLimit
+        public static string DefaultSearchResultLimit { get; set; } = CommonStringResources.Instance.DefaultSearchResultLimit;
 
         // UseMultiVectorRetriever
         public static string UseMultiVectorRetriever { get; set; } = CommonStringResources.Instance.UseMultiVectorRetriever;
@@ -95,5 +95,12 @@ namespace QAChat.View.VectorDB {
 
         // Send
         public static string Send { get; set; } = CommonStringResources.Instance.Send;
+
+        // RequestParameterJson
+        public static string RequestParameterJson => CommonStringResources.Instance.RequestParameterJson;
+
+        // VectorDBSearchResultMax
+        public static string VectorDBSearchResultMax => CommonStringResources.Instance.VectorDBSearchResultMax;
+
     }
 }

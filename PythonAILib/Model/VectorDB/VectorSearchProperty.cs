@@ -15,12 +15,13 @@ namespace PythonAILib.Model.VectorDB {
 
         public VectorSearchProperty(VectorDBItem vectorDBItem) {
             VectorDBItemId = vectorDBItem.Id;
+            TopK = vectorDBItem.DefaultSearchResultLimit;
         }
 
         public LiteDB.ObjectId VectorDBItemId { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         //TopK
-        public int TopK { get; set; } = 10;
+        public int TopK { get; set; }
 
         // FolderId
         public LiteDB.ObjectId FolderId { get; set; } = LiteDB.ObjectId.Empty;
@@ -30,8 +31,9 @@ namespace PythonAILib.Model.VectorDB {
 
         // SearchKWArgs
         private Dictionary<string, object> GetSearchKWArgs() {
-            Dictionary<string, object> dict = new();
-            dict["k"] = TopK;
+            Dictionary<string, object> dict = new() {
+                ["k"] = TopK
+            };
             // filter 
             Dictionary<string, object> filter = new();
             // folder_idが指定されている場合
@@ -74,7 +76,7 @@ namespace PythonAILib.Model.VectorDB {
                     return item.Name;
                 }
 
-                return $"{item.Name}:{folder.FolderName}";
+                return $"{item.Name}:{folder.FolderPath}";
             }
         }
 

@@ -109,8 +109,8 @@ namespace PythonAILib.Model.VectorDB {
         public int ChunkSize { get; set; } = 500;
 
         // ベクトル検索時の検索結果上限
-        [JsonPropertyName("MaxSearchResults")]
-        public int MaxSearchResults { get; set; } = 10;
+        [JsonPropertyName("DefaultSearchResultLimit")]
+        public int DefaultSearchResultLimit { get; set; } = 10;
 
         // 有効かどうか
         [JsonIgnore]
@@ -144,7 +144,6 @@ namespace PythonAILib.Model.VectorDB {
                 { "CollectionName", CollectionName ?? ""},
                 { "folder_id", FolderId ?? ""},
                 { "ChunkSize", ChunkSize },
-                { "MaxSearchResults", MaxSearchResults },
                 { "IsEnabled", IsEnabled },
                 { "IsSystem", IsSystem },
                 { "CatalogDBURL", CatalogDBURL }

@@ -1029,7 +1029,7 @@ namespace QAChat.Resource {
         public virtual string DocumentChunkSize { get; } = "ドキュメントのチャンクサイズ";
 
         // ベクトル検索結果の上限値
-        public virtual string VectorSearchResultLimit { get; } = "ベクトル検索結果の上限値";
+        public virtual string DefaultSearchResultLimit { get; } = "ベクトル検索結果のデフォルト上限値";
 
         // MultiVectorRetrieverを使用
         public virtual string UseMultiVectorRetriever { get; } = "MultiVectorRetrieverを使用";
