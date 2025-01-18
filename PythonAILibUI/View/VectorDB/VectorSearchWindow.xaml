@@ -96,7 +96,7 @@
                     CanUserResizeColumns="True"
                     CanUserResizeRows="False"
                     CanUserSortColumns="True"
-                    ItemsSource="{Binding VectorSearchResults}"
+                    ItemsSource="{Binding MultiVectorSearchResults}"
                     VerticalScrollBarVisibility="Auto"
                     VirtualizingPanel.VirtualizationMode="Recycling"
                     VirtualizingStackPanel.IsVirtualizing="True">
@@ -117,8 +117,7 @@
                                         ScrollViewer.CanContentScroll="True"
                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                        Text="{Binding Content}"
-                                        TextWrappingMode="{Binding TextWrappingMode}" />
+                                        Text="{Binding Content}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -130,8 +129,7 @@
                 Height="Auto"
                 Margin="10,10,0,10"
                 HorizontalAlignment="Left"
-                Header="{x:Static res:ViewStringResources.VectorSearchResult}"
-                Visibility="{Binding MultiVectorRetrieverVisibility}">
+                Header="{x:Static res:ViewStringResources.VectorSearchResult}">
                 <DataGrid
                     Margin="10,10,10,10"
                     AutoGenerateColumns="False"
@@ -142,7 +140,7 @@
                     CanUserResizeColumns="True"
                     CanUserResizeRows="False"
                     CanUserSortColumns="True"
-                    ItemsSource="{Binding SubDocsVectorSearchResults}"
+                    ItemsSource="{Binding VectorSearchResults}"
                     VerticalScrollBarVisibility="Auto"
                     VirtualizingPanel.VirtualizationMode="Recycling"
                     VirtualizingStackPanel.IsVirtualizing="True">

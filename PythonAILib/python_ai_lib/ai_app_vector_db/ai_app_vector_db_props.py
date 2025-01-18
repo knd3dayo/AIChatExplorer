@@ -17,15 +17,15 @@ class VectorDBProps:
     content_name = "content"
     folder_id_name = "folder_id"
 
-    vector_db_url_name = "VectorDBURL"
-    vector_db_type_string_name = "VectorDBTypeString"
-    vector_db_name_name = "VectorDBName"
-    vector_db_description_name = "VectorDBDescription"
-    catalog_db_url_name = "CatalogDBURL"
-    chunk_size_name = "ChunkSize"
-    is_use_multi_vector_retriever_name = "IsUseMultiVectorRetriever"
-    doc_store_url_name = "DocStoreURL"
-    collection_name = "CollectionName"
+    vector_db_url_name = "vector_db_url"
+    vector_db_type_string_name = "vector_db_type_string"
+    vector_db_name_name = "vector_db_name"
+    vector_db_description_name = "vector_db_description"
+    catalog_db_url_name = "catalog_db_url"
+    chunk_size_name = "chunk_size"
+    is_use_multi_vector_retriever_name = "is_use_multi_vector_retriever"
+    doc_store_url_name = "doc_store_url"
+    collection_name = "collection_name"
     search_kwargs_name = "search_kwargs"
 
     score_name = "score"
@@ -46,7 +46,7 @@ class VectorDBProps:
         # DBのカタログ情報を保持するDBのURL
         self.CatalogDBURL = props_dict.get(VectorDBProps.catalog_db_url_name, "")
         if not self.CatalogDBURL:
-            raise ValueError("CatalogDBURL is not set.")
+            raise ValueError("catalog_db_url is not set.")
         
         # チャンクサイズ
         self.ChunkSize = props_dict.get(VectorDBProps.chunk_size_name, 500)
@@ -87,15 +87,15 @@ class VectorDBProps:
     def get_vector_db_settings() -> 'VectorDBProps':
         load_dotenv()
         props: dict = {
-            "VectorDBName": os.getenv("VECTOR_DB_NAME"),
-            "VectorDBURL": os.getenv("VECTOR_DB_URL"),
-            "VectorDBTypeString": os.getenv("VECTOR_DB_TYPE_STRING"),
-            "VectorDBDescription": os.getenv("VECTOR_DB_DESCRIPTION"),
-            "IsUseMultiVectorRetriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
-            "DocStoreURL": os.getenv("DOC_STORE_URL"),
-            "CollectionName": os.getenv("VECTOR_DB_COLLECTION_NAME"),
+            "vector_db_name": os.getenv("VECTOR_DB_NAME"),
+            "vector_db_url": os.getenv("VECTOR_DB_URL"),
+            "vector_db_type_string": os.getenv("VECTOR_DB_TYPE_STRING"),
+            "vector_db_description": os.getenv("VECTOR_DB_DESCRIPTION"),
+            "is_use_multi_vector_retriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
+            "doc_store_url": os.getenv("DOC_STORE_URL"),
+            "collection_name": os.getenv("VECTOR_DB_COLLECTION_NAME"),
             # チャンクサイズ
-            "ChunkSize": int(os.getenv("ChunkSize", 500)),
+            "chunk_size": int(os.getenv("ChunkSize", 500)),
             # マルチベクトルリトリーバーの場合のドキュメントチャンクサイズ
             "MultiVectorDocChunkSize": int(os.getenv("MultiVectorDocChunkSize", 500)),
             

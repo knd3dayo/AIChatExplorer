@@ -31,7 +31,7 @@ namespace PythonAILib.Model.Content {
         public VectorSearchProperty GetMainVectorSearchProperty() {
 
             VectorSearchProperty searchProperty = new(VectorDBItem.GetDefaultVectorDB()) {
-                FolderId = Id
+                FolderId = Id,
             };
             return searchProperty;
         }
@@ -196,15 +196,9 @@ namespace PythonAILib.Model.Content {
         // フォルダに設定されたVectorDBのコレクションをアップデート
         public void UpdateVectorDBCollection() {
             Task.Run(() => {
-                PythonAILibManager libManager = PythonAILibManager.Instance;
-                OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-
-                ChatRequestContext chatRequestContext = new() {
-                    OpenAIProperties = openAIProperties,
-                    VectorSearchProperties = GetVectorSearchProperties()
-                };
-
-                PythonExecutor.PythonAIFunctions.UpdateVectorDBCollection(chatRequestContext);
+                // カタログの更新
+                VectorSearchProperty vectorSearchProperty = GetMainVectorSearchProperty();
+                vectorSearchProperty.UpdateCatalogDescription(Description);
             });
         }
 

@@ -272,8 +272,9 @@ def get_catalog_list(context_json: str) -> dict:
         vector_db_items = get_vector_db_objects(context_json)
         # 先頭のVectorDBPropsを取得
         vector_db_props = vector_db_items[0]
-        db_url = vector_db_props.CatalogDBURL
-        vector_db_catalog = ai_app.get_catalogs(db_url)
+        catalog_db_url = vector_db_props.CatalogDBURL
+        vectordb__url = vector_db_props.VectorDBURL
+        vector_db_catalog = ai_app.get_catalogs(catalog_db_url, vectordb__url)
         result = {}
         result["catalog_list"] = vector_db_catalog
         return result
@@ -283,9 +284,7 @@ def get_catalog_list(context_json: str) -> dict:
     # ラッパー関数を実行して結果のJSONを返す
     return wrapper()
 
-
 def get_catalog(context_json: str) -> dict:
-
     def func() -> dict:
         vector_db_items = get_vector_db_objects(context_json)
         catalog_list = []
@@ -293,11 +292,35 @@ def get_catalog(context_json: str) -> dict:
             catalog_db_url = vector_db_props.CatalogDBURL
             vector_db_url = vector_db_props.VectorDBURL
             collection = vector_db_props.CollectionName
-            vector_db_catalog = ai_app.get_catalog(catalog_db_url, vector_db_url, collection)
+            folder_id = vector_db_props.FolderID
+            vector_db_catalog = ai_app.get_catalog(catalog_db_url, vector_db_url, collection, folder_id)
             catalog_list.append(vector_db_catalog)
         result = {}
         result["catalog_list"] = catalog_list
     
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def get_catalog_description(catalog_db_url: str, vector_db_url: str, collection: str, folder_id: str):
+    def func() -> dict:
+        description = ai_app.get_catalog_entry(catalog_db_url, vector_db_url, collection, folder_id)
+
+        result = {}
+        result["output"] = description
+        return result
+
+    # strout,stderrをキャプチャするラッパー関数を生成
+    wrapper = capture_stdout_stderr(func)
+    # ラッパー関数を実行して結果のJSONを返す
+    return wrapper()
+
+def update_catalog_description(category_db_url: str, vector_db_url: str, collection: str, folder_id: str, description: str):
+    def func() -> dict:
+        ai_app.update_catalog(category_db_url, vector_db_url, collection, folder_id, description)
+        return {}
+
     # strout,stderrをキャプチャするラッパー関数を生成
     wrapper = capture_stdout_stderr(func)
     # ラッパー関数を実行して結果のJSONを返す
@@ -338,7 +361,8 @@ def update_collection(context_json: str):
             db_url = vector_db_props.VectorDBURL
             collection = vector_db_props.CollectionName
             description = vector_db_props.VectorDBDescription
-            ai_app.update_catalog(catalog_db_url, db_url, collection, description)
+            folder_id = vector_db_props.FolderID
+            ai_app.update_catalog(catalog_db_url, db_url, collection, folder_id, description)
 
         return {}
 

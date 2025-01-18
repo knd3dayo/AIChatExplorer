@@ -29,6 +29,13 @@ namespace PythonAILib.PythonIF {
 
         public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext);
 
+        //　コレクション名とFolderIdにマッチするDescriptionをカタログから取得する。
+        public string GetCatalogDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id);
+
+        // カタログ情報をアップデート
+        public string UpdateCatalogDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folder_id, string Description);
+
+
         public void DeleteVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);
 
         public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry);

@@ -43,7 +43,7 @@ namespace QAChat.ViewModel.VectorDB {
 
                 OnPropertyChanged(nameof(VectorSearchProperty));
                 OnPropertyChanged(nameof(MultiVectorRetrieverVisibility));
-                OnPropertyChanged(nameof(SubDocsVectorSearchResults));
+                OnPropertyChanged(nameof(VectorSearchResults));
 
             }
         }
@@ -54,10 +54,10 @@ namespace QAChat.ViewModel.VectorDB {
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; }
 
-        public ObservableCollection<VectorDBEntry> VectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEntry> MultiVectorSearchResults { get; set; } = [];
 
         // SubDocsのVectorSearchResults
-        public ObservableCollection<VectorDBEntry> SubDocsVectorSearchResults { get; set; } = [];
+        public ObservableCollection<VectorDBEntry> VectorSearchResults { get; set; } = [];
 
         // ベクトルDBアイテムを選択したときのアクション
         public Action<List<VectorSearchProperty>> SelectVectorDBItemAction { get; set; } = (items) => { };
@@ -91,8 +91,8 @@ namespace QAChat.ViewModel.VectorDB {
         // クリアボタンのコマンド
         public SimpleDelegateCommand<object> ClearCommand => new((parameter) => {
             // VectorSearchResultsをクリア
-            VectorSearchResults.Clear();
-            OnPropertyChanged(nameof(VectorSearchResults));
+            MultiVectorSearchResults.Clear();
+            OnPropertyChanged(nameof(MultiVectorSearchResults));
         });
 
         // SendCommand
@@ -102,7 +102,12 @@ namespace QAChat.ViewModel.VectorDB {
                 LogWrapper.Error("VectorDBItem is null.");
                 return;
             }
-            VectorSearchResults.Clear();
+            var vectorDBItem = VectorSearchProperty.GetVectorDBItem();
+            if (vectorDBItem == null) {
+                LogWrapper.Error("VectorDBItem is null.");
+                return;
+            }
+
             IsIndeterminate = true;
             await Task.Run(() => {
                 List<VectorDBEntry> vectorSearchResults = [];
@@ -120,16 +125,27 @@ namespace QAChat.ViewModel.VectorDB {
                 }
                 MainUITask.Run(() => {
                     // VectorSearchResultsを更新
+                    MultiVectorSearchResults.Clear();
                     VectorSearchResults.Clear();
-                    foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
-                        VectorSearchResults.Add(vectorSearchResult);
-                        // sub_docsを追加
-                        foreach (VectorDBEntry subDoc in vectorSearchResult.SubDocs) {
-                            SubDocsVectorSearchResults.Add(subDoc);
+
+                    if (vectorDBItem.IsUseMultiVectorRetriever) {
+                        foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
+                            MultiVectorSearchResults.Add(vectorSearchResult);
+                            // sub_docsを追加
+                            foreach (VectorDBEntry subDoc in vectorSearchResult.SubDocs) {
+                                VectorSearchResults.Add(subDoc);
+                            }
+                        }
+                    } else {
+                        // VectorSearchResultsを更新
+                        VectorSearchResults.Clear();
+                        foreach (VectorDBEntry vectorSearchResult in vectorSearchResults) {
+                            VectorSearchResults.Add(vectorSearchResult);
                         }
                     }
+
+                    OnPropertyChanged(nameof(MultiVectorSearchResults));
                     OnPropertyChanged(nameof(VectorSearchResults));
-                    OnPropertyChanged(nameof(SubDocsVectorSearchResults));
 
                 });
             });
@@ -175,7 +191,7 @@ namespace QAChat.ViewModel.VectorDB {
         });
 
         // UpdateStatusText
-        private void UpdateStatusText () {
+        private void UpdateStatusText() {
             // StatusTextを更新
             if (VectorSearchProperty == null) {
                 return;

@@ -22,7 +22,7 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
     def _load(self):
         # VectorDBTypeStringが"PGVector"でない場合は例外をスロー
         if self.vector_db_props.VectorDBTypeString != "PGVector":
-            raise ValueError("VectorDBTypeString must be 'PGVector'")
+            raise ValueError("vector_db_type_string must be 'PGVector'")
 
         # params
         params = {}
@@ -31,7 +31,7 @@ class LangChainVectorDBPGVector(LangChainVectorDB):
         params["use_jsonb"] = True
         
         # collectionが指定されている場合
-        print("CollectionName:", self.vector_db_props.CollectionName)
+        print("collection_name:", self.vector_db_props.CollectionName)
         if self.vector_db_props.CollectionName:
             params["collection_name"] = self.vector_db_props.CollectionName
                 

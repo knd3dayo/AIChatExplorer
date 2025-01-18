@@ -61,22 +61,22 @@ namespace PythonAILib.Model.VectorDB {
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.Empty;
 
         // 名前
-        [JsonPropertyName("VectorDBName")]
+        [JsonPropertyName("vector_db_name")]
         public string Name { get; set; } = DefaultCollectionName;
         // 説明
-        [JsonPropertyName("VectorDBDescription")]
+        [JsonPropertyName("vector_db_description")]
         public string Description { get; set; } = PythonAILibStringResources.Instance.VectorDBDescription;
 
         // ベクトルDBのURL
-        [JsonPropertyName("VectorDBURL")]
+        [JsonPropertyName("vector_db_url")]
         public string VectorDBURL { get; set; } = "";
 
         // マルチベクトルリトリーバを使うかどうか
-        [JsonPropertyName("IsUseMultiVectorRetriever")]
+        [JsonPropertyName("is_use_multi_vector_retriever")]
         public bool IsUseMultiVectorRetriever { get; set; } = false;
 
         // ドキュメントストアのURL マルチベクトルリトリーバを使う場合に指定する
-        [JsonPropertyName("DocStoreURL")]
+        [JsonPropertyName("doc_store_url")]
         public string DocStoreURL { get; set; } = "";
 
         // ベクトルDBの種類を表す列挙型
@@ -84,32 +84,28 @@ namespace PythonAILib.Model.VectorDB {
         public VectorDBTypeEnum Type { get; set; } = VectorDBTypeEnum.Chroma;
 
         // ベクトルDBの種類を表す文字列
-        [JsonPropertyName("VectorDBTypeString")]
+        [JsonPropertyName("vector_db_type_string")]
         public string VectorDBTypeString {
             get {
                 return Type.ToString();
             }
         }
 
-        // FolderId
-        [JsonPropertyName("folder_id")]
-        public string FolderId { get; set; } = "";
-
         // コレクション名
-        [JsonPropertyName("CollectionName")]
-        public string? CollectionName { get; set; } = null;
-
+        [JsonPropertyName("collection_name")]
+        public string CollectionName { get; set; } = DefaultCollectionName;
+        
         // カタログ用のDBURL
-        [JsonPropertyName("CatalogDBURL")]
+        [JsonPropertyName("catalog_db_url")]
         public string CatalogDBURL { get; set; } = GetCatalogDBURL();
 
 
         // チャンクサイズ ベクトル生成時にドキュメントをこのサイズで分割してベクトルを生成する
-        [JsonPropertyName("ChunkSize")]
+        [JsonPropertyName("chunk_size")]
         public int ChunkSize { get; set; } = 500;
 
         // ベクトル検索時の検索結果上限
-        [JsonPropertyName("DefaultSearchResultLimit")]
+        [JsonPropertyName("default_search_result_limit")]
         public int DefaultSearchResultLimit { get; set; } = 10;
 
         // 有効かどうか
@@ -135,18 +131,17 @@ namespace PythonAILib.Model.VectorDB {
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
-                { "VectorDBName", Name },
-                { "VectorDBDescription", Description },
-                { "VectorDBURL", VectorDBURL },
-                { "IsUseMultiVectorRetriever", IsUseMultiVectorRetriever },
-                { "DocStoreURL", DocStoreURL },
-                { "VectorDBTypeString", VectorDBTypeString },
-                { "CollectionName", CollectionName ?? ""},
-                { "folder_id", FolderId ?? ""},
-                { "ChunkSize", ChunkSize },
-                { "IsEnabled", IsEnabled },
-                { "IsSystem", IsSystem },
-                { "CatalogDBURL", CatalogDBURL }
+                { "vector_db_name", Name },
+                { "vector_db_description", Description },
+                { "vector_db_url", VectorDBURL },
+                { "is_use_multi_vector_retriever", IsUseMultiVectorRetriever },
+                { "doc_store_url", DocStoreURL },
+                { "vector_db_type_string", VectorDBTypeString },
+                { "collection_name", CollectionName ?? ""},
+                { "chunk_size", ChunkSize },
+                { "is_enabled", IsEnabled },
+                { "is_system", IsSystem },
+                { "catalog_db_url", CatalogDBURL }
             };
             return dict;
         }

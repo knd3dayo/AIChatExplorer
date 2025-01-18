@@ -19,7 +19,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
     def _load(self):
         # VectorDBTypeStringが"Chroma"でない場合は例外をスロー
         if self.vector_db_props.VectorDBTypeString != "Chroma":
-            raise ValueError("VectorDBTypeString must be 'Chroma'")
+            raise ValueError("vector_db_type_string must be 'Chroma'")
         # ベクトルDB用のディレクトリが存在しない、または空の場合
         if not self.vector_db_props.VectorDBURL or not os.path.exists(self.vector_db_props.VectorDBURL):
             # ディレクトリを作成
@@ -30,7 +30,7 @@ class LangChainVectorDBChroma(LangChainVectorDB):
         params["embedding_function"] = self.langchain_openai_client.get_embedding_client()
         params["collection_metadata"] = {"hnsw:space":"cosine"}
         # collectionが指定されている場合
-        print("CollectionName:", self.vector_db_props.CollectionName)
+        print("collection_name:", self.vector_db_props.CollectionName)
         if self.vector_db_props.CollectionName:
             params["collection_name"] = self.vector_db_props.CollectionName
                     

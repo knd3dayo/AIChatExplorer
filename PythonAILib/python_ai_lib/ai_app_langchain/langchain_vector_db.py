@@ -87,10 +87,10 @@ class LangChainVectorDB:
         self.langchain_openai_client = langchain_openai_client
         self.vector_db_props = vector_db_props
         if vector_db_props.IsUseMultiVectorRetriever:
-            print("DocStoreURL:", vector_db_props.DocStoreURL)
+            print("doc_store_url:", vector_db_props.DocStoreURL)
             self.doc_store = SQLDocStore(vector_db_props.DocStoreURL)
         else:
-            print("DocStoreURL is None")
+            print("doc_store_url is None")
 
         self.db: VectorStore = None
 
