@@ -1,5 +1,5 @@
 from magika import Magika  # type: ignore
-import chardet
+from chardet.universaldetector import UniversalDetector
 
 class FileUtil:
 
@@ -21,13 +21,10 @@ class FileUtil:
         # ファイルの種類を判定
         res = m.identify_bytes(byte_data)
         # エンコーディング判定
-        encoding_dic = chardet.detect(byte_data)
-        encoding = encoding_dic["encoding"]
-        if encoding == "SHIFT_JIS":
-            encoding = "cp932"
-        else:
-            encoding = "utf-8"
-            
+        detector = UniversalDetector()
+        detector.feed(byte_data)
+        detector.close()
+        encoding = detector.result['encoding']  
         return res, encoding
 
     @classmethod
