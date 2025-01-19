@@ -30,7 +30,7 @@ namespace WpfAppCommon.Model {
             if (value) {
                 InProgressText = inProgressText;
             } else {
-                Init();
+                Ready();
             }
         }
 
@@ -78,11 +78,15 @@ namespace WpfAppCommon.Model {
             if (IsInProgress) {
                 Text = InProgressText;
             } else {
-                Init();
+                Ready();
             }
         }
         public void Init() {
             ReadyText = _DefaultText;
+            Text = ReadyText;
+            OnPropertyChanged(nameof(Text));
+        }
+        public void Ready() {
             Text = ReadyText;
             OnPropertyChanged(nameof(Text));
         }

@@ -149,5 +149,9 @@ namespace QAChat.Resource {
 
         #endregion
 
+        // プロンプトテンプレートが存在しません。
+        public virtual string PromptTemplateNotFound { get; } = "プロンプトテンプレートが存在しません。";
+
+
     }
 }

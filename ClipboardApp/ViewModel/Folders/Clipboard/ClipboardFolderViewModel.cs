@@ -121,17 +121,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         }
 
-        /// <summary>
-        /// Ctrl + V が押された時の処理
-        /// コピー中のアイテムを選択中のフォルダにコピー/移動する
-        /// 貼り付け後にフォルダ内のアイテムを再読み込む
-        /// 
-        /// </summary>
-        /// <param name="Instance"></param>
-        /// <param name="item"></param>
-        /// <param name="fromFolder"></param>
-        /// <param name="toFolder"></param>
-        /// <returns></returns>
 
         public virtual void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag,
             IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
@@ -176,6 +165,9 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
         }
 
+        // -----------------------------------------------------------------------------------
+        #region プログレスインジケーター表示の処理
+
         /// <summary>
         /// フォルダ内の表示中のアイテムを削除する処理
         /// 削除後にフォルダ内のアイテムを再読み込む
@@ -185,17 +177,27 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show(CommonStringResources.Instance.ConfirmDeleteItems, CommonStringResources.Instance.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
+                MainWindowViewModel.Instance.UpdateIndeterminate(true);
+                List<Task> taskList = [];
                 foreach (ClipboardItemViewModel item in folderViewModel.Items) {
                     if (item.IsPinned) {
                         continue;
                     }
-                    // item.ClipboardItemを削除
-                    item.Commands.DeleteItemCommand.Execute(item);
+                    Task task = Task.Run(() => {
+                        // item.ClipboardItemを削除
+                        item.Commands.DeleteItemCommand.Execute(item);
+                    });
+                    taskList.Add(task);
                 }
-
-                // フォルダ内のアイテムを読み込む
-                folderViewModel.LoadFolderCommand.Execute(null);
-                LogWrapper.Info(CommonStringResources.Instance.DeletedItems);
+                // 全てのタスクが終了したら後続処理を実行
+                Task.WhenAll(taskList).ContinueWith((task) => {
+                    // フォルダ内のアイテムを読み込む
+                    MainUITask.Run(() => {
+                        folderViewModel.LoadFolderCommand.Execute(null);
+                    });
+                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
+                    LogWrapper.Info(CommonStringResources.Instance.DeletedItems);
+                });
             }
         }
 
@@ -245,6 +247,9 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 UpdateIndeterminate(false);
             }
         }
+
+        #endregion
+ 
         public override void UpdateIndeterminate(bool isIndeterminate) {
             MainWindowViewModel.Instance.UpdateIndeterminate(isIndeterminate);
         }
@@ -287,6 +292,5 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             StatusText.Instance.ReadyText = message;
             StatusText.Instance.Text = message;
         }
-
     }
 }

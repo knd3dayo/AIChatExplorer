@@ -18,18 +18,6 @@ using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 namespace ClipboardApp.Model.Folder {
     public partial class ClipboardFolder : ContentFolder {
 
-        public override void Save() {
-            Save<ClipboardFolder, ClipboardItem>();
-        }
-        // 削除
-        public override void Delete() {
-            Delete<ClipboardFolder, ClipboardItem>();
-        }
-
-        // 親フォルダ
-        public override ContentFolder? GetParent() {
-            return GetParent<ClipboardFolder>();
-        }
 
         //--------------------------------------------------------------------------------
         // コンストラクタ
@@ -48,6 +36,18 @@ namespace ClipboardApp.Model.Folder {
 
         }
 
+        public override void Save() {
+            Save<ClipboardFolder, ClipboardItem>();
+        }
+        // 削除
+        public override void Delete() {
+            Delete<ClipboardFolder, ClipboardItem>();
+        }
+
+        // 親フォルダ
+        public override ContentFolder? GetParent() {
+            return GetParent<ClipboardFolder>();
+        }
 
         // アイテム LiteDBには保存しない。
         [BsonIgnore]
@@ -90,6 +90,7 @@ namespace ClipboardApp.Model.Folder {
                 LogWrapper.Info(CommonStringResources.Instance.AutoProcessingApplied);
             }
         }
+
         public override ClipboardFolder CreateChild(string folderName) {
             ClipboardFolder child = new(this, folderName);
             return child;

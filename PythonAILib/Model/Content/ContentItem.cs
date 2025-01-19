@@ -396,9 +396,7 @@ namespace PythonAILib.Model.Content {
 
         public virtual void Delete() {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            Task.Run(() => {
-                ContentItemCommands.UpdateEmbedding(this, VectorDBUpdateMode.delete);
-            });
+            ContentItemCommands.UpdateEmbedding(this, VectorDBUpdateMode.delete);
             libManager.DataFactory.GetItemCollection<ContentItem>().Delete(Id);
         }
 

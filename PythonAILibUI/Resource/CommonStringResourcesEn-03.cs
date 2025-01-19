@@ -132,5 +132,7 @@ namespace QAChat.Resource {
         public override string MultiVectorRetrieverFinalSearchResult { get; } = "Multi Vector Retriever Final Search Result";
 
         #endregion
+        // PromptTemplateNotFound
+        public override string PromptTemplateNotFound { get; } = "Prompt Template Not Found";
     }
 }

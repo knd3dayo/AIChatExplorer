@@ -279,13 +279,24 @@ namespace ClipboardApp {
             //　削除確認ボタン
             MessageBoxResult result = MessageBox.Show(StringResources.ConfirmDeleteSelectedItems, StringResources.Confirm, MessageBoxButton.YesNo);
             if (result == MessageBoxResult.Yes) {
+                UpdateIndeterminate(true);
+                List<Task> taskLIst = [];
                 // 選択中のアイテムを削除
                 foreach (var item in SelectedItems) {
-                    item.Commands.DeleteItemCommand.Execute(item);
+                    Task task = Task.Run(() => {
+                        item.Commands.DeleteItemCommand.Execute(item);
+                    });
+                    taskLIst.Add(task);
                 }
-                // フォルダ内のアイテムを再読み込む
-                SelectedFolder?.LoadFolderCommand.Execute();
-                LogWrapper.Info(StringResources.Deleted);
+                // 全ての削除処理が終了した後、後続処理を実行
+                Task.WhenAll(taskLIst).ContinueWith((task) => {
+                    // フォルダ内のアイテムを再読み込む
+                    MainUITask.Run(() => {
+                        SelectedFolder?.LoadFolderCommand.Execute();
+                    });
+                    LogWrapper.Info(StringResources.Deleted);
+                    UpdateIndeterminate(false);
+                });
             }
         });
 
@@ -397,26 +408,14 @@ namespace ClipboardApp {
         public SimpleDelegateCommand<Tuple<ClipboardItemViewModel, PromptItem>> ExecutePromptTemplateCommand => new((tuple) => {
             ClipboardItemViewModel itemViewModel = tuple.Item1;
             PromptItem promptItem = tuple.Item2;
-            // チャットを実行
-            Task.Run(() => {
-                try {
-                    // プログレスインジケータを表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(true);
-
-                    foreach (var item in SelectedItems.Select(x => x.ContentItem).ToList()) {
-                        ContentItemCommands.CreateChatResult(item, promptItem);
-                        //保存
-                        item.Save();
-                    }
-                    MainUITask.Run(() => {
-                        // フォルダ内のアイテムを再読み込み
-                        SelectedFolder?.LoadFolderCommand.Execute();
-                    });
-                } finally {
-                    // プログレスインジケータを非表示
-                    MainWindowViewModel.Instance.UpdateIndeterminate(false);
-                }
-            });
+            List<ContentItem> contentItems = SelectedItems.Select(x => x.ContentItem).ToList();
+            ClipboardItemViewModelCommands commands = new();
+            commands.ExecutePromptTemplateCommand(contentItems, () => {
+                // フォルダ内のアイテムを再読み込み
+                MainUITask.Run(() => {
+                    SelectedFolder?.LoadFolderCommand.Execute();
+                });
+            }, promptItem);
         });
 
         #endregion

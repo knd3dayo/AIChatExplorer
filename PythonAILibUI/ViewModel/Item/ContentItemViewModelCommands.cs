@@ -1,4 +1,5 @@
 using PythonAILib.Model.Content;
+using PythonAILib.Model.Prompt;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
@@ -74,7 +75,7 @@ namespace PythonAILibUI.ViewModel.Item {
         public abstract void GenerateTitleCommand(List<ContentItem> contentItem, object afterExecuteAction);
 
         // void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName)
-        public abstract void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName);
+        public abstract void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, PromptItem promptItem);
 
         //  void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction)
         public abstract void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction);

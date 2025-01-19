@@ -385,7 +385,8 @@ def delete_collection(context_json: str):
             catalog_db_url = vector_db_props.CatalogDBURL
             db_url = vector_db_props.VectorDBURL
             collection = vector_db_props.CollectionName
-            ai_app.delete_catalog(catalog_db_url, db_url, collection)
+            folder_id = vector_db_props.FolderID
+            ai_app.delete_catalog(catalog_db_url, db_url, collection, folder_id)
 
         return {}
 
