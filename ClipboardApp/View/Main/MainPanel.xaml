@@ -270,14 +270,14 @@
                         FontSize="8pt"
                         Text="{Binding Path=SelectedItem.HeaderText}"
                         TextTrimming="None"
-                        Visibility="{Binding HooterVisibility}" />
+                        Visibility="{Binding FooterVisibility}" />
                     <CheckBox
                         Grid.Row="3"
                         Margin="10,0,10,10"
                         HorizontalAlignment="Left"
-                        Content="{x:Static res:ViewStringResources.ShowHooter}"
+                        Content="{x:Static res:ViewStringResources.ShowFooter}"
                         FontSize="8pt"
-                        IsChecked="{Binding ShowHooter}" />
+                        IsChecked="{Binding ShowFooter}" />
                 </Grid>
                 <materialDesign:Card.InputBindings>
                     <!--  Open selected item window by double-clicking  -->

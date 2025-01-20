@@ -216,21 +216,23 @@ namespace ClipboardApp {
             OnPropertyChanged(propertyName);
         }
 
-        // ShowHooter
-        public bool ShowHooter {
+        // ShowFooter
+        public bool ShowFooter {
             get {
-                return ClipboardAppConfig.Instance.ShowHooter;
+                return ClipboardAppConfig.Instance.ShowFooter;
             }
             set {
-                ClipboardAppConfig.Instance.ShowHooter = value;
-                OnPropertyChanged(nameof(ShowHooter));
-                OnPropertyChanged(nameof(HooterVisibility));
+                ClipboardAppConfig.Instance.ShowFooter = value;
+                ClipboardAppConfig.Instance.Save();
+
+                OnPropertyChanged(nameof(ShowFooter));
+                OnPropertyChanged(nameof(FooterVisibility));
             }
         }
-        // HooterVisibility
-        public Visibility HooterVisibility {
+        // FooterVisibility
+        public Visibility FooterVisibility {
             get {
-                return Tools.BoolToVisibility(ShowHooter);
+                return Tools.BoolToVisibility(ShowFooter);
             }
         }
     }

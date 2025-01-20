@@ -61,7 +61,7 @@ namespace QAChat.Resource {
         public virtual string VersionInfo { get; } = "バージョン情報";
 
         // フッター表示
-        public virtual string ShowHooter { get; } = "フッター表示";
+        public virtual string ShowFooter { get; } = "フッター表示";
 
         // 表示
         public virtual string View { get; } = "表示";

@@ -119,7 +119,7 @@
     <Setting Name="AutoDocumentReliabilityCheck" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowHooter" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowFooter" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

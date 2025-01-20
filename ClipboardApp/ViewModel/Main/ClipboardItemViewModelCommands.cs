@@ -494,6 +494,10 @@ namespace ClipboardApp.ViewModel.Main {
                     ContentItemCommands.CreateChatResult(item, promptItem.Name);
                     // Save
                     item.Save(false);
+                    // 10リクエスト毎に3秒待機
+                    if (index % 10 == 9) {
+                        System.Threading.Thread.Sleep(3000);
+                    }
                 });
                 taskList.Add(task);
             }
