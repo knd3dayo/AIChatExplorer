@@ -167,7 +167,8 @@ class OpenAIProps:
 
 from typing import Tuple
 import json
-from openai import OpenAI, AzureOpenAI
+from openai import OpenAI, AzureOpenAI, RateLimitError
+import time
 
 class OpenAIClient:
     def __init__(self, props: OpenAIProps):
@@ -232,10 +233,26 @@ class OpenAIClient:
         if self.props.AzureOpenAI:
             input_dict["max_tokens"] = 4096
             input_dict["stream"] = False
-            
-        response = client.chat.completions.create(
-            **input_dict
-            )
+
+        # openai.
+        # RateLimitErrorが発生した場合はリトライする
+        # リトライ回数は最大で5回
+        # リトライ間隔はcount**5秒
+        # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
+        # リトライ回数が5回以内で成功した場合は結果を返す
+        count = 0
+        while count < 5:
+            try:
+                response = client.chat.completions.create(
+                    **input_dict
+                )
+                break
+            except RateLimitError as e:
+                count += 1
+                time.sleep(count*5)
+                if count == 5:
+                    raise e
+                            
         # token情報を取得する
         total_tokens = response.usage.total_tokens
         # contentを取得する
@@ -270,10 +287,25 @@ class OpenAIClient:
         # embedding_model_nameを取得する
         embedding_model_name = self.props.OpenAIEmbeddingModel
         
-        response = client.embeddings.create(
-            model=embedding_model_name,
-            input=[input_text]
-        )
+        # RateLimitErrorが発生した場合はリトライする
+        # リトライ回数は最大で5回
+        # リトライ間隔はcount**5秒
+        # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
+        # リトライ回数が5回以内で成功した場合は結果を返す
+        count = 0
+        while count < 5:
+            try:
+                response = client.embeddings.create(
+                    model=embedding_model_name,
+                    input=[input_text]
+                )
+                break
+            except RateLimitError as e:
+                count += 1
+                time.sleep(count*5)
+                if count == 5:
+                    raise e
+
         return response.data[0].embedding
     
     def openai_transcription(self, audit_file_path: str):

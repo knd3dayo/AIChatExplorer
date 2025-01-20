@@ -407,10 +407,13 @@ namespace ClipboardApp.ViewModel.Main {
             // Display ProgressIndicator
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             int count = items.Count;
+            Task.Run(() => {
+                ParallelOptions parallelOptions = new();
+                // 10並列
+                parallelOptions.MaxDegreeOfParallelism = 10;
+                Parallel.For(0, count, parallelOptions, (i) => {
 
-            for (int i = 0; i < count; i++) {
-                int index = i; // Store the current index in a separate variable to avoid closure issues
-                Task task = Task.Run(() => {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
                     string message = $"{CommonStringResources.Instance.GenerateVectorInProgress} ({index + 1}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItem item = items[index];
@@ -418,9 +421,6 @@ namespace ClipboardApp.ViewModel.Main {
                     // Save
                     item.Save(false);
                 });
-                taskList.Add(task);
-            }
-            Task.WhenAll(taskList).ContinueWith((obj) => {
                 // Execute if obj is an Action
                 if (afterExecuteAction is Action action) {
                     action();
@@ -445,29 +445,30 @@ namespace ClipboardApp.ViewModel.Main {
                 LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
                 return;
             }
-            for (int i = 0; i < count; i++) {
-                int index = i; // Store the current index in a separate variable to avoid closure issues
-                Task task = Task.Run(() => {
-                    string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({index + 1}/{count})";
-                    StatusText.Instance.UpdateInProgress(true, message);
-                    var itemViewModel = MainWindowViewModel.Instance.SelectedItems[index];
+            Task.Run(() => {
+                ParallelOptions parallelOptions = new();
+                // 10並列
+                parallelOptions.MaxDegreeOfParallelism = 10;
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
+                    Task task = Task.Run(() => {
+                        string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({index + 1}/{count})";
+                        StatusText.Instance.UpdateInProgress(true, message);
+                        var itemViewModel = MainWindowViewModel.Instance.SelectedItems[index];
 
-                    ContentItem item = itemViewModel.ContentItem;
-                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                        LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                        return;
-                    }
-                    ContentItemCommands.ExtractTextCommandExecute(item);
-                    // Save the item
-                    item.Save(false);
+                        ContentItem item = itemViewModel.ContentItem;
+                        if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                            LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                            return;
+                        }
+                        ContentItemCommands.ExtractTextCommandExecute(item);
+                        // Save the item
+                        item.Save(false);
+                    });
                 });
-                taskList.Add(task);
-            }
-            Task.WhenAll(taskList).ContinueWith((obj) => {
                 LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
                 MainWindowViewModel.Instance.UpdateIndeterminate(false);
                 StatusText.Instance.UpdateInProgress(false);
-
             });
         });
 
@@ -483,10 +484,12 @@ namespace ClipboardApp.ViewModel.Main {
             // プログレスインジケータを表示
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             int count = contentItems.Count;
-
-            for (int i = 0; i < count; i++) {
-                int index = i; // Store the current index in a separate variable to avoid closure issues
-                Task task = Task.Run(() => {
+            Task.Run(() => {
+                ParallelOptions parallelOptions = new();
+                // 10並列
+                parallelOptions.MaxDegreeOfParallelism = 10;
+                Parallel.For(0, count, parallelOptions, (i) => {
+                    int index = i; // Store the current index in a separate variable to avoid closure issues
                     string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({index + 1}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItem item = contentItems[index];
@@ -494,16 +497,7 @@ namespace ClipboardApp.ViewModel.Main {
                     ContentItemCommands.CreateChatResult(item, promptItem.Name);
                     // Save
                     item.Save(false);
-                    // 10リクエスト毎に3秒待機
-                    if (index % 10 == 9) {
-                        System.Threading.Thread.Sleep(3000);
-                    }
                 });
-                taskList.Add(task);
-            }
-
-            Task.WhenAll(taskList).ContinueWith((obj) => {
-
                 // Execute if obj is an Action
                 if (afterExecuteAction is Action action) {
                     action();
