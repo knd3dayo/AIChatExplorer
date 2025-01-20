@@ -236,12 +236,12 @@ class OpenAIClient:
 
         # openai.
         # RateLimitErrorが発生した場合はリトライする
-        # リトライ回数は最大で5回
-        # リトライ間隔はcount**5秒
+        # リトライ回数は最大で3回
+        # リトライ間隔はcount*30秒
         # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
         # リトライ回数が5回以内で成功した場合は結果を返す
         count = 0
-        while count < 5:
+        while count < 3:
             try:
                 response = client.chat.completions.create(
                     **input_dict
@@ -249,7 +249,9 @@ class OpenAIClient:
                 break
             except RateLimitError as e:
                 count += 1
-                time.sleep(count*5)
+                # rate limit errorが発生した場合はリトライする旨を表示。英語
+                print(f"RateLimitError has occurred. Retry after {count*30} seconds.")
+                time.sleep(count*30)
                 if count == 5:
                     raise e
                             
@@ -288,12 +290,12 @@ class OpenAIClient:
         embedding_model_name = self.props.OpenAIEmbeddingModel
         
         # RateLimitErrorが発生した場合はリトライする
-        # リトライ回数は最大で5回
-        # リトライ間隔はcount**5秒
+        # リトライ回数は最大で3回
+        # リトライ間隔はcount*30秒
         # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
         # リトライ回数が5回以内で成功した場合は結果を返す
         count = 0
-        while count < 5:
+        while count < 3:
             try:
                 response = client.embeddings.create(
                     model=embedding_model_name,
@@ -302,7 +304,9 @@ class OpenAIClient:
                 break
             except RateLimitError as e:
                 count += 1
-                time.sleep(count*5)
+                # rate limit errorが発生した場合はリトライする旨を表示。英語
+                print(f"RateLimitError has occurred. Retry after {count*30} seconds.")
+                time.sleep(count*30)
                 if count == 5:
                     raise e
 

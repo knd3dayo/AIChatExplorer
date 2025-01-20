@@ -135,11 +135,11 @@ class LangChainVectorDB:
         # チャンクサイズ 
         chunk_size_list = []
         # textの長さが256以上の場合は256に分割
-        if len(text) > 256:
-            chunk_size_list.append(256)
+        # if len(text) > 256:
+        #     chunk_size_list.append(256)
         # textの長さが512以上の場合は512に分割
-        if len(text) > 512:
-            chunk_size_list.append(512)
+        # if len(text) > 512:
+        #     chunk_size_list.append(512)
         # textの長さが1024以上の場合は1024に分割
         if len(text) > 1024:
             chunk_size_list.append(1024)

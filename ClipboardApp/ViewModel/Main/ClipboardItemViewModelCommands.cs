@@ -408,13 +408,17 @@ namespace ClipboardApp.ViewModel.Main {
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             int count = items.Count;
             Task.Run(() => {
+                object lockObject = new();
+                int start_count = 0;
                 ParallelOptions parallelOptions = new();
                 // 10並列
                 parallelOptions.MaxDegreeOfParallelism = 10;
                 Parallel.For(0, count, parallelOptions, (i) => {
-
+                    lock (lockObject) {
+                        start_count++;
+                    }
                     int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{CommonStringResources.Instance.GenerateVectorInProgress} ({index + 1}/{count})";
+                    string message = $"{CommonStringResources.Instance.GenerateVectorInProgress} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItem item = items[index];
                     ContentItemCommands.UpdateEmbedding(item);
@@ -446,25 +450,28 @@ namespace ClipboardApp.ViewModel.Main {
                 return;
             }
             Task.Run(() => {
+                object lockObject = new();
+                int start_count = 0;
                 ParallelOptions parallelOptions = new();
                 // 10並列
                 parallelOptions.MaxDegreeOfParallelism = 10;
                 Parallel.For(0, count, parallelOptions, (i) => {
                     int index = i; // Store the current index in a separate variable to avoid closure issues
-                    Task task = Task.Run(() => {
-                        string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({index + 1}/{count})";
-                        StatusText.Instance.UpdateInProgress(true, message);
-                        var itemViewModel = MainWindowViewModel.Instance.SelectedItems[index];
+                    lock (lockObject) {
+                        start_count++;
+                    }
+                    string message = $"{CommonStringResources.Instance.TextExtractionInProgress} ({start_count}/{count})";
+                    StatusText.Instance.UpdateInProgress(true, message);
+                    var itemViewModel = MainWindowViewModel.Instance.SelectedItems[index];
 
-                        ContentItem item = itemViewModel.ContentItem;
-                        if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
-                            LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
-                            return;
-                        }
-                        ContentItemCommands.ExtractTextCommandExecute(item);
-                        // Save the item
-                        item.Save(false);
-                    });
+                    ContentItem item = itemViewModel.ContentItem;
+                    if (item.ContentType == ContentTypes.ContentItemTypes.Text) {
+                        LogWrapper.Error(CommonStringResources.Instance.CannotExtractTextForNonFileContent);
+                        return;
+                    }
+                    ContentItemCommands.ExtractTextCommandExecute(item);
+                    // Save the item
+                    item.Save(false);
                 });
                 LogWrapper.Info(CommonStringResources.Instance.TextExtractionCompleted);
                 MainWindowViewModel.Instance.UpdateIndeterminate(false);
@@ -485,12 +492,17 @@ namespace ClipboardApp.ViewModel.Main {
             MainWindowViewModel.Instance.UpdateIndeterminate(true);
             int count = contentItems.Count;
             Task.Run(() => {
+                object lockObject = new();
+                int start_count = 0;
                 ParallelOptions parallelOptions = new();
                 // 10並列
                 parallelOptions.MaxDegreeOfParallelism = 10;
                 Parallel.For(0, count, parallelOptions, (i) => {
+                    lock (lockObject) {
+                        start_count++;
+                    }
                     int index = i; // Store the current index in a separate variable to avoid closure issues
-                    string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({index + 1}/{count})";
+                    string message = $"{CommonStringResources.Instance.PromptTemplateInProgress(description)} ({start_count}/{count})";
                     StatusText.Instance.UpdateInProgress(true, message);
                     ContentItem item = contentItems[index];
 
