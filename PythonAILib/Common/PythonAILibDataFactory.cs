@@ -3,7 +3,6 @@ using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.Script;
 using PythonAILib.Model.Search;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
@@ -109,12 +108,6 @@ namespace PythonAILib.Common {
         // --- TagItem関連 ----------------------------------------------
         public ILiteCollection<T> GetTagCollection<T>() where T : TagItem {
             var collection = GetDatabase().GetCollection<T>(TAG_COLLECTION_NAME);
-            return collection;
-        }
-
-        // --- ScriptItem関連 ----------------------------------------------
-        public ILiteCollection<T> GetScriptCollection<T>() where T : ScriptItem {
-            var collection = GetDatabase().GetCollection<T>(SCRIPT_COLLECTION_NAME);
             return collection;
         }
 

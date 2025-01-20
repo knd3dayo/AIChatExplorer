@@ -3,18 +3,13 @@ using System.Runtime.CompilerServices;
 using Python.Runtime;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
-namespace PythonAILib.PythonIF
-{
+namespace PythonAILib.PythonIF {
     public class PythonExecutor {
         // String definition instance
         public static PythonAILibStringResources StringResources { get; } = PythonAILibStringResources.Instance;
 
-
-        // Template file for custom Python scripts
-        public static string TemplateScript { get; } = StringResources.TemplateScript;
-
         // Python script for OpenAI
-        public static string WpfAppCommonOpenAIScript {
+        public static string OpenAIScript {
             get {
                 string path = Path.Combine(PythonAILibPath, "ai_app_wrapper.py");
                 return path;
@@ -22,7 +17,7 @@ namespace PythonAILib.PythonIF
         }
 
         // Python script for Misc
-        public static string WpfAppCommonMiscScript {
+        public static string MiscScript {
             get {
                 string devPath = Path.Combine(PythonAILibPath, "dev");
                 string path = Path.Combine(devPath, "misc_app.py");
@@ -38,7 +33,9 @@ namespace PythonAILib.PythonIF
 
         private static string PathToVirtualEnv { get; set; } = "";
 
-        private static string PythonAILibPath { get; set; } = "python_ai_lib";
+        private static string PythonAILibPath { get; set; } = DefaultPythonAILibDir;
+
+        private const string DefaultPythonAILibDir = "python_ai_lib";
 
         private static IPythonAIFunctions? _pythonAIFunctions;
         public static IPythonAIFunctions PythonAIFunctions {
@@ -71,8 +68,8 @@ namespace PythonAILib.PythonIF
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv, string pythonAILibPathRoot, string httpsProxy, string noProxy) {
-            
+        public static void Init(string pythonPath, string pathToVirtualEnv, string appDataDir, string httpsProxy, string noProxy) {
+
             HttpsProxy = httpsProxy;
             NoProxy = noProxy;
 
@@ -80,23 +77,24 @@ namespace PythonAILib.PythonIF
             if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                 PathToVirtualEnv = pathToVirtualEnv;
             }
-            if (!string.IsNullOrEmpty(pythonAILibPathRoot)) {
+            if (!string.IsNullOrEmpty(appDataDir)) {
 
                 // ★TODO Pythonスクリプトをアプリケーション用ディレクトリにコピーする処理
                 // バージョンアップ時には、アプリケーション用ディレクトリにコピーする処理が必要となるが、
                 // 未実装のため、一旦コメントアウトしておく
-                // PythonAILibPath = Path.Combine(pythonAILibPathRoot, "python_ai_lib");
-
-                PythonAILibPath = "python_ai_lib";
+                PythonAILibPath = Path.Combine(appDataDir, DefaultPythonAILibDir);
 
                 // Check if the PythonAILibPath exists
                 if (!Directory.Exists(PythonAILibPath)) {
                     // ./pythonディレクトリをPythonAILibPathRootへコピーする
-                    Tools.CopyDirectory("python_ai_lib", PythonAILibPath, true);
+                    Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
                 }
             }
         }
 
+        private static void InitAutogenScripts(string pythonAILibPath) {
+
+        }
 
         private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath, string httpsProxy, string noProxy) {
             // Pythonスクリプトを実行するための準備
@@ -181,15 +179,6 @@ namespace PythonAILib.PythonIF
         // Load Python script
         public static string LoadPythonScript(string scriptName) {
             var file = new FileInfo(scriptName);
-            if (!file.Exists) {
-                // Load the template file
-
-                file = new FileInfo(TemplateScript);
-                if (!file.Exists) {
-                    throw new Exception(StringResources.TemplateScriptNotFound);
-                }
-                return File.ReadAllText(file.FullName);
-            }
             // Load the file
             string script = File.ReadAllText(file.FullName);
 

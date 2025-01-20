@@ -3,7 +3,6 @@ using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.Script;
 using PythonAILib.Model.Search;
 using PythonAILib.Model.Statistics;
 using PythonAILib.Model.Tag;
@@ -36,8 +35,6 @@ namespace PythonAILib.Common {
         // -- TagItem
         public ILiteCollection<T> GetTagCollection<T>() where T : TagItem;
 
-        // --- Python Script
-        public ILiteCollection<T> GetScriptCollection<T>() where T : ScriptItem;
 
         // --- Statistics
         public ILiteCollection<T> GetStatisticsCollection<T>() where T : MainStatistics;

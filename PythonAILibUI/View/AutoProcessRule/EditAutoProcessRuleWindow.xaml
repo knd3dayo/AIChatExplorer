@@ -253,7 +253,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Label
                     Grid.Row="0"
@@ -303,23 +302,6 @@
                     <RadioButton
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{x:Static res:ViewStringResources.ExecutePythonScript}"
-                        GroupName="ActionTypes"
-                        IsChecked="{Binding IsPythonScriptChecked}" />
-                    <!--  Pythonスクリプト一覧画面を表示するボタン  -->
-                    <Button
-                        Margin="10,3,10,3"
-                        Command="{Binding OpenSelectScriptWindowCommand, Mode=OneTime}"
-                        Content="{x:Static res:ViewStringResources.Select}" />
-                    <TextBox
-                        Margin="10,3,10,3"
-                        IsEnabled="False"
-                        Text="{Binding SelectedScriptItem.Name, Mode=OneTime}" />
-                </DockPanel>
-                <DockPanel Grid.Row="4" HorizontalAlignment="Stretch">
-                    <RadioButton
-                        Width="260"
-                        Margin="10,3,10,3"
                         Content="{x:Static res:ViewStringResources.ExecuteOpenAI}"
                         GroupName="ActionTypes"
                         IsChecked="{Binding IsPromptTemplateChecked}" />
@@ -334,7 +316,7 @@
                         Text="{Binding SelectedPromptItem.Name, Mode=OneTime}" />
                 </DockPanel>
                 <DockPanel
-                    Grid.Row="5"
+                    Grid.Row="4"
                     HorizontalAlignment="Stretch"
                     IsEnabled="{Binding IsPromptTemplateChecked}">
                     <Label
@@ -353,7 +335,7 @@
                     </ComboBox>
                 </DockPanel>
             </Grid>
-            <Grid Grid.Row="4" VerticalAlignment="Bottom">
+            <Grid Grid.Row="5" VerticalAlignment="Bottom">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>

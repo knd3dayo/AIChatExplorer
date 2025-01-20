@@ -60,7 +60,7 @@ namespace PythonAILib.PythonIF
                         };
 
             MaskedData actionResult = new(beforeTextList);
-            ExecPythonScript(PythonExecutor.WpfAppCommonMiscScript, (ps) => {
+            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "mask_data";
@@ -110,7 +110,7 @@ namespace PythonAILib.PythonIF
                             { "SpacyModel", SpacyModel }
                         };
             MaskedData actionResult = new(maskedTextList);
-            ExecPythonScript(PythonExecutor.WpfAppCommonMiscScript, (ps) => {
+            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "unmask_data";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -150,7 +150,7 @@ namespace PythonAILib.PythonIF
         public string ExtractTextFromImage(Image image, string tesseractExePath) {
             // Pythonスクリプトを実行する
             string result = "";
-            ExecPythonScript(PythonExecutor.WpfAppCommonMiscScript, (ps) => {
+            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text_from_image";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -212,7 +212,7 @@ namespace PythonAILib.PythonIF
         // スクリプトの内容とJSON文字列を引数に取り、結果となるJSON文字列を返す
         public string RunScript(string script, string input) {
             string resultString = "";
-            ExecPythonScript(PythonExecutor.WpfAppCommonMiscScript, (ps) => {
+            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_script";
@@ -229,7 +229,7 @@ namespace PythonAILib.PythonIF
 
             HashSet<string> actionResult = [];
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonMiscScript, (ps) => {
+            ExecPythonScript(PythonExecutor.MiscScript, (ps) => {
 
                 // SPACY_MODEL_NAMEが空の場合は例外をスロー
                 if (string.IsNullOrEmpty(SpacyModel)) {

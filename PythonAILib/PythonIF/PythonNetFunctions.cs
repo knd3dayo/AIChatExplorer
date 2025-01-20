@@ -67,7 +67,7 @@ namespace PythonAILib.PythonIF {
         // IPythonFunctionsのメソッドを実装
         public string ExtractFileToText(string path) {
             PythonScriptResult result = new();
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_text_from_file";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -98,7 +98,7 @@ namespace PythonAILib.PythonIF {
         public string HelloWorld() {
             string result = "";
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "hello_world";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -117,7 +117,7 @@ namespace PythonAILib.PythonIF {
             // ResultContainerを作成
             PythonScriptResult result = new();
 
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "extract_base64_to_text";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -149,7 +149,7 @@ namespace PythonAILib.PythonIF {
             // ChatResultを作成
             ChatResult chatResult = new();
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
@@ -225,7 +225,7 @@ namespace PythonAILib.PythonIF {
             ChatResult chatResult = new();
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_autogen_group_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -279,7 +279,7 @@ namespace PythonAILib.PythonIF {
             ChatResult chatResult = new();
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_autogen_normal_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -333,7 +333,7 @@ namespace PythonAILib.PythonIF {
             ChatResult chatResult = new();
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "run_autogen_nested_chat";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -381,7 +381,7 @@ namespace PythonAILib.PythonIF {
             Dictionary<string, dynamic?> result = [];
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 string function_name = "get_autogen_default_definition";
                 dynamic function_object = GetPythonFunction(ps, function_name);
@@ -401,7 +401,7 @@ namespace PythonAILib.PythonIF {
             List<VectorDBEntry> vectorSearchResults = [];
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
@@ -443,7 +443,7 @@ namespace PythonAILib.PythonIF {
         private void ExecutePythonScriptWrapper(string function_name, Func<dynamic, string> pythonFunction, PythonScriptResult result) {
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
                 // update_vector_db_index関数を呼び出す
@@ -559,7 +559,7 @@ namespace PythonAILib.PythonIF {
             LogWrapper.Info($"{PythonAILibStringResources.Instance.Data}:{dataJson}");
 
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, "export_to_excel");
                 // export_to_excel関数を呼び出す
@@ -572,7 +572,7 @@ namespace PythonAILib.PythonIF {
             // ResultContainerを作成
             CommonDataTable result = new([]);
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, "import_from_excel");
                 // import_from_excel関数を呼び出す
@@ -605,7 +605,7 @@ namespace PythonAILib.PythonIF {
             string function_name = "get_mime_type";
             string? contentType = "";
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, function_name);
 
@@ -628,7 +628,7 @@ namespace PythonAILib.PythonIF {
 
             long totalTokens = 0;
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, "get_token_count");
 
@@ -653,7 +653,7 @@ namespace PythonAILib.PythonIF {
             // ResultContainerを作成
             PythonScriptResult result = new();
             // Pythonスクリプトを実行する
-            ExecPythonScript(PythonExecutor.WpfAppCommonOpenAIScript, (ps) => {
+            ExecPythonScript(PythonExecutor.OpenAIScript, (ps) => {
                 // Pythonスクリプトの関数を呼び出す
                 dynamic function_object = GetPythonFunction(ps, "extract_webpage");
                 // extract_webpage関数を呼び出す

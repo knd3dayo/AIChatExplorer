@@ -11,6 +11,8 @@ namespace PythonAILib.Common {
 
         public string GetPathToVirtualEnv();
 
+        public string GetAutoGenDBPath();
+
         public string GetAppDataPath();
 
         public IDataFactory GetDataFactory();

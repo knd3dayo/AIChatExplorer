@@ -67,6 +67,12 @@ namespace ImageChat {
             return docDBPath;
 
         }
+
+        public string GetAutoGenDBPath() {
+            string dbPath = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "autogen.db");
+            return dbPath;
+        }
+
         public string GetAutoGenWorkDir() {
             string workDir = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "autogen");
             return workDir;

@@ -286,7 +286,7 @@
             <DockPanel Grid.Column="0" HorizontalAlignment="Left">
                 <Button
                     Width="100"
-                    Margin="10,10,10,10"
+                    Margin="10,0,10,5"
                     Command="{Binding AddItemCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.Add}" />
@@ -294,7 +294,7 @@
             <DockPanel Grid.Column="1" HorizontalAlignment="Right">
                 <Button
                     Width="100"
-                    Margin="10,10,10,10"
+                    Margin="10,0,10,5"
                     Command="{Binding SelectCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.Select}"
@@ -302,7 +302,7 @@
                     Visibility="{Binding SelectGroupChatModeVisibility}" />
                 <Button
                     Width="100"
-                    Margin="10,10,10,10"
+                    Margin="10,0,10,5"
                     Command="{Binding CloseCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
                     Content="{x:Static res:ViewStringResources.Close}"

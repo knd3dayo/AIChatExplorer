@@ -8,14 +8,11 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Model.Script;
 using QAChat.Model;
 using QAChat.View.Folder;
 using QAChat.View.PromptTemplate;
-using QAChat.View.PythonScript;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.PromptTemplate;
-using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoProcess {
@@ -127,14 +124,6 @@ namespace QAChat.ViewModel.AutoProcess {
                 OpenAIExecutionModeSelectedIndex = (int)promptAutoProcessItem.Mode;
 
             }
-            // ScriptAutoProcessItemの場合
-            else if (TargetAutoProcessRule.RuleAction is ScriptAutoProcessItem scriptAutoProcessItem) {
-                if (scriptAutoProcessItem.ScriptItem == null) {
-                    return;
-                }
-                IsPythonScriptChecked = true;
-                SelectedScriptItem = scriptAutoProcessItem.ScriptItem;
-            }
 
             OnPropertyChanged(nameof(Conditions));
 
@@ -171,10 +160,6 @@ namespace QAChat.ViewModel.AutoProcess {
         // SystemAutoProcessRuleのリスト
         public ObservableCollection<AutoProcessItemViewModel> AutoProcessItems { get; set; }
             = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.SystemAutoProcesses);
-
-        // ScriptAutoProcessRuleのリスト
-        public ObservableCollection<AutoProcessItemViewModel> ScriptAutoProcessItems { get; set; }
-            = new ObservableCollection<AutoProcessItemViewModel>(AutoProcessItemViewModel.ScriptAutoProcesses);
 
         // 自動処理ルールの条件リスト
         public ObservableCollection<AutoProcessRuleCondition> Conditions { get; set; } = [];
@@ -348,15 +333,6 @@ namespace QAChat.ViewModel.AutoProcess {
                 OnPropertyChanged(nameof(SelectedPromptItem));
             }
         }
-        // ScriptItem
-        private ScriptItem? _selectedScriptItem;
-        public ScriptItem? SelectedScriptItem {
-            get => _selectedScriptItem;
-            set {
-                _selectedScriptItem = value;
-                OnPropertyChanged(nameof(SelectedScriptItem));
-            }
-        }
 
         // 基本処理のラジオボタンが選択中かどうか
 
@@ -511,14 +487,6 @@ namespace QAChat.ViewModel.AutoProcess {
                 promptAutoProcessItem.Mode = OpenAIExecutionModeEnum;
                 TargetAutoProcessRule.RuleAction = promptAutoProcessItem;
             }
-            // IsPythonScriptCheckedがTrueの場合はSelectedScriptItemを追加
-            else if (IsPythonScriptChecked) {
-                if (SelectedScriptItem == null) {
-                    LogWrapper.Error(StringResources.SelectPythonScript);
-                    return;
-                }
-                TargetAutoProcessRule.RuleAction = new ScriptAutoProcessItem(SelectedScriptItem);
-            }
 
             // LiteDBに保存
             TargetAutoProcessRule.Save();
@@ -594,16 +562,6 @@ namespace QAChat.ViewModel.AutoProcess {
                 ListPromptTemplateWindowViewModel.ActionModeEum.Select, (promptItemViewModel, mode) => {
                     SelectedPromptItem = promptItemViewModel;
                 });
-        });
-
-        //OpenSelectScriptWindowCommand
-        public SimpleDelegateCommand<object> OpenSelectScriptWindowCommand => new((parameter) => {
-            // ラジオボタンをIsPythonScriptChecked = trueにする
-            IsPythonScriptChecked = true;
-            OnPropertyChanged(nameof(IsPythonScriptChecked));
-            ListPythonScriptWindow.OpenListPythonScriptWindow(ListPythonScriptWindowViewModel.ActionModeEnum.Select, (scriptItem) => {
-                SelectedScriptItem = scriptItem;
-            });
         });
 
         // OpenAIExecutionModeSelectionChangeCommand

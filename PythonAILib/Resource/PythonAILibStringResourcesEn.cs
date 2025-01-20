@@ -42,11 +42,6 @@ namespace PythonAILib.Resource {
         public override string PythonNotEnabledMessage { get; } = "Python is not enabled. Please set PythonExecute in the settings screen.";
 
         // --- PythonExecutor.cs ---
-        // Custom Python script template file
-        public override string TemplateScript { get; } = "python/script_template.py";
-
-        // Template file not found
-        public override string TemplateScriptNotFound { get; } = "Template file not found";
 
         // --- PythonNetFunctions.cs ---
         // Python DLL not found. Please check the path to the Python DLL:

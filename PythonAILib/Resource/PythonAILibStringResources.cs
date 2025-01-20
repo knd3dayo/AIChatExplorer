@@ -75,11 +75,6 @@ namespace PythonAILib.Resource {
         public virtual string PythonNotEnabledMessage { get; } = "Pythonが有効になっていません。設定画面でPythonExecuteを設定してください。";
 
         // --- PythonExecutor.cs ---
-        // カスタムPythonスクリプトの、templateファイル
-        public virtual string TemplateScript { get; } = "python/script_template.py";
-
-        // テンプレートファイルが見つかりません
-        public virtual string TemplateScriptNotFound { get; } = "テンプレートファイルが見つかりません";
 
         // --- PythonNetFunctions.cs ---
         // "PythonDLLが見つかりません。PythonDLLのパスを確認してください:"

@@ -15,7 +15,6 @@ using QAChat.View.AutoProcessRule;
 using QAChat.View.PromptTemplate;
 using QAChat.View.Tag;
 using QAChat.ViewModel.PromptTemplate;
-using QAChat.ViewModel.Script;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp {
@@ -107,10 +106,6 @@ namespace ClipboardApp {
         });
 
 
-        // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public static void OpenListPythonScriptWindowCommandExecute(object parameter) {
-            PythonCommands.OpenListPythonScriptWindowCommandExecute(parameter);
-        }
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public static void OpenListPromptTemplateWindowCommandExecute(MainWindowViewModel windowViewModel) {
             // ListPromptTemplateWindowを開く
@@ -132,10 +127,6 @@ namespace ClipboardApp {
         }
         #region 別Windowを開く処理
 
-        // メニューの「Pythonスクリプトを編集」をクリックしたときの処理
-        public SimpleDelegateCommand<object> OpenListPythonScriptWindowCommand => new((parameter) => {
-            OpenListPythonScriptWindowCommandExecute(parameter);
-        });
 
         // メニューの「プロンプトテンプレートを編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListPromptTemplateWindowCommand => new((parameter) => {

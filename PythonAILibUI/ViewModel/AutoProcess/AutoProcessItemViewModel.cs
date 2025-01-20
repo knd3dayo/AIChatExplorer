@@ -35,16 +35,6 @@ namespace QAChat.ViewModel.AutoProcess {
                 return autoProcesses;
             }
         }
-        // ScriptAutoProcessItemを取得
-        public static ObservableCollection<AutoProcessItemViewModel> ScriptAutoProcesses {
-            get {
-                ObservableCollection<AutoProcessItemViewModel> autoProcesses = [];
-                foreach (ScriptAutoProcessItem item in ScriptAutoProcessItem.GetScriptAutoProcessItems()) {
-                    autoProcesses.Add(new AutoProcessItemViewModel(item));
-                }
-                return autoProcesses;
-            }
-        }
 
         public bool IsCopyOrMoveOrMergeAction() {
             return AutoProcessItem.IsCopyOrMoveOrMergeAction();

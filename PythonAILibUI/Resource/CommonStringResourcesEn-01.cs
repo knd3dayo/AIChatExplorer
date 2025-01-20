@@ -265,12 +265,7 @@ namespace QAChat.Resource {
                 return $"{AppName} - {ListPythonScript}";
             }
         }
-        // Edit Python Script
-        public override string EditPythonScriptWindowTitle {
-            get {
-                return $"{AppName} - {EditPythonScript}";
-            }
-        }
+
         // Setting
         public override string SettingWindowTitle {
             get {

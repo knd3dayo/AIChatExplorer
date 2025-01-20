@@ -437,8 +437,7 @@ namespace QAChat.Resource {
         public virtual string EditTag { get; } = "タグ編集";
         // 自動処理ルール編集
         public virtual string EditAutoProcessRule { get; } = "自動処理ルール編集";
-        // Pythonスクリプト編集
-        public virtual string EditPythonScript { get; } = "Pythonスクリプト編集";
+
         // プロンプトテンプレート編集
         public virtual string EditPromptTemplate { get; } = "プロンプトテンプレート編集";
         // RAGソース編集

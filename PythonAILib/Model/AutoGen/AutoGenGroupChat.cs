@@ -7,13 +7,13 @@ namespace PythonAILib.Model.AutoGen {
         public LiteDB.ObjectId Id { get; set; } = LiteDB.ObjectId.NewObjectId();
 
         [JsonPropertyName("name")]
-        public string Name { get; set; } = "default";
+        public string Name { get; set; } = "";
 
         [JsonPropertyName("description")]
         public string Description { get; set; } = "";
 
         [JsonPropertyName("init_agent_name")]
-        public string InitAgentName { get; set; } = "user_proxy";
+        public string InitAgentName { get; set; } = "";
 
         [JsonPropertyName("agent_names")]
         public List<string> AgentNames { get; set; } = [];

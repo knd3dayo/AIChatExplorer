@@ -95,9 +95,6 @@ namespace ClipboardApp.View.Main {
         // EditTag
         public static string EditTag { get; set; } = CommonStringResources.Instance.EditTag;
 
-        // EditPythonScript
-        public static string EditPythonScript { get; set; } = CommonStringResources.Instance.EditPythonScript;
-
         // EditPromptTemplate
         public static string EditPromptTemplate { get; set; } = CommonStringResources.Instance.EditPromptTemplate;
 

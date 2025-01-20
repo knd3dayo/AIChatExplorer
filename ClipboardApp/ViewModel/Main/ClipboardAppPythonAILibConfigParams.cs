@@ -55,7 +55,6 @@ namespace ClipboardApp.ViewModel.Main {
             string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
             // Create database file path
             string dbPath = Path.Combine(appDataPath, "clipboard.db");
-
             return dbPath;
 
         }
@@ -68,6 +67,12 @@ namespace ClipboardApp.ViewModel.Main {
             string docDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_doc_store.db");
             return docDBPath;
         }
+
+        public string GetAutoGenDBPath() {
+            string dbPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen.db");
+            return dbPath;
+        }
+
         // AutoGenWorkDir
         public string GetAutoGenWorkDir() {
             string workDir = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "autogen");

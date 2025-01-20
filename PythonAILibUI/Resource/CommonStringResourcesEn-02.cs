@@ -63,8 +63,6 @@ namespace QAChat.Resource {
         // Edit Auto Process Rule
         public override string EditAutoProcessRule { get; } = "Edit Auto Process Rule";
         // Edit Python Script
-        public override string EditPythonScript { get; } = "Edit Python Script";
-        // Edit Prompt Template
         public override string EditPromptTemplate { get; } = "Edit Prompt Template";
         // Edit Git RAG Source
         public override string EditGitRagSource { get; } = "Edit Git RAG Source";

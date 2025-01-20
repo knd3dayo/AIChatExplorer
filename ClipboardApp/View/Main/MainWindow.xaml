@@ -113,12 +113,6 @@
                             Header="{x:Static res:ViewStringResources.EditAutoProcessRule}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenListPythonScriptWindowCommand, Mode=OneTime}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.EditPythonScript}"
-                            Visibility="{Binding EnableDevFeaturesVisibility}" />
-                        <MenuItem
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenListPromptTemplateWindowCommand, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.EditPromptTemplate}" />

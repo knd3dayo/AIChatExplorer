@@ -12,7 +12,6 @@ namespace PythonAILib.Model.AutoProcess {
             ExtractText,
             MergeAllItems,
             MergeItemsWithSameSourceApplicationTitle,
-            RunPythonScript,
             PromptTemplate,
         }
         public ObjectId? Id { get; set; } = ObjectId.Empty;

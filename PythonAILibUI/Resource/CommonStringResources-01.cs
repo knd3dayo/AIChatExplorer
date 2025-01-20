@@ -76,12 +76,6 @@ namespace QAChat.Resource {
                 return $"{AppName} - {ListPythonScript}";
             }
         }
-        // Pythonスクリプト編集
-        public virtual string EditPythonScriptWindowTitle {
-            get {
-                return $"{AppName} - {EditPythonScript}";
-            }
-        }
 
         // RAGソース(git)編集
         public virtual string EditGitRagSourceWindowTitle {
