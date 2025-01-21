@@ -1,4 +1,5 @@
 using System.Text;
+using PythonAILib.Common;
 using PythonAILib.PythonIF;
 
 namespace ClipboardApp.Settings {
@@ -102,8 +103,7 @@ namespace ClipboardApp.Settings {
         #endregion
         private TestResult TestSpacy() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
-                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList);
+            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
             StringBuilder stringBuilder = new();
             stringBuilder.AppendLine("def execute(input_str):");
             stringBuilder.AppendLine("    import spacy");

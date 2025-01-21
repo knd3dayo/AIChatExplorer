@@ -1,6 +1,7 @@
 using System.IO;
 using System.Runtime.CompilerServices;
 using Python.Runtime;
+using PythonAILib.Common;
 using PythonAILib.Resource;
 using PythonAILib.Utils.Common;
 namespace PythonAILib.PythonIF {
@@ -24,10 +25,8 @@ namespace PythonAILib.PythonIF {
                 return path;
             }
         }
-        // HttpsProxy
-        public static string HttpsProxy { get; set; } = "";
-        // NoProxy
-        public static string NoProxy { get; set; } = "";
+
+        private static IPythonAILibConfigParams? ConfigPrams;
 
         public static string? PythonPath { get; set; }
 
@@ -41,13 +40,10 @@ namespace PythonAILib.PythonIF {
         public static IPythonAIFunctions PythonAIFunctions {
             [MethodImpl(MethodImplOptions.Synchronized)]
             get {
-                if (string.IsNullOrEmpty(PythonPath)) {
+                if (string.IsNullOrEmpty(ConfigPrams?.GetAppDataPath())) {
                     throw new Exception(StringResources.PythonDLLNotFound);
                 }
-                if (_pythonAIFunctions == null) {
-                    InitPythonNet(PythonPath, PathToVirtualEnv, PythonAILibPath, HttpsProxy, NoProxy);
-                    _pythonAIFunctions = new PythonNetFunctions();
-                }
+                _pythonAIFunctions ??= new PythonNetFunctions();
                 return _pythonAIFunctions;
             }
         }
@@ -68,12 +64,12 @@ namespace PythonAILib.PythonIF {
             }
         }
         // Initialize Python functions
-        public static void Init(string pythonPath, string pathToVirtualEnv, string appDataDir, string httpsProxy, string noProxy) {
+        public static void Init(IPythonAILibConfigParams configPrams) {
+            ConfigPrams = configPrams;
 
-            HttpsProxy = httpsProxy;
-            NoProxy = noProxy;
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            string appDataDir = configPrams.GetAppDataPath();
 
-            PythonPath = pythonPath;
             if (!string.IsNullOrEmpty(pathToVirtualEnv)) {
                 PathToVirtualEnv = pathToVirtualEnv;
             }
@@ -89,20 +85,31 @@ namespace PythonAILib.PythonIF {
                     // ./pythonディレクトリをPythonAILibPathRootへコピーする
                     Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
                 }
+
+                InitPythonNet(configPrams);
             }
         }
 
         private static void InitAutogenScripts(string pythonAILibPath) {
 
+
+
         }
 
-        private static void InitPythonNet(string pythonDLLPath, string pathToVirtualEnv, string pythonAILibPath, string httpsProxy, string noProxy) {
+        private static void InitPythonNet(IPythonAILibConfigParams configPrams) {
             // Pythonスクリプトを実行するための準備
 
             // 既に初期化されている場合は初期化しない
             if (PythonEngine.IsInitialized) {
                 return;
             }
+
+            string pathToVirtualEnv = configPrams.GetPathToVirtualEnv();
+            string appDataDir = configPrams.GetAppDataPath();
+            string pythonDLLPath = configPrams.GetPythonDllPath();
+            string pythonAILibPath = PythonAILibPath;
+            string httpsProxy = configPrams.GetHttpsProxy();
+            string noProxy = configPrams.GetNoProxy();
 
             // PythonDLLのパスを設定
             Runtime.PythonDLL = pythonDLLPath;

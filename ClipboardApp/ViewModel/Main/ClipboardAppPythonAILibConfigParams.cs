@@ -9,7 +9,7 @@ using WpfAppCommon.Utils;
 namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
-        public string GetHttpProxy() {
+        public string GetHttpsProxy() {
             return ClipboardAppConfig.Instance.ProxyURL;
         }
         public string GetNoProxy() {

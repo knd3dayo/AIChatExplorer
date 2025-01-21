@@ -2,6 +2,7 @@ using System.Text;
 using System.Windows;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel;
+using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resource;
@@ -458,9 +459,7 @@ namespace ClipboardApp.Settings {
 
         private TestResult TestPython() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
-                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
-                );
+            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
             try {
                 string result = PythonExecutor.PythonAIFunctions.HelloWorld();
                 if (result != "Hello World") {
@@ -479,9 +478,8 @@ namespace ClipboardApp.Settings {
         }
         private TestResult TestOpenAI() {
             TestResult testResult = new();
-            PythonExecutor.Init(PythonDllPath, ClipboardAppConfig.Instance.PythonVenvPath, ClipboardAppConfig.Instance.AppDataFolder,
-                ClipboardAppConfig.Instance.ProxyURL, ClipboardAppConfig.Instance.NoProxyList
-                );
+            PythonExecutor.Init(PythonAILibManager.Instance.ConfigParams);
+
             try {
                 // ChatControllerを作成
                 ChatRequest chatRequest = new();

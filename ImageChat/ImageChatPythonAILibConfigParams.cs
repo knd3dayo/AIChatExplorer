@@ -8,7 +8,7 @@ using WpfAppCommon.Utils;
 namespace ImageChat {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
-        public string GetHttpProxy() {
+        public string GetHttpsProxy() {
             return ImageChatConfig.Instance.ProxyURL;
         }
         public string GetNoProxy() {
