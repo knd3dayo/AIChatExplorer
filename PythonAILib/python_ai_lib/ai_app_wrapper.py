@@ -5,7 +5,7 @@ from io import StringIO
 import sys
 sys.path.append("python")
 
-from ai_app_openai import OpenAIProps, OpenAIClient 
+from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
 from ai_app_vector_db import VectorDBProps
 from ai_app_autogen import AutoGenProps
 
@@ -91,6 +91,13 @@ def capture_generator_stdout_stderr(func):
 ########################
 # parametar関連
 ########################
+def get_request_context_objects(context_json: str) -> dict:
+    # ChatRequestContextからRequestContextを生成
+    props_dict = json.loads(context_json)
+    request_context_dict = props_dict["request_context"]
+    request_context = RequestContext(request_context_dict)
+    return request_context
+
 def get_openai_objects(context_json: str) -> tuple[OpenAIProps, OpenAIClient]:
     # ChatRequestContextからOpenAIPorpsを生成
     props_dict = json.loads(context_json)
@@ -118,11 +125,14 @@ def get_autogen_objects(openai_props: OpenAIProps,  context_json: str) -> AutoGe
 def run_openai_chat(context_json: str, request_json: str):
     # OpenAIチャットを実行する関数を定義
     def func() -> dict[str, Any]:
-        # ChatRequestContextからOpenAIPorps, OpenAIClientを生成
+        # context_jsonからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
+        # context_jsonからRequestContextを生成
+        request_context = get_request_context_objects(context_json)
+
         # request_jsonをdictに変換
         request = json.loads(request_json)
-        result:dict = ai_app.run_openai_chat(openai_props, request)
+        result:dict = ai_app.run_openai_chat(openai_props, request_context, request)
         return result
 
     # strout,stderrをキャプチャするラッパー関数を生成

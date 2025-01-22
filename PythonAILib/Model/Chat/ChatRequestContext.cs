@@ -5,7 +5,6 @@ using System.Text.Unicode;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.VectorDB;
-using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.Chat {
     // リクエストと共に送信するコンテキスト情報
@@ -28,12 +27,28 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("openai_props")]
         public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
 
+        // PromptTemplateText
+        [JsonPropertyName("prompt_template_text")]
+        public string PromptTemplateText { get; set; } = "";
+
+
+        public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
+
+        public SplitOnTokenLimitExceedMode SplitMode = SplitOnTokenLimitExceedMode.None;
+
         // ToDictList
         public Dictionary<string, object> ToDict() {
+            // RequestContext
+            Dictionary<string, object> requestContext = new() {
+                { "prompt_template_text", PromptTemplateText },
+                { "chat_mode", ChatMode.ToString() },
+                { "split_mode", SplitMode.ToString() },
+            };
             Dictionary<string, object> dict = new() {
                 { "vector_db_items", VectorSearchProperty.ToDictList(VectorSearchProperties) },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
+                { "request_context", requestContext },
             };
             return dict;
         }
@@ -42,8 +57,12 @@ namespace PythonAILib.Model.Chat {
             return JsonSerializer.Serialize(ToDict(), options);
         }
 
+       
+
         // CreateDefaultChatRequestContext 
-        public static ChatRequestContext CreateDefaultChatRequestContext(List<VectorSearchProperty> vectorSearchProperties , AutoGenGroupChat? groupChat ) {
+        public static ChatRequestContext CreateDefaultChatRequestContext(
+                OpenAIExecutionModeEnum mode, List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
+            ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             AutoGenProperties autoGenProperties;
 
@@ -62,6 +81,8 @@ namespace PythonAILib.Model.Chat {
                 VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 AutoGenProperties = autoGenProperties,
+                PromptTemplateText = promptTemplateText,
+                ChatMode = mode,
             };
 
             return chatRequestContext;

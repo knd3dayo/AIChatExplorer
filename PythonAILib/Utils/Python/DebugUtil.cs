@@ -117,21 +117,21 @@ namespace PythonAILib.Utils.Python {
         // Chatを実行するコマンド文字列を生成する。
         public static string CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
             // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequest.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequestContext.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
                 return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
             }
             // ModeがAutoGenの場合は、AutoGenのNormalChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
                 return string.Join("\n\n", DebugUtil.CreateAutoGenNormalChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
             }
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
@@ -139,7 +139,7 @@ namespace PythonAILib.Utils.Python {
                 return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
             }
             // ModeがAutoGenの場合は、AutoGenのNestedChatを実行するコマンドを返す
-            if (chatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);

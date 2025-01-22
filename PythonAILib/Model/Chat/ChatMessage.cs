@@ -54,6 +54,16 @@ namespace PythonAILib.Model.Chat {
             Content = text;
             Sources = sources;
         }
+        // Source
+
+        // Copy
+        public ChatMessage Copy() {
+            ChatMessage result = new(Role, Content, Sources) {
+                ImageURLs = ImageURLs,
+                SourceDocumentURL = SourceDocumentURL
+            };
+            return result;
+        }
 
         // ToDictList
         public Dictionary<string, object> ToDict() {

@@ -9,7 +9,7 @@ namespace PythonAILib.PythonIF {
 
         public string ExtractBase64ToText(string base64, string extension);
 
-        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatController);
+        public ChatResult OpenAIChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest);
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 

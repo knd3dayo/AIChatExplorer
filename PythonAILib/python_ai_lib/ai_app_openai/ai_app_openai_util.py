@@ -5,6 +5,15 @@ from mimetypes import guess_type
 from typing import Any, Type
 import tiktoken
 
+# リクエストコンテキスト
+class RequestContext:
+    prompt_template_text_name = "prompt_template_text"
+    chat_mode_name = "chat_mode" 
+    def __init__(self, request_context_dict: dict):
+        self.PromptTemplateText = request_context_dict.get(RequestContext.prompt_template_text_name, "")
+        self.ChatMode = request_context_dict.get(RequestContext.chat_mode_name, "Normal")
+        self.SplitMode = request_context_dict.get("split_mode", "None")
+
 class OpenAIProps:
     def __init__(self, props_dict: dict):
         
@@ -226,13 +235,29 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
 
-    def run_openai_chat(self, input_dict: dict) -> dict:
+    def run_openai_chat(self, request_context: RequestContext ,input_dict: dict) -> dict:
         # OpenAIのchatを実行する
         client = self.get_completion_client()
         # AzureOpenAIの場合はmax_tokensとstream=Falseを設定する
         if self.props.AzureOpenAI:
             input_dict["max_tokens"] = 4096
             input_dict["stream"] = False
+
+        # "messages"の最後の要素を取得する       
+        last_message = input_dict["messages"][-1]
+        for i in range(0, len(last_message["content"])):
+            if last_message["content"][i]["type"] == "text":
+                original_text = last_message["content"][i]["text"]
+                last_message["content"][i]["text"] = f"{request_context.PromptTemplateText}\n{original_text}"
+                break
+        # messagesの最後の要素を更新する
+        input_dict["messages"][-1] = last_message
+
+        if request_context.SplitMode != "None":
+            # input_dictのmessagesの最後の要素のみを取得する
+            last_message = input_dict["messages"][-1]
+            # input_dictのmessagesを更新する
+            input_dict["messages"] = [last_message]
 
         # openai.
         # RateLimitErrorが発生した場合はリトライする

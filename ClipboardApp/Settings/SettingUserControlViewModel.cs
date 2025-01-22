@@ -488,10 +488,11 @@ namespace ClipboardApp.Settings {
                 ChatMessage chatItem = new(ChatMessage.UserRole, "Hello");
                 chatItems.Add(chatItem);
                 chatRequest.ChatHistory = chatItems;
-                chatRequest.ChatMode = OpenAIExecutionModeEnum.Normal;
+
                 // ChatRequestContextを作成
                 ChatRequestContext chatRequestContext = new() {
                     OpenAIProperties = ClipboardAppConfig.Instance.CreateOpenAIProperties(),
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
                 };
 
                 string resultString = chatRequest.ExecuteChat(chatRequestContext, (message) => { })?.Output ?? "";

@@ -57,6 +57,15 @@ namespace ImageChat {
             return dbPath;
 
         }
+        public string GetPythonLibPath() {
+            /// Get AppData folder path
+            string appDataPath = ImageChatConfig.Instance.AppDataFolder;
+            // Create database file path
+            string path = Path.Combine(appDataPath, "python_ai_lib");
+            return path;
+
+        }
+
         public string GetSystemVectorDBPath() {
             string vectorDBPath = Path.Combine(ImageChatConfig.Instance.AppDataFolder, "imagechat_vector_db");
             return vectorDBPath;

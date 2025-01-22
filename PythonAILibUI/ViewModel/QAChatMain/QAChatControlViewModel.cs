@@ -57,12 +57,14 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(Temperature));
             }
         }
+
+        private OpenAIExecutionModeEnum _mode = OpenAIExecutionModeEnum.Normal;
         public int Mode {
             get {
-                return (int)ChatRequest.ChatMode;
+                return (int)_mode;
             }
             set {
-                ChatRequest.ChatMode = (OpenAIExecutionModeEnum)value;
+                _mode = (OpenAIExecutionModeEnum)value;
                 OnPropertyChanged(nameof(Mode));
             }
         }
@@ -115,12 +117,13 @@ namespace QAChat.ViewModel.QAChatMain {
         }
 
         // プロンプトの文字列
+        private string _PromptText = "";
         public string PromptText {
             get {
-                return ChatRequest.PromptTemplateText;
+                return _PromptText;
             }
             set {
-                ChatRequest.PromptTemplateText = value;
+                _PromptText = value;
                 OnPropertyChanged(nameof(PromptText));
             }
         }
@@ -143,8 +146,8 @@ namespace QAChat.ViewModel.QAChatMain {
                 foreach (var item in VectorSearchProperties) {
                     item.TopK = VectorDBSearchResultMax;
                 }
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
-                ChatRequest.UpdateMessage(chatRequestContext);
+                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateParameterJson(chatRequestContext, ChatRequest);
             }
         }
@@ -155,15 +158,20 @@ namespace QAChat.ViewModel.QAChatMain {
                 foreach (var item in VectorSearchProperties) {
                     item.TopK = VectorDBSearchResultMax;
                 }
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext([.. VectorSearchProperties], SelectedAutoGenGroupChat);
-                ChatRequest.UpdateMessage(chatRequestContext);
+                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
             }
         }
 
-
+        private ChatRequestContext CreateChatRequestContext() {
+            ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
+                _mode,                [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
+                );
+            return chatRequestContext;
+        }
         //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal);
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_mode != OpenAIExecutionModeEnum.Normal);
 
 
         // チャットを送信するコマンド
@@ -184,7 +192,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     foreach (var item in VectorSearchProperties) {
                         item.TopK = VectorDBSearchResultMax;
                     }
-                    ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
+                    ChatRequestContext chatRequestContext = CreateChatRequestContext();
 
                     // OpenAIChat or LangChainChatを実行
                     result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
@@ -259,11 +267,10 @@ namespace QAChat.ViewModel.QAChatMain {
         public SimpleDelegateCommand<RoutedEventArgs> ModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
-            int index = comboBox.SelectedIndex;
-            ChatRequest.ChatMode = (OpenAIExecutionModeEnum)index;
+            Mode = comboBox.SelectedIndex;
             // ModeがNormal以外の場合は、VectorDBItemを取得
             VectorSearchProperties = [];
-            if (ChatRequest.ChatMode != OpenAIExecutionModeEnum.Normal) {
+            if (_mode != OpenAIExecutionModeEnum.Normal) {
                 List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
                 foreach (var item in items) {
                     VectorSearchProperties.Add(item);
@@ -284,8 +291,9 @@ namespace QAChat.ViewModel.QAChatMain {
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
             if (routedEventArgs.OriginalSource is TabControl tabControl) {
                 // リクエストのメッセージをアップデート
-                ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext( [.. VectorSearchProperties], SelectedAutoGenGroupChat);
-                ChatRequest.UpdateMessage(chatRequestContext);
+                ChatRequestContext chatRequestContext = CreateChatRequestContext();
+
+                ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
@@ -358,7 +366,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Normal Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat);
+        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenNormalChat);
 
         // AutoGenNormalChatList
         public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
@@ -394,7 +402,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Group Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
+        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenGroupChat);
 
         // AutoGenGroupChatList
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
@@ -429,7 +437,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Nested Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNestedChatVisibility  => Tools.BoolToVisibility(ChatRequest.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat);
+        public Visibility AutoGenNestedChatVisibility  => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenNestedChat);
 
         // AutoGenNestedChatList
         public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {

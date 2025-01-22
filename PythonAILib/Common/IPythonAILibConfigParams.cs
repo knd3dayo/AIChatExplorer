@@ -3,6 +3,9 @@ namespace PythonAILib.Common {
 
         public string GetLang();
         public string GetPythonDllPath();
+        
+        public string GetPythonLibPath();
+
         public string GetDBPath();
 
         public string GetSystemVectorDBPath();

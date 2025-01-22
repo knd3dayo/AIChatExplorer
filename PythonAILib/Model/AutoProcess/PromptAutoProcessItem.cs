@@ -27,14 +27,14 @@ namespace PythonAILib.Model.AutoProcess {
 
             // PromptItemを取得
             PromptItem PromptItem = PromptItem.GetPromptItemById(PromptItemId);
-            chatRequest.PromptTemplateText = PromptItem.Prompt;
-            chatRequest.ChatMode = Mode;
             ContentFolder clipboardFolder = clipboardItem.GetFolder<ContentFolder>();
 
             // ChatRequestContentを作成
             ChatRequestContext chatRequestContent = new() {
                 OpenAIProperties = PythonAILibManager.Instance.ConfigParams.GetOpenAIProperties(),
-                VectorSearchProperties = [clipboardFolder.GetMainVectorSearchProperty()]
+                VectorSearchProperties = [clipboardFolder.GetMainVectorSearchProperty()],
+                PromptTemplateText = PromptItem.Prompt,
+                ChatMode = Mode
             };
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContent, (message) => { });

@@ -22,6 +22,8 @@ namespace ClipboardApp.ViewModel.Main {
         public string GetPythonDllPath() {
             return ClipboardAppConfig.Instance.PythonDllPath;
         }
+
+
         public string GetPathToVirtualEnv() {
             return ClipboardAppConfig.Instance.PythonVenvPath;
         }
@@ -58,6 +60,15 @@ namespace ClipboardApp.ViewModel.Main {
             return dbPath;
 
         }
+        public string GetPythonLibPath() {
+            /// Get AppData folder path
+            string appDataPath = ClipboardAppConfig.Instance.AppDataFolder;
+            // Create database file path
+            string path = Path.Combine(appDataPath, "python_ai_lib");
+            return path;
+        
+        }
+
         public string GetSystemVectorDBPath() {
             string vectorDBPath = Path.Combine(ClipboardAppConfig.Instance.AppDataFolder, "clipboard_vector_db");
             return vectorDBPath;

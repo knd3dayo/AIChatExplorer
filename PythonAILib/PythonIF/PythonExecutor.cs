@@ -1,3 +1,4 @@
+using System.Data.SQLite;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Python.Runtime;
@@ -90,9 +91,144 @@ namespace PythonAILib.PythonIF {
             }
         }
 
-        private static void InitAutogenScripts(string pythonAILibPath) {
+        private static void InitAutogenScripts() {
+            if (ConfigPrams == null) {
+                throw new Exception("ConfigPrams is not initialized.");
+            }
+
+            // search_wikipedia_ja
+            string toolName = "search_wikipedia_ja";
+            string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
+            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_app_autogen", "default_tools.py");
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // list_files_in_directory
+            toolName = "list_files_in_directory";
+            toolDescription = "This function lists the files in the specified directory.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // extract_file
+            toolName = "extract_file";
+            toolDescription = "This function extracts the specified file.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // check_file
+            toolName = "check_file";
+            toolDescription = "This function checks if the specified file exists.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // extract_webpage
+            toolName = "extract_webpage";
+            toolDescription = "This function extracts text and links from the specified URL of a web page.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // search_duckduckgo
+            toolName = "search_duckduckgo";
+            toolDescription = "This function searches DuckDuckGo with the specified keywords and returns related articles.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // save_text_file
+            toolName = "save_text_file";
+            toolDescription = "This function saves the specified text to a file.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // save_tools
+            toolName = "save_tools";
+            toolDescription = "This function saves the specified tools to a file.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // get_current_time
+            toolName = "get_current_time";
+            toolDescription = "This function returns the current time.";
+            UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
 
 
+        }
+        public static void UpdateAutoGenTool(string toolPath, string toolName, string toolDescription, bool overwrite) {
+            if (ConfigPrams == null) {
+                throw new Exception("ConfigPrams is not initialized.");
+            }
+            // SQLITE3 DBに接続
+            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            SQLiteConnection.CreateFile(autogenDBURL);
+            var sqlConnStr = new SQLiteConnectionStringBuilder(
+                $"Data Source={autogenDBURL};Version=3;"
+                );
+            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
+            // DBに接続
+            sqlConn.Open();
+            // DBにテーブルを作成
+            // テーブルが存在しない場合のみ作成
+            // toolsテーブル： ツールの情報を格納
+            // name: ツール名
+            // path: ツールのパス
+            // description: ツールの説明
+
+            using var cmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS tools (name TEXT, path TEXT, description TEXT)", sqlConn);
+            cmd.ExecuteNonQuery();
+            // ツールの情報をDBに登録
+            using var checkCmd = new SQLiteCommand("SELECT * FROM tools WHERE name = @name", sqlConn);
+            checkCmd.Parameters.AddWithValue("@name", "search_wikipedia_ja");
+            using var reader = checkCmd.ExecuteReader();
+            if (reader.HasRows == false) {
+
+                using var insertCmd = new SQLiteCommand("INSERT INTO tools (name, path, description) VALUES (@name, @path, @description)", sqlConn);
+                insertCmd.Parameters.AddWithValue("@name", toolName);
+                insertCmd.Parameters.AddWithValue("@path", toolPath);
+                insertCmd.Parameters.AddWithValue("@description", toolDescription);
+                insertCmd.ExecuteNonQuery();
+            } else if (overwrite) {
+                using var insertCmd = new SQLiteCommand("UPDATE tools SET path = @path, description = @description WHERE name = @name", sqlConn);
+                insertCmd.Parameters.AddWithValue("@name", toolName);
+                insertCmd.Parameters.AddWithValue("@path", toolPath);
+                insertCmd.Parameters.AddWithValue("@description", toolDescription);
+                insertCmd.ExecuteNonQuery();
+            }
+            // close
+            sqlConn.Close();
+
+        }
+
+        public static void UpdateAutoGenChat(string scriptPath, string functionName, string description, bool overwrite) {
+            if (ConfigPrams == null) {
+                throw new Exception("ConfigPrams is not initialized.");
+            }
+            // SQLITE3 DBに接続
+            string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
+            SQLiteConnection.CreateFile(autogenDBURL);
+            var sqlConnStr = new SQLiteConnectionStringBuilder(
+                $"Data Source={autogenDBURL};Version=3;"
+                );
+            using var sqlConn = new SQLiteConnection(sqlConnStr.ToString());
+            // DBに接続
+            sqlConn.Open();
+            // DBにテーブルを作成
+            // テーブルが存在しない場合のみ作成
+            // chatsテーブル： ツールの情報を格納
+            // name: ツール名
+            // path: ツールのパス
+            // description: ツールの説明
+            using var insertCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS chats (name TEXT, path TEXT, description TEXT)", sqlConn);
+            insertCmd.ExecuteNonQuery();
+            // チャット定義の情報をDBに登録
+            using var checkCmd = new SQLiteCommand("SELECT * FROM chats WHERE name = @name", sqlConn);
+            checkCmd.Parameters.AddWithValue("@name", functionName);
+            using var reader = checkCmd.ExecuteReader();
+            if (reader.HasRows == false) {
+                using var insertCmd2 = new SQLiteCommand("INSERT INTO chats (name, path, description) VALUES (@name, @path, @description)", sqlConn);
+                insertCmd2.Parameters.AddWithValue("@name", functionName);
+                insertCmd2.Parameters.AddWithValue("@path", scriptPath);
+                insertCmd2.Parameters.AddWithValue("@description", description);
+                insertCmd2.ExecuteNonQuery();
+            } else if (overwrite) {
+                using var insertCmd2 = new SQLiteCommand("UPDATE chats SET path = @path, description = @description WHERE name = @name", sqlConn);
+                insertCmd2.Parameters.AddWithValue("@name", functionName);
+                insertCmd2.Parameters.AddWithValue("@path", scriptPath);
+                insertCmd2.Parameters.AddWithValue("@description", description);
+                insertCmd2.ExecuteNonQuery();
+            }
+            // close
+            sqlConn.Close();
 
         }
 

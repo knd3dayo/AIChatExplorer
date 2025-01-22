@@ -20,10 +20,11 @@ namespace PythonAILib.Utils.Python {
         public static string CreateTextChatResult(ChatRequestContext chatRequestContext, PromptItem promptText, string content) {
             ChatRequest chatRequest = new() {
                 // NormalChat, OpenAI+RAG Chat, LangChainChatを実行
-                ChatMode = promptText.ChatType,
-                PromptTemplateText = promptText.Prompt,
                 ContentText = content,
             };
+
+            chatRequestContext.PromptTemplateText = promptText.Prompt;
+            chatRequestContext.ChatMode = promptText.ChatType;
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null) {
@@ -37,10 +38,11 @@ namespace PythonAILib.Utils.Python {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatController = new() {
-                    ChatMode = chatMode,
-                    PromptTemplateText = prompt,
                     ContentText = resultString,
                 };
+
+                chatRequestContext.ChatMode = chatMode;
+                chatRequestContext.PromptTemplateText = prompt;
 
                 ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
                 if (result != null) {
@@ -56,11 +58,11 @@ namespace PythonAILib.Utils.Python {
             string promptText = PromptStringResource.Instance.JsonStringListGenerationPrompt + "\n" + promptItem.Prompt;
             ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
-                ChatMode = promptItem.ChatType,
-                PromptTemplateText = promptText,
                 ContentText = content,
                 JsonMode = true
             };
+            chatRequestContext.PromptTemplateText = promptText;
+            chatRequestContext.ChatMode = promptItem.ChatType;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -76,11 +78,11 @@ namespace PythonAILib.Utils.Python {
         public static Dictionary<string, dynamic?> CreateDictionaryChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
             ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
-                ChatMode = promptItem.ChatType,
-                PromptTemplateText = promptItem.Prompt,
                 ContentText = content,
                 JsonMode = true
             };
+            chatRequestContext.ChatMode = promptItem.ChatType;
+            chatRequestContext.PromptTemplateText = promptItem.Prompt;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -94,11 +96,11 @@ namespace PythonAILib.Utils.Python {
         public static Dictionary<string, dynamic?> CreateTableChatResult(ChatRequestContext chatRequestContext, PromptItem promptItem, string content) {
             ChatRequest chatController = new() {
                 // OpenAI+RAG Chatを実行
-                ChatMode = promptItem.ChatType,
-                PromptTemplateText = promptItem.Prompt,
                 ContentText = content,
                 JsonMode = true
             };
+            chatRequestContext.ChatMode = promptItem.ChatType;
+            chatRequestContext.PromptTemplateText = promptItem.Prompt;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -112,8 +114,8 @@ namespace PythonAILib.Utils.Python {
         public static string ExtractTextFromImage(ChatRequestContext chatRequestContext, List<string> ImageBase64List) {
             ChatRequest chatController = new();
             // Normal Chatを実行
-            chatController.ChatMode = OpenAIExecutionModeEnum.Normal;
-            chatController.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
+            chatRequestContext.ChatMode = OpenAIExecutionModeEnum.Normal;
+            chatRequestContext.PromptTemplateText = PromptStringResource.Instance.ExtractTextRequest;
             chatController.ContentText = "";
             chatController.ImageURLs = ImageBase64List.Select(CreateImageURL).ToList();
             if (chatController.ImageURLs.Count == 0) {

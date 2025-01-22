@@ -144,6 +144,9 @@ namespace QAChat.ViewModel.ImageChat
             // ChatRequestContextを生成
             ChatRequestContext chatRequestContext = new() {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                PromptTemplateText = PromptText
+
             };
 
             // 画像イメージファイル名がない場合はエラー
@@ -167,10 +170,8 @@ namespace QAChat.ViewModel.ImageChat
                     // Base64に変換
                     List<string> imageBase64Strings = imageFileNames.Select(imageFileName => ChatUtil.CreateImageURLFromFilePath(imageFileName)).ToList();
 
-                    ChatController.ChatMode = OpenAIExecutionModeEnum.Normal;
                     ChatController.ImageURLs = imageBase64Strings;
                     ChatController.ContentText = InputText;
-                    ChatController.PromptTemplateText = PromptText;
                     // ChatRequestを送信してChatResultを受信
                     result = ChatController.ExecuteChat(chatRequestContext, (message) => { });
 

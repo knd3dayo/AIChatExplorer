@@ -3,7 +3,7 @@ from typing import Any, Tuple, Generator
 import tempfile
 import base64
 
-from ai_app_openai import OpenAIProps, OpenAIClient
+from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
 from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
@@ -88,9 +88,9 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, request: dict) -> Tuple[str, str]:
+def run_openai_chat(openai_props: OpenAIProps, request_context: RequestContext, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
-    return openai_client.run_openai_chat(request)
+    return openai_client.run_openai_chat(request_context, request)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)
