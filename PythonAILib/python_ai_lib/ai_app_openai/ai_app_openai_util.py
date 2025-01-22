@@ -4,6 +4,7 @@ import base64
 from mimetypes import guess_type
 from typing import Any, Type
 import tiktoken
+from ai_app_vector_db import VectorDBProps
 
 # リクエストコンテキスト
 class RequestContext:
@@ -146,6 +147,21 @@ class OpenAIProps:
         if json_mode:
             params["response_format"]= {"type": "json_object"}
         return params
+    
+    @staticmethod
+    def create_openai_chat_parameter_dict_simple(model: str, prompt: str, templature : float =0.5, json_mode : bool = False) -> dict:
+        # messagesの作成
+        messages = []
+        messages.append({"role": "user", "content": prompt})
+        # 入力パラメーターの設定
+        params : dict [ str, Any]= {}
+        params["messages"] = messages
+        params["model"] = model
+        if templature:
+            params["temperature"] = templature
+        if json_mode:
+            params["response_format"] = {"type": "json_object"}
+        return params
 
     # openai_chat_with_vision用のパラメーターを作成する
     @staticmethod
@@ -235,36 +251,132 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
 
-    def run_openai_chat(self, request_context: RequestContext ,input_dict: dict) -> dict:
-        # OpenAIのchatを実行する
-        client = self.get_completion_client()
-        # AzureOpenAIの場合はmax_tokensとstream=Falseを設定する
-        if self.props.AzureOpenAI:
-            input_dict["max_tokens"] = 4096
-            input_dict["stream"] = False
-
+    def split_message(self, message_list: list[str]) -> list[str]:
+        # token_countが80KBを超える場合は分割する
+        result_message_list = []
+        temp_message_list = []
+        total_token_count = 0
+        for i in range(0, len(message_list)):
+            message = message_list[i] + "\n"
+            token_count = self.get_token_count(message)
+            # total_token_count + token_countが80KBを超える場合はtemp_message_listをresult_message_listに追加する
+            if total_token_count + token_count > 80000:
+                result_message_list.append(temp_message_list)
+                temp_message_list = []
+                total_token_count = 0
+            temp_message_list.append(message)
+            total_token_count += token_count
+        # temp_message_listが空でない場合はresult_message_listに追加する
+        if len(temp_message_list) > 0:
+            result_message_list.append(temp_message_list)
+        # result_message_listを返す
+        return result_message_list
+    
+    def pre_process_input(self, vector_db_items: list[VectorDBProps], request_context:RequestContext, last_message: dict) -> list[dict]:
         # "messages"の最後の要素を取得する       
-        last_message = input_dict["messages"][-1]
+        last_text_content_index = -1
         for i in range(0, len(last_message["content"])):
             if last_message["content"][i]["type"] == "text":
-                original_text = last_message["content"][i]["text"]
-                last_message["content"][i]["text"] = f"{request_context.PromptTemplateText}\n{original_text}"
+                last_text_content_index = i
                 break
-        # messagesの最後の要素を更新する
-        input_dict["messages"][-1] = last_message
-
+        # last_text_content_indexが-1の場合はエラーをraiseする
+        if last_text_content_index == -1:
+            raise ValueError("last_text_content_index is -1")
+        # queryとして最後のtextを取得する
+        original_last_message = last_message["content"][last_text_content_index]["text"]
+        # request_contextのSplitModeがNone以外の場合はoriginal_last_messageを改行毎にtokenをカウントして、
+        # 80KBを超える場合は分割する
+        # 結果はresult_messagesに格納する
+        result_messages = []
         if request_context.SplitMode != "None":
-            # input_dictのmessagesの最後の要素のみを取得する
-            last_message = input_dict["messages"][-1]
-            # input_dictのmessagesを更新する
-            input_dict["messages"] = [last_message]
+            target_messages = self.split_message(original_last_message.split("\n"))
+        else:
+            target_messages = [original_last_message]
 
+        for target_message in target_messages:
+            # ベクトル検索用の文字列としてqueryにtarget_messageを設定する
+            query = target_message
+            # context_message 
+            context_message = ""
+            if len(request_context.PromptTemplateText) > 0:
+                context_message = request_context.PromptTemplateText
+            # chat_modeがNormal以外の場合はベクトル検索を実施
+            if request_context.ChatMode != "Normal":
+                from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
+                from ai_app_langchain.langchain_vector_db import LangChainVectorDB
+                params:VectorSearchParameter = VectorSearchParameter(self.props, vector_db_items, query)
+                vector_search_result = LangChainVectorDB.vector_search(params)
+                vector_search_results = [ document["content"] for document in vector_search_result["documents"]]
+                context_message = "\n".join(vector_search_results)
+            # last_messageをdeepcopyする
+            result_last_message = last_message.copy()
+            # result_last_messageのcontentの最後の要素を更新する
+            result_last_message["content"][last_text_content_index]["text"] = f"{context_message}\n{target_message}"
+            # result_messagesに追加する
+            result_messages.append(result_last_message)
+        return result_messages
+        
+    def run_openai_chat(self, vector_db_items: list[VectorDBProps], request_context: RequestContext ,input_dict: dict) -> dict:
+
+        # pre_process_inputを実行する
+        pre_processed_input_list = self.pre_process_input(vector_db_items, request_context, input_dict)
+        chat_result_dict_list = []
+
+        for pre_processed_input in pre_processed_input_list:
+            # input_dictのmessagesの最後の要素のみを取得する
+            copied_input_dict = input_dict.copy()
+
+            # split_modeがNone以外の場合はinput_dictのmessagesの最後の要素のみを取得する
+            if request_context.SplitMode != "None":
+                copied_input_dict["messages"] = [pre_processed_input]
+            else:
+                copied_input_dict["messages"][-1] = pre_processed_input
+
+            # chatを実行する
+            chat_result_dict = self.openai_chat(copied_input_dict)
+            # chat_result_dictをchat_result_dict_listに追加する
+            chat_result_dict_list.append(chat_result_dict)
+        # chat_result_dict_listのサイズが1の場合はchat_result_dict_list[0]を返す
+        if len(chat_result_dict_list) == 1:
+            return chat_result_dict_list[0]
+        # chat_result_dict_listのサイズが1より大きい場合はoutputの内容を連結してサマライズ用のoutputを作成する
+        else:
+            summary_prompt_text = ""
+            if len(request_context.PromptTemplateText) > 0:
+                summary_prompt_text = f"""
+                The following text is a document that was split into several parts, and based on the instructions of [{request_context.PromptTemplateText}], 
+                the AI-generated responses were combined. 
+                Since it is merely a concatenation, there might be sections where the text does not flow well. 
+                Please reshape the text to improve its coherence. 
+                The output language should be the same as the original text (English if the original text is in English, Japanese if the original text is in Japanese).
+                """
+
+            else:
+                summary_prompt_text = """
+                The following text is a document that has been divided into several parts, with AI-generated responses combined.
+                Since it is merely a concatenation, there might be sections where the text does not flow well. 
+                Please restructure the text to improve its coherence. 
+                The output language should be the same as the original text (English if the original text is in English, Japanese if the original text is in Japanese).
+                """
+            summary_input =  summary_prompt_text + "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
+            total_tokens = sum([chat_result_dict["total_tokens"] for chat_result_dict in chat_result_dict_list])
+            # openai_chatの入力用のdictを作成する
+            summary_input_dict = OpenAIProps.create_openai_chat_parameter_dict_simple(input_dict["model"], summary_input, input_dict.get("temperature", 0.5), input_dict.get("json_mode", False))
+            # chatを実行する
+            summary_result_dict = self.openai_chat(summary_input_dict)
+            # total_tokensを更新する
+            summary_result_dict["total_tokens"] = total_tokens + summary_result_dict["total_tokens"]
+            return summary_result_dict
+    
+    def openai_chat(self, input_dict: dict) -> dict:
         # openai.
         # RateLimitErrorが発生した場合はリトライする
         # リトライ回数は最大で3回
         # リトライ間隔はcount*30秒
         # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
         # リトライ回数が5回以内で成功した場合は結果を返す
+        # OpenAIのchatを実行する
+        client = self.get_completion_client()
         count = 0
         while count < 3:
             try:
@@ -286,26 +398,8 @@ class OpenAIClient:
         content = response.choices[0].message.content
         # dictにして返す
         return {"output": content, "total_tokens": total_tokens}
-    
-    def openai_chat(self, input_json: str, json_mode: bool = False, temperature=None) -> dict:
-        # 入力パラメーターの設定
-        model = self.props.OpenAICompletionModel
-        params = OpenAIProps.create_openai_chat_parameter_dict(model, input_json, temperature, json_mode)
-        return self.run_openai_chat(params)
 
-    def openai_chat_with_vision(self, prompt: str, image_file_name_list:list, temperature=None, json_mode=False) -> dict:
-        
-        # AzureOpenAIの場合はmax_tokensを設定する
-        if self.props.AzureOpenAI:
-            max_tokens = 4096
-        else:
-            max_tokens = None
 
-        # openai_chat_with_vision用のパラメーターを作成する
-        params = OpenAIProps.create_openai_chat_with_vision_parameter_dict(self.props.OpenAICompletionModel, prompt, image_file_name_list, temperature, json_mode, max_tokens)
-
-        return self.run_openai_chat(params)
-    
     def openai_embedding(self, input_text: str):
         
         # OpenAIのchatを実行する

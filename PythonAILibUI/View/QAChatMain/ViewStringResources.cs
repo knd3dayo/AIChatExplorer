@@ -51,8 +51,32 @@ namespace QAChat.View.QAChatMain {
         // Setting
         public static string Setting => CommonStringResources.Instance.Setting;
 
-        // Mode
-        public static string Mode => CommonStringResources.Instance.Mode;
+        // ChatMode
+        public static string ChatMode => CommonStringResources.Instance.ChatMode;
+
+        // ChatMode_OpenAI
+        public static string ChatMode_OpenAI => CommonStringResources.Instance.ChatMode_OpenAI;
+
+        // ChatMode_OpenAI_RAG
+        public static string ChatMode_OpenAI_RAG => CommonStringResources.Instance.ChatMode_OpenAI_RAG;
+
+        // ChatMode_AutoGen_GroupChat
+        public static string ChatMode_AutoGen_GroupChat => CommonStringResources.Instance.ChatMode_AutoGen_GroupChat;
+
+        // ChatMode_AutoGen_NormalChat
+        public static string ChatMode_AutoGen_NormalChat => CommonStringResources.Instance.ChatMode_AutoGen_NormalChat;
+
+        // ChatMode_AutoGen_NestedChat
+        public static string ChatMode_AutoGen_NestedChat => CommonStringResources.Instance.ChatMode_AutoGen_NestedChat;
+
+        // SplitMode
+        public static string SplitMode => CommonStringResources.Instance.SplitMode;
+
+        // SplitMode_None
+        public static string SplitMode_None => CommonStringResources.Instance.SplitMode_None;
+
+        // SplitMode_SplitIfExceedMaxToken
+        public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedMaxToken;
 
         // VectorDB
         public static string VectorDB => CommonStringResources.Instance.VectorDB;

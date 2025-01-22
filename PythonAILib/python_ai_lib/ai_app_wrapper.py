@@ -127,12 +127,14 @@ def run_openai_chat(context_json: str, request_json: str):
     def func() -> dict[str, Any]:
         # context_jsonからOpenAIPorps, OpenAIClientを生成
         openai_props, _ = get_openai_objects(context_json)
+        # context_jsonからVectorDBPropsを生成
+        vector_db_items = get_vector_db_objects(context_json)
         # context_jsonからRequestContextを生成
         request_context = get_request_context_objects(context_json)
 
         # request_jsonをdictに変換
         request = json.loads(request_json)
-        result:dict = ai_app.run_openai_chat(openai_props, request_context, request)
+        result:dict = ai_app.run_openai_chat(openai_props, vector_db_items, request_context, request)
         return result
 
     # strout,stderrをキャプチャするラッパー関数を生成

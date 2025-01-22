@@ -24,7 +24,8 @@ namespace PythonAILib.Utils.Python {
             };
 
             chatRequestContext.PromptTemplateText = promptText.Prompt;
-            chatRequestContext.ChatMode = promptText.ChatType;
+            chatRequestContext.ChatMode = promptText.ChatMode;
+            chatRequestContext.SplitMode = promptText.SplitMode;
 
             ChatResult? result = chatRequest.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null) {
@@ -34,7 +35,7 @@ namespace PythonAILib.Utils.Python {
         }
 
         // Chatを実行した結果を次の質問に渡すことを繰り返して文字列の結果を取得する
-        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, ChatRequestContext chatRequestContext, List<string> promptList, string content) {
+        public static string CreateTextChatResult(OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , ChatRequestContext chatRequestContext, List<string> promptList, string content) {
             string resultString = content;
             foreach (string prompt in promptList) {
                 ChatRequest chatController = new() {
@@ -43,6 +44,7 @@ namespace PythonAILib.Utils.Python {
 
                 chatRequestContext.ChatMode = chatMode;
                 chatRequestContext.PromptTemplateText = prompt;
+
 
                 ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
                 if (result != null) {
@@ -62,7 +64,8 @@ namespace PythonAILib.Utils.Python {
                 JsonMode = true
             };
             chatRequestContext.PromptTemplateText = promptText;
-            chatRequestContext.ChatMode = promptItem.ChatType;
+            chatRequestContext.ChatMode = promptItem.ChatMode;
+            chatRequestContext.SplitMode = promptItem.SplitMode;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -81,8 +84,9 @@ namespace PythonAILib.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.ChatMode = promptItem.ChatType;
+            chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
+            chatRequestContext.SplitMode = promptItem.SplitMode;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -99,8 +103,9 @@ namespace PythonAILib.Utils.Python {
                 ContentText = content,
                 JsonMode = true
             };
-            chatRequestContext.ChatMode = promptItem.ChatType;
+            chatRequestContext.ChatMode = promptItem.ChatMode;
             chatRequestContext.PromptTemplateText = promptItem.Prompt;
+            chatRequestContext.SplitMode = promptItem.SplitMode;
 
             ChatResult? result = chatController.ExecuteChat(chatRequestContext, (message) => { });
             if (result != null && !string.IsNullOrEmpty(result.Output)) {
@@ -201,5 +206,7 @@ namespace PythonAILib.Utils.Python {
             string result = CreateImageURL(base64String);
             return result;
         }
+
+
     }
 }

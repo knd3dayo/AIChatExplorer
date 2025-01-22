@@ -88,9 +88,9 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
 ########################
 # openai関連
 ########################
-def run_openai_chat(openai_props: OpenAIProps, request_context: RequestContext, request: dict) -> Tuple[str, str]:
+def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], request_context: RequestContext, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
-    return openai_client.run_openai_chat(request_context, request)
+    return openai_client.run_openai_chat(vector_db_items, request_context, request)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)

@@ -23,7 +23,10 @@ namespace PythonAILib.Model.Prompt {
         public PromptResultTypeEnum PromptResultType { get; set; } = PromptResultTypeEnum.TextContent;
 
         // チャットタイプ
-        public OpenAIExecutionModeEnum ChatType { get; set; } = OpenAIExecutionModeEnum.Normal;
+        public OpenAIExecutionModeEnum ChatMode { get; set; } = OpenAIExecutionModeEnum.Normal;
+
+        // 分割モード
+        public SplitOnTokenLimitExceedModeEnum SplitMode { get; set; } = SplitOnTokenLimitExceedModeEnum.None;
 
         // プロンプトの出力タイプ
         public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
@@ -96,7 +99,7 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.TitleGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
                     PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
 
                 };
@@ -119,7 +122,7 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                    ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
                 var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
@@ -142,7 +145,7 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.SummaryGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -165,7 +168,7 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TableContent,
-                    ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                    ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -187,7 +190,7 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.DocumentReliabilityCheckPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatType = OpenAIExecutionModeEnum.Normal,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
                     PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };

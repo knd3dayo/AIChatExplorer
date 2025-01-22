@@ -32,8 +32,27 @@ namespace QAChat.View.PromptTemplate {
         // 入力となるプロンプトテンプレート
         public static string PromptInputName { get; set; } = CommonStringResources.Instance.PromptInputName;
 
-        // Chatタイプ
-        public static string ChatType { get; set; } = CommonStringResources.Instance.ChatType;
+        // Chatモード
+        public static string ChatMode { get; set; } = CommonStringResources.Instance.ChatMode;
+
+        // ChatMode_OpenAI
+        public static string ChatMode_OpenAI => CommonStringResources.Instance.ChatMode_OpenAI;
+
+        // ChatMode_OpenAI_RAG
+        public static string ChatMode_OpenAI_RAG => CommonStringResources.Instance.ChatMode_OpenAI_RAG;
+
+
+        // 分割モード
+        public static string SplitMode { get; set; } = CommonStringResources.Instance.SplitMode;
+
+        // SplitMode_None
+        public static string SplitMode_None => CommonStringResources.Instance.SplitMode_None;
+
+        // SplitMode_SplitIfExceedMaxToken
+        public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedMaxToken;
+
+
+
         // 出力形式
         public static string OutputType { get; set; } = CommonStringResources.Instance.OutputType;
 

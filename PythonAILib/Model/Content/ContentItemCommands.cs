@@ -57,6 +57,7 @@ namespace PythonAILib.Model.Content {
             // CreateChatResultを実行
             ContentItemCommands.CreateChatResult(item, promptItem);
         }
+
         // 文章の信頼度を判定する
         public static void CheckDocumentReliability(ContentItem item) {
 
@@ -78,7 +79,7 @@ namespace PythonAILib.Model.Content {
             };
 
             Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
-                ChatType = OpenAIExecutionModeEnum.OpenAIRAG,
+                ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
                 Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
             // responseからキー：reliabilityを取得
@@ -125,14 +126,17 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorSearchProperty> vectorSearchProperties = promptItem.ChatType switch {
+            List<VectorSearchProperty> vectorSearchProperties = promptItem.ChatMode switch {
                 OpenAIExecutionModeEnum.OpenAIRAG => item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
                 _ => []
             };
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchProperties = vectorSearchProperties,
-                OpenAIProperties = openAIProperties
+                OpenAIProperties = openAIProperties,
+                PromptTemplateText = promptItem.Prompt,
+                ChatMode = promptItem.ChatMode,
+                SplitMode = promptItem.SplitMode
             };
 
 

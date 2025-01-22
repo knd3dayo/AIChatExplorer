@@ -207,8 +207,35 @@ namespace QAChat.Resource {
         // ImportFromRULList
         public override string ImportFromRULList { get; } = "Import from URL List";
 
-        // Mode
-        public override string Mode { get; } = "Mode";
+        // ChatMode
+        public override string ChatMode { get; } = "Chat Mode";
+
+        // OpenAI
+        public override string ChatMode_OpenAI { get; } = "OpenAI";
+
+        // OpenAI+RAG
+        public override string ChatMode_OpenAI_RAG { get; } = "OpenAI+RAG";
+
+        // AutoGen GroupChat
+        public override string ChatMode_AutoGen_GroupChat { get; } = "AutoGen GroupChat";
+
+        // AutoGen NormalChat
+        public override string ChatMode_AutoGen_NormalChat { get; } = "AutoGen NormalChat";
+
+        // AutoGen NestedChat
+        public override string ChatMode_AutoGen_NestedChat { get; } = "AutoGen NestedChat";
+
+        // 分割モード
+        public override string SplitMode { get; } = "Request Split Mode";
+
+        // 分割モード なし
+        public override string SplitMode_None { get; } = "None";
+
+        // 分割モード 最大トークン数を超えそうな場合はリクエストを分割
+        public override string SplitMode_SplitIfExceedMaxToken { get; } = "Split request if it seems to exceed the maximum token count";
+
+        // PromptTextIsNeededWhenSplitModeIsEnabled
+        public override string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "Prompt text is needed when split mode is enabled";
 
         // List of Auto Process Rules
         public override string ListAutoProcessRule { get; } = "List of Auto Process Rules";
@@ -575,8 +602,6 @@ namespace QAChat.Resource {
         // 入力となるプロンプトテンプレート
         public override string PromptInputName { get; } = "Prompt Input Name";
 
-        // Chatタイプ
-        public override string ChatType { get; } = "Chat Type";
         // 出力形式
         public override string OutputType { get; } = "Output Type";
         // 文字列

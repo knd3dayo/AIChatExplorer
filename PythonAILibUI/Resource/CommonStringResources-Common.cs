@@ -105,7 +105,34 @@ namespace QAChat.Resource {
         public virtual string ImportFromRULList { get; } = "URLリストからインポート";
 
         // モード
-        public virtual string Mode { get; } = "モード";
+        public virtual string ChatMode { get; } = "チャットモード";
+
+        // OpenAI
+        public virtual string ChatMode_OpenAI { get; } = "OpenAI";
+
+        // OpenAI_RAG
+        public virtual string ChatMode_OpenAI_RAG { get; } = "OpenAI_RAG";
+
+        // AutoGen_GroupChat
+        public virtual string ChatMode_AutoGen_GroupChat { get; } = "AutoGen_GroupChat";
+
+        // AutoGen_NormalChat
+        public virtual string ChatMode_AutoGen_NormalChat { get; } = "AutoGen_NormalChat";
+
+        // AutoGent_NestedChat
+        public virtual string ChatMode_AutoGen_NestedChat { get; } = "AutoGen_NestedChat";
+
+        // 分割モード
+        public virtual string SplitMode { get; } = "リクエスト分割モード";
+
+        // 分割モード なし
+        public virtual string SplitMode_None { get; } = "なし";
+
+        // 分割モード 最大トークン数を超えそうな場合はリクエストを分割
+        public virtual string SplitMode_SplitIfExceedMaxToken { get; } = "最大トークン数を超えそうな場合はリクエストを分割";
+
+        // PromptTextIsNeededWhenSplitModeIsEnabled
+        public virtual string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "分割モードが有効な場合はプロンプトテキストが必要です";
 
         // 貼り付け
         public virtual string Paste { get; } = "貼り付け";

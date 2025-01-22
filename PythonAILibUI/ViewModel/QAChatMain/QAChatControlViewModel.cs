@@ -8,7 +8,6 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using QAChat.Model;
-using QAChat.Resource;
 using QAChat.View.PromptTemplate;
 using QAChat.View.QAChatMain;
 using QAChat.View.VectorDB;
@@ -25,7 +24,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
             QAChatStartupProps = props;
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
-            VectorSearchProperties = [..  props.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
+            VectorSearchProperties = [.. props.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties()];
 
             // InputTextを設定
             InputText = QAChatStartupProps.ContentItem?.Content ?? "";
@@ -58,16 +57,27 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-        private OpenAIExecutionModeEnum _mode = OpenAIExecutionModeEnum.Normal;
-        public int Mode {
+        private OpenAIExecutionModeEnum _chatMode = OpenAIExecutionModeEnum.Normal;
+        public int ChatMode {
             get {
-                return (int)_mode;
+                return (int)_chatMode;
             }
             set {
-                _mode = (OpenAIExecutionModeEnum)value;
-                OnPropertyChanged(nameof(Mode));
+                _chatMode = (OpenAIExecutionModeEnum)value;
+                OnPropertyChanged(nameof(ChatMode));
             }
         }
+        private SplitOnTokenLimitExceedModeEnum _splitMode = SplitOnTokenLimitExceedModeEnum.None;
+        public int SplitMode {
+            get {
+                return (int)_splitMode;
+            }
+            set {
+                _splitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                OnPropertyChanged(nameof(SplitMode));
+            }
+        }
+
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
 
@@ -166,12 +176,12 @@ namespace QAChat.ViewModel.QAChatMain {
 
         private ChatRequestContext CreateChatRequestContext() {
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _mode,                [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
+                _chatMode, _splitMode,  [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
                 );
             return chatRequestContext;
         }
         //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_mode != OpenAIExecutionModeEnum.Normal);
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_chatMode != OpenAIExecutionModeEnum.Normal);
 
 
         // チャットを送信するコマンド
@@ -193,7 +203,11 @@ namespace QAChat.ViewModel.QAChatMain {
                         item.TopK = VectorDBSearchResultMax;
                     }
                     ChatRequestContext chatRequestContext = CreateChatRequestContext();
-
+                    // SplitModeが有効な場合で、PromptTextが空の場合はエラー
+                    if (_splitMode != SplitOnTokenLimitExceedModeEnum.None && string.IsNullOrEmpty(PromptText)) {
+                        LogWrapper.Error(StringResources.PromptTextIsNeededWhenSplitModeIsEnabled);
+                        return;
+                    }
                     // OpenAIChat or LangChainChatを実行
                     result = ChatRequest.ExecuteChat(chatRequestContext, (message) => {
                         MainUITask.Run(() => {
@@ -263,14 +277,14 @@ namespace QAChat.ViewModel.QAChatMain {
 
         });
 
-        // モードが変更されたときの処理
-        public SimpleDelegateCommand<RoutedEventArgs> ModeSelectionChangedCommand => new((routedEventArgs) => {
+        // Chatモードが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> ChatModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
-            Mode = comboBox.SelectedIndex;
+            ChatMode = comboBox.SelectedIndex;
             // ModeがNormal以外の場合は、VectorDBItemを取得
             VectorSearchProperties = [];
-            if (_mode != OpenAIExecutionModeEnum.Normal) {
+            if (_chatMode != OpenAIExecutionModeEnum.Normal) {
                 List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
                 foreach (var item in items) {
                     VectorSearchProperties.Add(item);
@@ -286,6 +300,15 @@ namespace QAChat.ViewModel.QAChatMain {
             OnPropertyChanged(nameof(AutoGenNestedChatVisibility));
 
         });
+
+        // Splitモードが変更されたときの処理
+        public SimpleDelegateCommand<RoutedEventArgs> SplitModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            SplitMode = comboBox.SelectedIndex;
+
+        });
+
 
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
@@ -366,7 +389,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Normal Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenNormalChat);
+        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenNormalChat);
 
         // AutoGenNormalChatList
         public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
@@ -402,7 +425,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Group Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenGroupChat);
+        public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
 
         // AutoGenGroupChatList
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
@@ -437,7 +460,7 @@ namespace QAChat.ViewModel.QAChatMain {
 
         #region AutoGen Nested Chat
         // AutoGen関連のVisibility
-        public Visibility AutoGenNestedChatVisibility  => Tools.BoolToVisibility(_mode == OpenAIExecutionModeEnum.AutoGenNestedChat);
+        public Visibility AutoGenNestedChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenNestedChat);
 
         // AutoGenNestedChatList
         public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {

@@ -21,7 +21,7 @@ namespace QAChat.ViewModel.PromptTemplate {
             AfterUpdate = afterUpdate;
             OnPropertyChanged(nameof(PromptResultTypeIndex));
             OnPropertyChanged(nameof(PromptOutputTypeIndex));
-            OnPropertyChanged(nameof(ChatTypeIndex));
+            OnPropertyChanged(nameof(ChatModeIndex));
             OnPropertyChanged(nameof(InputTypeItems));
 
         }
@@ -127,22 +127,39 @@ namespace QAChat.ViewModel.PromptTemplate {
                 OnPropertyChanged(nameof(PromptOutputTypeIndex));
             }
         }
-        // ChatTypeIndex
-        public int ChatTypeIndex {
+        // ChatModeIndex
+        public int ChatModeIndex {
             get {
                 if (ItemViewModel == null) {
                     return 0;
                 }
-                return (int)ItemViewModel.PromptItem.ChatType;
+                return (int)ItemViewModel.PromptItem.ChatMode;
             }
             set {
                 if (ItemViewModel == null) {
                     return;
                 }
-                ItemViewModel.PromptItem.ChatType = (OpenAIExecutionModeEnum)value;
-                OnPropertyChanged(nameof(ChatTypeIndex));
+                ItemViewModel.PromptItem.ChatMode = (OpenAIExecutionModeEnum)value;
+                OnPropertyChanged(nameof(ChatModeIndex));
             }
         }
+        // SplitModeIndex
+        public int SplitModeIndex {
+            get {
+                if (ItemViewModel == null) {
+                    return 0;
+                }
+                return (int)ItemViewModel.PromptItem.SplitMode;
+            }
+            set {
+                if (ItemViewModel == null) {
+                    return;
+                }
+                ItemViewModel.PromptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)value;
+                OnPropertyChanged(nameof(SplitModeIndex));
+            }
+        }
+
 
         public SimpleDelegateCommand<RoutedEventArgs> PromptResultTypeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
@@ -158,12 +175,20 @@ namespace QAChat.ViewModel.PromptTemplate {
             PromptOutputTypeIndex = index;
         });
 
-        public SimpleDelegateCommand<RoutedEventArgs> ChatTypeSelectionChangedCommand => new((routedEventArgs) => {
+        public SimpleDelegateCommand<RoutedEventArgs> ChatModeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             int index = comboBox.SelectedIndex;
-            ChatTypeIndex = index;
+            ChatModeIndex = index;
         });
+
+        public SimpleDelegateCommand<RoutedEventArgs> SplitModeSelectionChangedCommand => new((routedEventArgs) => {
+            ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
+            // 選択されたComboBoxItemのIndexを取得
+            int index = comboBox.SelectedIndex;
+            ChatModeIndex = index;
+        });
+
 
         private Action<PromptItemViewModel> AfterUpdate { get; set; } = (promtItem) => { };
 
@@ -183,7 +208,8 @@ namespace QAChat.ViewModel.PromptTemplate {
             promptItem.Name = Name;
             promptItem.PromptResultType = (PromptResultTypeEnum)PromptResultTypeIndex;
             promptItem.PromptOutputType = (PromptOutputTypeEnum)PromptOutputTypeIndex;
-            promptItem.ChatType = (OpenAIExecutionModeEnum)ChatTypeIndex;
+            promptItem.ChatMode = (OpenAIExecutionModeEnum)ChatModeIndex;
+            promptItem.SplitMode = (SplitOnTokenLimitExceedModeEnum)SplitModeIndex;
 
             // 入力がプロンプト結果の場合はPromptInputNameを設定
             if (PromptResultToInput) {

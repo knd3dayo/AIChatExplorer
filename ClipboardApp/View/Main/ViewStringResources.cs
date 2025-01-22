@@ -65,8 +65,8 @@ namespace ClipboardApp.View.Main {
         // OpenAIChat
         public static string OpenAIChat { get; set; } = CommonStringResources.Instance.OpenAIChat;
 
-        // Mode
-        public static string Mode { get; set; } = CommonStringResources.Instance.Mode;
+        // ChatMode
+        public static string Mode { get; set; } = CommonStringResources.Instance.ChatMode;
 
         // ImageChat
         public static string ImageChat { get; set; } = CommonStringResources.Instance.ImageChat;

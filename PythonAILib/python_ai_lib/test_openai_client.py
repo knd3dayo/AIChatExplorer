@@ -47,8 +47,3 @@ if __name__ == "__main__":
     model_list: list[str] = openai_client.list_openai_models()
     print(result)
     
-    # gpt4-vのchatを実行
-    result = openai_client.openai_chat_with_vision("画像に「Hello World!」という文字列が含まれている場合Yes,そうでない場合はNoと答えてください", ["../TestData/extract_test.png"])
-    print(result)
-
-    

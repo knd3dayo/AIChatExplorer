@@ -310,8 +310,6 @@ namespace QAChat.Resource {
         // 入力となるプロンプトテンプレート
         public virtual string PromptInputName { get; } = "入力となるプロンプトテンプレート";
 
-        // Chatタイプ
-        public virtual string ChatType { get; } = "Chatタイプ";
         // 出力形式
         public virtual string OutputType { get; } = "出力形式";
         // 新規タブ

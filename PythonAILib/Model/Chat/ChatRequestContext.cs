@@ -34,7 +34,7 @@ namespace PythonAILib.Model.Chat {
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
-        public SplitOnTokenLimitExceedMode SplitMode = SplitOnTokenLimitExceedMode.None;
+        public SplitOnTokenLimitExceedModeEnum SplitMode = SplitOnTokenLimitExceedModeEnum.None;
 
         // ToDictList
         public Dictionary<string, object> ToDict() {
@@ -61,7 +61,7 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum mode, List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode ,List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             AutoGenProperties autoGenProperties;
@@ -82,7 +82,8 @@ namespace PythonAILib.Model.Chat {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 AutoGenProperties = autoGenProperties,
                 PromptTemplateText = promptTemplateText,
-                ChatMode = mode,
+                ChatMode = chatMode,
+                SplitMode = splitMode,
             };
 
             return chatRequestContext;

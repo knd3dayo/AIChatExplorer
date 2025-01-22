@@ -77,7 +77,7 @@ namespace QAChat.Resource {
         // Automatically disable wrapping for large text
         public override string AutoTextWrapping { get; } = "Automatically disable wrapping for large text";
 
-        // Enable Compact Mode
+        // Enable Compact ChatMode
         public override string CompactMode { get; } = "Enable Compact Mode";
 
         // Tool

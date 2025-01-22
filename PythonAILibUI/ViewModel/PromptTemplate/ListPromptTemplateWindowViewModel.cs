@@ -140,7 +140,7 @@ namespace QAChat.ViewModel.PromptTemplate {
                 LogWrapper.Error(StringResources.NoPromptTemplateSelected);
                 return;
             }
-            // Mode からOpenAIExecutionModeEnumに変換
+            // ChatMode からOpenAIExecutionModeEnumに変換
             OpenAIExecutionModeEnum mode = (OpenAIExecutionModeEnum)Mode;
             AfterSelect(SelectedPromptItem, mode);
 

@@ -173,18 +173,35 @@
                         Margin="10,0,10,0"
                         VerticalAlignment="Center"
                         FontSize="12"
-                        Text="{x:Static res:ViewStringResources.ChatType}" />
+                        Text="{x:Static res:ViewStringResources.ChatMode}" />
                     <ComboBox
                         Width="100"
                         Margin="10,0,10,0"
                         FontSize="12"
                         SelectedIndex="{Binding ChatTypeIndex}">
-                        <ComboBoxItem Content="OpenAI" />
-                        <ComboBoxItem Content="OpenAI+RAG" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ExperimentalFunction1}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI_RAG}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding ChatTypeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                                <i:InvokeCommandAction Command="{Binding ChatModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <TextBlock
+                        Margin="10,0,10,0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Text="{x:Static res:ViewStringResources.SplitMode}" />
+                    <ComboBox
+                        Width="100"
+                        Margin="10,0,10,0"
+                        FontSize="12"
+                        SelectedIndex="{Binding SplitTypeIndex}">
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedMaxToken}" />
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </ComboBox>
