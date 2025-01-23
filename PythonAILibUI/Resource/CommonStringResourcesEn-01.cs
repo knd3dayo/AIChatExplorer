@@ -234,6 +234,9 @@ namespace QAChat.Resource {
         // 分割モード 最大トークン数を超えそうな場合はリクエストを分割
         public override string SplitMode_SplitIfExceedMaxToken { get; } = "Split request if it seems to exceed the maximum token count";
 
+        // SplitMode_SplitAndSummarizeIfExceedMaxToken
+        public override string SplitMode_SplitAndSummarizeIfExceedMaxToken { get; } = "Split request and summarize if it seems to exceed the maximum token count";
+
         // PromptTextIsNeededWhenSplitModeIsEnabled
         public override string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "Prompt text is needed when split mode is enabled";
 

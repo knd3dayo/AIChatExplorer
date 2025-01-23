@@ -178,7 +178,7 @@
                         Width="100"
                         Margin="10,0,10,0"
                         FontSize="12"
-                        SelectedIndex="{Binding ChatTypeIndex}">
+                        SelectedIndex="{Binding ChatModeIndex}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI_RAG}" />
                         <i:Interaction.Triggers>
@@ -196,7 +196,7 @@
                         Width="100"
                         Margin="10,0,10,0"
                         FontSize="12"
-                        SelectedIndex="{Binding SplitTypeIndex}">
+                        SelectedIndex="{Binding SplitModeIndex}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedMaxToken}" />
                         <i:Interaction.Triggers>

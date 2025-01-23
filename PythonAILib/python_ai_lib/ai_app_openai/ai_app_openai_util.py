@@ -315,32 +315,16 @@ class OpenAIClient:
             # result_messagesに追加する
             result_messages.append(result_last_message)
         return result_messages
+
+    def post_process_output(self, vector_db_items: list[VectorDBProps], request_context: RequestContext, last_message: dict, chat_result_dict_list: list[dict]) -> dict:
+        # RequestContextのSplitModeがNormalSplitの場合はchat_result_dict_listのoutputを結合した文字列とtotal_tokensを集計した結果を返す
+        if request_context.SplitMode == "NormalSplit":
+            output = "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
+            total_tokens = sum([chat_result_dict["total_tokens"] for chat_result_dict in chat_result_dict_list])
+            return {"output": output, "total_tokens": total_tokens}
         
-    def run_openai_chat(self, vector_db_items: list[VectorDBProps], request_context: RequestContext ,input_dict: dict) -> dict:
-
-        # pre_process_inputを実行する
-        pre_processed_input_list = self.pre_process_input(vector_db_items, request_context, input_dict)
-        chat_result_dict_list = []
-
-        for pre_processed_input in pre_processed_input_list:
-            # input_dictのmessagesの最後の要素のみを取得する
-            copied_input_dict = input_dict.copy()
-
-            # split_modeがNone以外の場合はinput_dictのmessagesの最後の要素のみを取得する
-            if request_context.SplitMode != "None":
-                copied_input_dict["messages"] = [pre_processed_input]
-            else:
-                copied_input_dict["messages"][-1] = pre_processed_input
-
-            # chatを実行する
-            chat_result_dict = self.openai_chat(copied_input_dict)
-            # chat_result_dictをchat_result_dict_listに追加する
-            chat_result_dict_list.append(chat_result_dict)
-        # chat_result_dict_listのサイズが1の場合はchat_result_dict_list[0]を返す
-        if len(chat_result_dict_list) == 1:
-            return chat_result_dict_list[0]
-        # chat_result_dict_listのサイズが1より大きい場合はoutputの内容を連結してサマライズ用のoutputを作成する
-        else:
+        # RequestContextのSplitModeがSplitAndSummarizeの場合はSummarize用のoutputを作成する
+        if request_context.SplitMode == "SplitAndSummarize":
             summary_prompt_text = ""
             if len(request_context.PromptTemplateText) > 0:
                 summary_prompt_text = f"""
@@ -367,6 +351,34 @@ class OpenAIClient:
             # total_tokensを更新する
             summary_result_dict["total_tokens"] = total_tokens + summary_result_dict["total_tokens"]
             return summary_result_dict
+        
+        # RequestContextのSplitModeがNoneの場合はoutput_dictの1つ目の要素を返す
+        return chat_result_dict_list[0]
+            
+    def run_openai_chat(self, vector_db_items: list[VectorDBProps], request_context: RequestContext ,input_dict: dict) -> dict:
+
+        # pre_process_inputを実行する
+        pre_processed_input_list = self.pre_process_input(vector_db_items, request_context, input_dict)
+        chat_result_dict_list = []
+
+        for pre_processed_input in pre_processed_input_list:
+            # input_dictのmessagesの最後の要素のみを取得する
+            copied_input_dict = input_dict.copy()
+
+            # split_modeがNone以外の場合はinput_dictのmessagesの最後の要素のみを取得する
+            if request_context.SplitMode != "None":
+                copied_input_dict["messages"] = [pre_processed_input]
+            else:
+                copied_input_dict["messages"][-1] = pre_processed_input
+
+            # chatを実行する
+            chat_result_dict = self.openai_chat(copied_input_dict)
+            # chat_result_dictをchat_result_dict_listに追加する
+            chat_result_dict_list.append(chat_result_dict)
+
+        # post_process_outputを実行する
+        result_dict = self.post_process_output(vector_db_items, request_context, input_dict, chat_result_dict_list)
+        return result_dict
     
     def openai_chat(self, input_dict: dict) -> dict:
         # openai.
