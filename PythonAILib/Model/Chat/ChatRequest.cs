@@ -91,10 +91,6 @@ namespace PythonAILib.Model.Chat {
         }
 
         public static void PrepareNormalRequest(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
-            // SplitWhenMaxTokenReachedがFalseの場合は、ChatHistoryをクリアする
-            if (chatRequest.SplitWhenMaxTokenReached == false) {
-                chatRequest.ChatHistory.Clear();
-            }
             // ChatHistoryのサイズが0か、最後のアイテムのRoleがAssistantRoleの場合は、ChatMessageを作成する.
             ChatMessage lastUserRoleMessage;
             if (chatRequest.ChatHistory.Count == 0 || chatRequest.ChatHistory.Last().Role == ChatMessage.AssistantRole) {
@@ -105,19 +101,8 @@ namespace PythonAILib.Model.Chat {
             }
 
             // PromptTextを作成
-            string promptText = "";
-
-            // PromptTemplateTextが空でない場合は、PromptTemplateTextを追加
-            if (string.IsNullOrEmpty(chatRequestContext.PromptTemplateText) == false) {
-                promptText = chatRequestContext.PromptTemplateText + PythonAILibStringResources.Instance.ContentHeader;
-            }
-            // ContentTextを追加
-            promptText += chatRequest.ContentText;
+            string promptText = chatRequest.ContentText;
             
-            // ModeがRAGの場合は、ベクトル検索の結果を追加
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
-                promptText += ChatUtil.GenerateVectorSearchResult(chatRequestContext, chatRequest.ContentText);
-            }
             // 最後のユーザー発言のContentにPromptTextを追加
             lastUserRoleMessage.Content = promptText;
             // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加

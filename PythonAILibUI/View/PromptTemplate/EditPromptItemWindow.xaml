@@ -199,6 +199,8 @@
                         SelectedIndex="{Binding SplitModeIndex}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedMaxToken}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedMaxToken}" />
+
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

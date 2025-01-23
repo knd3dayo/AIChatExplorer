@@ -4,17 +4,34 @@ namespace PythonAILib.Resource {
         // Instance
         public static PromptStringResource Instance { get; set; } = new();
 
+        #region RequestContext
 
+
+        // 上記の文章の不明点については、以下の関連情報を参考にしてください
+        public virtual string RelatedInformationByVectorSearch { get; } = "------ 以下は本文に関連する情報をベクトルDBから検索した結果です。---\n";
+        // SummarizePromptText 
+        public virtual string SummarizePromptText { get; } = "単純に結合しただけなので、文章のつながりがよくない箇所があるかもしれません。 文章のつながりがよくなるように整形してください。 出力言語は日本語にしてください。\n";
+
+        #endregion
+
+        #region システム定義プロンプト
         // 定義が不明な文章については、以下の説明を参考にしてください
         public virtual string UnknownContentDescription { get; } = "定義が不明な文章については、以下の説明を参考にしてください";
 
+        // 上記の文章の不明点については、以下の関連情報を参考にしてください
+        public virtual string RelatedInformation {
+            get {
+                return "------ 以下は参考情報です。---\n情報には信頼度が設定されている場合があります。参考情報に矛盾した内容がある場合は、信頼度が高い情報を優先してください。信頼度の定義は次の通りです。\n" +
+                    DocumentReliabilityDefinition + "\n " +
+                    "ユーザーに情報の信頼度を伝えるために、回答とともに使用した参考情報を信頼度毎に教えてください\n ------";
+            }
+        }
 
         // サマリー生成
         public virtual string SummaryGeneration { get; } = "サマリー";
 
         // "以下の文章から100～200文字程度のサマリーを生成してください。\n"
         public virtual string SummaryGenerationPrompt { get; } = "以下の文章から最大400文字程度のサマリーを生成してください。50文字程度のところで改行してください\n";
-
 
         // BackgroundInformationGeneration
         public virtual string BackgroundInformationGeneration { get; } = "背景情報";
@@ -36,14 +53,6 @@ namespace PythonAILib.Resource {
         // "この画像のテキストを抽出してください。\n"
         public virtual string ExtractTextRequest { get; } = "この画像のテキストを抽出してください。\n";
 
-        // 上記の文章の不明点については、以下の関連情報を参考にしてください
-        public virtual string RelatedInformation { 
-            get {
-                return "------ 以下は参考情報です。---\n情報には信頼度が設定されている場合があります。参考情報に矛盾した内容がある場合は、信頼度が高い情報を優先してください。信頼度の定義は次の通りです。\n" + 
-                    DocumentReliabilityDefinition  + "\n " +
-                    "ユーザーに情報の信頼度を伝えるために、回答とともに使用した参考情報を信頼度毎に教えてください\n ------";
-            }
-        } 
 
         // TODOリスト生成
         public virtual string TasksGeneration { get; } = "TODOリスト";
@@ -98,5 +107,7 @@ namespace PythonAILib.Resource {
             "  *  既存の論理、数学的な法則、自然科学的法則により正しいと判定可能な情報は信頼度をレベル内での上限値にする。\n" +
             "  *  一般的な社会学的法則、慣習などによりある程度正しいと判定可能は情報は信頼度をレベル内での中間値にする。\n" +
             "  * 正しさが判断できない、検証が必要な情報は信頼度をレベル内での下限値にする。\n";
+
+        #endregion
     }
 }

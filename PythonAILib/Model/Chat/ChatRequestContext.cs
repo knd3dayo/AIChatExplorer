@@ -36,6 +36,10 @@ namespace PythonAILib.Model.Chat {
 
         public SplitOnTokenLimitExceedModeEnum SplitMode = SplitOnTokenLimitExceedModeEnum.None;
 
+        public string SummarizePromptText = PythonAILib.Resource.PromptStringResource.Instance.SummarizePromptText;
+
+        public string RelatedInformationPromptText = PythonAILib.Resource.PromptStringResource.Instance.RelatedInformationByVectorSearch;
+
         // ToDictList
         public Dictionary<string, object> ToDict() {
             // RequestContext
@@ -43,6 +47,8 @@ namespace PythonAILib.Model.Chat {
                 { "prompt_template_text", PromptTemplateText },
                 { "chat_mode", ChatMode.ToString() },
                 { "split_mode", SplitMode.ToString() },
+                { "summarize_prompt_text", SummarizePromptText },
+                { "related_information_prompt_text", RelatedInformationPromptText },
             };
             Dictionary<string, object> dict = new() {
                 { "vector_db_items", VectorSearchProperty.ToDictList(VectorSearchProperties) },

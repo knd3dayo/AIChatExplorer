@@ -23,6 +23,10 @@ namespace PythonAILib.Resource {
         // Please generate a summary of 100 to 200 characters from the following text.\n
         public override string SummaryGenerationPrompt { get; } = "Please generate a summary of 100 to 200 characters from the following text.\n";
 
+        // RelatedInformationByVectorSearch
+        public override string RelatedInformationByVectorSearch { get; } = "------ The following is the result of searching for information related to the text from the vector DB.---\n";
+        // SummarizePromptText
+        public override string SummarizePromptText { get; } = "Since it is merely a concatenation, there might be sections where the text does not flow well. Please restructure the text to improve its coherence. The output language should be English.\n";
 
         // TODO List Generation
         public override string TasksGeneration { get; } = "TODO List";

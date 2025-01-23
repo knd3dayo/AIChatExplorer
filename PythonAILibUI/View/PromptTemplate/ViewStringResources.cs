@@ -51,6 +51,10 @@ namespace QAChat.View.PromptTemplate {
         // SplitMode_SplitIfExceedMaxToken
         public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedMaxToken;
 
+        // SplitMode_SplitAndSummarizeIfExceedMaxToken
+        public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedMaxToken;
+
+
 
 
         // 出力形式

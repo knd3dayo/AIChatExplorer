@@ -4,15 +4,19 @@ import base64
 from mimetypes import guess_type
 from typing import Any, Type
 import tiktoken
-
+import copy
 # リクエストコンテキスト
 class RequestContext:
     prompt_template_text_name = "prompt_template_text"
     chat_mode_name = "chat_mode" 
+    summarize_prompt_text_name = "summarize_prompt_text"
+    related_information_prompt_text_name = "related_information_prompt_text"
     def __init__(self, request_context_dict: dict):
         self.PromptTemplateText = request_context_dict.get(RequestContext.prompt_template_text_name, "")
         self.ChatMode = request_context_dict.get(RequestContext.chat_mode_name, "Normal")
         self.SplitMode = request_context_dict.get("split_mode", "None")
+        self.SummarizePromptText = request_context_dict.get(RequestContext.summarize_prompt_text_name, "")
+        self.RelatedInformationPromptText = request_context_dict.get(RequestContext.related_information_prompt_text_name, "")
 
 class OpenAIProps:
     def __init__(self, props_dict: dict):
@@ -260,14 +264,14 @@ class OpenAIClient:
             token_count = self.get_token_count(message)
             # total_token_count + token_countが80KBを超える場合はtemp_message_listをresult_message_listに追加する
             if total_token_count + token_count > 80000:
-                result_message_list.append(temp_message_list)
+                result_message_list.append("\n".join(temp_message_list))
                 temp_message_list = []
                 total_token_count = 0
             temp_message_list.append(message)
             total_token_count += token_count
         # temp_message_listが空でない場合はresult_message_listに追加する
         if len(temp_message_list) > 0:
-            result_message_list.append(temp_message_list)
+            result_message_list.append("\n".join(temp_message_list))
         # result_message_listを返す
         return result_message_list
     
@@ -303,9 +307,9 @@ class OpenAIClient:
             if request_context.ChatMode != "Normal":
                 vector_search_result = vector_search_function(query) 
                 vector_search_results = [ document["content"] for document in vector_search_result["documents"]]
-                context_message = "\n".join(vector_search_results)
+                context_message += request_context.RelatedInformationPromptText + "\n".join(vector_search_results)
             # last_messageをdeepcopyする
-            result_last_message = last_message_dict.copy()
+            result_last_message = copy.deepcopy(last_message_dict)
             # result_last_messageのcontentの最後の要素を更新する
             result_last_message["content"][last_text_content_index]["text"] = f"{context_message}\n{target_message}"
             # result_messagesに追加する
@@ -326,17 +330,13 @@ class OpenAIClient:
                 summary_prompt_text = f"""
                 The following text is a document that was split into several parts, and based on the instructions of [{request_context.PromptTemplateText}], 
                 the AI-generated responses were combined. 
-                Since it is merely a concatenation, there might be sections where the text does not flow well. 
-                Please reshape the text to improve its coherence. 
-                The output language should be Japanese.
+                {request_context.PromptTemplateText}
                 """
 
             else:
                 summary_prompt_text = """
                 The following text is a document that has been divided into several parts, with AI-generated responses combined.
-                Since it is merely a concatenation, there might be sections where the text does not flow well. 
-                Please restructure the text to improve its coherence. 
-                The output language should be Japanese.
+                {request_context.PromptTemplateText}
                 """
             summary_input =  summary_prompt_text + "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
             total_tokens = sum([chat_result_dict["total_tokens"] for chat_result_dict in chat_result_dict_list])
@@ -360,7 +360,7 @@ class OpenAIClient:
 
         for pre_processed_input in pre_processed_input_list:
             # input_dictのmessagesの最後の要素のみを取得する
-            copied_input_dict = input_dict.copy()
+            copied_input_dict = copy.deepcopy(input_dict)
 
             # split_modeがNone以外の場合はinput_dictのmessagesの最後の要素のみを取得する
             if request_context.SplitMode != "None":
@@ -368,7 +368,6 @@ class OpenAIClient:
             else:
                 copied_input_dict["messages"][-1] = pre_processed_input
 
-            # chatを実行する
             chat_result_dict = self.openai_chat(copied_input_dict)
             # chat_result_dictをchat_result_dict_listに追加する
             chat_result_dict_list.append(chat_result_dict)
@@ -385,6 +384,8 @@ class OpenAIClient:
         # リトライ回数が5回を超えた場合はRateLimitErrorをraiseする
         # リトライ回数が5回以内で成功した場合は結果を返す
         # OpenAIのchatを実行する
+        print("chat input", json.dumps(input_dict, ensure_ascii=False, indent=2))
+
         client = self.get_completion_client()
         count = 0
         while count < 3:
@@ -405,7 +406,9 @@ class OpenAIClient:
         total_tokens = response.usage.total_tokens
         # contentを取得する
         content = response.choices[0].message.content
+
         # dictにして返す
+        print("chat output", json.dumps(content, ensure_ascii=False, indent=2))
         return {"output": content, "total_tokens": total_tokens}
 
 
