@@ -24,7 +24,8 @@ namespace PythonAILib.Utils.Common {
                 if (copyOnNewFile && File.Exists(targetFilePath) && File.GetLastWriteTime(targetFilePath) >= file.LastWriteTime) {
                     continue;
                 }
-                file.CopyTo(targetFilePath);
+                // ファイルが存在する場合は上書きする
+                file.CopyTo(targetFilePath, true);
             }
 
             // If recursive and copying subdirectories, recursively call this method

@@ -82,10 +82,8 @@ namespace PythonAILib.PythonIF {
                 PythonAILibPath = Path.Combine(appDataDir, DefaultPythonAILibDir);
 
                 // Check if the PythonAILibPath exists
-                if (!Directory.Exists(PythonAILibPath)) {
-                    // ./pythonディレクトリをPythonAILibPathRootへコピーする
-                    Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
-                }
+                // ./pythonディレクトリをPythonAILibPathRootへコピーする
+                Tools.CopyDirectory(DefaultPythonAILibDir, PythonAILibPath, true, true);
 
                 InitPythonNet(configPrams);
             }
