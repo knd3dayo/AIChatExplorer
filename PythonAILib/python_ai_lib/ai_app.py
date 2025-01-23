@@ -90,7 +90,14 @@ def extract_webpage(url: Annotated[str, "URL of the web page to extract text and
 ########################
 def run_openai_chat(openai_props: OpenAIProps, vector_db_items: list[VectorDBProps], request_context: RequestContext, request: dict) -> Tuple[str, str]:
     openai_client = OpenAIClient(openai_props)
-    return openai_client.run_openai_chat(vector_db_items, request_context, request)
+    # ベクトル検索関数
+    def vector_search(query: str) -> dict:
+        from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
+        from ai_app_langchain.langchain_vector_db import LangChainVectorDB
+        params:VectorSearchParameter = VectorSearchParameter(openai_props, vector_db_items, query)
+        return LangChainVectorDB.vector_search(params)
+
+    return openai_client.run_openai_chat(vector_search, request_context, request)
 
 def openai_embedding(openai_props: OpenAIProps, input_text: str):
     openai_client = OpenAIClient(openai_props)

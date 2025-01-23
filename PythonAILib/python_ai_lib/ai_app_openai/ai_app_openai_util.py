@@ -4,7 +4,6 @@ import base64
 from mimetypes import guess_type
 from typing import Any, Type
 import tiktoken
-from ai_app_vector_db import VectorDBProps
 
 # リクエストコンテキスト
 class RequestContext:
@@ -272,18 +271,18 @@ class OpenAIClient:
         # result_message_listを返す
         return result_message_list
     
-    def pre_process_input(self, vector_db_items: list[VectorDBProps], request_context:RequestContext, last_message: dict) -> list[dict]:
+    def pre_process_input(self, vector_search_function : callable, request_context:RequestContext, last_message_dict: dict) -> list[dict]:
         # "messages"の最後の要素を取得する       
         last_text_content_index = -1
-        for i in range(0, len(last_message["content"])):
-            if last_message["content"][i]["type"] == "text":
+        for i in range(0, len(last_message_dict["content"])):
+            if last_message_dict["content"][i]["type"] == "text":
                 last_text_content_index = i
                 break
         # last_text_content_indexが-1の場合はエラーをraiseする
         if last_text_content_index == -1:
             raise ValueError("last_text_content_index is -1")
         # queryとして最後のtextを取得する
-        original_last_message = last_message["content"][last_text_content_index]["text"]
+        original_last_message = last_message_dict["content"][last_text_content_index]["text"]
         # request_contextのSplitModeがNone以外の場合はoriginal_last_messageを改行毎にtokenをカウントして、
         # 80KBを超える場合は分割する
         # 結果はresult_messagesに格納する
@@ -302,21 +301,18 @@ class OpenAIClient:
                 context_message = request_context.PromptTemplateText
             # chat_modeがNormal以外の場合はベクトル検索を実施
             if request_context.ChatMode != "Normal":
-                from ai_app_vector_db.ai_app_vector_db_props import VectorSearchParameter
-                from ai_app_langchain.langchain_vector_db import LangChainVectorDB
-                params:VectorSearchParameter = VectorSearchParameter(self.props, vector_db_items, query)
-                vector_search_result = LangChainVectorDB.vector_search(params)
+                vector_search_result = vector_search_function(query) 
                 vector_search_results = [ document["content"] for document in vector_search_result["documents"]]
                 context_message = "\n".join(vector_search_results)
             # last_messageをdeepcopyする
-            result_last_message = last_message.copy()
+            result_last_message = last_message_dict.copy()
             # result_last_messageのcontentの最後の要素を更新する
             result_last_message["content"][last_text_content_index]["text"] = f"{context_message}\n{target_message}"
             # result_messagesに追加する
             result_messages.append(result_last_message)
         return result_messages
 
-    def post_process_output(self, vector_db_items: list[VectorDBProps], request_context: RequestContext, last_message: dict, chat_result_dict_list: list[dict]) -> dict:
+    def post_process_output(self, vector_search_function : callable, request_context: RequestContext, input_dict: dict, chat_result_dict_list: list[dict]) -> dict:
         # RequestContextのSplitModeがNormalSplitの場合はchat_result_dict_listのoutputを結合した文字列とtotal_tokensを集計した結果を返す
         if request_context.SplitMode == "NormalSplit":
             output = "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
@@ -332,7 +328,7 @@ class OpenAIClient:
                 the AI-generated responses were combined. 
                 Since it is merely a concatenation, there might be sections where the text does not flow well. 
                 Please reshape the text to improve its coherence. 
-                The output language should be the same as the original text (English if the original text is in English, Japanese if the original text is in Japanese).
+                The output language should be Japanese.
                 """
 
             else:
@@ -340,7 +336,7 @@ class OpenAIClient:
                 The following text is a document that has been divided into several parts, with AI-generated responses combined.
                 Since it is merely a concatenation, there might be sections where the text does not flow well. 
                 Please restructure the text to improve its coherence. 
-                The output language should be the same as the original text (English if the original text is in English, Japanese if the original text is in Japanese).
+                The output language should be Japanese.
                 """
             summary_input =  summary_prompt_text + "\n".join([chat_result_dict["output"] for chat_result_dict in chat_result_dict_list])
             total_tokens = sum([chat_result_dict["total_tokens"] for chat_result_dict in chat_result_dict_list])
@@ -355,10 +351,11 @@ class OpenAIClient:
         # RequestContextのSplitModeがNoneの場合はoutput_dictの1つ目の要素を返す
         return chat_result_dict_list[0]
             
-    def run_openai_chat(self, vector_db_items: list[VectorDBProps], request_context: RequestContext ,input_dict: dict) -> dict:
+    def run_openai_chat(self, vector_search_function : callable, request_context: RequestContext ,input_dict: dict) -> dict:
 
         # pre_process_inputを実行する
-        pre_processed_input_list = self.pre_process_input(vector_db_items, request_context, input_dict)
+        last_message_dict = input_dict["messages"][-1]
+        pre_processed_input_list = self.pre_process_input(vector_search_function, request_context, last_message_dict)
         chat_result_dict_list = []
 
         for pre_processed_input in pre_processed_input_list:
@@ -377,7 +374,7 @@ class OpenAIClient:
             chat_result_dict_list.append(chat_result_dict)
 
         # post_process_outputを実行する
-        result_dict = self.post_process_output(vector_db_items, request_context, input_dict, chat_result_dict_list)
+        result_dict = self.post_process_output(vector_search_function, request_context, input_dict, chat_result_dict_list)
         return result_dict
     
     def openai_chat(self, input_dict: dict) -> dict:
