@@ -65,7 +65,7 @@ namespace QAChat.ViewModel.AutoGen {
         public void LoadAutoGenAgents() {
             // AutoGenAgentのリストを取得
             ObservableCollection<AutoGenAgentViewModel> autoGenAgents = [];
-            foreach (AutoGenAgent item in AutoGenAgent.FindAll()) {
+            foreach (AutoGenAgent item in AutoGenAgent.GetAutoGenAgentList()) {
                 AutoGenAgentViewModel autoGenAgentViewModel = new(item);
                 // itemのAgentNamesにAutoGenGroupChatのAgentNamesが含まれている場合はIsCheckedをTrueにする
                 if (AutoGenGroupChat.AgentNames.Contains(item.Name)) {

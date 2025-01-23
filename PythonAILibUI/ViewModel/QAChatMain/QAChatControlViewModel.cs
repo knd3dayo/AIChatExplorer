@@ -33,7 +33,7 @@ namespace QAChat.ViewModel.QAChatMain {
                 ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
             // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.FindAll().FirstOrDefault();
+            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
         }
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
@@ -294,10 +294,6 @@ namespace QAChat.ViewModel.QAChatMain {
             OnPropertyChanged(nameof(VectorDBItemVisibility));
             // AutoGenVisibilityを更新
             OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
-            // AutoGenVisibilityを更新
-            OnPropertyChanged(nameof(AutoGenNormalChatVisibility));
-            // AutoGenVisibilityを更新
-            OnPropertyChanged(nameof(AutoGenNestedChatVisibility));
 
         });
 
@@ -384,45 +380,6 @@ namespace QAChat.ViewModel.QAChatMain {
             window.Close();
         });
 
-
-
-
-        #region AutoGen Normal Chat
-        // AutoGen関連のVisibility
-        public Visibility AutoGenNormalChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenNormalChat);
-
-        // AutoGenNormalChatList
-        public ObservableCollection<AutoGenNormalChat> AutoGenNormalChatList {
-            get {
-                ObservableCollection<AutoGenNormalChat> autoGenNormalChatList = [];
-                foreach (var item in AutoGenNormalChat.FindAll()) {
-                    autoGenNormalChatList.Add(item);
-                }
-                return autoGenNormalChatList;
-            }
-        }
-
-        // SelectedAutoGenNormalChat
-        private AutoGenNormalChat? _SelectedAutoGenNormalChat = null;
-        public AutoGenNormalChat? SelectedAutoGenNormalChat {
-            get {
-                return _SelectedAutoGenNormalChat;
-            }
-            set {
-                _SelectedAutoGenNormalChat = value;
-                OnPropertyChanged(nameof(SelectedAutoGenNormalChat));
-            }
-        }
-        // AutoGenNormalChatSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNormalChatSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
-                // 選択されたComboBoxItemのIndexを取得
-                int index = comboBox.SelectedIndex;
-                SelectedAutoGenNormalChat = AutoGenNormalChatList[index];
-            }
-        });
-        #endregion
-
         #region AutoGen Group Chat
         // AutoGen関連のVisibility
         public Visibility AutoGenGroupChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenGroupChat);
@@ -431,7 +388,7 @@ namespace QAChat.ViewModel.QAChatMain {
         public ObservableCollection<AutoGenGroupChat> AutoGenGroupChatList {
             get {
                 ObservableCollection<AutoGenGroupChat> autoGenGroupChatList = [];
-                foreach (var item in AutoGenGroupChat.FindAll()) {
+                foreach (var item in AutoGenGroupChat.GetAutoGenChatList()) {
                     autoGenGroupChatList.Add(item);
                 }
                 return autoGenGroupChatList;
@@ -457,42 +414,6 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         });
         #endregion
-
-        #region AutoGen Nested Chat
-        // AutoGen関連のVisibility
-        public Visibility AutoGenNestedChatVisibility => Tools.BoolToVisibility(_chatMode == OpenAIExecutionModeEnum.AutoGenNestedChat);
-
-        // AutoGenNestedChatList
-        public ObservableCollection<AutoGenNestedChat> AutoGenNestedChatList {
-            get {
-                ObservableCollection<AutoGenNestedChat> autoGenNestedChatList = [];
-                foreach (var item in AutoGenNestedChat.FindAll()) {
-                    autoGenNestedChatList.Add(item);
-                }
-                return autoGenNestedChatList;
-            }
-        }
-        // SelectedAutoGenNestedChat
-        private AutoGenNestedChat? _SelectedAutoGenNestedChat = null;
-        public AutoGenNestedChat? SelectedAutoGenNestedChat {
-            get {
-                return _SelectedAutoGenNestedChat;
-            }
-            set {
-                _SelectedAutoGenNestedChat = value;
-                OnPropertyChanged(nameof(SelectedAutoGenNestedChat));
-            }
-        }
-        // AutoGenNestedChatSelectionChangedCommand
-        public SimpleDelegateCommand<RoutedEventArgs> AutoGenNestedChatSelectionChangedCommand => new((routedEventArgs) => {
-            if (routedEventArgs.OriginalSource is ComboBox comboBox) {
-                // 選択されたComboBoxItemのIndexを取得
-                int index = comboBox.SelectedIndex;
-                SelectedAutoGenNestedChat = AutoGenNestedChatList[index];
-            }
-        });
-        #endregion
-
 
     }
 

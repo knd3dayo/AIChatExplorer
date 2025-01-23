@@ -12,22 +12,12 @@ namespace QAChat.ViewModel.AutoGen {
         public AutoGenTool AutoGenTool { get; set; }
 
         // ToolsForExecution IsChecked
-        private bool _toolsForExecutionIsChecked = false;
-        public bool ToolsForExecutionIsChecked {
-            get { return _toolsForExecutionIsChecked; }
+        private bool _toolIsChecked = false;
+        public bool ToolIsChecked {
+            get { return _toolIsChecked; }
             set {
-                _toolsForExecutionIsChecked = value;
-                OnPropertyChanged(nameof(ToolsForExecutionIsChecked));
-            }
-        }
-
-        // ToolsForLLM IsChecked
-        private bool _toolsForLLMIsChecked = false;
-        public bool ToolsForLLMIsChecked {
-            get { return _toolsForLLMIsChecked; }
-            set {
-                _toolsForLLMIsChecked = value;
-                OnPropertyChanged(nameof(ToolsForLLMIsChecked));
+                _toolIsChecked = value;
+                OnPropertyChanged(nameof(ToolIsChecked));
             }
         }
 

@@ -71,10 +71,7 @@ namespace ClipboardApp {
             TabItems.Add(container);
 
             // AutoGenPropertiesの初期化
-            PythonAILibManager? libManager = PythonAILibManager.Instance;
-            Task.Run(() => {
-                AutoGenProperties.Init(libManager.ConfigParams.GetOpenAIProperties());
-            });
+            AutoGenProperties.Init();
 
         }
 

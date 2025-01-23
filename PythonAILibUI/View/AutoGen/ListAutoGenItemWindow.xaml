@@ -66,48 +66,6 @@
             Grid.Row="1"
             HorizontalContentAlignment="Left"
             SelectedIndex="{Binding SelectedTabIndex}">
-            <!--  ノーマルチャット  -->
-            <TabItem Header="{x:Static res:ViewStringResources.NormalChat}">
-                <DataGrid
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    CanUserReorderColumns="False"
-                    CanUserResizeColumns="False"
-                    CanUserResizeRows="False"
-                    CanUserSortColumns="False"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding AutoGenNormalChats}"
-                    SelectedItem="{Binding SelectedAutoGenNormalChat, Mode=TwoWay}"
-                    SelectionMode="Single"
-                    SelectionUnit="FullRow">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding AutoGenNormalChatSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-
-                    <DataGrid.InputBindings>
-                        <!--  Open selected item window by double-clicking  -->
-                        <MouseBinding Command="{Binding OpenEditAutoGenNormalChatWindowCommand}" MouseAction="LeftDoubleClick" />
-                    </DataGrid.InputBindings>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="200"
-                            Binding="{Binding Name}"
-                            Header="{x:Static res:ViewStringResources.Name}" />
-                        <DataGridTextColumn
-                            Width="*"
-                            Binding="{Binding Description}"
-                            Header="{x:Static res:ViewStringResources.Description}" />
-                    </DataGrid.Columns>
-                    <DataGrid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Command="{Binding DeleteAutoGenGroupChatCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
-                        </ContextMenu>
-                    </DataGrid.ContextMenu>
-                </DataGrid>
-            </TabItem>
             <!--  グループチャット  -->
             <TabItem Header="{x:Static res:ViewStringResources.GroupChat}">
                 <DataGrid
@@ -146,48 +104,6 @@
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Command="{Binding DeleteAutoGenGroupChatCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
-                        </ContextMenu>
-                    </DataGrid.ContextMenu>
-                </DataGrid>
-            </TabItem>
-            <!--  ネステッドチャット  -->
-            <TabItem Header="{x:Static res:ViewStringResources.NestedChat}">
-                <DataGrid
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    CanUserDeleteRows="False"
-                    CanUserReorderColumns="False"
-                    CanUserResizeColumns="False"
-                    CanUserResizeRows="False"
-                    CanUserSortColumns="False"
-                    IsReadOnly="True"
-                    ItemsSource="{Binding AutoGenNestedChats}"
-                    SelectedItem="{Binding SelectedAutoGenNestedChat, Mode=TwoWay}"
-                    SelectionMode="Single"
-                    SelectionUnit="FullRow">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="SelectionChanged">
-                            <i:InvokeCommandAction Command="{Binding AutoGenNestedChatSelectionChangedCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-
-                    <DataGrid.InputBindings>
-                        <!--  Open selected item window by double-clicking  -->
-                        <MouseBinding Command="{Binding OpenEditAutoGenNestedChatWindowCommand}" MouseAction="LeftDoubleClick" />
-                    </DataGrid.InputBindings>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Width="200"
-                            Binding="{Binding Name}"
-                            Header="{x:Static res:ViewStringResources.Name}" />
-                        <DataGridTextColumn
-                            Width="*"
-                            Binding="{Binding Description}"
-                            Header="{x:Static res:ViewStringResources.Description}" />
-                    </DataGrid.Columns>
-                    <DataGrid.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Command="{Binding DeleteAutoGenNestedChatCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>
@@ -273,6 +189,55 @@
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Command="{Binding DeleteAutoGenToolCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </TabItem>
+            <!--  LLMConfig  -->
+            <TabItem Header="{x:Static res:ViewStringResources.LLMConfig}" Visibility="{Binding NormalModeVisibility}">
+                <DataGrid
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    CanUserSortColumns="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding AutoGenLLMConfigs}"
+                    SelectedItem="{Binding SelectedAutoGenLLMConfig, Mode=TwoWay}"
+                    SelectionMode="Single"
+                    SelectionUnit="FullRow">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding AutoGenLLMConfigSelectionChangedCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.InputBindings>
+                        <!--  Open selected item window by double-clicking  -->
+                        <MouseBinding Command="{Binding OpenEditAutoGenLLMConfigWindowCommand}" MouseAction="LeftDoubleClick" />
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="200"
+                            Binding="{Binding Name}"
+                            Header="{x:Static res:ViewStringResources.Name}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding ApiType}"
+                            Header="{x:Static res:ViewStringResources.ApiType}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding ApiVersion}"
+                            Header="{x:Static res:ViewStringResources.ApiVersion}" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Model}"
+                            Header="{x:Static res:ViewStringResources.Model}" />
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding DeleteAutoGenLLMConfigCommand}" Header="{x:Static res:ViewStringResources.Delete}" />
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                 </DataGrid>

@@ -19,8 +19,11 @@ namespace QAChat.Resource {
         // AutoGenエージェント編集
         public virtual string EditAutoGenAgentWindowTitle { get; } = "AutoGenエージェント編集";
 
-        // ToolsForLLM
-        public virtual string ToolsForLLM { get; } = "ToolsForLLM";
+        // AutoGenLLMConfig編集
+        public virtual string EditAutoGenLLMConfigWindowTitle { get; } = "AutoGenLLMConfig編集";
+
+        // Tools
+        public virtual string Tools { get; } = "Tools";
 
         // ToolsForExecution
         public virtual string ToolsForExecution { get; } = "ToolsForExecution";
@@ -69,6 +72,9 @@ namespace QAChat.Resource {
         // TERMINATEMsg
         public virtual string TerminateMsg { get; } = "TerminateMsg";
 
+        // LLMConfig
+        public virtual string LLMConfig { get; } = "LLMConfig";
+
         // CodeExecution
         public virtual string CodeExecution { get; } = "CodeExecution";
 
@@ -77,7 +83,18 @@ namespace QAChat.Resource {
 
         // AddVectorDB
         public virtual string AddVectorDB { get; } = "ベクトルDB追加";
+
+        // ApiType
+        public virtual string ApiType { get; } = "ApiType";
+
+        // Model
+        public virtual string Model { get; } = "Model";
+
+        // BaseURL
+        public virtual string BaseURL { get; } = "BaseURL";
+
         #endregion
+
 
         // 有効
         public virtual string Enabled { get; } = "有効";

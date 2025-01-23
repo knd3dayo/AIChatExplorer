@@ -110,6 +110,19 @@ namespace ClipboardApp.Settings {
                 isPropertyChanged = true;
             }
         }
+        // AzureOpenAIAPIVersion
+        public string AzureOpenAIAPIVersion {
+            get {
+                return ClipboardAppConfig.Instance.AzureOpenAIAPIVersion;
+            }
+            set {
+                ClipboardAppConfig.Instance.AzureOpenAIAPIVersion = value;
+                OnPropertyChanged(nameof(AzureOpenAIAPIVersion));
+                // プロパティが変更されたことを設定
+                isPropertyChanged = true;
+            }
+        }
+
         // OpenAIのAPIキー
         public string OpenAIKey {
             get {

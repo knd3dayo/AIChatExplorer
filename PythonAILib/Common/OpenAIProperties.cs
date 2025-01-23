@@ -26,6 +26,10 @@ namespace PythonAILib.Common {
         [JsonPropertyName("OpenAIEmbeddingBaseURL")]
         public string OpenAIEmbeddingBaseURL { get; set; } = "";
 
+        // AzureOpenAIAPIVersion
+        [JsonPropertyName("AzureOpenAIAPIVersion")]
+        public string AzureOpenAIAPIVersion { get; set; } = "";
+
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
@@ -36,6 +40,7 @@ namespace PythonAILib.Common {
                 { "AzureOpenAIEndpoint", AzureOpenAIEndpoint },
                 { "OpenAICompletionBaseURL", OpenAICompletionBaseURL },
                 { "OpenAIEmbeddingBaseURL", OpenAIEmbeddingBaseURL },
+                { "AzureOpenAIAPIVersion", AzureOpenAIAPIVersion }
             };
             return dict;
         }

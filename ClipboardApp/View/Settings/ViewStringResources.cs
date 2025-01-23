@@ -59,6 +59,8 @@ namespace ClipboardApp.View.Settings {
         // UseAzureOpenAI
         public static string UseAzureOpenAI { get; set; } = CommonStringResources.Instance.UseAzureOpenAI;
 
+        // AzureOpenAIAPIVersion
+        public static string AzureOpenAIAPIVersion { get; set; } = CommonStringResources.Instance.AzureOpenAIAPIVersion;
         // UseAzureOpenAIInsteadOfOpenAI
         public static string UseAzureOpenAIInsteadOfOpenAI { get; set; } = CommonStringResources.Instance.UseAzureOpenAIInsteadOfOpenAI;
 

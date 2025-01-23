@@ -206,11 +206,7 @@
                             <DataGridCheckBoxColumn
                                 Width="Auto"
                                 Binding="{Binding ToolsForExecutionIsChecked}"
-                                Header="{x:Static res:ViewStringResources.ToolsForExecution}" />
-                            <DataGridCheckBoxColumn
-                                Width="Auto"
-                                Binding="{Binding ToolsForLLMIsChecked}"
-                                Header="{x:Static res:ViewStringResources.ToolsForLLM}" />
+                                Header="{x:Static res:ViewStringResources.Tools}" />
                             <DataGridTextColumn
                                 Width="200"
                                 Binding="{Binding AutoGenTool.Name}"

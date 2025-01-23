@@ -122,5 +122,8 @@
     <Setting Name="ShowFooter" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="AzureOpenAIAPIVersion" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2024-02-01</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

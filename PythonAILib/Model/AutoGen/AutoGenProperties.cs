@@ -1,8 +1,11 @@
+using System.Data.SQLite;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using PythonAILib.Common;
+using System.IO;
+
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 
@@ -24,14 +27,6 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("group_chat")]
         public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
 
-        // AutoGenNormalChat
-        [JsonPropertyName("normal_chat")]
-        public AutoGenNormalChat AutoGenNormalChat { get; set; } = new AutoGenNormalChat();
-
-        // AutoGenNestedChat
-        [JsonPropertyName("nested_chat")]
-        public AutoGenNestedChat AutoGenNestedChat { get; set; } = new AutoGenNestedChat();
-
         // AutoGenAgent
         [JsonPropertyName("agents")]
         public List<AutoGenAgent> AutoGenAgents { get; set; } = new List<AutoGenAgent>();
@@ -46,10 +41,6 @@ namespace PythonAILib.Model.AutoGen {
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
                 { "group_chat", AutoGenGroupChat.ToDict() },
-                { "normal_chat", AutoGenNormalChat.ToDict() },
-                { "nested_chat", AutoGenNestedChat.ToDict() },
-                { "agents", AutoGenAgent.ToDictList(AutoGenAgents) },
-                { "tools", AutoGenTool.ToDictList(AutoGenTools) },
             };
             return dict;
         }
@@ -61,88 +52,178 @@ namespace PythonAILib.Model.AutoGen {
 
         private static bool Initialized { get; set; } = false;
         // デフォルトの設定を取得
-        public static void Init(OpenAIProperties openAIProperties) {
-            // Initが実行済みの場合は処理をスキップ
+        public static void Init() {
             if (Initialized) {
                 return;
             }
 
-            ChatRequestContext chatRequestContent = new() {
-                OpenAIProperties = openAIProperties,
-            };
-            Dictionary<string, dynamic?> defaultSettings = PythonExecutor.PythonAIFunctions.GetAutoGenDefaultSettings(chatRequestContent);
-            // defaultSettings から group_chat を取得
-            if (defaultSettings.TryGetValue("group_chats", out dynamic? groupChatDataList)) {
-                if (groupChatDataList != null) {
-                    foreach (var groupChatData in groupChatDataList) {
-                        AutoGenGroupChat groupChat = new() {
-                            Name = groupChatData["name"],
-                            Description = groupChatData["description"],
-                            InitAgentName = groupChatData["init_agent_name"],
-                            AgentNames = [],
-                        };
-                        foreach (object item in groupChatData["agent_names"]) {
-                            var value = item.ToString();
-                            if (value != null) {
-                                groupChat.AgentNames.Add(value);
-                            }
-                        }
-                        groupChat.Save(allow_override: false);
-                    }
-                }
-            }
-            // defaultSettings から tools を取得
-            if (defaultSettings.TryGetValue("tools", out dynamic? toolsData)) {
-                if (toolsData != null) {
-                    foreach (var toolData in toolsData) {
-                        AutoGenTool tool = new AutoGenTool {
-                            Name = toolData["name"],
-                            Description = toolData["description"],
-                            SourcePath = toolData["source_path"],
-                        };
-                        tool.Save(allow_override: false);
-                    }
-                }
-            }
-            // defaultSettings から agents を取得
-            if (defaultSettings.TryGetValue("agents", out dynamic? agentsDataList)) {
-                if (agentsDataList != null) {
-                    foreach (var agentData in agentsDataList) {
-                        List<string> toolNamesForExecution = [];
-                        foreach( object item in agentData["tool_names_for_execution"]) {
-                            var value = item.ToString();
-                            if (value != null) {
-                                toolNamesForExecution.Add(value);
-                            }
-                        }
-                        List<string> toolNamesForLlm = [];
-                        foreach (object item in agentData["tool_names_for_llm"]) {
-                            var value = item.ToString();
-                            if (value != null) {
-                                toolNamesForLlm.Add(value);
-                            }
-                        }
+            IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
+            // llm_configの初期設定
+            string name = "default";
+            string api_type = ConfigPrams.GetOpenAIProperties().AzureOpenAI ? "azure" : "";
+            string api_version = ConfigPrams.GetOpenAIProperties().AzureOpenAIAPIVersion;
+            string model = ConfigPrams.GetOpenAIProperties().OpenAICompletionModel;
+            string api_key = ConfigPrams.GetOpenAIProperties().OpenAIKey;
+            string base_url = ConfigPrams.GetOpenAIProperties().OpenAICompletionBaseURL;
+            AutoGenLLMConfig.UpdateAutoGenLLMConfig(name, api_type, api_version, model, api_key, base_url);
 
-                        // List<string>に変換
+            // search_wikipedia_ja
+            string toolName = "search_wikipedia_ja";
+            string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
+            string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_app_autogen", "default_tools.py");
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
 
-                        AutoGenAgent agent = new() {
-                            Name = agentData["name"],
-                            Description = agentData["description"],
-                            HumanInputMode = agentData["human_input_mode"],
-                            TerminationMsg = agentData["termination_msg"],
-                            CodeExecution = agentData["code_execution"],
-                            Llm = agentData["llm_execution"],
-                            TypeValue = agentData["type_value"],
-                            ToolNamesForExecution = toolNamesForExecution,
-                            ToolNamesForLlm = toolNamesForLlm,
-                        };
-                        agent.Save(false);
-                    }
-                }
-            }
+            // list_files_in_directory
+            toolName = "list_files_in_directory";
+            toolDescription = "This function lists the files in the specified directory.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
 
+            // extract_file
+            toolName = "extract_file";
+            toolDescription = "This function extracts the specified file.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // check_file
+            toolName = "check_file";
+            toolDescription = "This function checks if the specified file exists.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // extract_webpage
+            toolName = "extract_webpage";
+            toolDescription = "This function extracts text and links from the specified URL of a web page.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // search_duckduckgo
+            toolName = "search_duckduckgo";
+            toolDescription = "This function searches DuckDuckGo with the specified keywords and returns related articles.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // save_text_file
+            toolName = "save_text_file";
+            toolDescription = "This function saves the specified text to a file.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // save_tools
+            toolName = "save_tools";
+            toolDescription = "This function saves the specified tools to a file.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // get_current_time
+            toolName = "get_current_time";
+            toolDescription = "This function returns the current time.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+
+            // agentの初期化
+            var agentName = "user_proxy";
+            var agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します";
+            var agentSystemMessage = "" +
+                "- まず、ユーザーの要求を達成するためにはどのエージェントと協力すべきか計画を作成します。" +
+                "code_writer,code_executorがいる場合は、その他のエージェントでは対応できない要求をcode_writer,code_executorに割り当てます。" +
+                "- 計画に基づき、対象のエージェントにタスクを割り当てて、タスクを実行します。" +
+                "- 計画が達成されたら、[End Meeting]と返信してください。";
+            var agentHumanInputMode = "c";
+            var agentTerminateMsg = "End Meeting";
+            var agentCodeExecution = false;
+            var agentLLMConfig = "default";
+            var agentTools =new List<string> { "search_wikipedia_ja","list_files_in_directory", "extract_file", "check_file", "extract_webpage", "search_duckduckgo", "save_text_file", "save_tools", "get_current_time" };
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            agentName = "code_writer";
+            agentDescription = "コードを書くためのエージェントです。";
+            agentSystemMessage = """
+                あなたはスクリプト開発者です。 コードを書くと、それは自動的に外部アプリケーションで実行されます。 ユーザーの指示に従ってコードを書きます。 コードの実行結果は、コードを投稿した後に自動的に表示されます。 ただし、次の条件を厳守する必要があります。 ルール:
+                - コードは必ずコードブロック内に提案すること。
+                - スクリプトの実行結果がエラーの場合、エラーメッセージに基づいて対策を検討し、再度修正したコードを作成すること。
+                - スクリプトの実行から得られる情報が不十分な場合、現在得られている情報に基づいて再度修正したコードを作成すること。
+                - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
+
+                """;
+            agentHumanInputMode = "Never";
+            agentTerminateMsg = "";
+            agentCodeExecution = true;
+            agentLLMConfig = "";
+            agentTools = [];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            agentName = "code_executor";
+            agentDescription = "コードを実行するためのエージェントです。";
+            agentSystemMessage = """
+                あなたはスクリプト実行者です。 コードを実行すると、それは自動的に外部アプリケーションで実行されます。 ユーザーの指示に従ってコードを実行します。 コードの実行結果は、コードを投稿した後に自動的に表示されます。 ただし、次の条件を厳守する必要があります。 ルール:
+                - コードは必ずコードブロック内に提案すること。
+                - スクリプトの実行結果がエラーの場合、エラーメッセージに基づいて対策を検討し、再度修正したコードを作成すること。
+                - スクリプトの実行から得られる情報が不十分な場合、現在得られている情報に基づいて再度修正したコードを作成すること。
+                - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
+                """;
+            agentHumanInputMode = "Never";
+            agentTerminateMsg = "";
+            agentCodeExecution = true;
+            agentLLMConfig = "";
+            agentTools = [];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            agentName = "web_searcher";
+            agentDescription = "Web検索を行うエージェントです。";
+            agentSystemMessage = """
+                あなたはウェブサーチャーです。ユーザーの指示に従って、以下の機能を利用してウェブ上のドキュメントを検索します。
+                それ以外の指示には返信しないでください。
+                - 情報を検索するために提供された search_duckduckgo 関数を使用してください。
+                - 必要なドキュメントがリンク先にない場合は、さらにリンクされた情報を検索してください。
+                - 必要なドキュメントが見つかった場合は、extract_webpage でドキュメントを取得し、ユーザーにテキストを提供してください。
+                """;
+            agentHumanInputMode = "Never";
+            agentTerminateMsg = "";
+            agentCodeExecution = false;
+            agentLLMConfig = "";
+            agentTools = ["search_duckduckgo", "extract_webpage"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            agentName = "file_operator";
+            agentDescription = "ファイル操作を行うエージェントです。";
+            agentSystemMessage = """
+                あなたはファイルオペレーターです。ユーザーの指示に従って、以下の機能を利用してファイル操作を行います。
+                それ以外の指示には返信しないでください。
+                - 指定されたディレクトリ内のファイルをリストするために提供された list_files_in_directory 関数を使用してください。
+                - 指定されたファイルを抽出するために提供された extract_file 関数を使用してください。
+                - 指定されたファイルが存在するかどうかを確認するために提供された check_file 関数を使用してください。
+                - テキストをファイルに保存するために提供された save_text_file 関数を使用してください。
+                """;
+            agentHumanInputMode = "Never";
+            agentTerminateMsg = "";
+            agentCodeExecution = false;
+            agentLLMConfig = "";
+            agentTools = ["list_files_in_directory", "extract_file", "check_file", "save_text_file"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            agentName = "time_checker";
+            agentDescription = "時間を確認するエージェントです。";
+            agentSystemMessage = """
+                あなたはタイムチェッカーです。ユーザーの指示に従って、以下の機能を利用して時間を確認します。
+                それ以外の指示には返信しないでください。
+                - 現在の時間を取得するために提供された get_current_time 関数を使用してください。
+                """;
+            agentHumanInputMode = "Never";
+            agentTerminateMsg = "";
+            agentCodeExecution = false;
+            agentLLMConfig = "";
+            agentTools = ["get_current_time"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+
+            // group_chatの初期化
+            var groupName = "default";
+            var groupDescription = "デフォルトのグループチャットです。";
+            var groupInitAgentName = "user_proxy";
+            var groupAgentNames = new List<string> { "user_proxy" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupInitAgentName, groupAgentNames, false);
             Initialized = true;
 
         }
+
+
     }
 }

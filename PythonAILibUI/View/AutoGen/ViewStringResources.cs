@@ -11,15 +11,16 @@ namespace QAChat.View.AutoGen {
         // EditAutoGenAgentWindowTitle
         public static string EditAutoGenAgentWindowTitle { get; set; } = CommonStringResources.Instance.EditAutoGenAgentWindowTitle;
 
+        // EditAutoGenLLMConfigWindowTitle
+        public static string EditAutoGenLLMConfigWindowTitle { get; set; } = CommonStringResources.Instance.EditAutoGenLLMConfigWindowTitle;
+
         // Name
         public static string Name { get; set; } = CommonStringResources.Instance.Name;
         // Description
         public static string Description { get; set; } = CommonStringResources.Instance.Description;
 
-        // ToolsForLLM
-        public static string ToolsForLLM { get; set; } = CommonStringResources.Instance.ToolsForLLM;
-        // ToolsForExecution
-        public static string ToolsForExecution { get; set; } = CommonStringResources.Instance.ToolsForExecution;
+        // Tools
+        public static string Tools { get; set; } = CommonStringResources.Instance.Tools;
 
         // Add
         public static string Add { get; set; } = CommonStringResources.Instance.Add;
@@ -73,10 +74,14 @@ namespace QAChat.View.AutoGen {
 
         // HumanInputMode
         public static string HumanInputMode { get; set; } = CommonStringResources.Instance.HumanInputMode;
+
         // Never
         public static string Never { get; set; } = CommonStringResources.Instance.Never;
         // Always
         public static string Always { get; set; } = CommonStringResources.Instance.Always;
+
+        // LLMConfig
+        public static string LLMConfig { get; set; } = CommonStringResources.Instance.LLMConfig;
 
         // Terminate
         public static string Terminate { get; set; } = CommonStringResources.Instance.Terminate;
@@ -95,6 +100,19 @@ namespace QAChat.View.AutoGen {
 
         // AddVectorDB
         public static string AddVectorDB { get; set; } = CommonStringResources.Instance.AddVectorDB;
+
+        // ApiType
+        public static string ApiType { get; set; } = CommonStringResources.Instance.ApiType;
+
+        // ApiVersion
+        public static string ApiVersion { get; set; } = CommonStringResources.Instance.AzureOpenAIAPIVersion;
+
+        // Model
+        public static string Model { get; set; } = CommonStringResources.Instance.Model;
+
+        // BaseURL
+        public static string BaseURL { get; set; } = CommonStringResources.Instance.BaseURL;
+
 
 
     }

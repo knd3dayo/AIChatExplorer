@@ -22,8 +22,12 @@ namespace QAChat.Resource {
         public override string AutoGenSettingList { get; } = "AutoGenSettingList";
         // EditAutoGenAgentWindowTitle
         public override string EditAutoGenAgentWindowTitle { get; } = "EditAutoGenAgentWindowTitle";
-        // ToolsForLLM
-        public override string ToolsForLLM { get; } = "ToolsForLLM";
+
+        // EditAutoGenLLMConfigWindowTitle
+        public override string EditAutoGenLLMConfigWindowTitle { get; } = "EditAutoGenLLMConfigWindowTitle";
+
+        // Tools
+        public override string Tools { get; } = "ToolsForLLM";
         // ToolsForExecution
         public override string ToolsForExecution { get; } = "ToolsForExecution";
         // SystemMessage
@@ -58,10 +62,23 @@ namespace QAChat.Resource {
         public override string TerminateMsg { get; } = "TerminateMsg";
         // CodeExecution
         public override string CodeExecution { get; } = "Code Execution";
+        // LLMConfig
+        public override string LLMConfig { get; } = "LLM Config";
+
         // LLM
         public override string LLM { get; } = "LLM";
         // AddVectorDB
         public override string AddVectorDB { get; } = "Add Vector DB";
+
+        // ApiType
+        public override string ApiType { get; } = "Api Type";
+
+        // Model
+        public override string Model { get; } = "Model";
+
+        // BaseURL
+        public override string BaseURL { get; } = "Base URL";
+
         #endregion
 
         // Enabled

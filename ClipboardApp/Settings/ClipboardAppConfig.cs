@@ -123,6 +123,22 @@ namespace ClipboardApp.Settings {
                 Properties.Settings.Default.AzureOpenAI = value;
             }
         }
+
+        // AzureOpenAIAPIVersion
+        private string? _azureOpenAIAPIVersion;
+        public string AzureOpenAIAPIVersion {
+            get {
+                if (_azureOpenAIAPIVersion == null) {
+                    _azureOpenAIAPIVersion = Properties.Settings.Default.AzureOpenAIAPIVersion;
+                }
+                return _azureOpenAIAPIVersion;
+            }
+            set {
+                _azureOpenAIAPIVersion = value;
+                Properties.Settings.Default.AzureOpenAIAPIVersion = value;
+            }
+        }
+
         // AzureOpenAIEndpoint
         private string? _azureOpenAIEndpoint;
         public string AzureOpenAIEndpoint {
@@ -566,8 +582,11 @@ namespace ClipboardApp.Settings {
                 OpenAIEmbeddingModel = OpenAIEmbeddingModel,
                 AzureOpenAI = AzureOpenAI,
             };
+            if (string.IsNullOrEmpty(Properties.Settings.Default.AzureOpenAIAPIVersion) == false && AzureOpenAI) {
+                openAIProperties.AzureOpenAIAPIVersion = Properties.Settings.Default.AzureOpenAIAPIVersion;
+            }
 
-            if (string.IsNullOrEmpty(Properties.Settings.Default.AzureOpenAIEndpoint) == false) {
+            if (string.IsNullOrEmpty(Properties.Settings.Default.AzureOpenAIEndpoint) == false && AzureOpenAI) {
                 openAIProperties.AzureOpenAIEndpoint = Properties.Settings.Default.AzureOpenAIEndpoint;
             }
 

@@ -44,6 +44,9 @@ namespace QAChat.Resource {
         // Use Azure OpenAI
         public override string UseAzureOpenAI { get; } = "Use Azure OpenAI";
 
+        // AzureOpenAIAPIVersion
+        public override string AzureOpenAIAPIVersion { get; } = "AzureOpenAIAPIVersion";
+
         // Use Azure OpenAI instead of OpenAI
         public override string UseAzureOpenAIInsteadOfOpenAI { get; } = "Use Azure OpenAI instead of OpenAI";
 

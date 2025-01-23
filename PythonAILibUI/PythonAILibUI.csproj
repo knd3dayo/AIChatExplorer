@@ -36,12 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="View\AutoGen\EditAutoGenNestedChatWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="View\AutoGen\EditAutoGenNormalChatWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="View\Common\StatusMessageWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

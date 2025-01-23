@@ -189,6 +189,7 @@
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                             <!--  OpenAI  -->
                             <TextBlock
@@ -220,17 +221,30 @@
                                 Grid.Row="1"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.UseAzureOpenAIInsteadOfOpenAI}"
-                                IsChecked="{Binding AzureOpenAI}" />
-
-                            <!--  Azure OpenAI Endpoint  -->
+                                Content="{x:Static res:ViewStringResources.AzureOpenAIAPIVersion}"
+                                IsChecked="{Binding AzureOpenAIAPIVersion}" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
+                                Text="{x:Static res:ViewStringResources.UseAzureOpenAI}"
+                                TextWrapping="Wrap" />
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Margin="10,10,10,0"
+                                Content="{x:Static res:ViewStringResources.UseAzureOpenAIInsteadOfOpenAI}"
+                                IsChecked="{Binding AzureOpenAI}" />
+
+
+                            <!--  Azure OpenAI Endpoint  -->
+                            <TextBlock
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.AzureOpenAIEndpoint}" />
                             <TextBox
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetAzureOpenAIEndpoint}"
@@ -238,12 +252,12 @@
 
                             <!--  OpenAI Completion Model  -->
                             <TextBlock
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.OpenAIModel}" />
                             <TextBox
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIModel}"
@@ -251,24 +265,24 @@
 
                             <!--  OpenAI Embedding Model  -->
                             <TextBlock
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.OpenAIEmbeddingModel}" />
                             <TextBox
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIEmbeddingModel}"
                                 Text="{Binding OpenAIEmbeddingModel}" />
                             <!--  OpenAI Complition Base URL  -->
                             <TextBlock
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.OpenAIChatBaseURL}" />
                             <TextBox
-                                Grid.Row="5"
+                                Grid.Row="6"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIChatBaseURL}"
@@ -276,12 +290,12 @@
 
                             <!--  OpenAI Embedding Base URL  -->
                             <TextBlock
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="1"
                                 Margin="10,10,10,0"
                                 Text="{x:Static res:ViewStringResources.OpenAIEmbeddingBaseURL}" />
                             <TextBox
-                                Grid.Row="6"
+                                Grid.Row="7"
                                 Grid.Column="2"
                                 Margin="10,10,10,0"
                                 materialDesign:HintAssist.Hint="{x:Static res:ViewStringResources.SetOpenAIEmbeddingBaseURL}"

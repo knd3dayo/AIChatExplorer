@@ -15,11 +15,6 @@ namespace QAChat.ViewModel.AutoGen {
             AfterUpdate = afterUpdate;
             LoadTools();
             // TypeValue
-            if (AutoGenAgent.TypeValue == "userproxy") {
-                SelectedTypeValueIndex = 0;
-            } else if (AutoGenAgent.TypeValue == "assistant") {
-                SelectedTypeValueIndex = 1;
-            }
             // HumanInputMode
             if (AutoGenAgent.HumanInputMode == "NEVER") {
                 SelectedHumanInputModeIndex = 0;
@@ -96,10 +91,10 @@ namespace QAChat.ViewModel.AutoGen {
             }
         }
         // Llm
-        public bool Llm {
-            get { return AutoGenAgent.Llm; }
+        public string LLMConfigName {
+            get { return AutoGenAgent.LLMConfigName; }
             set {
-                AutoGenAgent.Llm = value;
+                AutoGenAgent.LLMConfigName = value;
                 OnPropertyChanged();
             }
         }
@@ -125,17 +120,12 @@ namespace QAChat.ViewModel.AutoGen {
         public void LoadTools() {
             // Load tools
             ObservableCollection<AutoGenToolViewModel> autoGenTools = [];
-            foreach (AutoGenTool tool in AutoGenTool.FindAll()) {
+            foreach (AutoGenTool tool in AutoGenTool.GetAutoGenToolList()) {
                 AutoGenToolViewModel toolViewModel = new(tool);
-                if (AutoGenAgent.ToolNamesForExecution.Contains(tool.Name)) {
-                    toolViewModel.ToolsForExecutionIsChecked = true;
+                if (AutoGenAgent.ToolNames.Contains(tool.Name)) {
+                    toolViewModel.ToolIsChecked = true;
                 } else {
-                    toolViewModel.ToolsForExecutionIsChecked = false;
-                }
-                if (AutoGenAgent.ToolNamesForLlm.Contains(tool.Name)) {
-                    toolViewModel.ToolsForLLMIsChecked = true;
-                } else {
-                    toolViewModel.ToolsForLLMIsChecked = false;
+                    toolViewModel.ToolIsChecked = false;
                 }
 
                 autoGenTools.Add(toolViewModel);
