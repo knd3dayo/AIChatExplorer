@@ -87,8 +87,6 @@
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI_RAG}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_GroupChat}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_NormalChat}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_NestedChat}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding ChatModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -238,43 +236,14 @@
                 </Grid>
 
             </Grid>
-            <!--  AutoGent  -->
+            <!--  AutoGen  -->
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <Grid
-                    Grid.Row="0"
-                    Margin="10,20,0,10"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding AutoGenNormalChatVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="通常チャット" />
-                    <ComboBox
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        DisplayMemberPath="Name"
-                        ItemsSource="{Binding AutoGenNormalChatList}"
-                        SelectedItem="{Binding SelectedAutoGenNormalChat}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AutoGenNormalChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-
-                    </ComboBox>
-                </Grid>
                 <!--  AutoGenGroupChat  -->
                 <Grid
-                    Grid.Row="1"
+                    Grid.Row="0"
                     Margin="10,20,0,10"
                     HorizontalAlignment="Left"
                     Visibility="{Binding AutoGenGroupChatVisibility}">
@@ -297,35 +266,6 @@
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding AutoGenGroupChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-
-                    </ComboBox>
-                </Grid>
-                <!--  AutoGenNestedChat  -->
-                <Grid
-                    Grid.Row="2"
-                    Margin="10,20,0,10"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding AutoGenNestedChatVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="Nestedチャット" />
-                    <ComboBox
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        DisplayMemberPath="Name"
-                        ItemsSource="{Binding AutoGenNestedChatList}"
-                        SelectedItem="{Binding SelectedAutoGenNestedChat}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AutoGenNestedChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
 
