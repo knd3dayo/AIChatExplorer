@@ -40,7 +40,7 @@
     </UserControl.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="280" />
             <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -57,6 +57,7 @@
             <!--  共通設定  -->
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -110,8 +111,8 @@
                         Margin="10,0,10,0"
                         SelectedIndex="{Binding SplitMode}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_None}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedMaxToken}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedMaxToken}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitIfExceedSpecifiedToken}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding SplitModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
@@ -121,6 +122,27 @@
                 </Grid>
                 <Grid
                     Grid.Row="4"
+                    Margin="10,20,0,10"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding SplitMOdeVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Text="{x:Static res:ViewStringResources.NumberOfTokensToSplitRequest}" />
+                    <!--  書式は整数  -->
+                    <TextBox
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding SplitTokenCount, StringFormat=N0, UpdateSourceTrigger=PropertyChanged}" />
+
+                </Grid>
+                <Grid
+                    Grid.Row="5"
                     Margin="10,20,0,10"
                     HorizontalAlignment="Left">
                     <Grid.ColumnDefinitions>
@@ -146,7 +168,7 @@
                         VerticalAlignment="Center"
                         Text="{Binding Temperature, StringFormat={}{0:F2}}" />
                 </Grid>
-                <Separator Grid.Row="5" />
+                <Separator Grid.Row="6" />
             </Grid>
             <!--  ベクトルDB設定  -->
             <Grid Grid.Row="1" Visibility="{Binding VectorDBItemVisibility}">

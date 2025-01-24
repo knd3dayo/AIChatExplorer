@@ -75,11 +75,14 @@ namespace QAChat.View.QAChatMain {
         // SplitMode_None
         public static string SplitMode_None => CommonStringResources.Instance.SplitMode_None;
 
-        // SplitMode_SplitIfExceedMaxToken
-        public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedMaxToken;
+        // SplitMode_SplitIfExceedSpecifiedToken
+        public static string SplitMode_SplitIfExceedSpecifiedToken => CommonStringResources.Instance.SplitMode_SplitIfExceedSpecifiedToken;
 
-        // SplitMode_SplitAndSummarizeIfExceedMaxToken
-        public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedMaxToken;
+        // SplitMode_SplitAndSummarizeIfExceedSpecifiedToken
+        public static string SplitMode_SplitAndSummarizeIfExceedSpecifiedToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken;
+
+        // SplitTokenCount
+        public static string NumberOfTokensToSplitRequest => CommonStringResources.Instance.NumberOfTokensToSplitRequest;
 
         // VectorDB
         public static string VectorDB => CommonStringResources.Instance.VectorDB;

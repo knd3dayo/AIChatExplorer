@@ -234,14 +234,17 @@ namespace QAChat.Resource {
         // 分割モード なし
         public override string SplitMode_None { get; } = "None";
 
-        // 分割モード 最大トークン数を超えそうな場合はリクエストを分割
-        public override string SplitMode_SplitIfExceedMaxToken { get; } = "Split request if it seems to exceed the maximum token count";
+        // 分割モード 指定したトークン数を超える場合はリクエストを分割
+        public override string SplitMode_SplitIfExceedSpecifiedToken { get; } = "Split request if it seems to exceed the specified token count";
 
-        // SplitMode_SplitAndSummarizeIfExceedMaxToken
-        public override string SplitMode_SplitAndSummarizeIfExceedMaxToken { get; } = "Split request and summarize if it seems to exceed the maximum token count";
+        // 指定したトークン数を超える場合はリクエストを分割して要約
+        public override string SplitMode_SplitAndSummarizeIfExceedSpecifiedToken { get; } = "Split and summarize request if it seems to exceed the specified token count";
 
         // PromptTextIsNeededWhenSplitModeIsEnabled
         public override string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "Prompt text is needed when split mode is enabled";
+
+        // NumberOfTokensToSplitRequest
+        public override string NumberOfTokensToSplitRequest { get; } = "Number of tokens to split request";
 
         // List of Auto Process Rules
         public override string ListAutoProcessRule { get; } = "List of Auto Process Rules";

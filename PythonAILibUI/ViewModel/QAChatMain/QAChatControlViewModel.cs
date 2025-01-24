@@ -78,6 +78,23 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
+        // SplitTokenCount
+        private int _SplitTokenCount = 8000;
+        public string SplitTokenCount {
+            get {
+                return _SplitTokenCount.ToString();
+            }
+            set {
+                try {
+                    int count = Int32.Parse(value);
+                    _SplitTokenCount = count;
+                } catch (Exception) {
+                    return;
+                }
+                OnPropertyChanged(nameof(SplitTokenCount));
+            }
+        }
+
         // VectorDBSearchResultMax
         public int VectorDBSearchResultMax { get; set; } = 10;
 
@@ -175,14 +192,16 @@ namespace QAChat.ViewModel.QAChatMain {
         }
 
         private ChatRequestContext CreateChatRequestContext() {
+            int splitTokenCount = Int32.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode,  [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
+                _chatMode, _splitMode, splitTokenCount, [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
                 );
             return chatRequestContext;
         }
         //
         public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_chatMode != OpenAIExecutionModeEnum.Normal);
 
+        public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
@@ -302,6 +321,8 @@ namespace QAChat.ViewModel.QAChatMain {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             SplitMode = comboBox.SelectedIndex;
+            // SplitMOdeVisibility
+            OnPropertyChanged(nameof(SplitMOdeVisibility));
 
         });
 

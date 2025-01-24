@@ -11,10 +11,12 @@ class RequestContext:
     chat_mode_name = "chat_mode" 
     summarize_prompt_text_name = "summarize_prompt_text"
     related_information_prompt_text_name = "related_information_prompt_text"
+    split_token_count_name = "split_token_count"
     def __init__(self, request_context_dict: dict):
         self.PromptTemplateText = request_context_dict.get(RequestContext.prompt_template_text_name, "")
         self.ChatMode = request_context_dict.get(RequestContext.chat_mode_name, "Normal")
         self.SplitMode = request_context_dict.get("split_mode", "None")
+        self.SplitTokenCount = request_context_dict.get(RequestContext.split_token_count_name, 8000)
         self.SummarizePromptText = request_context_dict.get(RequestContext.summarize_prompt_text_name, "")
         self.RelatedInformationPromptText = request_context_dict.get(RequestContext.related_information_prompt_text_name, "")
 
@@ -254,7 +256,7 @@ class OpenAIClient:
         model_id_list = [ model.id for model in response.data]
         return model_id_list
 
-    def split_message(self, message_list: list[str]) -> list[str]:
+    def split_message(self, message_list: list[str], split_token_count: int) -> list[str]:
         # token_countが80KBを超える場合は分割する
         result_message_list = []
         temp_message_list = []
@@ -263,7 +265,7 @@ class OpenAIClient:
             message = message_list[i] + "\n"
             token_count = self.get_token_count(message)
             # total_token_count + token_countが80KBを超える場合はtemp_message_listをresult_message_listに追加する
-            if total_token_count + token_count > 80000:
+            if total_token_count + token_count > split_token_count:
                 result_message_list.append("\n".join(temp_message_list))
                 temp_message_list = []
                 total_token_count = 0
@@ -292,7 +294,7 @@ class OpenAIClient:
         # 結果はresult_messagesに格納する
         result_messages = []
         if request_context.SplitMode != "None":
-            target_messages = self.split_message(original_last_message.split("\n"))
+            target_messages = self.split_message(original_last_message.split("\n"), request_context.SplitTokenCount)
         else:
             target_messages = [original_last_message]
 

@@ -128,14 +128,17 @@ namespace QAChat.Resource {
         // 分割モード なし
         public virtual string SplitMode_None { get; } = "なし";
 
-        // 分割モード 最大トークン数を超えそうな場合はリクエストを分割
-        public virtual string SplitMode_SplitIfExceedMaxToken { get; } = "最大トークン数を超えそうな場合はリクエストを分割";
+        // 分割モード 指定したトークン数を超える場合はリクエストを分割
+        public virtual string SplitMode_SplitIfExceedSpecifiedToken { get; } = "指定したトークン数を超える場合はリクエストを分割";
 
-        // SplitMode_SplitAndSummarizeIfExceedMaxToken
-        public virtual string SplitMode_SplitAndSummarizeIfExceedMaxToken { get; } = "最大トークン数を超えそうな場合はリクエストを分割して要約";
+        // 指定したトークン数を超える場合はリクエストを分割して要約n
+        public virtual string SplitMode_SplitAndSummarizeIfExceedSpecifiedToken { get; } = "指定したトークン数を超える場合はリクエストを分割して要約";
 
         // PromptTextIsNeededWhenSplitModeIsEnabled
         public virtual string PromptTextIsNeededWhenSplitModeIsEnabled { get; } = "分割モードが有効な場合はプロンプトテキストが必要です";
+
+        // リクエストを分割するトークン数
+        public virtual string NumberOfTokensToSplitRequest { get; } = "リクエストを分割するトークン数";
 
         // 貼り付け
         public virtual string Paste { get; } = "貼り付け";

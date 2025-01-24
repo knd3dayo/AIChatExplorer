@@ -48,11 +48,11 @@ namespace QAChat.View.PromptTemplate {
         // SplitMode_None
         public static string SplitMode_None => CommonStringResources.Instance.SplitMode_None;
 
-        // SplitMode_SplitIfExceedMaxToken
-        public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedMaxToken;
+        // SplitMode_SplitIfExceedSpecifiedToken
+        public static string SplitMode_SplitIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitIfExceedSpecifiedToken;
 
-        // SplitMode_SplitAndSummarizeIfExceedMaxToken
-        public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedMaxToken;
+        // SplitMode_SplitAndSummarizeIfExceedSpecifiedToken
+        public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken;
 
 
 

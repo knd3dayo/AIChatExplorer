@@ -27,9 +27,15 @@ namespace PythonAILib.Model.Chat {
         [JsonPropertyName("openai_props")]
         public OpenAIProperties OpenAIProperties { get; set; } = new OpenAIProperties();
 
+        // リクエストを分割するトークン数
+        [JsonPropertyName("split_token_count")]
+        public int SplitTokenCount { get; set; } = 8000;
+
         // PromptTemplateText
         [JsonPropertyName("prompt_template_text")]
         public string PromptTemplateText { get; set; } = "";
+
+
 
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
@@ -49,6 +55,8 @@ namespace PythonAILib.Model.Chat {
                 { "split_mode", SplitMode.ToString() },
                 { "summarize_prompt_text", SummarizePromptText },
                 { "related_information_prompt_text", RelatedInformationPromptText },
+                { "split_token_count", SplitTokenCount },
+
             };
             Dictionary<string, object> dict = new() {
                 { "vector_db_items", VectorSearchProperty.ToDictList(VectorSearchProperties) },
@@ -67,7 +75,7 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode ,List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
             AutoGenProperties autoGenProperties;
@@ -90,6 +98,7 @@ namespace PythonAILib.Model.Chat {
                 PromptTemplateText = promptTemplateText,
                 ChatMode = chatMode,
                 SplitMode = splitMode,
+                SplitTokenCount = split_token_count,
             };
 
             return chatRequestContext;
