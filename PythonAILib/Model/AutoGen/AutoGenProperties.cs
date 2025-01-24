@@ -30,6 +30,17 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("group_chat")]
         public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
 
+        // terminate_msg
+        [JsonPropertyName("terminate_msg")]
+        public string TerminateMsg { get; set; } = "TERMINATE";
+
+        // max_msg
+        [JsonPropertyName("max_msg")]
+        public int MaxMsg { get; set; } = 15;
+
+        // timeout
+        [JsonPropertyName("timeout")]
+        public int Timeout { get; set; } = 60;
 
         // ToDictList
         public Dictionary<string, object> ToDict() {
@@ -38,6 +49,9 @@ namespace PythonAILib.Model.AutoGen {
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
                 { "group_chat", AutoGenGroupChat.ToDict() },
+                { "terminate_msg", TerminateMsg },
+                { "max_msg", MaxMsg },
+                { "timeout", Timeout },
             };
             return dict;
         }
@@ -111,20 +125,18 @@ namespace PythonAILib.Model.AutoGen {
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
 
             // agentの初期化
-            var agentName = "user_proxy";
+            var agentName = "planner";
             var agentDescription = "ユーザーの要求を達成するための計画を考えて、各エージェントと協力して要求を達成します";
             var agentSystemMessage = "" +
                 "- まず、ユーザーの要求を達成するためにはどのエージェントと協力すべきか計画を作成します。" +
                 "code_writer,code_executorがいる場合は、その他のエージェントでは対応できない要求をcode_writer,code_executorに割り当てます。" +
                 "- 計画に基づき、対象のエージェントにタスクを割り当てて、タスクを実行します。" +
                 "- 計画が達成されたら、[End Meeting]と返信してください。";
-            var agentHumanInputMode = "c";
-            var agentTerminateMsg = "End Meeting";
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
             var agentTools =new List<string> { "search_wikipedia_ja","list_files_in_directory", "extract_file", "check_file", "extract_webpage", "search_duckduckgo", "save_text_file", "save_tools", "get_current_time" };
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             agentName = "code_writer";
             agentDescription = "コードを書くためのエージェントです。";
@@ -136,13 +148,11 @@ namespace PythonAILib.Model.AutoGen {
                 - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
 
                 """;
-            agentHumanInputMode = "Never";
-            agentTerminateMsg = "";
             agentCodeExecution = true;
-            agentLLMConfig = "";
+            agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             agentName = "code_executor";
             agentDescription = "コードを実行するためのエージェントです。";
@@ -153,13 +163,11 @@ namespace PythonAILib.Model.AutoGen {
                 - スクリプトの実行から得られる情報が不十分な場合、現在得られている情報に基づいて再度修正したコードを作成すること。
                 - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
                 """;
-            agentHumanInputMode = "Never";
-            agentTerminateMsg = "";
             agentCodeExecution = true;
-            agentLLMConfig = "";
+            agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             agentName = "web_searcher";
             agentDescription = "Web検索を行うエージェントです。";
@@ -170,13 +178,11 @@ namespace PythonAILib.Model.AutoGen {
                 - 必要なドキュメントがリンク先にない場合は、さらにリンクされた情報を検索してください。
                 - 必要なドキュメントが見つかった場合は、extract_webpage でドキュメントを取得し、ユーザーにテキストを提供してください。
                 """;
-            agentHumanInputMode = "Never";
-            agentTerminateMsg = "";
             agentCodeExecution = false;
-            agentLLMConfig = "";
+            agentLLMConfig = "default";
             agentTools = ["search_duckduckgo", "extract_webpage"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             agentName = "file_operator";
             agentDescription = "ファイル操作を行うエージェントです。";
@@ -188,13 +194,11 @@ namespace PythonAILib.Model.AutoGen {
                 - 指定されたファイルが存在するかどうかを確認するために提供された check_file 関数を使用してください。
                 - テキストをファイルに保存するために提供された save_text_file 関数を使用してください。
                 """;
-            agentHumanInputMode = "Never";
-            agentTerminateMsg = "";
             agentCodeExecution = false;
-            agentLLMConfig = "";
+            agentLLMConfig = "default";
             agentTools = ["list_files_in_directory", "extract_file", "check_file", "save_text_file"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             agentName = "time_checker";
             agentDescription = "時間を確認するエージェントです。";
@@ -203,20 +207,19 @@ namespace PythonAILib.Model.AutoGen {
                 それ以外の指示には返信しないでください。
                 - 現在の時間を取得するために提供された get_current_time 関数を使用してください。
                 """;
-            agentHumanInputMode = "Never";
-            agentTerminateMsg = "";
             agentCodeExecution = false;
-            agentLLMConfig = "";
+            agentLLMConfig = "default";
             agentTools = ["get_current_time"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentHumanInputMode, agentTerminateMsg, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
 
             // group_chatの初期化
             var groupName = "default";
             var groupDescription = "デフォルトのグループチャットです。";
-            var groupInitAgentName = "user_proxy";
-            var groupAgentNames = new List<string> { "user_proxy" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupInitAgentName, groupAgentNames, false);
+            var grouLLMConfig = "default";
+            // 全エージェント名のリスト
+            var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, grouLLMConfig, groupAgentNames, false);
             Initialized = true;
 
         }

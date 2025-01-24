@@ -228,6 +228,18 @@ namespace QAChat.Resource {
         // AutoGen NestedChat
         public override string ChatMode_AutoGen_NestedChat { get; } = "AutoGen NestedChat";
 
+        // GroupChatName
+        public override string GroupChatName { get; } = "Group Chat Name";
+
+        // Timeout
+        public override string Timeout { get; } = "Timeout";
+
+        // TerminateMessage
+        public override string TerminateMessage { get; } = "Terminate Message";
+
+        // MaxMsg
+        public override string MaxMsg { get; } = "Max Msg";
+
         // 分割モード
         public override string SplitMode { get; } = "Request Split Mode";
 

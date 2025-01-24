@@ -34,6 +34,12 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             // AutoGenGroupChatを設定
             SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
+
+            // AutoGenPropertiesを設定
+            _autoGenProperties = new AutoGenProperties();
+            _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
+            _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
+            _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
         }
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
@@ -166,7 +172,16 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(SelectedContextItem));
             }
         }
-
+        private AutoGenProperties _autoGenProperties;
+        public AutoGenProperties AutoGenProperties {
+            get {
+                return _autoGenProperties;
+            }
+            set {
+                _autoGenProperties = value;
+                OnPropertyChanged(nameof(AutoGenProperties));
+            }
+        }
         public string PreviewJson {
             get {
                 // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
@@ -193,8 +208,9 @@ namespace QAChat.ViewModel.QAChatMain {
 
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = Int32.Parse(SplitTokenCount);
+
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, [.. VectorSearchProperties], SelectedAutoGenGroupChat, PromptText
+                _chatMode, _splitMode, splitTokenCount, [.. VectorSearchProperties], AutoGenProperties, PromptText
                 );
             return chatRequestContext;
         }
@@ -434,6 +450,38 @@ namespace QAChat.ViewModel.QAChatMain {
                 SelectedAutoGenGroupChat = AutoGenGroupChatList[index];
             }
         });
+
+        // terminate_msg
+        public string TerminateMsg {
+            get {
+                return AutoGenProperties.TerminateMsg;
+            }
+            set {
+                AutoGenProperties.TerminateMsg = value;
+                OnPropertyChanged(nameof(TerminateMsg));
+            }
+        }
+        // max_msg
+        public int MaxMsg {
+            get {
+                return AutoGenProperties.MaxMsg;
+            }
+            set {
+                AutoGenProperties.MaxMsg = value;
+                OnPropertyChanged(nameof(MaxMsg));
+            }
+        }
+        // timeout
+        public int Timeout {
+            get {
+                return AutoGenProperties.Timeout;
+            }
+            set {
+                AutoGenProperties.Timeout = value;
+                OnPropertyChanged(nameof(Timeout));
+            }
+        }
+
         #endregion
 
     }

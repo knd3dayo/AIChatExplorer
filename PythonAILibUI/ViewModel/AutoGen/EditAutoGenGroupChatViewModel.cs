@@ -38,11 +38,11 @@ namespace QAChat.ViewModel.AutoGen {
         }
 
         // InitAgentName
-        public string InitAgentName {
-            get => AutoGenGroupChat.InitAgentName;
+        public string LLMConfigName {
+            get => AutoGenGroupChat.LLMConfigName;
             set {
-                AutoGenGroupChat.InitAgentName = value;
-                OnPropertyChanged(nameof(InitAgentName));
+                AutoGenGroupChat.LLMConfigName = value;
+                OnPropertyChanged(nameof(LLMConfigName));
             }
         }
 
@@ -60,7 +60,7 @@ namespace QAChat.ViewModel.AutoGen {
         }
 
         // InitAgent
-        public AutoGenAgentViewModel? InitAgent { get; set; }
+        public AutoGenLLMConfig? LLMConfig { get; set; }
 
         public void LoadAutoGenAgents() {
             // AutoGenAgentのリストを取得
@@ -79,8 +79,8 @@ namespace QAChat.ViewModel.AutoGen {
             OnPropertyChanged(nameof(AutoGenAgents));
 
             // InitAgentNameからAutoGenAgentを取得
-            InitAgent = AutoGenAgents.Select((item) => item).FirstOrDefault((item) => item.AutoGenAgent.Name == AutoGenGroupChat.InitAgentName);
-            OnPropertyChanged(nameof(InitAgent));
+            LLMConfig = AutoGenLLMConfig.GetAutoGenLLMConfigList().FirstOrDefault(x => x.Name == AutoGenGroupChat.LLMConfigName);
+            OnPropertyChanged(nameof(LLMConfig));
 
         }
 
@@ -94,9 +94,9 @@ namespace QAChat.ViewModel.AutoGen {
                     AutoGenGroupChat.AgentNames.Add(item.AutoGenAgent.Name);
                 }
             }
-            // InitAgentNameを更新
-            if (InitAgent != null) { 
-                AutoGenGroupChat.InitAgentName = InitAgent.AutoGenAgent.Name;
+            // LLMConfigを更新
+            if (LLMConfig != null) { 
+                AutoGenGroupChat.LLMConfigName = LLMConfig.Name;
             }
             AutoGenGroupChat.Save();
             AfterUpdate();

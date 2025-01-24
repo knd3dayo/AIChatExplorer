@@ -7,7 +7,7 @@ from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
 from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
 from ai_app_langchain import LangChainChatParameter, LangChainUtil, LangChainVectorDB
 from ai_app_file import ExcelUtil, FileUtil
-from ai_app_autogen import AutoGenGroupChatWrapper, AutoGenProps, AutoGenNormalChatWrapper
+from ai_app_autogen import AutoGenProps
 
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -115,25 +115,8 @@ def get_token_count(openai_props: OpenAIProps, input_text: str):
 # autogen関連
 ########################
 def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
-    # autogen_propsからAgentsを取得
-    from ai_app_autogen.ai_app_autogen_util import AutoGenChatUtil
-    autogen_util = AutoGenChatUtil(autogen_props, vector_db_items)
-    # AutoGenGroupChatを生成
-
-    autogen_chat = AutoGenGroupChatWrapper(autogen_util.init_agent, autogen_util.agents)
     # run_group_chatを実行
-    result = autogen_chat.run_chat(input_text, 2, 10)
-    return result
-
-def run_autogen_normal_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
-    # autogen_propsからAgentsを取得
-    from ai_app_autogen.ai_app_autogen_util import AutoGenChatUtil
-    autogen_util = AutoGenChatUtil(autogen_props, vector_db_items)
-    # AutoGenGroupChatを生成
-
-    autogen_chat = AutoGenNormalChatWrapper(autogen_util.init_agent, autogen_util.agents)
-    # run_group_chatを実行
-    result = autogen_chat.run_chat(input_text, 2)
+    result = autogen_props.run_group_chat(input_text, 2, 10)
     return result
 
 ########################

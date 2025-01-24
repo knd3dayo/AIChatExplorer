@@ -81,9 +81,6 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -122,69 +119,27 @@
                             Grid.Column="1"
                             Margin="10,10,10,10"
                             Text="{Binding SystemMessage}" />
-                        <TextBlock
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Width="120"
-                            Margin="10,10,10,10"
-                            Text="{x:Static res:ViewStringResources.AgentType}" />
-                        <ComboBox
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            Margin="10,10,10,10"
-                            SelectedIndex="{Binding SelectedTypeValueIndex}">
-                            <ComboBoxItem Content="{x:Static res:ViewStringResources.UserProxy}" />
-                            <ComboBoxItem Content="{x:Static res:ViewStringResources.Assistant}" />
-                        </ComboBox>
-                        <TextBlock
-                            Grid.Row="4"
-                            Grid.Column="0"
-                            Width="120"
-                            Margin="10,10,10,10"
-                            Text="{x:Static res:ViewStringResources.HumanInputMode}" />
-                        <ComboBox
-                            Grid.Row="4"
-                            Grid.Column="1"
-                            Margin="10,10,10,10"
-                            SelectedIndex="{Binding SelectedHumanInputModeIndex}">
-                            <ComboBoxItem Content="{x:Static res:ViewStringResources.Never}" />
-                            <ComboBoxItem Content="{x:Static res:ViewStringResources.Always}" />
-                            <ComboBoxItem Content="{x:Static res:ViewStringResources.Terminate}" />
-                        </ComboBox>
-                        <TextBlock
-                            Grid.Row="5"
-                            Grid.Column="0"
-                            Width="120"
-                            Margin="10,10,10,10"
-                            Text="{x:Static res:ViewStringResources.TerminateMsg}" />
-                        <TextBox
-                            Grid.Row="5"
-                            Grid.Column="1"
-                            Margin="10,10,10,10"
-                            AcceptsReturn="False"
-                            Text="{Binding TerminationMsg}"
-                            TextWrapping="NoWrap" />
                         <!--  CodeExecution  -->
                         <TextBlock
-                            Grid.Row="6"
+                            Grid.Row="3"
                             Grid.Column="0"
                             Width="120"
                             Margin="10,10,10,10"
                             Text="{x:Static res:ViewStringResources.CodeExecution}" />
                         <CheckBox
-                            Grid.Row="6"
+                            Grid.Row="3"
                             Grid.Column="1"
                             Margin="10,10,10,10"
                             IsChecked="{Binding CodeExecution}" />
                         <!--  Llm  -->
                         <TextBlock
-                            Grid.Row="7"
+                            Grid.Row="4"
                             Grid.Column="0"
                             Width="120"
                             Margin="10,10,10,10"
                             Text="{x:Static res:ViewStringResources.LLM}" />
                         <CheckBox
-                            Grid.Row="7"
+                            Grid.Row="4"
                             Grid.Column="1"
                             Margin="10,10,10,10"
                             IsChecked="{Binding Llm}" />

@@ -1,9 +1,16 @@
-from autogen.coding import LocalCommandLineCodeExecutor
 import venv
-from ai_app_openai.ai_app_openai_util import OpenAIProps
+from collections.abc import AsyncGenerator
+from typing import Any
+
 # sqlite3
 import sqlite3
-from autogen import ConversableAgent, GroupChat
+# autogen
+from autogen_ext.models.openai import OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient
+from autogen_core.tools import FunctionTool
+from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
+from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
+from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination, TimeoutTermination
+from autogen_agentchat.teams import SelectorGroupChat
 
 class AutoGenProps:
 
@@ -12,9 +19,7 @@ class AutoGenProps:
     tools_table_name = "tools"
     group_chats_table_name = "group_chats"
 
-    def __init__(self, openai_props: OpenAIProps,  props_dict: dict):
-        # OpenAIProps
-        self.openai_props = openai_props
+    def __init__(self, props_dict: dict):
 
         # autogen_db_path
         autogen_db_path = props_dict.get("autogen_db_path", None)
@@ -36,6 +41,20 @@ class AutoGenProps:
 
         if self.chat_dict is None:
             raise ValueError("chat_dict is None")
+        
+        # terminate_msg
+        self.terminate_msg = props_dict.get("terminate_msg", "TERMINATE")
+
+        # max_msg
+        self.max_msg = props_dict.get("max_msg", 15)
+
+        # timeout
+        self.timeout = props_dict.get("timeout", 120)
+
+
+    async def  run_group_chat(self, initial_message: str) -> AsyncGenerator:
+        group_chat = self.create_group_chat(self.chat_dict["name"])
+        return await group_chat.run_stream(task=initial_message)
 
     # 指定したnameのGroupChatをDBから取得して、GroupChatを返す
     def create_group_chat(self, name: str):
@@ -49,13 +68,12 @@ class AutoGenProps:
             raise ValueError(f"GroupChat:{name} is not found.")
         # DBから取得したデータをchat_dictに変換する
         # なお、group_chatsのテーブル定義は以下の通り
-        # "CREATE TABLE IF NOT EXISTS group_chats (name TEXT, description TEXT, init_agent_name TEXT, agent_names TEXT, max_round INTEGER)"
+        # "CREATE TABLE IF NOT EXISTS group_chats (name TEXT, description TEXT, llm_config_name TEXT, agent_names TEXT)"
         chat_dict = {}
         chat_dict["name"] = row[0]
         chat_dict["description"] = row[1]
-        chat_dict["init_agent_name"] = row[2]
+        chat_dict["llm_config_name"] = row[2]
         chat_dict["agent_names"] = row[3]
-        chat_dict["max_round"] = row[4]
         conn.close()
 
         # agent_namesを取得
@@ -64,15 +82,18 @@ class AutoGenProps:
         for agent_name in agent_names:
             agent = self.create_agent(agent_name)
             agents.append(agent)
+
+        # termination_conditionを作成
+        termination_condition = self.create_termination_condition(self.terminate_msg, self.max_msg, self.timeout)
+
+        # SelectorGroupChatを作成
+        chat = SelectorGroupChat(
+            agents, 
+            model_client=self.create_client(chat_dict["llm_config_name"]), 
+            termination_condition=termination_condition,
+            )
         
-        # グループチャットを作成
-        groupchat = GroupChat(
-            admin_name="chat_admin_agent",
-            agents=agents,
-            messages=[],
-            max_round=chat_dict["max_round"],
-        )
-        
+        return chat
 
     # 指定したnameのAgentをDBから取得して、Agentを返す
     def create_agent(self, name: str):
@@ -86,49 +107,42 @@ class AutoGenProps:
             raise ValueError(f"Agent:{name} is not found.")
         # DBから取得したデータをagent_dictに変換する
         # なお、agentsのテーブル定義は以下の通り
-        # "CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, human_input_mode TEXT, termination_msg TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)"
+        # "CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)"
         agent_dict = {}
         agent_dict["name"] = row[0]
         agent_dict["description"] = row[1]
         agent_dict["system_message"] = row[2]
-        agent_dict["human_input_mode"] = row[3]
-        agent_dict["termination_msg"] = row[4]
-        agent_dict["code_execution"] = row[5]
-        agent_dict["llm_config_name"] = row[6]
-        agent_dict["tool_names"] = row[7]
+        agent_dict["code_execution"] = row[3]
+        agent_dict["llm_config_name"] = row[4]
+        agent_dict["tool_names"] = row[5]
         conn.close()
         # ConversableAgent object用の引数辞書を作成
         params = {}
         params["name"] = agent_dict["name"]
         params["description"] = agent_dict["description"]
-        params["system_message"] = agent_dict["system_message"]
-        params["human_input_mode"] = agent_dict["human_input_mode"]
-        params["is_termination_msg"] = lambda msg: agent_dict["termination_msg"] in msg["content"].lower()
-        # code_executionがTrueの場合は、code_executor_dictを作成
+        # code_executionがTrueの場合は、CodeExecutionAgentを作成
         if agent_dict["code_execution"]:
-            code_executor_dict = self.create_code_executor_dict()
-            params["code_executor_dict"] = code_executor_dict
+            code_executor = self.create_code_executor()
+            params["code_executor"] = code_executor
+            return CodeExecutorAgent(**params)
+
         else:
-            params["code_executor_dict"] = False
-        # llm_config_nameが指定されている場合は、llm_config_dictを作成
-        if agent_dict["llm_config_name"]:
-            llm_config_dict = self.create_llm_config_dict(agent_dict["llm_config_name"])
-            params["llm_config"] = llm_config_dict
-        else:
-            params["llm_config"] = False
+            # code_executionがFalseの場合は、AssistantAgentを作成
+            params["system_message"] = agent_dict["system_message"]
+            # llm_config_nameが指定されている場合は、llm_config_dictを作成
+            params["model_client"] = self.create_client(agent_dict["llm_config_name"])
 
-        # ConversableAgent objectを作成
-        agent = ConversableAgent(**params)
+            # tool_namesが指定されている場合は、tool_dictを作成
+            if agent_dict["tool_names"]:
+                tool_names = agent_dict["tool_names"].split(",")
+                tool_dict_list = []
+                for tool_name in tool_names:
+                    tool_dict = self.create_tool(tool_name)
+                    tool_dict_list.append(tool_dict)
 
-        # tool_namesが指定されている場合は、tool_dictを作成
-        if agent_dict["tool_names"]:
-            tool_names = agent_dict["tool_names"].split(",")
-            tool_dict_list = []
-            for tool_name in tool_names:
-                tool_dict = self.create_tool(tool_name)
-                # agentのregister_for_llmを実行
-                agent.register_for_llm(name = tool_dict["name"], description = tool_dict["description"])(tool_dict["func"]) 
+                params["tools"] = tool_dict_list
 
+            return AssistantAgent(**params)
 
     def create_tool(self, name: str):
         # sqlite3のDBを開く
@@ -158,10 +172,10 @@ class AutoGenProps:
         # nameの関数を取得
         tool_dict["func"] = locals_copy[name]
 
-        return tool_dict
+        return FunctionTool(tool_dict["func"], description=tool_dict["description"], name=tool_dict["name"])
     
     # 指定したnameのLLMConfigをDBから取得して、llm_configを返す    
-    def create_llm_config_dict(self, name: str):
+    def create_client(self, name: str):
         # sqlite3のDBを開く
         conn = sqlite3.connect(self.autogen_db_path)
         cursor = conn.cursor()
@@ -181,29 +195,46 @@ class AutoGenProps:
         llm_config_entry["base_url"] = row[5]
         conn.close() 
 
-        # config_listに追加
-        config_list = []
-        config_list.append(llm_config_entry)
-        llm_config = {}
-        llm_config["config_list"] = config_list
-        llm_config["cache_seed"] = None
+        client = None
+        parameters = {}
+        parameters["api_key"] = llm_config_entry["api_key"]
+        if llm_config_entry["api_type"] == "azure":
+            # parametersのapi_versionにapi_versionを設定
+            parameters["api_version"] = llm_config_entry["api_version"]
+            # parametersのazure_endpointにbase_urlを設定
+            parameters["azure_endpoint"] = llm_config_entry["base_url"]
+            # parametersのazure_deploymentにmodelを設定
+            parameters["azure_deployment"] = llm_config_entry["model"]
+            client = AzureOpenAIChatCompletionClient(**llm_config_entry)
+        else:
+            # parametersのmodelにmodelを設定
+            parameters["model"] = llm_config_entry["model"]
+            # base_urlが指定されている場合は、parametersのbase_urlにbase_urlを設定
+            if llm_config_entry["base_url"]:
+                parameters["base_url"] = llm_config_entry["base_url"]
+            client = OpenAIChatCompletionClient(**llm_config_entry)
 
-        return llm_config
+        return client
 
-
-    # TODO Agent毎に設定できるようにする
-    def create_code_executor_dict(self):
+    def create_code_executor(self):
         params = {}
-        params["timeout"] = 120
         params["work_dir"] = self.work_dir_path
+        print(f"work_dir_path:{self.work_dir_path}")
         if self.venv_path:
             env_builder = venv.EnvBuilder(with_pip=True)
             virtual_env_context = env_builder.ensure_directories(self.venv_path)
             params["virtual_env_context"] = virtual_env_context
+            print(f"venv_path:{self.venv_path}")
             
         # Create a local command line code executor.
-        print(f"work_dir_path:{self.work_dir_path}")
         executor = LocalCommandLineCodeExecutor(
             **params
         )
-        return {"executor": executor}
+        return executor
+
+    def create_termination_condition(self, termination_msg: str, max_msg: int, timeout: int):
+        # Define termination condition
+        max_msg_termination = MaxMessageTermination(max_messages=max_msg)
+        text_termination = TextMentionTermination(termination_msg)
+        time_terminarion = TimeoutTermination(timeout)
+        combined_termination = max_msg_termination | text_termination | time_terminarion

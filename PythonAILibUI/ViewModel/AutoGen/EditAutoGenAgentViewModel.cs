@@ -14,15 +14,6 @@ namespace QAChat.ViewModel.AutoGen {
             RootFolderViewModels = rootFolderViewModels;
             AfterUpdate = afterUpdate;
             LoadTools();
-            // TypeValue
-            // HumanInputMode
-            if (AutoGenAgent.HumanInputMode == "NEVER") {
-                SelectedHumanInputModeIndex = 0;
-            } else if (AutoGenAgent.HumanInputMode == "ALWAYS") {
-                SelectedHumanInputModeIndex = 1;
-            } else if (AutoGenAgent.HumanInputMode == "TERMINATE") {
-                SelectedHumanInputModeIndex = 2;
-            }
         }
 
         public ObservableCollection<ContentFolderViewModel> RootFolderViewModels { get; set; }
@@ -65,23 +56,7 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged();
             }
         }
-        // SelectedHumanInputModeIndex
-        private int _selectedHumanInputModeIndex = 0;
-        public int SelectedHumanInputModeIndex {
-            get { return _selectedHumanInputModeIndex; }
-            set {
-                _selectedHumanInputModeIndex = value;
-                OnPropertyChanged();
-            }
-        }
-        // termination_msg
-        public string TerminationMsg {
-            get { return AutoGenAgent.TerminationMsg; }
-            set {
-                AutoGenAgent.TerminationMsg = value;
-                OnPropertyChanged();
-            }
-        }
+
         // CodeExecution
         public bool CodeExecution {
             get { return AutoGenAgent.CodeExecution; }
@@ -96,6 +71,13 @@ namespace QAChat.ViewModel.AutoGen {
             set {
                 AutoGenAgent.LLMConfigName = value;
                 OnPropertyChanged();
+            }
+        }
+        // LlmConfigList
+        public ObservableCollection<AutoGenLLMConfig> LlmConfigList {
+            get {
+               var list = AutoGenLLMConfig.GetAutoGenLLMConfigList();
+                return new ObservableCollection<AutoGenLLMConfig>(list);
             }
         }
         // VectorSearchProperty
@@ -136,27 +118,6 @@ namespace QAChat.ViewModel.AutoGen {
 
         // SaveCommand
         public SimpleDelegateCommand<Window> SaveCommand => new((window) => {
-            // TypeValue
-            switch (SelectedTypeValueIndex) {
-                case 0:
-                    AutoGenAgent.TypeValue = "userproxy";
-                    break;
-                case 1:
-                    AutoGenAgent.TypeValue = "assistant";
-                    break;
-            }
-            // HumanInputMode
-            switch (SelectedHumanInputModeIndex) {
-                case 0:
-                    AutoGenAgent.HumanInputMode = "NEVER";
-                    break;
-                case 1:
-                    AutoGenAgent.HumanInputMode = "ALWAYS";
-                    break;
-                case 2:
-                    AutoGenAgent.HumanInputMode = "TERMINATE";
-                    break;
-            }
 
             // Save
             AutoGenAgent.Save();

@@ -122,6 +122,18 @@ namespace QAChat.Resource {
         // AutoGent_NestedChat
         public virtual string ChatMode_AutoGen_NestedChat { get; } = "AutoGen_NestedChat";
 
+        // GroupChatName
+        public virtual string GroupChatName { get; } = "グループチャット名";
+
+        // Timeout
+        public virtual string Timeout { get; } = "タイムアウト";
+
+        // TerminateMessage
+        public virtual string TerminateMessage { get; } = "終了メッセージ";
+
+        // MaxMsg
+        public virtual string MaxMsg { get; } = "最大メッセージ数";
+
         // 分割モード
         public virtual string SplitMode { get; } = "リクエスト分割モード";
 

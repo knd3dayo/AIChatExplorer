@@ -109,14 +109,14 @@
                         Grid.Column="0"
                         Width="120"
                         Margin="10,10,10,10"
-                        Text="{x:Static res:ViewStringResources.InitAgent}" />
+                        Text="{x:Static res:ViewStringResources.LLMConfig}" />
                     <ComboBox
                         Grid.Row="2"
                         Grid.Column="1"
                         Margin="10,10,10,10"
                         DisplayMemberPath="Name"
-                        ItemsSource="{Binding AutoGenAgents}"
-                        SelectedItem="{Binding InitAgent}" />
+                        ItemsSource="{Binding LLMConfigList}"
+                        SelectedItem="{Binding LLMConfig}" />
                 </Grid>
             </TabItem>
             <TabItem Header="{x:Static res:ViewStringResources.DetailSettings}">

@@ -75,31 +75,21 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, List<VectorSearchProperty> vectorSearchProperties, AutoGenGroupChat? groupChat, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
-            AutoGenProperties autoGenProperties;
-
-            if (groupChat != null) {
-                autoGenProperties = new AutoGenProperties() {
-                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                    AutoGenGroupChat = groupChat,
-                };
-            } else {
-                autoGenProperties = new AutoGenProperties() {
-                    WorkDir = libManager.ConfigParams.GetAutoGenWorkDir(),
-                };
-            }
 
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchProperties = vectorSearchProperties,
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
-                AutoGenProperties = autoGenProperties,
                 PromptTemplateText = promptTemplateText,
                 ChatMode = chatMode,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
             };
+            if (autoGenProperties != null) {
+                chatRequestContext.AutoGenProperties = autoGenProperties;
+            }
 
             return chatRequestContext;
         }

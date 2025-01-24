@@ -25,15 +25,6 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("tool_names")]
         public List<string> ToolNames { get; set; } = new List<string>();
 
-
-        // human_input_mode
-        [JsonPropertyName("human_input_mode")]
-        public string HumanInputMode { get; set; } = "";
-
-        // termination_msg
-        [JsonPropertyName("termination_msg")]
-        public string TerminationMsg { get; set; } = "";
-
         // code_execution 
         [JsonPropertyName("code_execution")]
         public bool CodeExecution { get; set; } = false;
@@ -56,8 +47,6 @@ namespace PythonAILib.Model.AutoGen {
                 { "system_message", data.SystemMessage },
                 { "type_value", data.TypeValue },
                 { "tool_names", data.ToolNames },
-                { "human_input_mode", data.HumanInputMode },
-                { "termination_msg", data.TerminationMsg },
                 { "code_execution", data.CodeExecution },
                 { "llm_config_name", data.LLMConfigName },
                 { "vector_db_items", VectorDBItem.ToDictList(data.VectorDBItems) }
@@ -77,7 +66,7 @@ namespace PythonAILib.Model.AutoGen {
 
         // Save
         public void Save(bool allow_override = true) {
-            UpdateAutoGenAgent(Name, Description, SystemMessage, HumanInputMode, TerminationMsg, CodeExecution, LLMConfigName, ToolNames, allow_override);
+            UpdateAutoGenAgent(Name, Description, SystemMessage, CodeExecution, LLMConfigName, ToolNames, allow_override);
         }
         // Delete
         public void Delete() {
@@ -85,7 +74,7 @@ namespace PythonAILib.Model.AutoGen {
         }
 
         // Update AutoGenAgent
-        public static void UpdateAutoGenAgent(string name, string description, string system_message, string human_input_mode, string terminateMsg, bool code_execution, string llm_config_name, List<string> tool_names, bool overwrite) {
+        public static void UpdateAutoGenAgent(string name, string description, string system_message, bool code_execution, string llm_config_name, List<string> tool_names, bool overwrite) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
             string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
@@ -102,36 +91,30 @@ namespace PythonAILib.Model.AutoGen {
             // name: Agent名
             // description: Agentの説明
             // system_message: システムメッセージ
-            // human_input_mode
-            // termination_msg
             // code_execution
             // llm_config_name LLMConfig名
             //tooo_names ツール名
             // テーブルが存在しない場合のみ作成
-            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, human_input_mode TEXT, termination_msg TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)", sqlConn);
+            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)", sqlConn);
             createCmd.ExecuteNonQuery();
             // Agentの情報をDBに登録
             using var checkCmd = new SQLiteCommand("SELECT * FROM agents WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows == false) {
-                using var insertCmd2 = new SQLiteCommand("INSERT INTO agents (name, description, system_message, human_input_mode, termination_msg, code_execution, llm_config_name, tool_names) VALUES (@name, @description, @system_message, @human_input_mode, @termination_msg, @code_execution, @llm_config_name, @tool_names)", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("INSERT INTO agents (name, description, system_message, code_execution, llm_config_name, tool_names) VALUES (@name, @description, @system_message, @code_execution, @llm_config_name, @tool_names)", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@description", description);
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
-                insertCmd2.Parameters.AddWithValue("@human_input_mode", human_input_mode);
-                insertCmd2.Parameters.AddWithValue("@termination_msg", terminateMsg);
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
                 insertCmd2.Parameters.AddWithValue("@tool_names", tool_names);
                 insertCmd2.ExecuteNonQuery();
             } else if (overwrite){
-                using var insertCmd2 = new SQLiteCommand("UPDATE agents SET description = @description, system_message = @system_message, human_input_mode = @human_input_mode, termination_msg = @termination_msg, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("UPDATE agents SET description = @description, system_message = @system_message, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@description", description);
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
-                insertCmd2.Parameters.AddWithValue("@human_input_mode", human_input_mode);
-                insertCmd2.Parameters.AddWithValue("@termination_msg",  terminateMsg);
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
                 insertCmd2.Parameters.AddWithValue("@tool_names", tool_names);
@@ -185,11 +168,9 @@ namespace PythonAILib.Model.AutoGen {
                     Name = reader.GetString(0),
                     Description = reader.GetString(1),
                     SystemMessage = reader.GetString(2),
-                    HumanInputMode = reader.GetString(3),
-                    TerminationMsg = reader.GetString(4),
-                    CodeExecution = reader.GetBoolean(5),
-                    LLMConfigName = reader.GetString(6),
-                    ToolNames = reader.GetString(7).Split(",").ToList(),
+                    CodeExecution = reader.GetBoolean(3),
+                    LLMConfigName = reader.GetString(4),
+                    ToolNames = reader.GetString(5).Split(",").ToList(),
                 };
                 agents.Add(agent);
             }

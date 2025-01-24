@@ -69,6 +69,15 @@ namespace QAChat.View.QAChatMain {
         // ChatMode_AutoGen_NestedChat
         public static string ChatMode_AutoGen_NestedChat => CommonStringResources.Instance.ChatMode_AutoGen_NestedChat;
 
+        // TerminateMessage
+        public static string TerminateMessage => CommonStringResources.Instance.TerminateMessage;
+
+        // Timeout
+        public static string Timeout => CommonStringResources.Instance.Timeout;
+
+        // MaxMsg
+        public static string MaxMsg => CommonStringResources.Instance.MaxMsg;
+
         // SplitMode
         public static string SplitMode => CommonStringResources.Instance.SplitMode;
 
@@ -129,5 +138,7 @@ namespace QAChat.View.QAChatMain {
         // Cancel
         public static string Cancel => CommonStringResources.Instance.Cancel;
 
+        // GroupChatName
+        public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
     }
 }
