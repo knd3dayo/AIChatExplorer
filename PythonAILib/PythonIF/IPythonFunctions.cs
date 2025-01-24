@@ -13,16 +13,6 @@ namespace PythonAILib.PythonIF {
 
         public ChatResult AutoGenGroupChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
 
-        public ChatResult AutoGenNormalChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
-
-        public ChatResult AutoGenNestedChat(ChatRequestContext chatRequestContext, ChatRequest chatRequest, Action<string> iteration);
-
-
-
-        // AutoGenのデフォルトの設定を取得する
-        public Dictionary<string, dynamic?> GetAutoGenDefaultSettings(ChatRequestContext chatRequestContext);
-
-
         public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query);
 
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext);

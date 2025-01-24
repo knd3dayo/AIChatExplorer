@@ -577,11 +577,7 @@ namespace QAChat.ViewModel.AutoProcess {
             } else if (selectedIndex == 1) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.OpenAIRAG;
             } else if (selectedIndex == 2) {
-                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenNormalChat;
-            } else if (selectedIndex == 3) {
                 OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenGroupChat;
-            } else if (selectedIndex == 4) {
-                OpenAIExecutionModeEnum = OpenAIExecutionModeEnum.AutoGenNestedChat;
             } else {
                 return;
             }

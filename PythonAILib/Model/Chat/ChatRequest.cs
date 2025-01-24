@@ -169,32 +169,9 @@ namespace PythonAILib.Model.Chat {
                 // AutoGenGroupChatを実行する
                 return ExecuteAutoGenGroupChat(chatRequestContext, iterateAction);
             }
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenNormalChat) {
-                // AutoGenGroupChatを実行する
-                return ExecuteAutoGenNormalChat(chatRequestContext, iterateAction);
-            }
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenNestedChat) {
-                // AutoGenGroupChatを実行する
-                return ExecuteAutoGenNestedChat(chatRequestContext, iterateAction);
-
-            }
             return null;
         }
 
-        // AutoGenNormalChatを実行する
-        public ChatResult? ExecuteAutoGenNormalChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // リクエストメッセージを最新化
-            PrepareNormalRequest(chatRequestContext, this);
-            // 結果
-            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
-            ChatHistory.Add(result);
-
-            // AutoGenGroupChatを実行する
-            return ChatUtil.ExecuteAutoGenNormalChat(chatRequestContext, this, (message) => {
-                result.Content += message;
-                iterateAction(message);
-            });
-        }
         // AutoGenGroupChatを実行する
         public ChatResult? ExecuteAutoGenGroupChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
             // リクエストメッセージを最新化
@@ -205,21 +182,6 @@ namespace PythonAILib.Model.Chat {
 
             // AutoGenGroupChatを実行する
             return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, this, (message) => {
-                result.Content += message;
-                iterateAction(message);
-            });
-        }
-
-        // AutoGenNestedChatを実行する
-        public ChatResult? ExecuteAutoGenNestedChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            // リクエストメッセージを最新化
-            PrepareNormalRequest(chatRequestContext, this);
-            // 結果
-            ChatMessage result = new(ChatMessage.AssistantRole, "", []);
-            ChatHistory.Add(result);
-
-            // AutoGenGroupChatを実行する
-            return ChatUtil.ExecuteAutoGenNestedChat(chatRequestContext, this, (message) => {
                 result.Content += message;
                 iterateAction(message);
             });
