@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
@@ -7,7 +6,6 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
@@ -77,7 +75,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
 
         public override void CreateItemCommandExecute() {
-            ClipboardItem clipboardItem = new(Folder.Id) ;
+            ClipboardItem clipboardItem = new(Folder.Id);
             ContentItemViewModel ItemViewModel = new ClipboardItemViewModel(this, clipboardItem);
 
 
@@ -232,24 +230,23 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
         // LoadItems
         public virtual async void LoadItems() {
-            Items.Clear();
             // ClipboardItemFolder.Itemsは別スレッドで実行
             List<ClipboardItem> _items = [];
-            try {
-                UpdateIndeterminate(true);
-                await Task.Run(() => {
-                    _items = Folder.GetItems<ClipboardItem>();
-                });
+            UpdateIndeterminate(true);
+            await Task.Run(() => {
+                _items = Folder.GetItems<ClipboardItem>();
+            });
+            MainUITask.Run(() => {
+                Items.Clear();
                 foreach (ContentItem item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
-            } finally {
-                UpdateIndeterminate(false);
-            }
+            });
+            UpdateIndeterminate(false);
         }
 
         #endregion
- 
+
         public override void UpdateIndeterminate(bool isIndeterminate) {
             MainWindowViewModel.Instance.UpdateIndeterminate(isIndeterminate);
         }
