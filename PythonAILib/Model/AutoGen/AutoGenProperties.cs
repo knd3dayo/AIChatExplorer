@@ -16,6 +16,9 @@ namespace PythonAILib.Model.AutoGen {
             WriteIndented = true,
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
         };
+        // autogen_db_path
+        [JsonPropertyName("autogen_db_path")]
+        public string AutoGenDBPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
         // venv_path
         [JsonPropertyName("venv_path")]
         public string VenvPath { get; set; } = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
@@ -27,17 +30,11 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("group_chat")]
         public AutoGenGroupChat AutoGenGroupChat { get; set; } = new AutoGenGroupChat();
 
-        // AutoGenAgent
-        [JsonPropertyName("agents")]
-        public List<AutoGenAgent> AutoGenAgents { get; set; } = new List<AutoGenAgent>();
-
-        // AutoGenTools
-        [JsonPropertyName("tools")]
-        public List<AutoGenTool> AutoGenTools { get; set; } = [];
 
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {
+                { "autogen_db_path", AutoGenDBPath },
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
                 { "group_chat", AutoGenGroupChat.ToDict() },

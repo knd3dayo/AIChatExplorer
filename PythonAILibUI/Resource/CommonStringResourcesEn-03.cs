@@ -79,6 +79,9 @@ namespace QAChat.Resource {
         // BaseURL
         public override string BaseURL { get; } = "Base URL";
 
+        // MaxRounds
+        public override string MaxRounds { get; } = "Max Rounds";
+
         #endregion
 
         // Enabled

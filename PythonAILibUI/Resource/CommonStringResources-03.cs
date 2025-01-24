@@ -93,6 +93,10 @@ namespace QAChat.Resource {
         // BaseURL
         public virtual string BaseURL { get; } = "BaseURL";
 
+        // MaxRounds
+        public virtual string MaxRounds { get; } = "MaxRounds";
+
+
         #endregion
 
 
