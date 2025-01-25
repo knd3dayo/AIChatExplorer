@@ -2,8 +2,7 @@ using System.Windows;
 using PythonAILib.Common;
 using QAChat.Resource;
 
-namespace QAChat.Model
-{
+namespace QAChat.Model {
     public class QAChatViewModelBase : CommonViewModelBase {
 
         // CommonStringResources

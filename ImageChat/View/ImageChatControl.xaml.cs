@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace QAChat.View.QAChatMain {
+namespace ImageChat.View {
     /// <summary>
     /// ImageChatControl.xaml の相互作用ロジック
     /// </summary>

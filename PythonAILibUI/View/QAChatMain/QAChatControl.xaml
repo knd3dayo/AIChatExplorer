@@ -508,6 +508,16 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Visibility="{Binding DebugCommandVisibility}">
+                    <Button
+                        Margin="10,0,10,5"
+                        Command="{Binding DebugCommand, Mode=OneTime}"
+                        Content="{x:Static res:ViewStringResources.ExecuteDebugCommand}" />
+                </StackPanel>
+                <StackPanel
                     Grid.Column="1"
                     HorizontalAlignment="Right"
                     Orientation="Horizontal">

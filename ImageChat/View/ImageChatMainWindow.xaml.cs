@@ -1,10 +1,8 @@
 using System.Windows;
+using ImageChat.ViewModel;
 using PythonAILib.Model.Content;
-using QAChat.ViewModel.ImageChat;
-using WpfAppCommon.Model;
 
-namespace QAChat.View.QAChatMain
-{
+namespace ImageChat.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

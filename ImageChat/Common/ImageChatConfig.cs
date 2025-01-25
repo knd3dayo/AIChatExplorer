@@ -2,8 +2,7 @@
 using System.IO;
 using PythonAILib.Common;
 
-namespace ImageChat.Model
-{
+namespace ImageChat.Common {
     public class ImageChatConfig {
 
         private static ImageChatConfig? _instance;

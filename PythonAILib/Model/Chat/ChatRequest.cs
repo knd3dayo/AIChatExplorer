@@ -1,9 +1,5 @@
-using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using PythonAILib.Common;
-using PythonAILib.Resource;
 using PythonAILib.Utils.Python;
 
 namespace PythonAILib.Model.Chat {
@@ -102,7 +98,7 @@ namespace PythonAILib.Model.Chat {
 
             // PromptTextを作成
             string promptText = chatRequest.ContentText;
-            
+
             // 最後のユーザー発言のContentにPromptTextを追加
             lastUserRoleMessage.Content = promptText;
             // ImageURLsが空でない場合は、lastUserRoleMessageにImageURLsを追加

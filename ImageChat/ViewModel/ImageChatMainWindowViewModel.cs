@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using ImageChat.View;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
@@ -9,13 +10,11 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
 using QAChat.Model;
-using QAChat.View.QAChatMain;
 using QAChat.View.PromptTemplate;
 using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace ImageChat.ViewModel {
     public class ImageChatMainWindowViewModel : QAChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
@@ -32,18 +31,6 @@ namespace QAChat.ViewModel.ImageChat
 
         // Chat
         public ChatRequest ChatController { get; set; }
-
-        // Progress Indicatorの表示状態
-        private bool _IsIndeterminate = false;
-        public bool IsIndeterminate {
-            get {
-                return _IsIndeterminate;
-            }
-            set {
-                _IsIndeterminate = value;
-                OnPropertyChanged(nameof(IsIndeterminate));
-            }
-        }
 
         // 更新後の処理
         public Action AfterUpdate { get; set; } = () => { };
@@ -109,16 +96,6 @@ namespace QAChat.ViewModel.ImageChat
 
         // 最後に選択された画像ファイルがあるフォルダ
         private string lastSelectedImageFolder = ".";
-
-        public TextWrapping TextWrapping {
-            get {
-                if (QAChatManager.Instance == null) {
-                    return TextWrapping.NoWrap;
-                }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
-            }
-        }
-
 
         // ScreenShotCheckPromptWindowを開くコマンド
         public SimpleDelegateCommand<object> ScreenShotCheckPromptCommand => new((parameter) => {

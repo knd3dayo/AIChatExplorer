@@ -39,9 +39,6 @@
     <Compile Update="View\Common\StatusMessageWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="View\QAChatMain\ScreenShotCheckPromptWindow.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="View\PromptTemplate\EditPromptItemWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

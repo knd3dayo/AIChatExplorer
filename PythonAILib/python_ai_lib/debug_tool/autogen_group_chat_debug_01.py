@@ -11,7 +11,7 @@ from autogen_agentchat.messages import TextMessage, HandoffMessage
 
 import sys
 import getopt
-async def main():
+def main():
     # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
     os.environ["PYTHONUTF8"] = "1"
 
@@ -70,7 +70,7 @@ async def main():
 
     # AutogenGroupChatを実行
     TaskResult = None
-    async for message in ai_app.run_autogen_group_chat(autogen_props, vector_db_items, input_text):
+    for message in ai_app.run_autogen_group_chat(autogen_props, vector_db_items, input_text):
         if type(message) == TaskResult:
             TaskResult = message
             break
@@ -80,5 +80,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+    main()

@@ -38,7 +38,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="LiteDB" Version="5.0.17" />
-    <PackageReference Include="MaterialDesignThemes" Version="5.0.1-ci619" />
+    <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
     <PackageReference Include="NetOfficeFw.Outlook" Version="2.0.0-preview20" />
@@ -46,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ImageChat\ImageChat.csproj" />
     <ProjectReference Include="..\PythonAILibUI\PythonAILibUI.csproj" />
     <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
     <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />

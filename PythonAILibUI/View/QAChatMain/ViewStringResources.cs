@@ -108,6 +108,9 @@ namespace QAChat.View.QAChatMain {
         // GenerateDebugCommand
         public static string GenerateDebugCommand => CommonStringResources.Instance.GenerateDebugCommand;
 
+        // ExecuteDebugCommand
+        public static string ExecuteDebugCommand => CommonStringResources.Instance.ExecuteDebugCommand;
+
         // ClearChatContents
         public static string ClearChatContents => CommonStringResources.Instance.ClearChatContents;
 

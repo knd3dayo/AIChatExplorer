@@ -203,9 +203,10 @@ namespace QAChat.ViewModel.QAChatMain {
                 }
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
                 ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
-                return DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest);
+                return string.Join("\n\n", DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
             }
         }
+
 
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = Int32.Parse(SplitTokenCount);
@@ -219,6 +220,19 @@ namespace QAChat.ViewModel.QAChatMain {
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
+        // DebugCommandVisibility
+        public Visibility DebugCommandVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2);
+
+        // DebugCommand
+        public SimpleDelegateCommand<object> DebugCommand => new((parameter) => {
+            // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
+            foreach (var item in VectorSearchProperties) {
+                item.TopK = VectorDBSearchResultMax;
+            }
+            ChatRequestContext chatRequestContext = CreateChatRequestContext();
+            ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+            DebugUtil.ExecuteDebugCommand(DebugUtil.CreateChatCommandLine(chatRequestContext, ChatRequest));
+        });
         // チャットを送信するコマンド
         public SimpleDelegateCommand<object> SendChatCommand => new(async (parameter) => {
 
@@ -342,6 +356,17 @@ namespace QAChat.ViewModel.QAChatMain {
 
         });
 
+        private int _SelectedTabIndex = 0;
+        public int SelectedTabIndex {
+            get {
+                return _SelectedTabIndex;
+            }
+            set {
+                _SelectedTabIndex = value;
+                OnPropertyChanged(nameof(SelectedTabIndex));
+            }
+        }
+
 
         // Tabが変更されたときの処理       
         public SimpleDelegateCommand<RoutedEventArgs> TabSelectionChangedCommand => new((routedEventArgs) => {
@@ -350,6 +375,8 @@ namespace QAChat.ViewModel.QAChatMain {
                 ChatRequestContext chatRequestContext = CreateChatRequestContext();
 
                 ChatRequest.PrepareNormalRequest(chatRequestContext, ChatRequest);
+                // SelectedTabIndexを更新
+                SelectedTabIndex = tabControl.SelectedIndex;
                 // タブが変更されたときの処理
                 if (tabControl.SelectedIndex == 1) {
                     // プレビュー(JSON)タブが選択された場合、プレビューJSONを更新
@@ -359,6 +386,7 @@ namespace QAChat.ViewModel.QAChatMain {
                     // デバッグタブが選択された場合、デバッグコマンドを更新
                     OnPropertyChanged(nameof(GeneratedDebugCommand));
                 }
+                OnPropertyChanged(nameof(DebugCommandVisibility));
             }
         });
 

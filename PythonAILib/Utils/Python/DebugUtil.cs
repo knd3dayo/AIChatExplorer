@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -23,10 +24,8 @@ namespace PythonAILib.Utils.Python {
         // ChatRequestの内容からPythonスクリプトを実行するコマンド文字列を生成する。
         public static List<string> GetPythonScriptCommand(string pythonScriptName, string pythonScriptArgs, string beforeExecScriptCommands = "", string afterExecScriptCommands = "") {
             List<string> cmdLines = [];
-            // アプリケーションが格納されたディレクトリ
-            string appDir = AppDomain.CurrentDomain.BaseDirectory;
             // python_ai_libのディレクトリ
-            string pythonAILibDir = Path.Combine(appDir, "python_ai_lib");
+            string pythonAILibDir = PythonAILibManager.Instance.ConfigParams.GetPythonLibPath();
             // debug用のScriptのディレクトリ
             string debugScriptDir = Path.Combine(pythonAILibDir, "debug_tool");
             // Scriptのフルパス
@@ -87,15 +86,26 @@ namespace PythonAILib.Utils.Python {
 
             return cmdLines;
         }
+        // コマンド文字列を実行する
+        public static void ExecuteDebugCommand(List<string> commandLines) {
+            string command = string.Join(" & ", commandLines);
+            ProcessStartInfo psi = new() {
+                FileName = "cmd.exe",
+                Arguments = $"/k {command}",
+                WorkingDirectory =PythonAILibManager.Instance.ConfigParams.GetAppDataPath(),
+                UseShellExecute = true,
+            };
+            Process.Start(psi);
+        }
 
         // Chatを実行するコマンド文字列を生成する。
-        public static string CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
+        public static List<string> CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
             // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
             if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequestContext.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
-                return string.Join("\n\n", DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile));
+                return DebugUtil.CreateOpenAIChatCommandLine(DebugUtil.DebugRequestParametersFile);
             }
             // ModeがAutoGenの場合は、AutoGenのGroupChatを実行するコマンドを返す
             if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
@@ -103,9 +113,9 @@ namespace PythonAILib.Utils.Python {
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);
 
-                return string.Join("\n\n", DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null));
+                return DebugUtil.CreateAutoGenGroupChatTest1CommandLine(DebugUtil.DebugRequestParametersFile, null);
             }
-            return "";
+            return [];
         }
 
         // OpenAIチャットを実行するコマンド文字列を生成する。
@@ -115,7 +125,7 @@ namespace PythonAILib.Utils.Python {
             // 事後コマンド pauseで一時停止
             string afterExecScriptCommands = "pause";
             string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_open_ai_chat_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("ai_app_open_ai_chat_debug_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
 
 
             return cmdLines;
@@ -127,7 +137,7 @@ namespace PythonAILib.Utils.Python {
             // 事後コマンド pauseで一時停止
             string afterExecScriptCommands = "pause";
             string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_langchain_chat_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("ai_app_langchain_chat_debug_01.py", $"{options}", beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;
         }

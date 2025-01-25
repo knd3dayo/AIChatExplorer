@@ -1,11 +1,10 @@
 using System.IO;
 using System.Windows;
-using ImageChat.Model;
 using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 
-namespace ImageChat {
+namespace ImageChat.Common {
     public class ImageChatPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
         public string GetHttpsProxy() {
@@ -91,67 +90,67 @@ namespace ImageChat {
             return dbUrl;
         }
         public bool AutoTag() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoTitle
         public bool AutoTitle() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         // AutoTitleWithOpenAI
         public bool AutoTitleWithOpenAI() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoBackgroundInfo
         public bool AutoBackgroundInfo() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoSummary
         public bool AutoSummary() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoGenerateTasks
         public bool AutoGenerateTasks() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoDocumentReliabilityCheck
         public bool AutoDocumentReliabilityCheck() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         // AutoMergeItemsBySourceApplicationTitle
         public bool AutoMergeItemsBySourceApplicationTitle() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoFileExtract
         public bool AutoFileExtract() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoExtractImageWithPyOCR
         public bool AutoExtractImageWithPyOCR() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         // AutoExtractImageWithOpenAI
         public bool AutoExtractImageWithOpenAI() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         // IgnoreLineCount
         public int IgnoreLineCount() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         // TesseractExePath
         public string TesseractExePath() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
         // public bool DevFeaturesEnabled();
         public bool DevFeaturesEnabled() {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

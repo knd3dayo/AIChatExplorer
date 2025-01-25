@@ -2,8 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Utils;
 using PythonAILib.Model.Image;
 
-namespace QAChat.ViewModel.ImageChat
-{
+namespace ImageChat.ViewModel {
     public class ScreenShotImageViewModel : ObservableObject {
 
         public ImageChatMainWindowViewModel MainWindowViewModel { get; set; }

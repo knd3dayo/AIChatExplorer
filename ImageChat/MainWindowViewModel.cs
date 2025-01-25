@@ -1,9 +1,9 @@
-using PythonAILib.Model.Content;
-using QAChat.ViewModel.ImageChat;
+using ImageChat.Common;
+using ImageChat.ViewModel;
 using PythonAILib.Common;
+using PythonAILib.Model.Content;
 
-namespace ImageChat
-{
+namespace ImageChat {
     public class MainWindowViewModel : ImageChatMainWindowViewModel {
 
 

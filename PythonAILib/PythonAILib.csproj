@@ -78,10 +78,10 @@
     <EmbeddedResource Include="python_ai_lib\ai_app_vector_db\__init__.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\debug_tool\test_ai_app_langchain_chat_01.py">
+    <EmbeddedResource Include="python_ai_lib\debug_tool\ai_app_langchain_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="python_ai_lib\debug_tool\test_ai_app_open_ai_chat_01.py">
+    <EmbeddedResource Include="python_ai_lib\debug_tool\ai_app_open_ai_chat_debug_01.py">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="python_ai_lib\debug_tool\autogen_group_chat_debug_01.py">

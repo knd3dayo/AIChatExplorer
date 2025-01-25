@@ -7,6 +7,7 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using ImageChat.View;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
