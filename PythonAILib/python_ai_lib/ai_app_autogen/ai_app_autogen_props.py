@@ -1,6 +1,10 @@
 import venv
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
 from typing import Any
+# queue
+from queue import Queue
+# asyncio
+import asyncio
 
 # sqlite3
 import sqlite3
@@ -11,6 +15,7 @@ from autogen_agentchat.agents import AssistantAgent, CodeExecutorAgent
 from autogen_ext.code_executors.local import LocalCommandLineCodeExecutor
 from autogen_agentchat.conditions import MaxMessageTermination, TextMentionTermination, TimeoutTermination
 from autogen_agentchat.teams import SelectorGroupChat
+from autogen_agentchat.base import TaskResult
 
 class AutoGenProps:
 
@@ -51,10 +56,20 @@ class AutoGenProps:
         # timeout
         self.timeout = props_dict.get("timeout", 120)
 
-
-    async def  run_group_chat(self, initial_message: str) -> AsyncGenerator:
+    async def create_run_group_chat_task(self, initial_message: str, result_queue: Queue):
+        if not initial_message:
+            raise ValueError("initial_message is None")
         group_chat = self.create_group_chat(self.chat_dict["name"])
-        return await group_chat.run_stream(task=initial_message)
+        async for message in group_chat.run_stream(task=initial_message):
+            if type(message) == TaskResult:
+                result_queue.put(None)
+                break
+            message_str = f"{message.source}: {message.content}"
+            result_queue.put(message_str)
+
+    def run_group_chat(self, initial_message: str, result_queue: Queue):
+        task = self.create_run_group_chat_task(initial_message, result_queue)
+        asyncio.run(task)
 
     # 指定したnameのGroupChatをDBから取得して、GroupChatを返す
     def create_group_chat(self, name: str):
@@ -137,8 +152,9 @@ class AutoGenProps:
                 tool_names = agent_dict["tool_names"].split(",")
                 tool_dict_list = []
                 for tool_name in tool_names:
-                    tool_dict = self.create_tool(tool_name)
-                    tool_dict_list.append(tool_dict)
+                    print(f"tool_name:{tool_name}")
+                    func_tool = self.create_tool(tool_name)
+                    tool_dict_list.append(func_tool)
 
                 params["tools"] = tool_dict_list
 
@@ -162,6 +178,8 @@ class AutoGenProps:
         tool_dict["description"] = row[2]
         conn.close()
         
+        print (f"tool_dict:{tool_dict}")
+
         # source_pathからファイルを読み込む
         with open(tool_dict["path"], "r", encoding="utf-8") as f:
             content = f.read()
@@ -205,14 +223,17 @@ class AutoGenProps:
             parameters["azure_endpoint"] = llm_config_entry["base_url"]
             # parametersのazure_deploymentにmodelを設定
             parameters["azure_deployment"] = llm_config_entry["model"]
-            client = AzureOpenAIChatCompletionClient(**llm_config_entry)
+            # print(f"autogen llm_config parameters:{parameters}")
+            client = AzureOpenAIChatCompletionClient(**parameters)
         else:
             # parametersのmodelにmodelを設定
             parameters["model"] = llm_config_entry["model"]
             # base_urlが指定されている場合は、parametersのbase_urlにbase_urlを設定
-            if llm_config_entry["base_url"]:
+            if llm_config_entry["base_url"] != "":
                 parameters["base_url"] = llm_config_entry["base_url"]
-            client = OpenAIChatCompletionClient(**llm_config_entry)
+    
+            # print(f"autogen llm_config parameters:{parameters}")
+            client = OpenAIChatCompletionClient(**parameters)
 
         return client
 
@@ -238,3 +259,4 @@ class AutoGenProps:
         text_termination = TextMentionTermination(termination_msg)
         time_terminarion = TimeoutTermination(timeout)
         combined_termination = max_msg_termination | text_termination | time_terminarion
+        return combined_termination

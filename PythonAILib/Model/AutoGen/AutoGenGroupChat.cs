@@ -20,6 +20,14 @@ namespace PythonAILib.Model.AutoGen {
         [JsonPropertyName("agent_names")]
         public List<string> AgentNames { get; set; } = [];
 
+        // CreateRequestDict
+        public Dictionary<string, object> CreateRequestDict() {
+            Dictionary<string, object> dict = new() {
+                { "name", Name },
+            };
+            return dict;
+        }
+
         // ToDictList
         public Dictionary<string, object> ToDict() {
             Dictionary<string, object> dict = new() {

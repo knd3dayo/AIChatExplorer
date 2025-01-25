@@ -6,11 +6,12 @@ import ai_app
 import logging 
 logging.basicConfig(level=logging.ERROR)
 
+from autogen_agentchat.base import TaskResult
+from autogen_agentchat.messages import TextMessage, HandoffMessage
 
 import sys
 import getopt
-
-if __name__ == '__main__':
+async def main():
     # AutoGenのCodeExecutor実行時にUncicodeEncodeErrorが発生するため、Pythonのデフォルトの文字コードをUTF-8に設定
     os.environ["PYTHONUTF8"] = "1"
 
@@ -50,12 +51,10 @@ if __name__ == '__main__':
             if not request_dict:
                 raise ValueError("request is not found in props.")
             
-            # openai_props
-            openai_props, _ = ai_app_wrapper.get_openai_objects(context_json)
             # vector_db_items
             vector_db_items = ai_app_wrapper.get_vector_db_objects(context_json)
-            # autogen_props
-            autogen_props = ai_app_wrapper.get_autogen_objects(openai_props,  context_json)
+            # autogen_props 
+            autogen_props = ai_app_wrapper.get_autogen_objects(context_json)
 
             # メッセージを取得
             # requestの[messages][0][content]の最後の要素を入力テキストとする
@@ -63,13 +62,23 @@ if __name__ == '__main__':
             if not messages:
                 raise ValueError("messages is not found in request.")
 
-            last_content = messages[0].get("content",[])[-1]
+            last_content = messages[-1].get("content",[])[-1]
             input_text = last_content.get("text", "")
 
     # メッセージを表示
     print(f"Input message: {input_text}")
 
     # AutogenGroupChatを実行
-    for message, _ in ai_app.run_autogen_normal_chat(autogen_props, vector_db_items, input_text):
-        print(f"message:{message}")
+    TaskResult = None
+    async for message in ai_app.run_autogen_group_chat(autogen_props, vector_db_items, input_text):
+        if type(message) == TaskResult:
+            TaskResult = message
+            break
+        print(message)
+        # print(f"source:{message.source}\nmessage:{message.content}")
 
+
+
+if __name__ == '__main__':
+    import asyncio
+    asyncio.run(main())

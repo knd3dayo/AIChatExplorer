@@ -14,6 +14,7 @@ from selenium.webdriver.edge.service import Service
 from selenium.webdriver.edge.options import Options
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from typing import Annotated
+from queue import Queue, Empty
 
 ########################
 # ファイル関連
@@ -114,10 +115,22 @@ def get_token_count(openai_props: OpenAIProps, input_text: str):
 ########################
 # autogen関連
 ########################
-def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator[Any, None, None]:
+def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
+    # queueを生成.
+    message_queue = Queue()
+
     # run_group_chatを実行
-    result = autogen_props.run_group_chat(input_text, 2, 10)
-    return result
+    autogen_props.run_group_chat(input_text, message_queue)
+    # メッセージがない場合はtimeout秒待つ. メッセージがある場合はyieldする.
+    while True:
+        try:
+            message = message_queue.get(block=True, timeout=autogen_props.timeout)
+            if message:
+                yield message
+            else:
+                break
+        except Empty:
+            return ""
 
 ########################
 # VectorDBCatalog関連

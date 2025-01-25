@@ -78,11 +78,11 @@ namespace PythonAILib.Utils.Python {
         public static List<string> CreateAutoGenGroupChatTest1CommandLine(string parametersJsonFile, string? outputFile) {
 
             // 事前コマンド デバッグ用に、notepadでパラメーターファイルを開く
-            string beforeExecScriptCommands = "notepad " + parametersJsonFile + "\n" + "pause";
+            string beforeExecScriptCommands = "notepad " + parametersJsonFile;
             // 事後コマンド pauseで一時停止
             string afterExecScriptCommands = "pause";
             string options = $"-p {parametersJsonFile}";
-            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("test_ai_app_autogen_group_chat_01.py", $"{options}",
+            List<string> cmdLines = DebugUtil.GetPythonScriptCommand("autogen_group_chat_debug_01.py", $"{options}",
                 beforeExecScriptCommands, afterExecScriptCommands);
 
             return cmdLines;

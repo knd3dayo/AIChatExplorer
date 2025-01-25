@@ -182,7 +182,7 @@ namespace PythonAILib.Model.Chat {
 
             // AutoGenGroupChatを実行する
             return ChatUtil.ExecuteAutoGenGroupChat(chatRequestContext, this, (message) => {
-                result.Content += message;
+                result.Content += message + "\n";
                 iterateAction(message);
             });
         }

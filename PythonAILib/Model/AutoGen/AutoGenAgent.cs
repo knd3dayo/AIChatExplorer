@@ -108,7 +108,7 @@ namespace PythonAILib.Model.AutoGen {
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
-                insertCmd2.Parameters.AddWithValue("@tool_names", tool_names);
+                insertCmd2.Parameters.AddWithValue("@tool_names", string.Join(",", tool_names));
                 insertCmd2.ExecuteNonQuery();
             } else if (overwrite){
                 using var insertCmd2 = new SQLiteCommand("UPDATE agents SET description = @description, system_message = @system_message, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
@@ -117,7 +117,7 @@ namespace PythonAILib.Model.AutoGen {
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
-                insertCmd2.Parameters.AddWithValue("@tool_names", tool_names);
+                insertCmd2.Parameters.AddWithValue("@tool_names", string.Join(",", tool_names));
                 insertCmd2.ExecuteNonQuery();
             }
             // close
@@ -170,7 +170,7 @@ namespace PythonAILib.Model.AutoGen {
                     SystemMessage = reader.GetString(2),
                     CodeExecution = reader.GetBoolean(3),
                     LLMConfigName = reader.GetString(4),
-                    ToolNames = reader.GetString(5).Split(",").ToList(),
+                    ToolNames = [.. reader.GetString(5).Split(",")],
                 };
                 agents.Add(agent);
             }

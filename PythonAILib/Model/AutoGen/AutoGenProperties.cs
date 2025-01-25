@@ -40,7 +40,7 @@ namespace PythonAILib.Model.AutoGen {
 
         // timeout
         [JsonPropertyName("timeout")]
-        public int Timeout { get; set; } = 60;
+        public int Timeout { get; set; } = 120;
 
         // ToDictList
         public Dictionary<string, object> ToDict() {
@@ -48,7 +48,7 @@ namespace PythonAILib.Model.AutoGen {
                 { "autogen_db_path", AutoGenDBPath },
                 { "work_dir", WorkDir },
                 { "venv_path", VenvPath },
-                { "group_chat", AutoGenGroupChat.ToDict() },
+                { "group_chat", AutoGenGroupChat.CreateRequestDict() },
                 { "terminate_msg", TerminateMsg },
                 { "max_msg", MaxMsg },
                 { "timeout", Timeout },
@@ -69,7 +69,7 @@ namespace PythonAILib.Model.AutoGen {
             }
 
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
-            // llm_configの初期設定
+            // llm_configの初期設定  
             string name = "default";
             string api_type = ConfigPrams.GetOpenAIProperties().AzureOpenAI ? "azure" : "";
             string api_version = ConfigPrams.GetOpenAIProperties().AzureOpenAIAPIVersion;
@@ -82,47 +82,47 @@ namespace PythonAILib.Model.AutoGen {
             string toolName = "search_wikipedia_ja";
             string toolDescription = "This function searches Wikipedia with the specified keywords and returns related articles.";
             string toolPath = Path.Combine(ConfigPrams.GetPythonLibPath(), "ai_app_autogen", "default_tools.py");
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // list_files_in_directory
             toolName = "list_files_in_directory";
             toolDescription = "This function lists the files in the specified directory.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // extract_file
             toolName = "extract_file";
             toolDescription = "This function extracts the specified file.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // check_file
             toolName = "check_file";
             toolDescription = "This function checks if the specified file exists.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // extract_webpage
             toolName = "extract_webpage";
             toolDescription = "This function extracts text and links from the specified URL of a web page.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // search_duckduckgo
             toolName = "search_duckduckgo";
             toolDescription = "This function searches DuckDuckGo with the specified keywords and returns related articles.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // save_text_file
             toolName = "save_text_file";
             toolDescription = "This function saves the specified text to a file.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // save_tools
             toolName = "save_tools";
             toolDescription = "This function saves the specified tools to a file.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // get_current_time
             toolName = "get_current_time";
             toolDescription = "This function returns the current time.";
-            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, false);
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // agentの初期化
             var agentName = "planner";
@@ -131,12 +131,12 @@ namespace PythonAILib.Model.AutoGen {
                 "- まず、ユーザーの要求を達成するためにはどのエージェントと協力すべきか計画を作成します。" +
                 "code_writer,code_executorがいる場合は、その他のエージェントでは対応できない要求をcode_writer,code_executorに割り当てます。" +
                 "- 計画に基づき、対象のエージェントにタスクを割り当てて、タスクを実行します。" +
-                "- 計画が達成されたら、[End Meeting]と返信してください。";
+                "- 計画が達成されたら、[TERMINATE]と返信してください。";
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
             var agentTools =new List<string> { "search_wikipedia_ja","list_files_in_directory", "extract_file", "check_file", "extract_webpage", "search_duckduckgo", "save_text_file", "save_tools", "get_current_time" };
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             agentName = "code_writer";
             agentDescription = "コードを書くためのエージェントです。";
@@ -152,7 +152,7 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             agentName = "code_executor";
             agentDescription = "コードを実行するためのエージェントです。";
@@ -167,7 +167,7 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = [];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             agentName = "web_searcher";
             agentDescription = "Web検索を行うエージェントです。";
@@ -182,7 +182,7 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["search_duckduckgo", "extract_webpage"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             agentName = "file_operator";
             agentDescription = "ファイル操作を行うエージェントです。";
@@ -198,7 +198,7 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["list_files_in_directory", "extract_file", "check_file", "save_text_file"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             agentName = "time_checker";
             agentDescription = "時間を確認するエージェントです。";
@@ -211,7 +211,7 @@ namespace PythonAILib.Model.AutoGen {
             agentLLMConfig = "default";
             agentTools = ["get_current_time"];
 
-            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, false);
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
             // group_chatの初期化
             var groupName = "default";
@@ -219,7 +219,7 @@ namespace PythonAILib.Model.AutoGen {
             var grouLLMConfig = "default";
             // 全エージェント名のリスト
             var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, grouLLMConfig, groupAgentNames, false);
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, grouLLMConfig, groupAgentNames, true);
             Initialized = true;
 
         }

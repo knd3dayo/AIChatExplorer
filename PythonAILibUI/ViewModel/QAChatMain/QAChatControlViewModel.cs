@@ -32,14 +32,15 @@ namespace QAChat.ViewModel.QAChatMain {
             if (QAChatStartupProps.ContentItem != null) {
                 ChatHistory = [.. QAChatStartupProps.ContentItem.ChatItems];
             }
-            // AutoGenGroupChatを設定
-            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
-
             // AutoGenPropertiesを設定
-            _autoGenProperties = new AutoGenProperties();
+            _autoGenProperties = new();
             _autoGenProperties.AutoGenDBPath = PythonAILibManager.Instance.ConfigParams.GetAutoGenDBPath();
             _autoGenProperties.WorkDir = PythonAILibManager.Instance.ConfigParams.GetAutoGenWorkDir();
             _autoGenProperties.VenvPath = PythonAILibManager.Instance.ConfigParams.GetPathToVirtualEnv();
+
+            // AutoGenGroupChatを設定
+            SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
+
         }
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
@@ -208,7 +209,6 @@ namespace QAChat.ViewModel.QAChatMain {
 
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = Int32.Parse(SplitTokenCount);
-
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
                 _chatMode, _splitMode, splitTokenCount, [.. VectorSearchProperties], AutoGenProperties, PromptText
                 );
@@ -439,6 +439,9 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             set {
                 _SelectedAutoGenGroupChat = value;
+                if (_SelectedAutoGenGroupChat != null) {
+                    AutoGenProperties.AutoGenGroupChat = _SelectedAutoGenGroupChat;
+                }
                 OnPropertyChanged(nameof(SelectedAutoGenGroupChat));
             }
         }

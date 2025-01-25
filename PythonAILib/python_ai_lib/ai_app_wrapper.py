@@ -62,6 +62,7 @@ def capture_generator_stdout_stderr(func):
         buffer = StringIO()
         sys.stdout = buffer
         sys.stderr = buffer
+        result = None # 初期化
         for result in func(*args, **kwargs):
             try:
                 # resultがdictでない場合は例外をスロー
@@ -113,10 +114,10 @@ def get_vector_db_objects(context_json: str) -> list[VectorDBProps]:
     vector_db_props = [VectorDBProps(item) for item in vector_db_items]
     return vector_db_props
 
-def get_autogen_objects(openai_props: OpenAIProps,  context_json: str) -> AutoGenProps:
+def get_autogen_objects(context_json: str) -> AutoGenProps:
     # ChatRequestContextからAutoGenPropsを生成
     props_dict = json.loads(context_json)
-    autogen_props = AutoGenProps(openai_props,  props_dict["autogen_props"])
+    autogen_props = AutoGenProps(props_dict["autogen_props"])
     return autogen_props
 
 ########################
@@ -186,12 +187,11 @@ def run_autogen_group_chat( context_json:str, input_text: str):
     def func() -> Generator[dict, None, None]:
         openai_props, _ = get_openai_objects(context_json)
         vector_db_items = get_vector_db_objects(context_json)
-        autogen_props = get_autogen_objects(openai_props, context_json)
+        autogen_props = get_autogen_objects( context_json)
 
-        result = ai_app.run_autogen_group_chat(autogen_props, vector_db_items,  input_text)
-        for message, is_last_message in result:
+        for message in ai_app.run_autogen_group_chat(autogen_props, vector_db_items,  input_text):
             # dictを作成
-            result_dict = {"message": message, "is_last_message": is_last_message}
+            result_dict = {"message": message }
             yield result_dict
     
     # strout,stderrをキャプチャするラッパー関数を生成
