@@ -88,20 +88,20 @@ namespace PythonAILib.Model.VectorDB {
                 return "";
             }
 
-            string description = PythonExecutor.PythonAIFunctions.GetCatalogDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString());
+            string description = PythonExecutor.PythonAIFunctions.GetVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString());
             if (string.IsNullOrEmpty(description)) {
                 return item.Description;
             }
             return description;
         }
 
-        // UpdateCatalogDescription
+        // UpdateVectorDBDescription
         public void UpdateCatalogDescription(string description) {
             VectorDBItem? item = GetVectorDBItem();
             if (item == null) {
                 return;
             }
-            PythonExecutor.PythonAIFunctions.UpdateCatalogDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString(), description);
+            PythonExecutor.PythonAIFunctions.UpdateVectorDBDescription(item.CatalogDBURL, item.VectorDBURL, item.CollectionName, FolderId.ToString(), description);
         }
 
         public string ToJson() {

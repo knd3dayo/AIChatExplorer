@@ -114,9 +114,28 @@ namespace PythonAILib.Model.AutoGen {
             toolDescription = "This function saves the specified text to a file.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
-            // save_tools
-            toolName = "save_tools";
-            toolDescription = "This function saves the specified tools to a file.";
+            // register_tool_agent
+            toolName = "register_tool_agent";
+            toolDescription = """
+            This function saves the specified tools to a sqlite3 database.
+            First argument: tool name, second argument: tool description, third argument: tool path.
+            - Tool name: Specify the name of the tool as the Python function name.
+            - Tool description: Provide a description of what the tool does.
+            - Tool path: The absolute path to the file where the tool is saved.First argument: tool name, second argument: tool description, third argument: tool path.
+            If the tool with the same name already exists, it will not be registered. And return False.
+            If the tool registration is successful, register the agent.
+            The agent name is [tool_name]_agent, and the agent description is the same as the tool description.
+            """;
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // list_tools
+            toolName = "list_tools";
+            toolDescription = "This function retrieves a list of registered tools from the database.";
+            AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
+
+            // list_agents
+            toolName = "list_agents";
+            toolDescription = "This function retrieves a list of registered agents from the database.";
             AutoGenTool.UpdateAutoGenTool(toolPath, toolName, toolDescription, true);
 
             // get_current_time
@@ -134,7 +153,7 @@ namespace PythonAILib.Model.AutoGen {
                 "- 計画が達成されたら、[TERMINATE]と返信してください。";
             var agentCodeExecution = false;
             var agentLLMConfig = "default";
-            var agentTools =new List<string> { "search_wikipedia_ja","list_files_in_directory", "extract_file", "check_file", "extract_webpage", "search_duckduckgo", "save_text_file", "save_tools", "get_current_time" };
+            var agentTools =new List<string> {};
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
@@ -148,7 +167,7 @@ namespace PythonAILib.Model.AutoGen {
                 - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
 
                 """;
-            agentCodeExecution = true;
+            agentCodeExecution = false;
             agentLLMConfig = "default";
             agentTools = [];
 
@@ -157,10 +176,11 @@ namespace PythonAILib.Model.AutoGen {
             agentName = "code_executor";
             agentDescription = "コードを実行するためのエージェントです。";
             agentSystemMessage = """
-                あなたはスクリプト実行者です。 コードを実行すると、それは自動的に外部アプリケーションで実行されます。 ユーザーの指示に従ってコードを実行します。 コードの実行結果は、コードを投稿した後に自動的に表示されます。 ただし、次の条件を厳守する必要があります。 ルール:
-                - コードは必ずコードブロック内に提案すること。
-                - スクリプトの実行結果がエラーの場合、エラーメッセージに基づいて対策を検討し、再度修正したコードを作成すること。
-                - スクリプトの実行から得られる情報が不十分な場合、現在得られている情報に基づいて再度修正したコードを作成すること。
+                あなたはスクリプト実行者です。 ユーザーの指示に従ってコードを実行します。 コードの実行結果は、コードを投稿した後に自動的に表示されます。 
+                ただし、次の条件を厳守する必要があります。 
+                ルール:
+                - 入力はMarkdown形式(例:```python ...```)であること。入力がMarkdown形式でない場合はMarkdown形式の入力を要求すること。
+                - スクリプトの実行結果がエラーの場合、エラーメッセージに基づいて対策を検討し、コード修正を要求すること
                 - 最終的な目標はユーザーの指示を満たすことであり、この目標を達成するために必要な回数だけコードを作成および修正すること。
                 """;
             agentCodeExecution = true;
@@ -213,13 +233,45 @@ namespace PythonAILib.Model.AutoGen {
 
             AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
 
+            // tool_register
+            var toolsDir = Path.Combine(ConfigPrams.GetPythonLibPath(), "generated_tools");
+            if (!Directory.Exists(toolsDir)) {
+                Directory.CreateDirectory(toolsDir);
+            }
+            agentName = "tool_register";
+            agentDescription = "ツールを登録するエージェントです。";
+            agentSystemMessage = $"""
+                あなたはツール登録者です。ユーザーの要求に応じてコードが作成された場合、そのコードをPythonファイルに関数として保存し、ツール登録を行います。
+                また、登録したツールを呼び出すエージェントを登録します。
+                1. 登録前に、list_tools関数で既存のツールを確認します。ユーザーの要求に応じてコードが作成されたコードが、既に登録されたツールと同じ処理を行う場合は、登録する必要はありません。
+                2. 作成されたコードは{toolsDir}ディレクトリにツール名.pyという名前で保存してください。保存には、save_text_file関数を使用してください。
+                3. register_tool 関数を用いてツール登録を行ってください。register_tool 関数の第1引数:ツール名, 第2引数はツールの説明,第3引数:ツールのパスです。
+                  - ツール名: ツールの名前はPython関数名を指定してください。
+                  - ツールの説明：どのようなツールであるかの説明を指定してください。
+                  - ツールのパスは保存したファイルの絶対パスです。
+                4. ツールが正常に登録されたかどうか、list_tools関数で取得したツール一覧に登録したツールが存在するか確認します。
+                5. エージェントが正常に登録されたかどうか、list_agents関数で取得したエージェント一覧に登録したエージェントが存在するか確認します。
+                """;
+            agentCodeExecution = false;
+            agentLLMConfig = "default";
+            agentTools = ["register_tool_agent", "list_tools", "list_agents", "save_text_file"];
+
+            AutoGenAgent.UpdateAutoGenAgent(agentName, agentDescription, agentSystemMessage, agentCodeExecution, agentLLMConfig, agentTools, true);
+
             // group_chatの初期化
             var groupName = "default";
             var groupDescription = "デフォルトのグループチャットです。";
-            var grouLLMConfig = "default";
+            var groupLLMConfig = "default";
             // 全エージェント名のリスト
-            var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker" };
-            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, grouLLMConfig, groupAgentNames, true);
+            var groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "web_searcher", "file_operator", "time_checker", "tool_register" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
+            groupName = "code_execute";
+            groupDescription = "コードを実行するためのグループチャットです。";
+            groupLLMConfig = "default";
+            groupAgentNames = new List<string> { "planner", "code_writer", "code_executor", "tool_register" };
+            AutoGenGroupChat.UpdateAutoGenGroupChat(groupName, groupDescription, groupLLMConfig, groupAgentNames, true);
+
             Initialized = true;
 
         }

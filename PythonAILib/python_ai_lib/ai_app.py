@@ -115,10 +115,16 @@ def get_token_count(openai_props: OpenAIProps, input_text: str):
 ########################
 # autogen関連
 ########################
-def run_autogen_group_chat(autogen_props: AutoGenProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
+def run_autogen_group_chat(autogen_props: AutoGenProps, openai_props: OpenAIProps, vector_db_items: list[VectorDBProps] ,input_text: str) -> Generator:
+
+    if type ( openai_props) != OpenAIProps:
+        raise ValueError("openai_props is not OpenAIProps")
     # queueを生成.
     message_queue = Queue()
 
+    # vector_db_itemsがある場合は、prepare_vector_search_agentsを実行
+    if vector_db_items:
+        autogen_props.prepare_vector_search_agents(openai_props, vector_db_items)
     # run_group_chatを実行
     autogen_props.run_group_chat(input_text, message_queue)
     # メッセージがない場合はtimeout秒待つ. メッセージがある場合はyieldする.

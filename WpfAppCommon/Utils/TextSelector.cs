@@ -15,30 +15,32 @@ namespace WpfAppCommon.Utils {
 
         public void SelectText(TextBox editor) {
             // 最後に選択したテキストと異なる場合は初期状態にする。
-            if (editor.SelectedText != LastSelectedText) {
+            string selectedText = editor.SelectedText;
+            if (selectedText != LastSelectedText) {
                 SingleLineSelected = false;
                 URLSelected = false;
                 AngleBracketSelected = false;
             }
             // 1行選択状態または複数行選択状態の場合は全選択
-            if (SingleLineSelected || editor.SelectedText.Contains('\n')) {
+            if (SingleLineSelected || selectedText.IndexOf('\n') > 0) {
                 editor.SelectAll();
                 SingleLineSelected = false;
                 URLSelected = false;
                 // 最後に選択したテキストを更新
-                LastSelectedText = editor.SelectedText;
+                LastSelectedText = selectedText;
                 return;
             } else {
                 int pos = editor.SelectionStart;
                 // posがTextの長さを超える場合はTextの最後を指定
-                if (pos >= editor.Text.Length) {
-                    pos = editor.Text.Length - 1;
+                string text = editor.Text;
+                if (pos >= text.Length) {
+                    pos = text.Length - 1;
                 }
-                int lineStart = editor.Text.LastIndexOf('\n', pos) + 1;
+                int lineStart = text.LastIndexOf('\n', pos) + 1;
 
-                int lineEnd = editor.Text.IndexOf('\n', pos);
+                int lineEnd = text.IndexOf('\n', pos);
                 if (lineEnd == -1) {
-                    lineEnd = editor.Text.Length;
+                    lineEnd = text.Length;
                 }
 
                 // lineEnd - lineStartが0以下の場合は何もしない
@@ -48,7 +50,7 @@ namespace WpfAppCommon.Utils {
                     return;
                 }
                 // 選択対象文字列
-                string selectedText = editor.Text[lineStart..lineEnd];
+                selectedText = editor.Text[lineStart..lineEnd];
                 // URLの場合はURL選択にする
                 int[]? ints = Tools.GetURLPosition(selectedText);
                 if (ints != null && URLSelected == false) {

@@ -14,6 +14,7 @@ namespace QAChat.ViewModel.AutoGen {
             AfterUpdate = afterUpdate;
 
             LoadAutoGenAgents();
+            LoadLLMConfig();
         }
 
         public AutoGenGroupChat AutoGenGroupChat { get; set; }
@@ -58,6 +59,8 @@ namespace QAChat.ViewModel.AutoGen {
                 OnPropertyChanged(nameof(SelectedTabIndex));
             }
         }
+        // LLMConfigList
+        public ObservableCollection<AutoGenLLMConfig> LLMConfigList { get; set; } = [ .. AutoGenLLMConfig.GetAutoGenLLMConfigList()];
 
         // InitAgent
         public AutoGenLLMConfig? LLMConfig { get; set; }
@@ -77,11 +80,11 @@ namespace QAChat.ViewModel.AutoGen {
             }
             AutoGenAgents = autoGenAgents;
             OnPropertyChanged(nameof(AutoGenAgents));
-
-            // InitAgentNameからAutoGenAgentを取得
-            LLMConfig = AutoGenLLMConfig.GetAutoGenLLMConfigList().FirstOrDefault(x => x.Name == AutoGenGroupChat.LLMConfigName);
+        }
+        // LLMConfigを読み込む
+        public void LoadLLMConfig() {
+            LLMConfig = AutoGenLLMConfig.GetAutoGenLLMConfigList().FirstOrDefault(x => x.Name == LLMConfigName);
             OnPropertyChanged(nameof(LLMConfig));
-
         }
 
 

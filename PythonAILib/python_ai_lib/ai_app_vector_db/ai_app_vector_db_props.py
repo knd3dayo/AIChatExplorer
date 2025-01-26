@@ -13,7 +13,8 @@ class VectorDBProps:
     git_repository_url_name = "git_repository_url"
     git_relative_path_name = "git_relative_path"
     image_url_name = "image_url"
-    desccription_name = "description"
+    description_name = "description"
+    system_message_name = "system_message"
     content_name = "content"
     folder_id_name = "folder_id"
 
@@ -55,8 +56,11 @@ class VectorDBProps:
         self.SearchKwarg = props_dict.get(VectorDBProps.search_kwargs_name, {})
 
         # description
-        self.Description = props_dict.get(VectorDBProps.desccription_name, "")
+        self.Description = props_dict.get(VectorDBProps.description_name, "")
         
+        # system_message
+        self.SystemMessage = props_dict.get(VectorDBProps.system_message_name, self.Description)
+
         # IsUseMultiVectorRetrieverがTrueの場合はMultiVectorRetrieverを使用する
         if props_dict.get(VectorDBProps.is_use_multi_vector_retriever_name, False) == True:
             self.IsUseMultiVectorRetriever = True
@@ -78,6 +82,7 @@ class VectorDBProps:
         vector_db_dict["name"] = self.Name
         vector_db_dict["vector_db_url"] = self.VectorDBURL
         vector_db_dict["description"] = self.VectorDBDescription
+        vector_db_dict["system_message"] = self.SystemMessage
         vector_db_dict["vector_db_type_string"] = self.VectorDBTypeString
         vector_db_dict["collection_name"] = self.CollectionName
         vector_db_dict["doc_store_url"] = self.DocStoreURL
@@ -91,6 +96,7 @@ class VectorDBProps:
             "vector_db_url": os.getenv("VECTOR_DB_URL"),
             "vector_db_type_string": os.getenv("VECTOR_DB_TYPE_STRING"),
             "vector_db_description": os.getenv("VECTOR_DB_DESCRIPTION"),
+            "vector_db_system_message": os.getenv("VECTOR_DB_SYSTEM_MESSAGE"),
             "is_use_multi_vector_retriever": os.getenv("IS_USE_MULTI_VECTOR_RETRIEVER","false").upper() == "TRUE",
             "doc_store_url": os.getenv("DOC_STORE_URL"),
             "collection_name": os.getenv("VECTOR_DB_COLLECTION_NAME"),
@@ -130,7 +136,6 @@ class VectorSearchParameter:
         #  openai_props, vector_db_items, query, search_kwargを設定する
         request: dict = json.loads(request_json)
         params.query = request.get("query", "")
-        params.search_kwarg = request.get("search_kwarg", {})
 
         return params
 
@@ -143,7 +148,7 @@ class ContentUpdateOrDeleteRequestParams:
         # request_jsonをdictに変換
         request: dict = json.loads(request_json)
         self.id = request[VectorDBProps.source_id_name]
-        self.description = request.get(VectorDBProps.desccription_name, "")
+        self.description = request.get(VectorDBProps.description_name, "")
         self.text = request[VectorDBProps.content_name]
         self.source_path = request.get(VectorDBProps.source_path_name, "")
         self.git_repository_url = request.get(VectorDBProps.git_repository_url_name, "")

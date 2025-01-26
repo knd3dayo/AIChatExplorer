@@ -133,6 +133,7 @@ namespace PythonAILib.Model.VectorDB {
             Dictionary<string, object> dict = new() {
                 { "vector_db_name", Name },
                 { "vector_db_description", Description },
+                { "vector_db_system_message", PromptStringResource.Instance.VectorDBSystemMessage(Description) },
                 { "vector_db_url", VectorDBURL },
                 { "is_use_multi_vector_retriever", IsUseMultiVectorRetriever },
                 { "doc_store_url", DocStoreURL },

@@ -184,6 +184,12 @@ namespace PythonAILib.Resource {
 
         // ベクトルDBのコレクション削除を実行
         public virtual string DeleteVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション削除を実行";
+        // ベクトルDBのコレクション更新を実行
+        public virtual string UpdateVectorDBCollectionExecute { get; } = "ベクトルDBのコレクション更新を実行";
+        // GetVectorDBDescription
+        public virtual string GetVectorDBDescription { get; } = "ベクトルDBの説明を取得";
+        // UpdateVectorDBDescription
+        public virtual string UpdateVectorDBDescription { get; } = "ベクトルDBの説明を更新";
 
         // モードが不正です
         public virtual string InvalidMode { get; } = "モードが不正です";

@@ -170,6 +170,12 @@ namespace PythonAILib.Resource {
         // ベクトルDBのコレクション削除を実行
         public override string DeleteVectorDBCollectionExecute { get; } = "Execute DeleteVectorDBCollection";
 
+        // ベクトルDBのコレクション更新を実行
+        public override string UpdateVectorDBCollectionExecute { get; } = "Execute UpdateVectorDBCollection";
+        // ベクトルDBの説明を取得
+        public override string GetVectorDBDescription { get; } = "Get VectorDB Description";
+        // UpdateVectorDBDescription
+        public override string UpdateVectorDBDescription { get; } = "Update VectorDB Description";
 
         public override string TextExtracted { get; } = "Extracted Text";
 

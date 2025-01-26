@@ -336,7 +336,7 @@ namespace PythonAILib.PythonIF {
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBCollectionExecute);
             LogWrapper.Info($"{PythonAILibStringResources.Instance.PropertyInfo} {chatRequestContextJson}");
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
@@ -345,9 +345,8 @@ namespace PythonAILib.PythonIF {
             }, result);
         }
 
-        public string GetCatalogDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId) { 
+        public string GetVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId) { 
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("get_catalog_description", (function_object) => {
@@ -357,9 +356,9 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
-        public string UpdateCatalogDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId, string description) {
+        public string UpdateVectorDBDescription(string catalogDBURL, string vectorDBURL, string collectionName, string folderId, string description) {
 
-            LogWrapper.Info(PythonAILibStringResources.Instance.DeleteVectorDBCollectionExecute);
+            LogWrapper.Info(PythonAILibStringResources.Instance.UpdateVectorDBDescription);
             // DeleteVectorDBIndexExecuteを呼び出す
             PythonScriptResult result = new();
             ExecutePythonScriptWrapper("update_catalog_description", (function_object) => {
@@ -369,7 +368,7 @@ namespace PythonAILib.PythonIF {
             return result.Output;
         }
 
-        // 指定されたベクトルDBのインデックスを削除する
+        // 指定されたベクトルDBのコレクションを削除する
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();

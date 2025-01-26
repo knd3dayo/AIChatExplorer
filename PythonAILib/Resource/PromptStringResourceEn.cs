@@ -10,12 +10,12 @@ namespace PythonAILib.Resource {
             }
         }
 
-        // Please analyze the following text and identify sentences containing undefined terms. " +
-        // "Undefined terms are those whose genus, specific difference, cause, purpose, function, or components are unclear." +
-        // "Return the output as a list in the following JSON format. If there is no text to analyze or analysis is not possible, return an empty list\n" +
-        // "{'result':[{'sentence':'Sentence containing undefined term','reason':'Reason for determining that the term is undefined'}]}"
+        // ベクトルDBシステムメッセージ。 
+        public override string VectorDBSystemMessage(string description) {
+            string message = $"The following information is stored in the vector DB. It searches for data that matches the string specified by the user\n\n {description}";
+            return message;
+        }
 
-        // For unclear sentences, please refer to the following explanation
         public override string UnknownContentDescription { get; } = "For unclear sentences, please refer to the following explanation";
 
         // SummaryGeneration

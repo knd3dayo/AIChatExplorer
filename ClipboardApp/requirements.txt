@@ -4,7 +4,8 @@ python-dotenv
 python-pptx
 tiktoken
 beautifulsoup4
-chromadb
+chroma-hnswlib==0.7.3
+chromadb==0.5.0
 openai
 langchain==0.3.4
 langchain-openai==0.2.3

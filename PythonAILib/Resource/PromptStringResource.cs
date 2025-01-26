@@ -15,6 +15,13 @@ namespace PythonAILib.Resource {
         #endregion
 
         #region システム定義プロンプト
+
+        // ベクトルDBシステムメッセージ。 
+        public virtual string VectorDBSystemMessage(string description) {
+            string message = $"以下の情報が格納されたベクトルDBを検索します。ユーザーから指定された文字列にマッチするデータを返します\n\n {description}";
+            return message;
+        }
+
         // 定義が不明な文章については、以下の説明を参考にしてください
         public virtual string UnknownContentDescription { get; } = "定義が不明な文章については、以下の説明を参考にしてください";
 
