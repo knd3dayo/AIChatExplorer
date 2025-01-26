@@ -188,15 +188,16 @@ def list_tools() -> Annotated[list[dict[str, str]], "List of registered tools, e
 def register_tool(
         tool_name: Annotated[str, "Tool name"], tool_description: Annotated[str, "Tool description"], 
         source_path: Annotated[str, "Absolute File Path of the file where the Python function defining the tool is located."], 
-        ) -> Annotated[bool, "Registration result"]:
+        ) -> tuple[Annotated[bool, "Registration result"], Annotated[str, "result message"]]:
     """
     This function saves the specified tools to a sqlite3 database.
     First argument: tool name, second argument: tool description, third argument: tool path.
     - Tool name: Specify the name of the tool as the Python function name.
     - Tool description: Provide a description of what the tool does.
     - Tool path: The absolute path to the file where the tool is saved.First argument: tool name, second argument: tool description, third argument: tool path.
-    If the tool with the same name already exists, it will not be registered. And return False.
-    If the registration is successful, return True.
+    If the tool with the same name already exists, return tuple(True, "The tool with the same name already exists.").
+    If the registration is successful, return tuple(True, "The tool has been successfully registered.").
+    If the registration fails, return tuple(False, "Failed to register the tool.").
     """
 
     global autogen_props
@@ -211,7 +212,7 @@ def register_tool(
     if cursor.fetchone() is not None:
         cursor.close()
         conn.close()
-        return False
+        return True, "The tool with the same name already exists."
 
     # ツールを登録
     cursor = conn.cursor()
@@ -226,8 +227,8 @@ def register_tool(
     cursor.close()
     conn.close()
     if tool is None:
-        return False
-    return True
+        return False, "Failed to register the tool."
+    return True, "The tool has been successfully registered."
     
 # エージェント一覧を取得する関数
 def list_agents() -> Annotated[list[dict[str, str]], "List of registered agents, each containing 'name' and 'description'"]:
@@ -258,7 +259,7 @@ def register_agent(
         agent_name: Annotated[str, "Agent name"], description: Annotated[str, "Agent description"],
         system_message: Annotated[str, "System message"], code_execution: Annotated[bool, "Code execution flag"],
         llm_config_name: Annotated[str, "LLM config name"], tool_names: Annotated[list[str], "List of tool names to be executed"],
-        ) -> Annotated[bool, "Registration result"]:
+        ) -> tuple[Annotated[bool, "Registration result"], Annotated[str, "result message"]]:
     """
     This function saves the specified agents to a sqlite3 database.
     First argument: agent name, second argument: agent description, third argument: system message, fourth argument: code execution flag, fifth argument: LLM config name, sixth argument: list of tool names
@@ -268,8 +269,9 @@ def register_agent(
     - Code execution flag: Specify whether the agent executes code.
     - LLM config name: Specify the name of the LLM configuration to use.
     - List of tool names: Specify the names of the tools to be executed by the agent.
-    If the agent with the same name already exists, it will not be registered. And return False.
-    If the registration is successful, return True.
+    If the agent with the same name already exists, return tuple(True, "The agent with the same name already exists.").
+    If the registration is successful, return tuple(True, "The agent has been successfully registered.").
+    If the registration fails, return tuple(False, "Failed to register the agent.").
     """
 
     global autogen_props
@@ -284,7 +286,7 @@ def register_agent(
     if cursor.fetchone() is not None:
         cursor.close()
         conn.close()
-        return False
+        return True, "The agent with the same name already exists."
     
     # エージェントを登録
     cursor = conn.cursor()
@@ -299,32 +301,30 @@ def register_agent(
     cursor.close()
     conn.close()
     if agent is None:
-        return False
-    return True
+        return False, "Failed to register the agent."
+    return True, "The agent has been successfully registered."
 
-# register_tool_agent
+# register_agent
 # register_toolで登録したツールを使用するエージェントを登録する関数
 def register_tool_agent(
         tool_name: Annotated[str, "Tool name"], tool_description: Annotated[str, "Tool description"], 
         source_path: Annotated[str, "Absolute File Path of the file where the Python function defining the tool is located."], 
-        ) -> Annotated[bool, "Registration result"]:
+        ) -> tuple[Annotated[bool, "Registration result"], Annotated[str, "result message"]]:
     """
-    This function saves the specified tools to a sqlite3 database.
-    First argument: tool name, second argument: tool description, third argument: tool path.
+    This function saves the agent that use the specified tool to a sqlite3 database.
+    First argument: tool name.
     - Tool name: Specify the name of the tool as the Python function name.
+    Second argument: tool description.
     - Tool description: Provide a description of what the tool does.
-    - Tool path: The absolute path to the file where the tool is saved.First argument: tool name, second argument: tool description, third argument: tool path.
-    If the tool with the same name already exists, it will not be registered. And return False.
-    If the tool registration is successful, register the agent.
+    Third argument: tool path.
+    - Tool path: The absolute path to the file where the tool is saved.
     The agent name is [tool_name]_agent, and the agent description is the same as the tool description.
-
+    If the agent with the same name already exists, return tuple(True, "The agent with the same name already exists.").
+    If the agent registration is successful, return tuple(True, "The agent has been successfully registered.").
+    If the agent registration fails, return tuple(False, "Failed to register the agent.").
     """
     agent_name = f"{tool_name}_agent"
-    agent_description = tool_description
-    system_message = f"""This agent executes the fllowing tool:
-    Tool name: {tool_name}
-    Tool description: {tool_description}
-    """
+
     code_execution = False
     llm_config_name = "default"
 
@@ -338,25 +338,34 @@ def register_tool_agent(
         exec(f.read(), globals(), locals_dict)
     
     agents = locals_dict["list_agents"]()
-    agent_names = [agent["name"] for agent in agents]
-    # 登録済みのエージェント名に指定されたエージェント名が含まれているか確認. 含まれている場合はFalseを返す
+    agent_names = [agent["name"] for agent in agents if agent["name"] == agent_name]
+    # 登録済みのエージェント名に指定されたエージェント名が含まれているか確認. 
     if agent_name in agent_names:
-        return False
+        return True, "The agent with the same name already exists."
     
     # list_tools関数を使用して、登録済みのツールを取得
     tools = locals_dict["list_tools"]()
-    tool_names = [tool["name"] for tool in tools]
-    register_tool = locals_dict["register_tool"]
+    registered_tools = [tool for tool in tools if tool["name"] == tool_name]
     # 登録済みのツール名に指定されたツール名が含まれているか確認
-    if tool_name not in tool_names:
-        # register_tool関数を使用して、ツールを登録. 登録に失敗した場合はFalseを返す
-        if not register_tool(tool_name, tool_description, source_path):
-            return False
+    if tool_name not in registered_tools:
+        # ツールが登録されていない場合は登録する
+        register_tool = locals_dict["register_tool"]
+        result, message = register_tool(tool_name, tool_description, source_path)
+        if not result:
+            return False, message
+        
+    tool_description = registered_tools[0]["description"]
+    agent_description = f"""This agent executes the fllowing tool:
+    Tool name: {tool_name}
+    Tool description: {tool_description}
+    """
+    system_message = agent_description
 
     register_agent = locals_dict["register_agent"]
     # register_agent関数を使用して、エージェントを登録. 登録に失敗した場合はFalseを返す
-    if not register_agent(agent_name, agent_description, system_message, code_execution, llm_config_name, [tool_name]):
-        return False
+    result, message =  register_agent(agent_name, agent_description, system_message, code_execution, llm_config_name, [tool_name])
+    if not result:
+        return False, message
     
-    return True
+    return True, "The agent has been successfully registered."
     

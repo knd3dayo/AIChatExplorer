@@ -717,6 +717,9 @@ namespace QAChat.Resource {
         // ベクトルDB選択
         public override string SelectVectorDB { get; } = "Select Vector DB";
 
+        // VectorDBSearchAgent
+        public override string VectorDBSearchAgent { get; } = "Vector DB Search Agent";
+
         public override string ExcludeFromList { get; } = "Exclude from list";
         public override string VectorDB { get; } = "Vector DB";
         public override string VectorDBExternal { get; } = "Vector DB (external)";

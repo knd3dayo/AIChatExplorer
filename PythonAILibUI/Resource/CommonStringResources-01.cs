@@ -462,6 +462,10 @@ namespace QAChat.Resource {
         // ベクトルDB選択
         public virtual string SelectVectorDB { get; } = "ベクトルDB選択";
 
+        // VectorDBSearchAgent ベクトルDB検索用のエージェント
+        public virtual string VectorDBSearchAgent { get; } = "ベクトルDB検索用のエージェント";
+
+
         // リストから除外
         public virtual string ExcludeFromList { get; } = "リストから除外";
 

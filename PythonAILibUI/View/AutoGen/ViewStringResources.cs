@@ -113,7 +113,11 @@ namespace QAChat.View.AutoGen {
         // BaseURL
         public static string BaseURL { get; set; } = CommonStringResources.Instance.BaseURL;
 
+        // SelectVectorDB
+        public static string SelectVectorDB { get; set; } = CommonStringResources.Instance.SelectVectorDB;
 
+        // VectorDBSearchAgent
+        public static string VectorDBSearchAgent { get; set; } = CommonStringResources.Instance.VectorDBSearchAgent;
 
     }
 }

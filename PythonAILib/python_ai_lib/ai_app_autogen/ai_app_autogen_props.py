@@ -4,7 +4,8 @@ from typing import Any
 from queue import Queue
 # asyncio
 import asyncio
-
+# json
+import json
 # sqlite3
 import sqlite3
 # autogen
@@ -64,37 +65,46 @@ class AutoGenProps:
         # default_tools absoulte path
         import ai_app_autogen.default_tools as default_tools
         self.default_tools_path = default_tools.__file__
-        # vector_search_agents
-        self.vector_search_agents = []
 
-    # openai_propsとvector_db_props_listを受け取り、vector_search_agentsを作成する
-    def prepare_vector_search_agents(self, openai_props: OpenAIProps, vector_db_props_list: list[VectorDBProps]):
-        for vector_db_props in vector_db_props_list:
-            vector_search_agent = self.__create_vector_search_agent(openai_props, vector_db_props)
-            self.vector_search_agents.append(vector_search_agent)
+        # group_chat
+        self.group_chat: SelectorGroupChat = None
 
-    # vector_search_agentsをクリアする
-    def clear_vector_search_agents(self):
-        self.vector_search_agents.clear()
+    # clear_agents
+    def clear_agents(self):
+        self.agents = []
 
     # 指定したinitial_messageを使って、GroupChatを実行する
     def run_group_chat(self, initial_message: str, result_queue: Queue):
         task = self.__create_run_group_chat_task(initial_message, result_queue)
-        asyncio.run(task)
+
+        import threading
+
+        def run_task():
+            asyncio.run(task)
+        thread = threading.Thread(target=run_task)
+        thread.start()
 
     async def __create_run_group_chat_task(self, initial_message: str, result_queue: Queue):
         if not initial_message:
             raise ValueError("initial_message is None")
-        group_chat = self.__create_group_chat(self.chat_dict["name"])
-        async for message in group_chat.run_stream(task=initial_message):
+        if not result_queue:
+            raise ValueError("result_queue is None")
+        if not self.group_chat:
+            raise ValueError("group_chat is not prepared")
+        
+        async for message in self.group_chat.run_stream(task=initial_message):
             if type(message) == TaskResult:
                 result_queue.put(None)
                 break
             message_str = f"{message.source}: {message.content}"
             result_queue.put(message_str)
+            # result_queue.put(message)
 
     # 指定したnameのGroupChatをDBから取得して、GroupChatを返す
-    def __create_group_chat(self, name: str):
+    def prepare_group_chat(self, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBProps]):
+        name = self.chat_dict.get("name", None)
+        if name is None:
+            raise ValueError("group chat name is None")
         # sqlite3のDBを開く
         conn = sqlite3.connect(self.autogen_db_path)
         cursor = conn.cursor()
@@ -117,12 +127,12 @@ class AutoGenProps:
         agent_names = chat_dict["agent_names"].split(",")
         agents = []
         for agent_name in agent_names:
-            agent = self.__create_agent(agent_name)
+            agent = self.__create_agent(agent_name, openai_props)
             agents.append(agent)
 
-        # self.vector_search_agentsがある場合は、agentsに追加
-        if self.vector_search_agents:
-            agents.extend(self.vector_search_agents)
+        # vector_search_agentsがある場合は、agentsに追加
+        vector_search_agents = self.__create_vector_search_agent_list(openai_props, vector_db_prop_list)
+        agents.extend(vector_search_agents)
 
         # エージェント名一覧を表示
         for agent in agents:
@@ -138,7 +148,16 @@ class AutoGenProps:
             termination_condition=termination_condition,
             )
         
-        return chat
+        self.group_chat = chat
+
+    # vector_search_agentsを準備する。vector_db_props_listを受け取り、vector_search_agentsを作成する
+    def __create_vector_search_agent_list(self, openai_props: OpenAIProps, vector_db_prop_list:list[VectorDBProps]):
+        vector_search_agents = []
+        for vector_db_props in vector_db_prop_list:
+            vector_search_agent = self.__create_vector_search_agent(openai_props, vector_db_props)
+            vector_search_agents.append(vector_search_agent)
+        
+        return vector_search_agents
 
     # 指定したopenai_propsとvector_db_propsを使って、VectorSearchAgentを作成する
     def __create_vector_search_agent(self, openai_props: OpenAIProps, vector_db_props: VectorDBProps):
@@ -160,7 +179,7 @@ class AutoGenProps:
         return AssistantAgent(**params)
 
     # 指定したnameのAgentをDBから取得して、Agentを返す
-    def __create_agent(self, name: str):
+    def __create_agent(self, name: str, openai_props: OpenAIProps):
         # sqlite3のDBを開く
         conn = sqlite3.connect(self.autogen_db_path)
         cursor = conn.cursor()
@@ -171,7 +190,7 @@ class AutoGenProps:
             raise ValueError(f"Agent:{name} is not found.")
         # DBから取得したデータをagent_dictに変換する
         # なお、agentsのテーブル定義は以下の通り
-        # "CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)"
+        # "CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)"
         agent_dict = {}
         agent_dict["name"] = row[0]
         agent_dict["description"] = row[1]
@@ -179,11 +198,13 @@ class AutoGenProps:
         agent_dict["code_execution"] = row[3]
         agent_dict["llm_config_name"] = row[4]
         agent_dict["tool_names"] = row[5]
+        agent_dict["vector_db_items"] = json.loads(row[6])
         conn.close()
         # ConversableAgent object用の引数辞書を作成
         params = {}
         params["name"] = agent_dict["name"]
         params["description"] = agent_dict["description"]
+
         # code_executionがTrueの場合は、CodeExecutionAgentを作成
         if agent_dict["code_execution"]:
             code_executor = self.__create_code_executor()
@@ -197,16 +218,23 @@ class AutoGenProps:
             params["model_client"] = self.__create_client(agent_dict["llm_config_name"])
 
             # tool_namesが指定されている場合は、tool_dictを作成
+            tool_dict_list = []
             if agent_dict["tool_names"]:
                 tool_names = agent_dict["tool_names"].split(",")
-                tool_dict_list = []
                 for tool_name in tool_names:
                     print(f"tool_name:{tool_name}")
                     func_tool = self.__create_tool(tool_name)
                     tool_dict_list.append(func_tool)
-
-                params["tools"] = tool_dict_list
-
+            # vector_db_itemsが指定されている場合は、vector_db_items用のtoolを作成
+            # vector_search_toolを作成
+            from ai_app_autogen.vector_db_tools import create_vector_search_tool
+            import uuid
+            for vector_db_item in agent_dict["vector_db_items"]:
+                id = str(uuid.uuid4()).replace('-', '_')
+                func = create_vector_search_tool(openai_props, [vector_db_item])
+                func_tool = FunctionTool(func, description=f"Vector Search Tool for {vector_db_item.Description}", name=f"vector_search_tool_{id}")
+                tool_dict_list.append(func_tool)
+            params["tools"] = tool_dict_list
             return AssistantAgent(**params)
 
     def __create_tool(self, name: str):

@@ -22,6 +22,8 @@ namespace QAChat.ViewModel.AutoGen {
 
         public Action AfterUpdate { get; set; }
 
+
+
         // Name
         public string Name {
             get { return AutoGenAgent.Name; }
@@ -74,17 +76,35 @@ namespace QAChat.ViewModel.AutoGen {
             }
         }
         // LlmConfigList
-        public ObservableCollection<AutoGenLLMConfig> LlmConfigList {
+        public ObservableCollection<string> LlmConfigNameList {
             get {
                var list = AutoGenLLMConfig.GetAutoGenLLMConfigList();
-                return new ObservableCollection<AutoGenLLMConfig>(list);
+                ObservableCollection<string> llmConfigNames = [];
+                foreach (var item in list) {
+                    llmConfigNames.Add(item.Name);
+                }
+                return llmConfigNames;
             }
         }
+
         // VectorSearchProperty
         public ObservableCollection<VectorDBItemViewModel> VectorDBItems { get; set; } = [];
 
         public VectorDBItemViewModel? SelectedVectorDBItem { get; set; }
 
+        // VectorDBSearchAgent
+        public bool VectorDBSearchAgent {
+            get { return AutoGenAgent.VectorDBSearchAgent; }
+            set {
+                AutoGenAgent.VectorDBSearchAgent = value;
+                OnPropertyChanged(nameof(VectorDBItemsListBoxIsEnabled));
+            }
+        }
+        // SelectedTabIndexが2の場合かつSelectVectorDBAtChatRun = falseの場合、「ベクトルDB選択」ボタンを表示するかどうか
+        public Visibility VectorDBSelectionButtonVisibility => Tools.BoolToVisibility(SelectedTabIndex == 2 && VectorDBSearchAgent == false);
+
+        // VectorDBItemsのListBoxをEnableにするかどうか
+        public bool VectorDBItemsListBoxIsEnabled => VectorDBSearchAgent == false;
         // AutoGenTools
         public ObservableCollection<AutoGenToolViewModel> AutoGenTools { get; set; } = [];
 
@@ -95,7 +115,7 @@ namespace QAChat.ViewModel.AutoGen {
             get { return _selectedTabIndex; }
             set {
                 _selectedTabIndex = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(VectorDBSelectionButtonVisibility));
             }
         }
 
@@ -145,6 +165,14 @@ namespace QAChat.ViewModel.AutoGen {
             });
         });
 
+        // RemoveVectorDBItemCommand
+        public SimpleDelegateCommand<object> RemoveVectorDBItemCommand => new((parameter) => {
+            if (SelectedVectorDBItem == null) {
+                return;
+            }
+            VectorDBItems.Remove(SelectedVectorDBItem);
+            OnPropertyChanged(nameof(VectorDBItems));
+        });
 
     }
 }

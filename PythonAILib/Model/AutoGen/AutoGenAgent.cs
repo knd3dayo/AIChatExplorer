@@ -38,6 +38,10 @@ namespace PythonAILib.Model.AutoGen {
         public List<VectorDBItem> VectorDBItems { get; set; } = [];
 
 
+        // VectorDBSearchAgent
+        [JsonPropertyName("vector_db_search_agent")]
+        public bool VectorDBSearchAgent { get; set; } = false;
+
         // ToDictList
         public static Dictionary<string, object> ToDict(AutoGenAgent data) {
             // Create a dictionary
@@ -49,7 +53,8 @@ namespace PythonAILib.Model.AutoGen {
                 { "tool_names", data.ToolNames },
                 { "code_execution", data.CodeExecution },
                 { "llm_config_name", data.LLMConfigName },
-                { "vector_db_items", VectorDBItem.ToDictList(data.VectorDBItems) }
+                { "vector_db_items", VectorDBItem.ToDictList(data.VectorDBItems) },
+                { "vector_db_search_agent", data.VectorDBSearchAgent },
 
             };
             return dict;
@@ -66,7 +71,12 @@ namespace PythonAILib.Model.AutoGen {
 
         // Save
         public void Save(bool allow_override = true) {
-            UpdateAutoGenAgent(Name, Description, SystemMessage, CodeExecution, LLMConfigName, ToolNames, allow_override);
+            List<VectorDBItem> vector_db_items = [];
+            if (VectorDBSearchAgent) {
+                vector_db_items = VectorDBItems;
+            }
+
+            UpdateAutoGenAgent(Name, Description, SystemMessage, CodeExecution, LLMConfigName, ToolNames, vector_db_items, allow_override);
         }
         // Delete
         public void Delete() {
@@ -74,7 +84,7 @@ namespace PythonAILib.Model.AutoGen {
         }
 
         // Update AutoGenAgent
-        public static void UpdateAutoGenAgent(string name, string description, string system_message, bool code_execution, string llm_config_name, List<string> tool_names, bool overwrite) {
+        public static void UpdateAutoGenAgent(string name, string description, string system_message, bool code_execution, string llm_config_name, List<string> tool_names, List<VectorDBItem> vector_db_items, bool overwrite) {
             IPythonAILibConfigParams ConfigPrams = PythonAILibManager.Instance.ConfigParams;
             // SQLITE3 DBに接続
             string autogenDBURL = ConfigPrams.GetAutoGenDBPath();
@@ -93,22 +103,24 @@ namespace PythonAILib.Model.AutoGen {
             // system_message: システムメッセージ
             // code_execution
             // llm_config_name LLMConfig名
-            //tooo_names ツール名
+            // tooo_names ツール名
+            // vector_db_items ベクトルDBアイテムをJSON形式で格納
             // テーブルが存在しない場合のみ作成
-            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT)", sqlConn);
+            using var createCmd = new SQLiteCommand("CREATE TABLE IF NOT EXISTS agents (name TEXT PRIMARY KEY, description TEXT, system_message TEXT, code_execution BOOLEAN, llm_config_name TEXT, tool_names TEXT, vector_db_items TEXT)", sqlConn);
             createCmd.ExecuteNonQuery();
             // Agentの情報をDBに登録
             using var checkCmd = new SQLiteCommand("SELECT * FROM agents WHERE name = @name", sqlConn);
             checkCmd.Parameters.AddWithValue("@name", name);
             using var reader = checkCmd.ExecuteReader();
             if (reader.HasRows == false) {
-                using var insertCmd2 = new SQLiteCommand("INSERT INTO agents (name, description, system_message, code_execution, llm_config_name, tool_names) VALUES (@name, @description, @system_message, @code_execution, @llm_config_name, @tool_names)", sqlConn);
+                using var insertCmd2 = new SQLiteCommand("INSERT INTO agents (name, description, system_message, code_execution, llm_config_name, tool_names, vector_db_items) VALUES (@name, @description, @system_message, @code_execution, @llm_config_name, @tool_names, @vector_db_items)", sqlConn);
                 insertCmd2.Parameters.AddWithValue("@name", name);
                 insertCmd2.Parameters.AddWithValue("@description", description);
                 insertCmd2.Parameters.AddWithValue("@system_message", system_message);
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
                 insertCmd2.Parameters.AddWithValue("@tool_names", string.Join(",", tool_names));
+                insertCmd2.Parameters.AddWithValue("@vector_db_items", VectorDBItem.ToJson(vector_db_items));
                 insertCmd2.ExecuteNonQuery();
             } else if (overwrite){
                 using var insertCmd2 = new SQLiteCommand("UPDATE agents SET description = @description, system_message = @system_message, code_execution = @code_execution, llm_config_name = @llm_config_name, tool_names = @tool_names WHERE name = @name", sqlConn);
@@ -118,6 +130,7 @@ namespace PythonAILib.Model.AutoGen {
                 insertCmd2.Parameters.AddWithValue("@code_execution", code_execution);
                 insertCmd2.Parameters.AddWithValue("@llm_config_name", llm_config_name);
                 insertCmd2.Parameters.AddWithValue("@tool_names", string.Join(",", tool_names));
+                insertCmd2.Parameters.AddWithValue("@vector_db_items", VectorDBItem.ToJson(vector_db_items));
                 insertCmd2.ExecuteNonQuery();
             }
             // close

@@ -31,5 +31,9 @@ namespace QAChat.ViewModel.AutoGen {
             }
             return false;
         }
+        public override int GetHashCode() {
+            return AutoGenAgent.Name.GetHashCode();
+        }
+
     }
 }

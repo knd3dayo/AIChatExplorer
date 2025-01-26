@@ -2,6 +2,7 @@ import os, json
 from typing import Any, Tuple, Generator
 import tempfile
 import base64
+import time
 
 from ai_app_openai import OpenAIProps, OpenAIClient, RequestContext
 from ai_app_vector_db import VectorDBProps, VectorSearchParameter, ContentUpdateOrDeleteRequestParams
@@ -122,21 +123,25 @@ def run_autogen_group_chat(autogen_props: AutoGenProps, openai_props: OpenAIProp
     # queueを生成.
     message_queue = Queue()
 
-    # vector_db_itemsがある場合は、prepare_vector_search_agentsを実行
-    if vector_db_items:
-        autogen_props.prepare_vector_search_agents(openai_props, vector_db_items)
+    # prepare_group_chatを実行
+    autogen_props.prepare_group_chat(openai_props, vector_db_items)
     # run_group_chatを実行
     autogen_props.run_group_chat(input_text, message_queue)
-    # メッセージがない場合はtimeout秒待つ. メッセージがある場合はyieldする.
+    # メッセージがある場合はyieldする.メッセージがない場合は5秒待つ. 10回待ってもメッセージがない場合は終了する.
     while True:
-        try:
-            message = message_queue.get(block=True, timeout=autogen_props.timeout)
-            if message:
-                yield message
-            else:
-                break
-        except Empty:
-            return ""
+        retry_count = 0
+        while retry_count < 10:
+            try:
+                message = message_queue.get()
+                if message:
+                    yield message
+                else:
+                    return None
+            except Empty:
+                retry_count += 1
+                if retry_count > 10:
+                    return None
+                time.sleep(5)
 
 ########################
 # VectorDBCatalog関連

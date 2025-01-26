@@ -190,6 +190,8 @@ def run_autogen_group_chat( context_json:str, input_text: str):
         autogen_props = get_autogen_objects( context_json)
 
         for message in ai_app.run_autogen_group_chat(autogen_props, openai_props, vector_db_items,  input_text):
+            if not message:
+                break
             # dictを作成
             result_dict = {"message": message }
             yield result_dict

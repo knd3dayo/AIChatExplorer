@@ -73,14 +73,13 @@ def main():
 
     # AutogenGroupChatを実行
     TaskResult = None
+    message_count = 0
     for message in ai_app.run_autogen_group_chat(autogen_props, openai_props, vector_db_items, input_text):
-        if type(message) == TaskResult:
-            TaskResult = message
+        if not message:
             break
-        print(message)
+        message_count += 1
+        print(f"[step {message_count}]:{message}")
         # print(f"source:{message.source}\nmessage:{message.content}")
-
-
 
 if __name__ == '__main__':
     main()
