@@ -203,30 +203,28 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
         public virtual async void LoadChildren(int nestLevel = 5) {
-            try {
-                UpdateIndeterminate(true);
-                // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-                List<ContentFolderViewModel> _children = [];
-                await Task.Run(() => {
-                    foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
-                        if (child == null) {
-                            continue;
-                        }
-                        ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                        // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                        if (nestLevel > 0) {
-                            childViewModel.LoadChildren(nestLevel - 1);
-                        }
-                        _children.Add(childViewModel);
+            UpdateIndeterminate(true);
+            // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
+            List<ContentFolderViewModel> _children = [];
+            await Task.Run(() => {
+                foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
+                    if (child == null) {
+                        continue;
                     }
+                    ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                    if (nestLevel > 0) {
+                        childViewModel.LoadChildren(nestLevel - 1);
+                    }
+                    _children.Add(childViewModel);
+                }
+            }).ContinueWith((task) => {
+                MainUITask.Run(() => {
+                    Children = new ObservableCollection<ContentFolderViewModel>(_children);
+                    OnPropertyChanged(nameof(Children));
+                    UpdateIndeterminate(false);
                 });
-
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
-                OnPropertyChanged(nameof(Children));
-
-            } finally {
-                UpdateIndeterminate(false);
-            }
+            });
         }
         // LoadItems
         public virtual async void LoadItems() {
