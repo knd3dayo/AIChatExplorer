@@ -79,7 +79,7 @@ namespace WpfAppCommon.Control.Editor {
             // Ctrl + :を押したら時刻を挿入
             InputBindings.Add(new KeyBinding(InsertTimeCommand, new KeyGesture(Key.OemSemicolon, ModifierKeys.Control)));
             // Ctrl + Xを押したら切り取り
-            InputBindings.Add(new KeyBinding(ApplicationCommands.Cut, new KeyGesture(Key.X, ModifierKeys.Control)));
+            InputBindings.Add(new KeyBinding(CutSelectedTextCommand, new KeyGesture(Key.X, ModifierKeys.Control)));
             // Ctrl + Zを押したらUndo
             InputBindings.Add(new KeyBinding(ApplicationCommands.Undo, new KeyGesture(Key.Z, ModifierKeys.Control)));
             // Ctrl + Yを押したらRedo
@@ -90,6 +90,12 @@ namespace WpfAppCommon.Control.Editor {
             // InputBindings.Add(new KeyBinding(RemoveTabCommand, new KeyGesture(Key.Tab, ModifierKeys.Shift)));
         }
 
+
+        // Ctrl + Xを押したら切り取り
+        public SimpleDelegateCommand<object> CutSelectedTextCommand => new((parameter) => {
+            // 選択中のテキストを切り取り
+            TextSelector.CutText(this);
+        });
 
         // Ctrl + Aを一回をしたら行選択、二回をしたら全選択
         public SimpleDelegateCommand<object> SelectTextCommand => new((parameter) => {

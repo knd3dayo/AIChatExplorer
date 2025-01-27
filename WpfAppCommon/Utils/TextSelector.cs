@@ -13,6 +13,9 @@ namespace WpfAppCommon.Utils {
         // 最後に選択したテキスト
         public string LastSelectedText { get; set; } = "";
 
+        public void CutText(TextBox editor) {
+            editor.Cut();
+        }
         public void SelectText(TextBox editor) {
             // 最後に選択したテキストと異なる場合は初期状態にする。
             string selectedText = editor.SelectedText;
