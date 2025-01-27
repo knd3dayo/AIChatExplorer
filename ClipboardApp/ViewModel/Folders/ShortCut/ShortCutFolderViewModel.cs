@@ -33,42 +33,37 @@ namespace ClipboardApp.ViewModel.Folders.ShortCut {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public override async void LoadChildren(int nestLevel = 0) {
-            try {
-                UpdateIndeterminate(true);
-                // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
-                List<ClipboardFolderViewModel> _children = [];
+        protected override async void LoadChildren(int nestLevel = 0) {
+            // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
+            List<ClipboardFolderViewModel> _children = [];
 
-                await Task.Run(() => {
-                    // RootFolderの場合は、ShortCutFolderを取得
-                    if (Folder.IsRootFolder) {
-                        foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
-                            if (child == null) {
-                                continue;
-                            }
-                            ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                            _children.Add(childViewModel);
-                        }
-                        return;
-                    }
-                    // RootFolder以外の場合は、FileSystemFolderを取得 
+            await Task.Run(() => {
+                // RootFolderの場合は、ShortCutFolderを取得
+                if (Folder.IsRootFolder) {
                     foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
                         if (child == null) {
                             continue;
                         }
-                        FileSystemFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                        // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                        if (nestLevel > 0) {
-                            childViewModel.LoadChildren(nestLevel - 1);
-                        }
+                        ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
                         _children.Add(childViewModel);
                     }
-                });
-                Children = new ObservableCollection<ContentFolderViewModel>(_children);
-                OnPropertyChanged(nameof(Children));
-            } finally {
-                UpdateIndeterminate(false);
-            }
+                    return;
+                }
+                // RootFolder以外の場合は、FileSystemFolderを取得 
+                foreach (var child in Folder.GetChildren<FileSystemFolder>()) {
+                    if (child == null) {
+                        continue;
+                    }
+                    ShortCutFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                    if (nestLevel > 0) {
+                        childViewModel.LoadChildren(nestLevel - 1);
+                    }
+                    _children.Add(childViewModel);
+                }
+            });
+            Children = new ObservableCollection<ContentFolderViewModel>(_children);
+            OnPropertyChanged(nameof(Children));
         }
 
     }

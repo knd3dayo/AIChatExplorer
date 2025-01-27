@@ -35,7 +35,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public override async void LoadChildren(int nestLevel = 0) {
+        protected override async void LoadChildren(int nestLevel = 0) {
             try {
                 UpdateIndeterminate(true);
                 // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
@@ -62,7 +62,7 @@ namespace ClipboardApp.ViewModel.Folders.Mail {
 
         }
         // LoadItems
-        public override async void LoadItems() {
+        protected override async void LoadItems() {
             Items.Clear();
             // ClipboardItemFolder.Itemsは別スレッドで実行
             List<OutlookItem> _items = [];

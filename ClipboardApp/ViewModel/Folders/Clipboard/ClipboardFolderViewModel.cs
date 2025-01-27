@@ -202,45 +202,36 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         // LoadChildren
         // 子フォルダを読み込む。nestLevelはネストの深さを指定する。1以上の値を指定すると、子フォルダの子フォルダも読み込む
         // 0を指定すると、子フォルダの子フォルダは読み込まない
-        public virtual async void LoadChildren(int nestLevel = 5) {
+        protected virtual void LoadChildren(int nestLevel = 5) {
             UpdateIndeterminate(true);
             // ChildrenはメインUIスレッドで更新するため、別のリストに追加してからChildrenに代入する
             List<ContentFolderViewModel> _children = [];
-            await Task.Run(() => {
-                foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
-                    if (child == null) {
-                        continue;
-                    }
-                    ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
-                    // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
-                    if (nestLevel > 0) {
-                        childViewModel.LoadChildren(nestLevel - 1);
-                    }
-                    _children.Add(childViewModel);
+            foreach (var child in Folder.GetChildren<ClipboardFolder>()) {
+                if (child == null) {
+                    continue;
                 }
-            }).ContinueWith((task) => {
-                MainUITask.Run(() => {
-                    Children = new ObservableCollection<ContentFolderViewModel>(_children);
-                    OnPropertyChanged(nameof(Children));
-                    UpdateIndeterminate(false);
-                });
+                ClipboardFolderViewModel childViewModel = CreateChildFolderViewModel(child);
+                // ネストの深さが1以上の場合は、子フォルダの子フォルダも読み込む
+                if (nestLevel > 0) {
+                    childViewModel.LoadChildren(nestLevel - 1);
+                }
+                _children.Add(childViewModel);
+            }
+            MainUITask.Run(() => {
+                Children = new ObservableCollection<ContentFolderViewModel>(_children);
+                OnPropertyChanged(nameof(Children));
             });
         }
         // LoadItems
-        public virtual async void LoadItems() {
+        protected virtual void LoadItems() {
             // ClipboardItemFolder.Itemsは別スレッドで実行
-            List<ClipboardItem> _items = [];
-            UpdateIndeterminate(true);
-            await Task.Run(() => {
-                _items = Folder.GetItems<ClipboardItem>();
-            });
+            List<ClipboardItem> _items = Folder.GetItems<ClipboardItem>();
             MainUITask.Run(() => {
                 Items.Clear();
                 foreach (ContentItem item in _items) {
                     Items.Add(CreateItemViewModel(item));
                 }
             });
-            UpdateIndeterminate(false);
         }
 
         #endregion
@@ -250,10 +241,16 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
         }
 
         public override SimpleDelegateCommand<object> LoadFolderCommand => new((parameter) => {
-            LoadChildren(DefaultNextLevel);
-            int count = Children.Count;
-            LoadItems();
-            UpdateStatusText();
+            UpdateIndeterminate(true);
+            Task.Run(() => {
+                LoadChildren(DefaultNextLevel);
+                LoadItems();
+            }).ContinueWith((task) => {
+                MainUITask.Run(() => {
+                    UpdateIndeterminate(false);
+                    UpdateStatusText();
+                });
+            });
         });
 
         protected virtual void UpdateStatusText() {
