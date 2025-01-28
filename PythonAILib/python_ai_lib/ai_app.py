@@ -126,22 +126,7 @@ def run_autogen_group_chat(autogen_props: AutoGenProps, openai_props: OpenAIProp
     # prepare_group_chatを実行
     autogen_props.prepare_group_chat(openai_props, vector_db_items)
     # run_group_chatを実行
-    autogen_props.run_group_chat(input_text, message_queue)
-    # メッセージがある場合はyieldする.メッセージがない場合は5秒待つ. 10回待ってもメッセージがない場合は終了する.
-    while True:
-        retry_count = 0
-        while retry_count < 10:
-            try:
-                message = message_queue.get()
-                if message:
-                    yield message
-                else:
-                    return None
-            except Empty:
-                retry_count += 1
-                if retry_count > 10:
-                    return None
-                time.sleep(5)
+    return autogen_props.run_group_chat(input_text, message_queue)
 
 ########################
 # VectorDBCatalog関連

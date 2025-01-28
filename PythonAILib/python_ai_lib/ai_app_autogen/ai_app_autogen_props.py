@@ -1,13 +1,18 @@
 import venv
 from typing import Any
 # queue
-from queue import Queue
+from queue import Queue, Empty
 # asyncio
 import asyncio
 # json
 import json
 # sqlite3
 import sqlite3
+# time
+import time
+# Generator
+from typing import Generator
+
 # autogen
 from autogen_ext.models.openai import OpenAIChatCompletionClient, AzureOpenAIChatCompletionClient
 from autogen_core.tools import FunctionTool
@@ -69,20 +74,56 @@ class AutoGenProps:
         # group_chat
         self.group_chat: SelectorGroupChat = None
 
+        self.quit_flag = False
+    def quit(self):
+        self.quit_flag = True
+
     # clear_agents
     def clear_agents(self):
         self.agents = []
 
     # 指定したinitial_messageを使って、GroupChatを実行する
-    def run_group_chat(self, initial_message: str, result_queue: Queue):
+    def run_group_chat(self, initial_message: str, result_queue: Queue) -> Generator:
         task = self.__create_run_group_chat_task(initial_message, result_queue)
 
         import threading
 
         def run_task():
-            asyncio.run(task)
+            try:
+                asyncio.run(task)
+            except Exception as e:
+                print(f"run_task error:{e}")
+                self.quit()
+                raise e
+
         thread = threading.Thread(target=run_task)
         thread.start()
+
+        # _get_messageを使って、result_queueからメッセージを取得して、Generatorを返す
+        try:
+            yield from self._get_message(result_queue)
+        except Exception as e:
+            self.quit()
+            raise e
+
+    def _get_message(self, result_queue: Queue) -> Generator:
+        while True:
+            retry_count = 0
+            while retry_count < 10:
+                if self.quit_flag:
+                    self.quit_flag = False
+                    return None
+                try:
+                    message = result_queue.get(block=True, timeout=5)
+                    if message:
+                        yield message
+                    else:
+                        return None
+                except Empty:
+                    retry_count += 1
+                    if retry_count > 10:
+                        return None
+                    
 
     async def __create_run_group_chat_task(self, initial_message: str, result_queue: Queue):
         if not initial_message:
@@ -93,6 +134,10 @@ class AutoGenProps:
             raise ValueError("group_chat is not prepared")
         
         async for message in self.group_chat.run_stream(task=initial_message):
+            if self.quit_flag:
+                self.quit_flag = False
+                return
+            
             if type(message) == TaskResult:
                 result_queue.put(None)
                 break
