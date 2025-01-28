@@ -12,7 +12,7 @@ namespace ImageChat.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.12.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -110,36 +110,12 @@ namespace ImageChat.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIEmbeddingModel {
+        public string OpenAIBaseURL {
             get {
-                return ((string)(this["OpenAIEmbeddingModel"]));
+                return ((string)(this["OpenAIBaseURL"]));
             }
             set {
-                this["OpenAIEmbeddingModel"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAICompletionBaseURL {
-            get {
-                return ((string)(this["OpenAICompletionBaseURL"]));
-            }
-            set {
-                this["OpenAICompletionBaseURL"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIEmbeddingBaseURL {
-            get {
-                return ((string)(this["OpenAIEmbeddingBaseURL"]));
-            }
-            set {
-                this["OpenAIEmbeddingBaseURL"] = value;
+                this["OpenAIBaseURL"] = value;
             }
         }
         
@@ -176,6 +152,18 @@ namespace ImageChat.Properties {
             }
             set {
                 this["NoProxyList"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OpenAIEmbeddingModel {
+            get {
+                return ((string)(this["OpenAIEmbeddingModel"]));
+            }
+            set {
+                this["OpenAIEmbeddingModel"] = value;
             }
         }
     }

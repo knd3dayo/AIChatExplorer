@@ -196,32 +196,18 @@ namespace ClipboardApp.Settings {
                 Properties.Settings.Default.OpenAIEmbeddingModel = value;
             }
         }
-        // OpenAICompletionBaseURL
-        private string? _openAICompletionBaseURL;
-        public string OpenAICompletionBaseURL {
+        // OpenAIBaseURL
+        private string? _openAIBaseURL;
+        public string OpenAIBaseURL {
             get {
-                if (_openAICompletionBaseURL == null) {
-                    _openAICompletionBaseURL = Properties.Settings.Default.OpenAICompletionBaseURL;
+                if (_openAIBaseURL == null) {
+                    _openAIBaseURL = Properties.Settings.Default.OpenAIBaseURL;
                 }
-                return _openAICompletionBaseURL;
+                return _openAIBaseURL;
             }
             set {
-                _openAICompletionBaseURL = value;
-                Properties.Settings.Default.OpenAICompletionBaseURL = value;
-            }
-        }
-        // OpenAIEmbeddingBaseURL
-        private string? _openAIEmbeddingBaseURL;
-        public string OpenAIEmbeddingBaseURL {
-            get {
-                if (_openAIEmbeddingBaseURL == null) {
-                    _openAIEmbeddingBaseURL = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
-                }
-                return _openAIEmbeddingBaseURL;
-            }
-            set {
-                _openAIEmbeddingBaseURL = value;
-                Properties.Settings.Default.OpenAIEmbeddingBaseURL = value;
+                _openAIBaseURL = value;
+                Properties.Settings.Default.OpenAIBaseURL = value;
             }
         }
 
@@ -590,12 +576,10 @@ namespace ClipboardApp.Settings {
                 openAIProperties.AzureOpenAIEndpoint = Properties.Settings.Default.AzureOpenAIEndpoint;
             }
 
-            if (Properties.Settings.Default.OpenAICompletionBaseURL != "") {
-                openAIProperties.OpenAICompletionBaseURL = Properties.Settings.Default.OpenAICompletionBaseURL;
+            if (Properties.Settings.Default.OpenAIBaseURL != "") {
+                openAIProperties.OpenAIBaseURL = Properties.Settings.Default.OpenAIBaseURL;
             }
-            if (Properties.Settings.Default.OpenAIEmbeddingBaseURL != "") {
-                openAIProperties.OpenAIEmbeddingBaseURL = Properties.Settings.Default.OpenAIEmbeddingBaseURL;
-            }
+
             return openAIProperties;
         }
 

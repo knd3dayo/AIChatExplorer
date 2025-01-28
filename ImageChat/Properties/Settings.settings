@@ -23,13 +23,7 @@
     <Setting Name="OpenAICompletionModel" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="OpenAIEmbeddingModel" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="OpenAICompletionBaseURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
+    <Setting Name="OpenAIBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="TextWrapping" Type="System.Boolean" Scope="User">
@@ -39,6 +33,9 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="NoProxyList" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="OpenAIEmbeddingModel" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

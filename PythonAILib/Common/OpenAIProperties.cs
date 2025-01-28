@@ -20,11 +20,8 @@ namespace PythonAILib.Common {
         [JsonPropertyName("AzureOpenAIEndpoint")]
         public string AzureOpenAIEndpoint { get; set; } = "";
 
-        [JsonPropertyName("OpenAICompletionBaseURL")]
-        public string OpenAICompletionBaseURL { get; set; } = "";
-
-        [JsonPropertyName("OpenAIEmbeddingBaseURL")]
-        public string OpenAIEmbeddingBaseURL { get; set; } = "";
+        [JsonPropertyName("OpenAIBaseURL")]
+        public string OpenAIBaseURL { get; set; } = "";
 
         // AzureOpenAIAPIVersion
         [JsonPropertyName("AzureOpenAIAPIVersion")]
@@ -38,8 +35,7 @@ namespace PythonAILib.Common {
                 { "OpenAIEmbeddingModel", OpenAIEmbeddingModel },
                 { "AzureOpenAI", AzureOpenAI },
                 { "AzureOpenAIEndpoint", AzureOpenAIEndpoint },
-                { "OpenAICompletionBaseURL", OpenAICompletionBaseURL },
-                { "OpenAIEmbeddingBaseURL", OpenAIEmbeddingBaseURL },
+                { "OpenAIBaseURL", OpenAIBaseURL },
                 { "AzureOpenAIAPIVersion", AzureOpenAIAPIVersion }
             };
             return dict;

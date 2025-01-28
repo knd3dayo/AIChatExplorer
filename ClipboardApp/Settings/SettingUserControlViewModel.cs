@@ -176,27 +176,14 @@ namespace ClipboardApp.Settings {
                 isPropertyChanged = true;
             }
         }
-        // OpenAICompletionBaseURL
-        public string OpenAICompletionBaseURL {
+        // OpenAIBaseURL
+        public string OpenAIBaseURL {
             get {
-                return ClipboardAppConfig.Instance.OpenAICompletionBaseURL;
+                return ClipboardAppConfig.Instance.OpenAIBaseURL;
             }
             set {
-                ClipboardAppConfig.Instance.OpenAICompletionBaseURL = value;
-                OnPropertyChanged(nameof(OpenAICompletionBaseURL));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
-        // OpenAIEmbeddingBaseURL
-        public string OpenAIEmbeddingBaseURL {
-            get {
-                return ClipboardAppConfig.Instance.OpenAIEmbeddingBaseURL;
-            }
-            set {
-                ClipboardAppConfig.Instance.OpenAIEmbeddingBaseURL = value;
-                OnPropertyChanged(nameof(OpenAIEmbeddingBaseURL));
+                ClipboardAppConfig.Instance.OpenAIBaseURL = value;
+                OnPropertyChanged(nameof(OpenAIBaseURL));
 
                 // プロパティが変更されたことを設定
                 isPropertyChanged = true;
@@ -443,12 +430,8 @@ namespace ClipboardApp.Settings {
 
                     stringBuilder.AppendLine();
                     Log(stringBuilder, $"{StringResources.AzureOpenAIEndpointNotSet}");
-                    if (string.IsNullOrEmpty(OpenAICompletionBaseURL) || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL)) {
-                        Log(stringBuilder, $"[NG]:{StringResources.SetAzureOpenAIEndpointOrBaseURL}");
-                        openAIOK = false;
-                    }
                 } else {
-                    if (string.IsNullOrEmpty(OpenAICompletionBaseURL) == false || string.IsNullOrEmpty(OpenAIEmbeddingBaseURL) == false) {
+                    if (string.IsNullOrEmpty(OpenAIBaseURL) == false) {
                         Log(stringBuilder, $"[NG]:{StringResources.CannotSetBothAzureOpenAIEndpointAndBaseURL}");
                         openAIOK = false;
                     }

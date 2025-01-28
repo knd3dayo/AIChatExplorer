@@ -170,12 +170,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAICompletionBaseURL {
+        public string OpenAIBaseURL {
             get {
-                return ((string)(this["OpenAICompletionBaseURL"]));
+                return ((string)(this["OpenAIBaseURL"]));
             }
             set {
-                this["OpenAICompletionBaseURL"] = value;
+                this["OpenAIBaseURL"] = value;
             }
         }
         
@@ -188,18 +188,6 @@ namespace ClipboardApp.Properties {
             }
             set {
                 this["AutoExtractImageWithPyOCR"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string OpenAIEmbeddingBaseURL {
-            get {
-                return ((string)(this["OpenAIEmbeddingBaseURL"]));
-            }
-            set {
-                this["OpenAIEmbeddingBaseURL"] = value;
             }
         }
         

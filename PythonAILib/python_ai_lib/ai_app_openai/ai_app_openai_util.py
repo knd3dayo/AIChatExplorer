@@ -33,82 +33,33 @@ class OpenAIProps:
         if type(self.AzureOpenAI) == str:
             self.AzureOpenAI = self.AzureOpenAI.upper() == "TRUE"
             
-        self.AzureOpenAIEmbeddingVersion = props_dict.get("AzureOpenAIEmbeddingVersion", None)
-        self.AzureOpenAICompletionVersion = props_dict.get("AzureOpenAICompletionVersion", None)
-        self.AzureOpenAIWhisperVersion = props_dict.get("AzureOpenAIWhisperVersion", None)
-
+        self.AzureOpenAIVersion = props_dict.get("AzureOpenAIVersion", None)
         self.AzureOpenAIEndpoint = props_dict.get("AzureOpenAIEndpoint", None)
-        self.OpenAICompletionBaseURL = props_dict.get("OpenAICompletionBaseURL", None)
-        self.OpenAIEmbeddingBaseURL = props_dict.get("OpenAIEmbeddingBaseURL", None)
-        self.OpenAIWhisperBaseURL = props_dict.get("OpenAIWhisperBaseURL", None)
+        self.OpenAIBaseURL = props_dict.get("OpenAIBaseURL", None)
 
-        # AzureOpenAIEmbeddingVersionがNoneの場合は2024-02-01を設定する
-        if self.AzureOpenAIEmbeddingVersion == None:
-            self.AzureOpenAIEmbeddingVersion = "2024-02-01"
         # AzureOpenAICompletionVersionがNoneの場合は2024-02-01を設定する
-        if self.AzureOpenAICompletionVersion == None:
-            self.AzureOpenAICompletionVersion = "2024-02-01"
-        # AzureOpenAIWhisperVersionがNoneの場合は2024-02-01を設定する
-        if self.AzureOpenAIWhisperVersion == None:
-            self.AzureOpenAIWhisperVersion = "2024-02-01"
+        if self.AzureOpenAIVersion == None:
+            self.AzureOpenAIVersion = "2024-02-01"
 
     # OpenAIのCompletion用のパラメーター用のdictを作成する
-    def create_openai_completion_dict(self) -> dict:
+    def create_openai_dict(self) -> dict:
         completion_dict = {}
         completion_dict["api_key"] = self.OpenAIKey
-        if self.OpenAICompletionBaseURL:
-            completion_dict["base_url"] = self.OpenAICompletionBaseURL
+        if self.OpenAIBaseURL:
+            completion_dict["base_url"] = self.OpenAIBaseURL
         return completion_dict
         
     # AzureOpenAIのCompletion用のパラメーター用のdictを作成する
-    def create_azure_openai_completion_dict(self) -> dict:
+    def create_azure_openai_dict(self) -> dict:
         completion_dict = {}
         completion_dict["api_key"] = self.OpenAIKey
-        completion_dict["api_version"] = self.AzureOpenAICompletionVersion
-        if self.OpenAICompletionBaseURL:
-            completion_dict["base_url"] = self.OpenAICompletionBaseURL
+        if self.OpenAIBaseURL:
+            completion_dict["base_url"] = self.OpenAIBaseURL
         else:
             completion_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
+            completion_dict["api_version"] = self.AzureOpenAIVersion
         return completion_dict
-        
-    # OpenAIのEmbedding用のパラメーター用のdictを作成する
-    def create_openai_embedding_dict(self) -> dict:
-        embedding_dict = {}
-        embedding_dict["api_key"] = self.OpenAIKey
-        if self.OpenAIEmbeddingBaseURL:
-            embedding_dict["base_url"] = self.OpenAIEmbeddingBaseURL
-        return embedding_dict
-        
-    # AzureOpenAIのEmbedding用のパラメーター用のdictを作成する
-    def create_azure_openai_embedding_dict(self) -> dict:
-        embedding_dict = {}
-        embedding_dict["api_key"] = self.OpenAIKey
-        embedding_dict["api_version"] = self.AzureOpenAIEmbeddingVersion
-        if self.OpenAIEmbeddingBaseURL:
-            embedding_dict["base_url"] = self.OpenAIEmbeddingBaseURL
-        else:
-            embedding_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
-        return embedding_dict
-    
-    # OpenAIのWhisper用のパラメーター用のdictを作成する
-    def create_openai_whisper_dict(self) -> dict:
-        whisper_dict = {}
-        whisper_dict["api_key"] = self.OpenAIKey
-        if self.OpenAIWhisperBaseURL:
-            whisper_dict["base_url"] = self.OpenAIWhisperBaseURL
-        return whisper_dict
 
-    # AzureOpenAIのWhisper用のパラメーター用のdictを作成する
-    def create_azure_openai_whisper_dict(self) -> dict:
-        whisper_dict = {}
-        whisper_dict["api_key"] = self
-        whisper_dict["api_version"] = self.AzureOpenAIWhisperVersion
-        if self.OpenAIWhisperBaseURL:
-            whisper_dict["base_url"] = self.OpenAIWhisperBaseURL
-        else:
-            whisper_dict["azure_endpoint"] = self.AzureOpenAIEndpoint
-        
-        return whisper_dict
 
     @staticmethod
     def env_to_props() -> 'OpenAIProps':
@@ -118,9 +69,8 @@ class OpenAIProps:
             "OpenAICompletionModel": os.getenv("OPENAI_COMPLETION_MODEL"),
             "OpenAIEmbeddingModel": os.getenv("OPENAI_EMBEDDING_MODEL"),
             "AzureOpenAI": os.getenv("AZURE_OPENAI"),
-            "AzureOpenAICompletionVersion": os.getenv("AZURE_OPENAI_API_VERSION"),
-            "OpenAICompletionBaseURL": os.getenv("OPENAI_COMPLETION_BASE_URL"),
-            "OpenAIEmbeddingBaseURL": os.getenv("OPENAI_EMBEDDING_BASE_URL"),
+            "AzureOpenAIVersion": os.getenv("AZURE_OPENAI_API_VERSION"),
+            "OpenAIBaseURL": os.getenv("OPENAI_BASE_URL"),
         }
         openAIProps = OpenAIProps(props)
         return openAIProps
@@ -208,13 +158,13 @@ class OpenAIClient:
     def get_completion_client(self):
         
         if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_completion_dict()
+            params = self.props.create_azure_openai_dict()
             result = AzureOpenAI(
                 **params
             )
 
         else:
-            params =self.props.create_openai_completion_dict()
+            params =self.props.create_openai_dict()
             result = OpenAI(
                 **params
             )

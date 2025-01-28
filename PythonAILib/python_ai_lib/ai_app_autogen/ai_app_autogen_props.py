@@ -295,6 +295,8 @@ class AutoGenProps:
         client = None
         parameters = {}
         parameters["api_key"] = llm_config_entry["api_key"]
+        # parametersのmodelにmodelを設定
+        parameters["model"] = llm_config_entry["model"]
         if llm_config_entry["api_type"] == "azure":
             # parametersのapi_versionにapi_versionを設定
             parameters["api_version"] = llm_config_entry["api_version"]
@@ -305,8 +307,6 @@ class AutoGenProps:
             # print(f"autogen llm_config parameters:{parameters}")
             client = AzureOpenAIChatCompletionClient(**parameters)
         else:
-            # parametersのmodelにmodelを設定
-            parameters["model"] = llm_config_entry["model"]
             # base_urlが指定されている場合は、parametersのbase_urlにbase_urlを設定
             if llm_config_entry["base_url"] != "":
                 parameters["base_url"] = llm_config_entry["base_url"]

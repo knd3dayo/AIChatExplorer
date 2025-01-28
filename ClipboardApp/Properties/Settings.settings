@@ -38,14 +38,11 @@
     <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="OpenAICompletionBaseURL" Type="System.String" Scope="User">
+    <Setting Name="OpenAIBaseURL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AutoExtractImageWithPyOCR" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
-    </Setting>
-    <Setting Name="OpenAIEmbeddingBaseURL" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="AzureOpenAIEndpoint" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
