@@ -148,7 +148,9 @@ namespace PythonAILib.Model.Chat {
 
         // Chatを実行する
         public ChatResult? ExecuteChat(ChatRequestContext chatRequestContext, Action<string> iterateAction) {
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequestContext.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+            // 通常のOpenAI Chatを実行する
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
+
                 // リクエストメッセージを最新化
                 PrepareNormalRequest(chatRequestContext, this);
                 // 通常のChatを実行する。
@@ -160,7 +162,7 @@ namespace PythonAILib.Model.Chat {
                 ChatHistory.Add(new ChatMessage(ChatMessage.AssistantRole, result.Output, result.PageSourceList));
                 return result;
             }
-
+            // AutoGenGroupChatを実行する
             if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.AutoGenGroupChat) {
                 // AutoGenGroupChatを実行する
                 return ExecuteAutoGenGroupChat(chatRequestContext, iterateAction);

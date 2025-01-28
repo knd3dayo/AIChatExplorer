@@ -159,7 +159,22 @@ namespace QAChat.ViewModel.PromptTemplate {
                 OnPropertyChanged(nameof(SplitModeIndex));
             }
         }
-
+        // UseVectorDB
+        public bool UseVectorDB {
+            get {
+                if (ItemViewModel == null) {
+                    return false;
+                }
+                return ItemViewModel.PromptItem.UseVectorDB;
+            }
+            set {
+                if (ItemViewModel == null) {
+                    return;
+                }
+                ItemViewModel.PromptItem.UseVectorDB = value;
+                OnPropertyChanged(nameof(UseVectorDB));
+            }
+        }
 
         public SimpleDelegateCommand<RoutedEventArgs> PromptResultTypeSelectionChangedCommand => new((routedEventArgs) => {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;

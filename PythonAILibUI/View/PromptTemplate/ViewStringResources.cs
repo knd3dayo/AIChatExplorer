@@ -41,6 +41,8 @@ namespace QAChat.View.PromptTemplate {
         // ChatMode_OpenAI_RAG
         public static string ChatMode_OpenAI_RAG => CommonStringResources.Instance.ChatMode_OpenAI_RAG;
 
+        // ChatMode_AutoGen_GroupChat
+        public static string ChatMode_AutoGen_GroupChat => CommonStringResources.Instance.ChatMode_AutoGen_GroupChat;
 
         // 分割モード
         public static string SplitMode { get; set; } = CommonStringResources.Instance.SplitMode;
@@ -55,7 +57,8 @@ namespace QAChat.View.PromptTemplate {
         public static string SplitMode_SplitAndSummarizeIfExceedMaxToken => CommonStringResources.Instance.SplitMode_SplitAndSummarizeIfExceedSpecifiedToken;
 
 
-
+        // UseVectorDB
+        public static string UseVectorDB { get; set; } = CommonStringResources.Instance.UseVectorDB;
 
         // 出力形式
         public static string OutputType { get; set; } = CommonStringResources.Instance.OutputType;

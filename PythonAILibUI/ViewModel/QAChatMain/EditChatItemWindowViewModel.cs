@@ -11,15 +11,5 @@ namespace QAChat.ViewModel.QAChatMain {
             ChatItem = chatItem;
             OnPropertyChanged(nameof(ChatItem));
         }
-
-        public  TextWrapping TextWrapping {
-            get {
-                if (QAChatManager.Instance == null) {
-                    return TextWrapping.NoWrap;
-                }
-                return QAChatManager.Instance.ConfigParams.GetTextWrapping();
-            }
-        }
-
     }
 }

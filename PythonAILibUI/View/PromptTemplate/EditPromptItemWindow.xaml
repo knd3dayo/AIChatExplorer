@@ -131,6 +131,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="30" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock
                     Grid.Row="0"
@@ -141,9 +142,14 @@
                     Style="{StaticResource MaterialDesignBody1TextBlock}"
                     Text="{x:Static res:ViewStringResources.AutoProcessSetting}" />
                 <DockPanel
-                    Grid.Row="1"
+                    Grid.Row="3"
                     Margin="10,0,10,10"
                     HorizontalAlignment="Left">
+                    <CheckBox
+                        Margin="10,0,10,0"
+                        Content="{x:Static res:ViewStringResources.UseVectorDB}"
+                        FontSize="12"
+                        IsChecked="{Binding UseVectorDB}" />
                     <CheckBox
                         Margin="10,0,10,0"
                         VerticalAlignment="Center"
@@ -180,7 +186,7 @@
                         FontSize="12"
                         SelectedIndex="{Binding ChatModeIndex}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI_RAG}" />
+                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_GroupChat}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
                                 <i:InvokeCommandAction Command="{Binding ChatModeSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />

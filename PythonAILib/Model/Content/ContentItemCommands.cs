@@ -79,7 +79,9 @@ namespace PythonAILib.Model.Content {
             };
 
             Dictionary<string, dynamic?> response = ChatUtil.CreateDictionaryChatResult(chatRequestContext, new PromptItem() {
-                ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
+                ChatMode = OpenAIExecutionModeEnum.Normal,
+                // ベクトルDBを使用する
+                UseVectorDB = true,
                 Prompt = PromptStringResource.Instance.DocumentReliabilityDictionaryPrompt
             }, result);
             // responseからキー：reliabilityを取得
@@ -126,10 +128,7 @@ namespace PythonAILib.Model.Content {
 
             PythonAILibManager libManager = PythonAILibManager.Instance;
             OpenAIProperties openAIProperties = libManager.ConfigParams.GetOpenAIProperties();
-            List<VectorSearchProperty> vectorSearchProperties = promptItem.ChatMode switch {
-                OpenAIExecutionModeEnum.OpenAIRAG => item.GetFolder<ContentFolder>().GetVectorSearchProperties(),
-                _ => []
-            };
+            List<VectorSearchProperty> vectorSearchProperties = promptItem.UseVectorDB ? item.GetFolder<ContentFolder>().GetVectorSearchProperties() : [];
             // ChatRequestContextを作成
             ChatRequestContext chatRequestContext = new() {
                 VectorSearchProperties = vectorSearchProperties,

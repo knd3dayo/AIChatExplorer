@@ -623,6 +623,9 @@ namespace QAChat.Resource {
         // 入力となるプロンプトテンプレート
         public override string PromptInputName { get; } = "Prompt Input Name";
 
+        // ベクトルDBを使用する
+        public override string UseVectorDB { get; } = "Use Vector DB";
+
         // 出力形式
         public override string OutputType { get; } = "Output Type";
         // 文字列

@@ -309,6 +309,8 @@ namespace QAChat.Resource {
 
         // 入力となるプロンプトテンプレート
         public virtual string PromptInputName { get; } = "入力となるプロンプトテンプレート";
+        // ベクトルDBを使用する
+        public virtual string UseVectorDB { get; } = "ベクトルDBを使用する";
 
         // 出力形式
         public virtual string OutputType { get; } = "出力形式";

@@ -183,6 +183,30 @@ namespace QAChat.ViewModel.QAChatMain {
                 OnPropertyChanged(nameof(AutoGenProperties));
             }
         }
+        // UseVectorDB
+        private bool _UseVectorDB = false;
+        public bool UseVectorDB {
+            get {
+                return _UseVectorDB;
+            }
+            set {
+                _UseVectorDB = value;
+                // _UserVectorDBがTrueの場合はVectorDBItemを取得
+                VectorSearchProperties = [];
+                if (_UseVectorDB) {
+                    List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
+                    foreach (var item in items) {
+                        VectorSearchProperties.Add(item);
+                    }
+                } else {
+                    VectorSearchProperties.Clear();
+                }
+
+                OnPropertyChanged(nameof(UseVectorDB));
+                OnPropertyChanged(nameof(VectorDBItemVisibility));
+            }
+        }
+
         public string PreviewJson {
             get {
                 // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
@@ -207,16 +231,16 @@ namespace QAChat.ViewModel.QAChatMain {
             }
         }
 
-
         private ChatRequestContext CreateChatRequestContext() {
             int splitTokenCount = Int32.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
-                _chatMode, _splitMode, splitTokenCount, [.. VectorSearchProperties], AutoGenProperties, PromptText
+                _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
                 );
             return chatRequestContext;
         }
+        
         //
-        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(_chatMode != OpenAIExecutionModeEnum.Normal);
+        public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
 
         public Visibility SplitMOdeVisibility => Tools.BoolToVisibility(_splitMode != SplitOnTokenLimitExceedModeEnum.None);
 
@@ -331,18 +355,9 @@ namespace QAChat.ViewModel.QAChatMain {
             ComboBox comboBox = (ComboBox)routedEventArgs.OriginalSource;
             // 選択されたComboBoxItemのIndexを取得
             ChatMode = comboBox.SelectedIndex;
-            // ModeがNormal以外の場合は、VectorDBItemを取得
-            VectorSearchProperties = [];
-            if (_chatMode != OpenAIExecutionModeEnum.Normal) {
-                List<VectorSearchProperty> items = QAChatStartupProps.ContentItem.GetFolder<ContentFolder>().GetVectorSearchProperties();
-                foreach (var item in items) {
-                    VectorSearchProperties.Add(item);
-                }
-            }
-            // VectorDBItemVisibilityを更新
-            OnPropertyChanged(nameof(VectorDBItemVisibility));
-            // AutoGenVisibilityを更新
+            // ChatModeVisibility
             OnPropertyChanged(nameof(AutoGenGroupChatVisibility));
+
 
         });
 

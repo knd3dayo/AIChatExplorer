@@ -143,5 +143,8 @@ namespace QAChat.View.QAChatMain {
 
         // GroupChatName
         public static string GroupChatName => CommonStringResources.Instance.GroupChatName;
+
+        // UseVectorDB
+        public static string UseVectorDB => CommonStringResources.Instance.UseVectorDB;
     }
 }

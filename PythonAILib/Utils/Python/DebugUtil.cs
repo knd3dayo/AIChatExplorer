@@ -101,7 +101,7 @@ namespace PythonAILib.Utils.Python {
         // Chatを実行するコマンド文字列を生成する。
         public static List<string> CreateChatCommandLine(ChatRequestContext chatRequestContext, ChatRequest chatRequest) {
             // ModeがNormalまたはOpenAIRAGの場合は、OpenAIChatを実行するコマンドを返す
-            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal || chatRequestContext.ChatMode == OpenAIExecutionModeEnum.OpenAIRAG) {
+            if (chatRequestContext.ChatMode == OpenAIExecutionModeEnum.Normal) {
                 // パラメーターファイルを作成
                 string parametersJson = DebugUtil.CreateParameterJson(chatRequestContext, chatRequest);
                 File.WriteAllText(DebugUtil.DebugRequestParametersFile, parametersJson);

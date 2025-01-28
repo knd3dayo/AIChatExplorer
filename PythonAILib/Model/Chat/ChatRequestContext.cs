@@ -36,7 +36,9 @@ namespace PythonAILib.Model.Chat {
         public string PromptTemplateText { get; set; } = "";
 
 
-
+        // ベクトルDBを使用するかどうか
+        [JsonIgnore]
+        public bool UseVectorDB { get; set; } = false;
 
         public OpenAIExecutionModeEnum ChatMode = OpenAIExecutionModeEnum.Normal;
 
@@ -59,7 +61,8 @@ namespace PythonAILib.Model.Chat {
 
             };
             Dictionary<string, object> dict = new() {
-                { "vector_db_items", VectorSearchProperty.ToDictList(VectorSearchProperties) },
+                // VectorSearchProperty UseVectorDBがTrueの場合は追加、Falseの場合は空リスト
+                { "vector_db_items", UseVectorDB ? VectorSearchProperty.ToDictList(VectorSearchProperties) : [] },
                 { "autogen_props", AutoGenProperties.ToDict() },
                 { "openai_props", OpenAIProperties.ToDict() },
                 { "request_context", requestContext },
@@ -75,7 +78,7 @@ namespace PythonAILib.Model.Chat {
 
         // CreateDefaultChatRequestContext 
         public static ChatRequestContext CreateDefaultChatRequestContext(
-                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
+                OpenAIExecutionModeEnum chatMode, SplitOnTokenLimitExceedModeEnum splitMode , int split_token_count, bool userVectorDB,  List<VectorSearchProperty> vectorSearchProperties, AutoGenProperties? autoGenProperties, string promptTemplateText
             ) {
             PythonAILibManager libManager = PythonAILibManager.Instance;
 
@@ -84,6 +87,7 @@ namespace PythonAILib.Model.Chat {
                 OpenAIProperties = libManager.ConfigParams.GetOpenAIProperties(),
                 PromptTemplateText = promptTemplateText,
                 ChatMode = chatMode,
+                UseVectorDB = userVectorDB,
                 SplitMode = splitMode,
                 SplitTokenCount = split_token_count,
             };

@@ -53,6 +53,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!--  共通設定  -->
             <Grid Grid.Row="0">
@@ -86,7 +87,6 @@
                         Margin="10,0,10,0"
                         SelectedIndex="{Binding ChatMode}">
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI}" />
-                        <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_OpenAI_RAG}" />
                         <ComboBoxItem Content="{x:Static res:ViewStringResources.ChatMode_AutoGen_GroupChat}" />
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="SelectionChanged">
@@ -170,8 +170,97 @@
                 </Grid>
                 <Separator Grid.Row="6" />
             </Grid>
+
+            <!--  AutoGen  -->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--  AutoGenGroupChat  -->
+                <Grid
+                    Grid.Row="0"
+                    Margin="10,20,0,10"
+                    HorizontalAlignment="Left"
+                    Visibility="{Binding AutoGenGroupChatVisibility}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="{x:Static res:ViewStringResources.GroupChatName}" />
+                    <ComboBox
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Width="200"
+                        Margin="10,0,0,0"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding AutoGenGroupChatList}"
+                        SelectedItem="{Binding SelectedAutoGenGroupChat}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <i:InvokeCommandAction Command="{Binding AutoGenGroupChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ComboBox>
+                    <!--  Terminate Message  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="{x:Static res:ViewStringResources.TerminateMessage}" />
+                    <TextBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding TerminateMsg}" />
+                    <!--  MaxMsg  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="{x:Static res:ViewStringResources.MaxMsg}" />
+                    <TextBox
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding MaxMsg}" />
+                    <!--  Timeout  -->
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        FontWeight="Bold"
+                        Text="{x:Static res:ViewStringResources.Timeout}" />
+                    <TextBox
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="{Binding Timeout}" />
+                </Grid>
+            </Grid>
+            <CheckBox
+                Grid.Row="2"
+                Margin="10,20,0,10"
+                Content="{x:Static res:ViewStringResources.UseVectorDB}"
+                IsChecked="{Binding UseVectorDB}" />
             <!--  ベクトルDB設定  -->
-            <Grid Grid.Row="1" Visibility="{Binding VectorDBItemVisibility}">
+            <Grid Grid.Row="3" Visibility="{Binding VectorDBItemVisibility}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -257,89 +346,6 @@
                         Text="{Binding VectorDBSearchResultMax}" />
                 </Grid>
 
-            </Grid>
-            <!--  AutoGen  -->
-            <Grid Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <!--  AutoGenGroupChat  -->
-                <Grid
-                    Grid.Row="0"
-                    Margin="10,20,0,10"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding AutoGenGroupChatVisibility}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="{x:Static res:ViewStringResources.GroupChatName}" />
-                    <ComboBox
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Width="200"
-                        Margin="10,0,0,0"
-                        DisplayMemberPath="Name"
-                        ItemsSource="{Binding AutoGenGroupChatList}"
-                        SelectedItem="{Binding SelectedAutoGenGroupChat}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="SelectionChanged">
-                                <i:InvokeCommandAction Command="{Binding AutoGenGroupChatSelectionChangedCommand, Mode=OneTime}" PassEventArgsToCommand="True" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </ComboBox>
-                    <!--  Terminate Message  -->
-                    <TextBlock
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="{x:Static res:ViewStringResources.TerminateMessage}" />
-                    <TextBox
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Text="{Binding TerminateMsg}" />
-                    <!--  MaxMsg  -->
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="{x:Static res:ViewStringResources.MaxMsg}" />
-                    <TextBox
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Text="{Binding MaxMsg}" />
-                    <!--  Timeout  -->
-                    <TextBlock
-                        Grid.Row="3"
-                        Grid.Column="0"
-                        VerticalAlignment="Center"
-                        FontWeight="Bold"
-                        Text="{x:Static res:ViewStringResources.Timeout}" />
-                    <TextBox
-                        Grid.Row="3"
-                        Grid.Column="1"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Text="{Binding Timeout}" />
-                </Grid>
             </Grid>
         </Grid>
         <GridSplitter Grid.Column="1" Width="5" />

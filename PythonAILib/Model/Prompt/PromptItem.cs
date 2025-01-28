@@ -28,6 +28,9 @@ namespace PythonAILib.Model.Prompt {
         // 分割モード
         public SplitOnTokenLimitExceedModeEnum SplitMode { get; set; } = SplitOnTokenLimitExceedModeEnum.None;
 
+        // ベクトルDBを使用する
+        public bool UseVectorDB { get; set; } = false;
+
         // プロンプトの出力タイプ
         public PromptOutputTypeEnum PromptOutputType { get; set; } = PromptOutputTypeEnum.NewContent;
 
@@ -100,6 +103,8 @@ namespace PythonAILib.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBは使用しない
+                    UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.OverwriteTitle
 
                 };
@@ -122,7 +127,9 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.BackgroundInformationGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
-                    ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBを使用する
+                    UseVectorDB = true,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
                 };
                 var collection = libManager.DataFactory.GetPromptCollection<PromptItem>();
@@ -146,6 +153,8 @@ namespace PythonAILib.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBを使用しない
+                    UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -168,7 +177,9 @@ namespace PythonAILib.Model.Prompt {
                     Prompt = PromptStringResource.Instance.TasksGenerationPrompt,
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TableContent,
-                    ChatMode = OpenAIExecutionModeEnum.OpenAIRAG,
+                    ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBを使用する
+                    UseVectorDB = true,
                     PromptOutputType = PromptOutputTypeEnum.NewContent
 
                 };
@@ -191,6 +202,8 @@ namespace PythonAILib.Model.Prompt {
                     PromptTemplateType = PromptTemplateTypeEnum.SystemDefined,
                     PromptResultType = PromptResultTypeEnum.TextContent,
                     ChatMode = OpenAIExecutionModeEnum.Normal,
+                    // ベクトルDBを使用しない
+                    UseVectorDB = false,
                     PromptOutputType = PromptOutputTypeEnum.NewContent,
 
                 };
