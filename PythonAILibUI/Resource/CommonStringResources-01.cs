@@ -325,6 +325,9 @@ namespace QAChat.Resource {
         // ファイル選択
         public virtual string SelectFile { get; } = "ファイル選択";
 
+        // SelectClipboardFolder
+        public virtual string SelectClipboardFolder { get; } = "クリップボードフォルダ選択";
+
         // -- EditItemWindow --
         // テキストをファイルとして開く
         public virtual string OpenTextAsFile { get; } = "テキストをファイルとして開く";

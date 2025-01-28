@@ -11,7 +11,7 @@
     xmlns:res="clr-namespace:QAChat.View.Folder"
     Title="{x:Static res:ViewStringResources.ImportClipboardItemsWindow}"
     Width="800"
-    Height="380"
+    Height="500"
     d:DataContext="{d:DesignInstance local:ExportImportWindowViewModel}"
     mc:Ignorable="d">
     <Window.Resources>
@@ -109,6 +109,40 @@
                 Margin="10,3,10,3"
                 Padding="0"
                 FontSize="10"
+                Header="{x:Static res:ViewStringResources.ExportAsNewItem}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <!--  新規アイテムとしてエクスポート  -->
+                    <DataGrid
+                        Grid.Row="0"
+                        Margin="10,10,10,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        AutoGenerateColumns="False"
+                        ItemsSource="{Binding ExportItems}"
+                        SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="{x:Static res:ViewStringResources.ExportTarget}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox Content="{Binding DisplayText}" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem
+                Width="Auto"
+                Height="Auto"
+                Margin="10,3,10,3"
+                Padding="0"
+                FontSize="10"
                 Header="{x:Static res:ViewStringResources.ImportFromExcel}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -176,7 +210,8 @@
             <DockPanel
                 Grid.Column="0"
                 Margin="10,0,0,10"
-                HorizontalAlignment="Left">
+                HorizontalAlignment="Left"
+                Visibility="{Binding FileSelectionButtonVisibility}">
                 <Button
                     Width="100"
                     Margin="10,0,0,0"
@@ -189,6 +224,25 @@
                     HorizontalAlignment="Left"
                     IsReadOnly="True"
                     Text="{Binding SelectedFileName, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </DockPanel>
+            <DockPanel
+                Grid.Column="0"
+                Margin="10,0,0,10"
+                HorizontalAlignment="Left"
+                Visibility="{Binding ClipboardFolderSelectionButtonVisibility}">
+                <Button
+                    Width="180"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding OpenClipboardFolderWindowCommand, Mode=OneTime}"
+                    Content="{x:Static res:ViewStringResources.SelectClipboardFolder}" />
+                <TextBox
+                    Width="300"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    IsReadOnly="True"
+                    Text="{Binding SelectedClipboardFolderPath, Mode=OneWay}"
                     TextWrapping="Wrap" />
             </DockPanel>
             <DockPanel

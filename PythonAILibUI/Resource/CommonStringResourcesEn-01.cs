@@ -644,6 +644,10 @@ namespace QAChat.Resource {
 
         public override string SelectFile { get; } = "Select File";
 
+        // SelectClipboardFolder
+        public override string SelectClipboardFolder { get; } = "Select Clipboard Folder";
+
+
         // -- EditItemWindow --
         public override string OpenTextAsFile { get; } = "Open text as file";
         public override string OpenFile { get; } = "Open file";

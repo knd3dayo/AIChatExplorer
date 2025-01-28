@@ -154,5 +154,9 @@ namespace QAChat.Resource {
         #endregion
         // PromptTemplateNotFound
         public override string PromptTemplateNotFound { get; } = "Prompt Template Not Found";
+
+        // 新規アイテムとしてエクスポート
+        public override string ExportAsNewItem { get; } = "Export As New Item";
+
     }
 }

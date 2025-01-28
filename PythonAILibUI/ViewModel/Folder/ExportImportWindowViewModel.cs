@@ -1,10 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
+using PythonAILibUI.ViewModel.Folder;
 using QAChat.Model;
 using QAChat.Resource;
+using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.Folder {
@@ -38,7 +41,27 @@ namespace QAChat.ViewModel.Folder {
         }
 
 
-        public int SelectedIndex { get; set; }
+        private int _selectedIndex = 0;
+        public int SelectedIndex {
+            get {
+                return _selectedIndex;
+            }
+            set {
+                _selectedIndex = value;
+                OnPropertyChanged(nameof(FileSelectionButtonVisibility));
+                OnPropertyChanged(nameof(ClipboardFolderSelectionButtonVisibility));
+            }
+        }
+
+        // 
+        public ContentFolder? ExportTargetFolder { get; set; }
+
+        // 選択したクリップボードフォルダのパス
+        public string SelectedClipboardFolderPath {
+            get { 
+                return ExportTargetFolder?.FolderPath ?? "";
+            }
+        }
 
         // 選択したファイル名
         public string SelectedFileName { get; set; } = "";
@@ -46,6 +69,11 @@ namespace QAChat.ViewModel.Folder {
         // インポート時に自動処理を実行
         public bool IsAutoProcessEnabled { get; set; } = false;
 
+        // FileSelectionButtonVisibility
+        public Visibility FileSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 0 || SelectedIndex == 2 || SelectedIndex == 3);
+
+        // ClipboardFolderSelectionButtonVisibility
+        public Visibility ClipboardFolderSelectionButtonVisibility => Tools.BoolToVisibility(SelectedIndex == 1);
 
         public SimpleDelegateCommand<Window> OKCommand => new((window) => {
 
@@ -58,10 +86,14 @@ namespace QAChat.ViewModel.Folder {
                         ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
                         break;
                     case 1:
+                        // 新規アイテムとしてエクスポート処理
+                        // ClipboardFolderViewModel.Folder.ExportToExcel(SelectedFileName, [.. ExportItems]);
+                        break;
+                    case 2:
                         // Excelインポート処理
                         ClipboardFolderViewModel.Folder.ImportFromExcel(SelectedFileName, [.. ImportItems], IsAutoProcessEnabled);
                         break;
-                    case 2:
+                    case 3:
                         // URLリストインポート処理
                         ClipboardFolderViewModel.Folder.ImportFromURLList(SelectedFileName, IsAutoProcessEnabled);
                         break;
@@ -116,5 +148,14 @@ namespace QAChat.ViewModel.Folder {
             }
         });
 
+        // OpenSelectTargetFolderWindowCommand
+        public SimpleDelegateCommand<object> OpenClipboardFolderWindowCommand => new((parameter) => {
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
+                if (finished) {
+                    ExportTargetFolder = folderViewModel.Folder;
+                    OnPropertyChanged(nameof(SelectedClipboardFolderPath));
+                }
+            });
+        });
     }
 }

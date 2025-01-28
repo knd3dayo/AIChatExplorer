@@ -20,6 +20,8 @@ namespace QAChat.View.Folder {
         // SelectFile
         public static string SelectFile { get; set; } = CommonStringResources.Instance.SelectFile;
 
+        // SelectClipboardFolder
+        public static string SelectClipboardFolder { get; set; } = CommonStringResources.Instance.SelectClipboardFolder;
         // Cancel
         public static string Cancel { get; set; } = CommonStringResources.Instance.Cancel;
 
@@ -37,6 +39,9 @@ namespace QAChat.View.Folder {
 
         // ExportToExcel
         public static string ExportTarget { get; set; } = CommonStringResources.Instance.ExportTarget;
+
+        // 新規アイテムとしてエクスポート
+        public static string ExportAsNewItem { get; set; } = CommonStringResources.Instance.ExportAsNewItem;
 
         // ImportTarget
         public static string ImportTarget { get; set; } = CommonStringResources.Instance.ImportTarget;

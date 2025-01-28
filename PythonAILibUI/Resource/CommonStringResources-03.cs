@@ -173,6 +173,8 @@ namespace QAChat.Resource {
         // プロンプトテンプレートが存在しません。
         public virtual string PromptTemplateNotFound { get; } = "プロンプトテンプレートが存在しません。";
 
+        // 新規アイテムとしてエクスポート
+        public virtual string ExportAsNewItem { get; } = "新規アイテムとしてエクスポート";
 
     }
 }

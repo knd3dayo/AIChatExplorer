@@ -136,8 +136,8 @@ namespace QAChat.ViewModel.Search {
             window.Close();
         });
 
-        // OpenSelectTargetFolderWindowCommand
-        public SimpleDelegateCommand<object> OpenSelectTargetFolderWindowCommand => new((parameter) => {
+        // OpenClipboardFolderWindowCommand
+        public SimpleDelegateCommand<object> OpenClipboardFolderWindowCommand => new((parameter) => {
             FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, finished) => {
                 if (finished) {
                     SearchConditionRule.TargetFolder = folderViewModel.Folder;
