@@ -83,16 +83,10 @@ namespace ClipboardApp.View.Settings {
         public static string SetOpenAIEmbeddingModel { get; set; } = CommonStringResources.Instance.SetOpenAIEmbeddingModel;
 
         // OpenAIChatBaseURL
-        public static string OpenAIChatBaseURL { get; set; } = CommonStringResources.Instance.OpenAIChatBaseURL;
+        public static string OpenAIBaseURL { get; set; } = CommonStringResources.Instance.OpenAIBaseURL;
 
         // SetOpenAIChatBaseURL
-        public static string SetOpenAIChatBaseURL { get; set; } = CommonStringResources.Instance.SetOpenAIChatBaseURL;
-
-        // OpenAIEmbeddingBaseURL
-        public static string OpenAIEmbeddingBaseURL { get; set; } = CommonStringResources.Instance.OpenAIEmbeddingBaseURL;
-
-        // SetOpenAIEmbeddingBaseURL
-        public static string SetOpenAIEmbeddingBaseURL { get; set; } = CommonStringResources.Instance.SetOpenAIEmbeddingBaseURL;
+        public static string SetOpenAIBaseURL { get; set; } = CommonStringResources.Instance.SetOpenAIBaseURL;
 
         // PythonSpacySettings
         public static string PythonSpacySettings { get; set; } = CommonStringResources.Instance.PythonSpacySettings;

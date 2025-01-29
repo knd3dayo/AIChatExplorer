@@ -69,16 +69,10 @@ namespace QAChat.Resource {
         public override string SetOpenAIEmbeddingModel { get; } = "Set OpenAI or Azure OpenAI embedding model. Example: text-embedding-ada-002, text-embedding-3-small, etc.";
 
         // Base URL for OpenAI Chat model
-        public override string OpenAIChatBaseURL { get; } = "Base URL for OpenAI Chat model";
+        public override string OpenAIBaseURL { get; } = "Base URL for OpenAI Chat model";
 
         // Set different endpoint for OpenAI Chat model than the default endpoint or Azure OpenAI endpoint
-        public override string SetOpenAIChatBaseURL { get; } = "Set different endpoint for OpenAI Chat model than the default endpoint or Azure OpenAI endpoint";
-
-        // Base URL for OpenAI Embedding model
-        public override string OpenAIEmbeddingBaseURL { get; } = "Base URL for OpenAI Embedding model";
-
-        // Set different endpoint for OpenAI Embedding model than the default endpoint or Azure OpenAI endpoint
-        public override string SetOpenAIEmbeddingBaseURL { get; } = "Set different endpoint for OpenAI Embedding model than the default endpoint or Azure OpenAI endpoint";
+        public override string SetOpenAIBaseURL { get; } = "Set different endpoint for OpenAI Chat model than the default endpoint or Azure OpenAI endpoint";
 
         // Python Spacy Settings
         public override string PythonSpacySettings { get; } = "Python Spacy Settings";

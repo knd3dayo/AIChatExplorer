@@ -83,16 +83,10 @@ namespace QAChat.Resource {
         public virtual string SetOpenAIEmbeddingModel { get; } = "OpenAIまたはAzure OpenAIのEmbedding用モデルを設定。例：　text-embedding-ada-002,text-embedding-3-smallなど";
 
         // OpenAIのチャットモデルのBaseUR
-        public virtual string OpenAIChatBaseURL { get; } = "OpenAIのチャットモデルのBaseUR";
+        public virtual string OpenAIBaseURL { get; } = "OpenAIのBaseURL";
 
         // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
-        public virtual string SetOpenAIChatBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
-
-        // OpenAIのEmbeddingモデルのBaseURL
-        public virtual string OpenAIEmbeddingBaseURL { get; } = "OpenAIのEmbeddingモデルのBaseURL";
-
-        // OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定
-        public virtual string SetOpenAIEmbeddingBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
+        public virtual string SetOpenAIBaseURL { get; } = "OpenAIのデフォルトのエンドポイントやAzure OpenAIのエンドポイントと異なるエンドポイントを使用する場合に設定";
 
         // Python Spacy設定
         public virtual string PythonSpacySettings { get; } = "Python Spacy設定";
