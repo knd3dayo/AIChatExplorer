@@ -172,12 +172,12 @@ class OpenAIClient:
 
     def get_embedding_client(self):
         if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_embedding_dict()
+            params = self.props.create_azure_openai_dict()
             result = AzureOpenAI(
                 **params
             )
         else:
-            params =self.props.create_openai_embedding_dict()
+            params =self.props.create_openai_dict()
             result = OpenAI(
                 **params
             )
@@ -185,12 +185,12 @@ class OpenAIClient:
 
     def get_whisper_client(self):
         if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_whisper_dict()
+            params = self.props.create_azure_openai_dict()
             result = AzureOpenAI(
                 **params
             )
         else:
-            params =self.props.create_openai_whisper_dict()
+            params =self.props.create_openai_dict()
             result = OpenAI(
                 **params
             )

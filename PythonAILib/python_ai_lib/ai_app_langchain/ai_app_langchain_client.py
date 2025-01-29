@@ -17,7 +17,7 @@ class LangChainOpenAIClient:
     def get_completion_client(self):
         
         if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_completion_dict()
+            params = self.props.create_azure_openai_dict()
             # modelを設定する。
             params["model"] = self.props.OpenAICompletionModel
             llm = AzureChatOpenAI(
@@ -25,7 +25,7 @@ class LangChainOpenAIClient:
             )
 
         else:
-            params =self.props.create_openai_completion_dict()
+            params =self.props.create_openai_dict()
             # modelを設定する。
             params["model"] = self.props.OpenAICompletionModel
             llm = ChatOpenAI(
@@ -35,14 +35,14 @@ class LangChainOpenAIClient:
         
     def get_embedding_client(self):
         if (self.props.AzureOpenAI):
-            params = self.props.create_azure_openai_embedding_dict()
+            params = self.props.create_azure_openai_dict()
             # modelを設定する。
             params["model"] = self.props.OpenAIEmbeddingModel
             embeddings = AzureOpenAIEmbeddings(
                 **params
             )
         else:
-            params =self.props.create_openai_embedding_dict()
+            params =self.props.create_openai_dict()
             # modelを設定する。
             params["model"] = self.props.OpenAIEmbeddingModel
             embeddings = OpenAIEmbeddings(

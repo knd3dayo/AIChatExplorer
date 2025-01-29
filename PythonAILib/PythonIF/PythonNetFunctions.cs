@@ -292,6 +292,8 @@ namespace PythonAILib.PythonIF {
         }
 
         public List<VectorDBEntry> VectorSearch(ChatRequestContext chatRequestContext, string query) {
+            // ベクトルDB更新処理用にUseVectorDB=Trueに設定
+            chatRequestContext.UseVectorDB = true;
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
             
@@ -333,6 +335,8 @@ namespace PythonAILib.PythonIF {
             });
         }
         public void UpdateVectorDBCollection(ChatRequestContext chatRequestContext) {
+            // ベクトルDB更新処理用にUseVectorDB=Trueに設定
+            chatRequestContext.UseVectorDB = true;
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
 
@@ -370,6 +374,8 @@ namespace PythonAILib.PythonIF {
 
         // 指定されたベクトルDBのコレクションを削除する
         public void DeleteVectorDBCollection(ChatRequestContext chatRequestContext) {
+            // ベクトルDB更新処理用にUseVectorDB=Trueに設定
+            chatRequestContext.UseVectorDB = true;
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
 
@@ -383,7 +389,8 @@ namespace PythonAILib.PythonIF {
         }
 
         public void UpdateVectorDBIndex(ChatRequestContext chatRequestContext, VectorDBEntry vectorDBEntry, string function_name) {
-
+            // ベクトルDB更新処理用にUseVectorDB=Trueに設定
+            chatRequestContext.UseVectorDB = true;
             // ChatRequestContextをJSON文字列に変換
             string chatRequestContextJson = chatRequestContext.ToJson();
             // contentInfoをJSON文字列に変換
