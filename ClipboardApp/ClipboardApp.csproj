@@ -42,10 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImageChat\ImageChat.csproj" />
+    <ProjectReference Include="..\LibUICommon\LibUICommon.csproj" />
+    <ProjectReference Include="..\LibUIImageChat\LibUIImageChat.csproj" />
     <ProjectReference Include="..\PythonAILibUI\PythonAILibUI.csproj" />
     <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
-    <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>

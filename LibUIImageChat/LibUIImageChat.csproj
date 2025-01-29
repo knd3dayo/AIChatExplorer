@@ -13,17 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LibUICommon\LibUICommon.csproj" />
     <ProjectReference Include="..\PythonAILibUI\PythonAILibUI.csproj" />
     <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
-    <ProjectReference Include="..\WpfAppCommon\WpfAppCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Update="View\ImageChatControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -33,10 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 
-namespace PythonAILibUIMergeChat {
+namespace LibUIMergeChat {
     public class Class1 {
     }
 
