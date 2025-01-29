@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageChat", "ImageChat\Imag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonAILibUI", "PythonAILibUI\PythonAILibUI.csproj", "{814368F4-99B4-433E-B8A2-D37D18EB1E7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeChat", "MergeChat\MergeChat.csproj", "{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonAILibUIMergeChat", "PythonAILibUIMergeChat\PythonAILibUIMergeChat.csproj", "{AD04D9CB-535C-49EA-8DB0-64CEC139291F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonAILibUICheckListChat", "PythonAILibUICheckListChat\PythonAILibUICheckListChat.csproj", "{5581DD10-00F6-4C40-B2C7-CC3AB9B1C0DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +45,14 @@ Global
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD04D9CB-535C-49EA-8DB0-64CEC139291F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD04D9CB-535C-49EA-8DB0-64CEC139291F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD04D9CB-535C-49EA-8DB0-64CEC139291F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD04D9CB-535C-49EA-8DB0-64CEC139291F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5581DD10-00F6-4C40-B2C7-CC3AB9B1C0DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5581DD10-00F6-4C40-B2C7-CC3AB9B1C0DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5581DD10-00F6-4C40-B2C7-CC3AB9B1C0DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5581DD10-00F6-4C40-B2C7-CC3AB9B1C0DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
