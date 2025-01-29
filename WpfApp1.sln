@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageChat", "ImageChat\Imag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PythonAILibUI", "PythonAILibUI\PythonAILibUI.csproj", "{814368F4-99B4-433E-B8A2-D37D18EB1E7F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeChat", "MergeChat\MergeChat.csproj", "{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{814368F4-99B4-433E-B8A2-D37D18EB1E7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5BAA5A7-BDC0-47E2-A220-4329F44F51A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

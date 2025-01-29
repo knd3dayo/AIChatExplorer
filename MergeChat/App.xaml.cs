@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace ImageChat {
+namespace MergeChat {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
