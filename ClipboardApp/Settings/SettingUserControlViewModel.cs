@@ -5,7 +5,7 @@ using ClipboardApp.ViewModel;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
-using PythonAILib.Resource;
+using PythonAILib.Resources;
 using QAChat.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

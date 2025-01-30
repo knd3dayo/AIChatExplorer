@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Prompt;
-using PythonAILib.Resource;
+using PythonAILib.Resources;
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
     public class ClipboardItemMenu : ClipboardAppViewModelBase {

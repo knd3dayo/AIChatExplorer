@@ -8,15 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PythonAILibUI\PythonAILibUI.csproj" />
-    <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
-    <ProjectReference Include="..\WpfAppCommon\LibUICommon.csproj" />
+    <ProjectReference Include="..\LibPythonAI\LibPythonAI.csproj" />
+    <ProjectReference Include="..\LibUICommon\LibUICommon.csproj" />
+    <ProjectReference Include="..\LibUIPythonAI\LibUIPythonAI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="View\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
 
 </Project>

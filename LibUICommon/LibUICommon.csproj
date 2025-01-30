@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PythonAILib\PythonAILib.csproj" />
+    <ProjectReference Include="..\PythonAILib\LibPythonAI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
