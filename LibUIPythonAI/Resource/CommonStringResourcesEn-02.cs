@@ -86,6 +86,10 @@ namespace QAChat.Resource {
         public override string OpenAIChat { get; } = "OpenAI Chat";
         // BitmapImage Chat
         public override string ImageChat { get; } = "Image Chat";
+
+        // マージチャット
+        public override string MergeChat { get; } = "Merge Chat";
+
         // Local FileSystem
         public override string FileSystem { get; } = "Local FileSystem";
 

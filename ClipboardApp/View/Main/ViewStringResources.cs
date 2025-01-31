@@ -71,6 +71,9 @@ namespace ClipboardApp.View.Main {
         // ImageChat
         public static string ImageChat { get; set; } = CommonStringResources.Instance.ImageChat;
 
+        // MergeChat
+        public static string MergeChat { get; set; } = CommonStringResources.Instance.MergeChat;
+
         // Help
         public static string Help { get; set; } = CommonStringResources.Instance.Help;
 

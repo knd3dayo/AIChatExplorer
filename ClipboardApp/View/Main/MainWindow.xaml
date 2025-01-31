@@ -5,15 +5,16 @@
     xmlns:cc="clr-namespace:QAChat.View.Common;assembly=LibUIPythonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ClipboardApp"
+    xmlns:local="clr-namespace:ClipboardApp.View.Main"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:ClipboardApp.ViewModel.Main"
     xmlns:res="clr-namespace:ClipboardApp.View.Main"
     x:Name="window1"
     Title="{x:Static res:ViewStringResources.AppName}"
     Width="800"
     Height="450"
-    d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=model:MainWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
     WindowState="Maximized"
     mc:Ignorable="d">
@@ -162,9 +163,14 @@
                             Header="{x:Static res:ViewStringResources.OpenAIChat}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Command="{Binding OpenScreenshotCheckerWindow, Mode=OneTime}"
+                            Command="{Binding OpenImageChatWindow, Mode=OneTime}"
                             Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
                             Header="{x:Static res:ViewStringResources.ImageChat}" />
+                        <MenuItem
+                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
+                            Command="{Binding OpenMergeChatWindow, Mode=OneTime}"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
+                            Header="{x:Static res:ViewStringResources.MergeChat}" />
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding OpenVectorSearchWindowCommand, Mode=OneTime}"

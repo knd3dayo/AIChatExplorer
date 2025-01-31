@@ -103,6 +103,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
+            <!--  新規アイテムとしてエクスポート  -->
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -137,6 +138,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
+            <!--  Excelからインポート  -->
             <TabItem
                 Width="Auto"
                 Height="Auto"
@@ -158,7 +160,7 @@
                         VerticalAlignment="Top"
                         Content="{x:Static res:ViewStringResources.ExecuteAutoProcessingOnImport}"
                         IsChecked="{Binding IsAutoProcessEnabled}" />
-                    <!--  インスポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
+                    <!--  インポート用のDataGrid Checkbox(IsCheckd、DisplayText）を表示  -->
                     <DataGrid
                         Grid.Row="1"
                         Margin="10,10,10,0"
@@ -180,6 +182,7 @@
 
                 </Grid>
             </TabItem>
+            <!--  URLリストからインポート  -->
             <TabItem
                 Width="Auto"
                 Height="Auto"

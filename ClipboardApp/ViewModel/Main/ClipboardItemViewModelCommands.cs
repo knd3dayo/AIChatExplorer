@@ -4,10 +4,12 @@ using System.Windows;
 using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
+using ClipboardApp.View.Main;
 using ClipboardApp.View.Settings;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ImageChat.View;
+using MergeChat.View;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
@@ -100,6 +102,12 @@ namespace ClipboardApp.ViewModel.Main {
         // Command to open Image Chat
         public override void OpenImageChatWindowCommand(ContentItem item, Action action) {
             ImageChatMainWindow.OpenMainWindow(item, action);
+        }
+
+        // Command to Open Merge Chat
+        public void OpenMergeChatWindowCommand(ContentItem item, Action action) {
+            QAChatStartupProps qAChatStartupProps = CreateQAChatStartupProps(item);
+            MergeChatMainWindow.OpenWindow(qAChatStartupProps);
         }
 
         // Process when "RAG Management" is clicked in the menu

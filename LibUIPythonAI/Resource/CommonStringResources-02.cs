@@ -458,6 +458,10 @@ namespace QAChat.Resource {
         public virtual string OpenAIChat { get; } = "OpenAIチャット";
         // 画像エビデンスチェッカー
         public virtual string ImageChat { get; } = "イメージチャット";
+
+        // マージチャット
+        public virtual string MergeChat { get; } = "マージチャット";
+
         // ローカルファイルシステム
         public virtual string FileSystem { get; } = "ファイルシステム";
 

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
+using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.AutoProcess;

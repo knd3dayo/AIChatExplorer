@@ -17,7 +17,7 @@ using QAChat.View.Tag;
 using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp {
+namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel {
         // アプリケーションを終了する。
         // Ctrl + Q が押された時の処理
@@ -161,8 +161,8 @@ namespace ClipboardApp {
         });
 
 
-        // OpenScreenshotCheckerWindowExecute メニューの「画像エビデンスチェッカー」をクリックしたときの処理。選択中のアイテムは無視
-        public SimpleDelegateCommand<object> OpenScreenshotCheckerWindow => new((parameter) => {
+        // OpenImageChatWindow
+        public SimpleDelegateCommand<object> OpenImageChatWindow => new((parameter) => {
             // チャット履歴フォルダーに新規作成
             ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
             ClipboardItemViewModelCommands commands = new();
@@ -170,6 +170,16 @@ namespace ClipboardApp {
                 RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
             });
         });
+
+        // OpenMergeChatWindow
+        public SimpleDelegateCommand<object> OpenMergeChatWindow => new((parameter) => {
+            ClipboardItemViewModelCommands commands = new();
+            ClipboardItem dummyItem = new(RootFolderViewModelContainer.ChatRootFolderViewModel.Folder.Id);
+            commands.OpenMergeChatWindowCommand(dummyItem, () => {
+                RootFolderViewModelContainer.ChatRootFolderViewModel.LoadFolderCommand.Execute();
+            });
+        });
+
 
         // OpenVectorSearchWindowCommand メニューの「ベクトル検索」をクリックしたときの処理。選択中のアイテムは無視
         public SimpleDelegateCommand<object> OpenVectorSearchWindowCommand => new((parameter) => {

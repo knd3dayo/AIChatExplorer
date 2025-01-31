@@ -15,7 +15,7 @@ using PythonAILib.Model.AutoGen;
 using QAChat;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp {
+namespace ClipboardApp.ViewModel.Main {
     public partial class MainWindowViewModel : ClipboardAppViewModelBase {
         public MainWindowViewModel() { }
         public void Init() {
@@ -232,6 +232,7 @@ namespace ClipboardApp {
                 return Tools.BoolToVisibility(ShowFooter);
             }
         }
+
     }
 
 }

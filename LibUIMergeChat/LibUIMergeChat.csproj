@@ -15,7 +15,12 @@
 
   <ItemGroup>
     <Folder Include="Common\" />
-    <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="View\MergeTargetPanel.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
 </Project>

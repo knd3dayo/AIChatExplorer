@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
+using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Search;

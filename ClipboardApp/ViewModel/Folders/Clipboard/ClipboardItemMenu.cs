@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
+using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Content;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Resources;
