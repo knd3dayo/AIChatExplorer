@@ -11,7 +11,7 @@
     xmlns:res="clr-namespace:ClipboardApp.View.Main"
     xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Main"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:MainWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewModel:MainPanelDataGridViewControlViewModel}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ContextMenu
@@ -36,7 +36,7 @@
             CanUserResizeColumns="True"
             CanUserResizeRows="False"
             CanUserSortColumns="True"
-            ItemsSource="{Binding SelectedFolder.Items}"
+            ItemsSource="{Binding SelectedFolder.Items, UpdateSourceTrigger=PropertyChanged}"
             RowHeaderWidth="0"
             SelectionMode="Extended"
             SelectionUnit="FullRow"
@@ -81,12 +81,6 @@
                 <KeyBinding
                     Key="X"
                     Command="{Binding CutItemCommand, Mode=OneTime}"
-                    CommandParameter="{Binding}"
-                    Modifiers="Control" />
-                <!--  Paste items into selected folder  -->
-                <KeyBinding
-                    Key="V"
-                    Command="{Binding PasteCommand, Mode=OneTime}"
                     CommandParameter="{Binding}"
                     Modifiers="Control" />
                 <!--  Delete selected item  -->

@@ -6,6 +6,7 @@ using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Search;
 using QAChat.View.Search;
 using QAChat.ViewModel.Folder;
+using ClipboardApp.Common;
 
 namespace ClipboardApp.ViewModel.Folders.Search {
     public class SearchFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -55,7 +56,7 @@ namespace ClipboardApp.ViewModel.Folders.Search {
 
         }
 
-        public override void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
+        public override void PasteClipboardItemCommandExecute(ClipboardController.CutFlagEnum CutFlag, IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             // 検索フォルダには貼り付け不可
 
         }

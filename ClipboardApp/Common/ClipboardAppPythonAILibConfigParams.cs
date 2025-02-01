@@ -6,7 +6,7 @@ using PythonAILib.Common;
 using QAChat.Abstract;
 using WpfAppCommon.Utils;
 
-namespace ClipboardApp.ViewModel.Main {
+namespace ClipboardApp.Common {
     public class ClipboardAppPythonAILibConfigParams : IPythonAILibConfigParams, IQAChatConfigParams {
 
         public string GetHttpsProxy() {
@@ -66,7 +66,7 @@ namespace ClipboardApp.ViewModel.Main {
             // Create database file path
             string path = Path.Combine(appDataPath, "python_ai_lib");
             return path;
-        
+
         }
 
         public string GetSystemVectorDBPath() {

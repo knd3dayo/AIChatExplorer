@@ -11,8 +11,20 @@
     xmlns:res="clr-namespace:ClipboardApp.View.Main"
     xmlns:viewModel="clr-namespace:ClipboardApp.ViewModel.Main"
     x:Name="Root"
-    d:DataContext="{d:DesignInstance Type=viewModel:MainWindowViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewModel:MainPanelTreeViewControlViewModel}"
     mc:Ignorable="d">
+    <UserControl.InputBindings>
+        <KeyBinding
+            Key="N"
+            Command="{Binding CreateItemCommand, Mode=OneTime}"
+            Modifiers="Control" />
+        <!--  Paste items into selected folder  -->
+        <KeyBinding
+            Key="V"
+            Command="{Binding PasteCommand, Mode=OneTime}"
+            CommandParameter="{Binding}"
+            Modifiers="Control" />
+    </UserControl.InputBindings>
     <Grid>
         <!--  Folder TreeView  -->
         <TreeView Grid.Column="0" ItemsSource="{Binding RootFolderViewModelContainer.FolderViewModels}">

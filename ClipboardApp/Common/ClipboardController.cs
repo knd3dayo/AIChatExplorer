@@ -9,8 +9,7 @@ using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 
-namespace ClipboardApp.Common
-{
+namespace ClipboardApp.Common {
     /// <summary>
     /// Class for clipboard monitoring feature
     /// </summary>
@@ -34,6 +33,21 @@ namespace ClipboardApp.Common
             _clipboard.ClipboardChanged += ClipboardChanged;
 
         }
+
+        // Cutフラグ
+        public enum CutFlagEnum {
+            None,
+            Item,
+            Folder
+        }
+        public CutFlagEnum CutFlag { get; set; } = CutFlagEnum.None;
+
+        /// <summary>
+        /// コピーされたアイテム
+        /// </summary>
+        // Ctrl + C or X が押された時のClipboardItem or ClipboardFolder
+        public List<object> CopiedObjects { get; set; } = [];
+
         // ClipboardChangedが呼ばれたときの処理
         public Action<ClipboardChangedEventArgs> OnClipboardChanged { get; set; } = (e) => { };
 

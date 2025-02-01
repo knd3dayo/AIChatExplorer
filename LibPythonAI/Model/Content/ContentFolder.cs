@@ -223,6 +223,7 @@ namespace PythonAILib.Model.Content {
             ContentFolder folder = new() {
                 ParentId = Id,
                 FolderName = folderName,
+                FolderType = this.FolderType
             };
             return folder;
         }

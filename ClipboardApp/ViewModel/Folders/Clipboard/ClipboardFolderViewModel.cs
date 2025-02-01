@@ -17,6 +17,7 @@ using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
+using ClipboardApp.Common;
 
 
 namespace ClipboardApp.ViewModel.Folders.Clipboard {
@@ -52,13 +53,12 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             get {
                 return Folder.IsRootFolder == false;
             }
-
         }
+
         // フォルダ作成コマンドの実装
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
             // 子フォルダを作成する
             ClipboardFolder childFolder = (ClipboardFolder)Folder.CreateChild("");
-            childFolder.FolderType = FolderTypeEnum.Normal;
             ClipboardFolderViewModel childFolderViewModel = new(childFolder);
 
             FolderEditWindow.OpenFolderEditWindow(childFolderViewModel, afterUpdate);
@@ -99,34 +99,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
 
 
         }
-        public override void OpenItemCommandExecute(ContentItemViewModel item) {
-            // MainWindowViewModelのTabItemを追加する
-            EditItemControl editItemControl = EditItemControl.CreateEditItemControl(this, item,
-                () => {
-                    // フォルダ内のアイテムを再読み込み
-                    LoadFolderCommand.Execute();
-                    LogWrapper.Info(StringResources.Edited);
-                });
 
-            ClipboardAppTabContainer container = new(item.ContentItem.Description, editItemControl);
-
-            // UserControlをクローズする場合の処理を設定
-            editItemControl.SetCloseUserControl(() => {
-                MainWindowViewModel.Instance.RemoveTabItem(container);
-            });
-
-            MainWindowViewModel.Instance.AddTabItem(container);
-
-
-        }
-
-
-        public virtual void PasteClipboardItemCommandExecute(MainWindowViewModel.CutFlagEnum CutFlag,
+        public virtual void PasteClipboardItemCommandExecute(ClipboardController.CutFlagEnum CutFlag,
             IEnumerable<object> items, ClipboardFolderViewModel toFolder) {
             foreach (var item in items) {
                 if (item is ClipboardItemViewModel itemViewModel) {
                     ContentItem clipboardItem = itemViewModel.ContentItem;
-                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Item) {
+                    if (CutFlag == ClipboardController.CutFlagEnum.Item) {
                         // Cutフラグが立っている場合はコピー元のアイテムを削除する
                         clipboardItem.MoveToFolder(toFolder.Folder);
                     } else {
@@ -135,7 +114,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 }
                 if (item is ClipboardFolderViewModel folderViewModel) {
                     ClipboardFolder folder = (ClipboardFolder)folderViewModel.Folder;
-                    if (CutFlag == MainWindowViewModel.CutFlagEnum.Folder) {
+                    if (CutFlag == ClipboardController.CutFlagEnum.Folder) {
                         // Cutフラグが立っている場合はコピー元のフォルダを削除する
                         folder.MoveTo(toFolder.Folder);
                         // 元のフォルダの親フォルダを再読み込み

@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Folders.Chat;
 using ClipboardApp.ViewModel.Folders.Clipboard;
@@ -6,12 +5,9 @@ using ClipboardApp.ViewModel.Folders.FileSystem;
 using ClipboardApp.ViewModel.Folders.Mail;
 using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
-using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILibUI.ViewModel.Folder;
-using QAChat.ViewModel.Folder;
 
-namespace ClipboardApp.ViewModel.Main
-{
+namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {
 
         // RootFolderのClipboardViewModel

@@ -6,6 +6,7 @@ using WpfAppCommon.Utils;
 namespace PythonAILibUI.ViewModel.Item {
     public abstract class ContentItemViewModelCommands {
 
+ 
         // フォルダを開くコマンド
         public SimpleDelegateCommand<ContentItemViewModel> OpenFolderCommand => new((itemViewModel) => {
             OpenFolder(itemViewModel.ContentItem);
@@ -27,11 +28,7 @@ namespace PythonAILibUI.ViewModel.Item {
             OpenFileAsNewFile(itemViewModel.ContentItem);
         });
 
-        // QAChatButtonCommand
-        public SimpleDelegateCommand<ContentItemViewModel> QAChatButtonCommand => new((itemViewModel) => {
-            // QAChatControlのDrawerを開く
-            OpenOpenAIChatWindowCommand(itemViewModel.ContentItem);
-        });
+
         // アイテム保存
         public SimpleDelegateCommand<ContentItemViewModel> SaveClipboardItemCommand => new((itemViewModel) => {
             itemViewModel.ContentItem.Save();
@@ -44,20 +41,8 @@ namespace PythonAILibUI.ViewModel.Item {
 
 
         // OpenContentItemCommand
-        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
-            OpenItem(itemViewModel.ContentItem);
-        });
+        public abstract SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand { get; }
 
-        // RemoveSelectedItemCommand
-        public SimpleDelegateCommand<ContentItemViewModel> RemoveCommand => new((itemViewModel) => {
-            RemoveItem(itemViewModel.ContentItem);
-        });
-
-        // 選択中のContentItemBaseを開く
-        public abstract void OpenItem(ContentItem contentItem);
-
-        // 選択中のContentItemBaseを削除
-        public abstract void RemoveItem(ContentItem contentItem);
 
         public abstract void OpenFolder(ContentItem contentItem);
 
@@ -70,47 +55,6 @@ namespace PythonAILibUI.ViewModel.Item {
 
         // OpenFileAsNewFile(ContentItem contentItem) 
         public abstract void OpenFileAsNewFile(ContentItem contentItem);
-
-        // async void GenerateTitleCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void GenerateTitleCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        // void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, string promptName)
-        public abstract void ExecutePromptTemplateCommand(List<ContentItem> contentItem, object afterExecuteAction, PromptItem promptItem);
-
-        //  void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void GenerateBackgroundInfoCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        // void GenerateSummaryCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void GenerateSummaryCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        // void GenerateTasksCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void GenerateTasksCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        // void CheckDocumentReliabilityCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void CheckDocumentReliabilityCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        // void GenerateVectorCommand(List<ContentItem> contentItem, object afterExecuteAction)
-        public abstract void GenerateVectorCommand(List<ContentItem> contentItem, object afterExecuteAction);
-
-        //  void OpenVectorSearchWindowCommand(ContentFolder folder) 
-        public abstract void OpenVectorSearchWindowCommand(ContentFolder folder);
-
-        //  void OpenVectorSearchWindowCommand(ContentItem contentItem)
-        public abstract void OpenVectorSearchWindowCommand(ContentItem contentItem);
-
-        // void OpenImageChatWindowCommand(ContentItem item, Action action)
-        public abstract void OpenImageChatWindowCommand(ContentItem item, Action action);
-
-        // void OpenRAGManagementWindowCommand()
-        public abstract void OpenRAGManagementWindowCommand();
-
-        //  void OpenVectorDBManagementWindowCommand()
-        public abstract void OpenVectorDBManagementWindowCommand();
-
-        //  void SettingCommandExecute()
-        public abstract void SettingCommandExecute();
-
-
 
 
     }

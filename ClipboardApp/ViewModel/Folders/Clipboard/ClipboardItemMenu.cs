@@ -29,7 +29,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateTitleMenuItem = new() {
                 Header = StringResources.GenerateTitle,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.GenerateTitleCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.GenerateTitleCommand,
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(generateTitleMenuItem);
@@ -38,7 +38,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateBackgroundInfoMenuItem = new() {
                 Header = StringResources.GenerateBackgroundInfo,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.GenerateBackgroundInfoCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.GenerateBackgroundInfoCommand,
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(generateBackgroundInfoMenuItem);
@@ -47,7 +47,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateSummaryMenuItem = new() {
                 Header = StringResources.GenerateSummary,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.GenerateSummaryCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.GenerateSummaryCommand,
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(generateSummaryMenuItem);
@@ -56,7 +56,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateTasksMenuItem = new() {
                 Header = StringResources.GenerateTasks,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.GenerateTasksCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.GenerateTasksCommand,
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(generateTasksMenuItem);
@@ -65,7 +65,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem checkDocumentTrustMenuItem = new() {
                 Header = StringResources.CheckDocumentReliability,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.CheckDocumentReliabilityCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.CheckDocumentReliabilityCommand,
                 CommandParameter = itemViewModel
             };
             promptMenuItem.Items.Add(checkDocumentTrustMenuItem);
@@ -79,7 +79,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             foreach (var promptItem in promptItems) {
                 MenuItem promptItemMenuItem = new() {
                     Header = promptItem.Description,
-                    Command = MainWindowViewModel.Instance.ExecutePromptTemplateCommand,
+                    Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.ExecutePromptTemplateCommand,
                     CommandParameter = new Tuple<ClipboardItemViewModel, PromptItem>(itemViewModel, promptItem)
                 };
                 otherPromptMenuItem.Items.Add(promptItemMenuItem);
@@ -99,7 +99,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
-                Command = clipboardFolderViewModel.OpenItemCommand,
+                Command = itemViewModel.Commands.OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
             };
@@ -125,7 +125,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem copyMenuItem = new() {
                 Header = StringResources.Copy,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.CopyItemCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.CopyItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+C"
             };
@@ -135,7 +135,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem deleteMnuItem = new() {
                 Header = StringResources.Delete,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.DeleteItemCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.DeleteItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Delete"
             };
@@ -149,7 +149,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem generateVectorMenuItem = new() {
                 Header = StringResources.GenerateVector,
                 // 複数のアイテムの処理を行うため、MainWindowViewModelのコマンドを使用
-                Command = MainWindowViewModel.Instance.GenerateVectorCommand,
+                Command = MainWindowViewModel.Instance.MainPanelDataGridViewControlViewModel.GenerateVectorCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(generateVectorMenuItem);

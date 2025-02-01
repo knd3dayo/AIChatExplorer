@@ -29,11 +29,6 @@
             Key="F"
             Command="{Binding SearchCommand, Mode=OneTime}"
             Modifiers="Control" />
-        <!--  Create new item  -->
-        <KeyBinding
-            Key="N"
-            Command="{Binding CreateItemCommand, Mode=OneTime}"
-            Modifiers="Control" />
     </Window.InputBindings>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -77,18 +72,6 @@
                             Header="{Binding ClipboardMonitorButtonText}"
                             ToolTip="{x:Static res:ViewStringResources.ToggleClipboardWatchToolTop}" />
 
-                        <MenuItem
-                            Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                            Header="{x:Static res:ViewStringResources.Create}">
-                            <!--  Create Item  -->
-                            <MenuItem
-                                Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                                Command="{Binding CreateItemCommand, Mode=OneTime}"
-                                Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                                Header="{x:Static res:ViewStringResources.CreateItem}"
-                                ToolTip="{x:Static res:ViewStringResources.CreateItemToolTip}" />
-                        </MenuItem>
                         <MenuItem
                             Background="{DynamicResource MaterialDesign.Brush.Primary}"
                             Command="{Binding ExitCommand, Mode=OneTime}"

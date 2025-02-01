@@ -21,8 +21,6 @@ namespace QAChat.ViewModel.Folder {
 
         public abstract ObservableCollection<MenuItem> FolderMenuItems { get; }
 
-        public abstract void OpenItemCommandExecute(ContentItemViewModel item);
-
         // RootFolderのViewModelを取得する
         public abstract ContentFolderViewModel GetRootFolderViewModel();
 
@@ -64,13 +62,6 @@ namespace QAChat.ViewModel.Folder {
         // アイテム保存コマンド
         public SimpleDelegateCommand<ContentItemViewModel> AddItemCommand => new((item) => {
             Folder.AddItem(item.ContentItem);
-        });
-
-        //クリップボードアイテムを開く
-        public SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
-
-            OpenItemCommandExecute(itemViewModel);
-
         });
 
         // DisplayText

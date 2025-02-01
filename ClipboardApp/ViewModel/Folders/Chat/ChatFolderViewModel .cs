@@ -23,11 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
         public override void CreateItemCommandExecute() {
             ClipboardItem clipboardItem = new(Folder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
-            OpenItemCommandExecute(clipboardItemViewModel);
-        }
-        public override void OpenItemCommandExecute(ContentItemViewModel itemViewModel) {
-            QAChatStartupProps props = new(itemViewModel.ContentItem);
-
+            QAChatStartupProps props = new(clipboardItemViewModel.ContentItem);
             QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 

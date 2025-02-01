@@ -4,11 +4,13 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Item;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Main;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Prompt;
+using PythonAILibUI.ViewModel.Item;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
@@ -33,10 +35,8 @@ namespace ClipboardApp.ViewModel.Content {
 
         }
 
-        public ClipboardItemViewModelCommands Commands { get; }
-
-        // FolderViewModel
-        public ContentFolderViewModel FolderViewModel { get; set; }
+        // Commands
+        public ClipboardItemViewModelCommands Commands { get; set; }
 
 
         // Context Menu
@@ -129,18 +129,7 @@ namespace ClipboardApp.ViewModel.Content {
         // ContentType
         public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
 
-        // SelectedTabIndex
-        private int selectedTabIndex = 0;
-        public int SelectedTabIndex {
-            get {
-                return selectedTabIndex;
-            }
-            set {
-                selectedTabIndex = value;
-                // LastSelectedTabIndex = value;
-                OnPropertyChanged(nameof(SelectedTabIndex));
-            }
-        }
+
 
         // MergeItems
         public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
