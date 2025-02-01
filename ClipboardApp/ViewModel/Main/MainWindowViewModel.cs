@@ -66,17 +66,6 @@ namespace ClipboardApp.ViewModel.Main {
                 ClipboardController.Instance.CopiedObjects.Clear();
             };
 
-            // TabItemsの初期化
-            MainPanel mainPanel = new() {
-                DataContext = this
-            };
-
-            ClipboardAppTabContainer container = new("main", mainPanel) {
-                CloseButtonVisibility = Visibility.Collapsed
-            };
-            TabItems.Add(container);
-
-
             // MainPanelDataGridViewControlViewModelの初期化
             MainPanelDataGridViewControlViewModel = new() {
                 UpdateIndeterminateAction = UpdateIndeterminate,
@@ -90,6 +79,22 @@ namespace ClipboardApp.ViewModel.Main {
                     MainPanelDataGridViewControlViewModel.SelectedFolder = selectedFolder;
                 })
             };
+
+            MainPanelViewModel mainPanelViewModel = new() {
+                MainPanelTreeViewControlViewModel = MainPanelTreeViewControlViewModel,
+                MainPanelDataGridViewControlViewModel = MainPanelDataGridViewControlViewModel
+            };
+
+            // TabItemsの初期化
+            MainPanel mainPanel = new() {
+                DataContext = mainPanelViewModel
+            };
+
+            ClipboardAppTabContainer container = new("main", mainPanel) {
+                CloseButtonVisibility = Visibility.Collapsed
+            };
+            TabItems.Add(container);
+
 
             // AutoGenPropertiesの初期化
             AutoGenProperties.Init();
@@ -173,28 +178,6 @@ namespace ClipboardApp.ViewModel.Main {
         public void NotifyPropertyChanged(string propertyName) {
             OnPropertyChanged(propertyName);
         }
-
-        // ShowFooter
-        public bool ShowFooter {
-            get {
-                return ClipboardAppConfig.Instance.ShowFooter;
-            }
-            set {
-                ClipboardAppConfig.Instance.ShowFooter = value;
-                ClipboardAppConfig.Instance.Save();
-
-                OnPropertyChanged(nameof(ShowFooter));
-                OnPropertyChanged(nameof(FooterVisibility));
-            }
-        }
-        // FooterVisibility
-        public Visibility FooterVisibility {
-            get {
-                return Tools.BoolToVisibility(ShowFooter);
-            }
-        }
-
-
 
         public static SimpleDelegateCommand<object> ExitCommand => new((parameter) => {
             // Display exit confirmation dialog. If Yes, exit the application

@@ -420,7 +420,7 @@
                     Padding="0"
                     FontSize="10"
                     Header="{x:Static res:ViewStringResources.MergeTargetItem}">
-                    <qaChatControl:MergeTargetPanel />
+                    <qaChatControl:MergeTargetPanel DataContext="{Binding MergeTargetPanelViewModel}" />
                 </TabItem>
                 <!--  マージ対象データ  -->
                 <TabItem

@@ -18,6 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="View\MergeChatDataGridViewControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\MergeChatTreeViewControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="View\MergeTargetPanel.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using QAChat.Resource;
+using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
@@ -37,8 +38,16 @@ namespace MergeChat.ViewModel {
             }
         }
 
-
-
+        private ContentFolderViewModel? _selectedFolder;
+        public ContentFolderViewModel? SelectedFolder {
+            get {
+                return _selectedFolder;
+            }
+            set {
+                _selectedFolder = value;
+                OnPropertyChanged(nameof(SelectedFolder));
+            }
+        }
 
         // クリップボードアイテムが選択された時の処理
         // ListBoxで、SelectionChangedが発生したときの処理

@@ -21,7 +21,7 @@ namespace MergeChat.ViewModel {
 
 
         //初期化
-        public MergeChatControlViewModel(QAChatStartupProps props) {
+        public MergeChatControlViewModel(QAChatStartupProps props, MergeTargetPanelViewModel mergeTargetPanelViewModel) {
 
             QAChatStartupProps = props;
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
@@ -42,7 +42,12 @@ namespace MergeChat.ViewModel {
             // AutoGenGroupChatを設定
             SelectedAutoGenGroupChat = AutoGenGroupChat.GetAutoGenChatList().FirstOrDefault();
 
+            // MergeTargetPanelViewModelを設定
+            MergeTargetPanelViewModel = mergeTargetPanelViewModel;
         }
+
+        public MergeTargetPanelViewModel MergeTargetPanelViewModel { get; set; }
+
 
         public QAChatStartupProps QAChatStartupProps { get; set; }
 
@@ -530,6 +535,8 @@ namespace MergeChat.ViewModel {
         }
 
         #endregion
+
+
 
     }
 
