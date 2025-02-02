@@ -1,21 +1,21 @@
 <Window
-    x:Class="LibUIPythonAI.View.QAChatMain.EditChatItemWindow"
+    x:Class="LibUIPythonAI.View.ChatMain.QAChatMainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:LibUIPythonAI.View.Common"
-    xmlns:commonModel="clr-namespace:LibUIPythonAI.Resource"
+    xmlns:control="clr-namespace:LibUIPythonAI.View.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:editorControl="clr-namespace:WpfAppCommon.Control.Editor;assembly=LibUICommon"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:LibUIPythonAI.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="clr-namespace:LibUIPythonAI.ViewModel.ChatMain"
-    xmlns:res="clr-namespace:LibUIPythonAI.View.QAChatMain"
-    Title="{x:Static res:ViewStringResources.ChatItem}"
+    xmlns:qc="clr-namespace:LibUIPythonAI.View.ChatMain"
+    xmlns:res="clr-namespace:LibUIPythonAI.View.ChatMain"
+    Title="{x:Static res:ViewStringResources.QAChatWindowTitle}"
     Width="800"
-    Height="450"
-    d:DataContext="{d:DesignInstance Type=model:EditChatItemWindowViewModel}"
+    Height="550"
+    d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
     Style="{StaticResource MaterialDesignWindow}"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">
@@ -44,9 +44,11 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!--  メニューバー  -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
         <StackPanel
             Grid.Row="0"
             Margin="0,0,0,0"
@@ -55,41 +57,21 @@
                 materialDesign:ElevationAssist.Elevation="Dp4"
                 DockPanel.Dock="Top"
                 Mode="PrimaryMid">
+                <!--  メニューバー  -->
                 <Menu
                     Name="menu1"
-                    Margin="0,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
                     materialDesign:MenuAssist.TopLevelMenuItemHeight="18"
-                    IsMainMenu="False">
-                    <MenuItem
-                        Background="{DynamicResource MaterialDesign.Brush.Primary}"
-                        Foreground="{DynamicResource MaterialDesign.Brush.Primary.Foreground}"
-                        Header="" />
+                    IsMainMenu="True">
+                    <MenuItem />
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <editorControl:MyTextBox
-            x:Name="textBox"
+        <qc:QAChatControl
+            x:Name="QAChtControl"
             Grid.Row="1"
-            Margin="10,10,10,10"
-            VerticalContentAlignment="Top"
-            FontSize="12"
-            HorizontalScrollBarVisibility="Auto"
-            IsReadOnly="True"
-            Text="{Binding ChatItem.Content, Mode=OneWay}"
-            TextWrapping="{Binding TextWrapping, Mode=OneWay}"
-            VerticalScrollBarVisibility="Auto" />
-        <Grid Grid.Row="2">
-            <DockPanel Margin="10,0,10,10" HorizontalAlignment="Right">
-                <Button
-                    Width="100"
-                    Margin="10,0,10,0"
-                    Command="{Binding CloseCommand, Mode=OneTime}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}"
-                    Content="{x:Static res:ViewStringResources.Close}"
-                    DockPanel.Dock="Right" />
-            </DockPanel>
-        </Grid>
-        <cc:MyStatusBar Grid.Row="3" VerticalAlignment="Bottom" />
+            DataContext="{Binding ChatControlViewModel}" />
+        <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
-
 </Window>

@@ -17,7 +17,7 @@ using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Item;
 using LibUIPythonAI.Resource;
 using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.QAChatMain;
+using LibUIPythonAI.View.ChatMain;
 using LibUIPythonAI.View.RAG;
 using LibUIPythonAI.View.Search;
 using LibUIPythonAI.View.VectorDB;

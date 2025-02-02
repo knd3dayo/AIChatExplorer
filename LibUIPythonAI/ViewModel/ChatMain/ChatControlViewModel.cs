@@ -10,7 +10,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using LibUIPythonAI.View.QAChatMain;
+using LibUIPythonAI.View.ChatMain;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel;
 using WpfAppCommon.Utils;

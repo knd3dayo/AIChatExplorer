@@ -23,7 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             ClipboardItem clipboardItem = new(Folder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             QAChatStartupProps props = new(clipboardItemViewModel.ContentItem);
-            LibUIPythonAI.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
+            LibUIPythonAI.View.ChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {
