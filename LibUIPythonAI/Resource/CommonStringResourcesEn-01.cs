@@ -164,8 +164,8 @@ namespace QAChat.Resource {
         // Version Info
         public override string VersionInfo { get; } = "Version Info";
 
-        // ShowFooter
-        public override string ShowFooter { get; } = "Show Footer";
+        // ShowProperties
+        public override string ShowProperties { get; } = "Show Properties";
         // View
         public override string View { get; } = "View";
 
@@ -658,6 +658,9 @@ namespace QAChat.Resource {
         public override string ExtractTextFromImage { get; } = "Extract text from image";
         public override string MaskData { get; } = "Mask data";
         public override string ClickHereToOpenTheTagEditScreen { get; } = "Click here to open the tag edit screen";
+
+        // Properties
+        public override string Properties { get; } = "Properties";
         public override string Text { get; } = "Text";
         public override string FilePath { get; } = "File path";
         public override string Folder { get; } = "Folder";

@@ -163,7 +163,8 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                     }
                     Task task = Task.Run(() => {
                         // item.ClipboardItemを削除
-                        item.Commands.DeleteItemCommand.Execute(item);
+                        ClipboardItemViewModelCommands commands = new();
+                        commands.DeleteItemCommand.Execute(item);
                     });
                     taskList.Add(task);
                 }

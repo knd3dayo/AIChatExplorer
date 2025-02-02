@@ -536,18 +536,18 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // ShowFooter
-        private bool? _showFooter;
-        public bool ShowFooter {
+        // ShowProperties
+        private bool? _showProperties;
+        public bool ShowProperties {
             get {
-                if (_showFooter == null) {
-                    _showFooter = Properties.Settings.Default.ShowFooter;
+                if (_showProperties == null) {
+                    _showProperties = Properties.Settings.Default.ShowProperties;
                 }
-                return _showFooter.Value;
+                return _showProperties.Value;
             }
             set {
-                _showFooter = value;
-                Properties.Settings.Default.ShowFooter = value;
+                _showProperties = value;
+                Properties.Settings.Default.ShowProperties = value;
             }
         }
 

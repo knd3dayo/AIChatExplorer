@@ -164,8 +164,8 @@ namespace MergeChat.View {
         // SourceTitle
         public static string SourceTitle => CommonStringResources.Instance.SourceTitle;
 
-        // ShowFooter
-        public static string ShowFooter => CommonStringResources.Instance.ShowFooter;
+        // ShowProperties
+        public static string ShowProperties => CommonStringResources.Instance.ShowProperties;
 
         // CreateDate
         public static string CreateDate => CommonStringResources.Instance.CreateDate;

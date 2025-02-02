@@ -90,14 +90,14 @@
                         FontSize="8pt"
                         Text="{Binding Path=MainPanelDataGridViewControlViewModel.SelectedItem.HeaderText}"
                         TextTrimming="None"
-                        Visibility="{Binding FooterVisibility}" />
+                        Visibility="{Binding PropertiesVisibility}" />
                     <CheckBox
                         Grid.Row="3"
                         Margin="10,0,10,10"
                         HorizontalAlignment="Left"
-                        Content="{x:Static res:ViewStringResources.ShowFooter}"
+                        Content="{x:Static res:ViewStringResources.ShowProperties}"
                         FontSize="8pt"
-                        IsChecked="{Binding ShowFooter}" />
+                        IsChecked="{Binding ShowProperties}" />
                 </Grid>
                 <materialDesign:Card.InputBindings>
                     <!--  Open selected item window by double-clicking  -->

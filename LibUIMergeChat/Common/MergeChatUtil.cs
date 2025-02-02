@@ -10,7 +10,7 @@ namespace MergeChat.Common {
         public static ChatResult MergeChat(
             ChatRequestContext context, List<ContentItem> items, string preProcessPrompt, string postProcessPrompt, List<ExportImportItem>? targetDataList = null) {
             // プリプロセスのリクエストを作成。 items毎にリクエストを作成
-            List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt);
+            List<ChatResult> preProcessResults = PreProcess(items, context, preProcessPrompt, targetDataList);
 
             // ポストプロセスのリクエストを作成。 プリプロセスの結果を結合してリクエストを作成
             ChatResult? postProcessResult = PostProcess(preProcessResults, context, postProcessPrompt);
@@ -30,6 +30,9 @@ namespace MergeChat.Common {
 
             foreach (var item in targetDataList) {
                 if (item.IsChecked) {
+                    if (item.Name == "Properties") {
+                        targetData += contentItem.HeaderText + "\n";
+                    }
                     if (item.Name == "Text") {
                         targetData += contentItem.Content + "\n";
                     }
@@ -44,7 +47,7 @@ namespace MergeChat.Common {
             return targetData;
         }
 
-        private static List<ChatResult> PreProcess(List<ContentItem> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList = null) {
+        private static List<ChatResult> PreProcess(List<ContentItem> items, ChatRequestContext context, string preProcessPrompt, List<ExportImportItem>? targetDataList) {
             List<ChatResult> preProcessResults = [];
             if (!string.IsNullOrEmpty(preProcessPrompt)) {
                 foreach (var item in items) {
@@ -74,8 +77,12 @@ namespace MergeChat.Common {
                 }
             } else {
                 foreach (var item in items) {
+                    string contentText = GetTargetData(item, targetDataList);
+                    if (string.IsNullOrEmpty(contentText)) {
+                        continue;
+                    }
                     ChatResult chatResult = new() {
-                        Output = item.Content,
+                        Output = contentText,
                     };
                     preProcessResults.Add(chatResult);
                 }

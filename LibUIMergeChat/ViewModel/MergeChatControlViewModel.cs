@@ -450,6 +450,7 @@ namespace MergeChat.ViewModel {
             List<PromptItem> promptItems = PromptItem.GetPromptItems().Where(item => item.PromptResultType == PromptResultTypeEnum.TextContent).ToList();
 
             ObservableCollection<ExportImportItem> items = [
+                new ExportImportItem("Properties", CommonStringResources.Instance.Properties, true, false),
                 new ExportImportItem("Text", CommonStringResources.Instance.Text, true, false),
             ];
             foreach (PromptItem promptItem in promptItems) {

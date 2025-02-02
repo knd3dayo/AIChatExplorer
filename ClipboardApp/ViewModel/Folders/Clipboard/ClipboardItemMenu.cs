@@ -94,12 +94,13 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             if (itemViewModel.FolderViewModel is not ClipboardFolderViewModel clipboardFolderViewModel) {
                 return [];
             }
+            ClipboardItemViewModelCommands commands = new();
             // MenuItemのリストを作成
             ObservableCollection<MenuItem> menuItems = [];
             // 開く
             MenuItem createMenuItem = new() {
                 Header = StringResources.Open,
-                Command = itemViewModel.Commands.OpenItemCommand,
+                Command = commands.OpenItemCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+O"
             };
@@ -108,7 +109,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             // テキストをファイルとして開く
             MenuItem openContentAsFileMenuItem = new() {
                 Header = StringResources.OpenTextAsFile,
-                Command = itemViewModel.Commands.OpenContentAsFileCommand,
+                Command = commands.OpenContentAsFileCommand,
                 CommandParameter = itemViewModel,
                 InputGestureText = "Ctrl+Shit+O"
             };
@@ -116,7 +117,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             // ピン留め
             MenuItem pinnedStateChangeMenuItem = new() {
                 Header = PythonAILibStringResources.Instance.Pin,
-                Command = itemViewModel.Commands.ChangePinCommand,
+                Command = commands.ChangePinCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(pinnedStateChangeMenuItem);
@@ -159,7 +160,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             MenuItem vectorSearchMenuItem = new() {
                 Header = StringResources.VectorSearch,
                 // 将来、複数のアイテムの処理を行う可能性があるため、MainWindowViewModelのコマンドを使用
-                Command = itemViewModel.Commands.VectorSearchCommand,
+                Command = commands.VectorSearchCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(vectorSearchMenuItem);
@@ -167,7 +168,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             //  テキストを抽出
             MenuItem extractTextMenuItem = new() {
                 Header = StringResources.ExtractText,
-                Command = itemViewModel.Commands.ExtractTextCommand,
+                Command = commands.ExtractTextCommand,
                 CommandParameter = itemViewModel
             };
             menuItems.Add(extractTextMenuItem);

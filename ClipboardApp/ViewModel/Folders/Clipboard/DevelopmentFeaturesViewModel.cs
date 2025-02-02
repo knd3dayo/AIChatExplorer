@@ -1,6 +1,7 @@
 using System.Windows;
 using ClipboardApp.Model.Item;
 using ClipboardApp.Settings;
+using ClipboardApp.ViewModel.Main;
 using PythonAILib.PythonIF;
 using WpfAppCommon.Utils;
 
@@ -27,7 +28,8 @@ namespace ClipboardApp.ViewModel.Content {
             }
             clipboardItem.MaskDataCommandExecute();
             // 保存
-            Commands.SaveClipboardItemCommand.Execute(true);
+            ClipboardItemViewModelCommands command = new();
+            command.SaveClipboardItemCommand.Execute(true);
 
         });
 

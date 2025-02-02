@@ -60,8 +60,8 @@ namespace QAChat.Resource {
         // バージョン情報
         public virtual string VersionInfo { get; } = "バージョン情報";
 
-        // フッター表示
-        public virtual string ShowFooter { get; } = "フッター表示";
+        // プロパティ表示
+        public virtual string ShowProperties { get; } = "プロパティ表示";
 
         // 表示
         public virtual string View { get; } = "表示";

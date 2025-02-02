@@ -12,6 +12,7 @@ namespace QAChat.ViewModel.Item {
         // FolderViewModel
         public ContentFolderViewModel FolderViewModel { get; set; } = folderViewModel;
 
+        public abstract ContentItemViewModelCommands Commands { get; set; }
 
         // IsSelected
         private bool isSelected = false;

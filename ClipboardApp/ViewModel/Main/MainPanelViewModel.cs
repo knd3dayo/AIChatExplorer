@@ -13,23 +13,23 @@ namespace ClipboardApp.ViewModel.Main {
         public MainPanelDataGridViewControlViewModel MainPanelDataGridViewControlViewModel { get; set; } = new();
 
 
-        // ShowFooter
-        public bool ShowFooter {
+        // ShowProperties
+        public bool ShowProperties {
             get {
-                return ClipboardAppConfig.Instance.ShowFooter;
+                return ClipboardAppConfig.Instance.ShowProperties;
             }
             set {
-                ClipboardAppConfig.Instance.ShowFooter = value;
+                ClipboardAppConfig.Instance.ShowProperties = value;
                 ClipboardAppConfig.Instance.Save();
 
-                OnPropertyChanged(nameof(ShowFooter));
-                OnPropertyChanged(nameof(FooterVisibility));
+                OnPropertyChanged(nameof(ShowProperties));
+                OnPropertyChanged(nameof(PropertiesVisibility));
             }
         }
-        // FooterVisibility
-        public Visibility FooterVisibility {
+        // PropertiesVisibility
+        public Visibility PropertiesVisibility {
             get {
-                return Tools.BoolToVisibility(ShowFooter);
+                return Tools.BoolToVisibility(ShowProperties);
             }
         }
 

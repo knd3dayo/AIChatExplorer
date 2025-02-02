@@ -52,22 +52,22 @@ namespace MergeChat.ViewModel {
 
         public MergeTargetTreeViewControlViewModel MergeTargetTreeViewControlViewModel { get; set; }
 
-        private bool _showFooter = false;
-        // ShowFooter
-        public bool ShowFooter {
+        private bool _showProperties = false;
+        // ShowProperties
+        public bool ShowProperties {
             get {
-                return _showFooter;
+                return _showProperties;
             }
             set {
-                _showFooter = value;
-                OnPropertyChanged(nameof(ShowFooter));
-                OnPropertyChanged(nameof(FooterVisibility));
+                _showProperties = value;
+                OnPropertyChanged(nameof(ShowProperties));
+                OnPropertyChanged(nameof(PropertiesVisibility));
             }
         }
-        // FooterVisibility
-        public Visibility FooterVisibility {
+        // PropertiesVisibility
+        public Visibility PropertiesVisibility {
             get {
-                return Tools.BoolToVisibility(ShowFooter);
+                return Tools.BoolToVisibility(ShowProperties);
             }
         }
     }

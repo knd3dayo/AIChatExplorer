@@ -36,7 +36,7 @@ namespace ClipboardApp.ViewModel.Content {
         }
 
         // Commands
-        public ClipboardItemViewModelCommands Commands { get; set; }
+        public override ContentItemViewModelCommands Commands { get; set; }
 
 
         // Context Menu

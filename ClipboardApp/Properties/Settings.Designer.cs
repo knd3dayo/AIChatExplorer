@@ -482,12 +482,12 @@ namespace ClipboardApp.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool ShowFooter {
+        public bool ShowProperties {
             get {
-                return ((bool)(this["ShowFooter"]));
+                return ((bool)(this["ShowProperties"]));
             }
             set {
-                this["ShowFooter"] = value;
+                this["ShowProperties"] = value;
             }
         }
         

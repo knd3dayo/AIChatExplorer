@@ -358,6 +358,9 @@ namespace QAChat.Resource {
         // ここをクリックするとタグ編集画面が開きます
         public virtual string ClickHereToOpenTheTagEditScreen { get; } = "ここをクリックするとタグ編集画面が開きます";
 
+        // Properties
+        public virtual string Properties { get; } = "プロパティ";
+
         // テキスト
         public virtual string Text { get; } = "テキスト";
 

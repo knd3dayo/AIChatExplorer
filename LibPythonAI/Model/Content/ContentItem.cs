@@ -196,6 +196,8 @@ namespace PythonAILib.Model.Content {
         public string HeaderText {
             get {
                 string header1 = "";
+                // タイトルを追加
+                header1 += $"[{PythonAILibStringResources.Instance.Title}]" + Description + "\n";
                 // 作成日時文字列を追加
                 header1 += $"[{PythonAILibStringResources.Instance.CreationDateTime}]" + CreatedAtString + "\n";
                 // 更新日時文字列を追加
@@ -229,10 +231,6 @@ namespace PythonAILib.Model.Content {
 
                 // Tags
                 header1 += $"[{PythonAILibStringResources.Instance.Tag}]" + TagsString() + "\n";
-                // ピン留め中かどうか
-                if (IsPinned) {
-                    header1 += $"[{PythonAILibStringResources.Instance.Pinned}]\n";
-                }
                 return header1;
             }
         }

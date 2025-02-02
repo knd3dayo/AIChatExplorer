@@ -116,7 +116,7 @@
     <Setting Name="AutoDocumentReliabilityCheck" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="ShowFooter" Type="System.Boolean" Scope="User">
+    <Setting Name="ShowProperties" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="AzureOpenAIAPIVersion" Type="System.String" Scope="User">

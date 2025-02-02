@@ -27,6 +27,8 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
+        public ClipboardItemViewModelCommands Commands { get; } = new();
+
         // 選択中のアイテム(複数選択)
         private ObservableCollection<ClipboardItemViewModel> _selectedItems = [];
         public ObservableCollection<ClipboardItemViewModel> SelectedItems {
@@ -92,7 +94,7 @@ namespace ClipboardApp.ViewModel.Main {
                 return;
             }
             foreach (ClipboardItemViewModel clipboardItemViewModel in SelectedItems) {
-               clipboardItemViewModel.Commands.ChangePinCommand.Execute();
+               Commands.ChangePinCommand.Execute();
             }
         });
         // Deleteが押された時の処理 選択中のアイテムを削除する処理
@@ -110,7 +112,7 @@ namespace ClipboardApp.ViewModel.Main {
                 // 選択中のアイテムを削除
                 foreach (var item in SelectedItems) {
                     Task task = Task.Run(() => {
-                        item.Commands.DeleteItemCommand.Execute(item);
+                        Commands.DeleteItemCommand.Execute(item);
                     });
                     taskLIst.Add(task);
                 }
@@ -132,13 +134,12 @@ namespace ClipboardApp.ViewModel.Main {
         #region クリップボードアイテムのコンテキストメニューのInputBinding用のコマンド
         // 選択したアイテムをテキストファイルとして開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenContentAsFileCommand => new((parameter) => {
-            this.SelectedItem?.Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
+            Commands.OpenContentAsFileCommand.Execute(this.SelectedItem);
         });
 
         // タイトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTitleCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.GenerateTitleCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.GenerateTitleCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -151,8 +152,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // 背景情報を生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateBackgroundInfoCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.GenerateBackgroundInfoCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -165,8 +165,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // サマリーを生成する処理　複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateSummaryCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.GenerateSummaryCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -179,8 +178,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // 課題リストを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateTasksCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.GenerateTasksCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.GenerateTasksCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -192,8 +190,7 @@ namespace ClipboardApp.ViewModel.Main {
         });
         // 文書の信頼度を判定する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> CheckDocumentReliabilityCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.CheckDocumentReliabilityCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -207,8 +204,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // ベクトルを生成する処理 複数アイテム処理可
         public SimpleDelegateCommand<object> GenerateVectorCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.GenerateVectorCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
+            Commands.GenerateVectorCommand(SelectedItems.Select(x => x.ContentItem).ToList(), () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -225,8 +221,7 @@ namespace ClipboardApp.ViewModel.Main {
             ClipboardItemViewModel itemViewModel = tuple.Item1;
             PromptItem promptItem = tuple.Item2;
             List<ContentItem> contentItems = SelectedItems.Select(x => x.ContentItem).ToList();
-            ClipboardItemViewModelCommands commands = new();
-            commands.ExecutePromptTemplateCommand(contentItems, () => {
+            Commands.ExecutePromptTemplateCommand(contentItems, () => {
                 // フォルダ内のアイテムを再読み込み
                 MainUITask.Run(() => {
                     var folders = SelectedItems.Select(x => x.FolderViewModel).DistinctBy(x => x.Folder.Id);
@@ -239,7 +234,7 @@ namespace ClipboardApp.ViewModel.Main {
 
         // ベクトル検索を実行する処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> VectorSearchCommand => new((parameter) => {
-            this.SelectedItem?.Commands.VectorSearchCommand.Execute(SelectedItem);
+            Commands.VectorSearchCommand.Execute(SelectedItem);
         });
 
 
@@ -258,29 +253,27 @@ namespace ClipboardApp.ViewModel.Main {
 
         // Ctrl + X が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CutItemCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.CutItemCommandExecute(this);
+            Commands.CutItemCommandExecute(this);
         });
         // Ctrl + C が押された時の処理 複数アイテム処理可能
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            commands.CopyToClipboardCommandExecute(this);
+            Commands.CopyToClipboardCommandExecute(this);
         });
         // Ctrl + M が押された時の処理
         public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
             ClipboardItemViewModelCommands commands = new();
-            commands.MergeItemCommandExecute(this);
+            Commands.MergeItemCommandExecute(this);
         });
 
         // Ctrl + Shift + M が押された時の処理
         public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
             ClipboardItemViewModelCommands commands = new();
-            commands.MergeItemWithHeaderCommandExecute(this);
+            Commands.MergeItemWithHeaderCommandExecute(this);
         });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {
-            SelectedItem?.Commands.OpenItemCommand.Execute(this.SelectedItem);
+            Commands.OpenItemCommand.Execute(this.SelectedItem);
 
         });
 
