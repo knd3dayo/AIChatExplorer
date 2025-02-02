@@ -15,9 +15,8 @@ namespace PythonAILib.Model.AutoProcess {
             Description = description;
         }
 
-        public bool IsCopyOrMoveOrMergeAction() {
-            return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString()
-                || Name == TypeEnum.MergeAllItems.ToString() || Name == TypeEnum.MergeItemsWithSameSourceApplicationTitle.ToString();
+        public bool IsCopyOrMoveAction() {
+            return Name == TypeEnum.CopyToFolder.ToString() || Name == TypeEnum.MoveToFolder.ToString();
         }
 
         public virtual void Execute(ContentItem clipboardItem, ContentFolder? destinationFolder) {
@@ -104,18 +103,7 @@ namespace PythonAILib.Model.AutoProcess {
                     ContentItemCommands.ExtractTextCommandExecute(args);
                 };
             }
-            if (typeEnum == TypeEnum.MergeAllItems) {
-                return (args) => {
-                    ContentFolder folder = destinationFolder ?? throw new Exception(PythonAILibStringResources.Instance.NoFolderSelected);
-                    folder.MergeItems(args);
-                };
-            }
-            if (typeEnum == TypeEnum.MergeItemsWithSameSourceApplicationTitle) {
-                return (args) => {
-                    ContentFolder folder = destinationFolder ?? throw new Exception(PythonAILibStringResources.Instance.NoFolderSelected);
-                    folder.MergeItemsBySourceApplicationTitleCommandExecute(args);
-                };
-            }
+
             return (args) => {
                 return;
             };

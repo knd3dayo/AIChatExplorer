@@ -52,15 +52,6 @@ namespace PythonAILib.Model.AutoProcess {
             if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text && lineCount <= configParams.IgnoreLineCount()) {
                 return item;
             }
-
-            // ★TODO Implement processing based on automatic processing rules.
-            // If AutoMergeItemsBySourceApplicationTitle is set, automatically merge items
-            /**
-            if (configParams.AutoMergeItemsBySourceApplicationTitle()) {
-                LogWrapper.Info(CommonStringResources.Instance.AutoMerge);
-                FolderManager.RootFolder.MergeItemsBySourceApplicationTitleCommandExecute(item);
-            }
-            **/
             // If AutoFileExtract is set, extract files
             if (configParams.AutoFileExtract() && item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Files) {
                 string text = PythonExecutor.PythonAIFunctions.ExtractFileToText(item.FilePath);

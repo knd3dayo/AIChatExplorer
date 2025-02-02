@@ -287,7 +287,7 @@
                     <Label
                         Width="260"
                         Margin="10,3,10,3"
-                        Content="{x:Static res:ViewStringResources.CopyMoveMergeTarget}" />
+                        Content="{x:Static res:ViewStringResources.CopyMoveTarget}" />
                     <!--  コピー/移動/マージ先を選択するツリービューを表示するボタン  -->
                     <Button
                         Margin="10,3,10,3"

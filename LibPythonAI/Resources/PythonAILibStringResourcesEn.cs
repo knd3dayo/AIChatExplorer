@@ -23,11 +23,7 @@ namespace PythonAILib.Resources {
         public override string AutoSetTag { get; } = "Running automatic tag setting process";
         // Failed to set tag
         public override string SetTagFailed { get; } = "Failed to set tag";
-        // Running automatic merge process
-        public override string AutoMerge { get; } = "Running automatic merge process";
-        // Failed to merge
-        public override string MergeFailed { get; } = "Failed to merge";
-        // Running OCR process
+
         public override string OCR { get; } = "Running OCR process";
         // Failed to run OCR process
         public override string OCRFailed { get; } = "Failed to run OCR process";
@@ -284,10 +280,6 @@ namespace PythonAILib.Resources {
         public override string ExtractClipboardText { get; } = "Extract Clipboard Text";
         public override string DataMasking { get; } = "Data Masking";
         public override string MaskClipboardText { get; } = "Mask Clipboard Text";
-        public override string MergeItemsInFolder { get; } = "Merge Items in Folder";
-        public override string MergeItemsInFolderDescription { get; } = "Merge Items in Folder Description";
-        public override string MergeItemsWithTheSameSourceApplicationTitle { get; } = "Merge Items with the Same Source Application Title";
-        public override string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "Merge Items with the Same Source Application Title Description";
         public override string NoFolderSelected { get; } = "No Folder Selected";
         public override string CopyToFolderDescription { get; } = "Copy to Folder Description";
         public override string CannotOpenDirectoryAsNewFile { get; } = "Cannot Open Directory as New File";

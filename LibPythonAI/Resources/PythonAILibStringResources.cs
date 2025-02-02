@@ -56,10 +56,7 @@ namespace PythonAILib.Resources {
         public virtual string AutoSetTag { get; } = "自動タグ設定処理を実行します";
         // タグ設定処理が失敗しました
         public virtual string SetTagFailed { get; } = "タグ設定処理が失敗しました";
-        // 自動マージ処理を実行します
-        public virtual string AutoMerge { get; } = "自動マージ処理を実行します";
-        // マージ処理が失敗しました
-        public virtual string MergeFailed { get; } = "マージ処理が失敗しました";
+
         // OCR処理を実行します
         public virtual string OCR { get; } = "OCR処理を実行します";
         // OCR処理が失敗しました
@@ -401,17 +398,6 @@ namespace PythonAILib.Resources {
         public virtual string DataMasking { get; } = "データマスキング";
         // "クリップボードのテキストをマスキングします"
         public virtual string MaskClipboardText { get; } = "クリップボードのテキストをマスキングします";
-
-        //  "フォルダ内のアイテムをマージ", 
-        public virtual string MergeItemsInFolder { get; } = "フォルダ内のアイテムをマージ";
-
-        // "フォルダ内のアイテムをマージします"
-        public virtual string MergeItemsInFolderDescription { get; } = "フォルダ内のアイテムをマージします";
-
-        // "同じSourceApplicationTitleを持つアイテムをマージ",
-        public virtual string MergeItemsWithTheSameSourceApplicationTitle { get; } = "同じSourceApplicationTitleを持つアイテムをマージ";
-        // "同じSourceApplicationTitleを持つアイテムをマージします"
-        public virtual string MergeItemsWithTheSameSourceApplicationTitleDescription { get; } = "同じSourceApplicationTitleを持つアイテムをマージします";
 
         // フォルダが選択されていません
         public virtual string NoFolderSelected { get; } = "フォルダが選択されていません";

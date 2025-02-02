@@ -131,17 +131,6 @@ namespace ClipboardApp.ViewModel.Content {
         // ContentType
         public ContentTypes.ContentItemTypes ContentType => ContentItem.ContentType;
 
-
-
-        // MergeItems
-        public void MergeItems(List<ClipboardItemViewModel> itemViewModels) {
-            List<ContentItem> items = [];
-            foreach (var itemViewModel in itemViewModels) {
-                items.Add(itemViewModel.ContentItem);
-            }
-            ContentItem.MergeItems(items);
-        }
-
         // Copy
         public ClipboardItemViewModel Copy() {
             ClipboardItem newItem = (ClipboardItem)ContentItem.Copy();

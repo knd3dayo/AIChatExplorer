@@ -82,8 +82,8 @@ namespace LibUIPythonAI.View.AutoProcessRule {
         // ExecuteNextProcess
         public static string ExecuteNextProcess { get; set; } = CommonStringResources.Instance.ExecuteNextProcess;
 
-        // CopyMoveMergeTarget
-        public static string CopyMoveMergeTarget { get; set; } = CommonStringResources.Instance.CopyMoveMergeTarget;
+        // CopyMoveTarget
+        public static string CopyMoveTarget { get; set; } = CommonStringResources.Instance.CopyMoveMergeTarget;
 
         // ExecutePythonScript
         public static string ExecutePythonScript { get; set; } = CommonStringResources.Instance.ExecutePythonScript;

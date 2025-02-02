@@ -143,12 +143,6 @@ namespace LibUIPythonAI.Resource {
         // クリップボードの内容から自動的にタグを生成します
         public virtual string AutomaticallyGenerateTagsFromClipboardContent { get; } = "クリップボードの内容から自動的にタグを生成します";
 
-        // 自動でマージ
-        public virtual string AutomaticallyMerge { get; } = "自動でマージ";
-
-        // コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします
-        public virtual string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; } = "コピー元のアプリ名、タイトルが同じ場合にアイテムを自動的にマージします";
-
         // 自動でEmbedding
         public virtual string AutomaticallyEmbedding { get; } = "自動でEmbedding";
 
@@ -388,10 +382,7 @@ namespace LibUIPythonAI.Resource {
         public virtual string AutoSetTag { get; } = "自動タグ設定処理を実行します";
         // タグ設定処理が失敗しました
         public virtual string SetTagFailed { get; } = "タグ設定処理が失敗しました";
-        // 自動マージ処理を実行します
-        public virtual string AutoMerge { get; } = "自動マージ処理を実行します";
-        // マージ処理が失敗しました
-        public virtual string MergeFailed { get; } = "マージ処理が失敗しました";
+
         // OCR処理を実行します
         public virtual string OCR { get; } = "OCR処理を実行します";
         // OCR処理が失敗しました

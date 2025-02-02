@@ -412,8 +412,7 @@ namespace LibUIPythonAI.Resource {
 
         public override string AutoSetTag { get; } = "Executing auto tag setting process";
         public override string SetTagFailed { get; } = "Failed to set tag";
-        public override string AutoMerge { get; } = "Executing auto merge process";
-        public override string MergeFailed { get; } = "Failed to merge";
+
         public override string OCR { get; } = "Executing OCR process";
         public override string OCRFailed { get; } = "Failed to perform OCR";
 
@@ -538,10 +537,6 @@ namespace LibUIPythonAI.Resource {
         public override string AutomaticallyGenerateTags { get; } = "Automatically generate tags";
 
         public override string AutomaticallyGenerateTagsFromClipboardContent { get; } = "Automatically generate tags from clipboard content";
-
-        public override string AutomaticallyMerge { get; } = "Automatically merge";
-
-        public override string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; } = "Automatically merge items if source app and title are the same";
 
         public override string AutomaticallyEmbedding { get; } = "Automatically embedding";
 
@@ -761,10 +756,6 @@ namespace LibUIPythonAI.Resource {
         public override string Added { get; } = "Added";
         public override string Edited { get; } = "Edited";
         public override string Pasted { get; } = "Pasted";
-        public override string SelectTwoItemsToMerge { get; } = "Select two items to merge";
-        public override string MergeTargetNotSelected { get; } = "Merge target not selected";
-        public override string MergeSourceNotSelected { get; } = "Merge source not selected";
-        public override string Merged { get; } = "Merged";
         public override string ErrorOccurredAndMessage { get; } = "Error occurred.\nMessage";
         public override string StackTrace { get; } = "Stack trace";
 
@@ -982,8 +973,6 @@ namespace LibUIPythonAI.Resource {
         public override string AutoProcessingApplied { get; } = "Auto Processing Applied";
         public override string ItemsDeletedByAutoProcessing { get; } = "Items Deleted by Auto Processing";
         public override string FailedToParseJSONString { get; } = "Failed to Parse JSON String";
-        public override string CannotMergeToNonTextItems { get; } = "Cannot Merge to Non-Text Items";
-        public override string CannotMergeItemsContainingNonTextItems { get; } = "Cannot Merge Items Containing Non-Text Items";
         public override string CreationDateTime { get; } = "Creation Date Time";
         public override string SourceAppName { get; } = "Source App Name";
         public override string Pinned { get; } = "Pinned";

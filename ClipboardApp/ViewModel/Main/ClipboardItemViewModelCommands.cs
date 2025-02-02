@@ -298,44 +298,6 @@ namespace ClipboardApp.ViewModel.Main {
             }
         }
 
-        // Process when Ctrl + Shift + M is pressed
-        public void MergeItemWithHeaderCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = model.SelectedItems;
-            ClipboardFolderViewModel? SelectedFolder = model.SelectedFolder;
-            // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // Do not process if no folder is selected
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            SelectedFolder.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems
-            );
-        }
-        // Process when Ctrl + M is pressed
-        public void MergeItemCommandExecute(MainPanelDataGridViewControlViewModel model) {
-            ObservableCollection<ClipboardItemViewModel> SelectedItems = model.SelectedItems;
-            ClipboardFolderViewModel? SelectedFolder = model.SelectedFolder;
-            // Do not process if no items are selected
-            if (SelectedItems == null || SelectedItems.Count == 0) {
-                LogWrapper.Error(CommonStringResources.Instance.NoItemSelected);
-                return;
-            }
-            // Do not process if no folder is selected
-            if (SelectedFolder == null) {
-                LogWrapper.Error(CommonStringResources.Instance.FolderNotSelected);
-                return;
-            }
-            SelectedFolder.MergeItemCommandExecute(
-                SelectedFolder,
-                SelectedItems
-            );
-        }
 
 
         // -----------------------------------------------------------------------------------

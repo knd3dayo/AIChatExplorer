@@ -66,18 +66,7 @@
                     Command="{Binding OpenContentAsFileCommand, Mode=OneTime}"
                     CommandParameter="{Binding}"
                     Modifiers="Control+Shift" />
-                <!--  Merge items into selected item  -->
-                <KeyBinding
-                    Key="M"
-                    Command="{Binding MergeItemCommand, Mode=OneTime}"
-                    CommandParameter="{Binding}"
-                    Modifiers="Control" />
-                <!--  Merge items into selected item with header  -->
-                <KeyBinding
-                    Key="M"
-                    Command="{Binding MergeItemWithHeaderCommand, Mode=OneTime}"
-                    CommandParameter="{Binding}"
-                    Modifiers="Control+Shift" />
+
                 <KeyBinding
                     Key="X"
                     Command="{Binding CutItemCommand, Mode=OneTime}"

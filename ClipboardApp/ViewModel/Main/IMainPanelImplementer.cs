@@ -14,10 +14,7 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<RoutedEventArgs> ClipboardItemSelectionChangedCommand { get; }
         public SimpleDelegateCommand<object> OpenSelectedItemCommand { get; }
         public SimpleDelegateCommand<object> OpenContentAsFileCommand { get; }
-        // MergeItemCommand
-        public SimpleDelegateCommand<object> MergeItemCommand { get; }
-        // MergeItemWithHeaderCommand
-        public SimpleDelegateCommand<object> MergeItemWithHeaderCommand { get; }
+
         public SimpleDelegateCommand<object> CopyItemCommand { get; }
         public SimpleDelegateCommand<object> DeleteItemCommand { get; }
         // CutItemCommand

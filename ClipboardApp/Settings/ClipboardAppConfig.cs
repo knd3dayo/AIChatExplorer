@@ -241,21 +241,6 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // AutoMergeItemsBySourceApplicationTitle
-        private bool? _autoMergeItemsBySourceApplicationTitle;
-        public bool AutoMergeItemsBySourceApplicationTitle {
-            get {
-                if (_autoMergeItemsBySourceApplicationTitle == null) {
-                    _autoMergeItemsBySourceApplicationTitle = Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle;
-                }
-                return _autoMergeItemsBySourceApplicationTitle.Value;
-            }
-            set {
-                _autoMergeItemsBySourceApplicationTitle = value;
-                Properties.Settings.Default.AutoMergeItemsBySourceApplicationTitle = value;
-            }
-        }
-
         // AutoBackgroundInfo
         private bool? _autoBackgroundInfo;
         public bool AutoBackgroundInfo {

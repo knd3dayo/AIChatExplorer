@@ -36,8 +36,8 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             }
         }
 
-        public bool IsCopyOrMoveOrMergeAction() {
-            return AutoProcessItem.IsCopyOrMoveOrMergeAction();
+        public bool IsCopyOrMoveAction() {
+            return AutoProcessItem.IsCopyOrMoveAction();
         }
 
     }

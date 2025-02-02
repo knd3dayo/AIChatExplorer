@@ -10,8 +10,6 @@ namespace PythonAILib.Model.AutoProcess {
             CopyToFolder,
             MoveToFolder,
             ExtractText,
-            MergeAllItems,
-            MergeItemsWithSameSourceApplicationTitle,
             PromptTemplate,
         }
         public ObjectId? Id { get; set; } = ObjectId.Empty;

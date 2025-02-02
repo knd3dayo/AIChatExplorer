@@ -191,19 +191,6 @@ namespace ClipboardApp.Settings {
             }
         }
 
-        // AutoMergeItemsBySourceApplicationTitle
-        public bool AutoMergeItemsBySourceApplicationTitle {
-            get {
-                return ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle;
-            }
-            set {
-                ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle = value;
-                OnPropertyChanged(nameof(AutoMergeItemsBySourceApplicationTitle));
-
-                // プロパティが変更されたことを設定
-                isPropertyChanged = true;
-            }
-        }
         // AutoBackgroundInfo
         public bool AutoBackgroundInfo {
             get {

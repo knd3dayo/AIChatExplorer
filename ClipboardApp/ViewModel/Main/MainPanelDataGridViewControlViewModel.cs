@@ -259,17 +259,6 @@ namespace ClipboardApp.ViewModel.Main {
         public SimpleDelegateCommand<object> CopyItemCommand => new((parameter) => {
             Commands.CopyToClipboardCommandExecute(this);
         });
-        // Ctrl + M が押された時の処理
-        public SimpleDelegateCommand<object> MergeItemCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            Commands.MergeItemCommandExecute(this);
-        });
-
-        // Ctrl + Shift + M が押された時の処理
-        public SimpleDelegateCommand<object> MergeItemWithHeaderCommand => new((parameter) => {
-            ClipboardItemViewModelCommands commands = new();
-            Commands.MergeItemWithHeaderCommandExecute(this);
-        });
 
         // 選択中のアイテムを開く処理 複数アイテム処理不可
         public SimpleDelegateCommand<object> OpenSelectedItemCommand => new((parameter) => {

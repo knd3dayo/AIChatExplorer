@@ -128,21 +128,6 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
             LogWrapper.Info(StringResources.Pasted);
         }
 
-        public virtual void MergeItemCommandExecute(
-            ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems) {
-
-            if (selectedItems.Count < 2) {
-                LogWrapper.Error(StringResources.SelectTwoItemsToMerge);
-                return;
-            }
-            selectedItems[0].MergeItems([.. selectedItems]);
-
-            // フォルダ内のアイテムを再読み込み
-            folderViewModel.LoadFolderCommand.Execute();
-            LogWrapper.Info(StringResources.Merged);
-
-        }
-
         // -----------------------------------------------------------------------------------
         #region プログレスインジケーター表示の処理
 

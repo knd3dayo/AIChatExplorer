@@ -178,7 +178,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
                 OnPropertyChanged(nameof(SelectedAutoProcessItem));
 
                 // アクションがコピーまたは移動の場合はFolderSelectionPanelEnabledをTrueにする
-                if (value.IsCopyOrMoveOrMergeAction()) {
+                if (value.IsCopyOrMoveAction()) {
                     FolderSelectionPanelEnabled = true;
                 } else {
                     FolderSelectionPanelEnabled = false;
@@ -455,7 +455,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             if (IsBasicProcessChecked) {
                 TargetAutoProcessRule.RuleAction = SelectedAutoProcessItem.AutoProcessItem;
                 // アクションタイプがCopyToFolderまたは MoveToFolderの場合はDestinationFolderを設定
-                if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
+                if (SelectedAutoProcessItem.IsCopyOrMoveAction()) {
                     if (DestinationFolder == null) {
                         LogWrapper.Error(StringResources.SelectCopyOrMoveTargetFolder);
                         return;
@@ -544,7 +544,7 @@ namespace LibUIPythonAI.ViewModel.AutoProcess {
             if (SelectedAutoProcessItem == null) {
                 return;
             }
-            if (SelectedAutoProcessItem.IsCopyOrMoveOrMergeAction()) {
+            if (SelectedAutoProcessItem.IsCopyOrMoveAction()) {
                 FolderSelectionPanelEnabled = true;
             } else {
                 FolderSelectionPanelEnabled = false;

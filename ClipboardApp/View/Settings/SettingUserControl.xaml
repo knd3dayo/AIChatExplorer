@@ -437,17 +437,6 @@
                                     Text="{x:Static res:ViewStringResources.LineOrLess}" />
                             </DockPanel>
                             <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Margin="10,10,10,0"
-                                Text="{x:Static res:ViewStringResources.AutomaticallyMerge}" />
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="10,10,10,0"
-                                Content="{x:Static res:ViewStringResources.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame}"
-                                IsChecked="{Binding AutoMergeItemsBySourceApplicationTitle}" />
-                            <TextBlock
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Margin="10,10,10,0"

@@ -32,9 +32,6 @@
     <Setting Name="UserMaskedDataInOpenAI" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="AutoMergeItemsBySourceApplicationTitle" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
-    </Setting>
     <Setting Name="MonitorTargetAppNames" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

@@ -143,7 +143,7 @@ namespace PythonAILib.Model.AutoProcess {
                     result += $"{PythonAILibStringResources.Instance.ActionNone}\n";
                 }
                 // TypeValue が CopyToFolderまたはMoveToFolderの場合
-                if (RuleAction != null && RuleAction.IsCopyOrMoveOrMergeAction()) {
+                if (RuleAction != null && RuleAction.IsCopyOrMoveAction()) {
                     // DestinationFolderが設定されている場合
                     // DestinationIdに一致するフォルダを取得
                     PythonAILibManager libManager = PythonAILibManager.Instance;
@@ -171,7 +171,7 @@ namespace PythonAILib.Model.AutoProcess {
                 return false;
             }
             // ruleがCopyToFolderまたはMoveToFolder以外の場合はFalseを返す
-            if (rule.RuleAction.IsCopyOrMoveOrMergeAction() == false) {
+            if (rule.RuleAction.IsCopyOrMoveAction() == false) {
                 return false;
             }
             IEnumerable<AutoProcessRule> copyToMoveToRules = AutoProcessRuleController.GetCopyToMoveToRules();

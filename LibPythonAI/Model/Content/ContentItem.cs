@@ -119,43 +119,6 @@ namespace PythonAILib.Model.Content {
             clipboardItem.SourcePath = SourcePath;
         }
 
-
-        public void MergeItems<T>(List<T> items) where T : ContentItem {
-            // itemsが空の場合は何もしない
-            if (items.Count == 0) {
-                return;
-            }
-
-            string mergeText = "\n";
-            mergeText += "---\n";
-
-            foreach (var item in items) {
-                // itemが自分自身の場合はスキップ
-                if (item.Id == Id) {
-                    continue;
-                }
-                // Contentを追加
-                mergeText += item.Content + "\n";
-            }
-            // mergeTextをContentに追加
-            Content += mergeText;
-
-            // Tagsのマージ。重複を除外して追加
-            Tags.UnionWith(items.SelectMany(item => item.Tags));
-
-            // マージしたアイテムを削除
-            foreach (var item in items) {
-                // itemが自分自身の場合はスキップ
-                if (item.Id == Id) {
-                    continue;
-                }
-                item.Delete();
-            }
-            // 保存
-            Save();
-
-        }
-
         // タグ表示用の文字列
         public string TagsString() {
             return string.Join(",", Tags);

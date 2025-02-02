@@ -123,11 +123,6 @@ namespace ClipboardApp.View.Settings {
         // LineOrLess
         public static string LineOrLess { get; set; } = CommonStringResources.Instance.LineOrLess;
 
-        // AutomaticallyMerge
-        public static string AutomaticallyMerge { get; set; } = CommonStringResources.Instance.AutomaticallyMerge;
-
-        // AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame
-        public static string AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame { get; set; } = CommonStringResources.Instance.AutomaticallyMergeItemsIfSourceAppAndTitleAreTheSame;
 
         // AutomaticallyExtractTextFromFile
         public static string AutomaticallyExtractTextFromFile { get; set; } = CommonStringResources.Instance.AutomaticallyExtractTextFromFile;

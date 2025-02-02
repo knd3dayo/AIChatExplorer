@@ -127,10 +127,6 @@ namespace ClipboardApp.Common {
         public bool AutoDocumentReliabilityCheck() {
             return ClipboardAppConfig.Instance.AutoDocumentReliabilityCheck;
         }
-        // AutoMergeItemsBySourceApplicationTitle
-        public bool AutoMergeItemsBySourceApplicationTitle() {
-            return ClipboardAppConfig.Instance.AutoMergeItemsBySourceApplicationTitle;
-        }
 
         // AutoFileExtract
         public bool AutoFileExtract() {

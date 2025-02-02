@@ -560,18 +560,6 @@ namespace LibUIPythonAI.Resource {
         // 貼り付けました
         public virtual string Pasted { get; } = "貼り付けました";
 
-        // "マージするアイテムを2つ選択してください"
-        public virtual string SelectTwoItemsToMerge { get; } = "マージするアイテムを2つ選択してください";
-
-        // マージ先のアイテムが選択されていません
-        public virtual string MergeTargetNotSelected { get; } = "マージ先のアイテムが選択されていません";
-
-        // マージ元のアイテムが選択されていません
-        public virtual string MergeSourceNotSelected { get; } = "マージ元のアイテムが選択されていません";
-
-        // "マージしました"
-        public virtual string Merged { get; } = "マージしました";
-
         // エラーが発生しました。\nメッセージ
         public virtual string ErrorOccurredAndMessage { get; } = "エラーが発生しました。\nメッセージ";
 
@@ -1010,12 +998,6 @@ namespace LibUIPythonAI.Resource {
         // JSON文字列をパースできませんでした
         public virtual string FailedToParseJSONString { get; } = "JSON文字列をパースできませんでした";
 
-        // ClipboardItem
-        // Text以外のアイテムへのマージはできません
-        public virtual string CannotMergeToNonTextItems { get; } = "Text以外のアイテムへのマージはできません";
-
-        // "Text以外のアイテムが含まれているアイテムはマージできません"
-        public virtual string CannotMergeItemsContainingNonTextItems { get; } = "Text以外のアイテムが含まれているアイテムはマージできません";
 
         // 作成日時
         public virtual string CreationDateTime { get; } = "作成日時";

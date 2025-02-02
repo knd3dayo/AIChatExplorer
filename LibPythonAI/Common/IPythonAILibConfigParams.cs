@@ -55,9 +55,6 @@ namespace PythonAILib.Common {
         // AutoDocumentReliabilityCheck
         public bool AutoDocumentReliabilityCheck();
 
-        // AutoMergeItemsBySourceApplicationTitle
-        public bool AutoMergeItemsBySourceApplicationTitle();
-
         // AutoFileExtract
         public bool AutoFileExtract();
         

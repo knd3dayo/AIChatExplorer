@@ -60,10 +60,6 @@ namespace ClipboardApp.ViewModel.Folders.Search {
             // 検索フォルダには貼り付け不可
 
         }
-        public override void MergeItemCommandExecute(ClipboardFolderViewModel folderViewModel, Collection<ClipboardItemViewModel> selectedItems) {
-            // 検索フォルダにはマージ不可
-        }
-
 
         public override void CreateItemCommandExecute() {
             // 検査フォルダにアイテム追加不可

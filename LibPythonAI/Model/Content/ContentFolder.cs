@@ -452,37 +452,5 @@ namespace PythonAILib.Model.Content {
         }
         public virtual void ImportItemsFromJson(string json) { }
 
-        // 指定されたフォルダの全アイテムをマージするコマンド
-        public void MergeItems(ContentItem item) {
-            item.MergeItems(GetItems<ContentItem>());
-        }
-        // 指定されたフォルダの中のSourceApplicationTitleが一致するアイテムをマージするコマンド
-        public void MergeItemsBySourceApplicationTitleCommandExecute(ContentItem newItem) {
-            // SourceApplicationNameが空の場合は何もしない
-            if (string.IsNullOrEmpty(newItem.SourceApplicationName)) {
-                return;
-            }
-            // NewItemのSourceApplicationTitleが空の場合は何もしない
-            if (string.IsNullOrEmpty(newItem.SourceApplicationTitle)) {
-                return;
-            }
-            List<ContentItem> items = GetItems<ContentItem>();
-            if (items.Count == 0) {
-                return;
-            }
-            List<ContentItem> sameTitleItems = [];
-            // マージ先のアイテムのうち、SourceApplicationTitleとSourceApplicationNameが一致するアイテムを取得
-            foreach (var item in items) {
-                if (newItem.SourceApplicationTitle == item.SourceApplicationTitle
-                    && newItem.SourceApplicationName == item.SourceApplicationName) {
-                    // TypeがTextのアイテムのみマージ
-                    if (item.ContentType == PythonAILib.Model.File.ContentTypes.ContentItemTypes.Text) {
-                        sameTitleItems.Add(item);
-                    }
-                }
-            }
-            newItem.MergeItems(sameTitleItems);
-        }
-
     }
 }
