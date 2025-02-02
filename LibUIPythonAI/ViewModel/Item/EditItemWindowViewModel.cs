@@ -6,11 +6,10 @@ using PythonAILib.Model.Content;
 using QAChat.Model;
 using QAChat.View.Tag;
 using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Content {
+namespace QAChat.ViewModel.Item {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
