@@ -1,6 +1,6 @@
 using LibUIPythonAI.Resource;
 
-namespace ImageChat.View {
+namespace LibUIImageChat.View {
     public class ViewStringResources {
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
 

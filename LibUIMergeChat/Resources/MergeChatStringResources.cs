@@ -1,4 +1,4 @@
-namespace MergeChat.Resources {
+namespace LibUIMergeChat.Resources {
     public class MergeChatStringResources {
 
 

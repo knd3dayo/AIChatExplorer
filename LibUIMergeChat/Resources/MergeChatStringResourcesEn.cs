@@ -1,5 +1,5 @@
-namespace MergeChat.Resources {
-    public class MergeChatStringResourcesEn: MergeChatStringResources {
+namespace LibUIMergeChat.Resources {
+    public class MergeChatStringResourcesEn : MergeChatStringResources {
 
         // マージ対象
         public override string MergeTarget { get; set; } = "Merge Target";

@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibUIPythonAI.Resource;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace MergeChat.ViewModel {
+namespace LibUIMergeChat.ViewModel {
     public class MergeTargetTreeViewControlViewModel : ObservableObject {
 
         public MergeTargetTreeViewControlViewModel(Action<ContentFolderViewModel> selectFolderAction, Action<bool> updateIndeterminateAction) {
@@ -33,7 +31,7 @@ namespace MergeChat.ViewModel {
                 } else {
                     _selectedFolder = value;
                     // Load
-                    _selectedFolder.LoadFolder( afterUpdate: () => {
+                    _selectedFolder.LoadFolder(afterUpdate: () => {
                         SelectFolderAction(_selectedFolder);
                     });
                 }

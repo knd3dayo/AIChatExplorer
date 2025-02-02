@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MergeChat.View {
+namespace LibUIMergeChat.View {
     /// <summary>
     /// MainPanelDataGridViewControl.xaml の相互作用ロジック
     /// </summary>

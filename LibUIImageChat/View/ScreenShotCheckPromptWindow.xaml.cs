@@ -1,8 +1,8 @@
 using System.Windows;
 using PythonAILib.Model.Image;
-using ImageChat.ViewModel;
+using LibUIImageChat.ViewModel;
 
-namespace ImageChat.View
+namespace LibUIImageChat.View
 {
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック

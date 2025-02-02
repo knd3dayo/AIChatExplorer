@@ -5,7 +5,7 @@ using PythonAILib.Model.Image;
 using WpfAppCommon.Utils;
 using LibUIPythonAI.ViewModel;
 
-namespace ImageChat.ViewModel {
+namespace LibUIImageChat.ViewModel {
 
     public class ScreenShotCheckPromptWindowViewModel : ChatViewModelBase {
 

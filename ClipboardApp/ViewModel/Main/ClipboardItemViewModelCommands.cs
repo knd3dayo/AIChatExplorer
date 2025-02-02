@@ -5,36 +5,36 @@ using ClipboardApp.Common;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.View.Settings;
+using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using ImageChat.View;
-using MergeChat.View;
+using LibUIImageChat.View;
+using LibUIMergeChat.View;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.ChatMain;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.View.Item;
+using LibUIPythonAI.View.RAG;
+using LibUIPythonAI.View.Search;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Item;
-using LibUIPythonAI.Resource;
-using LibUIPythonAI.View.Folder;
-using LibUIPythonAI.View.ChatMain;
-using LibUIPythonAI.View.RAG;
-using LibUIPythonAI.View.Search;
-using LibUIPythonAI.View.VectorDB;
-using LibUIPythonAI.ViewModel;
-using LibUIPythonAI.ViewModel.Item;
-using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using LibUIPythonAI.View.Item;
-using ClipboardApp.ViewModel.Common;
-using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
 
         public override SimpleDelegateCommand<ContentItemViewModel> OpenItemCommand => new((itemViewModel) => {
-            
+
             ContentFolderViewModel folderViewModel = itemViewModel.FolderViewModel;
 
             EditItemControl editItemControl = EditItemControl.CreateEditItemControl(folderViewModel, itemViewModel,
@@ -116,19 +116,19 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Process when "RAG Management" is clicked in the menu
-        public  void OpenRAGManagementWindowCommand() {
+        public void OpenRAGManagementWindowCommand() {
             // Open RARManagementWindow
             ListRAGSourceWindow.OpenRagManagementWindow();
         }
 
         // Process when "Vector DB Management" is clicked in the menu
-        public  void OpenVectorDBManagementWindowCommand() {
+        public void OpenVectorDBManagementWindowCommand() {
             // Open VectorDBManagementWindow
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Edit, RootFolderViewModelContainer.FolderViewModels, (vectorDBItem) => { });
         }
 
         // Process when "Settings" is clicked in the menu
-        public  void SettingCommandExecute() {
+        public void SettingCommandExecute() {
             // Open UserControl settings window
             SettingsUserControl settingsControl = new();
             Window window = new() {
@@ -272,7 +272,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to perform vector search
-        public  void OpenVectorSearchWindowCommand(ContentItem contentItem) {
+        public void OpenVectorSearchWindowCommand(ContentItem contentItem) {
             // Open vector search result window
             VectorSearchWindowViewModel vectorSearchWindowViewModel = new();
             // Action when a vector DB item is selected
@@ -405,7 +405,7 @@ namespace ClipboardApp.ViewModel.Main {
 
 
         // Command to generate vectors
-        public  void GenerateVectorCommand(List<ContentItem> items, object afterExecuteAction) {
+        public void GenerateVectorCommand(List<ContentItem> items, object afterExecuteAction) {
 
             List<Task> taskList = [];
             // Display ProgressIndicator
@@ -485,7 +485,7 @@ namespace ClipboardApp.ViewModel.Main {
 
 
         // Command to execute a prompt template (複数選択可能)
-        public  void ExecutePromptTemplateCommand(List<ContentItem> contentItems, object afterExecuteAction, PromptItem promptItem) {
+        public void ExecutePromptTemplateCommand(List<ContentItem> contentItems, object afterExecuteAction, PromptItem promptItem) {
             List<Task> taskList = [];
 
             // promptNameからDescriptionを取得
@@ -561,7 +561,7 @@ namespace ClipboardApp.ViewModel.Main {
         }
 
         // Command to generate a task list
-        public  void GenerateTasksCommand(List<ContentItem> items, object afterExecuteAction) {
+        public void GenerateTasksCommand(List<ContentItem> items, object afterExecuteAction) {
             string promptName = SystemDefinedPromptNames.TasksGeneration.ToString();
             PromptItem? promptItem = PromptItem.GetPromptItemByName(promptName);
             if (promptItem == null) {

@@ -5,7 +5,7 @@ using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Utils;
 
-namespace MergeChat.ViewModel {
+namespace LibUIMergeChat.ViewModel {
     public class MergeTargetPanelViewModel : ChatViewModelBase {
 
         private bool _initialized = false;

@@ -4,7 +4,7 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Utils.Common;
 using PythonAILib.Utils.Python;
 
-namespace MergeChat.Common {
+namespace LibUIMergeChat.Common {
     public class MergeChatUtil {
 
         public static ChatResult MergeChat(

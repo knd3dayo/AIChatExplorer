@@ -1,16 +1,15 @@
 <Window
-    x:Class="MergeChat.View.MergeChatMainWindow"
+    x:Class="LibUIMergeChat.View.MergeChatMainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:control="clr-namespace:LibUIPythonAI.View.Common;assembly=LibUIPYthonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:MergeChat.View"
+    xmlns:local="clr-namespace:LibUIMergeChat.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="clr-namespace:MergeChat.ViewModel"
-    xmlns:qc="clr-namespace:MergeChat.View"
-    xmlns:res="clr-namespace:MergeChat.View"
+    xmlns:model="clr-namespace:LibUIMergeChat.ViewModel"
+    xmlns:res="clr-namespace:LibUIMergeChat.View"
     Title="{x:Static res:ViewStringResources.QAChatWindowTitle}"
     Width="800"
     Height="550"
@@ -69,7 +68,7 @@
                 </Menu>
             </materialDesign:ColorZone>
         </StackPanel>
-        <qc:MergeChatControl
+        <local:MergeChatControl
             x:Name="QAChtControl"
             Grid.Row="1"
             DataContext="{Binding MergeChatControlViewModel}" />

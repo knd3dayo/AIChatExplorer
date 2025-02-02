@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace ImageChat.View {
+namespace LibUIImageChat.View {
     /// <summary>
     /// ImageChatControl.xaml の相互作用ロジック
     /// </summary>

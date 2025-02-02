@@ -1,8 +1,8 @@
 using System.Windows;
-using ImageChat.ViewModel;
+using LibUIImageChat.ViewModel;
 using PythonAILib.Model.Content;
 
-namespace ImageChat.View {
+namespace LibUIImageChat.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

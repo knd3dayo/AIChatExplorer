@@ -1,7 +1,7 @@
-using MergeChat.Resources;
 using LibUIPythonAI.Resource;
+using LibUIMergeChat.Resources;
 
-namespace MergeChat.View {
+namespace LibUIMergeChat.View {
     public class ViewStringResources {
         // Open
         public static string Open => CommonStringResources.Instance.Open;

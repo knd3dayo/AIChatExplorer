@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace MergeChat.View {
+namespace LibUIMergeChat.View {
     /// <summary>
     /// MainWindowListView1.xaml の相互作用ロジック
     /// </summary>

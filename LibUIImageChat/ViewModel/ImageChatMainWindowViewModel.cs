@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using ImageChat.View;
+using LibUIImageChat.View;
 using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
 using LibUIPythonAI.ViewModel.PromptTemplate;
@@ -14,7 +14,7 @@ using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
 
-namespace ImageChat.ViewModel {
+namespace LibUIImageChat.ViewModel {
     public class ImageChatMainWindowViewModel : ChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {

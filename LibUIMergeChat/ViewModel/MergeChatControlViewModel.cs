@@ -6,7 +6,6 @@ using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
 using LibUIPythonAI.View.PromptTemplate;
-using MergeChat.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
@@ -20,8 +19,9 @@ using LibUIPythonAI.View.Folder;
 using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
+using LibUIMergeChat.Common;
 
-namespace MergeChat.ViewModel {
+namespace LibUIMergeChat.ViewModel {
     public class MergeChatControlViewModel : ChatViewModelBase {
 
 
@@ -137,7 +137,7 @@ namespace MergeChat.ViewModel {
             }
             set {
                 try {
-                    int count = Int32.Parse(value);
+                    int count = int.Parse(value);
                     _SplitTokenCount = count;
                 } catch (Exception) {
                     return;
@@ -209,7 +209,7 @@ namespace MergeChat.ViewModel {
         }
 
         private ChatRequestContext CreateChatRequestContext() {
-            int splitTokenCount = Int32.Parse(SplitTokenCount);
+            int splitTokenCount = int.Parse(SplitTokenCount);
             // ベクトルDB検索結果最大値をVectorSearchPropertyに設定
             foreach (var item in VectorSearchProperties) {
                 item.TopK = VectorDBSearchResultMax;

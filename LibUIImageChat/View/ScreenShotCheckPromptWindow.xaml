@@ -1,19 +1,19 @@
 <Window
-    x:Class="ImageChat.View.ScreenShotCheckPromptWindow"
+    x:Class="LibUIImageChat.View.ScreenShotCheckPromptWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cc="clr-namespace:LibUIPythonAI.View.Common;assembly=LibUIPythonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:ImageChat.ViewModel"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:res="clr-namespace:ImageChat.View"
+    xmlns:model="clr-namespace:LibUIImageChat.ViewModel"
+    xmlns:res="clr-namespace:LibUIImageChat.View"
     x:Name="root"
     Title="{x:Static res:ViewStringResources.ScreenShotCheckPromptWindowTitle}"
     Width="800"
     Height="450"
-    d:DataContext="d:DdesignInstance Type=local:ScreenShotCheckPromptWindowViewModel"
+    d:DataContext="d:DdesignInstance Type=model:ScreenShotCheckPromptWindowViewModel"
     mc:Ignorable="d">
     <Window.Resources>
         <Style BasedOn="{StaticResource MaterialDesignFlatLightBgButton}" TargetType="{x:Type Button}">

@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.ViewModel.Item;
-using MergeChat.ViewModel;
 using LibUIPythonAI.ViewModel.Folder;
+using LibUIMergeChat.ViewModel;
 
-namespace MergeChat.View {
+namespace LibUIMergeChat.View {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -14,7 +14,7 @@ namespace MergeChat.View {
         }
 
         public static void OpenWindow(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
-            MergeChat.View.MergeChatMainWindow openAIChatWindow = new();
+            LibUIMergeChat.View.MergeChatMainWindow openAIChatWindow = new();
             MergeChatWindowViewModel mainWindowViewModel = new(folderViewModel, selectedItems);
             openAIChatWindow.DataContext = mainWindowViewModel;
 
