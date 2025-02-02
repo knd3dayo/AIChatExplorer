@@ -1,8 +1,7 @@
 using PythonAILib.Model.Tag;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.Tag {
-    public class TagItemViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.Tag {
+    public class TagItemViewModel : ChatViewModelBase {
 
         // コンストラクタ
         public TagItemViewModel(TagItem tagItem) {

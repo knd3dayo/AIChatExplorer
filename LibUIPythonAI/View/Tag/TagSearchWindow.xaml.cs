@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.ViewModel.Tag;
+using LibUIPythonAI.ViewModel.Tag;
 
 namespace QAChat.View.Tag {
     /// <summary>

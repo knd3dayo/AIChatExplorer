@@ -2,21 +2,17 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.File;
 using WpfAppCommon.Utils;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.RAG {
+namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class SelectCommitWindowViewModel : QAChatViewModelBase
-    {
-        public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action)
-        {
+    public class SelectCommitWindowViewModel : ChatViewModelBase {
+        public SelectCommitWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<string> action) {
             this.itemViewModel = itemViewModel;
             // コミット情報を取得
             CommitInfoList.Clear();
-            foreach (var commit in itemViewModel.Item.GetCommitList())
-            {
+            foreach (var commit in itemViewModel.Item.GetCommitList()) {
                 CommitInfoList.Add(commit);
             }
             afterUpdate = action;
@@ -30,14 +26,11 @@ namespace QAChat.ViewModel.RAG {
 
         // 選択中のコミットハッシュ
         private CommitInfo? selectedCommitInfo;
-        public CommitInfo? SelectedCommitInfo
-        {
-            get
-            {
+        public CommitInfo? SelectedCommitInfo {
+            get {
                 return selectedCommitInfo;
             }
-            set
-            {
+            set {
                 selectedCommitInfo = value;
                 OnPropertyChanged(nameof(SelectedCommitInfo));
             }
@@ -45,11 +38,9 @@ namespace QAChat.ViewModel.RAG {
         private Action<string> afterUpdate = (hash) => { };
 
         // OKボタン
-        public SimpleDelegateCommand<Window> OkCommand => new((window) =>
-        {
+        public SimpleDelegateCommand<Window> OkCommand => new((window) => {
             // 選択中のコミットハッシュが空の場合はエラー
-            if (SelectedCommitInfo == null)
-            {
+            if (SelectedCommitInfo == null) {
                 LogWrapper.Error(StringResources.SelectCommitPlease);
                 return;
             }

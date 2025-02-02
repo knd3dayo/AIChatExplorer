@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using QAChat.Model;
+using LibUIPythonAI.ViewModel;
 using QAChat.Resource;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.Folder {
 
-    public class FolderSelectWindowViewModel : QAChatViewModelBase {
+    public class FolderSelectWindowViewModel : ChatViewModelBase {
 
         public FolderSelectWindowViewModel(ObservableCollection<ContentFolderViewModel> rootFolderViewModelList, Action<ContentFolderViewModel, bool> _FolderSelectedAction) {
 

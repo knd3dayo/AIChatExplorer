@@ -4,13 +4,11 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using QAChat.Model;
 using QAChat.ViewModel.Common;
-using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDB {
-    public class VectorSearchWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.VectorDB {
+    public class VectorSearchWindowViewModel : ChatViewModelBase {
 
         public VectorSearchWindowViewModel() {
             InputText = string.Empty;

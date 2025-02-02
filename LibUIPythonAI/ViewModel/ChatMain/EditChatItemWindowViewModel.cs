@@ -1,9 +1,7 @@
-using System.Windows;
 using PythonAILib.Model.Chat;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.QAChatMain {
-    public class EditChatItemWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.ChatMain {
+    public class EditChatItemWindowViewModel : ChatViewModelBase {
 
         public ChatMessage ChatItem { get; set; }
 

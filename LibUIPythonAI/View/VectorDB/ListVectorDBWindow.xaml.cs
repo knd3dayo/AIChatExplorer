@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.VectorDB;
 using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 
 namespace QAChat.View.VectorDB
 {

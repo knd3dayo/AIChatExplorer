@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
-using QAChat.Model;
+using LibUIPythonAI.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public class MergeChatWindowViewModel : QAChatViewModelBase {
+    public class MergeChatWindowViewModel : ChatViewModelBase {
 
         //初期化
         public MergeChatWindowViewModel(ContentFolderViewModel folderViewModel, ObservableCollection<ContentItemViewModel> selectedItems) {
@@ -14,7 +14,7 @@ namespace MergeChat.ViewModel {
 
             MergeTargetPanelViewModel mergeTargetPanelViewModel = new(folderViewModel, selectedItems, UpdateIndeterminate);
 
-            // QAChatControlViewModelを生成
+            // ChatControlViewModelを生成
             MergeChatControlViewModel = new(mergeTargetPanelViewModel);
 
         }

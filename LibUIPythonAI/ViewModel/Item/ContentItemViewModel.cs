@@ -1,12 +1,12 @@
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Content;
 using PythonAILibUI.ViewModel.Item;
-using QAChat.Model;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.Item {
-    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItem contentItemBase) : QAChatViewModelBase {
+    public abstract class ContentItemViewModel(ContentFolderViewModel folderViewModel, ContentItem contentItemBase) : ChatViewModelBase {
         public ContentItem ContentItem { get; set; } = contentItemBase;
 
         // FolderViewModel

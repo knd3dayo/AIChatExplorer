@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.VectorDB;
-using QAChat.Model;
 using QAChat.View.VectorDB;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.Folder {
-    public class FolderEditWindowViewModel : QAChatViewModelBase {
+    public class FolderEditWindowViewModel : ChatViewModelBase {
 
         // 起動時の処理
         public FolderEditWindowViewModel(ContentFolderViewModel folderViewModel, Action afterUpdate) {

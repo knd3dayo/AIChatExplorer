@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using QAChat.Model;
+using LibUIPythonAI.ViewModel;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public class MergeTargetPanelViewModel : QAChatViewModelBase {
+    public class MergeTargetPanelViewModel : ChatViewModelBase {
 
         private bool _initialized = false;
 

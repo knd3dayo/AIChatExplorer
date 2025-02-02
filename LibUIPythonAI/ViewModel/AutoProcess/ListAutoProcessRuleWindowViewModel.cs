@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
-using QAChat.Model;
 using QAChat.View.AutoProcessRule;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoProcess {
-    public class ListAutoProcessRuleWindowViewModel : QAChatViewModelBase {
+    public class ListAutoProcessRuleWindowViewModel : ChatViewModelBase {
 
         // ルールの一覧
         public ObservableCollection<AutoProcessRule> AutoProcessRules { get; set; } = [];

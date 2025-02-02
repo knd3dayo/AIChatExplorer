@@ -1,15 +1,15 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Content;
-using QAChat.Model;
 using QAChat.View.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 
 namespace QAChat.ViewModel.Folder {
-    public abstract class ContentFolderViewModel(ContentFolder folder) : QAChatViewModelBase {
+    public abstract class ContentFolderViewModel(ContentFolder folder) : ChatViewModelBase {
 
 
         // フォルダ作成コマンドの実装

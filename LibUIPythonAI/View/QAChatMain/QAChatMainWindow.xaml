@@ -71,7 +71,7 @@
         <qc:QAChatControl
             x:Name="QAChtControl"
             Grid.Row="1"
-            DataContext="{Binding QAChatControlViewModel}" />
+            DataContext="{Binding ChatControlViewModel}" />
         <control:MyStatusBar Grid.Row="2" VerticalAlignment="Bottom" />
     </Grid>
 </Window>

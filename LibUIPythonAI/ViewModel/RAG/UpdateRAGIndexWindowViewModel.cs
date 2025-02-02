@@ -4,10 +4,9 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
 using QAChat.View.RAG;
 using WpfAppCommon.Utils;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.RAG {
-    internal class UpdateRAGIndexWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.RAG {
+    internal class UpdateRAGIndexWindowViewModel : ChatViewModelBase {
         public UpdateRAGIndexWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> action) {
 
             this.itemViewModel = itemViewModel;

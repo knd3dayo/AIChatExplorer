@@ -1,7 +1,6 @@
 using System.Windows;
+using LibUIPythonAI.ViewModel.ChatMain;
 using PythonAILib.Model.Chat;
-using QAChat.ViewModel;
-using QAChat.ViewModel.QAChatMain;
 
 namespace QAChat.View.QAChatMain {
     /// <summary>

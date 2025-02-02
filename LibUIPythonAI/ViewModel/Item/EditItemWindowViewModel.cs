@@ -1,9 +1,9 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using QAChat.Model;
 using QAChat.View.Tag;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Model;
@@ -13,7 +13,7 @@ namespace QAChat.ViewModel.Item {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>
-    public class EditItemWindowViewModel : QAChatViewModelBase {
+    public class EditItemWindowViewModel : ChatViewModelBase {
 
         public EditItemWindowViewModel(ContentFolderViewModel folderViewModel, ContentItemViewModel itemViewModel, Action afterUpdate) {
 

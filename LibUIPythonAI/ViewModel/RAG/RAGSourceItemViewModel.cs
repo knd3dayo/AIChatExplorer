@@ -1,12 +1,8 @@
 using System.Collections.ObjectModel;
-using PythonAILib.Common;
-using PythonAILib.Model.File;
 using PythonAILib.Model.VectorDB;
-using QAChat.Model;
 
-namespace QAChat.ViewModel.RAG
-{
-    public class RAGSourceItemViewModel(RAGSourceItem item) : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.RAG {
+    public class RAGSourceItemViewModel(RAGSourceItem item) : ChatViewModelBase {
         public RAGSourceItem Item { get; set; } = item;
         // SourceURL
         public string SourceURL {

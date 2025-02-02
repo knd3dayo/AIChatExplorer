@@ -1,10 +1,10 @@
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using QAChat.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
-    public class EditAutoGenLLMConfigViewModel : QAChatViewModelBase {
+    public class EditAutoGenLLMConfigViewModel : ChatViewModelBase {
         public EditAutoGenLLMConfigViewModel(AutoGenLLMConfig autoGenLLMConfig, Action afterUpdate) {
             AutoGenLLMConfig = autoGenLLMConfig;
             AfterUpdate = afterUpdate;

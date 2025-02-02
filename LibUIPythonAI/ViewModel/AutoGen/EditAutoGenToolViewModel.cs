@@ -1,12 +1,12 @@
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.AutoGen;
-using QAChat.Model;
 using QAChat.Resource;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
-    public class EditAutoGenToolViewModel : QAChatViewModelBase {
+    public class EditAutoGenToolViewModel : ChatViewModelBase {
 
         public EditAutoGenToolViewModel(AutoGenTool autoGenTool, Action afterUpdate) {
             AutoGenTool = autoGenTool;

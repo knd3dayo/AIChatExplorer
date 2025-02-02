@@ -2,15 +2,14 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
-using QAChat.Model;
 using QAChat.View.RAG;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.RAG {
+namespace LibUIPythonAI.ViewModel.RAG {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListRAGSourceWindowViewModel : QAChatViewModelBase {
+    public class ListRAGSourceWindowViewModel : ChatViewModelBase {
 
         public ListRAGSourceWindowViewModel() {
             // RagSourceItemのリストを初期化

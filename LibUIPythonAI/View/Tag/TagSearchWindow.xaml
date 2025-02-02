@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:local="clr-namespace:QAChat.ViewModel.Tag"
+    xmlns:local="clr-namespace:LibUIPythonAI.ViewModel.Tag"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:res="clr-namespace:QAChat.View.Tag"
     Title="{x:Static res:ViewStringResources.TagSearch}"

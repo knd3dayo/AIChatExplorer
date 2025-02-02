@@ -2,12 +2,11 @@ using System.Windows;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using PythonAILibUI.ViewModel.Folder;
-using QAChat.Model;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Search {
-    public class SearchWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.Search {
+    public class SearchWindowViewModel : ChatViewModelBase {
         public SearchWindowViewModel(
             SearchRule searchConditionRule,
             ContentFolder searchFolder, bool isSearchFolder,

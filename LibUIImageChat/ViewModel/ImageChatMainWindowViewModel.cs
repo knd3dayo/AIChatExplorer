@@ -3,19 +3,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using ImageChat.View;
+using LibUIPythonAI.ViewModel;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
-using QAChat.Model;
 using QAChat.View.PromptTemplate;
 using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
 namespace ImageChat.ViewModel {
-    public class ImageChatMainWindowViewModel : QAChatViewModelBase {
+    public class ImageChatMainWindowViewModel : ChatViewModelBase {
         // コンストラクタ
         public ImageChatMainWindowViewModel(ContentItem clipboardItem, Action afterUpdate) {
             AfterUpdate = afterUpdate;

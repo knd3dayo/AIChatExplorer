@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel;
 using MergeChat.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
@@ -10,7 +11,6 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using QAChat.Model;
 using QAChat.Resource;
 using QAChat.View.Folder;
 using QAChat.View.PromptTemplate;
@@ -18,11 +18,11 @@ using QAChat.View.VectorDB;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using QAChat.ViewModel.PromptTemplate;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public class MergeChatControlViewModel : QAChatViewModelBase {
+    public class MergeChatControlViewModel : ChatViewModelBase {
 
 
         //初期化

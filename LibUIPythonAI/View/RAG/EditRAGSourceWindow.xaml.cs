@@ -1,8 +1,8 @@
 using System.Windows;
-using QAChat.ViewModel.RAG;
+using LibUIPythonAI.ViewModel.RAG;
+using LibUIPythonAI.ViewModel.RAG;
 
-namespace QAChat.View.RAG
-{
+namespace QAChat.View.RAG {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

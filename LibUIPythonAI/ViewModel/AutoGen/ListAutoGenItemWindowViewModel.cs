@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using QAChat.Model;
 using QAChat.View.AutoGen;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
-    public class ListAutoGenItemWindowViewModel : QAChatViewModelBase {
+    public class ListAutoGenItemWindowViewModel : ChatViewModelBase {
 
         public ObservableCollection<AutoGenAgent> AutoGenAgents { get; set; } = [];
 

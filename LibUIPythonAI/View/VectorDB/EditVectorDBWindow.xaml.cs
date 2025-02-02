@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 
 namespace QAChat.View.VectorDB
 {

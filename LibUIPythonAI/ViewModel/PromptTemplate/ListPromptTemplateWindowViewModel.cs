@@ -1,14 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
-using QAChat.Model;
 using QAChat.View.PromptTemplate;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.PromptTemplate {
-    public class ListPromptTemplateWindowViewModel : QAChatViewModelBase {
+    public class ListPromptTemplateWindowViewModel : ChatViewModelBase {
         // 初期化
 
         public enum ActionModeEum {

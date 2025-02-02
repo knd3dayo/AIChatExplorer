@@ -1,10 +1,9 @@
 using System.Windows;
-using QAChat.Model;
 using QAChat.View.RAG;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.RAG {
-    public class EditRAGSourceWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.RAG {
+    public class EditRAGSourceWindowViewModel : ChatViewModelBase {
 
         // 初期化
         public EditRAGSourceWindowViewModel(RAGSourceItemViewModel itemViewModel, Action<RAGSourceItemViewModel> afterUpdate) {

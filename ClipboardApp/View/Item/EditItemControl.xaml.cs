@@ -1,7 +1,6 @@
 using System.Windows.Controls;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
-using QAChat.ViewModel.Content;
 
 namespace ClipboardApp.View.Item {
     /// <summary>

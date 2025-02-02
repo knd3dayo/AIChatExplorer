@@ -1,6 +1,6 @@
 using System.Windows;
 using PythonAILib.Model.VectorDB;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 
 namespace QAChat.View.VectorDB {
     /// <summary>

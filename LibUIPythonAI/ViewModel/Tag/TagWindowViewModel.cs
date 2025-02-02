@@ -3,12 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Tag;
-using QAChat.Model;
 using QAChat.View.Tag;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Tag {
-    public class TagWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.Tag {
+    public class TagWindowViewModel : ChatViewModelBase {
 
         public ObservableCollection<TagItemViewModel> TagList { get; set; } = [];
 

@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
-using QAChat.Model;
 
 namespace QAChat.ViewModel.AutoProcess {
-    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : QAChatViewModelBase {
+    public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ChatViewModelBase {
         public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 
         public string Name {

@@ -3,15 +3,15 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LibGit2Sharp;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Content;
-using QAChat.Model;
 using QAChat.Resource;
 using QAChat.ViewModel.Folder;
 using QAChat.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
-    public class MergeTargetDataGridViewControlViewModel : QAChatViewModelBase {
+    public class MergeTargetDataGridViewControlViewModel : ChatViewModelBase {
 
         public MergeTargetDataGridViewControlViewModel(Action<bool> updateIndeterminateAction) {
             UpdateIndeterminateAction = updateIndeterminateAction;

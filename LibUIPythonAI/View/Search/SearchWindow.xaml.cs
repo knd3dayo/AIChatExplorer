@@ -1,7 +1,7 @@
 using System.Windows;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
-using QAChat.ViewModel.Search;
+using LibUIPythonAI.ViewModel.Search;
 
 namespace QAChat.View.Search {
     /// <summary>

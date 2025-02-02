@@ -1,13 +1,13 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
-using QAChat.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.PromptTemplate {
-    public class EditPromptItemWindowViewModel : QAChatViewModelBase {
+    public class EditPromptItemWindowViewModel : ChatViewModelBase {
 
 
         // 初期化

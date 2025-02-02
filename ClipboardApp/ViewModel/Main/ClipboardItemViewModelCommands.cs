@@ -24,7 +24,7 @@ using QAChat.View.Search;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel;
 using QAChat.ViewModel.Item;
-using QAChat.ViewModel.VectorDB;
+using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 using ClipboardApp.View.Item;

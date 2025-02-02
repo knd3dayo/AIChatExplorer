@@ -1,9 +1,8 @@
 using System.Windows;
-using QAChat.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Tag {
-    public class TagSearchWindowViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.Tag {
+    public class TagSearchWindowViewModel : ChatViewModelBase {
         private Action<string, bool> _afterUpdate = (tag, exclude) => { };
 
         public TagSearchWindowViewModel(Action<string, bool> afterUpdate) {

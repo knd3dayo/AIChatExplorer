@@ -1,12 +1,13 @@
 using System.Windows;
 using PythonAILib.Common;
+using QAChat;
 using QAChat.Resource;
 
-namespace QAChat.Model {
-    public class QAChatViewModelBase : CommonViewModelBase {
+namespace LibUIPythonAI.ViewModel {
+    public class ChatViewModelBase : CommonViewModelBase {
 
         // CommonStringResources
-        public  static CommonStringResources StringResources {
+        public static CommonStringResources StringResources {
             get {
                 // 文字列リソースの言語設定
                 PythonAILibManager? libManager = PythonAILibManager.Instance;

@@ -1,6 +1,6 @@
 using System.Windows;
 using PythonAILib.Model.Content;
-using QAChat.ViewModel.Tag;
+using LibUIPythonAI.ViewModel.Tag;
 
 namespace QAChat.View.Tag
 {

@@ -2,16 +2,15 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
-using QAChat.Model;
 using QAChat.View.VectorDB;
 using QAChat.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.VectorDB {
+namespace LibUIPythonAI.ViewModel.VectorDB {
     /// <summary>
     /// RAGのドキュメントソースとなるGitリポジトリ、作業ディレクトリを管理するためのウィンドウのViewModel
     /// </summary>
-    public class ListVectorDBWindowViewModel : QAChatViewModelBase {
+    public class ListVectorDBWindowViewModel : ChatViewModelBase {
 
         public ListVectorDBWindowViewModel(ActionModeEnum mode, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action<VectorSearchProperty> callBackup) {
 
@@ -63,7 +62,7 @@ namespace QAChat.ViewModel.VectorDB {
         }
 
         // FolderSelectWindowViewModel
-        public FolderSelectWindowViewModel FolderSelectWindowViewModel { get; set; } 
+        public FolderSelectWindowViewModel FolderSelectWindowViewModel { get; set; }
         // ContentFolderViewModel 
         public ContentFolderViewModel? FolderViewModel { get; set; }
 

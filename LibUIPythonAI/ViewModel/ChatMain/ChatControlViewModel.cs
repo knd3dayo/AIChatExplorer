@@ -1,26 +1,26 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using QAChat.Model;
 using QAChat.View.PromptTemplate;
 using QAChat.View.QAChatMain;
 using QAChat.View.VectorDB;
+using QAChat.ViewModel;
 using QAChat.ViewModel.PromptTemplate;
-using QAChat.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.QAChatMain {
-    public class QAChatControlViewModel : QAChatViewModelBase {
+namespace LibUIPythonAI.ViewModel.ChatMain {
+    public class ChatControlViewModel : ChatViewModelBase {
 
 
         //初期化
-        public QAChatControlViewModel(QAChatStartupProps props) {
+        public ChatControlViewModel(QAChatStartupProps props) {
 
             QAChatStartupProps = props;
             // VectorDBItemsを設定 ClipboardFolderのベクトルDBを取得
@@ -93,7 +93,7 @@ namespace QAChat.ViewModel.QAChatMain {
             }
             set {
                 try {
-                    int count = Int32.Parse(value);
+                    int count = int.Parse(value);
                     _SplitTokenCount = count;
                 } catch (Exception) {
                     return;
@@ -232,13 +232,13 @@ namespace QAChat.ViewModel.QAChatMain {
         }
 
         private ChatRequestContext CreateChatRequestContext() {
-            int splitTokenCount = Int32.Parse(SplitTokenCount);
+            int splitTokenCount = int.Parse(SplitTokenCount);
             ChatRequestContext chatRequestContext = ChatRequestContext.CreateDefaultChatRequestContext(
                 _chatMode, _splitMode, splitTokenCount, UseVectorDB, [.. VectorSearchProperties], AutoGenProperties, PromptText
                 );
             return chatRequestContext;
         }
-        
+
         //
         public Visibility VectorDBItemVisibility => Tools.BoolToVisibility(UseVectorDB);
 

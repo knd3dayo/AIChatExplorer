@@ -1,17 +1,17 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILibUI.ViewModel.Folder;
-using QAChat.Model;
 using QAChat.Resource;
 using QAChat.View.Folder;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.Folder {
-    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : QAChatViewModelBase {
+    public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {
 
         // ImportItems
         public ObservableCollection<ExportImportItem> ImportItems { get; set; } = CreateImportItems();

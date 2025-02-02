@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using QAChat.Model;
 using WpfAppCommon.Utils;
 
 namespace QAChat.ViewModel.AutoGen {
-    public class EditAutoGenGroupChatViewModel : QAChatViewModelBase {
+    public class EditAutoGenGroupChatViewModel : ChatViewModelBase {
 
 
         public EditAutoGenGroupChatViewModel(AutoGenGroupChat autoGenGroupChat, Action afterUpdate) {
