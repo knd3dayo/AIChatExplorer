@@ -1,6 +1,6 @@
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
-namespace QAChat.View.RAG {
+namespace LibUIPythonAI.View.RAG {
     public class ViewStringResources {
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;
 

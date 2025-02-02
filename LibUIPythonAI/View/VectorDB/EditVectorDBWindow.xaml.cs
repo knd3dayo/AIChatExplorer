@@ -1,7 +1,7 @@
 using System.Windows;
 using LibUIPythonAI.ViewModel.VectorDB;
 
-namespace QAChat.View.VectorDB
+namespace LibUIPythonAI.View.VectorDB
 {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック

@@ -5,7 +5,7 @@ using ClipboardApp.ViewModel.Folders.FileSystem;
 using ClipboardApp.ViewModel.Folders.Mail;
 using ClipboardApp.ViewModel.Folders.Search;
 using ClipboardApp.ViewModel.Folders.ShortCut;
-using PythonAILibUI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main {
     public class ClipboardAppRootFolderViewModelContainer : RootFolderViewModelContainer {

@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using WpfAppCommon.Control.Editor;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Resource {
+namespace LibUIPythonAI.Resource {
     public abstract class CommonViewModelBase : ObservableObject {
 
         private static MyTextBox.TextWrappingModeEnum _textWrappingMode = MyTextBox.TextWrappingModeEnum.Wrap;

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using QAChat.Abstract;
+using LibUIPythonAI.Abstract;
 
-namespace QAChat {
+namespace LibUIPythonAI {
     public class QAChatManager {
     
         public static QAChatManager? Instance { get; private set; }

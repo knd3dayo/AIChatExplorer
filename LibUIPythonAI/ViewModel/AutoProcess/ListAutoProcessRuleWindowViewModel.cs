@@ -2,11 +2,11 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
-using QAChat.View.AutoProcessRule;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.AutoProcessRule;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoProcess {
+namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class ListAutoProcessRuleWindowViewModel : ChatViewModelBase {
 
         // ルールの一覧

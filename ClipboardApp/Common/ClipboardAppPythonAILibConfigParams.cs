@@ -3,7 +3,7 @@ using System.Windows;
 using ClipboardApp.Factory;
 using ClipboardApp.Settings;
 using PythonAILib.Common;
-using QAChat.Abstract;
+using LibUIPythonAI.Abstract;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Common {

@@ -1,6 +1,6 @@
 using System.Windows.Controls;
 
-namespace QAChat.View.QAChatMain {
+namespace LibUIPythonAI.View.QAChatMain {
     /// <summary>
     /// QAChatControl.xaml の相互作用ロジック
     /// </summary>

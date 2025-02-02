@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LibUIPythonAI.ViewModel.RAG;
 
-namespace QAChat.View.RAG
+namespace LibUIPythonAI.View.RAG
 {
     /// <summary>
     /// UpdateRAGIndexWindow.xaml の相互作用ロジック

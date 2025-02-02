@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.View.RAG;
+using LibUIPythonAI.View.RAG;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.RAG {

@@ -2,7 +2,7 @@ using System.Windows;
 using LibUIPythonAI.ViewModel.ChatMain;
 using PythonAILib.Model.Chat;
 
-namespace QAChat.View.QAChatMain {
+namespace LibUIPythonAI.View.QAChatMain {
     /// <summary>
     /// EditChatItem.xaml の相互作用ロジック
     /// </summary>

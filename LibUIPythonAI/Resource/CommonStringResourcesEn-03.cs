@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QAChat.Resource {
+namespace LibUIPythonAI.Resource {
     public partial class CommonStringResourcesEn : CommonStringResources  {
 
         #region QAChatControl

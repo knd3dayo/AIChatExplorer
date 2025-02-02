@@ -1,7 +1,7 @@
 using ClipboardApp.Factory;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Search;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.Model.Folder {
     public class FolderManager {

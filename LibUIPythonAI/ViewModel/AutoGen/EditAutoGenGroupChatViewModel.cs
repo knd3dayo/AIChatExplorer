@@ -4,7 +4,7 @@ using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenGroupChatViewModel : ChatViewModelBase {
 
 

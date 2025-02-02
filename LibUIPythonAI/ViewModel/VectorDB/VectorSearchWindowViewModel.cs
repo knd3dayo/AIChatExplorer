@@ -4,7 +4,7 @@ using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using QAChat.ViewModel.Common;
+using LibUIPythonAI.ViewModel.Common;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {

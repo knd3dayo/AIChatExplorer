@@ -14,22 +14,21 @@ using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.Search;
-using PythonAILibUI.ViewModel.Folder;
 using PythonAILibUI.ViewModel.Item;
-using QAChat.Resource;
-using QAChat.View.Folder;
-using QAChat.View.QAChatMain;
-using QAChat.View.RAG;
-using QAChat.View.Search;
-using QAChat.View.VectorDB;
-using QAChat.ViewModel;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.View.QAChatMain;
+using LibUIPythonAI.View.RAG;
+using LibUIPythonAI.View.Search;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Item;
 using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
-using ClipboardApp.View.Item;
+using LibUIPythonAI.View.Item;
 using ClipboardApp.ViewModel.Common;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Main {
     public class ClipboardItemViewModelCommands : ContentItemViewModelCommands {
@@ -612,7 +611,7 @@ namespace ClipboardApp.ViewModel.Main {
                 // ExportChatアクション
                 ExportChatCommand = (chatHistory) => {
 
-                    FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
+                    FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folder, finished) => {
                         if (finished) {
                             ClipboardItem chatHistoryItem = new(folder.Folder.Id);
                             // タイトルを日付 + 元のタイトルにする

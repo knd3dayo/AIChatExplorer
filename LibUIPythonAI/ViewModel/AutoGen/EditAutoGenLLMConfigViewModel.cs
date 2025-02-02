@@ -3,7 +3,7 @@ using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenLLMConfigViewModel : ChatViewModelBase {
         public EditAutoGenLLMConfigViewModel(AutoGenLLMConfig autoGenLLMConfig, Action afterUpdate) {
             AutoGenLLMConfig = autoGenLLMConfig;

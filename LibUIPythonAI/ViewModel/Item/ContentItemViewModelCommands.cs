@@ -1,6 +1,6 @@
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace PythonAILibUI.ViewModel.Item {

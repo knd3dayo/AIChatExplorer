@@ -1,4 +1,4 @@
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.View.Main {
     public class ViewStringResources {

@@ -5,7 +5,7 @@ using ClipboardApp.Settings;
 using System.Windows;
 using System.Windows.Controls;
 using WpfAppCommon.Utils;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Prompt;
 using ClipboardApp.ViewModel.Folders.Clipboard;

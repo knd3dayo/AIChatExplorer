@@ -1,4 +1,4 @@
-using QAChat.ViewModel;
+using LibUIPythonAI.ViewModel;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {

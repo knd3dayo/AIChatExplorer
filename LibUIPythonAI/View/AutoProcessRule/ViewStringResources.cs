@@ -1,6 +1,6 @@
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
-namespace QAChat.View.AutoProcessRule {
+namespace LibUIPythonAI.View.AutoProcessRule {
     public class ViewStringResources {
 
         public static CommonStringResources CommonStringResources { get; set; } = CommonStringResources.Instance;

@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using ClipboardApp.ViewModel.Folders.FileSystem;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Folders.ShortCut {
     public class ShortCutFolderViewModel(FileSystemFolder clipboardItemFolder) : FileSystemFolderViewModel(clipboardItemFolder) {

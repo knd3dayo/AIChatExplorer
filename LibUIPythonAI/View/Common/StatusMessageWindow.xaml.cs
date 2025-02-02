@@ -1,8 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
-using QAChat.ViewModel.Common;
+using LibUIPythonAI.ViewModel.Common;
 
-namespace QAChat.View.Common {
+namespace LibUIPythonAI.View.Common {
     /// <summary>
     /// StatusMessageWindow.xaml の相互作用ロジック
     /// </summary>

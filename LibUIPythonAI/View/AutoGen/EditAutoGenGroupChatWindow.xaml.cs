@@ -1,8 +1,8 @@
 using System.Windows;
 using PythonAILib.Model.AutoGen;
-using QAChat.ViewModel.AutoGen;
+using LibUIPythonAI.ViewModel.AutoGen;
 
-namespace QAChat.View.AutoGen {
+namespace LibUIPythonAI.View.AutoGen {
     /// <summary>
     /// EditAutoGenGroupWindow.xaml の相互作用ロジック
     /// </summary>

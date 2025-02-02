@@ -2,7 +2,7 @@ using System.Windows;
 using PythonAILib.Model.VectorDB;
 using LibUIPythonAI.ViewModel.VectorDB;
 
-namespace QAChat.View.VectorDB {
+namespace LibUIPythonAI.View.VectorDB {
     /// <summary>
     /// VectorSearchWindow.xaml の相互作用ロジック
     /// </summary>

@@ -1,4 +1,4 @@
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace ImageChat.View {
     public class ViewStringResources {

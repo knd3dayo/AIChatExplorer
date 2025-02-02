@@ -43,7 +43,7 @@ namespace ClipboardApp.ViewModel.Folders.Clipboard {
                 // エクスポート/インポート
                 MenuItem exportImportMenuItem = new() {
                     Header = StringResources.ExportImport,
-                    Command = QAChat.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
+                    Command = LibUIPythonAI.ViewModel.Folder.ContentFolderViewModel.ExportImportFolderCommand,
                     CommandParameter = ClipboardFolderViewModel
                 };
                 menuItems.Add(exportImportMenuItem);

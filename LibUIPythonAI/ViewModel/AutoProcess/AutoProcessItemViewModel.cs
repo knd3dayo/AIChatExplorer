@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
 
-namespace QAChat.ViewModel.AutoProcess {
+namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class AutoProcessItemViewModel(SystemAutoProcessItem autoProcessItem) : ChatViewModelBase {
         public SystemAutoProcessItem AutoProcessItem { get; set; } = autoProcessItem;
 

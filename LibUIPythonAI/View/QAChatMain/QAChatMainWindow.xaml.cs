@@ -1,8 +1,8 @@
 using System.Windows;
 using LibUIPythonAI.ViewModel.ChatMain;
-using QAChat.ViewModel;
+using LibUIPythonAI.ViewModel;
 
-namespace QAChat.View.QAChatMain {
+namespace LibUIPythonAI.View.QAChatMain {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -12,7 +12,7 @@ namespace QAChat.View.QAChatMain {
         }
 
         public static void OpenOpenAIChatWindow(QAChatStartupProps props) {
-            QAChat.View.QAChatMain.QAChatMainWindow openAIChatWindow = new();
+            LibUIPythonAI.View.QAChatMain.QAChatMainWindow openAIChatWindow = new();
             ChatWindowViewModel mainWindowViewModel = new(props);
             openAIChatWindow.DataContext = mainWindowViewModel;
 

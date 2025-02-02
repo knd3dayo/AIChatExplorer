@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using LibUIPythonAI.ViewModel.Item;
 using MergeChat.ViewModel;
-using QAChat.ViewModel;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace MergeChat.View {
     /// <summary>

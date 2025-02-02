@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.Mail {

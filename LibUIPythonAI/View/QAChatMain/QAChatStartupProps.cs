@@ -2,9 +2,9 @@ using System.Collections.ObjectModel;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
-namespace QAChat.ViewModel {
+namespace LibUIPythonAI.ViewModel {
     public class QAChatStartupProps {
         public QAChatStartupProps(ContentItem clipboardItem) {
             ContentItem = clipboardItem;

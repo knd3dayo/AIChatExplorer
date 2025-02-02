@@ -1,10 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Resource;
-using QAChat.View.Common;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.Common;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Common {
+namespace LibUIPythonAI.ViewModel.Common {
     public class MyStatusBarViewModel : ObservableObject {
 
         // ステータスバーのテキスト

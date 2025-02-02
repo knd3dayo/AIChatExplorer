@@ -1,6 +1,6 @@
 using WpfAppCommon.Model;
 
-namespace QAChat.Resource {
+namespace LibUIPythonAI.Resource {
     public  partial class CommonStringResourcesEn : CommonStringResources {
 
         // -- SettingsUserControl.xaml --

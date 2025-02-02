@@ -1,8 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.ViewModel.Folder;
 using System.Collections.ObjectModel;
 
-namespace PythonAILibUI.ViewModel.Folder {
+namespace LibUIPythonAI.ViewModel.Folder {
     public class RootFolderViewModelContainer : ObservableObject {
 
         // ClipboardFolder

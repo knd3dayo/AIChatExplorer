@@ -6,7 +6,7 @@ using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
 using WpfAppCommon.Utils;
 
-namespace QAChat.Utils {
+namespace LibUIPythonAI.Utils {
     public class AutoGenProcessController {
 
         public static Process? AutoGenGroupChatTest1Process { get; set; }

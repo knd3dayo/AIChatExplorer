@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace QAChat.View.Folder {
+namespace LibUIPythonAI.View.Folder {
     /// <summary>
     /// FolderSelectControl.xaml の相互作用ロジック
     /// </summary>

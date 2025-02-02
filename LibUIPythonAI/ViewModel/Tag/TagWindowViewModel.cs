@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Tag;
-using QAChat.View.Tag;
+using LibUIPythonAI.View.Tag;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.Tag {

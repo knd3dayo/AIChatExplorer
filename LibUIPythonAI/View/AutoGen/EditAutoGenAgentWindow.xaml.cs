@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.AutoGen;
-using QAChat.ViewModel.AutoGen;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.AutoGen;
+using LibUIPythonAI.ViewModel.Folder;
 
-namespace QAChat.View.AutoGen {
+namespace LibUIPythonAI.View.AutoGen {
     /// <summary>
     /// EditAutoGenAgentWindow.xaml の相互作用ロジック
     /// </summary>

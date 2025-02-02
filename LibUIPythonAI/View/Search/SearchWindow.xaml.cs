@@ -3,7 +3,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.Search;
 using LibUIPythonAI.ViewModel.Search;
 
-namespace QAChat.View.Search {
+namespace LibUIPythonAI.View.Search {
     /// <summary>
     /// Window1.xaml の相互作用ロジック
     /// </summary>

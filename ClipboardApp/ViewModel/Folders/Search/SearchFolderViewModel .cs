@@ -4,8 +4,8 @@ using ClipboardApp.ViewModel.Main;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Search;
-using QAChat.View.Search;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.Search;
+using LibUIPythonAI.ViewModel.Folder;
 using ClipboardApp.Common;
 
 namespace ClipboardApp.ViewModel.Folders.Search {

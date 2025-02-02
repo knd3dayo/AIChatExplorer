@@ -11,7 +11,7 @@ using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.PythonIF;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 using static WK.Libraries.SharpClipboardNS.SharpClipboard;
 

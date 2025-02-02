@@ -2,6 +2,10 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.PromptTemplate;
+using LibUIPythonAI.ViewModel.VectorDB;
+using LibUIPythonAI.View.PromptTemplate;
 using MergeChat.Common;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
@@ -11,14 +15,10 @@ using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using QAChat.Resource;
-using QAChat.View.Folder;
-using QAChat.View.PromptTemplate;
-using QAChat.View.VectorDB;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
-using QAChat.ViewModel.PromptTemplate;
-using LibUIPythonAI.ViewModel.VectorDB;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
@@ -250,7 +250,7 @@ namespace MergeChat.ViewModel {
                         return;
                     }
                     // MergeChatUtil.MergeChatを実行
-                    result = MergeChatUtil.MergeChat(chatRequestContext, items , PreProcessPromptText, PostProcessPromptText, [ .. ExportItems]);
+                    result = MergeChatUtil.MergeChat(chatRequestContext, items, PreProcessPromptText, PostProcessPromptText, [.. ExportItems]);
                 });
 
                 if (result == null) {
@@ -326,7 +326,7 @@ namespace MergeChat.ViewModel {
                     // request.Temperature;
                     Temperature = Temperature
                 };
-                ChatUtil.PrepareNormalRequest( chatRequestContext, request);
+                ChatUtil.PrepareNormalRequest(chatRequestContext, request);
                 // SelectedTabIndexを更新
                 SelectedTabIndex = tabControl.SelectedIndex;
             }
@@ -345,7 +345,7 @@ namespace MergeChat.ViewModel {
         // 出力先フォルダを選択するコマンド
         public SimpleDelegateCommand<object> SelectOutputFolderCommand => new((parameter) => {
             // フォルダを選択
-            FolderSelectWindow.OpenFolderSelectWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (folderViewModel, isSelect) => {
+            FolderSelectWindow.OpenFolderSelectWindow(RootFolderViewModelContainer.FolderViewModels, (folderViewModel, isSelect) => {
                 if (isSelect) {
                     OutputFolder = folderViewModel;
                 }
@@ -365,7 +365,7 @@ namespace MergeChat.ViewModel {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                 });
 

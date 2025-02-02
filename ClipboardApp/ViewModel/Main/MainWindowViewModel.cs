@@ -10,17 +10,17 @@ using ClipboardApp.View.Help;
 using ClipboardApp.View.Main;
 using ClipboardApp.ViewModel.Common;
 using ClipboardApp.ViewModel.Folders.Clipboard;
+using LibUIPythonAI.View.PromptTemplate;
+using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
-using QAChat;
-using QAChat.Resource;
-using QAChat.View.AutoGen;
-using QAChat.View.AutoProcessRule;
-using QAChat.View.PromptTemplate;
-using QAChat.View.Tag;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
-using QAChat.ViewModel.PromptTemplate;
+using LibUIPythonAI;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.AutoGen;
+using LibUIPythonAI.View.AutoProcessRule;
+using LibUIPythonAI.View.Tag;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Main {
@@ -217,7 +217,7 @@ namespace ClipboardApp.ViewModel.Main {
         // メニューの「自動処理ルールを編集」をクリックしたときの処理
         public void OpenListAutoProcessRuleWindowCommandExecute() {
             // ListAutoProcessRuleWindowを開く
-            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+            ListAutoProcessRuleWindow.OpenListAutoProcessRuleWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
 
         }
         // メニューの「タグ編集」をクリックしたときの処理
@@ -243,7 +243,7 @@ namespace ClipboardApp.ViewModel.Main {
         });
         // メニューの「AutoGen定義編集」をクリックしたときの処理
         public SimpleDelegateCommand<object> OpenListAutoGenItemWindowCommand => new((parameter) => {
-            ListAutoGenItemWindow.OpenListAutoGenItemWindow(PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
+            ListAutoGenItemWindow.OpenListAutoGenItemWindow(LibUIPythonAI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels);
         });
 
         // バージョン情報画面を開く処理

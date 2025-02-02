@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
-namespace QAChat.View.Folder {
+namespace LibUIPythonAI.View.Folder {
     /// <summary>
     /// FolderSelectWindow.xaml の相互作用ロジック
     /// </summary>

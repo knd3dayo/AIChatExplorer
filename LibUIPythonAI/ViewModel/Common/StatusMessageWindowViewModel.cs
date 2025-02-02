@@ -1,10 +1,10 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Common {
+namespace LibUIPythonAI.ViewModel.Common {
     public class StatusMessageWindowViewModel : ObservableObject {
         private string _message = string.Empty;
         public string Message {

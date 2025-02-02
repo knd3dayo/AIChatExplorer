@@ -3,15 +3,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using ImageChat.View;
+using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Common;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Image;
 using PythonAILib.Utils.Python;
-using QAChat.View.PromptTemplate;
-using QAChat.ViewModel.PromptTemplate;
 using WpfAppCommon.Utils;
 
 namespace ImageChat.ViewModel {

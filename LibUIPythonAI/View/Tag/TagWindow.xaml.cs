@@ -2,7 +2,7 @@ using System.Windows;
 using PythonAILib.Model.Content;
 using LibUIPythonAI.ViewModel.Tag;
 
-namespace QAChat.View.Tag
+namespace LibUIPythonAI.View.Tag
 {
     /// <summary>
     /// Tag.xaml の相互作用ロジック

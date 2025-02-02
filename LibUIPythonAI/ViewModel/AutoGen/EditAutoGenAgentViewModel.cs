@@ -2,12 +2,12 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using QAChat.View.VectorDB;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace LibUIPythonAI.ViewModel.AutoGen {
     public class EditAutoGenAgentViewModel : ChatViewModelBase {
         public EditAutoGenAgentViewModel(AutoGenAgent autoGenAgent, ObservableCollection<ContentFolderViewModel> rootFolderViewModels, Action afterUpdate) {
             AutoGenAgent = autoGenAgent;

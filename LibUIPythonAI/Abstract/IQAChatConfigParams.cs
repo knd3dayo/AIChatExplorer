@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace QAChat.Abstract {
+namespace LibUIPythonAI.Abstract {
     public  interface IQAChatConfigParams {
 
         public TextWrapping GetTextWrapping();

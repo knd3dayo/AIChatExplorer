@@ -1,6 +1,6 @@
 using System.Windows;
 using ClipboardApp.Settings;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Control.Editor;
 using WpfAppCommon.Utils;
 

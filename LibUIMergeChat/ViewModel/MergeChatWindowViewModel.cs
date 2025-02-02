@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using LibUIPythonAI.ViewModel;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Item;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {

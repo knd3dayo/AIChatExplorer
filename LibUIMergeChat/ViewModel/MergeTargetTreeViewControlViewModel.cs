@@ -3,9 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using PythonAILibUI.ViewModel.Folder;
-using QAChat.Resource;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {

@@ -1,13 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.ComponentModel;
-using LibGit2Sharp;
 using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.Content;
-using QAChat.Resource;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Item;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 
 namespace MergeChat.ViewModel {
@@ -16,7 +12,7 @@ namespace MergeChat.ViewModel {
         public MergeTargetDataGridViewControlViewModel(Action<bool> updateIndeterminateAction) {
             UpdateIndeterminateAction = updateIndeterminateAction;
         }
-        public Action<bool> UpdateIndeterminateAction { get; set; } 
+        public Action<bool> UpdateIndeterminateAction { get; set; }
 
 
         private ObservableCollection<ContentItemViewModel> _items = [];

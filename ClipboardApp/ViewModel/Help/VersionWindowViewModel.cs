@@ -1,4 +1,4 @@
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.ViewModel.Help {
     public class VersionWindowViewModel : ClipboardAppViewModelBase {

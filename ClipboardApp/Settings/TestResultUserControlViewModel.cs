@@ -1,6 +1,6 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Settings {

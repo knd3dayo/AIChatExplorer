@@ -11,10 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using QAChat.ViewModel.PromptTemplate;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 
-namespace QAChat.View.PromptTemplate
-{
+namespace LibUIPythonAI.View.PromptTemplate {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

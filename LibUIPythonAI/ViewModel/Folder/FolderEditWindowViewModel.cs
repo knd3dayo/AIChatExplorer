@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Controls;
-using LibUIPythonAI.ViewModel;
-using PythonAILib.Model.VectorDB;
-using QAChat.View.VectorDB;
+using LibUIPythonAI.View.VectorDB;
 using LibUIPythonAI.ViewModel.VectorDB;
+using PythonAILib.Model.VectorDB;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Folder {
+namespace LibUIPythonAI.ViewModel.Folder {
     public class FolderEditWindowViewModel : ChatViewModelBase {
 
         // 起動時の処理
@@ -90,7 +88,7 @@ namespace QAChat.ViewModel.Folder {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                 });
 

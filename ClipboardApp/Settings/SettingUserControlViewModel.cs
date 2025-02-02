@@ -7,7 +7,7 @@ using PythonAILib.Model.Chat;
 using PythonAILib.PythonIF;
 using PythonAILib.Resources;
 using PythonAILib.Utils.Python;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 

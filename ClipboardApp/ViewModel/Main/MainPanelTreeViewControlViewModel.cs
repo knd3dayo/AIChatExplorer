@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using CommunityToolkit.Mvvm.ComponentModel;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 using System.Windows.Controls;
 

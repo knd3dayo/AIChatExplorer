@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace QAChat.View.Item {
+namespace LibUIPythonAI.View.Item {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Model.VectorDB;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 using LibUIPythonAI.ViewModel.VectorDB;
 
-namespace QAChat.View.VectorDB
+namespace LibUIPythonAI.View.VectorDB
 {
     /// <summary>
     /// RagManagementWindow.xaml の相互作用ロジック

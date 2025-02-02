@@ -2,8 +2,8 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
-using QAChat.View.VectorDB;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.VectorDB {

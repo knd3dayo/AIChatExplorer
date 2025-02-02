@@ -1,5 +1,5 @@
 using MergeChat.Resources;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace MergeChat.View {
     public class ViewStringResources {

@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Prompt;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.PromptTemplate {
+namespace LibUIPythonAI.ViewModel.PromptTemplate {
     public class EditPromptItemWindowViewModel : ChatViewModelBase {
 
 
@@ -81,7 +80,7 @@ namespace QAChat.ViewModel.PromptTemplate {
             }
         }
         // InputTypeItemsVisibility
-        public Visibility InputTypeItemsVisibility  => Tools.BoolToVisibility(PromptResultToInput);
+        public Visibility InputTypeItemsVisibility => Tools.BoolToVisibility(PromptResultToInput);
 
         // InputTypeItems
         public ObservableCollection<PromptItem> InputTypeItems {

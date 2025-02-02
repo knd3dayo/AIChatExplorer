@@ -1,8 +1,8 @@
 using System.Windows.Controls;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Item;
 
-namespace QAChat.View.Item {
+namespace LibUIPythonAI.View.Item {
     /// <summary>
     /// EditItemWindow.xaml の相互作用ロジック
     /// </summary>

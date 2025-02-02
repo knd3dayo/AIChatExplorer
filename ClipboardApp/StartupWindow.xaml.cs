@@ -1,5 +1,5 @@
 using System.Windows;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using ClipboardApp.View.Main;
 using ClipboardApp.Settings;
 using ClipboardApp.ViewModel.Main;

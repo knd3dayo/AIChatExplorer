@@ -4,7 +4,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Folder;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.ViewModel.Folders.FileSystem {

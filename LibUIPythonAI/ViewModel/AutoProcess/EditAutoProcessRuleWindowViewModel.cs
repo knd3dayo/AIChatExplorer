@@ -2,20 +2,20 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.View.PromptTemplate;
 using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using QAChat.View.Folder;
-using QAChat.View.PromptTemplate;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.PromptTemplate;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoProcess {
+namespace LibUIPythonAI.ViewModel.AutoProcess {
     public class EditAutoProcessRuleWindowViewModel : ChatViewModelBase {
 
         // 初期化

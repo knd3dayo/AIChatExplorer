@@ -1,7 +1,7 @@
 using System.Windows;
 using LibUIPythonAI.ViewModel.Tag;
 
-namespace QAChat.View.Tag {
+namespace LibUIPythonAI.View.Tag {
     /// <summary>
     /// TagSearchWindow.xaml の相互作用ロジック
     /// </summary>

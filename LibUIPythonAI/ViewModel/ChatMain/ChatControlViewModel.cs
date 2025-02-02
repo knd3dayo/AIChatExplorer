@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibUIPythonAI.View.PromptTemplate;
+using LibUIPythonAI.ViewModel.PromptTemplate;
 using LibUIPythonAI.ViewModel.VectorDB;
 using PythonAILib.Common;
 using PythonAILib.Model.AutoGen;
@@ -8,12 +10,11 @@ using PythonAILib.Model.Chat;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.VectorDB;
 using PythonAILib.Utils.Python;
-using QAChat.View.PromptTemplate;
-using QAChat.View.QAChatMain;
-using QAChat.View.VectorDB;
-using QAChat.ViewModel;
-using QAChat.ViewModel.PromptTemplate;
+using LibUIPythonAI.View.QAChatMain;
+using LibUIPythonAI.View.VectorDB;
+using LibUIPythonAI.ViewModel;
 using WpfAppCommon.Utils;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace LibUIPythonAI.ViewModel.ChatMain {
     public class ChatControlViewModel : ChatViewModelBase {
@@ -447,7 +448,7 @@ namespace LibUIPythonAI.ViewModel.ChatMain {
         public SimpleDelegateCommand<object> AddVectorDBItemCommand => new((parameter) => {
             // フォルダを選択
             ListVectorDBWindow.OpenListVectorDBWindow(ListVectorDBWindowViewModel.ActionModeEnum.Select,
-                PythonAILibUI.ViewModel.Folder.RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
+                RootFolderViewModelContainer.FolderViewModels, (vectorDBItemBase) => {
                     VectorSearchProperties.Add(vectorDBItemBase);
                 });
 

@@ -2,7 +2,7 @@
     x:Class="ImageChat.View.ScreenShotCheckPromptWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cc="clr-namespace:QAChat.View.Common;assembly=LibUIPythonAI"
+    xmlns:cc="clr-namespace:LibUIPythonAI.View.Common;assembly=LibUIPythonAI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:ImageChat.ViewModel"

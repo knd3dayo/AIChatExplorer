@@ -3,7 +3,7 @@ using ClipboardApp.Model.Folder;
 using ClipboardApp.Settings;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WK.Libraries.SharpClipboardNS;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;

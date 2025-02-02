@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using PythonAILib.Common;
 using PythonAILib.Model.VectorDB;
-using QAChat.View.RAG;
+using LibUIPythonAI.View.RAG;
 using WpfAppCommon.Utils;
 
 namespace LibUIPythonAI.ViewModel.RAG {

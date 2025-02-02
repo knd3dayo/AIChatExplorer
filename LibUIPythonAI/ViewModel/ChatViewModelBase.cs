@@ -1,7 +1,7 @@
 using System.Windows;
 using PythonAILib.Common;
-using QAChat;
-using QAChat.Resource;
+using LibUIPythonAI;
+using LibUIPythonAI.Resource;
 
 namespace LibUIPythonAI.ViewModel {
     public class ChatViewModelBase : CommonViewModelBase {

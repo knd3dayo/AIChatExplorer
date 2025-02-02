@@ -1,6 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 
 namespace ClipboardApp.Settings {
     /// <summary>

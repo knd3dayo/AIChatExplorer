@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Windows;
-using QAChat.ViewModel.AutoProcess;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.AutoProcess;
+using LibUIPythonAI.ViewModel.Folder;
 
-namespace QAChat.View.AutoProcessRule {
+namespace LibUIPythonAI.View.AutoProcessRule {
     /// <summary>
     /// ListAutoProcessRuleWindow.xaml の相互作用ロジック
     /// </summary>

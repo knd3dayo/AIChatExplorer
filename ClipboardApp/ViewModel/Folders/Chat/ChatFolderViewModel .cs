@@ -3,10 +3,9 @@ using ClipboardApp.Model.Item;
 using ClipboardApp.ViewModel.Content;
 using ClipboardApp.ViewModel.Folders.Clipboard;
 using PythonAILib.Model.Folder;
-using QAChat.View.Folder;
-using QAChat.ViewModel;
-using QAChat.ViewModel.Folder;
-using QAChat.ViewModel.Item;
+using LibUIPythonAI.View.Folder;
+using LibUIPythonAI.ViewModel;
+using LibUIPythonAI.ViewModel.Folder;
 
 namespace ClipboardApp.ViewModel.Folders.Chat {
     public class ChatFolderViewModel(ClipboardFolder clipboardItemFolder) : ClipboardFolderViewModel(clipboardItemFolder) {
@@ -24,7 +23,7 @@ namespace ClipboardApp.ViewModel.Folders.Chat {
             ClipboardItem clipboardItem = new(Folder.Id);
             ClipboardItemViewModel clipboardItemViewModel = new(this, clipboardItem);
             QAChatStartupProps props = new(clipboardItemViewModel.ContentItem);
-            QAChat.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
+            LibUIPythonAI.View.QAChatMain.QAChatMainWindow.OpenOpenAIChatWindow(props);
         }
 
         public override void CreateFolderCommandExecute(ContentFolderViewModel folderViewModel, Action afterUpdate) {

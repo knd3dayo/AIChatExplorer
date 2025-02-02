@@ -1,7 +1,7 @@
 using System.Windows;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.ViewModel.Folder;
 
-namespace QAChat.View.Folder {
+namespace LibUIPythonAI.View.Folder {
     /// <summary>
     /// ExportImportWindow.xaml の相互作用ロジック
     /// </summary>

@@ -1,15 +1,14 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoProcess;
 using PythonAILib.Model.Content;
-using QAChat.View.Tag;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.Tag;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Model;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Item {
+namespace LibUIPythonAI.ViewModel.Item {
     /// <summary>
     /// クリップボードアイテム編集ウィンドウのViewModel
     /// </summary>

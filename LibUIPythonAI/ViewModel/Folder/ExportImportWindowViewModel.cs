@@ -5,12 +5,11 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using PythonAILib.Model.Content;
 using PythonAILib.Model.Folder;
 using PythonAILib.Model.Prompt;
-using PythonAILibUI.ViewModel.Folder;
-using QAChat.Resource;
-using QAChat.View.Folder;
+using LibUIPythonAI.Resource;
+using LibUIPythonAI.View.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Folder {
+namespace LibUIPythonAI.ViewModel.Folder {
     public class ExportImportWindowViewModel(ContentFolderViewModel ClipboardFolderViewModel, Action AfterUpdate) : ChatViewModelBase {
 
         // ImportItems

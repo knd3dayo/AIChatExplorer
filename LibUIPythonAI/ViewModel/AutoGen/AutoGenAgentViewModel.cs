@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.AutoGen;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace LibUIPythonAI.ViewModel.AutoGen {
     public class AutoGenAgentViewModel : ObservableObject {
 
 

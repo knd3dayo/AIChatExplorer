@@ -1,7 +1,7 @@
 using PythonAILib.Model.Content;
 using PythonAILib.Model.File;
 using PythonAILib.PythonIF;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 
 namespace ClipboardApp.Model.Item

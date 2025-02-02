@@ -1,4 +1,4 @@
-namespace QAChat.Resource {
+namespace LibUIPythonAI.Resource {
     public partial class CommonStringResources {
 
         private static CommonStringResources? _instance;

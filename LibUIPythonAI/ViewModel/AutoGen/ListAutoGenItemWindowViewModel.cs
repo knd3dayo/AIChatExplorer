@@ -3,11 +3,11 @@ using System.Windows;
 using System.Windows.Controls;
 using LibUIPythonAI.ViewModel;
 using PythonAILib.Model.AutoGen;
-using QAChat.View.AutoGen;
-using QAChat.ViewModel.Folder;
+using LibUIPythonAI.View.AutoGen;
+using LibUIPythonAI.ViewModel.Folder;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.AutoGen {
+namespace LibUIPythonAI.ViewModel.AutoGen {
     public class ListAutoGenItemWindowViewModel : ChatViewModelBase {
 
         public ObservableCollection<AutoGenAgent> AutoGenAgents { get; set; } = [];

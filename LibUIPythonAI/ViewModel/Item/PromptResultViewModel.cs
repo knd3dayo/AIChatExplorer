@@ -3,10 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PythonAILib.Model.Prompt;
-using QAChat.Resource;
+using LibUIPythonAI.Resource;
 using WpfAppCommon.Utils;
 
-namespace QAChat.ViewModel.Item {
+namespace LibUIPythonAI.ViewModel.Item {
     public class PromptResultViewModel : ObservableObject {
 
         public PromptResultViewModel(PromptChatResult promptChatResult, string promptName) {
